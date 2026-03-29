@@ -1,0 +1,4 @@
+# file: C:\ PYTHON APPS\PROGRAMSTART\scripts\programstart_bootstrap.py
+# hypothesis_version: 6.151.10
+
+['--dest', '--dry-run', '--force', '--project-name', '--variant', '.bat', '.cmd', '.ps1', 'README.md', '__main__', 'bootstrap_assets', 'control_files', 'enterprise', 'lite', 'output_files', 'product', 'programbuild', 'state_file', 'store_true', 'systems', 'utf-8', 'variant', 'w', 'workflow_state', 'workspace']

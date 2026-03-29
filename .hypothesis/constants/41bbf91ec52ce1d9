@@ -1,0 +1,4 @@
+# file: C:\ PYTHON APPS\PROGRAMSTART\scripts\programstart_command_registry.py
+# hypothesis_version: 6.151.10
+
+['--check', '--dry-run', '--kickoff', '--system', '-m', 'advance', 'advance.programbuild', 'advance.userjourney', 'attach', 'bootstrap', 'clean', 'context', 'context.summary', 'dashboard', 'drift', 'guide', 'guide.kickoff', 'guide.programbuild', 'guide.userjourney', 'impact', 'impact.workflow', 'init', 'log', 'next', 'programbuild', 'progress', 'query', 'recommend', 'refresh', 'retrieval', 'serve', 'show', 'smoke.browser', 'smoke.dashboard', 'state', 'state.show', 'status', 'userjourney', 'validate', 'workflow', 'workflow-state']

@@ -1,0 +1,95 @@
+{
+  "system": "programbuild",
+  "variant": "",
+  "active_stage": "inputs_and_mode_selection",
+  "stages": {
+    "inputs_and_mode_selection": {
+      "status": "in_progress",
+      "signoff": {
+        "decision": "",
+        "date": "",
+        "notes": ""
+      }
+    },
+    "feasibility": {
+      "status": "planned",
+      "signoff": {
+        "decision": "",
+        "date": "",
+        "notes": ""
+      }
+    },
+    "research": {
+      "status": "planned",
+      "signoff": {
+        "decision": "",
+        "date": "",
+        "notes": ""
+      }
+    },
+    "requirements_and_ux": {
+      "status": "planned",
+      "signoff": {
+        "decision": "",
+        "date": "",
+        "notes": ""
+      }
+    },
+    "architecture_and_risk_spikes": {
+      "status": "planned",
+      "signoff": {
+        "decision": "",
+        "date": "",
+        "notes": ""
+      }
+    },
+    "scaffold_and_guardrails": {
+      "status": "planned",
+      "signoff": {
+        "decision": "",
+        "date": "",
+        "notes": ""
+      }
+    },
+    "test_strategy": {
+      "status": "planned",
+      "signoff": {
+        "decision": "",
+        "date": "",
+        "notes": ""
+      }
+    },
+    "implementation_loop": {
+      "status": "planned",
+      "signoff": {
+        "decision": "",
+        "date": "",
+        "notes": ""
+      }
+    },
+    "release_readiness": {
+      "status": "planned",
+      "signoff": {
+        "decision": "",
+        "date": "",
+        "notes": ""
+      }
+    },
+    "audit_and_drift_control": {
+      "status": "planned",
+      "signoff": {
+        "decision": "",
+        "date": "",
+        "notes": ""
+      }
+    },
+    "post_launch_review": {
+      "status": "planned",
+      "signoff": {
+        "decision": "",
+        "date": "",
+        "notes": ""
+      }
+    }
+  }
+}

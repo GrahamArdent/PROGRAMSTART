@@ -1,0 +1,15 @@
+.coverage
+.nox/
+.pytest_cache/
+.ruff_cache/
+.tmp_bootstrap_*/
+.venv/
+STATUS_DASHBOARD_TEST.md
+*.egg-info/
+__pycache__/
+build/
+htmlcov/
+site/
+*.pyc
+*.pyo
+*.pyd

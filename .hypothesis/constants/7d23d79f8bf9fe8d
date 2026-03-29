@@ -1,0 +1,4 @@
+# file: C:\ PYTHON APPS\PROGRAMSTART\scripts\programstart_cli.py
+# hypothesis_version: 6.151.10
+
+['--system', '__main__', 'advance', 'attach', 'bootstrap', 'clean', 'command', 'context', 'dashboard', 'drift', 'guide', 'help', 'impact', 'init', 'log', 'next', 'programbuild', 'programstart advance', 'programstart attach', 'programstart clean', 'programstart context', 'programstart drift', 'programstart guide', 'programstart impact', 'programstart init', 'programstart log', 'programstart refresh', 'programstart serve', 'programstart state', 'programstart status', 'progress', 'recommend', 'refresh', 'retrieval', 'serve', 'state', 'status', 'userjourney', 'validate']

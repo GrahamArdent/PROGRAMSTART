@@ -1,0 +1,32 @@
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      dev-tools:
+        patterns:
+          - "ruff"
+          - "pyright"
+          - "pre-commit"
+          - "check-jsonschema"
+          - "nox"
+          - "pytest*"
+          - "coverage"
+      docs:
+        patterns:
+          - "mkdocs*"
+      runtime:
+        patterns:
+          - "playwright"
+          - "uv"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      ci-actions:
+        patterns:
+          - "*"

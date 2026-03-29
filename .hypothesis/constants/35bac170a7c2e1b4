@@ -1,0 +1,4 @@
+# file: C:\ PYTHON APPS\PROGRAMSTART\scripts\programstart_workflow_state.py
+# hypothesis_version: 6.151.10
+
+[' <', '--date', '--decision', '--dry-run', '--notes', '--status', '--step', '--system', '--variant', 'Show workflow state.', 'Sign-off date.', 'Stage or phase key.', '__main__', 'active_phase', 'active_stage', 'advance', 'all', 'approved', 'blocked', 'command', 'completed', 'date', 'decision', 'dry_run', 'enterprise', 'in_progress', 'init', 'lite', 'notes', 'optional', 'planned', 'product', 'programbuild', 'root', 'set', 'show', 'signoff', 'status', 'store_true', 'systems', 'userjourney', 'variant']

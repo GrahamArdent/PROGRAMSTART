@@ -1,0 +1,21 @@
+# CODEOWNERS — GitHub will request reviews from these owners on PRs.
+# Update this file as team ownership evolves.
+
+# Workflow tooling and infrastructure
+scripts/                     @workflow-maintainers
+config/                      @workflow-maintainers
+schemas/                     @workflow-maintainers
+tests/                       @workflow-maintainers
+noxfile.py                   @workflow-maintainers
+pyproject.toml               @workflow-maintainers
+.github/workflows/           @workflow-maintainers
+
+# PROGRAMBUILD planning system
+PROGRAMBUILD/                @product-leads
+
+# USERJOURNEY planning system
+USERJOURNEY/                 @product-leads
+
+# Documentation
+docs/                        @workflow-maintainers
+*.md                         @workflow-maintainers

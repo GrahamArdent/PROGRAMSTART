@@ -1,0 +1,4 @@
+# file: C:\ PYTHON APPS\PROGRAMSTART\scripts\programstart_common.py
+# hypothesis_version: 6.151.10
+
+['#', '##', '*', '---', '--cached', '--name-only', '.git', '.py', '.tmp_dist_smoke', '/', '1', '2', '31', '32', '33', '36', 'MANIFEST_', 'NO_COLOR', 'PROGRAMSTART_ROOT', 'VERIFICATION_REPORT_', '\\', '^\\d+\\.\\s+(.*)$', 'active_key', 'baselines', 'blocked', 'bootstrap_assets', 'build', 'completed', 'config', 'control_files', 'core_files', 'date', 'decision', 'diff', 'dist', 'exclude_globs', 'exclude_names', 'exclude_prefixes', 'git', 'in_progress', 'initial_step', 'integrity', 'main_output', 'manifest', 'manifest_collection', 'metadata_rules', 'notes', 'output_files', 'outputs', 'phases', 'planned', 'product', 'programbuild', 'required_prefixes', 'root', 'root_readme', 'signoff', 'stage_order', 'stages', 'state_file', 'status', 'step_files', 'step_order', 'system', 'systems', 'utf-8', 'variant', 'workflow_state', 'workspace', '|']

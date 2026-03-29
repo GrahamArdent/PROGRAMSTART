@@ -1,0 +1,206 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "PROGRAMSTART: Init New Project (dry-run)",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "programstart", "init", "--dest", ".tmp_init_preview", "--project-name", "SampleProject", "--product-shape", "CLI tool", "--dry-run"],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true }
+    },
+    {
+      "label": "PROGRAMSTART: Recommend Current Project",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "programstart", "recommend"],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true }
+    },
+    {
+      "label": "PROGRAMSTART: What To Do Next",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "programstart", "next"],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "focus": true },
+      "group": { "kind": "build", "isDefault": true }
+    },
+    {
+      "label": "PROGRAMSTART: Show State",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "programstart", "state", "show"],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true }
+    },
+    {
+      "label": "PROGRAMSTART: Validate All",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "programstart", "validate"],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "PROGRAMSTART: Validate Workflow State",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "programstart", "validate", "--check", "workflow-state"],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "PROGRAMSTART: Validate Authority Sync",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "programstart", "validate", "--check", "authority-sync"],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "PROGRAMSTART: Validate Planning References",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "programstart", "validate", "--check", "planning-references"],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "PROGRAMSTART: Validate Bootstrap Assets",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "programstart", "validate", "--check", "bootstrap-assets"],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "PROGRAMSTART: Guide Active PROGRAMBUILD",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "programstart", "guide", "--system", "programbuild"],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true }
+    },
+    {
+      "label": "PROGRAMSTART: Guide Active USERJOURNEY",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "programstart", "guide", "--system", "userjourney"],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true }
+    },
+    {
+      "label": "PROGRAMSTART: Advance PROGRAMBUILD (dry-run)",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "programstart", "advance", "--system", "programbuild", "--dry-run"],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true }
+    },
+    {
+      "label": "PROGRAMSTART: Advance PROGRAMBUILD",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "programstart", "advance", "--system", "programbuild"],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "focus": true }
+    },
+    {
+      "label": "PROGRAMSTART: Advance USERJOURNEY (dry-run)",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "programstart", "advance", "--system", "userjourney", "--dry-run"],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true }
+    },
+    {
+      "label": "PROGRAMSTART: Advance USERJOURNEY",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "programstart", "advance", "--system", "userjourney"],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "focus": true }
+    },
+    {
+      "label": "PROGRAMSTART: Refresh Dashboard",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "programstart", "dashboard"],
+      "presentation": { "reveal": "silent", "panel": "shared", "clear": true }
+    },
+    {
+      "label": "PROGRAMSTART: Clean Workspace",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "programstart", "clean"],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "PROGRAMSTART: Pre-commit All",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "pre-commit", "run", "--all-files"],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "PROGRAMSTART: Pyright",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "pyright"],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "PROGRAMSTART: Pytest",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "pytest", "--cov-report=term-missing"],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "PROGRAMSTART: Browser Smoke",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "python", "scripts/programstart_dashboard_browser_smoke.py", "--expect-userjourney", "attached"],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "PROGRAMSTART: Build Docs",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "mkdocs", "build", "--strict"],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "PROGRAMSTART: Full CI Gate",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "nox", "-s", "ci"],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "focus": true },
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "PROGRAMSTART: Sign-off Log",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "programstart", "log"],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true }
+    },
+    {
+      "label": "PROGRAMSTART: Launch Web Dashboard",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "programstart", "serve"],
+      "isBackground": true,
+      "presentation": { "reveal": "always", "panel": "dedicated", "clear": true, "focus": true },
+      "problemMatcher": []
+    }
+  ]
+}

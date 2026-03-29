@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://programstart.local/schemas/process-registry.schema.json",
+  "title": "PROGRAMSTART process registry",
+  "type": "object",
+  "required": ["version", "workspace", "systems", "sync_rules", "metadata_rules", "workflow_guidance", "workflow_state"],
+  "properties": {
+    "version": { "type": "string" },
+    "workspace": {
+      "type": "object",
+      "required": ["name", "description", "root_readme", "bootstrap_assets"],
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "root_readme": { "type": "string" },
+        "generated_outputs_root": { "type": "string" },
+        "bootstrap_assets": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": true
+    },
+    "systems": {
+      "type": "object",
+      "required": ["programbuild", "userjourney"],
+      "additionalProperties": {
+        "type": "object",
+        "required": ["root"],
+        "properties": {
+          "root": { "type": "string" },
+          "optional": { "type": "boolean" },
+          "control_files": { "type": "array", "items": { "type": "string" } },
+          "output_files": { "type": "array", "items": { "type": "string" } },
+          "core_files": { "type": "array", "items": { "type": "string" } },
+          "metadata_required": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": true
+      }
+    },
+    "sync_rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "system", "description"],
+        "properties": {
+          "name": { "type": "string" },
+          "system": { "type": "string" },
+          "authority_files": { "type": "array", "items": { "type": "string" } },
+          "dependent_files": { "type": "array", "items": { "type": "string" } },
+          "require_authority_when_dependents_change": { "type": "boolean" },
+          "description": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "metadata_rules": {
+      "type": "object",
+      "required": ["required_prefixes", "owner_placeholder"],
+      "properties": {
+        "required_prefixes": { "type": "array", "items": { "type": "string" } },
+        "owner_placeholder": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "integrity": {
+      "type": "object",
+      "properties": {
+        "manifest_collection": {
+          "type": "object",
+          "properties": {
+            "include_workspace_readme": { "type": "boolean" },
+            "include_bootstrap_assets": { "type": "boolean" },
+            "include_system_file_groups": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "include_baseline_roots": { "type": "boolean" },
+            "exclude_prefixes": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "exclude_names": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "exclude_globs": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          },
+          "additionalProperties": true
+        },
+        "baselines": {
+          "type": "array",
+          "items": { "type": "object" }
+        }
+      },
+      "additionalProperties": true
+    },
+    "planning_reference_rules": { "type": "object" },
+    "workflow_guidance": { "type": "object" },
+    "workflow_state": { "type": "object" }
+  },
+  "additionalProperties": true
+}

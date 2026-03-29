@@ -1,0 +1,964 @@
+{
+  "version": "2026-03-29",
+  "workspace": {
+    "name": "PROGRAMSTART",
+    "description": "Reusable PROGRAMBUILD template workspace with optional project attachments such as USERJOURNEY.",
+    "root_readme": "README.md",
+    "generated_outputs_root": "outputs",
+    "bootstrap_assets": [
+      ".secrets.baseline",
+      ".editorconfig",
+      ".gitattributes",
+      ".gitignore",
+      ".pre-commit-config.yaml",
+      ".python-version",
+      ".yamllint",
+      "pyproject.toml",
+      "uv.lock",
+      "noxfile.py",
+      "mkdocs.yml",
+      "CHANGELOG.md",
+      "CODEOWNERS",
+      "CONTRIBUTING.md",
+      "SECURITY.md",
+      "requirements.txt",
+      "QUICKSTART.md",
+      "config/process-registry.json",
+      "config/knowledge-base.json",
+      "docs/dashboard-api.md",
+      "docs/defaults-review.md",
+      "docs/index.md",
+      "docs/context-layer.md",
+      "docs/knowledge-base.md",
+      "docs/knowledge-ops.md",
+      "docs/retrieval-architecture.md",
+      "docs/reusable-patterns.md",
+      "docs/toolchain.md",
+      "docs/verification.md",
+      "docs/workflow-model.md",
+      "scripts/pb.ps1",
+      "scripts/__init__.py",
+      "scripts/programstart_attach.py",
+      "scripts/programstart_cli.py",
+      "scripts/programstart_bootstrap.py",
+      "scripts/programstart_clean.py",
+      "scripts/programstart_checklist_progress.py",
+      "scripts/programstart_common.py",
+      "scripts/programstart_command_registry.py",
+      "scripts/programstart_context.py",
+      "scripts/programstart_cli_smoke.py",
+      "scripts/programstart_dashboard.py",
+      "scripts/programstart_dashboard_golden.py",
+      "scripts/programstart_dashboard_browser_smoke.py",
+      "scripts/programstart_dashboard_smoke.py",
+      "scripts/programstart_dist_smoke.py",
+      "scripts/programstart_drift_check.py",
+      "scripts/programstart_impact.py",
+      "scripts/programstart_init.py",
+      "scripts/programstart_log.py",
+      "scripts/programstart_research_delta.py",
+      "scripts/programstart_models.py",
+      "scripts/programstart_refresh_integrity.py",
+      "scripts/programstart_retrieval.py",
+      "scripts/programstart_recommend.py",
+      "scripts/programstart_serve.py",
+      "scripts/programstart_status.py",
+      "scripts/programstart_step_guide.py",
+      "scripts/programstart_validate.py",
+      "scripts/programstart_workflow_state.py",
+      "schemas/process-registry.schema.json",
+      "schemas/programbuild-state.schema.json",
+      "schemas/userjourney-state.schema.json",
+      "tests/conftest.py",
+      "tests/test_hypothesis_retrieval.py",
+      "tests/test_programstart_checklist_progress.py",
+      "tests/test_programstart_cli.py",
+      "tests/test_programstart_clean.py",
+      "tests/test_programstart_command_registry.py",
+      "tests/test_programstart_common.py",
+      "tests/test_programstart_context.py",
+      "tests/test_programstart_dashboard.py",
+      "tests/test_programstart_dashboard_golden.py",
+      "tests/test_programstart_drift_check.py",
+      "tests/golden/dashboard/absent-shell.png",
+      "tests/golden/dashboard/attached-shell.png",
+      "tests/golden/dashboard/attached-signoff-modal.png",
+      "tests/test_programstart_log.py",
+      "tests/test_programstart_models.py",
+      "tests/test_programstart_project_factory.py",
+      "tests/test_programstart_research_delta.py",
+      "tests/test_programstart_refresh_integrity.py",
+      "tests/test_programstart_retrieval.py",
+      "tests/test_rag_integration.py",
+      "tests/test_programstart_serve.py",
+      "tests/test_programstart_status.py",
+      "tests/test_programstart_step_guide.py",
+      "tests/test_programstart_validate.py",
+      "tests/test_programstart_workflow_state.py",
+      ".github/copilot-instructions.md",
+      ".github/dependabot.yml",
+      ".github/instructions/programbuild.instructions.md",
+      ".github/instructions/userjourney.instructions.md",
+      ".github/ISSUE_TEMPLATE/bug_report.md",
+      ".github/ISSUE_TEMPLATE/feature_request.md",
+      ".github/PULL_REQUEST_TEMPLATE.md",
+      ".github/workflows/process-guardrails.yml",
+      ".github/prompts/audit-process-drift.prompt.md",
+      ".github/prompts/programstart-stage-guide.prompt.md",
+      ".github/prompts/programstart-what-next.prompt.md",
+      ".github/prompts/start-programstart-project.prompt.md",
+      ".github/prompts/userjourney-next-slice.prompt.md",
+      ".vscode/tasks.json"
+    ]
+  },
+  "systems": {
+    "programbuild": {
+      "root": "PROGRAMBUILD",
+      "packaging": "template_repo",
+      "control_files": [
+        "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+        "PROGRAMBUILD/PROGRAMBUILD_FILE_INDEX.md",
+        "PROGRAMBUILD/PROGRAMBUILD_ADR_TEMPLATE.md",
+        "PROGRAMBUILD/PROGRAMBUILD_CHANGELOG.md",
+        "PROGRAMBUILD/PROGRAMBUILD_STATE.json",
+        "PROGRAMBUILD/PROGRAMBUILD.md",
+        "PROGRAMBUILD/PROGRAMBUILD_LITE.md",
+        "PROGRAMBUILD/PROGRAMBUILD_PRODUCT.md",
+        "PROGRAMBUILD/PROGRAMBUILD_ENTERPRISE.md",
+        "PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md",
+        "PROGRAMBUILD/PROGRAMBUILD_SUBAGENTS.md",
+        "PROGRAMBUILD/PROGRAMBUILD_CHECKLIST.md"
+      ],
+      "output_files": [
+        "PROGRAMBUILD/FEASIBILITY.md",
+        "PROGRAMBUILD/DECISION_LOG.md",
+        "PROGRAMBUILD/RESEARCH_SUMMARY.md",
+        "PROGRAMBUILD/REQUIREMENTS.md",
+        "PROGRAMBUILD/USER_FLOWS.md",
+        "PROGRAMBUILD/ARCHITECTURE.md",
+        "PROGRAMBUILD/RISK_SPIKES.md",
+        "PROGRAMBUILD/TEST_STRATEGY.md",
+        "PROGRAMBUILD/RELEASE_READINESS.md",
+        "PROGRAMBUILD/AUDIT_REPORT.md",
+        "PROGRAMBUILD/POST_LAUNCH_REVIEW.md"
+      ],
+      "variants": [
+        "PROGRAMBUILD/PROGRAMBUILD_LITE.md",
+        "PROGRAMBUILD/PROGRAMBUILD_PRODUCT.md",
+        "PROGRAMBUILD/PROGRAMBUILD_ENTERPRISE.md"
+      ],
+      "stage_order": [
+        { "id": 0, "name": "inputs_and_mode_selection", "main_output": "inputs block" },
+        { "id": 1, "name": "feasibility", "main_output": "PROGRAMBUILD/FEASIBILITY.md" },
+        { "id": 2, "name": "research", "main_output": "PROGRAMBUILD/RESEARCH_SUMMARY.md" },
+        { "id": 3, "name": "requirements_and_ux", "main_output": "PROGRAMBUILD/REQUIREMENTS.md" },
+        { "id": 4, "name": "architecture_and_risk_spikes", "main_output": "PROGRAMBUILD/ARCHITECTURE.md" },
+        { "id": 5, "name": "scaffold_and_guardrails", "main_output": "working skeleton and CI gates" },
+        { "id": 6, "name": "test_strategy", "main_output": "PROGRAMBUILD/TEST_STRATEGY.md" },
+        { "id": 7, "name": "implementation_loop", "main_output": "feature code and tests" },
+        { "id": 8, "name": "release_readiness", "main_output": "PROGRAMBUILD/RELEASE_READINESS.md" },
+        { "id": 9, "name": "audit_and_drift_control", "main_output": "PROGRAMBUILD/AUDIT_REPORT.md" },
+        { "id": 10, "name": "post_launch_review", "main_output": "PROGRAMBUILD/POST_LAUNCH_REVIEW.md" }
+      ],
+      "metadata_required": [
+        "PROGRAMBUILD/FEASIBILITY.md",
+        "PROGRAMBUILD/DECISION_LOG.md",
+        "PROGRAMBUILD/RESEARCH_SUMMARY.md",
+        "PROGRAMBUILD/REQUIREMENTS.md",
+        "PROGRAMBUILD/USER_FLOWS.md",
+        "PROGRAMBUILD/ARCHITECTURE.md",
+        "PROGRAMBUILD/RISK_SPIKES.md",
+        "PROGRAMBUILD/TEST_STRATEGY.md",
+        "PROGRAMBUILD/RELEASE_READINESS.md",
+        "PROGRAMBUILD/AUDIT_REPORT.md",
+        "PROGRAMBUILD/POST_LAUNCH_REVIEW.md"
+      ]
+    },
+    "userjourney": {
+      "root": "USERJOURNEY",
+      "packaging": "project_attachment",
+      "optional": true,
+      "bootstrap_supported": false,
+      "attachment_role": "example_project_attachment",
+      "core_files": [
+        "USERJOURNEY/README.md",
+        "USERJOURNEY/USERJOURNEY_STATE.json",
+        "USERJOURNEY/USERJOURNEY_INTEGRITY_REFERENCE.json",
+        "USERJOURNEY/PRODUCT_SPEC.md",
+        "USERJOURNEY/USER_FLOWS.md",
+        "USERJOURNEY/UX_COPY_DRAFT.md",
+        "USERJOURNEY/LEGAL_AND_CONSENT.md",
+        "USERJOURNEY/EXTERNAL_REVIEW_PACKET.md",
+        "USERJOURNEY/IMPLEMENTATION_PLAN.md",
+        "USERJOURNEY/IMPLEMENTATION_TRACKER.md",
+        "USERJOURNEY/EXECUTION_SLICES.md",
+        "USERJOURNEY/FILE_BY_FILE_IMPLEMENTATION_CHECKLIST.md",
+        "USERJOURNEY/DELIVERY_GAMEPLAN.md",
+        "USERJOURNEY/SCREEN_INVENTORY.md",
+        "USERJOURNEY/ROUTE_AND_STATE_FREEZE.md",
+        "USERJOURNEY/LEGAL_REVIEW_NOTES.md",
+        "USERJOURNEY/STATES_AND_RULES.md",
+        "USERJOURNEY/ACCEPTANCE_CRITERIA.md",
+        "USERJOURNEY/ANALYTICS_AND_OUTCOMES.md",
+        "USERJOURNEY/TERMS_OF_SERVICE_DRAFT.md",
+        "USERJOURNEY/PRIVACY_POLICY_DRAFT.md",
+        "USERJOURNEY/ADDITIONAL_SUGGESTIONS.md",
+        "USERJOURNEY/REUSE_STRATEGY.md",
+        "USERJOURNEY/USERJOURNEY_TEMPLATE_STARTER.md",
+        "USERJOURNEY/DECISION_LOG.md",
+        "USERJOURNEY/OPEN_QUESTIONS.md"
+      ],
+      "metadata_required": [
+        "USERJOURNEY/README.md",
+        "USERJOURNEY/PRODUCT_SPEC.md",
+        "USERJOURNEY/USER_FLOWS.md",
+        "USERJOURNEY/UX_COPY_DRAFT.md",
+        "USERJOURNEY/LEGAL_AND_CONSENT.md",
+        "USERJOURNEY/EXTERNAL_REVIEW_PACKET.md",
+        "USERJOURNEY/IMPLEMENTATION_PLAN.md",
+        "USERJOURNEY/IMPLEMENTATION_TRACKER.md",
+        "USERJOURNEY/EXECUTION_SLICES.md",
+        "USERJOURNEY/FILE_BY_FILE_IMPLEMENTATION_CHECKLIST.md",
+        "USERJOURNEY/DELIVERY_GAMEPLAN.md",
+        "USERJOURNEY/SCREEN_INVENTORY.md",
+        "USERJOURNEY/ROUTE_AND_STATE_FREEZE.md",
+        "USERJOURNEY/LEGAL_REVIEW_NOTES.md",
+        "USERJOURNEY/STATES_AND_RULES.md",
+        "USERJOURNEY/ACCEPTANCE_CRITERIA.md",
+        "USERJOURNEY/ANALYTICS_AND_OUTCOMES.md",
+        "USERJOURNEY/TERMS_OF_SERVICE_DRAFT.md",
+        "USERJOURNEY/PRIVACY_POLICY_DRAFT.md",
+        "USERJOURNEY/ADDITIONAL_SUGGESTIONS.md",
+        "USERJOURNEY/REUSE_STRATEGY.md",
+        "USERJOURNEY/USERJOURNEY_TEMPLATE_STARTER.md",
+        "USERJOURNEY/DECISION_LOG.md",
+        "USERJOURNEY/OPEN_QUESTIONS.md"
+      ],
+      "engineering_blocker_file": "USERJOURNEY/OPEN_QUESTIONS.md",
+      "activation_event": "first_value_achieved"
+    }
+  },
+  "sync_rules": [
+    {
+      "name": "programbuild_control_inventory",
+      "system": "programbuild",
+      "authority_files": [
+        "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+        "PROGRAMBUILD/PROGRAMBUILD_FILE_INDEX.md"
+      ],
+      "dependent_files": [
+        "PROGRAMBUILD/PROGRAMBUILD.md",
+        "PROGRAMBUILD/PROGRAMBUILD_LITE.md",
+        "PROGRAMBUILD/PROGRAMBUILD_PRODUCT.md",
+        "PROGRAMBUILD/PROGRAMBUILD_ENTERPRISE.md",
+        "PROGRAMBUILD/PROGRAMBUILD_ADR_TEMPLATE.md",
+        "PROGRAMBUILD/PROGRAMBUILD_CHANGELOG.md",
+        "PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md",
+        "PROGRAMBUILD/PROGRAMBUILD_SUBAGENTS.md",
+        "PROGRAMBUILD/PROGRAMBUILD_CHECKLIST.md"
+      ],
+      "require_authority_when_dependents_change": true,
+      "description": "Changes to Program Build control behavior should update the canonical and file index docs in the same change."
+    },
+    {
+      "name": "programbuild_architecture_contracts",
+      "system": "programbuild",
+      "authority_files": [
+        "PROGRAMBUILD/ARCHITECTURE.md"
+      ],
+      "dependent_files": [
+        "PROGRAMBUILD/TEST_STRATEGY.md",
+        "PROGRAMBUILD/RELEASE_READINESS.md",
+        "PROGRAMBUILD/RISK_SPIKES.md"
+      ],
+      "require_authority_when_dependents_change": true,
+      "description": "Test strategy, release readiness, and risk spikes depend on architecture contracts. Update ARCHITECTURE.md first when contracts change."
+    },
+    {
+      "name": "programbuild_requirements_scope",
+      "system": "programbuild",
+      "authority_files": [
+        "PROGRAMBUILD/REQUIREMENTS.md"
+      ],
+      "dependent_files": [
+        "PROGRAMBUILD/USER_FLOWS.md",
+        "PROGRAMBUILD/ARCHITECTURE.md",
+        "PROGRAMBUILD/TEST_STRATEGY.md"
+      ],
+      "require_authority_when_dependents_change": true,
+      "description": "User flows, architecture, and test strategy must stay aligned with requirements scope. Update REQUIREMENTS.md first when scope changes."
+    },
+    {
+      "name": "programbuild_feasibility_cascade",
+      "system": "programbuild",
+      "authority_files": [
+        "PROGRAMBUILD/FEASIBILITY.md"
+      ],
+      "dependent_files": [
+        "PROGRAMBUILD/DECISION_LOG.md",
+        "PROGRAMBUILD/RESEARCH_SUMMARY.md",
+        "PROGRAMBUILD/REQUIREMENTS.md",
+        "PROGRAMBUILD/RISK_SPIKES.md"
+      ],
+      "require_authority_when_dependents_change": true,
+      "description": "Feasibility outcomes, kill criteria, and early risk framing should be updated before downstream decision records, research, scope, and spike plans drift."
+    },
+    {
+      "name": "programbuild_variant_alignment",
+      "system": "programbuild",
+      "authority_files": [
+        "PROGRAMBUILD/PROGRAMBUILD.md"
+      ],
+      "dependent_files": [
+        "PROGRAMBUILD/PROGRAMBUILD_LITE.md",
+        "PROGRAMBUILD/PROGRAMBUILD_PRODUCT.md",
+        "PROGRAMBUILD/PROGRAMBUILD_ENTERPRISE.md"
+      ],
+      "require_authority_when_dependents_change": false,
+      "description": "Variant playbooks should stay compatible with the master playbook stage order and naming rules. Review PROGRAMBUILD.md when variants change."
+    },
+    {
+      "name": "userjourney_external_review_packet",
+      "system": "userjourney",
+      "authority_files": [
+        "USERJOURNEY/OPEN_QUESTIONS.md",
+        "USERJOURNEY/LEGAL_REVIEW_NOTES.md",
+        "USERJOURNEY/LEGAL_AND_CONSENT.md"
+      ],
+      "dependent_files": [
+        "USERJOURNEY/EXTERNAL_REVIEW_PACKET.md",
+        "USERJOURNEY/TERMS_OF_SERVICE_DRAFT.md",
+        "USERJOURNEY/PRIVACY_POLICY_DRAFT.md"
+      ],
+      "require_authority_when_dependents_change": true,
+      "description": "External legal and operational review framing must stay aligned with the open questions, legal notes, and consent authority docs."
+    },
+    {
+      "name": "userjourney_route_state_logic",
+      "system": "userjourney",
+      "authority_files": [
+        "USERJOURNEY/DECISION_LOG.md",
+        "USERJOURNEY/ROUTE_AND_STATE_FREEZE.md",
+        "USERJOURNEY/STATES_AND_RULES.md"
+      ],
+      "dependent_files": [
+        "USERJOURNEY/USER_FLOWS.md",
+        "USERJOURNEY/SCREEN_INVENTORY.md",
+        "USERJOURNEY/IMPLEMENTATION_PLAN.md",
+        "USERJOURNEY/IMPLEMENTATION_TRACKER.md"
+      ],
+      "require_authority_when_dependents_change": true,
+      "description": "Route or state behavior changes must update the decision and route/state authority docs before dependent execution docs."
+    },
+    {
+      "name": "userjourney_legal_consent_behavior",
+      "system": "userjourney",
+      "authority_files": [
+        "USERJOURNEY/DECISION_LOG.md",
+        "USERJOURNEY/LEGAL_AND_CONSENT.md"
+      ],
+      "dependent_files": [
+        "USERJOURNEY/TERMS_OF_SERVICE_DRAFT.md",
+        "USERJOURNEY/PRIVACY_POLICY_DRAFT.md",
+        "USERJOURNEY/LEGAL_REVIEW_NOTES.md",
+        "USERJOURNEY/UX_COPY_DRAFT.md",
+        "USERJOURNEY/ACCEPTANCE_CRITERIA.md"
+      ],
+      "require_authority_when_dependents_change": true,
+      "description": "Legal or consent behavior changes must update the authority docs before drafts, copy, and acceptance criteria."
+    },
+    {
+      "name": "userjourney_ux_surfaces_copy",
+      "system": "userjourney",
+      "authority_files": [
+        "USERJOURNEY/SCREEN_INVENTORY.md",
+        "USERJOURNEY/USER_FLOWS.md",
+        "USERJOURNEY/UX_COPY_DRAFT.md"
+      ],
+      "dependent_files": [
+        "USERJOURNEY/ACCEPTANCE_CRITERIA.md",
+        "USERJOURNEY/ANALYTICS_AND_OUTCOMES.md"
+      ],
+      "require_authority_when_dependents_change": true,
+      "description": "UX surface changes should update inventory, flows, and copy before downstream acceptance and analytics docs."
+    },
+    {
+      "name": "userjourney_implementation_sequence",
+      "system": "userjourney",
+      "authority_files": [
+        "USERJOURNEY/IMPLEMENTATION_TRACKER.md"
+      ],
+      "dependent_files": [
+        "USERJOURNEY/EXECUTION_SLICES.md",
+        "USERJOURNEY/FILE_BY_FILE_IMPLEMENTATION_CHECKLIST.md",
+        "USERJOURNEY/DELIVERY_GAMEPLAN.md"
+      ],
+      "require_authority_when_dependents_change": true,
+      "description": "Implementation sequence changes must start in the tracker and then flow to slices, file checklist, and delivery gameplan."
+    },
+    {
+      "name": "cross_system_isolation",
+      "system": "cross",
+      "authority_files": [],
+      "dependent_files": [],
+      "require_authority_when_dependents_change": false,
+      "description": "PROGRAMBUILD and USERJOURNEY are separate systems. USERJOURNEY may be absent because it is an optional project attachment. Changes inside one system should not silently alter the other. If a cross-system change is needed, update both systems explicitly and note the dependency in config/process-registry.json."
+    }
+  ],
+  "metadata_rules": {
+    "required_prefixes": [
+      "Purpose:",
+      "Owner:",
+      "Last updated:",
+      "Depends on:",
+      "Authority:"
+    ],
+    "owner_placeholder": "[ASSIGN]"
+  },
+  "integrity": {
+    "manifest_collection": {
+      "include_workspace_readme": true,
+      "include_bootstrap_assets": true,
+      "include_system_file_groups": [
+        "control_files",
+        "output_files",
+        "core_files"
+      ],
+      "include_baseline_roots": true,
+      "exclude_prefixes": [
+        ".git",
+        ".venv",
+        ".pytest_cache",
+        ".ruff_cache",
+        ".mypy_cache",
+        ".nox",
+        ".tmp_dist_smoke",
+        "__pycache__",
+        "build",
+        "dist",
+        "outputs"
+      ],
+      "exclude_names": [
+        "PROGRAMSTART_2026-03-27.zip"
+      ],
+      "exclude_globs": [
+        "MANIFEST_*.txt",
+        "VERIFICATION_REPORT_*.md",
+        "*.pyc"
+      ]
+    },
+    "baselines": [
+      {
+        "name": "programbuild_backup_snapshot",
+        "system": "programbuild",
+        "kind": "snapshot",
+        "root": "BACKUPS/2026-03-27_pre-structure_flat_export_snapshot"
+      },
+      {
+        "name": "userjourney_attachment_reference",
+        "system": "userjourney",
+        "kind": "attachment-manifest",
+        "manifest": "USERJOURNEY/USERJOURNEY_INTEGRITY_REFERENCE.json"
+      }
+    ]
+  },
+  "planning_reference_rules": {
+    "docs": [
+      "USERJOURNEY/DELIVERY_GAMEPLAN.md",
+      "USERJOURNEY/FILE_BY_FILE_IMPLEMENTATION_CHECKLIST.md",
+      "USERJOURNEY/IMPLEMENTATION_PLAN.md"
+    ],
+    "workspace_prefixes": [
+      ".github/",
+      ".vscode/",
+      "BACKUPS/",
+      "PROGRAMBUILD/",
+      "USERJOURNEY/",
+      "config/",
+      "docs/",
+      "schemas/",
+      "scripts/",
+      "tests/"
+    ],
+    "allowlist_manifest": "USERJOURNEY/USERJOURNEY_INTEGRITY_REFERENCE.json"
+  },
+  "workflow_guidance": {
+    "kickoff": {
+      "description": "Kick off a new project repository using the durable assets instead of chat memory. Attach USERJOURNEY separately only when the project needs it.",
+      "files": [
+        "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+        "PROGRAMBUILD/PROGRAMBUILD_FILE_INDEX.md",
+        "PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md"
+      ],
+      "scripts": [
+        "scripts/programstart_bootstrap.py",
+        "scripts/programstart_init.py",
+        "scripts/programstart_recommend.py",
+        "scripts/programstart_attach.py",
+        "scripts/programstart_validate.py",
+        "scripts/programstart_step_guide.py"
+      ],
+      "prompts": [
+        ".github/prompts/start-programstart-project.prompt.md",
+        ".github/prompts/programstart-stage-guide.prompt.md"
+      ]
+    },
+    "programbuild": {
+      "inputs_and_mode_selection": {
+        "description": "Choose the PROGRAMBUILD variant (lite/product/enterprise), fill in the kickoff packet, and set executive scope.",
+        "files": [
+          "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+          "PROGRAMBUILD/PROGRAMBUILD_FILE_INDEX.md",
+          "PROGRAMBUILD/PROGRAMBUILD.md",
+          "PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md"
+        ],
+        "scripts": [
+          "scripts/programstart_step_guide.py",
+          "scripts/programstart_validate.py",
+          "scripts/programstart_checklist_progress.py"
+        ],
+        "prompts": [
+          ".github/prompts/start-programstart-project.prompt.md",
+          ".github/prompts/programstart-stage-guide.prompt.md"
+        ]
+      },
+      "feasibility": {
+        "description": "Validate whether the idea is technically and commercially viable before committing resources.",
+        "files": [
+          "PROGRAMBUILD/FEASIBILITY.md",
+          "PROGRAMBUILD/DECISION_LOG.md",
+          "PROGRAMBUILD/PROGRAMBUILD_CHECKLIST.md"
+        ],
+        "scripts": [
+          "scripts/programstart_validate.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/programstart-stage-guide.prompt.md"
+        ]
+      },
+      "research": {
+        "description": "Gather competitive, technical, and market research to inform requirements.",
+        "files": [
+          "PROGRAMBUILD/RESEARCH_SUMMARY.md",
+          "PROGRAMBUILD/DECISION_LOG.md",
+          "PROGRAMBUILD/RISK_SPIKES.md"
+        ],
+        "scripts": [
+          "scripts/programstart_validate.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/programstart-stage-guide.prompt.md"
+        ]
+      },
+      "requirements_and_ux": {
+        "description": "Define functional requirements, user flows, and UX expectations.",
+        "files": [
+          "PROGRAMBUILD/REQUIREMENTS.md",
+          "PROGRAMBUILD/USER_FLOWS.md",
+          "PROGRAMBUILD/DECISION_LOG.md"
+        ],
+        "scripts": [
+          "scripts/programstart_drift_check.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/programstart-stage-guide.prompt.md"
+        ]
+      },
+      "architecture_and_risk_spikes": {
+        "description": "Design the system architecture and spike on high-risk technical areas.",
+        "files": [
+          "PROGRAMBUILD/ARCHITECTURE.md",
+          "PROGRAMBUILD/RISK_SPIKES.md",
+          "PROGRAMBUILD/DECISION_LOG.md"
+        ],
+        "scripts": [
+          "scripts/programstart_drift_check.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/programstart-stage-guide.prompt.md"
+        ]
+      },
+      "scaffold_and_guardrails": {
+        "description": "Set up project scaffolding, CI, linting, and process guardrails.",
+        "files": [
+          "PROGRAMBUILD/ARCHITECTURE.md",
+          "PROGRAMBUILD/TEST_STRATEGY.md",
+          "PROGRAMBUILD/PROGRAMBUILD_CHECKLIST.md"
+        ],
+        "scripts": [
+          "scripts/programstart_drift_check.py",
+          "scripts/programstart_validate.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/programstart-stage-guide.prompt.md"
+        ]
+      },
+      "test_strategy": {
+        "description": "Finalize the testing plan: unit, integration, E2E, and acceptance criteria.",
+        "files": [
+          "PROGRAMBUILD/TEST_STRATEGY.md",
+          "PROGRAMBUILD/REQUIREMENTS.md",
+          "PROGRAMBUILD/ARCHITECTURE.md"
+        ],
+        "scripts": [
+          "scripts/programstart_drift_check.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/programstart-stage-guide.prompt.md"
+        ]
+      },
+      "implementation_loop": {
+        "description": "Build, test, and iterate — the main development cycle.",
+        "files": [
+          "PROGRAMBUILD/TEST_STRATEGY.md",
+          "PROGRAMBUILD/DECISION_LOG.md",
+          "PROGRAMBUILD/PROGRAMBUILD_CHECKLIST.md"
+        ],
+        "scripts": [
+          "scripts/programstart_checklist_progress.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/programstart-stage-guide.prompt.md"
+        ]
+      },
+      "release_readiness": {
+        "description": "Final pre-launch review: all checks green, sign-off from stakeholders.",
+        "files": [
+          "PROGRAMBUILD/RELEASE_READINESS.md",
+          "PROGRAMBUILD/TEST_STRATEGY.md",
+          "PROGRAMBUILD/AUDIT_REPORT.md"
+        ],
+        "scripts": [
+          "scripts/programstart_validate.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/programstart-stage-guide.prompt.md"
+        ]
+      },
+      "audit_and_drift_control": {
+        "description": "Post-release audit: verify no drift between docs, code, and decisions.",
+        "files": [
+          "PROGRAMBUILD/AUDIT_REPORT.md",
+          "PROGRAMBUILD/RELEASE_READINESS.md",
+          "PROGRAMBUILD/ARCHITECTURE.md"
+        ],
+        "scripts": [
+          "scripts/programstart_drift_check.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/audit-process-drift.prompt.md",
+          ".github/prompts/programstart-stage-guide.prompt.md"
+        ]
+      },
+      "post_launch_review": {
+        "description": "Retrospective: capture lessons learned, update the planning kit for next time.",
+        "files": [
+          "PROGRAMBUILD/POST_LAUNCH_REVIEW.md",
+          "PROGRAMBUILD/DECISION_LOG.md",
+          "PROGRAMBUILD/RELEASE_READINESS.md"
+        ],
+        "scripts": [
+          "scripts/programstart_step_guide.py",
+          "scripts/programstart_refresh_integrity.py"
+        ],
+        "prompts": [
+          ".github/prompts/programstart-stage-guide.prompt.md"
+        ]
+      }
+    },
+    "userjourney": {
+      "phase_0": {
+        "description": "Freeze product decisions, resolve open legal/operational questions, lock route & state model.",
+        "files": [
+          "USERJOURNEY/OPEN_QUESTIONS.md",
+          "USERJOURNEY/EXTERNAL_REVIEW_PACKET.md",
+          "USERJOURNEY/DELIVERY_GAMEPLAN.md",
+          "USERJOURNEY/DECISION_LOG.md"
+        ],
+        "scripts": [
+          "scripts/programstart_status.py",
+          "scripts/programstart_validate.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/userjourney-next-slice.prompt.md",
+          ".github/prompts/programstart-stage-guide.prompt.md"
+        ]
+      },
+      "phase_1": {
+        "description": "Draft and review legal documents: Terms of Service, Privacy Policy, consent flows.",
+        "files": [
+          "USERJOURNEY/LEGAL_AND_CONSENT.md",
+          "USERJOURNEY/LEGAL_REVIEW_NOTES.md",
+          "USERJOURNEY/TERMS_OF_SERVICE_DRAFT.md",
+          "USERJOURNEY/PRIVACY_POLICY_DRAFT.md"
+        ],
+        "scripts": [
+          "scripts/programstart_status.py",
+          "scripts/programstart_validate.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/userjourney-next-slice.prompt.md",
+          ".github/prompts/programstart-stage-guide.prompt.md"
+        ]
+      },
+      "phase_2": {
+        "description": "Design screens, UX copy, and user flows for signup and onboarding.",
+        "files": [
+          "USERJOURNEY/SCREEN_INVENTORY.md",
+          "USERJOURNEY/UX_COPY_DRAFT.md",
+          "USERJOURNEY/USER_FLOWS.md"
+        ],
+        "scripts": [
+          "scripts/programstart_status.py",
+          "scripts/programstart_drift_check.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/userjourney-next-slice.prompt.md",
+          ".github/prompts/programstart-stage-guide.prompt.md"
+        ]
+      },
+      "phase_3": {
+        "description": "Define state machine rules, routing logic, and implementation architecture.",
+        "files": [
+          "USERJOURNEY/STATES_AND_RULES.md",
+          "USERJOURNEY/ROUTE_AND_STATE_FREEZE.md",
+          "USERJOURNEY/IMPLEMENTATION_PLAN.md"
+        ],
+        "scripts": [
+          "scripts/programstart_status.py",
+          "scripts/programstart_drift_check.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/userjourney-next-slice.prompt.md",
+          ".github/prompts/programstart-stage-guide.prompt.md"
+        ]
+      },
+      "phase_4": {
+        "description": "Write acceptance criteria, plan execution slices, and prepare implementation backlog.",
+        "files": [
+          "USERJOURNEY/ACCEPTANCE_CRITERIA.md",
+          "USERJOURNEY/IMPLEMENTATION_PLAN.md",
+          "USERJOURNEY/EXECUTION_SLICES.md",
+          "USERJOURNEY/FILE_BY_FILE_IMPLEMENTATION_CHECKLIST.md"
+        ],
+        "scripts": [
+          "scripts/programstart_status.py",
+          "scripts/programstart_drift_check.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/userjourney-next-slice.prompt.md",
+          ".github/prompts/programstart-stage-guide.prompt.md"
+        ]
+      },
+      "phase_5": {
+        "description": "Execute implementation slices and track delivery against the gameplan.",
+        "files": [
+          "USERJOURNEY/EXECUTION_SLICES.md",
+          "USERJOURNEY/FILE_BY_FILE_IMPLEMENTATION_CHECKLIST.md",
+          "USERJOURNEY/DELIVERY_GAMEPLAN.md",
+          "USERJOURNEY/ACCEPTANCE_CRITERIA.md"
+        ],
+        "scripts": [
+          "scripts/programstart_status.py",
+          "scripts/programstart_drift_check.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/userjourney-next-slice.prompt.md",
+          ".github/prompts/programstart-stage-guide.prompt.md"
+        ]
+      },
+      "phase_6": {
+        "description": "QA and polish: verify all flows, screens, and acceptance criteria pass.",
+        "files": [
+          "USERJOURNEY/EXECUTION_SLICES.md",
+          "USERJOURNEY/USER_FLOWS.md",
+          "USERJOURNEY/SCREEN_INVENTORY.md",
+          "USERJOURNEY/ACCEPTANCE_CRITERIA.md"
+        ],
+        "scripts": [
+          "scripts/programstart_status.py",
+          "scripts/programstart_drift_check.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/userjourney-next-slice.prompt.md",
+          ".github/prompts/programstart-stage-guide.prompt.md"
+        ]
+      },
+      "phase_7": {
+        "description": "Wire analytics events and validate outcome tracking against state rules.",
+        "files": [
+          "USERJOURNEY/ANALYTICS_AND_OUTCOMES.md",
+          "USERJOURNEY/STATES_AND_RULES.md",
+          "USERJOURNEY/ACCEPTANCE_CRITERIA.md"
+        ],
+        "scripts": [
+          "scripts/programstart_status.py",
+          "scripts/programstart_drift_check.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/userjourney-next-slice.prompt.md",
+          ".github/prompts/programstart-stage-guide.prompt.md"
+        ]
+      },
+      "phase_8": {
+        "description": "Final activation review: confirm first_value_achieved fires correctly, legal sign-off complete.",
+        "files": [
+          "USERJOURNEY/ANALYTICS_AND_OUTCOMES.md",
+          "USERJOURNEY/LEGAL_REVIEW_NOTES.md",
+          "USERJOURNEY/ACCEPTANCE_CRITERIA.md",
+          "USERJOURNEY/DELIVERY_GAMEPLAN.md"
+        ],
+        "scripts": [
+          "scripts/programstart_status.py",
+          "scripts/programstart_validate.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/userjourney-next-slice.prompt.md",
+          ".github/prompts/programstart-stage-guide.prompt.md"
+        ]
+      }
+    }
+  },
+  "workflow_state": {
+    "programbuild": {
+      "state_file": "PROGRAMBUILD/PROGRAMBUILD_STATE.json",
+      "active_key": "active_stage",
+      "initial_step": "inputs_and_mode_selection",
+      "step_order": [
+        "inputs_and_mode_selection",
+        "feasibility",
+        "research",
+        "requirements_and_ux",
+        "architecture_and_risk_spikes",
+        "scaffold_and_guardrails",
+        "test_strategy",
+        "implementation_loop",
+        "release_readiness",
+        "audit_and_drift_control",
+        "post_launch_review"
+      ],
+      "step_files": {
+        "inputs_and_mode_selection": [
+          "PROGRAMBUILD/PROGRAMBUILD.md",
+          "PROGRAMBUILD/PROGRAMBUILD_CHECKLIST.md"
+        ],
+        "feasibility": [
+          "PROGRAMBUILD/FEASIBILITY.md",
+          "PROGRAMBUILD/DECISION_LOG.md"
+        ],
+        "research": [
+          "PROGRAMBUILD/RESEARCH_SUMMARY.md",
+          "PROGRAMBUILD/DECISION_LOG.md"
+        ],
+        "requirements_and_ux": [
+          "PROGRAMBUILD/REQUIREMENTS.md",
+          "PROGRAMBUILD/USER_FLOWS.md"
+        ],
+        "architecture_and_risk_spikes": [
+          "PROGRAMBUILD/ARCHITECTURE.md",
+          "PROGRAMBUILD/RISK_SPIKES.md"
+        ],
+        "scaffold_and_guardrails": [
+          "PROGRAMBUILD/ARCHITECTURE.md",
+          "PROGRAMBUILD/TEST_STRATEGY.md"
+        ],
+        "test_strategy": [
+          "PROGRAMBUILD/TEST_STRATEGY.md"
+        ],
+        "implementation_loop": [
+          "PROGRAMBUILD/DECISION_LOG.md",
+          "PROGRAMBUILD/PROGRAMBUILD_CHECKLIST.md"
+        ],
+        "release_readiness": [
+          "PROGRAMBUILD/RELEASE_READINESS.md"
+        ],
+        "audit_and_drift_control": [
+          "PROGRAMBUILD/AUDIT_REPORT.md"
+        ],
+        "post_launch_review": [
+          "PROGRAMBUILD/POST_LAUNCH_REVIEW.md"
+        ]
+      }
+    },
+    "userjourney": {
+      "state_file": "USERJOURNEY/USERJOURNEY_STATE.json",
+      "active_key": "active_phase",
+      "initial_step": "phase_0",
+      "step_order": [
+        "phase_0",
+        "phase_1",
+        "phase_2",
+        "phase_3",
+        "phase_4",
+        "phase_5",
+        "phase_6",
+        "phase_7",
+        "phase_8"
+      ],
+      "step_files": {
+        "phase_0": [
+          "USERJOURNEY/OPEN_QUESTIONS.md",
+          "USERJOURNEY/DECISION_LOG.md",
+          "USERJOURNEY/ROUTE_AND_STATE_FREEZE.md"
+        ],
+        "phase_1": [
+          "USERJOURNEY/LEGAL_AND_CONSENT.md",
+          "USERJOURNEY/LEGAL_REVIEW_NOTES.md",
+          "USERJOURNEY/EXTERNAL_REVIEW_PACKET.md"
+        ],
+        "phase_2": [
+          "USERJOURNEY/SCREEN_INVENTORY.md",
+          "USERJOURNEY/UX_COPY_DRAFT.md",
+          "USERJOURNEY/USER_FLOWS.md"
+        ],
+        "phase_3": [
+          "USERJOURNEY/STATES_AND_RULES.md",
+          "USERJOURNEY/ROUTE_AND_STATE_FREEZE.md",
+          "USERJOURNEY/IMPLEMENTATION_PLAN.md"
+        ],
+        "phase_4": [
+          "USERJOURNEY/ACCEPTANCE_CRITERIA.md",
+          "USERJOURNEY/IMPLEMENTATION_PLAN.md",
+          "USERJOURNEY/EXECUTION_SLICES.md"
+        ],
+        "phase_5": [
+          "USERJOURNEY/EXECUTION_SLICES.md",
+          "USERJOURNEY/FILE_BY_FILE_IMPLEMENTATION_CHECKLIST.md",
+          "USERJOURNEY/DELIVERY_GAMEPLAN.md"
+        ],
+        "phase_6": [
+          "USERJOURNEY/USER_FLOWS.md",
+          "USERJOURNEY/SCREEN_INVENTORY.md",
+          "USERJOURNEY/ACCEPTANCE_CRITERIA.md"
+        ],
+        "phase_7": [
+          "USERJOURNEY/ANALYTICS_AND_OUTCOMES.md",
+          "USERJOURNEY/STATES_AND_RULES.md"
+        ],
+        "phase_8": [
+          "USERJOURNEY/ANALYTICS_AND_OUTCOMES.md",
+          "USERJOURNEY/LEGAL_REVIEW_NOTES.md",
+          "USERJOURNEY/ACCEPTANCE_CRITERIA.md"
+        ]
+      }
+    }
+  }
+}

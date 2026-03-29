@@ -1,0 +1,4395 @@
+{
+  "version": "2026-03-28",
+  "workspace": {
+    "name": "PROGRAMSTART",
+    "description": "Reusable PROGRAMBUILD template workspace with optional project attachments such as USERJOURNEY.",
+    "root_readme": "README.md",
+    "generated_outputs_root": "outputs"
+  },
+  "systems": {
+    "programbuild": {
+      "root": "PROGRAMBUILD",
+      "packaging": "template_repo",
+      "control_files": [
+        "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+        "PROGRAMBUILD/PROGRAMBUILD_FILE_INDEX.md",
+        "PROGRAMBUILD/PROGRAMBUILD_ADR_TEMPLATE.md",
+        "PROGRAMBUILD/PROGRAMBUILD_CHANGELOG.md",
+        "PROGRAMBUILD/PROGRAMBUILD_STATE.json",
+        "PROGRAMBUILD/PROGRAMBUILD.md",
+        "PROGRAMBUILD/PROGRAMBUILD_LITE.md",
+        "PROGRAMBUILD/PROGRAMBUILD_PRODUCT.md",
+        "PROGRAMBUILD/PROGRAMBUILD_ENTERPRISE.md",
+        "PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md",
+        "PROGRAMBUILD/PROGRAMBUILD_SUBAGENTS.md",
+        "PROGRAMBUILD/PROGRAMBUILD_CHECKLIST.md"
+      ],
+      "output_files": [
+        "PROGRAMBUILD/FEASIBILITY.md",
+        "PROGRAMBUILD/DECISION_LOG.md",
+        "PROGRAMBUILD/RESEARCH_SUMMARY.md",
+        "PROGRAMBUILD/REQUIREMENTS.md",
+        "PROGRAMBUILD/USER_FLOWS.md",
+        "PROGRAMBUILD/ARCHITECTURE.md",
+        "PROGRAMBUILD/RISK_SPIKES.md",
+        "PROGRAMBUILD/TEST_STRATEGY.md",
+        "PROGRAMBUILD/RELEASE_READINESS.md",
+        "PROGRAMBUILD/AUDIT_REPORT.md",
+        "PROGRAMBUILD/POST_LAUNCH_REVIEW.md"
+      ],
+      "variants": [
+        "PROGRAMBUILD/PROGRAMBUILD_LITE.md",
+        "PROGRAMBUILD/PROGRAMBUILD_PRODUCT.md",
+        "PROGRAMBUILD/PROGRAMBUILD_ENTERPRISE.md"
+      ],
+      "stage_order": [
+        {
+          "id": 0,
+          "name": "inputs_and_mode_selection",
+          "main_output": "inputs block"
+        },
+        {
+          "id": 1,
+          "name": "feasibility",
+          "main_output": "PROGRAMBUILD/FEASIBILITY.md"
+        },
+        {
+          "id": 2,
+          "name": "research",
+          "main_output": "PROGRAMBUILD/RESEARCH_SUMMARY.md"
+        },
+        {
+          "id": 3,
+          "name": "requirements_and_ux",
+          "main_output": "PROGRAMBUILD/REQUIREMENTS.md"
+        },
+        {
+          "id": 4,
+          "name": "architecture_and_risk_spikes",
+          "main_output": "PROGRAMBUILD/ARCHITECTURE.md"
+        },
+        {
+          "id": 5,
+          "name": "scaffold_and_guardrails",
+          "main_output": "working skeleton and CI gates"
+        },
+        {
+          "id": 6,
+          "name": "test_strategy",
+          "main_output": "PROGRAMBUILD/TEST_STRATEGY.md"
+        },
+        {
+          "id": 7,
+          "name": "implementation_loop",
+          "main_output": "feature code and tests"
+        },
+        {
+          "id": 8,
+          "name": "release_readiness",
+          "main_output": "PROGRAMBUILD/RELEASE_READINESS.md"
+        },
+        {
+          "id": 9,
+          "name": "audit_and_drift_control",
+          "main_output": "PROGRAMBUILD/AUDIT_REPORT.md"
+        },
+        {
+          "id": 10,
+          "name": "post_launch_review",
+          "main_output": "PROGRAMBUILD/POST_LAUNCH_REVIEW.md"
+        }
+      ],
+      "metadata_required": [
+        "PROGRAMBUILD/FEASIBILITY.md",
+        "PROGRAMBUILD/DECISION_LOG.md",
+        "PROGRAMBUILD/RESEARCH_SUMMARY.md",
+        "PROGRAMBUILD/REQUIREMENTS.md",
+        "PROGRAMBUILD/USER_FLOWS.md",
+        "PROGRAMBUILD/ARCHITECTURE.md",
+        "PROGRAMBUILD/RISK_SPIKES.md",
+        "PROGRAMBUILD/TEST_STRATEGY.md",
+        "PROGRAMBUILD/RELEASE_READINESS.md",
+        "PROGRAMBUILD/AUDIT_REPORT.md",
+        "PROGRAMBUILD/POST_LAUNCH_REVIEW.md"
+      ]
+    },
+    "userjourney": {
+      "root": "USERJOURNEY",
+      "packaging": "project_attachment",
+      "optional": true,
+      "bootstrap_supported": false,
+      "attachment_role": "example_project_attachment",
+      "core_files": [
+        "USERJOURNEY/README.md",
+        "USERJOURNEY/USERJOURNEY_STATE.json",
+        "USERJOURNEY/USERJOURNEY_INTEGRITY_REFERENCE.json",
+        "USERJOURNEY/PRODUCT_SPEC.md",
+        "USERJOURNEY/USER_FLOWS.md",
+        "USERJOURNEY/UX_COPY_DRAFT.md",
+        "USERJOURNEY/LEGAL_AND_CONSENT.md",
+        "USERJOURNEY/EXTERNAL_REVIEW_PACKET.md",
+        "USERJOURNEY/IMPLEMENTATION_PLAN.md",
+        "USERJOURNEY/IMPLEMENTATION_TRACKER.md",
+        "USERJOURNEY/EXECUTION_SLICES.md",
+        "USERJOURNEY/FILE_BY_FILE_IMPLEMENTATION_CHECKLIST.md",
+        "USERJOURNEY/DELIVERY_GAMEPLAN.md",
+        "USERJOURNEY/SCREEN_INVENTORY.md",
+        "USERJOURNEY/ROUTE_AND_STATE_FREEZE.md",
+        "USERJOURNEY/LEGAL_REVIEW_NOTES.md",
+        "USERJOURNEY/STATES_AND_RULES.md",
+        "USERJOURNEY/ACCEPTANCE_CRITERIA.md",
+        "USERJOURNEY/ANALYTICS_AND_OUTCOMES.md",
+        "USERJOURNEY/TERMS_OF_SERVICE_DRAFT.md",
+        "USERJOURNEY/PRIVACY_POLICY_DRAFT.md",
+        "USERJOURNEY/ADDITIONAL_SUGGESTIONS.md",
+        "USERJOURNEY/REUSE_STRATEGY.md",
+        "USERJOURNEY/USERJOURNEY_TEMPLATE_STARTER.md",
+        "USERJOURNEY/DECISION_LOG.md",
+        "USERJOURNEY/OPEN_QUESTIONS.md"
+      ],
+      "metadata_required": [
+        "USERJOURNEY/README.md",
+        "USERJOURNEY/PRODUCT_SPEC.md",
+        "USERJOURNEY/USER_FLOWS.md",
+        "USERJOURNEY/UX_COPY_DRAFT.md",
+        "USERJOURNEY/LEGAL_AND_CONSENT.md",
+        "USERJOURNEY/EXTERNAL_REVIEW_PACKET.md",
+        "USERJOURNEY/IMPLEMENTATION_PLAN.md",
+        "USERJOURNEY/IMPLEMENTATION_TRACKER.md",
+        "USERJOURNEY/EXECUTION_SLICES.md",
+        "USERJOURNEY/FILE_BY_FILE_IMPLEMENTATION_CHECKLIST.md",
+        "USERJOURNEY/DELIVERY_GAMEPLAN.md",
+        "USERJOURNEY/SCREEN_INVENTORY.md",
+        "USERJOURNEY/ROUTE_AND_STATE_FREEZE.md",
+        "USERJOURNEY/LEGAL_REVIEW_NOTES.md",
+        "USERJOURNEY/STATES_AND_RULES.md",
+        "USERJOURNEY/ACCEPTANCE_CRITERIA.md",
+        "USERJOURNEY/ANALYTICS_AND_OUTCOMES.md",
+        "USERJOURNEY/TERMS_OF_SERVICE_DRAFT.md",
+        "USERJOURNEY/PRIVACY_POLICY_DRAFT.md",
+        "USERJOURNEY/ADDITIONAL_SUGGESTIONS.md",
+        "USERJOURNEY/REUSE_STRATEGY.md",
+        "USERJOURNEY/USERJOURNEY_TEMPLATE_STARTER.md",
+        "USERJOURNEY/DECISION_LOG.md",
+        "USERJOURNEY/OPEN_QUESTIONS.md"
+      ],
+      "engineering_blocker_file": "USERJOURNEY/OPEN_QUESTIONS.md",
+      "activation_event": "first_value_achieved"
+    }
+  },
+  "runtime": {
+    "programbuild": {
+      "system": "programbuild",
+      "variant": "",
+      "active_stage": "inputs_and_mode_selection",
+      "stages": {
+        "inputs_and_mode_selection": {
+          "status": "in_progress",
+          "signoff": {
+            "decision": "",
+            "date": "",
+            "notes": ""
+          }
+        },
+        "feasibility": {
+          "status": "planned",
+          "signoff": {
+            "decision": "",
+            "date": "",
+            "notes": ""
+          }
+        },
+        "research": {
+          "status": "planned",
+          "signoff": {
+            "decision": "",
+            "date": "",
+            "notes": ""
+          }
+        },
+        "requirements_and_ux": {
+          "status": "planned",
+          "signoff": {
+            "decision": "",
+            "date": "",
+            "notes": ""
+          }
+        },
+        "architecture_and_risk_spikes": {
+          "status": "planned",
+          "signoff": {
+            "decision": "",
+            "date": "",
+            "notes": ""
+          }
+        },
+        "scaffold_and_guardrails": {
+          "status": "planned",
+          "signoff": {
+            "decision": "",
+            "date": "",
+            "notes": ""
+          }
+        },
+        "test_strategy": {
+          "status": "planned",
+          "signoff": {
+            "decision": "",
+            "date": "",
+            "notes": ""
+          }
+        },
+        "implementation_loop": {
+          "status": "planned",
+          "signoff": {
+            "decision": "",
+            "date": "",
+            "notes": ""
+          }
+        },
+        "release_readiness": {
+          "status": "planned",
+          "signoff": {
+            "decision": "",
+            "date": "",
+            "notes": ""
+          }
+        },
+        "audit_and_drift_control": {
+          "status": "planned",
+          "signoff": {
+            "decision": "",
+            "date": "",
+            "notes": ""
+          }
+        },
+        "post_launch_review": {
+          "status": "planned",
+          "signoff": {
+            "decision": "",
+            "date": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    "userjourney_attached": true,
+    "userjourney": {
+      "system": "userjourney",
+      "active_phase": "phase_1",
+      "phases": {
+        "phase_0": {
+          "status": "completed",
+          "signoff": {
+            "decision": "approved",
+            "date": "2026-03-27",
+            "notes": "All product decisions resolved. Route/state model frozen. Dedicated onboarding route family confirmed. External legal items scoped to Phase 1. No outstanding product-layer blockers.",
+            "saved_at": "2026-03-27"
+          },
+          "signoff_history": [
+            {
+              "decision": "",
+              "date": "",
+              "notes": "",
+              "saved_at": "2026-03-27"
+            },
+            {
+              "decision": "",
+              "date": "",
+              "notes": "",
+              "saved_at": "2026-03-27"
+            },
+            {
+              "decision": "approved",
+              "date": "2026-03-27",
+              "notes": "All product decisions resolved. Route/state model frozen. Dedicated onboarding route family confirmed. External legal items scoped to Phase 1. No outstanding product-layer blockers.",
+              "saved_at": "2026-03-27"
+            }
+          ]
+        },
+        "phase_1": {
+          "status": "in_progress",
+          "signoff": {
+            "decision": "",
+            "date": "",
+            "notes": "",
+            "saved_at": "2026-03-28"
+          },
+          "signoff_history": [
+            {
+              "decision": "",
+              "date": "",
+              "notes": "",
+              "saved_at": "2026-03-27"
+            },
+            {
+              "decision": "",
+              "date": "",
+              "notes": "",
+              "saved_at": "2026-03-27"
+            },
+            {
+              "decision": "",
+              "date": "",
+              "notes": "",
+              "saved_at": "2026-03-27"
+            },
+            {
+              "decision": "",
+              "date": "",
+              "notes": "",
+              "saved_at": "2026-03-27"
+            },
+            {
+              "decision": "",
+              "date": "",
+              "notes": "",
+              "saved_at": "2026-03-27"
+            },
+            {
+              "decision": "",
+              "date": "",
+              "notes": "",
+              "saved_at": "2026-03-27"
+            },
+            {
+              "decision": "",
+              "date": "",
+              "notes": "",
+              "saved_at": "2026-03-28"
+            },
+            {
+              "decision": "",
+              "date": "",
+              "notes": "",
+              "saved_at": "2026-03-28"
+            },
+            {
+              "decision": "",
+              "date": "",
+              "notes": "",
+              "saved_at": "2026-03-28"
+            },
+            {
+              "decision": "",
+              "date": "",
+              "notes": "",
+              "saved_at": "2026-03-28"
+            },
+            {
+              "decision": "",
+              "date": "",
+              "notes": "",
+              "saved_at": "2026-03-28"
+            },
+            {
+              "decision": "",
+              "date": "",
+              "notes": "",
+              "saved_at": "2026-03-28"
+            },
+            {
+              "decision": "",
+              "date": "",
+              "notes": "",
+              "saved_at": "2026-03-28"
+            },
+            {
+              "decision": "",
+              "date": "",
+              "notes": "",
+              "saved_at": "2026-03-28"
+            },
+            {
+              "decision": "",
+              "date": "",
+              "notes": "",
+              "saved_at": "2026-03-28"
+            },
+            {
+              "decision": "",
+              "date": "",
+              "notes": "",
+              "saved_at": "2026-03-28"
+            },
+            {
+              "decision": "",
+              "date": "",
+              "notes": "",
+              "saved_at": "2026-03-28"
+            },
+            {
+              "decision": "",
+              "date": "",
+              "notes": "",
+              "saved_at": "2026-03-28"
+            }
+          ]
+        },
+        "phase_2": {
+          "status": "planned",
+          "signoff": {
+            "decision": "",
+            "date": "",
+            "notes": ""
+          }
+        },
+        "phase_3": {
+          "status": "planned",
+          "signoff": {
+            "decision": "",
+            "date": "",
+            "notes": ""
+          }
+        },
+        "phase_4": {
+          "status": "planned",
+          "signoff": {
+            "decision": "",
+            "date": "",
+            "notes": ""
+          }
+        },
+        "phase_5": {
+          "status": "planned",
+          "signoff": {
+            "decision": "",
+            "date": "",
+            "notes": ""
+          }
+        },
+        "phase_6": {
+          "status": "planned",
+          "signoff": {
+            "decision": "",
+            "date": "",
+            "notes": ""
+          }
+        },
+        "phase_7": {
+          "status": "planned",
+          "signoff": {
+            "decision": "",
+            "date": "",
+            "notes": ""
+          }
+        },
+        "phase_8": {
+          "status": "planned",
+          "signoff": {
+            "decision": "",
+            "date": "",
+            "notes": ""
+          }
+        }
+      }
+    }
+  },
+  "documents": [
+    {
+      "path": "PROGRAMBUILD/ARCHITECTURE.md",
+      "title": "ARCHITECTURE.md",
+      "purpose": "System boundaries, contracts, data ownership, auth model, and technical decisions.",
+      "owner": "Solo operator",
+      "last_updated": "2026-03-27",
+      "depends_on": [
+        "REQUIREMENTS.md",
+        "USER_FLOWS.md",
+        "RESEARCH_SUMMARY.md"
+      ],
+      "authority": "Canonical for technical architecture",
+      "headings": [
+        "System Topology",
+        "PRODUCT_SHAPE Checklist",
+        "Technology Decision Table",
+        "Requirements Mapping",
+        "API Contract Table",
+        "Data Model And Ownership",
+        "External Dependencies",
+        "Dependency Heat Map",
+        "Route Contract Plan",
+        "Auth Matrix",
+        "Error Contract",
+        "Environment Strategy",
+        "Observability Plan"
+      ]
+    },
+    {
+      "path": "PROGRAMBUILD/AUDIT_REPORT.md",
+      "title": "AUDIT_REPORT.md",
+      "purpose": "Post-build audit of drift, risk, route integrity, auth integrity, and release gaps.",
+      "owner": "Solo operator",
+      "last_updated": "2026-03-27",
+      "depends_on": [
+        "ARCHITECTURE.md",
+        "TEST_STRATEGY.md",
+        "RELEASE_READINESS.md"
+      ],
+      "authority": "Canonical for audit findings",
+      "headings": [
+        "Findings",
+        "Prevention Guardrails",
+        "Owners And Follow-Up",
+        "Accepted Residual Risks"
+      ]
+    },
+    {
+      "path": "PROGRAMBUILD/DECISION_LOG.md",
+      "title": "DECISION_LOG.md",
+      "purpose": "Running record of material project decisions, reversals, and rationale.",
+      "owner": "Solo operator",
+      "last_updated": "2026-03-27",
+      "depends_on": [
+        "FEASIBILITY.md",
+        "RESEARCH_SUMMARY.md",
+        "ARCHITECTURE.md"
+      ],
+      "authority": "Canonical for project decision history",
+      "headings": [
+        "Decision Register",
+        "Decision Details",
+        "DEC-001"
+      ]
+    },
+    {
+      "path": "PROGRAMBUILD/FEASIBILITY.md",
+      "title": "FEASIBILITY.md",
+      "purpose": "Project viability, kill criteria, and go/no-go decision.",
+      "owner": "Product Lead",
+      "last_updated": "2026-03-27",
+      "depends_on": [
+        "Program inputs block"
+      ],
+      "authority": "Canonical for project viability",
+      "headings": [
+        "Problem Statement",
+        "Primary User Pain",
+        "Alternatives",
+        "Business Viability Assumptions",
+        "Technical Feasibility Assumptions",
+        "Top Risks",
+        "Kill Criteria",
+        "Rough Cost And Effort Estimate",
+        "Recommendation"
+      ]
+    },
+    {
+      "path": "PROGRAMBUILD/POST_LAUNCH_REVIEW.md",
+      "title": "POST_LAUNCH_REVIEW.md",
+      "purpose": "Compare actual launch outcomes to the plan and capture lessons, reversals, and follow-up work.",
+      "owner": "Solo operator",
+      "last_updated": "2026-03-27",
+      "depends_on": [
+        "RELEASE_READINESS.md",
+        "AUDIT_REPORT.md"
+      ],
+      "authority": "Canonical for post-launch learning",
+      "headings": [
+        "Launch Summary",
+        "Metrics Versus Targets",
+        "Incident And Support Notes",
+        "Decision Confirmations And Reversals",
+        "Lessons Learned",
+        "Follow-Up Actions"
+      ]
+    },
+    {
+      "path": "PROGRAMBUILD/PROGRAMBUILD.md",
+      "title": "PROGRAMBUILD.md",
+      "purpose": null,
+      "owner": null,
+      "last_updated": null,
+      "depends_on": [],
+      "authority": null,
+      "headings": [
+        "1. How To Use This File",
+        "2. Inputs",
+        "PRODUCT_SHAPE Conditionals",
+        "Kickoff Triage",
+        "Inputs Stage Gate Status",
+        "3. Core Rules",
+        "4. Naming Convention For Critical Files",
+        "5. Suggested Subagents",
+        "6. Stage Overview",
+        "7. Gate Model By Variant",
+        "8. Stage 1: Feasibility And Kill Criteria",
+        "9. Stage 2: Research",
+        "10. Stage 3: Requirements And UX",
+        "11. Stage 4: Architecture And Risk Spikes",
+        "12. Stage 5: Scaffold And Guardrails",
+        "13. Stage 6: Test Strategy",
+        "14. Stage 7: Implementation Loop",
+        "15. Stage 8: Release Readiness",
+        "16. Stage 9: Audit And Drift Control",
+        "17. Stage 10: Post-Launch Review And Retrospective",
+        "18. Additional Operating Practices",
+        "19. Which Variant To Use",
+        "20. Cardinal Lessons"
+      ]
+    },
+    {
+      "path": "PROGRAMBUILD/PROGRAMBUILD_ADR_TEMPLATE.md",
+      "title": "PROGRAMBUILD_ADR_TEMPLATE.md",
+      "purpose": null,
+      "owner": null,
+      "last_updated": null,
+      "depends_on": [],
+      "authority": null,
+      "headings": [
+        "Template",
+        "Context",
+        "Decision",
+        "Consequences",
+        "Alternatives Considered",
+        "Follow-Up"
+      ]
+    },
+    {
+      "path": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+      "title": "PROGRAMBUILD_CANONICAL.md",
+      "purpose": null,
+      "owner": null,
+      "last_updated": null,
+      "depends_on": [],
+      "authority": null,
+      "headings": [
+        "1. Canonical Rules",
+        "2. Critical Naming Standard",
+        "3. Authority Map",
+        "4. Conflict Resolution",
+        "5. Canonical Maintenance Rules"
+      ]
+    },
+    {
+      "path": "PROGRAMBUILD/PROGRAMBUILD_CHANGELOG.md",
+      "title": "PROGRAMBUILD_CHANGELOG.md",
+      "purpose": null,
+      "owner": null,
+      "last_updated": null,
+      "depends_on": [],
+      "authority": null,
+      "headings": [
+        "2026-03-27"
+      ]
+    },
+    {
+      "path": "PROGRAMBUILD/PROGRAMBUILD_CHECKLIST.md",
+      "title": "PROGRAMBUILD_CHECKLIST.md",
+      "purpose": null,
+      "owner": null,
+      "last_updated": null,
+      "depends_on": [],
+      "authority": null,
+      "headings": [
+        "1. Setup",
+        "2. Feasibility",
+        "3. Research",
+        "4. Requirements And UX",
+        "5. Architecture And Risk Spikes",
+        "6. Scaffold And Guardrails",
+        "7. Test Strategy",
+        "8. Implementation Loop",
+        "9. Release Readiness",
+        "10. Audit",
+        "11. Post-Launch Review",
+        "12. File Governance",
+        "13. Gate Sign-Off Log"
+      ]
+    },
+    {
+      "path": "PROGRAMBUILD/PROGRAMBUILD_ENTERPRISE.md",
+      "title": "PROGRAMBUILD_ENTERPRISE.md",
+      "purpose": null,
+      "owner": null,
+      "last_updated": null,
+      "depends_on": [],
+      "authority": "",
+      "headings": [
+        "When To Use",
+        "Enterprise Expectations",
+        "Required Stages",
+        "Required Enterprise Additions",
+        "Suggested Subagents",
+        "Enterprise Prompt Pattern",
+        "Enterprise Definition Of Done"
+      ]
+    },
+    {
+      "path": "PROGRAMBUILD/PROGRAMBUILD_FILE_INDEX.md",
+      "title": "PROGRAMBUILD_FILE_INDEX.md",
+      "purpose": null,
+      "owner": null,
+      "last_updated": null,
+      "depends_on": [],
+      "authority": null,
+      "headings": [
+        "1. Control Files",
+        "2. Project Output Files",
+        "3. Index Rules"
+      ]
+    },
+    {
+      "path": "PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md",
+      "title": "PROGRAMBUILD_KICKOFF_PACKET.md",
+      "purpose": null,
+      "owner": null,
+      "last_updated": null,
+      "depends_on": [],
+      "authority": null,
+      "headings": [
+        "1. Kickoff File Set",
+        "2. Starter Inputs Block",
+        "3. Stage Startup Checklist",
+        "Kickoff Decision Matrix",
+        "Ownership And Gates",
+        "Feasibility",
+        "Research",
+        "Requirements And UX",
+        "Architecture And Risk Spikes",
+        "Scaffold And Guardrails",
+        "Test Strategy",
+        "Release Readiness",
+        "Audit",
+        "Post-Launch Review",
+        "4. RACI Starter",
+        "5. Required Output Rule"
+      ]
+    },
+    {
+      "path": "PROGRAMBUILD/PROGRAMBUILD_LITE.md",
+      "title": "PROGRAMBUILD_LITE.md",
+      "purpose": null,
+      "owner": null,
+      "last_updated": null,
+      "depends_on": [],
+      "authority": "",
+      "headings": [
+        "When To Use",
+        "Essential Stages",
+        "Non-Negotiables",
+        "Suggested Subagents",
+        "Minimal Prompt Pattern",
+        "Lite Definition Of Done"
+      ]
+    },
+    {
+      "path": "PROGRAMBUILD/PROGRAMBUILD_PRODUCT.md",
+      "title": "PROGRAMBUILD_PRODUCT.md",
+      "purpose": null,
+      "owner": null,
+      "last_updated": null,
+      "depends_on": [],
+      "authority": "",
+      "headings": [
+        "When To Use",
+        "Required Stages",
+        "Required Guardrails",
+        "Suggested Subagents",
+        "Product Prompt Pattern",
+        "Product Definition Of Done"
+      ]
+    },
+    {
+      "path": "PROGRAMBUILD/PROGRAMBUILD_SUBAGENTS.md",
+      "title": "PROGRAMBUILD_SUBAGENTS.md",
+      "purpose": null,
+      "owner": null,
+      "last_updated": null,
+      "depends_on": [],
+      "authority": null,
+      "headings": [
+        "Catalog Structure",
+        "Core Agent 1 \u2014 Discovery & Scoping",
+        "Core Agent 2 \u2014 Architecture & Security",
+        "Core Agent 3 \u2014 Quality & Release",
+        "On-Demand Agent 1 \u2014 Risk Spike",
+        "On-Demand Agent 2 \u2014 Contract Auditor"
+      ]
+    },
+    {
+      "path": "PROGRAMBUILD/RELEASE_READINESS.md",
+      "title": "RELEASE_READINESS.md",
+      "purpose": "Launch gate covering deployment safety, rollback, monitoring, and support ownership.",
+      "owner": "Solo operator",
+      "last_updated": "2026-03-27",
+      "depends_on": [
+        "ARCHITECTURE.md",
+        "TEST_STRATEGY.md"
+      ],
+      "authority": "Canonical for release readiness",
+      "headings": [
+        "Launch Scope",
+        "Deployment Readiness",
+        "Migration And Rollback Plan",
+        "Monitoring And Alerts",
+        "SLOs And SLIs",
+        "Release-Day Smoke Checks",
+        "Support Ownership",
+        "Go / No-Go Decision"
+      ]
+    },
+    {
+      "path": "PROGRAMBUILD/REQUIREMENTS.md",
+      "title": "REQUIREMENTS.md",
+      "purpose": "Functional scope, non-functional targets, user stories, and explicit boundaries.",
+      "owner": "Solo operator",
+      "last_updated": "2026-03-27",
+      "depends_on": [
+        "FEASIBILITY.md",
+        "RESEARCH_SUMMARY.md"
+      ],
+      "authority": "Canonical for scope and requirements",
+      "headings": [
+        "Functional Requirements",
+        "Non-Functional Requirements",
+        "User Stories",
+        "Story 1",
+        "Out Of Scope",
+        "Assumptions"
+      ]
+    },
+    {
+      "path": "PROGRAMBUILD/RESEARCH_SUMMARY.md",
+      "title": "RESEARCH_SUMMARY.md",
+      "purpose": "Research findings that inform stack choices, market positioning, constraints, and tooling.",
+      "owner": "Solo operator",
+      "last_updated": "2026-03-27",
+      "depends_on": [
+        "FEASIBILITY.md"
+      ],
+      "authority": "Canonical for research findings",
+      "headings": [
+        "Existing Solutions",
+        "Technology Validation",
+        "AI And Automation Opportunities",
+        "Compliance And Regulatory Considerations",
+        "Tooling Recommendations",
+        "Known Failure Patterns",
+        "Decisions Table"
+      ]
+    },
+    {
+      "path": "PROGRAMBUILD/RISK_SPIKES.md",
+      "title": "RISK_SPIKES.md",
+      "purpose": "Resolve technical unknowns before implementation commits the team to the wrong design.",
+      "owner": "Solo operator",
+      "last_updated": "2026-03-27",
+      "depends_on": [
+        "ARCHITECTURE.md"
+      ],
+      "authority": "Canonical for technical risk resolution",
+      "headings": [
+        "Spike Register",
+        "Notes"
+      ]
+    },
+    {
+      "path": "PROGRAMBUILD/TEST_STRATEGY.md",
+      "title": "TEST_STRATEGY.md",
+      "purpose": "Test model, fixture strategy, coverage rules, and endpoint-to-test registry.",
+      "owner": "Solo operator",
+      "last_updated": "2026-03-27",
+      "depends_on": [
+        "REQUIREMENTS.md",
+        "USER_FLOWS.md",
+        "ARCHITECTURE.md"
+      ],
+      "authority": "Canonical for quality model",
+      "headings": [
+        "Test Pyramid Targets",
+        "PRODUCT_SHAPE Testing Checklist",
+        "Unit Test Rules",
+        "Component Test Rules",
+        "Purpose And Auth Test Rules",
+        "Golden Baseline Policy",
+        "E2E And Smoke Strategy",
+        "Fixture Strategy",
+        "Requirements Traceability Matrix",
+        "Endpoint-To-Test Registry",
+        "Gap Analysis"
+      ]
+    },
+    {
+      "path": "PROGRAMBUILD/USER_FLOWS.md",
+      "title": "USER_FLOWS.md",
+      "purpose": "Primary user journeys, role-sensitive paths, and state behavior.",
+      "owner": "Solo operator",
+      "last_updated": "2026-03-27",
+      "depends_on": [
+        "REQUIREMENTS.md"
+      ],
+      "authority": "Canonical for UX flow behavior",
+      "headings": [
+        "Primary Flows",
+        "Flow 1",
+        "Role-Sensitive Flows",
+        "Loading States",
+        "Empty States",
+        "Error States",
+        "Retry And Recovery Paths",
+        "Accessibility-Sensitive Interactions"
+      ]
+    },
+    {
+      "path": "README.md",
+      "title": "PROGRAMSTART",
+      "purpose": "Organized planning workspace for reusable product-start kits.",
+      "owner": null,
+      "last_updated": "2026-03-27",
+      "depends_on": [],
+      "authority": null,
+      "headings": [
+        "Structure",
+        "`PROGRAMBUILD/`",
+        "`USERJOURNEY/`",
+        "`BACKUPS/2026-03-27_pre-structure_flat_export_snapshot/`",
+        "Why This Layout Exists",
+        "Recommended Use",
+        "Workflow Automation",
+        "Tooling And Stability",
+        "Safety Notes"
+      ]
+    },
+    {
+      "path": "USERJOURNEY/ACCEPTANCE_CRITERIA.md",
+      "title": "ACCEPTANCE_CRITERIA.md",
+      "purpose": "Testable acceptance criteria for signup, onboarding, consent, and first-run activation.",
+      "owner": "Solo operator",
+      "last_updated": "2026-03-27",
+      "depends_on": [
+        "PRODUCT_SPEC.md",
+        "USER_FLOWS.md",
+        "STATES_AND_RULES.md"
+      ],
+      "authority": "Canonical acceptance criteria for USERJOURNEY behavior",
+      "headings": [
+        "Goal",
+        "Auth Entry Criteria",
+        "Signup Criteria",
+        "Verification Criteria",
+        "Consent Criteria",
+        "Onboarding Criteria",
+        "Import Path Criteria",
+        "Start-From-Scratch Criteria",
+        "Activation Criteria",
+        "Returning User Criteria",
+        "Analytics Criteria"
+      ]
+    },
+    {
+      "path": "USERJOURNEY/ADDITIONAL_SUGGESTIONS.md",
+      "title": "ADDITIONAL_SUGGESTIONS.md",
+      "purpose": "Additional recommendations for keeping the USERJOURNEY work organized, actionable, and low-risk.",
+      "owner": "Solo operator",
+      "last_updated": "2026-03-27",
+      "depends_on": [
+        "Entire USERJOURNEY package"
+      ],
+      "authority": "Advisory recommendations only",
+      "headings": [
+        "Organizational Suggestions",
+        "Product Suggestions",
+        "Legal And Trust Suggestions",
+        "Implementation Suggestions",
+        "Documentation Suggestions",
+        "Best Next Steps"
+      ]
+    },
+    {
+      "path": "USERJOURNEY/ANALYTICS_AND_OUTCOMES.md",
+      "title": "ANALYTICS_AND_OUTCOMES.md",
+      "purpose": "Define expected outcomes, analytics checkpoints, and activation metrics for the new-user journey.",
+      "owner": "Solo operator",
+      "last_updated": "2026-03-27",
+      "depends_on": [
+        "PRODUCT_SPEC.md",
+        "STATES_AND_RULES.md"
+      ],
+      "authority": "Canonical analytics and outcome model for onboarding success",
+      "headings": [
+        "Why This Exists",
+        "Expected Outcomes",
+        "Primary Funnel",
+        "Suggested Event Definitions",
+        "auth_entry_viewed",
+        "signup_started",
+        "signup_submitted",
+        "email_verified",
+        "onboarding_started",
+        "ai_notice_acknowledged",
+        "first_profile_created",
+        "first_value_achieved",
+        "onboarding_completed",
+        "workspace_activated",
+        "Core Metrics",
+        "Product Health Questions",
+        "Interpreting Outcomes",
+        "Positive Indicators",
+        "Negative Indicators",
+        "Target Benchmarks",
+        "Review Thresholds",
+        "Option 3 Clarification"
+      ]
+    },
+    {
+      "path": "USERJOURNEY/DECISION_LOG.md",
+      "title": "DECISION_LOG.md",
+      "purpose": "Canonical log of resolved product decisions for the new-user journey.",
+      "owner": "Solo operator",
+      "last_updated": "2026-03-27",
+      "depends_on": [
+        "PRODUCT_SPEC.md",
+        "ROUTE_AND_STATE_FREEZE.md"
+      ],
+      "authority": "Canonical resolved-decision record for USERJOURNEY",
+      "headings": [
+        "How To Use This File",
+        "Current Decisions",
+        "Pending Decisions Not Yet Resolved"
+      ]
+    },
+    {
+      "path": "USERJOURNEY/DELIVERY_GAMEPLAN.md",
+      "title": "DELIVERY_GAMEPLAN",
+      "purpose": "Provide the implementation-ready gameplan that keeps USERJOURNEY decisions, docs, and code-touch planning synchronized.",
+      "owner": "Solo operator",
+      "last_updated": "2026-03-27",
+      "depends_on": [
+        "README.md",
+        "DECISION_LOG.md",
+        "ROUTE_AND_STATE_FREEZE.md",
+        "IMPLEMENTATION_TRACKER.md",
+        "EXECUTION_SLICES.md",
+        "FILE_BY_FILE_IMPLEMENTATION_CHECKLIST.md"
+      ],
+      "authority": "Canonical cross-document execution and sync guide for USERJOURNEY",
+      "headings": [
+        "Goal",
+        "Current Planning Status",
+        "Source Of Truth Matrix",
+        "Operating Rule",
+        "Detailed Delivery Sequence",
+        "Step 1: Close Remaining External Decisions",
+        "Step 2: Freeze The Execution Baseline",
+        "Step 3: Prepare UI Surface Ownership",
+        "Step 4: Prepare Auth, Callback, And Metadata Ownership",
+        "Step 5: Execute By Slices, Not By File Grab-Bag",
+        "Step 6: Verify Against Acceptance, Not Intuition",
+        "Repo File Mapping By Slice",
+        "Sync Rules",
+        "If Route Or State Logic Changes",
+        "If Legal Or Consent Behavior Changes",
+        "If UX Surfaces Or Copy Change",
+        "If Implementation Sequence Changes",
+        "Anti-Drift Rules",
+        "Definition Of Ready For Engineering",
+        "Definition Of Done For The Planning Package"
+      ]
+    },
+    {
+      "path": "USERJOURNEY/EXECUTION_SLICES.md",
+      "title": "EXECUTION_SLICES.md",
+      "purpose": "Define concrete implementation slices and test scope before coding begins.",
+      "owner": "Solo operator",
+      "last_updated": "2026-03-27",
+      "depends_on": [
+        "IMPLEMENTATION_PLAN.md",
+        "IMPLEMENTATION_TRACKER.md",
+        "ACCEPTANCE_CRITERIA.md"
+      ],
+      "authority": "Canonical pre-coding execution sequence for USERJOURNEY",
+      "headings": [
+        "Goal",
+        "Slice 1: Consent And State Model Freeze",
+        "Outcome",
+        "Scope",
+        "Primary Risk",
+        "Test Scope",
+        "Slice 2: Auth Entry And Signup Contract",
+        "Outcome",
+        "Scope",
+        "Critical Mapping Note",
+        "Test Scope",
+        "Slice 3: Callback Branching And Route Guards",
+        "Outcome",
+        "Scope",
+        "Critical Mapping Note",
+        "Test Scope",
+        "Slice 4: Onboarding Welcome And Skip Path",
+        "Outcome",
+        "Scope",
+        "Critical Mapping Note",
+        "Test Scope",
+        "Slice 5: AI Notice Gating",
+        "Outcome",
+        "Scope",
+        "Critical Mapping Note",
+        "Test Scope",
+        "Slice 6: Import Resume First-Run Flow",
+        "Outcome",
+        "Scope",
+        "Critical Mapping Note",
+        "Test Scope",
+        "Slice 7: Start-From-Scratch First-Run Flow",
+        "Outcome",
+        "Scope",
+        "Critical Mapping Note",
+        "Test Scope",
+        "Slice 8: Goal Selection And First Value Handoff",
+        "Outcome",
+        "Scope",
+        "Test Scope",
+        "Slice 9: Analytics And Policy-Version Handling",
+        "Outcome",
+        "Scope",
+        "Test Scope",
+        "Recommended Build Order",
+        "Why This Order"
+      ]
+    },
+    {
+      "path": "USERJOURNEY/EXTERNAL_REVIEW_PACKET.md",
+      "title": "EXTERNAL_REVIEW_PACKET.md",
+      "purpose": "Review-ready packet for the remaining legal and operational approvals that block USERJOURNEY finalization.",
+      "owner": "Solo operator",
+      "last_updated": "2026-03-27",
+      "depends_on": [
+        "OPEN_QUESTIONS.md",
+        "LEGAL_REVIEW_NOTES.md",
+        "LEGAL_AND_CONSENT.md",
+        "TERMS_OF_SERVICE_DRAFT.md",
+        "PRIVACY_POLICY_DRAFT.md"
+      ],
+      "authority": "Derived review packet only; source of truth remains the linked authority docs",
+      "headings": [
+        "Goal",
+        "Current Product Context",
+        "Decisions Needed",
+        "1. Governing Law And Jurisdiction",
+        "2. Limitation Of Liability Wording",
+        "3. Additional Employment-Tool Disclosures",
+        "4. Retention And Backup Behavior",
+        "5. Published Contact Path",
+        "What Should Not Be Invented Before Review",
+        "Recommended Review Order",
+        "Suggested Review Ask",
+        "Phase 1 Triage Status"
+      ]
+    },
+    {
+      "path": "USERJOURNEY/FILE_BY_FILE_IMPLEMENTATION_CHECKLIST.md",
+      "title": "FILE_BY_FILE_IMPLEMENTATION_CHECKLIST.md",
+      "purpose": "File-level, non-code implementation checklist for onboarding and consent work in the current repo.",
+      "owner": "Solo operator",
+      "last_updated": "2026-03-27",
+      "depends_on": [
+        "EXECUTION_SLICES.md",
+        "IMPLEMENTATION_PLAN.md",
+        "ROUTE_AND_STATE_FREEZE.md"
+      ],
+      "authority": "Canonical file-level implementation planning checklist for this repo",
+      "headings": [
+        "How To Use This File",
+        "Critical Mapping Note",
+        "Frontend Auth And Entry Files",
+        "`v6_clean_repo_candidate/v6_nextjs_migration/frontend/app/auth/login/page.tsx`",
+        "`v6_clean_repo_candidate/v6_nextjs_migration/frontend/app/auth/signup/page.tsx`",
+        "`v6_clean_repo_candidate/v6_nextjs_migration/frontend/app/auth/callback/route.ts`",
+        "Frontend Session And Routing Files",
+        "`v6_clean_repo_candidate/v6_nextjs_migration/frontend/lib/auth-context.tsx`",
+        "`v6_clean_repo_candidate/v6_nextjs_migration/frontend/app/page.tsx`",
+        "Frontend Existing Workspace Surfaces",
+        "`v6_clean_repo_candidate/v6_nextjs_migration/frontend/components/dashboard/DashboardHome.tsx`",
+        "`v6_clean_repo_candidate/v6_nextjs_migration/frontend/components/dashboard/Sidebar.tsx`",
+        "Frontend Builder And Profile Flow Files",
+        "`v6_clean_repo_candidate/v6_nextjs_migration/frontend/components/builder/StartFromScratchModal.tsx`",
+        "`v6_clean_repo_candidate/v6_nextjs_migration/frontend/lib/profilesApi.ts`",
+        "Backend And Persistence Files",
+        "`v6_clean_repo_candidate/v6_nextjs_migration/backend/app/routes/profiles.py`",
+        "`v6_clean_repo_candidate/v6_nextjs_migration/backend/app/supabase_client.py`",
+        "New Planned Surface Areas",
+        "Slice Mapping",
+        "Final Review Rule"
+      ]
+    },
+    {
+      "path": "USERJOURNEY/IMPLEMENTATION_PLAN.md",
+      "title": "IMPLEMENTATION_PLAN.md",
+      "purpose": "Non-code implementation plan for the new-user journey, with critical mapping to the current application structure.",
+      "owner": "Solo operator",
+      "last_updated": "2026-03-27",
+      "depends_on": [
+        "PRODUCT_SPEC.md",
+        "STATES_AND_RULES.md",
+        "ACCEPTANCE_CRITERIA.md"
+      ],
+      "authority": "Canonical implementation-planning document for USERJOURNEY",
+      "headings": [
+        "Goal",
+        "Current Surface Summary",
+        "Critical Mapping Assessment",
+        "What Maps Cleanly",
+        "Where The Current Mapping Is Weak",
+        "Critical Warning",
+        "Recommended Architectural Direction",
+        "Direction 1: Separate First-Run Routing From Activated Workspace Routing",
+        "Direction 2: Reuse Existing Builder Components Selectively",
+        "Direction 3: Add Explicit Onboarding Metadata",
+        "Proposed Workstreams",
+        "Workstream 1: Product And Legal Definition",
+        "Workstream 2: Routing Model",
+        "Workstream 3: Auth And Account Metadata",
+        "Workstream 4: Onboarding UI",
+        "Workstream 5: Workspace Handoff",
+        "Suggested Sequencing",
+        "Mapping Risks And Tradeoffs",
+        "Risk 1: Reusing The Modal Builder As-Is",
+        "Risk 2: Using Profile Existence As A Proxy For Activation",
+        "Risk 3: Expanding `app/page.tsx` Further",
+        "Risk 4: Treating Legal Acceptance As Pure Frontend UI",
+        "Risk 5: Overbuilding Before Decisions Are Locked",
+        "Risk 6: Treating Skip As A Shortcut To Activation",
+        "Test Planning Notes",
+        "Bottom-Line Recommendation"
+      ]
+    },
+    {
+      "path": "USERJOURNEY/IMPLEMENTATION_TRACKER.md",
+      "title": "IMPLEMENTATION_TRACKER.md",
+      "purpose": "Phased execution tracker for implementing the new-user journey without losing scope control.",
+      "owner": "Solo operator",
+      "last_updated": "2026-03-28",
+      "depends_on": [
+        "IMPLEMENTATION_PLAN.md",
+        "ROUTE_AND_STATE_FREEZE.md",
+        "ACCEPTANCE_CRITERIA.md",
+        "DELIVERY_GAMEPLAN.md"
+      ],
+      "authority": "Canonical execution tracker for USERJOURNEY implementation planning",
+      "headings": [
+        "Usage Rules",
+        "Phase Overview",
+        "Slice Readiness",
+        "Phase 0: Decision Freeze",
+        "Scope",
+        "Key Decisions Required",
+        "Risks",
+        "Impacted Files / Areas",
+        "Exit Gate",
+        "Exit Gate Checklist",
+        "Phase 1: Legal And Consent Model",
+        "Scope",
+        "Risks",
+        "Impacted Files / Areas",
+        "Exit Gate",
+        "Phase 2: UX Surface Definition",
+        "Scope",
+        "Risks",
+        "Impacted Files / Areas",
+        "Exit Gate",
+        "Phase 3: Metadata And Ownership Planning",
+        "Scope",
+        "Risks",
+        "Impacted Files / Areas",
+        "Exit Gate",
+        "Phase 4: Execution Slicing And Test Planning",
+        "Scope",
+        "Risks",
+        "Impacted Files / Areas",
+        "Exit Gate",
+        "Critical Risk Register",
+        "File-Level Ownership Hints"
+      ]
+    },
+    {
+      "path": "USERJOURNEY/LEGAL_AND_CONSENT.md",
+      "title": "LEGAL_AND_CONSENT.md",
+      "purpose": "Define required legal surfaces and consent requirements for signup and onboarding.",
+      "owner": "Solo operator",
+      "last_updated": "2026-03-27",
+      "depends_on": [
+        "PRODUCT_SPEC.md"
+      ],
+      "authority": "Canonical consent and policy requirements for the new-user journey",
+      "headings": [
+        "Objective",
+        "Required Legal Surfaces",
+        "Required Consent Events",
+        "Required At Signup",
+        "Required Before First Upload Or Generation",
+        "Optional Consent",
+        "Terms Of Service Requirements",
+        "Privacy Policy Requirements",
+        "AI Notice Requirements",
+        "Versioning Requirements",
+        "UX Rules",
+        "Example Plain-Language Notice",
+        "Legal Review Notes",
+        "Phase 0 Contribution Status"
+      ]
+    },
+    {
+      "path": "USERJOURNEY/LEGAL_REVIEW_NOTES.md",
+      "title": "LEGAL_REVIEW_NOTES.md",
+      "purpose": "Centralize legal review checklist items, concerns, and follow-ups for onboarding and consent work.",
+      "owner": "Solo operator",
+      "last_updated": "2026-03-27",
+      "depends_on": [
+        "TERMS_OF_SERVICE_DRAFT.md",
+        "PRIVACY_POLICY_DRAFT.md",
+        "LEGAL_AND_CONSENT.md"
+      ],
+      "authority": "Canonical legal review workspace for USERJOURNEY",
+      "headings": [
+        "Review Status",
+        "Review Checklist",
+        "High-Risk Legal Gaps",
+        "Product-Legal Alignment Notes",
+        "Follow-Up Questions For Counsel",
+        "Review Packet",
+        "Operational Dependencies",
+        "Repo-Evidenced Provider Posture"
+      ]
+    },
+    {
+      "path": "USERJOURNEY/OPEN_QUESTIONS.md",
+      "title": "OPEN_QUESTIONS.md",
+      "purpose": "Track unresolved product, legal, and UX decisions for the new-user journey.",
+      "owner": "Solo operator",
+      "last_updated": "2026-03-27",
+      "depends_on": [
+        "PRODUCT_SPEC.md",
+        "LEGAL_AND_CONSENT.md"
+      ],
+      "authority": "Canonical unresolved-decision list for USERJOURNEY",
+      "headings": [
+        "Status",
+        "Remaining Operational And Legal Decisions",
+        "Phase 1 Triage Dispositions",
+        "Recommendation Bias"
+      ]
+    },
+    {
+      "path": "USERJOURNEY/PRIVACY_POLICY_DRAFT.md",
+      "title": "PRIVACY_POLICY_DRAFT.md",
+      "purpose": "First product-tailored draft of the Privacy Policy for the resume platform.",
+      "owner": "Solo operator",
+      "last_updated": "2026-03-27",
+      "depends_on": [
+        "LEGAL_AND_CONSENT.md"
+      ],
+      "authority": "Working draft only; not final legal text",
+      "headings": [
+        "Important Note",
+        "Privacy Policy",
+        "1. Overview",
+        "2. Information We Collect",
+        "Account Information",
+        "Resume And Profile Information",
+        "Job Description And Tailoring Information",
+        "Generated And Derived Information",
+        "Technical And Usage Information",
+        "3. How We Use Information",
+        "4. AI And Automated Processing",
+        "5. Sharing And Service Providers",
+        "6. Data Retention",
+        "7. Your Choices And Rights",
+        "8. Security",
+        "9. Children's Privacy",
+        "10. International Processing",
+        "11. Policy Changes",
+        "12. Contact"
+      ]
+    },
+    {
+      "path": "USERJOURNEY/PRODUCT_SPEC.md",
+      "title": "PRODUCT_SPEC.md",
+      "purpose": "Product specification for new-user signup, onboarding, consent, and first-run activation.",
+      "owner": "Solo operator",
+      "last_updated": "2026-03-27",
+      "depends_on": [
+        "USER_FLOWS.md",
+        "LEGAL_AND_CONSENT.md",
+        "STATES_AND_RULES.md"
+      ],
+      "authority": "Canonical product spec for the new-user journey",
+      "headings": [
+        "Product Problem",
+        "Product Goal",
+        "Success Definition",
+        "Primary User Types",
+        "User Type 1: Resume Improver",
+        "User Type 2: Job Tailorer",
+        "User Type 3: From-Scratch Builder",
+        "Core Product Principles",
+        "Proposed Journey",
+        "Stage 1: Entry",
+        "Stage 2: Account Creation",
+        "Stage 3: Verification",
+        "Stage 4: First Auth Callback Decision",
+        "Stage 5: Welcome / Orientation",
+        "Stage 6: AI And Data Notice",
+        "Stage 7A: Import Resume Path",
+        "Stage 7B: Start From Scratch Path",
+        "Stage 7C: Skip Guided Onboarding Path",
+        "Stage 8: Intent Selection",
+        "Stage 9: First Value Moment",
+        "Stage 10: Activated Workspace",
+        "User Stories",
+        "Non-Goals",
+        "Expected Outcomes"
+      ]
+    },
+    {
+      "path": "USERJOURNEY/README.md",
+      "title": "USERJOURNEY",
+      "purpose": "Canonical index for the new-user journey, signup, onboarding, and consent design.",
+      "owner": "Solo operator",
+      "last_updated": "2026-03-27",
+      "depends_on": [
+        "Existing auth flow",
+        "workspace routing",
+        "product goals"
+      ],
+      "authority": "Canonical index for the USERJOURNEY folder",
+      "headings": [
+        "Goal",
+        "Attachment Status",
+        "What This Folder Contains",
+        "Scope",
+        "Product Summary",
+        "Intended Outcome",
+        "Planning Discipline"
+      ]
+    },
+    {
+      "path": "USERJOURNEY/REUSE_STRATEGY.md",
+      "title": "REUSE_STRATEGY.md",
+      "purpose": "Define how USERJOURNEY should be treated as a reusable subsystem for future applications.",
+      "owner": "Solo operator",
+      "last_updated": "2026-03-27",
+      "depends_on": [
+        "Entire USERJOURNEY package"
+      ],
+      "authority": "Canonical portability guidance for USERJOURNEY",
+      "headings": [
+        "Short Answer",
+        "Recommended Reusable Pattern",
+        "What Should Stay Generic Across Future Apps",
+        "What Should Be Application-Specific",
+        "Recommended Packaging Approach For Future Projects",
+        "Architectural Recommendation",
+        "Portability Benefits",
+        "Recommendation For This Repo"
+      ]
+    },
+    {
+      "path": "USERJOURNEY/ROUTE_AND_STATE_FREEZE.md",
+      "title": "ROUTE_AND_STATE_FREEZE.md",
+      "purpose": "Freeze the proposed route map and state model before implementation planning expands.",
+      "owner": "Solo operator",
+      "last_updated": "2026-03-27",
+      "depends_on": [
+        "STATES_AND_RULES.md",
+        "USER_FLOWS.md"
+      ],
+      "authority": "Canonical routing and state baseline for onboarding planning",
+      "headings": [
+        "Purpose",
+        "Frozen Principles",
+        "Proposed Logical Routes",
+        "State Baseline",
+        "Branching Rules",
+        "Callback Branching",
+        "Workspace Access Branching",
+        "Explicit Freeze On Current Risks",
+        "Change Control",
+        "Approval And Exit Gate Status"
+      ]
+    },
+    {
+      "path": "USERJOURNEY/SCREEN_INVENTORY.md",
+      "title": "SCREEN_INVENTORY.md",
+      "purpose": "Canonical inventory of onboarding-related screens, states, and ownership.",
+      "owner": "Solo operator",
+      "last_updated": "2026-03-27",
+      "depends_on": [
+        "UX_COPY_DRAFT.md",
+        "USER_FLOWS.md",
+        "ROUTE_AND_STATE_FREEZE.md"
+      ],
+      "authority": "Canonical screen inventory for USERJOURNEY",
+      "headings": [
+        "Inventory",
+        "Notes On Existing Surface Reuse",
+        "Existing And Reusable",
+        "Existing But Not Ready As-Is",
+        "Additional Surface Rules",
+        "Screen Discipline Rules"
+      ]
+    },
+    {
+      "path": "USERJOURNEY/STATES_AND_RULES.md",
+      "title": "STATES_AND_RULES.md",
+      "purpose": "Define lifecycle states, routing rules, and activation logic for new and returning users.",
+      "owner": "Solo operator",
+      "last_updated": "2026-03-27",
+      "depends_on": [
+        "PRODUCT_SPEC.md",
+        "USER_FLOWS.md"
+      ],
+      "authority": "Canonical state and routing model for onboarding",
+      "headings": [
+        "Lifecycle States",
+        "State 1: Anonymous",
+        "State 2: Account Created, Unverified",
+        "State 3: Verified, Not Onboarded",
+        "State 4: Consent Complete, No Profile Yet",
+        "State 5: Profile Created, Not Activated",
+        "State 5B: Guided Onboarding Skipped, Not Activated",
+        "State 6: Activated User",
+        "State 7: Returning Activated User",
+        "Core Routing Rules",
+        "Account Milestones",
+        "Activation Rule",
+        "Resume Point Rules",
+        "Policy Update Rule",
+        "Operational Rules",
+        "Edge Conditions",
+        "Verified User With No Profile",
+        "Verified User With Profile But No Onboarding Completion Flag",
+        "User Declines Optional Marketing Consent",
+        "User Refuses Required Legal Acceptance",
+        "User Skips Guided Onboarding",
+        "User Has Session But Callback Failed"
+      ]
+    },
+    {
+      "path": "USERJOURNEY/TERMS_OF_SERVICE_DRAFT.md",
+      "title": "TERMS_OF_SERVICE_DRAFT.md",
+      "purpose": "First product-tailored draft of Terms of Service for the resume platform.",
+      "owner": "Solo operator",
+      "last_updated": "2026-03-27",
+      "depends_on": [
+        "LEGAL_AND_CONSENT.md"
+      ],
+      "authority": "Working draft only; not final legal text",
+      "headings": [
+        "Important Note",
+        "Terms of Service",
+        "1. Overview",
+        "2. Eligibility And Accounts",
+        "3. The Service",
+        "4. No Employment Guarantee",
+        "5. User Content And Responsibility",
+        "6. AI-Assisted Output Disclaimer",
+        "7. License To Operate The Service",
+        "8. Prohibited Use",
+        "9. Third-Party Providers",
+        "10. Suspension And Termination",
+        "11. Account Closure And Data Deletion",
+        "12. Service Changes",
+        "13. Disclaimer Of Warranties",
+        "14. Limitation Of Liability",
+        "15. Changes To These Terms",
+        "16. Governing Law And Disputes",
+        "17. Contact"
+      ]
+    },
+    {
+      "path": "USERJOURNEY/USERJOURNEY_TEMPLATE_STARTER.md",
+      "title": "USERJOURNEY_TEMPLATE_STARTER.md",
+      "purpose": "Portable starter template for reusing the USERJOURNEY planning subsystem in future applications.",
+      "owner": "Solo operator",
+      "last_updated": "2026-03-27",
+      "depends_on": [
+        "REUSE_STRATEGY.md"
+      ],
+      "authority": "Portable template seed for future projects",
+      "headings": [
+        "What This Is",
+        "Core Principle",
+        "Recommended Starter Files",
+        "Reusable Milestone Model",
+        "Reusable Open Questions",
+        "Reusable Anti-Patterns",
+        "Reusable Decision Defaults",
+        "How To Adapt For A New App"
+      ]
+    },
+    {
+      "path": "USERJOURNEY/USER_FLOWS.md",
+      "title": "USER_FLOWS.md",
+      "purpose": "Route-level and screen-level definition of the new-user journey.",
+      "owner": "Solo operator",
+      "last_updated": "2026-03-27",
+      "depends_on": [
+        "PRODUCT_SPEC.md"
+      ],
+      "authority": "Canonical flow definition for user-facing onboarding behavior",
+      "headings": [
+        "Flow 1: New User Signup To Activation",
+        "Flow 1B: New User Skip Guided Onboarding",
+        "Flow 2: Returning User Login",
+        "Flow 3: Verification Link Failure",
+        "Flow 4: Import Existing Resume",
+        "Flow 5: Start From Scratch",
+        "Flow 6: Tailor To Job Description First",
+        "Route Intent Model",
+        "UX Requirements By Step",
+        "Auth Entry",
+        "Verification Pending",
+        "Welcome",
+        "AI/Data Notice",
+        "Import Review",
+        "Failure States",
+        "First-Run Success Criteria"
+      ]
+    },
+    {
+      "path": "USERJOURNEY/UX_COPY_DRAFT.md",
+      "title": "UX_COPY_DRAFT.md",
+      "purpose": "Draft screen copy and product language for signup, verification, onboarding, consent, and first-run activation.",
+      "owner": "Solo operator",
+      "last_updated": "2026-03-27",
+      "depends_on": [
+        "PRODUCT_SPEC.md",
+        "USER_FLOWS.md",
+        "LEGAL_AND_CONSENT.md"
+      ],
+      "authority": "Working UX copy draft for the USERJOURNEY package",
+      "headings": [
+        "Guidance",
+        "Screen 1: Auth Entry",
+        "Primary Heading",
+        "Supporting Copy",
+        "Primary Actions",
+        "Trust Copy",
+        "Screen 2: Create Account",
+        "Heading",
+        "Supporting Copy",
+        "Field Labels",
+        "Required Consent Copy",
+        "Optional Consent Copy",
+        "Submission CTA",
+        "Footer Link",
+        "Screen 3: Verification Pending",
+        "Heading",
+        "Supporting Copy",
+        "Actions",
+        "Secondary Note",
+        "Screen 4: Verification Recovery",
+        "Heading",
+        "Supporting Copy",
+        "Actions",
+        "Screen 5: Welcome / Onboarding Intro",
+        "Heading",
+        "Supporting Copy",
+        "Primary Actions",
+        "Expectation Copy",
+        "Skip Copy",
+        "Screen 6: AI And Data Notice",
+        "Heading",
+        "Body Copy",
+        "Actions",
+        "Optional Fine Print",
+        "Screen 7: Import Resume",
+        "Heading",
+        "Supporting Copy",
+        "Primary CTA",
+        "Secondary Note",
+        "Screen 8: Review Imported Resume",
+        "Heading",
+        "Supporting Copy",
+        "Primary CTA",
+        "Secondary CTA",
+        "Helper Copy",
+        "Screen 9: Start From Scratch",
+        "Heading",
+        "Supporting Copy",
+        "Suggested Inputs",
+        "CTA",
+        "Screen 10: Choose Your First Goal",
+        "Heading",
+        "Options",
+        "Supporting Copy",
+        "Screen 11: Activated Workspace Empty-State Copy",
+        "If Imported Resume Exists",
+        "If Starter Profile Exists",
+        "If Tailoring Was Selected",
+        "Tone Rules"
+      ]
+    },
+    {
+      "path": "docs/context-layer.md",
+      "title": "Context Layer",
+      "purpose": null,
+      "owner": null,
+      "last_updated": null,
+      "depends_on": [],
+      "authority": null,
+      "headings": [
+        "Why This Exists",
+        "Model",
+        "1. Structured Facts First",
+        "2. Document Metadata Second",
+        "3. Research-Backed Knowledge Base Third",
+        "4. Relations Across Everything",
+        "CLI Surface",
+        "What The Index Contains",
+        "Current Boundaries",
+        "Current Recommendation"
+      ]
+    },
+    {
+      "path": "docs/dashboard-api.md",
+      "title": "Dashboard API",
+      "purpose": null,
+      "owner": null,
+      "last_updated": null,
+      "depends_on": [],
+      "authority": null,
+      "headings": [
+        "Scope",
+        "Stability Rules",
+        "GET Routes",
+        "`GET /` and `GET /index.html`",
+        "`GET /api/state`",
+        "`GET /api/doc?path=<workspace-relative-path>`",
+        "POST Routes",
+        "`POST /api/run`",
+        "`POST /api/bootstrap`",
+        "`POST /api/workflow-signoff`",
+        "`POST /api/workflow-advance`",
+        "`POST /api/uj-phase`",
+        "`POST /api/uj-slice`",
+        "Error Model",
+        "Security Notes",
+        "Testing Surfaces"
+      ]
+    },
+    {
+      "path": "docs/defaults-review.md",
+      "title": "Defaults Review",
+      "purpose": null,
+      "owner": null,
+      "last_updated": null,
+      "depends_on": [],
+      "authority": null,
+      "headings": [
+        "Short Answer",
+        "Decision Frame",
+        "Promote Into PROGRAMBUILD As Default Patterns",
+        "1. Explicit Activation Checkpoint For Interactive Products",
+        "2. Route/State Freeze Discipline",
+        "3. Consent And Policy-Version Questions",
+        "4. Resume-Point And Skip-State Semantics",
+        "Keep As Optional USERJOURNEY Attachment Assets",
+        "Keep As Optional But Strong Candidates For Interactive Products",
+        "Recommended Platform Direction",
+        "Conclusion"
+      ]
+    },
+    {
+      "path": "docs/index.md",
+      "title": "PROGRAMSTART",
+      "purpose": null,
+      "owner": null,
+      "last_updated": null,
+      "depends_on": [],
+      "authority": null,
+      "headings": []
+    },
+    {
+      "path": "docs/knowledge-base.md",
+      "title": "Knowledge Base",
+      "purpose": null,
+      "owner": null,
+      "last_updated": null,
+      "depends_on": [],
+      "authority": null,
+      "headings": [
+        "What This Adds",
+        "Research Method",
+        "Decision Rules",
+        "Stack Matrix",
+        "Recommended Archetypes",
+        "1. Business Web Platform",
+        "2. API And Automation Platform",
+        "3. TypeScript Full-Stack Web Product",
+        "4. Durable Workflow Product",
+        "5. Hybrid Knowledge System",
+        "Interaction Guidance",
+        "Frontend with backend",
+        "API with jobs and workflows",
+        "Data with retrieval",
+        "Packaging with orchestration",
+        "Testing with observability",
+        "KB And The Context Layer",
+        "Source Anchors"
+      ]
+    },
+    {
+      "path": "docs/reusable-patterns.md",
+      "title": "Reusable Patterns",
+      "purpose": null,
+      "owner": null,
+      "last_updated": null,
+      "depends_on": [],
+      "authority": null,
+      "headings": [
+        "Patterns Worth Reusing In Built Programs",
+        "1. Machine-Readable Workflow Registry",
+        "2. Authority File And Dependent File Discipline",
+        "3. Route And State Freeze Before UI Expansion",
+        "4. Activation As A Measured Milestone",
+        "5. Purpose-Based Browser Goldens",
+        "6. Bootstrap And Validate The Produced Artifact",
+        "7. Thin Operator Surface Over Safe Commands",
+        "Patterns Built Programs Can Feed Back Into PROGRAMSTART",
+        "1. Real Route Edge Cases",
+        "2. Better Activation Definitions",
+        "3. Better Operator UX Patterns",
+        "4. Tighter Verification Contracts",
+        "What Not To Copy Blindly",
+        "Recommended Adoption Order"
+      ]
+    },
+    {
+      "path": "docs/toolchain.md",
+      "title": "Toolchain",
+      "purpose": null,
+      "owner": null,
+      "last_updated": null,
+      "depends_on": [],
+      "authority": null,
+      "headings": []
+    },
+    {
+      "path": "docs/verification.md",
+      "title": "Verification",
+      "purpose": null,
+      "owner": null,
+      "last_updated": null,
+      "depends_on": [],
+      "authority": null,
+      "headings": []
+    },
+    {
+      "path": "docs/workflow-model.md",
+      "title": "Workflow Model",
+      "purpose": null,
+      "owner": null,
+      "last_updated": null,
+      "depends_on": [],
+      "authority": null,
+      "headings": []
+    }
+  ],
+  "knowledge_base": {
+    "version": "2026-03-29",
+    "method": "Primary-source synthesis from official framework, platform, and tooling documentation.",
+    "stacks": [
+      {
+        "name": "React",
+        "aliases": [
+          "react"
+        ],
+        "layer": "frontend-ui",
+        "primary_languages": [
+          "JavaScript",
+          "TypeScript"
+        ],
+        "delivery_models": [
+          "spa",
+          "ssr-via-framework",
+          "hybrid"
+        ],
+        "strengths": [
+          "Component model stays effective for highly interactive interfaces.",
+          "Large ecosystem and broad staffing availability.",
+          "Fits both simple SPA shells and framework-driven SSR stacks."
+        ],
+        "tradeoffs": [
+          "React alone is a UI library, not a full delivery architecture.",
+          "State, routing, data fetching, and build choices still need platform decisions."
+        ],
+        "best_for": [
+          "Interactive product UIs with non-trivial client state.",
+          "Teams that want a common UI model across multiple delivery options."
+        ],
+        "avoid_when": [
+          "A simple server-rendered app can be handled faster with a batteries-included framework.",
+          "The team needs strong architectural defaults more than flexibility."
+        ],
+        "pairs_with": [
+          "Vite",
+          "Next.js",
+          "Playwright",
+          "OpenTelemetry"
+        ],
+        "capabilities": [
+          "component-ui",
+          "interactive-client-state",
+          "progressive-enhancement"
+        ],
+        "sources": [
+          "https://react.dev/learn"
+        ]
+      },
+      {
+        "name": "Vite",
+        "aliases": [
+          "vite"
+        ],
+        "layer": "frontend-build",
+        "primary_languages": [
+          "JavaScript",
+          "TypeScript"
+        ],
+        "delivery_models": [
+          "spa",
+          "multi-page",
+          "custom-ssr"
+        ],
+        "strengths": [
+          "Fast local dev server with native-module oriented workflow.",
+          "Lean default for frontend apps that do not need framework-level full-stack features.",
+          "Plugin model fits mixed frontend stacks and monorepos."
+        ],
+        "tradeoffs": [
+          "It solves build/runtime ergonomics, not backend-for-frontend concerns.",
+          "SSR and production architecture still require extra framework or platform design."
+        ],
+        "best_for": [
+          "Pure frontend apps with separate APIs.",
+          "Design systems, admin tools, dashboards, and embedded product UIs."
+        ],
+        "avoid_when": [
+          "The app needs integrated routing, server rendering, and data mutation conventions.",
+          "The team wants file-system routing and opinionated deployment defaults."
+        ],
+        "pairs_with": [
+          "React",
+          "FastAPI",
+          "Django",
+          "NestJS"
+        ],
+        "capabilities": [
+          "frontend-build",
+          "hmr",
+          "spa-delivery",
+          "plugin-ecosystem"
+        ],
+        "sources": [
+          "https://vite.dev/guide/"
+        ]
+      },
+      {
+        "name": "Next.js",
+        "aliases": [
+          "next",
+          "nextjs"
+        ],
+        "layer": "fullstack-web",
+        "primary_languages": [
+          "JavaScript",
+          "TypeScript"
+        ],
+        "delivery_models": [
+          "ssr",
+          "ssg",
+          "isr",
+          "spa-like-hybrid",
+          "bff"
+        ],
+        "strengths": [
+          "Integrated routing, layouts, loading states, and API route handlers.",
+          "Good fit when frontend and backend-for-frontend logic should live together.",
+          "Supports mixed rendering strategies per route instead of one global model."
+        ],
+        "tradeoffs": [
+          "Complexity rises quickly when Server Components, caching, and route handlers mix without clear boundaries.",
+          "A poor fit if the team wants a thin frontend over a separately owned API platform."
+        ],
+        "best_for": [
+          "Content-heavy or product-heavy web apps that need SEO and responsive perceived performance.",
+          "BFF patterns where route-level data loading, auth, and rendering should be colocated."
+        ],
+        "avoid_when": [
+          "The frontend should stay deployment-independent from the core backend.",
+          "The application is mostly an internal SPA where SSR adds more cost than value."
+        ],
+        "pairs_with": [
+          "PostgreSQL",
+          "Prisma",
+          "Playwright",
+          "OpenTelemetry"
+        ],
+        "capabilities": [
+          "file-system-routing",
+          "ssr",
+          "bff",
+          "seo",
+          "hybrid-rendering"
+        ],
+        "sources": [
+          "https://nextjs.org/docs/app/getting-started/project-structure"
+        ]
+      },
+      {
+        "name": "Django",
+        "aliases": [
+          "django"
+        ],
+        "layer": "backend-web",
+        "primary_languages": [
+          "Python"
+        ],
+        "delivery_models": [
+          "monolith",
+          "server-rendered-web",
+          "api-plus-admin"
+        ],
+        "strengths": [
+          "Strong batteries-included platform with ORM, admin, forms, auth, and security features.",
+          "Excellent when the application benefits from tight coupling between data model, admin operations, and web workflows.",
+          "Mature deployment, testing, and validation surfaces."
+        ],
+        "tradeoffs": [
+          "Heavier than an API-first microservice framework for narrow services.",
+          "Can become rigid if the team is trying to force highly decoupled service boundaries from day one."
+        ],
+        "best_for": [
+          "Business systems, admin-rich products, operational consoles, and content-heavy web apps.",
+          "Teams that want one coherent framework for data, auth, forms, and templating."
+        ],
+        "avoid_when": [
+          "The product is mostly a lightweight async API with minimal server-rendered UI.",
+          "The architecture requires independently deployed services with minimal shared framework assumptions."
+        ],
+        "pairs_with": [
+          "PostgreSQL",
+          "Redis",
+          "Celery",
+          "Playwright",
+          "OpenTelemetry"
+        ],
+        "capabilities": [
+          "admin-ui",
+          "orm",
+          "forms",
+          "server-rendered-web",
+          "auth"
+        ],
+        "sources": [
+          "https://docs.djangoproject.com/en/stable/"
+        ]
+      },
+      {
+        "name": "FastAPI",
+        "aliases": [
+          "fastapi"
+        ],
+        "layer": "backend-api",
+        "primary_languages": [
+          "Python"
+        ],
+        "delivery_models": [
+          "rest-api",
+          "async-service",
+          "ml-service",
+          "backend-for-frontend"
+        ],
+        "strengths": [
+          "Type-hint driven request validation and OpenAPI generation reduce API drift.",
+          "Good fit for async APIs, typed contracts, and service boundaries around automation or ML workloads.",
+          "Lower ceremony than larger batteries-included frameworks."
+        ],
+        "tradeoffs": [
+          "Teams still need to choose their own ORM, migrations, background strategy, and admin story.",
+          "Async support does not remove the need for explicit durability and job design."
+        ],
+        "best_for": [
+          "API-first services, automation backends, data services, and platform control planes.",
+          "Python stacks where typed contracts matter more than server-rendered UI."
+        ],
+        "avoid_when": [
+          "The product needs a full integrated admin/content/forms platform immediately.",
+          "Long-running business workflows are being modeled as request handlers instead of durable jobs or workflows."
+        ],
+        "pairs_with": [
+          "SQLAlchemy",
+          "PostgreSQL",
+          "Redis",
+          "Celery",
+          "Temporal",
+          "OpenTelemetry"
+        ],
+        "capabilities": [
+          "api-contracts",
+          "openapi",
+          "async-io",
+          "validation",
+          "service-boundaries"
+        ],
+        "sources": [
+          "https://fastapi.tiangolo.com/"
+        ]
+      },
+      {
+        "name": "NestJS",
+        "aliases": [
+          "nest",
+          "nestjs"
+        ],
+        "layer": "backend-api",
+        "primary_languages": [
+          "TypeScript",
+          "JavaScript"
+        ],
+        "delivery_models": [
+          "rest-api",
+          "graphql-service",
+          "microservice",
+          "backend-for-frontend"
+        ],
+        "strengths": [
+          "Provides architectural structure for Node teams that need clear modules, providers, and test seams.",
+          "Good compromise between raw Express/Fastify flexibility and enterprise-grade conventions.",
+          "Works well for larger TypeScript service teams."
+        ],
+        "tradeoffs": [
+          "More ceremony than minimal Node web stacks.",
+          "The framework can be overkill for small utilities or very simple APIs."
+        ],
+        "best_for": [
+          "TypeScript service platforms with multiple modules and explicit dependency boundaries.",
+          "Teams that want Angular-like application structure on the backend."
+        ],
+        "avoid_when": [
+          "A simple route layer and thin service set are sufficient.",
+          "The team is optimizing for minimum abstraction rather than long-lived structure."
+        ],
+        "pairs_with": [
+          "Prisma",
+          "PostgreSQL",
+          "Redis",
+          "OpenTelemetry"
+        ],
+        "capabilities": [
+          "modular-backend",
+          "dependency-injection",
+          "typescript-services",
+          "api-platform"
+        ],
+        "sources": [
+          "https://docs.nestjs.com/"
+        ]
+      },
+      {
+        "name": "PostgreSQL",
+        "aliases": [
+          "postgres",
+          "postgresql"
+        ],
+        "layer": "data-store",
+        "primary_languages": [
+          "SQL"
+        ],
+        "delivery_models": [
+          "transactional-db",
+          "analytics-adjacent",
+          "search-augmented"
+        ],
+        "strengths": [
+          "Strong relational model, transactional guarantees, mature indexing, and extension ecosystem.",
+          "Usually the right default system of record for business applications.",
+          "Can host traditional relational data and selected retrieval features in one operational system."
+        ],
+        "tradeoffs": [
+          "Not every workload belongs in one primary database instance.",
+          "Teams often underinvest in schema, indexing, and maintenance discipline when Postgres is treated as a generic bucket."
+        ],
+        "best_for": [
+          "Canonical business data, workflow state, audit trails, and relational joins.",
+          "Applications that need strong consistency and long-lived schema ownership."
+        ],
+        "avoid_when": [
+          "The team is trying to use the primary OLTP store as a substitute for every queue, analytics, and blob workload.",
+          "Schema ownership is unclear or migrations are unmanaged."
+        ],
+        "pairs_with": [
+          "SQLAlchemy",
+          "Prisma",
+          "pgvector",
+          "Django",
+          "FastAPI",
+          "Next.js"
+        ],
+        "capabilities": [
+          "transactions",
+          "relational-modeling",
+          "indexes",
+          "full-text-search",
+          "extensions"
+        ],
+        "sources": [
+          "https://www.postgresql.org/docs/current/"
+        ]
+      },
+      {
+        "name": "SQLAlchemy",
+        "aliases": [
+          "sqlalchemy"
+        ],
+        "layer": "data-access",
+        "primary_languages": [
+          "Python"
+        ],
+        "delivery_models": [
+          "orm",
+          "sql-core",
+          "repository-pattern"
+        ],
+        "strengths": [
+          "Flexible Python data layer that supports both ORM and explicit SQL construction.",
+          "Good for teams that need precision around relational behavior without abandoning Python models.",
+          "Strong fit with FastAPI and service-oriented Python stacks."
+        ],
+        "tradeoffs": [
+          "More design freedom means more room for inconsistent session and loading patterns.",
+          "Teams need discipline around transactions, lazy loading, and query shape."
+        ],
+        "best_for": [
+          "Python services with relational models that still need explicit query control.",
+          "Applications where the team wants to tune joins and loading strategies rather than hide them."
+        ],
+        "avoid_when": [
+          "The team wants a highly declarative single-schema workflow like Prisma in a TypeScript stack.",
+          "Developers are likely to treat ORM defaults as performance-safe without review."
+        ],
+        "pairs_with": [
+          "FastAPI",
+          "PostgreSQL",
+          "Celery"
+        ],
+        "capabilities": [
+          "python-orm",
+          "query-construction",
+          "transaction-control",
+          "relational-modeling"
+        ],
+        "sources": [
+          "https://docs.sqlalchemy.org/en/20/orm/quickstart.html"
+        ]
+      },
+      {
+        "name": "Prisma",
+        "aliases": [
+          "prisma"
+        ],
+        "layer": "data-access",
+        "primary_languages": [
+          "TypeScript",
+          "JavaScript"
+        ],
+        "delivery_models": [
+          "orm",
+          "schema-first-data-access"
+        ],
+        "strengths": [
+          "Type-safe client and schema-first workflow give TypeScript teams a clear data ownership model.",
+          "Migrations, generated client, and schema definitions work well as one toolkit.",
+          "Good fit for application teams that prioritize delivery speed and compile-time safety."
+        ],
+        "tradeoffs": [
+          "Less appropriate when the team needs unrestricted SQL as the default path.",
+          "Query abstractions can hide inefficient access patterns if data shape is not reviewed."
+        ],
+        "best_for": [
+          "TypeScript backends and full-stack apps that want schema, migration, and query tooling aligned.",
+          "Teams that benefit from generated clients and strong IDE support."
+        ],
+        "avoid_when": [
+          "Raw SQL is the dominant integration surface.",
+          "The data platform is Python-first or heavily driven by non-Node tooling."
+        ],
+        "pairs_with": [
+          "Next.js",
+          "NestJS",
+          "PostgreSQL"
+        ],
+        "capabilities": [
+          "typescript-orm",
+          "generated-client",
+          "schema-first",
+          "migrations"
+        ],
+        "sources": [
+          "https://www.prisma.io/docs/orm/overview/introduction/what-is-prisma"
+        ]
+      },
+      {
+        "name": "Redis",
+        "aliases": [
+          "redis"
+        ],
+        "layer": "cache-and-queue-adjacent",
+        "primary_languages": [
+          "Redis command model"
+        ],
+        "delivery_models": [
+          "cache",
+          "ephemeral-state",
+          "queue-broker",
+          "vector-store"
+        ],
+        "strengths": [
+          "Extremely effective for low-latency caching, transient coordination, and queue-adjacent workloads.",
+          "Useful as a broker and fast data structure engine near the request path.",
+          "Can support vector and AI-oriented patterns when low-latency memory-first access matters."
+        ],
+        "tradeoffs": [
+          "Easy to misuse as a primary system of record.",
+          "Durability and operational semantics depend heavily on deployment mode and use case."
+        ],
+        "best_for": [
+          "Caching, tokens, rate limits, broker roles, transient coordination, and short-lived state.",
+          "Latency-sensitive derived data rather than canonical business truth."
+        ],
+        "avoid_when": [
+          "The data requires strong relational queries and durable auditability as the default.",
+          "Teams are tempted to keep business-critical state only in cache-shaped storage."
+        ],
+        "pairs_with": [
+          "Celery",
+          "FastAPI",
+          "Django",
+          "NestJS"
+        ],
+        "capabilities": [
+          "cache",
+          "broker",
+          "fast-data-structures",
+          "token-storage",
+          "semantic-cache"
+        ],
+        "sources": [
+          "https://redis.io/docs/latest/"
+        ]
+      },
+      {
+        "name": "Celery",
+        "aliases": [
+          "celery"
+        ],
+        "layer": "background-jobs",
+        "primary_languages": [
+          "Python"
+        ],
+        "delivery_models": [
+          "task-queue",
+          "async-jobs",
+          "scheduled-work"
+        ],
+        "strengths": [
+          "Good fit for conventional background job processing in Python stacks.",
+          "Supports retries, scheduling, task routing, and horizontal worker scaling.",
+          "Integrates naturally with Django and other Python web frameworks."
+        ],
+        "tradeoffs": [
+          "Simple jobs are easy; complex long-running business workflows can become hard to reason about.",
+          "Broker and result backend choices materially affect reliability and operability."
+        ],
+        "best_for": [
+          "Email, exports, ingest jobs, image processing, periodic tasks, and async work off the request path.",
+          "Python products that need standard queue-driven workers rather than workflow orchestration."
+        ],
+        "avoid_when": [
+          "Workflows need durable step-by-step state, human waits, or years-long execution.",
+          "The team is modeling long business processes as opaque chains of ad hoc tasks."
+        ],
+        "pairs_with": [
+          "Redis",
+          "Django",
+          "FastAPI",
+          "PostgreSQL"
+        ],
+        "capabilities": [
+          "background-jobs",
+          "retries",
+          "scheduling",
+          "worker-scaling"
+        ],
+        "sources": [
+          "https://docs.celeryq.dev/en/stable/getting-started/introduction.html"
+        ]
+      },
+      {
+        "name": "Temporal",
+        "aliases": [
+          "temporal"
+        ],
+        "layer": "workflow-orchestration",
+        "primary_languages": [
+          "TypeScript",
+          "Python",
+          "Go",
+          "Java",
+          ".NET",
+          "PHP"
+        ],
+        "delivery_models": [
+          "durable-workflows",
+          "long-running-processes",
+          "saga-style-coordination"
+        ],
+        "strengths": [
+          "Durable workflow execution with replay, persisted event history, and clear execution state.",
+          "Better fit than task queues for long-running business processes with retries, timers, signals, and child workflows.",
+          "Makes workflow state an explicit platform concern instead of hidden glue code."
+        ],
+        "tradeoffs": [
+          "More infrastructure and conceptual overhead than simple queue workers.",
+          "Requires deterministic workflow design and explicit modeling discipline."
+        ],
+        "best_for": [
+          "Provisioning flows, approvals, recovery logic, multi-step integrations, and durable cross-system business processes.",
+          "Any workflow where waiting, retries, and visibility are first-class requirements."
+        ],
+        "avoid_when": [
+          "The work is just a short fire-and-forget background task.",
+          "The team is not prepared to treat workflow design as application architecture."
+        ],
+        "pairs_with": [
+          "FastAPI",
+          "NestJS",
+          "PostgreSQL",
+          "OpenTelemetry"
+        ],
+        "capabilities": [
+          "durable-workflows",
+          "replay",
+          "timers",
+          "signals",
+          "workflow-state"
+        ],
+        "sources": [
+          "https://docs.temporal.io/workflow-execution"
+        ]
+      },
+      {
+        "name": "Docker",
+        "aliases": [
+          "docker"
+        ],
+        "layer": "packaging",
+        "primary_languages": [
+          "Container image model"
+        ],
+        "delivery_models": [
+          "containerized-apps",
+          "local-dev-parity",
+          "ci-cd-artifacts"
+        ],
+        "strengths": [
+          "Makes the application package a portable test and deploy unit.",
+          "Improves parity across local, CI, and production environments.",
+          "Useful even before full orchestration is justified."
+        ],
+        "tradeoffs": [
+          "Containerization does not solve deployment topology or observability by itself.",
+          "Poor image hygiene can simply encapsulate bad environments instead of fixing them."
+        ],
+        "best_for": [
+          "Standardizing app packaging and dependency isolation.",
+          "CI/CD pipelines and teams that need reproducible runtime environments."
+        ],
+        "avoid_when": [
+          "The team expects Docker alone to replace platform design, secrets strategy, or runtime operations.",
+          "A simple script or local-only utility does not need image lifecycle overhead."
+        ],
+        "pairs_with": [
+          "Kubernetes",
+          "Playwright",
+          "PostgreSQL"
+        ],
+        "capabilities": [
+          "container-packaging",
+          "environment-parity",
+          "artifact-delivery"
+        ],
+        "sources": [
+          "https://docs.docker.com/get-started/docker-overview/"
+        ]
+      },
+      {
+        "name": "Kubernetes",
+        "aliases": [
+          "k8s",
+          "kubernetes"
+        ],
+        "layer": "orchestration",
+        "primary_languages": [
+          "Declarative platform APIs"
+        ],
+        "delivery_models": [
+          "container-orchestration",
+          "platform-layer",
+          "autoscaled-services"
+        ],
+        "strengths": [
+          "Provides resilient deployment, scaling, load balancing, and self-healing for containerized workloads.",
+          "Strong fit once multiple services, environments, or operational controls must be standardized.",
+          "Acts as a platform substrate rather than an app framework."
+        ],
+        "tradeoffs": [
+          "Operationally expensive for small products that do not need platform-level control.",
+          "It is not a PaaS and does not remove the need for logging, monitoring, CI/CD, or service design choices."
+        ],
+        "best_for": [
+          "Multi-service platforms, workload isolation, controlled rollouts, and autoscaling environments.",
+          "Organizations that need a durable internal platform rather than ad hoc host management."
+        ],
+        "avoid_when": [
+          "A single app or small product can be operated more simply on managed app hosting.",
+          "The team lacks the operational maturity to own cluster-level complexity."
+        ],
+        "pairs_with": [
+          "Docker",
+          "OpenTelemetry",
+          "PostgreSQL",
+          "Redis"
+        ],
+        "capabilities": [
+          "orchestration",
+          "self-healing",
+          "rollouts",
+          "autoscaling",
+          "platform-layer"
+        ],
+        "sources": [
+          "https://kubernetes.io/docs/concepts/overview/"
+        ]
+      },
+      {
+        "name": "OpenTelemetry",
+        "aliases": [
+          "otel",
+          "opentelemetry"
+        ],
+        "layer": "observability",
+        "primary_languages": [
+          "Cross-language telemetry standards"
+        ],
+        "delivery_models": [
+          "traces",
+          "metrics",
+          "logs",
+          "collector-pipeline"
+        ],
+        "strengths": [
+          "Standardizes telemetry generation across services and runtimes.",
+          "Reduces vendor lock-in by separating instrumentation from backend choice.",
+          "Critical for debugging distributed systems and workflow-heavy platforms."
+        ],
+        "tradeoffs": [
+          "Instrumentation without conventions creates noisy telemetry rather than observability.",
+          "The tooling is not itself a backend, so teams still need storage and visualization decisions."
+        ],
+        "best_for": [
+          "Cross-service tracing, request correlation, and telemetry normalization.",
+          "Any platform that expects multiple components, queues, and workflows to interact."
+        ],
+        "avoid_when": [
+          "The team is not ready to define meaningful spans, attributes, and service boundaries.",
+          "There is no downstream backend or collector plan."
+        ],
+        "pairs_with": [
+          "FastAPI",
+          "Next.js",
+          "NestJS",
+          "Kubernetes",
+          "Temporal"
+        ],
+        "capabilities": [
+          "tracing",
+          "metrics",
+          "logs",
+          "vendor-neutral-observability"
+        ],
+        "sources": [
+          "https://opentelemetry.io/docs/what-is-opentelemetry/"
+        ]
+      },
+      {
+        "name": "Playwright",
+        "aliases": [
+          "playwright"
+        ],
+        "layer": "testing",
+        "primary_languages": [
+          "Python",
+          "TypeScript",
+          "JavaScript",
+          ".NET",
+          "Java"
+        ],
+        "delivery_models": [
+          "browser-e2e",
+          "ui-smoke",
+          "golden-regression"
+        ],
+        "strengths": [
+          "Browser automation with strong isolation, modern engine support, and CI suitability.",
+          "Useful for user-path verification, UI contract checks, and visual regression capture.",
+          "Fits both explicit end-to-end tests and targeted smoke/golden workflows."
+        ],
+        "tradeoffs": [
+          "End-to-end tests become brittle if they replace lower-level contract or unit coverage.",
+          "Golden tests need normalization discipline to avoid false diffs."
+        ],
+        "best_for": [
+          "Critical browser flows, route-level regressions, and screenshot baselines.",
+          "Verifying integration behavior that unit tests cannot prove."
+        ],
+        "avoid_when": [
+          "The team is trying to use browser tests as the first line of debugging for all logic.",
+          "UI volatility is high and selectors/contracts are unmanaged."
+        ],
+        "pairs_with": [
+          "React",
+          "Next.js",
+          "Vite",
+          "FastAPI",
+          "Django"
+        ],
+        "capabilities": [
+          "browser-testing",
+          "ui-regression",
+          "cross-browser",
+          "goldens"
+        ],
+        "sources": [
+          "https://playwright.dev/python/docs/intro"
+        ]
+      },
+      {
+        "name": "pgvector",
+        "aliases": [
+          "pgvector",
+          "vector",
+          "postgres-vector"
+        ],
+        "layer": "retrieval",
+        "primary_languages": [
+          "SQL",
+          "PostgreSQL extension"
+        ],
+        "delivery_models": [
+          "vector-search",
+          "hybrid-search",
+          "embedding-storage"
+        ],
+        "strengths": [
+          "Keeps vectors close to relational data, joins, and transactional controls.",
+          "Supports exact and approximate nearest-neighbor search plus hybrid search with full-text search.",
+          "Useful when retrieval should remain inside the main Postgres operating model."
+        ],
+        "tradeoffs": [
+          "Approximate indexes require recall tuning and operational review.",
+          "Vector search alone is not enough for authoritative or policy-driven repo understanding."
+        ],
+        "best_for": [
+          "Knowledge systems that need semantic search layered on top of canonical relational metadata.",
+          "Applications that want hybrid lexical plus vector retrieval in PostgreSQL."
+        ],
+        "avoid_when": [
+          "Teams expect embeddings to replace structured facts, ownership rules, or explicit relations.",
+          "Operational scale clearly exceeds what the current Postgres footprint should carry."
+        ],
+        "pairs_with": [
+          "PostgreSQL",
+          "LangChain",
+          "OpenTelemetry"
+        ],
+        "capabilities": [
+          "vector-search",
+          "hybrid-search",
+          "hnsw",
+          "ivfflat",
+          "retrieval-layer"
+        ],
+        "sources": [
+          "https://github.com/pgvector/pgvector"
+        ]
+      },
+      {
+        "name": "LangChain Retrieval Patterns",
+        "aliases": [
+          "langchain",
+          "rag",
+          "retrieval-augmented-generation"
+        ],
+        "layer": "retrieval-architecture",
+        "primary_languages": [
+          "Python"
+        ],
+        "delivery_models": [
+          "two-step-rag",
+          "agentic-rag",
+          "hybrid-rag"
+        ],
+        "strengths": [
+          "Makes retrieval pipelines explicit: ingestion, chunking, embeddings, retrieval, and answer generation.",
+          "Useful vocabulary for separating simple two-step RAG from agentic and validated hybrid RAG.",
+          "Reinforces that an existing SQL or document system can remain authoritative while retrieval layers sit on top."
+        ],
+        "tradeoffs": [
+          "Agentic retrieval can add latency and unpredictability when simpler two-step retrieval would work.",
+          "Naive chunk-and-embed pipelines often ignore authority, freshness, and structured metadata."
+        ],
+        "best_for": [
+          "Knowledge systems that need explicit retrieval architecture choices.",
+          "Teams evaluating when to keep retrieval deterministic versus agentic."
+        ],
+        "avoid_when": [
+          "The team is trying to bolt semantic search onto a domain that lacks curated source-of-truth structure.",
+          "Complex agentic retrieval is being introduced before deterministic retrieval quality is proven."
+        ],
+        "pairs_with": [
+          "pgvector",
+          "PostgreSQL",
+          "OpenTelemetry"
+        ],
+        "capabilities": [
+          "rag-architecture",
+          "retrieval-validation",
+          "query-enhancement",
+          "grounding"
+        ],
+        "sources": [
+          "https://docs.langchain.com/oss/python/langchain/retrieval",
+          "https://docs.langchain.com/oss/python/langchain/overview"
+        ]
+      }
+    ],
+    "integration_patterns": [
+      {
+        "name": "Server-rendered product monolith",
+        "fit_for": [
+          "admin-heavy apps",
+          "business systems",
+          "content and forms workflows"
+        ],
+        "components": [
+          "Django",
+          "PostgreSQL",
+          "Redis",
+          "Celery",
+          "Playwright"
+        ],
+        "notes": [
+          "Choose when a single team can own product, data, auth, admin, and operational workflows together.",
+          "Prefer over premature service decomposition when speed and governance matter more than independent deployment."
+        ]
+      },
+      {
+        "name": "SPA plus API",
+        "fit_for": [
+          "internal tools",
+          "rich dashboards",
+          "separate frontend/backend ownership"
+        ],
+        "components": [
+          "React",
+          "Vite",
+          "FastAPI or NestJS",
+          "PostgreSQL",
+          "Playwright"
+        ],
+        "notes": [
+          "Keep the backend API as the system contract and let the SPA stay deployment-independent.",
+          "Use when SSR and BFF behavior add little product value."
+        ]
+      },
+      {
+        "name": "SSR or BFF web platform",
+        "fit_for": [
+          "SEO-sensitive apps",
+          "route-level personalization",
+          "tight auth and data coupling"
+        ],
+        "components": [
+          "Next.js",
+          "PostgreSQL",
+          "Prisma",
+          "Playwright",
+          "OpenTelemetry"
+        ],
+        "notes": [
+          "Choose when route rendering, mutation, caching, and auth should be designed together.",
+          "Set strict boundaries between server components, route handlers, and external services early."
+        ]
+      },
+      {
+        "name": "API plus background workers",
+        "fit_for": [
+          "automation",
+          "async processing",
+          "export or ingest pipelines"
+        ],
+        "components": [
+          "FastAPI",
+          "PostgreSQL",
+          "Redis",
+          "Celery",
+          "OpenTelemetry"
+        ],
+        "notes": [
+          "Keep request handlers thin and move non-immediate work to jobs.",
+          "Do not treat queues as durable workflow state unless the job model truly stays short-lived."
+        ]
+      },
+      {
+        "name": "Durable workflow platform",
+        "fit_for": [
+          "approvals",
+          "provisioning",
+          "multi-step integrations",
+          "human-in-the-loop flows"
+        ],
+        "components": [
+          "FastAPI or NestJS",
+          "Temporal",
+          "PostgreSQL",
+          "OpenTelemetry"
+        ],
+        "notes": [
+          "Choose when retries, waits, timers, and state transitions must be visible and durable.",
+          "Prefer over ad hoc chained jobs when the process itself is a product concern."
+        ]
+      },
+      {
+        "name": "Hybrid retrieval system",
+        "fit_for": [
+          "internal knowledge systems",
+          "policy-aware assistants",
+          "doc plus metadata search"
+        ],
+        "components": [
+          "PostgreSQL",
+          "pgvector",
+          "LangChain Retrieval Patterns",
+          "OpenTelemetry"
+        ],
+        "notes": [
+          "Keep source-of-truth metadata and relations structured, then layer lexical and semantic retrieval over them.",
+          "Do not let embeddings become the authority model."
+        ]
+      }
+    ],
+    "retrieval_guidance": {
+      "principles": [
+        "Structured facts, ownership rules, and dependency edges should remain authoritative.",
+        "Lexical and semantic retrieval should be treated as ranking layers over authoritative structure.",
+        "Hybrid retrieval is preferable to vector-only retrieval when compliance, ownership, or workflow order matters.",
+        "Two-step retrieval is the default; agentic retrieval should be added only when deterministic retrieval is insufficient."
+      ],
+      "recommended_layers": [
+        "Registry and state facts",
+        "Document metadata and headings",
+        "Concern and dependency relations",
+        "Lexical retrieval",
+        "Optional vector retrieval and answer validation"
+      ],
+      "avoid": [
+        "Treating embeddings as the only context layer",
+        "Mixing stale and canonical documents without authority ranking",
+        "Adding agentic retrieval before deterministic quality checks exist"
+      ],
+      "sources": [
+        "https://docs.langchain.com/oss/python/langchain/retrieval",
+        "https://github.com/pgvector/pgvector"
+      ]
+    }
+  },
+  "concerns": [
+    {
+      "system": "programbuild",
+      "concern": "overall process and stage order",
+      "owner_file": "PROGRAMBUILD.md",
+      "supporting_files": [],
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+      "relation": "canonical_owner"
+    },
+    {
+      "system": "programbuild",
+      "concern": "lighter-weight process",
+      "owner_file": "PROGRAMBUILD_LITE.md",
+      "supporting_files": [],
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+      "relation": "canonical_owner"
+    },
+    {
+      "system": "programbuild",
+      "concern": "standard product process",
+      "owner_file": "PROGRAMBUILD_PRODUCT.md",
+      "supporting_files": [],
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+      "relation": "canonical_owner"
+    },
+    {
+      "system": "programbuild",
+      "concern": "enterprise process",
+      "owner_file": "PROGRAMBUILD_ENTERPRISE.md",
+      "supporting_files": [],
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+      "relation": "canonical_owner"
+    },
+    {
+      "system": "programbuild",
+      "concern": "document authority and naming rules",
+      "owner_file": "PROGRAMBUILD_CANONICAL.md",
+      "supporting_files": [],
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+      "relation": "canonical_owner"
+    },
+    {
+      "system": "programbuild",
+      "concern": "critical file inventory and status",
+      "owner_file": "PROGRAMBUILD_FILE_INDEX.md",
+      "supporting_files": [],
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+      "relation": "canonical_owner"
+    },
+    {
+      "system": "programbuild",
+      "concern": "ADR structure and status vocabulary",
+      "owner_file": "PROGRAMBUILD_ADR_TEMPLATE.md",
+      "supporting_files": [],
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+      "relation": "canonical_owner"
+    },
+    {
+      "system": "programbuild",
+      "concern": "system-level change history",
+      "owner_file": "PROGRAMBUILD_CHANGELOG.md",
+      "supporting_files": [],
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+      "relation": "canonical_owner"
+    },
+    {
+      "system": "programbuild",
+      "concern": "new-project starter packet",
+      "owner_file": "PROGRAMBUILD_KICKOFF_PACKET.md",
+      "supporting_files": [],
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+      "relation": "canonical_owner"
+    },
+    {
+      "system": "programbuild",
+      "concern": "subagent definitions and prompt templates",
+      "owner_file": "PROGRAMBUILD_SUBAGENTS.md",
+      "supporting_files": [],
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+      "relation": "canonical_owner"
+    },
+    {
+      "system": "programbuild",
+      "concern": "execution checklist format",
+      "owner_file": "PROGRAMBUILD_CHECKLIST.md",
+      "supporting_files": [],
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+      "relation": "canonical_owner"
+    },
+    {
+      "system": "programbuild",
+      "concern": "project viability decision",
+      "owner_file": "FEASIBILITY.md",
+      "supporting_files": [],
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+      "relation": "canonical_owner"
+    },
+    {
+      "system": "programbuild",
+      "concern": "material project decisions and reversals",
+      "owner_file": "DECISION_LOG.md",
+      "supporting_files": [],
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+      "relation": "canonical_owner"
+    },
+    {
+      "system": "programbuild",
+      "concern": "external research and stack validation",
+      "owner_file": "RESEARCH_SUMMARY.md",
+      "supporting_files": [],
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+      "relation": "canonical_owner"
+    },
+    {
+      "system": "programbuild",
+      "concern": "requirements and scope",
+      "owner_file": "REQUIREMENTS.md",
+      "supporting_files": [],
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+      "relation": "canonical_owner"
+    },
+    {
+      "system": "programbuild",
+      "concern": "user journey and state behavior",
+      "owner_file": "USER_FLOWS.md",
+      "supporting_files": [],
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+      "relation": "canonical_owner"
+    },
+    {
+      "system": "programbuild",
+      "concern": "system boundaries, contracts, data model, auth model",
+      "owner_file": "ARCHITECTURE.md",
+      "supporting_files": [],
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+      "relation": "canonical_owner"
+    },
+    {
+      "system": "programbuild",
+      "concern": "risky unknowns and proofs",
+      "owner_file": "RISK_SPIKES.md",
+      "supporting_files": [],
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+      "relation": "canonical_owner"
+    },
+    {
+      "system": "programbuild",
+      "concern": "test model and coverage plan",
+      "owner_file": "TEST_STRATEGY.md",
+      "supporting_files": [],
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+      "relation": "canonical_owner"
+    },
+    {
+      "system": "programbuild",
+      "concern": "launch and operational gate",
+      "owner_file": "RELEASE_READINESS.md",
+      "supporting_files": [],
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+      "relation": "canonical_owner"
+    },
+    {
+      "system": "programbuild",
+      "concern": "post-build drift and risk findings",
+      "owner_file": "AUDIT_REPORT.md",
+      "supporting_files": [],
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+      "relation": "canonical_owner"
+    },
+    {
+      "system": "programbuild",
+      "concern": "post-launch outcomes and lessons learned",
+      "owner_file": "POST_LAUNCH_REVIEW.md",
+      "supporting_files": [],
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+      "relation": "canonical_owner"
+    },
+    {
+      "system": "userjourney",
+      "concern": "product goals and first-run promise",
+      "owner_file": "PRODUCT_SPEC.md",
+      "supporting_files": [
+        "USER_FLOWS.md",
+        "UX_COPY_DRAFT.md"
+      ],
+      "source": "USERJOURNEY/DELIVERY_GAMEPLAN.md",
+      "relation": "source_of_truth"
+    },
+    {
+      "system": "userjourney",
+      "concern": "resolved defaults and product decisions",
+      "owner_file": "DECISION_LOG.md",
+      "supporting_files": [
+        "OPEN_QUESTIONS.md"
+      ],
+      "source": "USERJOURNEY/DELIVERY_GAMEPLAN.md",
+      "relation": "source_of_truth"
+    },
+    {
+      "system": "userjourney",
+      "concern": "unresolved or externally blocked items",
+      "owner_file": "OPEN_QUESTIONS.md",
+      "supporting_files": [
+        "LEGAL_REVIEW_NOTES.md"
+      ],
+      "source": "USERJOURNEY/DELIVERY_GAMEPLAN.md",
+      "relation": "source_of_truth"
+    },
+    {
+      "system": "userjourney",
+      "concern": "route structure and state boundaries",
+      "owner_file": "ROUTE_AND_STATE_FREEZE.md",
+      "supporting_files": [
+        "STATES_AND_RULES.md",
+        "USER_FLOWS.md"
+      ],
+      "source": "USERJOURNEY/DELIVERY_GAMEPLAN.md",
+      "relation": "source_of_truth"
+    },
+    {
+      "system": "userjourney",
+      "concern": "lifecycle semantics and activation rules",
+      "owner_file": "STATES_AND_RULES.md",
+      "supporting_files": [
+        "ACCEPTANCE_CRITERIA.md",
+        "ANALYTICS_AND_OUTCOMES.md"
+      ],
+      "source": "USERJOURNEY/DELIVERY_GAMEPLAN.md",
+      "relation": "source_of_truth"
+    },
+    {
+      "system": "userjourney",
+      "concern": "legal and consent requirements",
+      "owner_file": "LEGAL_AND_CONSENT.md",
+      "supporting_files": [
+        "TERMS_OF_SERVICE_DRAFT.md",
+        "PRIVACY_POLICY_DRAFT.md",
+        "LEGAL_REVIEW_NOTES.md"
+      ],
+      "source": "USERJOURNEY/DELIVERY_GAMEPLAN.md",
+      "relation": "source_of_truth"
+    },
+    {
+      "system": "userjourney",
+      "concern": "UX surfaces and copy",
+      "owner_file": "SCREEN_INVENTORY.md` and `UX_COPY_DRAFT.md",
+      "supporting_files": [
+        "USER_FLOWS.md"
+      ],
+      "source": "USERJOURNEY/DELIVERY_GAMEPLAN.md",
+      "relation": "source_of_truth"
+    },
+    {
+      "system": "userjourney",
+      "concern": "measurable outcomes and funnel logic",
+      "owner_file": "ANALYTICS_AND_OUTCOMES.md",
+      "supporting_files": [
+        "ACCEPTANCE_CRITERIA.md"
+      ],
+      "source": "USERJOURNEY/DELIVERY_GAMEPLAN.md",
+      "relation": "source_of_truth"
+    },
+    {
+      "system": "userjourney",
+      "concern": "implementation order, slice readiness, and risk control",
+      "owner_file": "IMPLEMENTATION_TRACKER.md` and `EXECUTION_SLICES.md",
+      "supporting_files": [
+        "FILE_BY_FILE_IMPLEMENTATION_CHECKLIST.md"
+      ],
+      "source": "USERJOURNEY/DELIVERY_GAMEPLAN.md",
+      "relation": "source_of_truth"
+    },
+    {
+      "system": "userjourney",
+      "concern": "code-touch planning for this repo",
+      "owner_file": "FILE_BY_FILE_IMPLEMENTATION_CHECKLIST.md",
+      "supporting_files": [
+        "IMPLEMENTATION_PLAN.md"
+      ],
+      "source": "USERJOURNEY/DELIVERY_GAMEPLAN.md",
+      "relation": "source_of_truth"
+    }
+  ],
+  "commands": {
+    "cli": [
+      "status",
+      "validate",
+      "context",
+      "state",
+      "advance",
+      "next",
+      "log",
+      "progress",
+      "guide",
+      "drift",
+      "bootstrap",
+      "clean",
+      "refresh",
+      "dashboard",
+      "serve"
+    ],
+    "dashboard": [
+      "advance.programbuild",
+      "advance.programbuild.dry",
+      "advance.userjourney",
+      "advance.userjourney.dry",
+      "context.summary",
+      "dashboard",
+      "drift",
+      "guide.kickoff",
+      "guide.programbuild",
+      "guide.userjourney",
+      "log",
+      "progress",
+      "smoke.browser",
+      "smoke.dashboard",
+      "state.show",
+      "state.show.programbuild",
+      "state.show.userjourney",
+      "status",
+      "validate",
+      "validate.workflow-state"
+    ]
+  },
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/",
+      "purpose": "Dashboard HTML shell"
+    },
+    {
+      "method": "GET",
+      "path": "/index.html",
+      "purpose": "Dashboard HTML shell"
+    },
+    {
+      "method": "GET",
+      "path": "/api/doc",
+      "purpose": "Workspace document preview"
+    },
+    {
+      "method": "GET",
+      "path": "/api/state",
+      "purpose": "Dashboard state payload"
+    },
+    {
+      "method": "POST",
+      "path": "/api/bootstrap",
+      "purpose": "Run validated bootstrap flow"
+    },
+    {
+      "method": "POST",
+      "path": "/api/uj-phase",
+      "purpose": "Update USERJOURNEY implementation-tracker phase"
+    },
+    {
+      "method": "POST",
+      "path": "/api/uj-slice",
+      "purpose": "Update USERJOURNEY implementation-tracker slice"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflow-advance",
+      "purpose": "Advance workflow with signoff"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflow-signoff",
+      "purpose": "Save workflow signoff metadata"
+    }
+  ],
+  "relations": [
+    {
+      "type": "depends_on",
+      "from": "PROGRAMBUILD/ARCHITECTURE.md",
+      "to": "REQUIREMENTS.md",
+      "source": "PROGRAMBUILD/ARCHITECTURE.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "PROGRAMBUILD/ARCHITECTURE.md",
+      "to": "USER_FLOWS.md",
+      "source": "PROGRAMBUILD/ARCHITECTURE.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "PROGRAMBUILD/ARCHITECTURE.md",
+      "to": "RESEARCH_SUMMARY.md",
+      "source": "PROGRAMBUILD/ARCHITECTURE.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "PROGRAMBUILD/AUDIT_REPORT.md",
+      "to": "ARCHITECTURE.md",
+      "source": "PROGRAMBUILD/AUDIT_REPORT.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "PROGRAMBUILD/AUDIT_REPORT.md",
+      "to": "TEST_STRATEGY.md",
+      "source": "PROGRAMBUILD/AUDIT_REPORT.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "PROGRAMBUILD/AUDIT_REPORT.md",
+      "to": "RELEASE_READINESS.md",
+      "source": "PROGRAMBUILD/AUDIT_REPORT.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "PROGRAMBUILD/DECISION_LOG.md",
+      "to": "FEASIBILITY.md",
+      "source": "PROGRAMBUILD/DECISION_LOG.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "PROGRAMBUILD/DECISION_LOG.md",
+      "to": "RESEARCH_SUMMARY.md",
+      "source": "PROGRAMBUILD/DECISION_LOG.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "PROGRAMBUILD/DECISION_LOG.md",
+      "to": "ARCHITECTURE.md",
+      "source": "PROGRAMBUILD/DECISION_LOG.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "PROGRAMBUILD/FEASIBILITY.md",
+      "to": "Program inputs block",
+      "source": "PROGRAMBUILD/FEASIBILITY.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "PROGRAMBUILD/POST_LAUNCH_REVIEW.md",
+      "to": "RELEASE_READINESS.md",
+      "source": "PROGRAMBUILD/POST_LAUNCH_REVIEW.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "PROGRAMBUILD/POST_LAUNCH_REVIEW.md",
+      "to": "AUDIT_REPORT.md",
+      "source": "PROGRAMBUILD/POST_LAUNCH_REVIEW.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "PROGRAMBUILD/RELEASE_READINESS.md",
+      "to": "ARCHITECTURE.md",
+      "source": "PROGRAMBUILD/RELEASE_READINESS.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "PROGRAMBUILD/RELEASE_READINESS.md",
+      "to": "TEST_STRATEGY.md",
+      "source": "PROGRAMBUILD/RELEASE_READINESS.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "PROGRAMBUILD/REQUIREMENTS.md",
+      "to": "FEASIBILITY.md",
+      "source": "PROGRAMBUILD/REQUIREMENTS.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "PROGRAMBUILD/REQUIREMENTS.md",
+      "to": "RESEARCH_SUMMARY.md",
+      "source": "PROGRAMBUILD/REQUIREMENTS.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "PROGRAMBUILD/RESEARCH_SUMMARY.md",
+      "to": "FEASIBILITY.md",
+      "source": "PROGRAMBUILD/RESEARCH_SUMMARY.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "PROGRAMBUILD/RISK_SPIKES.md",
+      "to": "ARCHITECTURE.md",
+      "source": "PROGRAMBUILD/RISK_SPIKES.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "PROGRAMBUILD/TEST_STRATEGY.md",
+      "to": "REQUIREMENTS.md",
+      "source": "PROGRAMBUILD/TEST_STRATEGY.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "PROGRAMBUILD/TEST_STRATEGY.md",
+      "to": "USER_FLOWS.md",
+      "source": "PROGRAMBUILD/TEST_STRATEGY.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "PROGRAMBUILD/TEST_STRATEGY.md",
+      "to": "ARCHITECTURE.md",
+      "source": "PROGRAMBUILD/TEST_STRATEGY.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "PROGRAMBUILD/USER_FLOWS.md",
+      "to": "REQUIREMENTS.md",
+      "source": "PROGRAMBUILD/USER_FLOWS.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/ACCEPTANCE_CRITERIA.md",
+      "to": "PRODUCT_SPEC.md",
+      "source": "USERJOURNEY/ACCEPTANCE_CRITERIA.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/ACCEPTANCE_CRITERIA.md",
+      "to": "USER_FLOWS.md",
+      "source": "USERJOURNEY/ACCEPTANCE_CRITERIA.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/ACCEPTANCE_CRITERIA.md",
+      "to": "STATES_AND_RULES.md",
+      "source": "USERJOURNEY/ACCEPTANCE_CRITERIA.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/ADDITIONAL_SUGGESTIONS.md",
+      "to": "Entire USERJOURNEY package",
+      "source": "USERJOURNEY/ADDITIONAL_SUGGESTIONS.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/ANALYTICS_AND_OUTCOMES.md",
+      "to": "PRODUCT_SPEC.md",
+      "source": "USERJOURNEY/ANALYTICS_AND_OUTCOMES.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/ANALYTICS_AND_OUTCOMES.md",
+      "to": "STATES_AND_RULES.md",
+      "source": "USERJOURNEY/ANALYTICS_AND_OUTCOMES.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/DECISION_LOG.md",
+      "to": "PRODUCT_SPEC.md",
+      "source": "USERJOURNEY/DECISION_LOG.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/DECISION_LOG.md",
+      "to": "ROUTE_AND_STATE_FREEZE.md",
+      "source": "USERJOURNEY/DECISION_LOG.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/DELIVERY_GAMEPLAN.md",
+      "to": "README.md",
+      "source": "USERJOURNEY/DELIVERY_GAMEPLAN.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/DELIVERY_GAMEPLAN.md",
+      "to": "DECISION_LOG.md",
+      "source": "USERJOURNEY/DELIVERY_GAMEPLAN.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/DELIVERY_GAMEPLAN.md",
+      "to": "ROUTE_AND_STATE_FREEZE.md",
+      "source": "USERJOURNEY/DELIVERY_GAMEPLAN.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/DELIVERY_GAMEPLAN.md",
+      "to": "IMPLEMENTATION_TRACKER.md",
+      "source": "USERJOURNEY/DELIVERY_GAMEPLAN.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/DELIVERY_GAMEPLAN.md",
+      "to": "EXECUTION_SLICES.md",
+      "source": "USERJOURNEY/DELIVERY_GAMEPLAN.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/DELIVERY_GAMEPLAN.md",
+      "to": "FILE_BY_FILE_IMPLEMENTATION_CHECKLIST.md",
+      "source": "USERJOURNEY/DELIVERY_GAMEPLAN.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/EXECUTION_SLICES.md",
+      "to": "IMPLEMENTATION_PLAN.md",
+      "source": "USERJOURNEY/EXECUTION_SLICES.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/EXECUTION_SLICES.md",
+      "to": "IMPLEMENTATION_TRACKER.md",
+      "source": "USERJOURNEY/EXECUTION_SLICES.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/EXECUTION_SLICES.md",
+      "to": "ACCEPTANCE_CRITERIA.md",
+      "source": "USERJOURNEY/EXECUTION_SLICES.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/EXTERNAL_REVIEW_PACKET.md",
+      "to": "OPEN_QUESTIONS.md",
+      "source": "USERJOURNEY/EXTERNAL_REVIEW_PACKET.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/EXTERNAL_REVIEW_PACKET.md",
+      "to": "LEGAL_REVIEW_NOTES.md",
+      "source": "USERJOURNEY/EXTERNAL_REVIEW_PACKET.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/EXTERNAL_REVIEW_PACKET.md",
+      "to": "LEGAL_AND_CONSENT.md",
+      "source": "USERJOURNEY/EXTERNAL_REVIEW_PACKET.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/EXTERNAL_REVIEW_PACKET.md",
+      "to": "TERMS_OF_SERVICE_DRAFT.md",
+      "source": "USERJOURNEY/EXTERNAL_REVIEW_PACKET.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/EXTERNAL_REVIEW_PACKET.md",
+      "to": "PRIVACY_POLICY_DRAFT.md",
+      "source": "USERJOURNEY/EXTERNAL_REVIEW_PACKET.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/FILE_BY_FILE_IMPLEMENTATION_CHECKLIST.md",
+      "to": "EXECUTION_SLICES.md",
+      "source": "USERJOURNEY/FILE_BY_FILE_IMPLEMENTATION_CHECKLIST.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/FILE_BY_FILE_IMPLEMENTATION_CHECKLIST.md",
+      "to": "IMPLEMENTATION_PLAN.md",
+      "source": "USERJOURNEY/FILE_BY_FILE_IMPLEMENTATION_CHECKLIST.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/FILE_BY_FILE_IMPLEMENTATION_CHECKLIST.md",
+      "to": "ROUTE_AND_STATE_FREEZE.md",
+      "source": "USERJOURNEY/FILE_BY_FILE_IMPLEMENTATION_CHECKLIST.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/IMPLEMENTATION_PLAN.md",
+      "to": "PRODUCT_SPEC.md",
+      "source": "USERJOURNEY/IMPLEMENTATION_PLAN.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/IMPLEMENTATION_PLAN.md",
+      "to": "STATES_AND_RULES.md",
+      "source": "USERJOURNEY/IMPLEMENTATION_PLAN.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/IMPLEMENTATION_PLAN.md",
+      "to": "ACCEPTANCE_CRITERIA.md",
+      "source": "USERJOURNEY/IMPLEMENTATION_PLAN.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/IMPLEMENTATION_TRACKER.md",
+      "to": "IMPLEMENTATION_PLAN.md",
+      "source": "USERJOURNEY/IMPLEMENTATION_TRACKER.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/IMPLEMENTATION_TRACKER.md",
+      "to": "ROUTE_AND_STATE_FREEZE.md",
+      "source": "USERJOURNEY/IMPLEMENTATION_TRACKER.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/IMPLEMENTATION_TRACKER.md",
+      "to": "ACCEPTANCE_CRITERIA.md",
+      "source": "USERJOURNEY/IMPLEMENTATION_TRACKER.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/IMPLEMENTATION_TRACKER.md",
+      "to": "DELIVERY_GAMEPLAN.md",
+      "source": "USERJOURNEY/IMPLEMENTATION_TRACKER.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/LEGAL_AND_CONSENT.md",
+      "to": "PRODUCT_SPEC.md",
+      "source": "USERJOURNEY/LEGAL_AND_CONSENT.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/LEGAL_REVIEW_NOTES.md",
+      "to": "TERMS_OF_SERVICE_DRAFT.md",
+      "source": "USERJOURNEY/LEGAL_REVIEW_NOTES.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/LEGAL_REVIEW_NOTES.md",
+      "to": "PRIVACY_POLICY_DRAFT.md",
+      "source": "USERJOURNEY/LEGAL_REVIEW_NOTES.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/LEGAL_REVIEW_NOTES.md",
+      "to": "LEGAL_AND_CONSENT.md",
+      "source": "USERJOURNEY/LEGAL_REVIEW_NOTES.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/OPEN_QUESTIONS.md",
+      "to": "PRODUCT_SPEC.md",
+      "source": "USERJOURNEY/OPEN_QUESTIONS.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/OPEN_QUESTIONS.md",
+      "to": "LEGAL_AND_CONSENT.md",
+      "source": "USERJOURNEY/OPEN_QUESTIONS.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/PRIVACY_POLICY_DRAFT.md",
+      "to": "LEGAL_AND_CONSENT.md",
+      "source": "USERJOURNEY/PRIVACY_POLICY_DRAFT.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/PRODUCT_SPEC.md",
+      "to": "USER_FLOWS.md",
+      "source": "USERJOURNEY/PRODUCT_SPEC.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/PRODUCT_SPEC.md",
+      "to": "LEGAL_AND_CONSENT.md",
+      "source": "USERJOURNEY/PRODUCT_SPEC.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/PRODUCT_SPEC.md",
+      "to": "STATES_AND_RULES.md",
+      "source": "USERJOURNEY/PRODUCT_SPEC.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/README.md",
+      "to": "Existing auth flow",
+      "source": "USERJOURNEY/README.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/README.md",
+      "to": "workspace routing",
+      "source": "USERJOURNEY/README.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/README.md",
+      "to": "product goals",
+      "source": "USERJOURNEY/README.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/REUSE_STRATEGY.md",
+      "to": "Entire USERJOURNEY package",
+      "source": "USERJOURNEY/REUSE_STRATEGY.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/ROUTE_AND_STATE_FREEZE.md",
+      "to": "STATES_AND_RULES.md",
+      "source": "USERJOURNEY/ROUTE_AND_STATE_FREEZE.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/ROUTE_AND_STATE_FREEZE.md",
+      "to": "USER_FLOWS.md",
+      "source": "USERJOURNEY/ROUTE_AND_STATE_FREEZE.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/SCREEN_INVENTORY.md",
+      "to": "UX_COPY_DRAFT.md",
+      "source": "USERJOURNEY/SCREEN_INVENTORY.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/SCREEN_INVENTORY.md",
+      "to": "USER_FLOWS.md",
+      "source": "USERJOURNEY/SCREEN_INVENTORY.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/SCREEN_INVENTORY.md",
+      "to": "ROUTE_AND_STATE_FREEZE.md",
+      "source": "USERJOURNEY/SCREEN_INVENTORY.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/STATES_AND_RULES.md",
+      "to": "PRODUCT_SPEC.md",
+      "source": "USERJOURNEY/STATES_AND_RULES.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/STATES_AND_RULES.md",
+      "to": "USER_FLOWS.md",
+      "source": "USERJOURNEY/STATES_AND_RULES.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/TERMS_OF_SERVICE_DRAFT.md",
+      "to": "LEGAL_AND_CONSENT.md",
+      "source": "USERJOURNEY/TERMS_OF_SERVICE_DRAFT.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/USERJOURNEY_TEMPLATE_STARTER.md",
+      "to": "REUSE_STRATEGY.md",
+      "source": "USERJOURNEY/USERJOURNEY_TEMPLATE_STARTER.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/USER_FLOWS.md",
+      "to": "PRODUCT_SPEC.md",
+      "source": "USERJOURNEY/USER_FLOWS.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/UX_COPY_DRAFT.md",
+      "to": "PRODUCT_SPEC.md",
+      "source": "USERJOURNEY/UX_COPY_DRAFT.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/UX_COPY_DRAFT.md",
+      "to": "USER_FLOWS.md",
+      "source": "USERJOURNEY/UX_COPY_DRAFT.md"
+    },
+    {
+      "type": "depends_on",
+      "from": "USERJOURNEY/UX_COPY_DRAFT.md",
+      "to": "LEGAL_AND_CONSENT.md",
+      "source": "USERJOURNEY/UX_COPY_DRAFT.md"
+    },
+    {
+      "type": "canonical_owner",
+      "from": "overall process and stage order",
+      "to": "PROGRAMBUILD.md",
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md"
+    },
+    {
+      "type": "canonical_owner",
+      "from": "lighter-weight process",
+      "to": "PROGRAMBUILD_LITE.md",
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md"
+    },
+    {
+      "type": "canonical_owner",
+      "from": "standard product process",
+      "to": "PROGRAMBUILD_PRODUCT.md",
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md"
+    },
+    {
+      "type": "canonical_owner",
+      "from": "enterprise process",
+      "to": "PROGRAMBUILD_ENTERPRISE.md",
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md"
+    },
+    {
+      "type": "canonical_owner",
+      "from": "document authority and naming rules",
+      "to": "PROGRAMBUILD_CANONICAL.md",
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md"
+    },
+    {
+      "type": "canonical_owner",
+      "from": "critical file inventory and status",
+      "to": "PROGRAMBUILD_FILE_INDEX.md",
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md"
+    },
+    {
+      "type": "canonical_owner",
+      "from": "ADR structure and status vocabulary",
+      "to": "PROGRAMBUILD_ADR_TEMPLATE.md",
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md"
+    },
+    {
+      "type": "canonical_owner",
+      "from": "system-level change history",
+      "to": "PROGRAMBUILD_CHANGELOG.md",
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md"
+    },
+    {
+      "type": "canonical_owner",
+      "from": "new-project starter packet",
+      "to": "PROGRAMBUILD_KICKOFF_PACKET.md",
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md"
+    },
+    {
+      "type": "canonical_owner",
+      "from": "subagent definitions and prompt templates",
+      "to": "PROGRAMBUILD_SUBAGENTS.md",
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md"
+    },
+    {
+      "type": "canonical_owner",
+      "from": "execution checklist format",
+      "to": "PROGRAMBUILD_CHECKLIST.md",
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md"
+    },
+    {
+      "type": "canonical_owner",
+      "from": "project viability decision",
+      "to": "FEASIBILITY.md",
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md"
+    },
+    {
+      "type": "canonical_owner",
+      "from": "material project decisions and reversals",
+      "to": "DECISION_LOG.md",
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md"
+    },
+    {
+      "type": "canonical_owner",
+      "from": "external research and stack validation",
+      "to": "RESEARCH_SUMMARY.md",
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md"
+    },
+    {
+      "type": "canonical_owner",
+      "from": "requirements and scope",
+      "to": "REQUIREMENTS.md",
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md"
+    },
+    {
+      "type": "canonical_owner",
+      "from": "user journey and state behavior",
+      "to": "USER_FLOWS.md",
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md"
+    },
+    {
+      "type": "canonical_owner",
+      "from": "system boundaries, contracts, data model, auth model",
+      "to": "ARCHITECTURE.md",
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md"
+    },
+    {
+      "type": "canonical_owner",
+      "from": "risky unknowns and proofs",
+      "to": "RISK_SPIKES.md",
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md"
+    },
+    {
+      "type": "canonical_owner",
+      "from": "test model and coverage plan",
+      "to": "TEST_STRATEGY.md",
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md"
+    },
+    {
+      "type": "canonical_owner",
+      "from": "launch and operational gate",
+      "to": "RELEASE_READINESS.md",
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md"
+    },
+    {
+      "type": "canonical_owner",
+      "from": "post-build drift and risk findings",
+      "to": "AUDIT_REPORT.md",
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md"
+    },
+    {
+      "type": "canonical_owner",
+      "from": "post-launch outcomes and lessons learned",
+      "to": "POST_LAUNCH_REVIEW.md",
+      "source": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md"
+    },
+    {
+      "type": "source_of_truth",
+      "from": "product goals and first-run promise",
+      "to": "PRODUCT_SPEC.md",
+      "source": "USERJOURNEY/DELIVERY_GAMEPLAN.md"
+    },
+    {
+      "type": "source_of_truth",
+      "from": "resolved defaults and product decisions",
+      "to": "DECISION_LOG.md",
+      "source": "USERJOURNEY/DELIVERY_GAMEPLAN.md"
+    },
+    {
+      "type": "source_of_truth",
+      "from": "unresolved or externally blocked items",
+      "to": "OPEN_QUESTIONS.md",
+      "source": "USERJOURNEY/DELIVERY_GAMEPLAN.md"
+    },
+    {
+      "type": "source_of_truth",
+      "from": "route structure and state boundaries",
+      "to": "ROUTE_AND_STATE_FREEZE.md",
+      "source": "USERJOURNEY/DELIVERY_GAMEPLAN.md"
+    },
+    {
+      "type": "source_of_truth",
+      "from": "lifecycle semantics and activation rules",
+      "to": "STATES_AND_RULES.md",
+      "source": "USERJOURNEY/DELIVERY_GAMEPLAN.md"
+    },
+    {
+      "type": "source_of_truth",
+      "from": "legal and consent requirements",
+      "to": "LEGAL_AND_CONSENT.md",
+      "source": "USERJOURNEY/DELIVERY_GAMEPLAN.md"
+    },
+    {
+      "type": "source_of_truth",
+      "from": "UX surfaces and copy",
+      "to": "SCREEN_INVENTORY.md` and `UX_COPY_DRAFT.md",
+      "source": "USERJOURNEY/DELIVERY_GAMEPLAN.md"
+    },
+    {
+      "type": "source_of_truth",
+      "from": "measurable outcomes and funnel logic",
+      "to": "ANALYTICS_AND_OUTCOMES.md",
+      "source": "USERJOURNEY/DELIVERY_GAMEPLAN.md"
+    },
+    {
+      "type": "source_of_truth",
+      "from": "implementation order, slice readiness, and risk control",
+      "to": "IMPLEMENTATION_TRACKER.md` and `EXECUTION_SLICES.md",
+      "source": "USERJOURNEY/DELIVERY_GAMEPLAN.md"
+    },
+    {
+      "type": "source_of_truth",
+      "from": "code-touch planning for this repo",
+      "to": "FILE_BY_FILE_IMPLEMENTATION_CHECKLIST.md",
+      "source": "USERJOURNEY/DELIVERY_GAMEPLAN.md"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "PROGRAMBUILD/PROGRAMBUILD.md",
+      "to": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+      "source": "programbuild_control_inventory"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "PROGRAMBUILD/PROGRAMBUILD.md",
+      "to": "PROGRAMBUILD/PROGRAMBUILD_FILE_INDEX.md",
+      "source": "programbuild_control_inventory"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "PROGRAMBUILD/PROGRAMBUILD_LITE.md",
+      "to": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+      "source": "programbuild_control_inventory"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "PROGRAMBUILD/PROGRAMBUILD_LITE.md",
+      "to": "PROGRAMBUILD/PROGRAMBUILD_FILE_INDEX.md",
+      "source": "programbuild_control_inventory"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "PROGRAMBUILD/PROGRAMBUILD_PRODUCT.md",
+      "to": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+      "source": "programbuild_control_inventory"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "PROGRAMBUILD/PROGRAMBUILD_PRODUCT.md",
+      "to": "PROGRAMBUILD/PROGRAMBUILD_FILE_INDEX.md",
+      "source": "programbuild_control_inventory"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "PROGRAMBUILD/PROGRAMBUILD_ENTERPRISE.md",
+      "to": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+      "source": "programbuild_control_inventory"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "PROGRAMBUILD/PROGRAMBUILD_ENTERPRISE.md",
+      "to": "PROGRAMBUILD/PROGRAMBUILD_FILE_INDEX.md",
+      "source": "programbuild_control_inventory"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "PROGRAMBUILD/PROGRAMBUILD_ADR_TEMPLATE.md",
+      "to": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+      "source": "programbuild_control_inventory"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "PROGRAMBUILD/PROGRAMBUILD_ADR_TEMPLATE.md",
+      "to": "PROGRAMBUILD/PROGRAMBUILD_FILE_INDEX.md",
+      "source": "programbuild_control_inventory"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "PROGRAMBUILD/PROGRAMBUILD_CHANGELOG.md",
+      "to": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+      "source": "programbuild_control_inventory"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "PROGRAMBUILD/PROGRAMBUILD_CHANGELOG.md",
+      "to": "PROGRAMBUILD/PROGRAMBUILD_FILE_INDEX.md",
+      "source": "programbuild_control_inventory"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md",
+      "to": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+      "source": "programbuild_control_inventory"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md",
+      "to": "PROGRAMBUILD/PROGRAMBUILD_FILE_INDEX.md",
+      "source": "programbuild_control_inventory"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "PROGRAMBUILD/PROGRAMBUILD_SUBAGENTS.md",
+      "to": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+      "source": "programbuild_control_inventory"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "PROGRAMBUILD/PROGRAMBUILD_SUBAGENTS.md",
+      "to": "PROGRAMBUILD/PROGRAMBUILD_FILE_INDEX.md",
+      "source": "programbuild_control_inventory"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "PROGRAMBUILD/PROGRAMBUILD_CHECKLIST.md",
+      "to": "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+      "source": "programbuild_control_inventory"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "PROGRAMBUILD/PROGRAMBUILD_CHECKLIST.md",
+      "to": "PROGRAMBUILD/PROGRAMBUILD_FILE_INDEX.md",
+      "source": "programbuild_control_inventory"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "PROGRAMBUILD/TEST_STRATEGY.md",
+      "to": "PROGRAMBUILD/ARCHITECTURE.md",
+      "source": "programbuild_architecture_contracts"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "PROGRAMBUILD/RELEASE_READINESS.md",
+      "to": "PROGRAMBUILD/ARCHITECTURE.md",
+      "source": "programbuild_architecture_contracts"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "PROGRAMBUILD/RISK_SPIKES.md",
+      "to": "PROGRAMBUILD/ARCHITECTURE.md",
+      "source": "programbuild_architecture_contracts"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "PROGRAMBUILD/USER_FLOWS.md",
+      "to": "PROGRAMBUILD/REQUIREMENTS.md",
+      "source": "programbuild_requirements_scope"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "PROGRAMBUILD/ARCHITECTURE.md",
+      "to": "PROGRAMBUILD/REQUIREMENTS.md",
+      "source": "programbuild_requirements_scope"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "PROGRAMBUILD/TEST_STRATEGY.md",
+      "to": "PROGRAMBUILD/REQUIREMENTS.md",
+      "source": "programbuild_requirements_scope"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "PROGRAMBUILD/DECISION_LOG.md",
+      "to": "PROGRAMBUILD/FEASIBILITY.md",
+      "source": "programbuild_feasibility_cascade"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "PROGRAMBUILD/RESEARCH_SUMMARY.md",
+      "to": "PROGRAMBUILD/FEASIBILITY.md",
+      "source": "programbuild_feasibility_cascade"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "PROGRAMBUILD/REQUIREMENTS.md",
+      "to": "PROGRAMBUILD/FEASIBILITY.md",
+      "source": "programbuild_feasibility_cascade"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "PROGRAMBUILD/RISK_SPIKES.md",
+      "to": "PROGRAMBUILD/FEASIBILITY.md",
+      "source": "programbuild_feasibility_cascade"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "PROGRAMBUILD/PROGRAMBUILD_LITE.md",
+      "to": "PROGRAMBUILD/PROGRAMBUILD.md",
+      "source": "programbuild_variant_alignment"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "PROGRAMBUILD/PROGRAMBUILD_PRODUCT.md",
+      "to": "PROGRAMBUILD/PROGRAMBUILD.md",
+      "source": "programbuild_variant_alignment"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "PROGRAMBUILD/PROGRAMBUILD_ENTERPRISE.md",
+      "to": "PROGRAMBUILD/PROGRAMBUILD.md",
+      "source": "programbuild_variant_alignment"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/EXTERNAL_REVIEW_PACKET.md",
+      "to": "USERJOURNEY/OPEN_QUESTIONS.md",
+      "source": "userjourney_external_review_packet"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/EXTERNAL_REVIEW_PACKET.md",
+      "to": "USERJOURNEY/LEGAL_REVIEW_NOTES.md",
+      "source": "userjourney_external_review_packet"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/EXTERNAL_REVIEW_PACKET.md",
+      "to": "USERJOURNEY/LEGAL_AND_CONSENT.md",
+      "source": "userjourney_external_review_packet"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/TERMS_OF_SERVICE_DRAFT.md",
+      "to": "USERJOURNEY/OPEN_QUESTIONS.md",
+      "source": "userjourney_external_review_packet"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/TERMS_OF_SERVICE_DRAFT.md",
+      "to": "USERJOURNEY/LEGAL_REVIEW_NOTES.md",
+      "source": "userjourney_external_review_packet"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/TERMS_OF_SERVICE_DRAFT.md",
+      "to": "USERJOURNEY/LEGAL_AND_CONSENT.md",
+      "source": "userjourney_external_review_packet"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/PRIVACY_POLICY_DRAFT.md",
+      "to": "USERJOURNEY/OPEN_QUESTIONS.md",
+      "source": "userjourney_external_review_packet"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/PRIVACY_POLICY_DRAFT.md",
+      "to": "USERJOURNEY/LEGAL_REVIEW_NOTES.md",
+      "source": "userjourney_external_review_packet"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/PRIVACY_POLICY_DRAFT.md",
+      "to": "USERJOURNEY/LEGAL_AND_CONSENT.md",
+      "source": "userjourney_external_review_packet"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/USER_FLOWS.md",
+      "to": "USERJOURNEY/DECISION_LOG.md",
+      "source": "userjourney_route_state_logic"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/USER_FLOWS.md",
+      "to": "USERJOURNEY/ROUTE_AND_STATE_FREEZE.md",
+      "source": "userjourney_route_state_logic"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/USER_FLOWS.md",
+      "to": "USERJOURNEY/STATES_AND_RULES.md",
+      "source": "userjourney_route_state_logic"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/SCREEN_INVENTORY.md",
+      "to": "USERJOURNEY/DECISION_LOG.md",
+      "source": "userjourney_route_state_logic"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/SCREEN_INVENTORY.md",
+      "to": "USERJOURNEY/ROUTE_AND_STATE_FREEZE.md",
+      "source": "userjourney_route_state_logic"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/SCREEN_INVENTORY.md",
+      "to": "USERJOURNEY/STATES_AND_RULES.md",
+      "source": "userjourney_route_state_logic"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/IMPLEMENTATION_PLAN.md",
+      "to": "USERJOURNEY/DECISION_LOG.md",
+      "source": "userjourney_route_state_logic"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/IMPLEMENTATION_PLAN.md",
+      "to": "USERJOURNEY/ROUTE_AND_STATE_FREEZE.md",
+      "source": "userjourney_route_state_logic"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/IMPLEMENTATION_PLAN.md",
+      "to": "USERJOURNEY/STATES_AND_RULES.md",
+      "source": "userjourney_route_state_logic"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/IMPLEMENTATION_TRACKER.md",
+      "to": "USERJOURNEY/DECISION_LOG.md",
+      "source": "userjourney_route_state_logic"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/IMPLEMENTATION_TRACKER.md",
+      "to": "USERJOURNEY/ROUTE_AND_STATE_FREEZE.md",
+      "source": "userjourney_route_state_logic"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/IMPLEMENTATION_TRACKER.md",
+      "to": "USERJOURNEY/STATES_AND_RULES.md",
+      "source": "userjourney_route_state_logic"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/TERMS_OF_SERVICE_DRAFT.md",
+      "to": "USERJOURNEY/DECISION_LOG.md",
+      "source": "userjourney_legal_consent_behavior"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/TERMS_OF_SERVICE_DRAFT.md",
+      "to": "USERJOURNEY/LEGAL_AND_CONSENT.md",
+      "source": "userjourney_legal_consent_behavior"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/PRIVACY_POLICY_DRAFT.md",
+      "to": "USERJOURNEY/DECISION_LOG.md",
+      "source": "userjourney_legal_consent_behavior"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/PRIVACY_POLICY_DRAFT.md",
+      "to": "USERJOURNEY/LEGAL_AND_CONSENT.md",
+      "source": "userjourney_legal_consent_behavior"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/LEGAL_REVIEW_NOTES.md",
+      "to": "USERJOURNEY/DECISION_LOG.md",
+      "source": "userjourney_legal_consent_behavior"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/LEGAL_REVIEW_NOTES.md",
+      "to": "USERJOURNEY/LEGAL_AND_CONSENT.md",
+      "source": "userjourney_legal_consent_behavior"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/UX_COPY_DRAFT.md",
+      "to": "USERJOURNEY/DECISION_LOG.md",
+      "source": "userjourney_legal_consent_behavior"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/UX_COPY_DRAFT.md",
+      "to": "USERJOURNEY/LEGAL_AND_CONSENT.md",
+      "source": "userjourney_legal_consent_behavior"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/ACCEPTANCE_CRITERIA.md",
+      "to": "USERJOURNEY/DECISION_LOG.md",
+      "source": "userjourney_legal_consent_behavior"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/ACCEPTANCE_CRITERIA.md",
+      "to": "USERJOURNEY/LEGAL_AND_CONSENT.md",
+      "source": "userjourney_legal_consent_behavior"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/ACCEPTANCE_CRITERIA.md",
+      "to": "USERJOURNEY/SCREEN_INVENTORY.md",
+      "source": "userjourney_ux_surfaces_copy"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/ACCEPTANCE_CRITERIA.md",
+      "to": "USERJOURNEY/USER_FLOWS.md",
+      "source": "userjourney_ux_surfaces_copy"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/ACCEPTANCE_CRITERIA.md",
+      "to": "USERJOURNEY/UX_COPY_DRAFT.md",
+      "source": "userjourney_ux_surfaces_copy"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/ANALYTICS_AND_OUTCOMES.md",
+      "to": "USERJOURNEY/SCREEN_INVENTORY.md",
+      "source": "userjourney_ux_surfaces_copy"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/ANALYTICS_AND_OUTCOMES.md",
+      "to": "USERJOURNEY/USER_FLOWS.md",
+      "source": "userjourney_ux_surfaces_copy"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/ANALYTICS_AND_OUTCOMES.md",
+      "to": "USERJOURNEY/UX_COPY_DRAFT.md",
+      "source": "userjourney_ux_surfaces_copy"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/EXECUTION_SLICES.md",
+      "to": "USERJOURNEY/IMPLEMENTATION_TRACKER.md",
+      "source": "userjourney_implementation_sequence"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/FILE_BY_FILE_IMPLEMENTATION_CHECKLIST.md",
+      "to": "USERJOURNEY/IMPLEMENTATION_TRACKER.md",
+      "source": "userjourney_implementation_sequence"
+    },
+    {
+      "type": "authority_dependency",
+      "from": "USERJOURNEY/DELIVERY_GAMEPLAN.md",
+      "to": "USERJOURNEY/IMPLEMENTATION_TRACKER.md",
+      "source": "userjourney_implementation_sequence"
+    }
+  ]
+}

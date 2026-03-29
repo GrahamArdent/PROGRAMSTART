@@ -1,0 +1,2014 @@
+{
+  "version": "2026-04-01",
+  "method": "Primary-source synthesis from official framework, platform, and tooling documentation. Deep research expansion covering AI/LLM toolchains, agentic frameworks, ML/data tools, vector databases, IaC, BaaS, dev tooling, and integration patterns for production multi-agent systems.",
+  "stacks": [
+    {
+      "name": "React",
+      "aliases": ["react"],
+      "layer": "frontend-ui",
+      "primary_languages": ["JavaScript", "TypeScript"],
+      "delivery_models": ["spa", "ssr-via-framework", "hybrid"],
+      "strengths": [
+        "Component model stays effective for highly interactive interfaces.",
+        "Large ecosystem and broad staffing availability.",
+        "Fits both simple SPA shells and framework-driven SSR stacks."
+      ],
+      "tradeoffs": [
+        "React alone is a UI library, not a full delivery architecture.",
+        "State, routing, data fetching, and build choices still need platform decisions."
+      ],
+      "best_for": [
+        "Interactive product UIs with non-trivial client state.",
+        "Teams that want a common UI model across multiple delivery options."
+      ],
+      "avoid_when": [
+        "A simple server-rendered app can be handled faster with a batteries-included framework.",
+        "The team needs strong architectural defaults more than flexibility."
+      ],
+      "pairs_with": ["Vite", "Next.js", "Playwright", "OpenTelemetry"],
+      "capabilities": ["component-ui", "interactive-client-state", "progressive-enhancement"],
+      "sources": [
+        "https://react.dev/learn"
+      ]
+    },
+    {
+      "name": "Vite",
+      "aliases": ["vite"],
+      "layer": "frontend-build",
+      "primary_languages": ["JavaScript", "TypeScript"],
+      "delivery_models": ["spa", "multi-page", "custom-ssr"],
+      "strengths": [
+        "Fast local dev server with native-module oriented workflow.",
+        "Lean default for frontend apps that do not need framework-level full-stack features.",
+        "Plugin model fits mixed frontend stacks and monorepos."
+      ],
+      "tradeoffs": [
+        "It solves build/runtime ergonomics, not backend-for-frontend concerns.",
+        "SSR and production architecture still require extra framework or platform design."
+      ],
+      "best_for": [
+        "Pure frontend apps with separate APIs.",
+        "Design systems, admin tools, dashboards, and embedded product UIs."
+      ],
+      "avoid_when": [
+        "The app needs integrated routing, server rendering, and data mutation conventions.",
+        "The team wants file-system routing and opinionated deployment defaults."
+      ],
+      "pairs_with": ["React", "FastAPI", "Django", "NestJS"],
+      "capabilities": ["frontend-build", "hmr", "spa-delivery", "plugin-ecosystem"],
+      "sources": [
+        "https://vite.dev/guide/"
+      ]
+    },
+    {
+      "name": "Next.js",
+      "aliases": ["next", "nextjs"],
+      "layer": "fullstack-web",
+      "primary_languages": ["JavaScript", "TypeScript"],
+      "delivery_models": ["ssr", "ssg", "isr", "spa-like-hybrid", "bff"],
+      "strengths": [
+        "Integrated routing, layouts, loading states, and API route handlers.",
+        "Good fit when frontend and backend-for-frontend logic should live together.",
+        "Supports mixed rendering strategies per route instead of one global model."
+      ],
+      "tradeoffs": [
+        "Complexity rises quickly when Server Components, caching, and route handlers mix without clear boundaries.",
+        "A poor fit if the team wants a thin frontend over a separately owned API platform."
+      ],
+      "best_for": [
+        "Content-heavy or product-heavy web apps that need SEO and responsive perceived performance.",
+        "BFF patterns where route-level data loading, auth, and rendering should be colocated."
+      ],
+      "avoid_when": [
+        "The frontend should stay deployment-independent from the core backend.",
+        "The application is mostly an internal SPA where SSR adds more cost than value."
+      ],
+      "pairs_with": ["PostgreSQL", "Prisma", "Playwright", "OpenTelemetry"],
+      "capabilities": ["file-system-routing", "ssr", "bff", "seo", "hybrid-rendering"],
+      "sources": [
+        "https://nextjs.org/docs/app/getting-started/project-structure"
+      ]
+    },
+    {
+      "name": "Django",
+      "aliases": ["django"],
+      "layer": "backend-web",
+      "primary_languages": ["Python"],
+      "delivery_models": ["monolith", "server-rendered-web", "api-plus-admin"],
+      "strengths": [
+        "Strong batteries-included platform with ORM, admin, forms, auth, and security features.",
+        "Excellent when the application benefits from tight coupling between data model, admin operations, and web workflows.",
+        "Mature deployment, testing, and validation surfaces."
+      ],
+      "tradeoffs": [
+        "Heavier than an API-first microservice framework for narrow services.",
+        "Can become rigid if the team is trying to force highly decoupled service boundaries from day one."
+      ],
+      "best_for": [
+        "Business systems, admin-rich products, operational consoles, and content-heavy web apps.",
+        "Teams that want one coherent framework for data, auth, forms, and templating."
+      ],
+      "avoid_when": [
+        "The product is mostly a lightweight async API with minimal server-rendered UI.",
+        "The architecture requires independently deployed services with minimal shared framework assumptions."
+      ],
+      "pairs_with": ["PostgreSQL", "Redis", "Celery", "Playwright", "OpenTelemetry"],
+      "capabilities": ["admin-ui", "orm", "forms", "server-rendered-web", "auth"],
+      "sources": [
+        "https://docs.djangoproject.com/en/stable/"
+      ]
+    },
+    {
+      "name": "FastAPI",
+      "aliases": ["fastapi"],
+      "layer": "backend-api",
+      "primary_languages": ["Python"],
+      "delivery_models": ["rest-api", "async-service", "ml-service", "backend-for-frontend"],
+      "strengths": [
+        "Type-hint driven request validation and OpenAPI generation reduce API drift.",
+        "Good fit for async APIs, typed contracts, and service boundaries around automation or ML workloads.",
+        "Lower ceremony than larger batteries-included frameworks."
+      ],
+      "tradeoffs": [
+        "Teams still need to choose their own ORM, migrations, background strategy, and admin story.",
+        "Async support does not remove the need for explicit durability and job design."
+      ],
+      "best_for": [
+        "API-first services, automation backends, data services, and platform control planes.",
+        "Python stacks where typed contracts matter more than server-rendered UI."
+      ],
+      "avoid_when": [
+        "The product needs a full integrated admin/content/forms platform immediately.",
+        "Long-running business workflows are being modeled as request handlers instead of durable jobs or workflows."
+      ],
+      "pairs_with": ["SQLAlchemy", "PostgreSQL", "Redis", "Celery", "Temporal", "OpenTelemetry"],
+      "capabilities": ["api-contracts", "openapi", "async-io", "validation", "service-boundaries"],
+      "sources": [
+        "https://fastapi.tiangolo.com/"
+      ]
+    },
+    {
+      "name": "NestJS",
+      "aliases": ["nest", "nestjs"],
+      "layer": "backend-api",
+      "primary_languages": ["TypeScript", "JavaScript"],
+      "delivery_models": ["rest-api", "graphql-service", "microservice", "backend-for-frontend"],
+      "strengths": [
+        "Provides architectural structure for Node teams that need clear modules, providers, and test seams.",
+        "Good compromise between raw Express/Fastify flexibility and enterprise-grade conventions.",
+        "Works well for larger TypeScript service teams."
+      ],
+      "tradeoffs": [
+        "More ceremony than minimal Node web stacks.",
+        "The framework can be overkill for small utilities or very simple APIs."
+      ],
+      "best_for": [
+        "TypeScript service platforms with multiple modules and explicit dependency boundaries.",
+        "Teams that want Angular-like application structure on the backend."
+      ],
+      "avoid_when": [
+        "A simple route layer and thin service set are sufficient.",
+        "The team is optimizing for minimum abstraction rather than long-lived structure."
+      ],
+      "pairs_with": ["Prisma", "PostgreSQL", "Redis", "OpenTelemetry"],
+      "capabilities": ["modular-backend", "dependency-injection", "typescript-services", "api-platform"],
+      "sources": [
+        "https://docs.nestjs.com/"
+      ]
+    },
+    {
+      "name": "PostgreSQL",
+      "aliases": ["postgres", "postgresql"],
+      "layer": "data-store",
+      "primary_languages": ["SQL"],
+      "delivery_models": ["transactional-db", "analytics-adjacent", "search-augmented"],
+      "strengths": [
+        "Strong relational model, transactional guarantees, mature indexing, and extension ecosystem.",
+        "Usually the right default system of record for business applications.",
+        "Can host traditional relational data and selected retrieval features in one operational system."
+      ],
+      "tradeoffs": [
+        "Not every workload belongs in one primary database instance.",
+        "Teams often underinvest in schema, indexing, and maintenance discipline when Postgres is treated as a generic bucket."
+      ],
+      "best_for": [
+        "Canonical business data, workflow state, audit trails, and relational joins.",
+        "Applications that need strong consistency and long-lived schema ownership."
+      ],
+      "avoid_when": [
+        "The team is trying to use the primary OLTP store as a substitute for every queue, analytics, and blob workload.",
+        "Schema ownership is unclear or migrations are unmanaged."
+      ],
+      "pairs_with": ["SQLAlchemy", "Prisma", "pgvector", "Django", "FastAPI", "Next.js"],
+      "capabilities": ["transactions", "relational-modeling", "indexes", "full-text-search", "extensions"],
+      "sources": [
+        "https://www.postgresql.org/docs/current/"
+      ]
+    },
+    {
+      "name": "SQLAlchemy",
+      "aliases": ["sqlalchemy"],
+      "layer": "data-access",
+      "primary_languages": ["Python"],
+      "delivery_models": ["orm", "sql-core", "repository-pattern"],
+      "strengths": [
+        "Flexible Python data layer that supports both ORM and explicit SQL construction.",
+        "Good for teams that need precision around relational behavior without abandoning Python models.",
+        "Strong fit with FastAPI and service-oriented Python stacks."
+      ],
+      "tradeoffs": [
+        "More design freedom means more room for inconsistent session and loading patterns.",
+        "Teams need discipline around transactions, lazy loading, and query shape."
+      ],
+      "best_for": [
+        "Python services with relational models that still need explicit query control.",
+        "Applications where the team wants to tune joins and loading strategies rather than hide them."
+      ],
+      "avoid_when": [
+        "The team wants a highly declarative single-schema workflow like Prisma in a TypeScript stack.",
+        "Developers are likely to treat ORM defaults as performance-safe without review."
+      ],
+      "pairs_with": ["FastAPI", "PostgreSQL", "Celery"],
+      "capabilities": ["python-orm", "query-construction", "transaction-control", "relational-modeling"],
+      "sources": [
+        "https://docs.sqlalchemy.org/en/20/orm/quickstart.html"
+      ]
+    },
+    {
+      "name": "Prisma",
+      "aliases": ["prisma"],
+      "layer": "data-access",
+      "primary_languages": ["TypeScript", "JavaScript"],
+      "delivery_models": ["orm", "schema-first-data-access"],
+      "strengths": [
+        "Type-safe client and schema-first workflow give TypeScript teams a clear data ownership model.",
+        "Migrations, generated client, and schema definitions work well as one toolkit.",
+        "Good fit for application teams that prioritize delivery speed and compile-time safety."
+      ],
+      "tradeoffs": [
+        "Less appropriate when the team needs unrestricted SQL as the default path.",
+        "Query abstractions can hide inefficient access patterns if data shape is not reviewed."
+      ],
+      "best_for": [
+        "TypeScript backends and full-stack apps that want schema, migration, and query tooling aligned.",
+        "Teams that benefit from generated clients and strong IDE support."
+      ],
+      "avoid_when": [
+        "Raw SQL is the dominant integration surface.",
+        "The data platform is Python-first or heavily driven by non-Node tooling."
+      ],
+      "pairs_with": ["Next.js", "NestJS", "PostgreSQL"],
+      "capabilities": ["typescript-orm", "generated-client", "schema-first", "migrations"],
+      "sources": [
+        "https://www.prisma.io/docs/orm/overview/introduction/what-is-prisma"
+      ]
+    },
+    {
+      "name": "Redis",
+      "aliases": ["redis"],
+      "layer": "cache-and-queue-adjacent",
+      "primary_languages": ["Redis command model"],
+      "delivery_models": ["cache", "ephemeral-state", "queue-broker", "vector-store"],
+      "strengths": [
+        "Extremely effective for low-latency caching, transient coordination, and queue-adjacent workloads.",
+        "Useful as a broker and fast data structure engine near the request path.",
+        "Can support vector and AI-oriented patterns when low-latency memory-first access matters."
+      ],
+      "tradeoffs": [
+        "Easy to misuse as a primary system of record.",
+        "Durability and operational semantics depend heavily on deployment mode and use case."
+      ],
+      "best_for": [
+        "Caching, tokens, rate limits, broker roles, transient coordination, and short-lived state.",
+        "Latency-sensitive derived data rather than canonical business truth."
+      ],
+      "avoid_when": [
+        "The data requires strong relational queries and durable auditability as the default.",
+        "Teams are tempted to keep business-critical state only in cache-shaped storage."
+      ],
+      "pairs_with": ["Celery", "FastAPI", "Django", "NestJS"],
+      "capabilities": ["cache", "broker", "fast-data-structures", "token-storage", "semantic-cache"],
+      "sources": [
+        "https://redis.io/docs/latest/"
+      ]
+    },
+    {
+      "name": "Celery",
+      "aliases": ["celery"],
+      "layer": "background-jobs",
+      "primary_languages": ["Python"],
+      "delivery_models": ["task-queue", "async-jobs", "scheduled-work"],
+      "strengths": [
+        "Good fit for conventional background job processing in Python stacks.",
+        "Supports retries, scheduling, task routing, and horizontal worker scaling.",
+        "Integrates naturally with Django and other Python web frameworks."
+      ],
+      "tradeoffs": [
+        "Simple jobs are easy; complex long-running business workflows can become hard to reason about.",
+        "Broker and result backend choices materially affect reliability and operability."
+      ],
+      "best_for": [
+        "Email, exports, ingest jobs, image processing, periodic tasks, and async work off the request path.",
+        "Python products that need standard queue-driven workers rather than workflow orchestration."
+      ],
+      "avoid_when": [
+        "Workflows need durable step-by-step state, human waits, or years-long execution.",
+        "The team is modeling long business processes as opaque chains of ad hoc tasks."
+      ],
+      "pairs_with": ["Redis", "Django", "FastAPI", "PostgreSQL"],
+      "capabilities": ["background-jobs", "retries", "scheduling", "worker-scaling"],
+      "sources": [
+        "https://docs.celeryq.dev/en/stable/getting-started/introduction.html"
+      ]
+    },
+    {
+      "name": "Temporal",
+      "aliases": ["temporal"],
+      "layer": "workflow-orchestration",
+      "primary_languages": ["TypeScript", "Python", "Go", "Java", ".NET", "PHP"],
+      "delivery_models": ["durable-workflows", "long-running-processes", "saga-style-coordination"],
+      "strengths": [
+        "Durable workflow execution with replay, persisted event history, and clear execution state.",
+        "Better fit than task queues for long-running business processes with retries, timers, signals, and child workflows.",
+        "Makes workflow state an explicit platform concern instead of hidden glue code."
+      ],
+      "tradeoffs": [
+        "More infrastructure and conceptual overhead than simple queue workers.",
+        "Requires deterministic workflow design and explicit modeling discipline."
+      ],
+      "best_for": [
+        "Provisioning flows, approvals, recovery logic, multi-step integrations, and durable cross-system business processes.",
+        "Any workflow where waiting, retries, and visibility are first-class requirements."
+      ],
+      "avoid_when": [
+        "The work is just a short fire-and-forget background task.",
+        "The team is not prepared to treat workflow design as application architecture."
+      ],
+      "pairs_with": ["FastAPI", "NestJS", "PostgreSQL", "OpenTelemetry"],
+      "capabilities": ["durable-workflows", "replay", "timers", "signals", "workflow-state"],
+      "sources": [
+        "https://docs.temporal.io/workflow-execution"
+      ]
+    },
+    {
+      "name": "Docker",
+      "aliases": ["docker"],
+      "layer": "packaging",
+      "primary_languages": ["Container image model"],
+      "delivery_models": ["containerized-apps", "local-dev-parity", "ci-cd-artifacts"],
+      "strengths": [
+        "Makes the application package a portable test and deploy unit.",
+        "Improves parity across local, CI, and production environments.",
+        "Useful even before full orchestration is justified."
+      ],
+      "tradeoffs": [
+        "Containerization does not solve deployment topology or observability by itself.",
+        "Poor image hygiene can simply encapsulate bad environments instead of fixing them."
+      ],
+      "best_for": [
+        "Standardizing app packaging and dependency isolation.",
+        "CI/CD pipelines and teams that need reproducible runtime environments."
+      ],
+      "avoid_when": [
+        "The team expects Docker alone to replace platform design, secrets strategy, or runtime operations.",
+        "A simple script or local-only utility does not need image lifecycle overhead."
+      ],
+      "pairs_with": ["Kubernetes", "Playwright", "PostgreSQL"],
+      "capabilities": ["container-packaging", "environment-parity", "artifact-delivery"],
+      "sources": [
+        "https://docs.docker.com/get-started/docker-overview/"
+      ]
+    },
+    {
+      "name": "Kubernetes",
+      "aliases": ["k8s", "kubernetes"],
+      "layer": "orchestration",
+      "primary_languages": ["Declarative platform APIs"],
+      "delivery_models": ["container-orchestration", "platform-layer", "autoscaled-services"],
+      "strengths": [
+        "Provides resilient deployment, scaling, load balancing, and self-healing for containerized workloads.",
+        "Strong fit once multiple services, environments, or operational controls must be standardized.",
+        "Acts as a platform substrate rather than an app framework."
+      ],
+      "tradeoffs": [
+        "Operationally expensive for small products that do not need platform-level control.",
+        "It is not a PaaS and does not remove the need for logging, monitoring, CI/CD, or service design choices."
+      ],
+      "best_for": [
+        "Multi-service platforms, workload isolation, controlled rollouts, and autoscaling environments.",
+        "Organizations that need a durable internal platform rather than ad hoc host management."
+      ],
+      "avoid_when": [
+        "A single app or small product can be operated more simply on managed app hosting.",
+        "The team lacks the operational maturity to own cluster-level complexity."
+      ],
+      "pairs_with": ["Docker", "OpenTelemetry", "PostgreSQL", "Redis"],
+      "capabilities": ["orchestration", "self-healing", "rollouts", "autoscaling", "platform-layer"],
+      "sources": [
+        "https://kubernetes.io/docs/concepts/overview/"
+      ]
+    },
+    {
+      "name": "OpenTelemetry",
+      "aliases": ["otel", "opentelemetry"],
+      "layer": "observability",
+      "primary_languages": ["Cross-language telemetry standards"],
+      "delivery_models": ["traces", "metrics", "logs", "collector-pipeline"],
+      "strengths": [
+        "Standardizes telemetry generation across services and runtimes.",
+        "Reduces vendor lock-in by separating instrumentation from backend choice.",
+        "Critical for debugging distributed systems and workflow-heavy platforms."
+      ],
+      "tradeoffs": [
+        "Instrumentation without conventions creates noisy telemetry rather than observability.",
+        "The tooling is not itself a backend, so teams still need storage and visualization decisions."
+      ],
+      "best_for": [
+        "Cross-service tracing, request correlation, and telemetry normalization.",
+        "Any platform that expects multiple components, queues, and workflows to interact."
+      ],
+      "avoid_when": [
+        "The team is not ready to define meaningful spans, attributes, and service boundaries.",
+        "There is no downstream backend or collector plan."
+      ],
+      "pairs_with": ["FastAPI", "Next.js", "NestJS", "Kubernetes", "Temporal"],
+      "capabilities": ["tracing", "metrics", "logs", "vendor-neutral-observability"],
+      "sources": [
+        "https://opentelemetry.io/docs/what-is-opentelemetry/"
+      ]
+    },
+    {
+      "name": "Playwright",
+      "aliases": ["playwright"],
+      "layer": "testing",
+      "primary_languages": ["Python", "TypeScript", "JavaScript", ".NET", "Java"],
+      "delivery_models": ["browser-e2e", "ui-smoke", "golden-regression"],
+      "strengths": [
+        "Browser automation with strong isolation, modern engine support, and CI suitability.",
+        "Useful for user-path verification, UI contract checks, and visual regression capture.",
+        "Fits both explicit end-to-end tests and targeted smoke/golden workflows."
+      ],
+      "tradeoffs": [
+        "End-to-end tests become brittle if they replace lower-level contract or unit coverage.",
+        "Golden tests need normalization discipline to avoid false diffs."
+      ],
+      "best_for": [
+        "Critical browser flows, route-level regressions, and screenshot baselines.",
+        "Verifying integration behavior that unit tests cannot prove."
+      ],
+      "avoid_when": [
+        "The team is trying to use browser tests as the first line of debugging for all logic.",
+        "UI volatility is high and selectors/contracts are unmanaged."
+      ],
+      "pairs_with": ["React", "Next.js", "Vite", "FastAPI", "Django"],
+      "capabilities": ["browser-testing", "ui-regression", "cross-browser", "goldens"],
+      "sources": [
+        "https://playwright.dev/python/docs/intro"
+      ]
+    },
+    {
+      "name": "pgvector",
+      "aliases": ["pgvector", "vector", "postgres-vector"],
+      "layer": "retrieval",
+      "primary_languages": ["SQL", "PostgreSQL extension"],
+      "delivery_models": ["vector-search", "hybrid-search", "embedding-storage"],
+      "strengths": [
+        "Keeps vectors close to relational data, joins, and transactional controls.",
+        "Supports exact and approximate nearest-neighbor search plus hybrid search with full-text search.",
+        "Useful when retrieval should remain inside the main Postgres operating model."
+      ],
+      "tradeoffs": [
+        "Approximate indexes require recall tuning and operational review.",
+        "Vector search alone is not enough for authoritative or policy-driven repo understanding."
+      ],
+      "best_for": [
+        "Knowledge systems that need semantic search layered on top of canonical relational metadata.",
+        "Applications that want hybrid lexical plus vector retrieval in PostgreSQL."
+      ],
+      "avoid_when": [
+        "Teams expect embeddings to replace structured facts, ownership rules, or explicit relations.",
+        "Operational scale clearly exceeds what the current Postgres footprint should carry."
+      ],
+      "pairs_with": ["PostgreSQL", "LangChain", "OpenTelemetry"],
+      "capabilities": ["vector-search", "hybrid-search", "hnsw", "ivfflat", "retrieval-layer"],
+      "sources": [
+        "https://github.com/pgvector/pgvector"
+      ]
+    },
+    {
+      "name": "LangChain Retrieval Patterns",
+      "aliases": ["langchain", "rag", "retrieval-augmented-generation"],
+      "layer": "retrieval-architecture",
+      "primary_languages": ["Python"],
+      "delivery_models": ["two-step-rag", "agentic-rag", "hybrid-rag"],
+      "strengths": [
+        "Makes retrieval pipelines explicit: ingestion, chunking, embeddings, retrieval, and answer generation.",
+        "Useful vocabulary for separating simple two-step RAG from agentic and validated hybrid RAG.",
+        "Reinforces that an existing SQL or document system can remain authoritative while retrieval layers sit on top."
+      ],
+      "tradeoffs": [
+        "Agentic retrieval can add latency and unpredictability when simpler two-step retrieval would work.",
+        "Naive chunk-and-embed pipelines often ignore authority, freshness, and structured metadata."
+      ],
+      "best_for": [
+        "Knowledge systems that need explicit retrieval architecture choices.",
+        "Teams evaluating when to keep retrieval deterministic versus agentic."
+      ],
+      "avoid_when": [
+        "The team is trying to bolt semantic search onto a domain that lacks curated source-of-truth structure.",
+        "Complex agentic retrieval is being introduced before deterministic retrieval quality is proven."
+      ],
+      "pairs_with": ["pgvector", "PostgreSQL", "OpenTelemetry"],
+      "capabilities": ["rag-architecture", "retrieval-validation", "query-enhancement", "grounding"],
+      "sources": [
+        "https://docs.langchain.com/oss/python/langchain/retrieval",
+        "https://docs.langchain.com/oss/python/langchain/overview"
+      ]
+    },
+    {
+      "name": "OpenAI API",
+      "aliases": ["openai", "gpt", "chatgpt-api"],
+      "layer": "ai-llm",
+      "primary_languages": ["Python", "TypeScript", "REST"],
+      "delivery_models": ["chat-completion", "embeddings", "function-calling", "batch-api", "structured-outputs"],
+      "strengths": [
+        "Mature API with chat completions, embeddings, function calling, and structured outputs.",
+        "text-embedding-3-small (1536d) and text-embedding-3-large (3072d) with dimension reduction via dimensions param.",
+        "Function calling with strict mode enforces JSON Schema conformance; all fields required, additionalProperties: false.",
+        "Tool search defers rarely-used tools and loads them on demand, reducing token cost.",
+        "Namespaces group related tools by domain (crm, billing) for better routing in large tool surfaces.",
+        "Structured Outputs via response_format guarantees schema adherence using Pydantic/zod integration.",
+        "Custom tools with context-free grammars (Lark/regex) constrain free-form tool outputs.",
+        "Prompt caching, streaming, batch API, and compaction support production cost optimization."
+      ],
+      "tradeoffs": [
+        "Vendor-locked to OpenAI infrastructure and pricing model.",
+        "Function calling adds token overhead; strict mode increases first-call latency from schema processing.",
+        "Structured Outputs limited to 5000 properties, 10 nesting levels; some JSON Schema features unsupported."
+      ],
+      "best_for": [
+        "LLM-powered applications needing embeddings, chat, and tool use.",
+        "Production systems requiring prompt engineering, eval pipelines, and RAG integration.",
+        "Agent systems needing reliable structured output with schema enforcement."
+      ],
+      "avoid_when": [
+        "Latency or cost constraints require on-premise or open-weight models.",
+        "The application can run with simpler deterministic logic instead of LLM inference."
+      ],
+      "pairs_with": ["ChromaDB", "pgvector", "LlamaIndex", "Pydantic", "FastAPI"],
+      "capabilities": ["embeddings", "chat-completion", "function-calling", "batch-inference", "structured-outputs", "tool-search", "namespaces", "custom-tools"],
+      "best_practices": [
+        "Use strict: true on all function definitions for reliable schema conformance.",
+        "Keep initially available functions under 20 per turn; use tool search for large tool surfaces.",
+        "Use namespaces to group tools by domain (crm.get_customer, billing.create_invoice).",
+        "Write clear function descriptions and parameter documentation; pass the 'intern test'.",
+        "Offload burden from the model: don't make it fill arguments you already know.",
+        "Combine functions that are always called in sequence into a single function.",
+        "Use Pydantic models with responses.parse() for type-safe structured output handling.",
+        "Handle refusals: check response.output_parsed for None and response.refusal for safety-based refusals.",
+        "For parallel tool calls, handle all function_call items in response.output; pass back reasoning items for reasoning models.",
+        "Use tool_choice: 'required' when at least one tool call is always expected; 'auto' for flexible behavior."
+      ],
+      "sources": [
+        "https://developers.openai.com/api/docs/guides/function-calling",
+        "https://developers.openai.com/api/docs/guides/structured-outputs",
+        "https://developers.openai.com/api/docs/guides/prompt-guidance",
+        "https://developers.openai.com/api/docs/guides/embeddings",
+        "https://developers.openai.com/api/docs/guides/production-best-practices"
+      ]
+    },
+    {
+      "name": "Anthropic Claude API",
+      "aliases": ["claude", "anthropic"],
+      "layer": "ai-llm",
+      "primary_languages": ["Python", "TypeScript", "REST"],
+      "delivery_models": ["chat-completion", "tool-use", "agentic-workflows", "server-tools"],
+      "strengths": [
+        "Client tools (user-executed) and server tools (web_search, code_execution, web_fetch, tool_search) provide flexible agent patterns.",
+        "Strict tool use mode (strict: true) forces the model to always match tool schema exactly.",
+        "Server tools run on Anthropic infrastructure; client tools return tool_use blocks for your code to execute.",
+        "Agentic loop pattern: request -> tool_use (stop_reason) -> execute -> tool_result -> continue until done.",
+        "Strong reasoning capabilities; benchmark gains (LAB-Bench, SWE-bench) with even basic tool access."
+      ],
+      "tradeoffs": [
+        "Server tools add per-request token overhead (~346 tokens for auto/none, ~313 for any/tool in Claude 4+ models).",
+        "Tool definitions injected as system prompt tokens; monitor tool_use input token cost.",
+        "Fewer built-in structured output modes compared to OpenAI's strict function calling."
+      ],
+      "best_for": [
+        "Agentic systems needing tool orchestration and complex reasoning chains.",
+        "Applications requiring built-in web search or code execution as server-side tools.",
+        "Multi-step workflows with tool_use -> tool_result conversation loops."
+      ],
+      "avoid_when": [
+        "The application only needs simple text generation without tool use.",
+        "Cost sensitivity requires the cheapest possible per-token pricing."
+      ],
+      "pairs_with": ["MCP", "Pydantic", "FastAPI", "ChromaDB"],
+      "capabilities": ["tool-use", "agentic-workflows", "server-tools", "strict-tool-mode", "web-search", "code-execution"],
+      "best_practices": [
+        "Use strict: true on tool definitions to guarantee schema conformance.",
+        "Handle the agentic loop: check stop_reason for 'tool_use', execute tool, return tool_result, repeat.",
+        "Use server tools (web_search, code_execution) for tasks that benefit from Anthropic-infrastructure execution.",
+        "Use MCP connector for standardized tool servers across multiple LLM hosts.",
+        "Monitor tool token overhead: ~313-346 additional system prompt tokens per request with tools."
+      ],
+      "sources": [
+        "https://platform.claude.com/docs/en/docs/build-with-claude/tool-use",
+        "https://platform.claude.com/docs/en/agents-and-tools/tool-use/how-tool-use-works"
+      ]
+    },
+    {
+      "name": "Model Context Protocol",
+      "aliases": ["mcp"],
+      "layer": "ai-integration",
+      "primary_languages": ["TypeScript", "Python", "JSON-RPC"],
+      "delivery_models": ["tool-server", "resource-server", "prompt-library"],
+      "strengths": [
+        "Standardized host/client/server architecture for LLM tool integration via JSON-RPC 2.0.",
+        "Three primitives: Tools (model-controlled actions), Resources (application-controlled data), Prompts (user-controlled templates).",
+        "Transport layer supports stdio (local) and Streamable HTTP (remote); lifecycle management with capability negotiation."
+      ],
+      "tradeoffs": [
+        "Protocol is evolving; breaking changes may occur in transport and capability specs.",
+        "Adds architectural complexity compared to direct function calling in a single LLM API."
+      ],
+      "best_for": [
+        "Building reusable tool servers that work across multiple LLM hosts and editors.",
+        "Multi-agent systems where standardized tool discovery and execution matters."
+      ],
+      "avoid_when": [
+        "Simple single-LLM applications where direct function calling suffices.",
+        "The team cannot maintain MCP server infrastructure alongside the main application."
+      ],
+      "pairs_with": ["Anthropic Claude API", "OpenAI API", "FastAPI"],
+      "capabilities": ["tool-discovery", "resource-serving", "prompt-templates", "capability-negotiation"],
+      "sources": [
+        "https://modelcontextprotocol.io/introduction",
+        "https://modelcontextprotocol.io/specification/2025-03-26"
+      ]
+    },
+    {
+      "name": "ChromaDB",
+      "aliases": ["chroma", "chromadb"],
+      "layer": "vector-store",
+      "primary_languages": ["Python", "TypeScript"],
+      "delivery_models": ["in-memory", "persistent-local", "cloud-hosted"],
+      "strengths": [
+        "Open-source, lightweight vector DB with automatic embedding via built-in models.",
+        "Collections API supports add, query, upsert, and delete with metadata filtering.",
+        "In-memory client for prototyping, persistent client for local apps, cloud client for production."
+      ],
+      "tradeoffs": [
+        "Fewer advanced index tuning options compared to Weaviate or Pinecone.",
+        "Cloud offering is newer and less battle-tested at extreme scale."
+      ],
+      "best_for": [
+        "Rapid semantic search prototyping and lightweight RAG pipelines.",
+        "Python-first applications that need a quick embedded vector store."
+      ],
+      "avoid_when": [
+        "Production workloads require managed infrastructure with SLAs and high availability.",
+        "Advanced index types (HNSW tuning, quantization) are critical performance requirements."
+      ],
+      "pairs_with": ["OpenAI API", "LlamaIndex", "FastAPI", "Pydantic"],
+      "capabilities": ["vector-search", "metadata-filtering", "auto-embedding", "collection-management"],
+      "sources": [
+        "https://docs.trychroma.com/docs/overview/introduction",
+        "https://docs.trychroma.com/docs/overview/getting-started"
+      ]
+    },
+    {
+      "name": "Weaviate",
+      "aliases": ["weaviate"],
+      "layer": "vector-store",
+      "primary_languages": ["Python", "TypeScript", "Go", "Java", "GraphQL", "REST"],
+      "delivery_models": ["self-hosted", "cloud-managed", "embedded"],
+      "strengths": [
+        "Multiple vector index types: HNSW (default, logarithmic search), flat (small/multi-tenant), dynamic (auto-switches flat-to-HNSW), HFresh (cluster-based, memory-efficient).",
+        "Supports keyword (BM25F), vector, and hybrid search with reranking and integrated RAG.",
+        "Named vectors allow multiple vector spaces per collection; async indexing for high-throughput imports."
+      ],
+      "tradeoffs": [
+        "Operationally heavier than lightweight embedded vector stores like ChromaDB.",
+        "HNSW index requires all vectors in memory for optimal performance; can be memory-intensive at scale."
+      ],
+      "best_for": [
+        "Production semantic search needing hybrid keyword+vector retrieval with reranking.",
+        "Multi-tenant SaaS with per-tenant isolated datasets using flat or dynamic indexes."
+      ],
+      "avoid_when": [
+        "A simple in-memory vector store suffices for prototyping.",
+        "The team cannot manage vector DB infrastructure alongside the primary data store."
+      ],
+      "pairs_with": ["OpenAI API", "Anthropic Claude API", "FastAPI", "PostgreSQL"],
+      "capabilities": ["hnsw-index", "hybrid-search", "reranking", "multi-tenancy", "named-vectors", "rag-integration"],
+      "sources": [
+        "https://docs.weaviate.io/weaviate/concepts/vector-index",
+        "https://docs.weaviate.io/weaviate/concepts/search"
+      ]
+    },
+    {
+      "name": "LlamaIndex",
+      "aliases": ["llamaindex", "llama-index"],
+      "layer": "retrieval-framework",
+      "primary_languages": ["Python", "TypeScript"],
+      "delivery_models": ["rag-pipeline", "agentic-rag", "query-engine"],
+      "strengths": [
+        "Five-stage RAG architecture: Loading (connectors/readers), Indexing (documents/nodes), Storing (vector/index persistence), Querying (retrievers/routers/postprocessors/synthesizers), Evaluation.",
+        "Retriever abstraction supports vector, keyword, hybrid, and custom retrieval strategies.",
+        "Router and node postprocessor patterns enable multi-index queries and result refinement."
+      ],
+      "tradeoffs": [
+        "Abstractions can hide retrieval quality issues if not tuned carefully.",
+        "Framework coupling makes it harder to swap individual retrieval components."
+      ],
+      "best_for": [
+        "Structured RAG pipelines with explicit ingestion, indexing, and query stages.",
+        "Applications needing multi-source retrieval with routing between different indexes."
+      ],
+      "avoid_when": [
+        "Simple direct embedding lookup suffices without pipeline orchestration.",
+        "The team prefers lower-level control over each retrieval step."
+      ],
+      "pairs_with": ["OpenAI API", "ChromaDB", "Weaviate", "pgvector", "Pydantic"],
+      "capabilities": ["rag-pipeline", "document-loading", "index-management", "query-routing", "response-synthesis"],
+      "sources": [
+        "https://docs.llamaindex.ai/en/stable/understanding/rag/"
+      ]
+    },
+    {
+      "name": "Pydantic",
+      "aliases": ["pydantic"],
+      "layer": "validation",
+      "primary_languages": ["Python"],
+      "delivery_models": ["data-models", "settings-management", "api-contracts"],
+      "strengths": [
+        "Type-hint driven validation with BaseModel, TypeAdapter, and model_validate/model_validate_json.",
+        "Field validators (before/after/wrap/plain), model validators, and custom error types for complex constraints.",
+        "Generic models, RootModel, frozen immutability, ConfigDict for extra/strict/from_attributes behavior.",
+        "JSON Schema generation via model_json_schema(); tight FastAPI integration for API contracts."
+      ],
+      "tradeoffs": [
+        "V2 migration from V1 requires updating method names and config patterns.",
+        "Validator ordering (right-to-left for before/wrap, left-to-right for after) requires care."
+      ],
+      "best_for": [
+        "API request/response validation, configuration management, and data pipeline contracts.",
+        "Any Python system where runtime type safety and serialization matter."
+      ],
+      "avoid_when": [
+        "Simple dataclasses or TypedDict suffice without validation logic.",
+        "Performance-critical hot paths where dataclass construction is measurably faster."
+      ],
+      "pairs_with": ["FastAPI", "OpenAI API", "SQLAlchemy", "Anthropic Claude API"],
+      "capabilities": ["runtime-validation", "json-schema", "serialization", "settings-management", "generic-models"],
+      "sources": [
+        "https://docs.pydantic.dev/latest/concepts/models/",
+        "https://docs.pydantic.dev/latest/concepts/validators/"
+      ]
+    },
+    {
+      "name": "pytest",
+      "aliases": ["pytest"],
+      "layer": "testing",
+      "primary_languages": ["Python"],
+      "delivery_models": ["unit-tests", "integration-tests", "parametrized-tests", "property-tests"],
+      "strengths": [
+        "Fixture system with scopes (function/class/module/package/session), yield teardown, autouse, and factory patterns.",
+        "Parametrize decorator for data-driven tests; pytest.param with marks for conditional execution.",
+        "conftest.py for fixture sharing across modules; fixtures can request other fixtures for composability.",
+        "Markers, custom hooks (pytest_generate_tests), and introspection via request object.",
+        "Dynamic fixture scope via callable; fixture overriding at folder/module/test level."
+      ],
+      "tradeoffs": [
+        "Advanced fixture dependency graphs can become hard to trace without clear naming conventions.",
+        "Parametrized tests with large datasets need explicit IDs to maintain readable output.",
+        "Yield fixture teardown runs in reverse order; finalizer ordering requires care."
+      ],
+      "best_for": [
+        "Python test suites needing structured fixtures, parametrization, and plugin extensibility.",
+        "Projects requiring test coverage, async testing, or property-based testing integration."
+      ],
+      "avoid_when": [
+        "The project is not Python-based.",
+        "Simple assertion scripts suffice without fixture or parametrization needs."
+      ],
+      "pairs_with": ["FastAPI", "Django", "Pydantic", "Playwright", "SQLAlchemy", "Hypothesis"],
+      "capabilities": ["fixtures", "parametrize", "markers", "plugins", "conftest", "property-testing", "fixture-factories"],
+      "best_practices": [
+        "Use yield fixtures for teardown; place cleanup code after yield for automatic execution on test completion.",
+        "Keep fixtures atomic: each fixture should make one state-changing action with its own teardown.",
+        "Use scope='session' for expensive resources (DB connections, Docker containers); scope='function' for test isolation.",
+        "Use factory-as-fixture pattern when a test needs multiple instances from the same fixture.",
+        "Use autouse=True sparingly; prefer explicit fixture requests for clarity.",
+        "Use request.node.get_closest_marker() to pass data from markers into fixtures.",
+        "Use conftest.py at different directory levels for scope-appropriate fixture overriding.",
+        "Use pytest.param(value, marks=pytest.mark.skip) to conditionally skip specific parametrize values.",
+        "Use dynamic scope (callable scope) when fixture lifetime depends on CLI flags (e.g., --keep-containers).",
+        "Use @pytest.mark.usefixtures for class-level fixtures that don't need direct reference in test methods.",
+        "Combine Hypothesis @given with pytest fixtures and parametrize for layered coverage.",
+        "Use addfinalizer for safe teardown when multiple cleanup steps must execute independently."
+      ],
+      "sources": [
+        "https://docs.pytest.org/en/stable/how-to/fixtures.html",
+        "https://docs.pytest.org/en/stable/how-to/parametrize.html"
+      ]
+    },
+    {
+      "name": "Ruff",
+      "aliases": ["ruff"],
+      "layer": "code-quality",
+      "primary_languages": ["Python"],
+      "delivery_models": ["linter", "formatter", "ci-check"],
+      "strengths": [
+        "Extremely fast Rust-based Python linter and formatter replacing flake8, isort, black, and pycodestyle.",
+        "Hierarchical config via pyproject.toml/ruff.toml with per-file-ignores and extend patterns.",
+        "Default rules include Pyflakes (F) and pycodestyle subset (E4/E7/E9); supports 800+ rules from 50+ plugins.",
+        "Auto-fix with --fix, preview mode for unstable rules, and Jupyter notebook support."
+      ],
+      "tradeoffs": [
+        "Not all flake8 plugins have ruff equivalents yet.",
+        "Rapid release cadence means rule behavior can change between versions."
+      ],
+      "best_for": [
+        "Python projects needing fast, unified linting and formatting in CI and editor.",
+        "Replacing multiple legacy tools (flake8, isort, black) with one fast binary."
+      ],
+      "avoid_when": [
+        "The project requires a specific flake8 plugin with no ruff equivalent.",
+        "The team prefers mypy-only type checking without linting concerns."
+      ],
+      "pairs_with": ["pytest", "FastAPI", "Django", "GitHub Actions"],
+      "capabilities": ["linting", "formatting", "auto-fix", "rule-selection", "ci-integration"],
+      "sources": [
+        "https://docs.astral.sh/ruff/configuration/"
+      ]
+    },
+    {
+      "name": "GitHub Actions",
+      "aliases": ["github-actions", "gha"],
+      "layer": "ci-cd",
+      "primary_languages": ["YAML"],
+      "delivery_models": ["ci-pipeline", "cd-pipeline", "automation-workflows"],
+      "strengths": [
+        "Workflow YAML in .github/workflows with event triggers (push, pull_request, schedule, workflow_dispatch).",
+        "Jobs run on GitHub-hosted or self-hosted runners with matrix strategies for multi-platform testing.",
+        "Security hardening: secrets in env vars (not interpolated in scripts), OIDC for cloud auth, Dependabot for action updates."
+      ],
+      "tradeoffs": [
+        "Complex workflows with many jobs can become hard to debug without structured logging.",
+        "Self-hosted runners require security hardening (JIT runners, restricted network, no persistent state)."
+      ],
+      "best_for": [
+        "GitHub-hosted projects needing CI/CD, automated testing, and deployment pipelines.",
+        "Open source projects leveraging free GitHub-hosted runner minutes."
+      ],
+      "avoid_when": [
+        "The project requires complex multi-repo orchestration better suited to dedicated CI platforms.",
+        "Self-hosted runner security requirements exceed the team's operational capacity."
+      ],
+      "pairs_with": ["Ruff", "pytest", "Docker", "Playwright"],
+      "capabilities": ["ci-pipeline", "cd-pipeline", "matrix-builds", "secrets-management", "oidc-auth"],
+      "sources": [
+        "https://docs.github.com/en/actions/writing-workflows/quickstart",
+        "https://docs.github.com/en/actions/security-for-github-actions/security-hardening-for-github-actions"
+      ]
+    },
+    {
+      "name": "OWASP API Security",
+      "aliases": ["owasp", "api-security"],
+      "layer": "security-standards",
+      "primary_languages": ["Cross-language security standards"],
+      "delivery_models": ["security-checklist", "threat-model", "compliance-baseline"],
+      "strengths": [
+        "OWASP API Security Top 10 (2023): Broken Object Level Authorization, Broken Authentication, Broken Object Property Level Authorization, Unrestricted Resource Consumption, Broken Function Level Authorization.",
+        "Also covers: Unrestricted Access to Sensitive Business Flows, SSRF, Security Misconfiguration, Improper Inventory Management, Unsafe Consumption of APIs.",
+        "Provides actionable prevention checklists for each risk category."
+      ],
+      "tradeoffs": [
+        "Checklist-oriented; teams must still design security architecture specific to their domain.",
+        "Does not replace runtime security tooling (WAF, SAST, DAST)."
+      ],
+      "best_for": [
+        "API security threat modeling and design reviews.",
+        "Compliance baselines and security audit preparation."
+      ],
+      "avoid_when": [
+        "The team treats the checklist as a substitute for security engineering culture.",
+        "The application has no API surface exposed to external consumers."
+      ],
+      "pairs_with": ["FastAPI", "NestJS", "Django", "GitHub Actions"],
+      "capabilities": ["threat-modeling", "security-checklist", "auth-patterns", "access-control", "api-hardening"],
+      "sources": [
+        "https://owasp.org/API-Security/editions/2023/en/0x11-t10/"
+      ]
+    },
+    {
+      "name": "Python Asyncio",
+      "aliases": ["asyncio", "async-python"],
+      "layer": "concurrency",
+      "primary_languages": ["Python"],
+      "delivery_models": ["async-service", "concurrent-io", "structured-concurrency"],
+      "strengths": [
+        "TaskGroup (3.11+) provides structured concurrency: if any task fails, siblings are cancelled and all exceptions propagate as ExceptionGroup.",
+        "asyncio.timeout context manager (3.11+) for scoped deadline enforcement; replaces wait_for for clarity.",
+        "asyncio.to_thread offloads blocking I/O to thread pool without losing async flow control.",
+        "Eager task factory (3.12+) starts coroutines synchronously up to first await for reduced scheduling overhead.",
+        "Runner context manager (3.11+) provides reusable event loop for REPL and testing without asyncio.run per call."
+      ],
+      "tradeoffs": [
+        "create_task returns weak references; tasks must be saved to a set to prevent garbage collection of running tasks.",
+        "CancelledError is a BaseException (3.9+), not Exception; bare except clauses can silently swallow cancellation.",
+        "Mixing sync and async code requires explicit to_thread/run_coroutine_threadsafe bridges.",
+        "TaskGroup does not support fire-and-forget patterns; all tasks must complete or cancel."
+      ],
+      "best_for": [
+        "High-concurrency I/O-bound services: HTTP servers, database clients, file processing pipelines.",
+        "Structured concurrent workflows where error propagation and cleanup must be explicit."
+      ],
+      "avoid_when": [
+        "CPU-bound workloads that need true parallelism (use multiprocessing or ProcessPoolExecutor).",
+        "Simple scripts where threading or synchronous I/O are sufficient."
+      ],
+      "pairs_with": ["FastAPI", "pytest", "OpenTelemetry", "Redis"],
+      "capabilities": ["structured-concurrency", "task-groups", "timeout-scoping", "thread-bridging", "eager-tasks"],
+      "best_practices": [
+        "Use TaskGroup instead of gather for new code: explicit error handling, automatic cancellation on failure.",
+        "Always save task references: background_tasks = set(); task = asyncio.create_task(coro()); background_tasks.add(task); task.add_done_callback(background_tasks.discard).",
+        "Prefer asyncio.timeout over asyncio.wait_for for scoped deadline management.",
+        "Use asyncio.to_thread for blocking library calls (file I/O, legacy sync APIs).",
+        "Never call asyncio.run inside an already-running event loop; use Runner or nest_asyncio for testing.",
+        "Handle CancelledError explicitly in cleanup paths; use task.uncancel() only when resuming cancelled work intentionally."
+      ],
+      "sources": [
+        "https://docs.python.org/3/library/asyncio-task.html"
+      ]
+    },
+    {
+      "name": "Python Typing",
+      "aliases": ["typing", "type-hints", "mypy"],
+      "layer": "type-safety",
+      "primary_languages": ["Python"],
+      "delivery_models": ["static-analysis", "runtime-validation", "api-contracts"],
+      "strengths": [
+        "Protocol classes enable structural subtyping (duck typing with static checking) without inheritance.",
+        "TypeVar with bounds/constraints enables generic functions and classes with type safety.",
+        "ParamSpec (3.10+) preserves function signatures through decorators for accurate type checking.",
+        "TypeGuard and TypeIs (3.10+/3.12+) enable user-defined type narrowing in conditionals.",
+        "Generic syntax [T] (3.12+) and type statement simplify generic class/function/alias definitions."
+      ],
+      "tradeoffs": [
+        "Runtime overhead is zero for annotations but Protocol/TypeVar require understanding of variance.",
+        "TypeGuard narrows only the argument type, not the containing scope; TypeIs narrows both but has stricter requirements.",
+        "NewType creates a distinct type for static checking but is identity function at runtime."
+      ],
+      "best_for": [
+        "Library and framework code where API contracts must be precise and self-documenting.",
+        "Teams using mypy, pyright, or similar type checkers for CI-level type safety.",
+        "Plugin architectures using Protocol for structural interfaces."
+      ],
+      "avoid_when": [
+        "Quick scripts or prototypes where type annotation overhead exceeds benefit.",
+        "The team has no type checker configured and annotations would be unchecked documentation."
+      ],
+      "pairs_with": ["Pydantic", "FastAPI", "pytest", "Ruff"],
+      "capabilities": ["static-typing", "generics", "protocols", "type-narrowing", "paramspec"],
+      "best_practices": [
+        "Use Protocol for structural subtyping instead of ABCs when you only need method signature matching.",
+        "Define TypeVar with bound=SomeBase to constrain generic types to a class hierarchy.",
+        "Use ParamSpec in decorator types to preserve the wrapped function's signature for IDE support.",
+        "Prefer TypeIs over TypeGuard (3.12+) for type narrowing that works in both positive and negative branches.",
+        "Use NewType for domain-specific primitives (UserId, EmailAddress) to prevent accidental mixing.",
+        "Use TypedDict for dictionary shapes with known keys; use total=False for optional keys.",
+        "Annotate with collections.abc types (Sequence, Mapping) rather than concrete types (list, dict) for parameters."
+      ],
+      "sources": [
+        "https://docs.python.org/3/library/typing.html"
+      ]
+    },
+    {
+      "name": "Python Dataclasses",
+      "aliases": ["dataclasses", "dataclass"],
+      "layer": "data-modeling",
+      "primary_languages": ["Python"],
+      "delivery_models": ["value-objects", "dto", "configuration"],
+      "strengths": [
+        "frozen=True creates immutable instances with __hash__ support, ideal for value objects and dict keys.",
+        "slots=True (3.10+) generates __slots__ for reduced memory footprint and faster attribute access.",
+        "kw_only=True (3.10+) forces keyword-only constructor arguments for clarity in large dataclasses.",
+        "__post_init__ enables derived field computation and validation after construction.",
+        "field(default_factory=list) prevents the mutable default argument pitfall."
+      ],
+      "tradeoffs": [
+        "No built-in validation; use Pydantic when runtime type checking and coercion are needed.",
+        "Inheritance ordering follows MRO; fields from parent classes appear first in __init__.",
+        "match_args=True (default 3.10+) enables structural pattern matching but adds generated __match_args__."
+      ],
+      "best_for": [
+        "Internal data containers, DTOs, and configuration objects without complex validation.",
+        "Value objects in domain-driven design where immutability and equality semantics matter."
+      ],
+      "avoid_when": [
+        "Input data needs runtime validation and coercion (use Pydantic instead).",
+        "The class needs extensive custom __init__ logic beyond what __post_init__ provides."
+      ],
+      "pairs_with": ["Pydantic", "pytest", "FastAPI", "SQLAlchemy"],
+      "capabilities": ["immutable-objects", "slots-optimization", "keyword-only-fields", "post-init-processing"],
+      "best_practices": [
+        "Use frozen=True for value objects that should be hashable and immutable.",
+        "Use slots=True for memory-intensive applications with many instances.",
+        "Always use field(default_factory=list) for mutable defaults, never a bare mutable literal.",
+        "Use kw_only=True or KW_ONLY sentinel for dataclasses with many fields to prevent positional argument mistakes.",
+        "Use InitVar for constructor-only parameters that should not be stored as fields.",
+        "Prefer dataclasses over NamedTuple when you need mutability or complex field defaults."
+      ],
+      "sources": [
+        "https://docs.python.org/3/library/dataclasses.html"
+      ]
+    },
+    {
+      "name": "Python Logging",
+      "aliases": ["logging", "structured-logging"],
+      "layer": "observability",
+      "primary_languages": ["Python"],
+      "delivery_models": ["structured-logs", "hierarchical-logging", "audit-trail"],
+      "strengths": [
+        "Hierarchical logger namespace via getLogger(__name__) automatically follows module structure.",
+        "Handler/Formatter/Filter separation enables routing logs to multiple destinations with different formats.",
+        "LoggerAdapter adds contextual fields (request_id, user_id) without modifying logger calls.",
+        "Thread-safe by design; handlers use internal locks for concurrent access.",
+        "captureWarnings(True) routes Python warnings through the logging system for unified output."
+      ],
+      "tradeoffs": [
+        "basicConfig convenience function only works on first call; subsequent calls are no-ops unless force=True.",
+        "Root logger propagation can cause duplicate messages if handlers are added at multiple levels.",
+        "No built-in structured (JSON) logging; requires custom formatter or third-party library (structlog, python-json-logger)."
+      ],
+      "best_for": [
+        "Application and library logging with hierarchical namespace control.",
+        "Audit trails, request tracing, and structured error reporting."
+      ],
+      "avoid_when": [
+        "Simple print-based debugging suffices for a throwaway script.",
+        "The application needs high-throughput structured event streaming (consider dedicated event systems)."
+      ],
+      "pairs_with": ["FastAPI", "Django", "OpenTelemetry", "pytest"],
+      "capabilities": ["hierarchical-loggers", "handlers", "formatters", "filters", "context-injection"],
+      "best_practices": [
+        "Always use logger = logging.getLogger(__name__) in libraries; never configure the root logger from library code.",
+        "Set propagate=False on loggers with their own handlers to prevent duplicate messages.",
+        "Use LoggerAdapter or logging.Filter to inject request-scoped context (request_id, trace_id).",
+        "Use logging.config.dictConfig for application-level configuration; avoid basicConfig in production code.",
+        "Log at appropriate levels: DEBUG for development diagnostics, INFO for operational events, WARNING for recoverable issues, ERROR for failures, CRITICAL for system-level failures.",
+        "Include taskName (3.12+) in formatters for asyncio task identification in logs.",
+        "Never log sensitive data (passwords, tokens, PII) even at DEBUG level."
+      ],
+      "sources": [
+        "https://docs.python.org/3/library/logging.html",
+        "https://docs.python.org/3/howto/logging-cookbook.html"
+      ]
+    },
+    {
+      "name": "Hypothesis",
+      "aliases": ["hypothesis", "property-based-testing"],
+      "layer": "testing",
+      "primary_languages": ["Python"],
+      "delivery_models": ["property-tests", "fuzz-testing", "invariant-checking"],
+      "strengths": [
+        "@given decorator with strategies generates hundreds of random inputs per test, finding edge cases manual tests miss.",
+        "Automatic shrinking: when a failing case is found, Hypothesis minimizes it to the simplest reproducing example.",
+        "@composite strategy lets you build dependent generators where one drawn value constrains the next.",
+        "Works seamlessly with pytest fixtures, markers, and parametrize decorators.",
+        "Database persistence: failing examples are saved and replayed on future runs for regression catching."
+      ],
+      "tradeoffs": [
+        "Tests run slower than unit tests due to many generated inputs (default 100 examples per test).",
+        "Requires thinking in terms of properties and invariants rather than specific input/output pairs.",
+        "assume() and filter() can discard many generated values, reducing effective coverage if overused."
+      ],
+      "best_for": [
+        "Testing pure functions, serialization round-trips, and mathematical invariants.",
+        "Finding edge cases in parsers, validators, data transformations, and encoding/decoding logic.",
+        "Complementing example-based tests with generative property-based coverage."
+      ],
+      "avoid_when": [
+        "The function under test has complex side effects that are expensive to set up and tear down.",
+        "Properties are difficult to express (e.g., the only specification is 'it matches the expected output')."
+      ],
+      "pairs_with": ["pytest", "Pydantic", "FastAPI"],
+      "capabilities": ["property-testing", "shrinking", "composite-strategies", "stateful-testing", "regression-database"],
+      "best_practices": [
+        "Start with simple strategies (st.integers, st.text, st.lists) and compose with .map() and .filter().",
+        "Use @composite for dependent generation where one value constrains subsequent draws.",
+        "Prefer .filter() on strategies over assume() in test body for clearer intent and less waste.",
+        "Combine @given with @pytest.mark.parametrize for orthogonal coverage dimensions.",
+        "Use st.data() for interactive drawing inside the test body when generation depends on computed state.",
+        "Set max_examples via settings profile for CI (more examples) vs local development (fewer examples).",
+        "Use hypothesis[cli] to manage the example database and reproduction across CI runs."
+      ],
+      "sources": [
+        "https://hypothesis.readthedocs.io/en/latest/quickstart.html",
+        "https://hypothesis.readthedocs.io/en/latest/reference/index.html"
+      ]
+    },
+    {
+      "name": "uv",
+      "aliases": ["uv", "astral-uv"],
+      "layer": "package-management",
+      "primary_languages": ["Python"],
+      "delivery_models": ["package-manager", "virtualenv-manager", "python-installer"],
+      "strengths": [
+        "10-100x faster than pip for dependency resolution and installation, written in Rust.",
+        "Unified tool: replaces pip, pip-tools, virtualenv, pyenv, and pipx in a single binary.",
+        "Universal lockfile (uv.lock) ensures deterministic cross-platform dependency resolution.",
+        "Built-in Python version management: uv python install and automatic version discovery.",
+        "uv run command auto-creates virtualenvs and runs scripts with proper dependency isolation."
+      ],
+      "tradeoffs": [
+        "Newer tool with less community documentation than pip/pipenv/poetry.",
+        "Some edge cases with legacy packages that rely on pip-specific installation behavior.",
+        "Lockfile format is uv-specific; not directly compatible with pip-tools requirements.txt."
+      ],
+      "best_for": [
+        "New Python projects wanting fast, modern dependency management with lockfiles.",
+        "CI/CD pipelines where installation speed directly impacts build times.",
+        "Monorepos and workspaces needing shared dependency resolution."
+      ],
+      "avoid_when": [
+        "The project is deeply integrated with poetry or pipenv and migration cost is high.",
+        "Legacy deployment systems require pip freeze / requirements.txt as the only supported format."
+      ],
+      "pairs_with": ["pytest", "Ruff", "FastAPI", "Docker", "GitHub Actions"],
+      "capabilities": ["fast-resolution", "lockfile", "python-management", "workspace-support", "script-runner"],
+      "best_practices": [
+        "Use uv init to scaffold new projects with pyproject.toml and uv.lock.",
+        "Run uv sync to install exact locked dependencies; use uv lock to update the lockfile.",
+        "Use uv run <command> instead of activating virtualenvs manually.",
+        "Define optional dependency groups in pyproject.toml for dev/test/docs extras.",
+        "Pin Python version with .python-version file for team consistency.",
+        "Use uv tool install for global CLI tools (ruff, mkdocs) without polluting project environments."
+      ],
+      "sources": [
+        "https://docs.astral.sh/uv/getting-started/"
+      ]
+    },
+    {
+      "name": "Prompt Engineering",
+      "aliases": ["prompt-engineering", "prompting"],
+      "layer": "ai-patterns",
+      "primary_languages": ["Natural language", "Cross-platform"],
+      "delivery_models": ["system-prompts", "structured-instructions", "agent-frameworks"],
+      "strengths": [
+        "Output contracts (format, length, section order) reduce drift and improve token efficiency.",
+        "Verification loops (correctness, grounding, formatting checks) catch errors before high-impact actions.",
+        "Completeness contracts with internal checklists and blocked-item marking prevent partial execution.",
+        "Tool persistence rules with dependency checks ensure prerequisite steps are not skipped.",
+        "Research mode (plan-retrieve-synthesize 3-pass) improves multi-source synthesis quality."
+      ],
+      "tradeoffs": [
+        "More explicit prompts increase input token cost; balance verbosity against accuracy gains.",
+        "Prompt patterns that work for large models may over-constrain small models (nano/mini).",
+        "Reasoning effort is not one-size-fits-all; higher effort increases latency without guaranteed quality gains."
+      ],
+      "best_for": [
+        "Agent systems requiring reliable tool use, structured output, and multi-step completion.",
+        "Production assistants needing consistent formatting, citation accuracy, and safety compliance.",
+        "Research and synthesis workflows needing disciplined evidence gathering and verification."
+      ],
+      "avoid_when": [
+        "Simple text generation where default model behavior is sufficient.",
+        "The application can enforce output structure through structured outputs (JSON Schema) instead."
+      ],
+      "pairs_with": ["OpenAI API", "Anthropic Claude API", "MCP", "Pydantic"],
+      "capabilities": ["output-contracts", "verification-loops", "completeness-tracking", "research-mode", "reasoning-effort-tuning"],
+      "best_practices": [
+        "Start with the smallest prompt that passes your evals; add blocks only when they fix a measured failure mode.",
+        "Use XML-like tags (<output_contract>, <verification_loop>, <tool_persistence_rules>) for clear section boundaries.",
+        "Define instruction priority explicitly: user instructions override defaults; safety constraints never yield.",
+        "For mid-conversation updates, use scoped <task_update> blocks that state scope, override, and carry-forward.",
+        "Default reasoning effort: none/low for execution-heavy; medium/high for research-heavy; xhigh only if evals prove benefit.",
+        "Add <empty_result_recovery> to handle partial or empty retrieval results with fallback strategies.",
+        "Separate persistent personality from per-response writing controls for customer-facing workflows.",
+        "Pin citation rules: only cite retrieved sources, never fabricate, attach to specific claims."
+      ],
+      "sources": [
+        "https://developers.openai.com/api/docs/guides/prompt-guidance",
+        "https://developers.openai.com/api/docs/guides/prompt-engineering"
+      ]
+    },
+    {
+      "name": "OWASP Authentication & REST Security",
+      "aliases": ["owasp-auth", "rest-security", "jwt-security"],
+      "layer": "security-patterns",
+      "primary_languages": ["Cross-language security patterns"],
+      "delivery_models": ["auth-architecture", "api-hardening", "compliance-controls"],
+      "strengths": [
+        "Layered authentication: password policy (min 8 w/MFA, max 64+, block breached passwords), MFA (stops 99.9% of compromises), adaptive/risk-based auth.",
+        "JWT validation discipline: verify issuer, audience, expiry, not-before, and algorithm; reject alg:none; prefer asymmetric signing.",
+        "REST hardening: restrict HTTP methods (405), validate Content-Type (406/415), enforce CORS, apply Cache-Control/HSTS/X-Content-Type-Options headers.",
+        "State machine patterns for out-of-order API execution prevention in multi-step workflows."
+      ],
+      "tradeoffs": [
+        "Comprehensive checklists require implementation effort proportional to the threat surface.",
+        "Generic error messages (prevent user enumeration) can frustrate UX; balance security with usability."
+      ],
+      "best_for": [
+        "APIs exposed to external consumers or mobile clients needing authentication hardening.",
+        "Multi-step workflows requiring CSRF protection, session management, and reauthentication for sensitive operations."
+      ],
+      "avoid_when": [
+        "Internal-only services behind strong network controls where simplified auth suffices.",
+        "The application has no user-facing authentication surface."
+      ],
+      "pairs_with": ["FastAPI", "Django", "NestJS", "OWASP API Security", "OpenTelemetry"],
+      "capabilities": ["password-policy", "mfa", "jwt-validation", "cors-hardening", "security-headers", "rate-limiting", "session-management"],
+      "best_practices": [
+        "Store passwords with Argon2id or bcrypt; never use MD5/SHA1 for password hashing.",
+        "Implement exponential backoff for failed login attempts; consider account lockout after threshold.",
+        "Use constant-time comparison for credential verification to prevent timing attacks.",
+        "Return generic error messages for auth failures: 'Login failed; Invalid user ID or password' prevents enumeration.",
+        "Validate JWT: check iss, aud, exp, nbf, and algorithm; reject tokens with alg:none.",
+        "Apply rate limiting with 429 status codes; use API keys for identification, not authentication.",
+        "Set security headers: Strict-Transport-Security, X-Content-Type-Options: nosniff, X-Frame-Options, Content-Security-Policy.",
+        "Require reauthentication for sensitive operations (password change, payment, admin actions)."
+      ],
+      "sources": [
+        "https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html",
+        "https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html"
+      ]
+    },
+    {
+      "name": "LangGraph",
+      "aliases": ["langgraph"],
+      "layer": "agentic-framework",
+      "primary_languages": ["Python", "TypeScript"],
+      "delivery_models": ["stateful-agent", "multi-agent", "human-in-the-loop", "streaming"],
+      "strengths": [
+        "StateGraph model with typed nodes, edges, and conditional routing enables complex agent topologies.",
+        "Durable execution: agents persist through failures and resume from exactly where they left off.",
+        "Human-in-the-loop via interrupt_before/interrupt_after lets humans inspect and modify state mid-execution.",
+        "MemorySaver for in-memory checkpointing; PostgreSQL and Redis backends for persistent cross-session state.",
+        "Subgraphs enable composable multi-agent systems with isolated state and independent lifecycle.",
+        "Streaming output at token, state, event, and message levels for responsive agent UX."
+      ],
+      "tradeoffs": [
+        "Low-level API requires more explicit state management than high-level agent frameworks.",
+        "Debugging complex graph topologies requires LangSmith or custom observability tooling.",
+        "Learning curve for StateGraph design patterns when coming from simple chain-based architecture."
+      ],
+      "best_for": [
+        "Complex multi-step agents needing durable state and failure recovery.",
+        "Stateful conversational flows requiring persistent memory across sessions.",
+        "Human-oversight workflows where agent state must be inspectable and modifiable.",
+        "Multi-agent architectures where independent subgraphs collaborate on a shared task."
+      ],
+      "avoid_when": [
+        "Simple single-turn LLM calls or basic retrieval pipelines that do not need stateful loops.",
+        "The team cannot maintain graph topology complexity without dedicated observability tooling."
+      ],
+      "pairs_with": ["OpenAI API", "Anthropic Claude API", "LangChain Retrieval Patterns", "Model Context Protocol", "PostgreSQL"],
+      "capabilities": ["stateful-graph", "conditional-routing", "checkpointing", "human-in-the-loop", "streaming", "multi-agent", "durable-execution"],
+      "best_practices": [
+        "Define state as a TypedDict or Pydantic model; use reducers for message accumulation.",
+        "Use MemorySaver during development; switch to PostgreSQL/Redis checkpointer for production persistence.",
+        "Use interrupt_before/interrupt_after to add human review gates without redesigning graph topology.",
+        "Decompose complex agents into subgraphs with clear input/output state boundaries.",
+        "Use streaming events to give users real-time feedback during long-running agent loops.",
+        "Pair with LangSmith for graph visualization, state transition tracing, and eval pipelines."
+      ],
+      "sources": [
+        "https://raw.githubusercontent.com/langchain-ai/langgraph/refs/heads/main/README.md",
+        "https://docs.langchain.com/oss/python/langgraph/overview"
+      ]
+    },
+    {
+      "name": "Instructor",
+      "aliases": ["instructor"],
+      "layer": "llm-tooling",
+      "primary_languages": ["Python", "TypeScript", "Ruby", "Go", "Elixir"],
+      "delivery_models": ["structured-extraction", "validation-retry", "streaming-extraction"],
+      "strengths": [
+        "Pydantic-based structured output extraction from 15+ LLM providers with a single unified API.",
+        "instructor.from_provider('openai/gpt-4o') pattern works across OpenAI, Anthropic, Gemini, and others.",
+        "Automatic validation retry with max_retries: invalid LLM outputs are re-requested until valid.",
+        "Streaming partial and iterable support for progressive extraction of structured objects.",
+        "Jinja templating for prompt composition and llm_validator for semantic field validation via LLM.",
+        "Hooks system for logging, monitoring, and tracing extraction calls.",
+        "3M+ monthly downloads; widely adopted for production LLM data pipelines."
+      ],
+      "tradeoffs": [
+        "Adds a library dependency around LLM API calls; debugging retry loops requires understanding the retry strategy.",
+        "Does not replace a full LLM gateway like LiteLLM; focused specifically on structured output extraction."
+      ],
+      "best_for": [
+        "Extracting structured data from unstructured text or LLM responses.",
+        "Applications needing Pydantic-validated LLM output with automatic retry on schema violations.",
+        "Multi-provider LLM applications where structured output format consistency is required."
+      ],
+      "avoid_when": [
+        "The application only needs raw LLM text output without structured parsing.",
+        "A full LLM gateway with cost tracking and provider routing is needed (use LiteLLM instead or alongside)."
+      ],
+      "pairs_with": ["OpenAI API", "Anthropic Claude API", "Google Gemini API", "Pydantic", "LiteLLM"],
+      "capabilities": ["structured-extraction", "validation-retry", "multi-provider", "streaming-extraction", "jinja-templating", "llm-validation"],
+      "best_practices": [
+        "Always define Pydantic response models with field descriptions; descriptions guide LLM output quality.",
+        "Use max_retries to handle transient schema violations; set a reasonable budget (2-3 retries).",
+        "Use create_with_completion to access raw API response alongside parsed model for debugging.",
+        "Use streaming iterables for list extraction to reduce time-to-first-result.",
+        "Add field-level validators (Pydantic @field_validator) for semantic constraints beyond JSON Schema."
+      ],
+      "sources": [
+        "https://python.useinstructor.com/"
+      ]
+    },
+    {
+      "name": "LiteLLM",
+      "aliases": ["litellm"],
+      "layer": "llm-gateway",
+      "primary_languages": ["Python"],
+      "delivery_models": ["library", "proxy-server", "router"],
+      "strengths": [
+        "Single completion() interface for 100+ LLM providers using OpenAI format: no per-provider SDK switching.",
+        "Router with automatic retry, fallback, and load-balancing across multiple model deployments.",
+        "Proxy Server (LLM Gateway): self-hosted OpenAI-compatible endpoint for all backend providers.",
+        "Virtual keys with per-key, per-team, and per-user spend budgets and rate limits.",
+        "Built-in cost tracking per response; supports Langfuse, MLflow, Helicone, and OpenTelemetry callbacks.",
+        "MCP gateway support and A2A agent protocol compatibility.",
+        "Consistent exception types across all providers for uniform error handling."
+      ],
+      "tradeoffs": [
+        "Proxy server adds infrastructure complexity; requires careful virtual key and budget management.",
+        "Provider abstraction may hide provider-specific features not exposed in the unified interface.",
+        "Router configuration for complex fallback trees requires careful upfront planning."
+      ],
+      "best_for": [
+        "Multi-provider LLM applications needing a single interface with fallback and cost control.",
+        "Teams running a shared LLM gateway for cost visibility, virtual key management, and provider flexibility.",
+        "Production agent systems requiring retry logic, load balancing, and observability across model calls."
+      ],
+      "avoid_when": [
+        "Single-provider applications where direct SDK offers sufficient control.",
+        "The team cannot maintain a proxy server deployment alongside the main application."
+      ],
+      "pairs_with": ["OpenAI API", "Anthropic Claude API", "Google Gemini API", "Model Context Protocol", "OpenTelemetry", "Instructor"],
+      "capabilities": ["multi-provider", "router-fallback", "llm-proxy", "virtual-keys", "cost-tracking", "observability-callbacks", "mcp-gateway"],
+      "best_practices": [
+        "Use litellm.Router for production: configure multiple deployments per model with retry and fallback policies.",
+        "Set up virtual keys in the Proxy Server for team/service isolation and budget enforcement.",
+        "Use success_callback and failure_callback for observability; hook into Langfuse or OpenTelemetry for tracing.",
+        "Use consistent model string format: 'provider/model-name' (e.g., 'anthropic/claude-3-5-sonnet-20241022').",
+        "Test fallback chains with mock failures before production; verify budget limits in staging."
+      ],
+      "sources": [
+        "https://docs.litellm.ai/docs/"
+      ]
+    },
+    {
+      "name": "Google Gemini API",
+      "aliases": ["gemini", "google-gemini", "gemini-api"],
+      "layer": "ai-llm",
+      "primary_languages": ["Python", "TypeScript", "REST"],
+      "delivery_models": ["chat-completion", "function-calling", "structured-output", "live-api", "multimodal"],
+      "strengths": [
+        "Gemini 2.5 Flash (frontier-class, cost-efficient) and Pro (best multimodal reasoning) models.",
+        "Million-token long context window enables full codebase, document corpus, or video ingestion in one request.",
+        "Native function calling and structured outputs via JSON Schema for schema-constrained generation.",
+        "Built-in tools: Google Search, URL Context, Code Execution, Maps, and computer use capabilities.",
+        "Live API for real-time low-latency voice and audio streaming with interruption handling.",
+        "Thinking mode for multi-step complex reasoning with transparent chain-of-thought.",
+        "OpenAI-compatible endpoint: existing openai library code works with a base_url swap.",
+        "google.genai Python SDK with async support and streaming."
+      ],
+      "tradeoffs": [
+        "Google infrastructure dependency; data residency and compliance requirements need careful review.",
+        "Some advanced tool capabilities (computer use) are in early access with evolving APIs.",
+        "Pricing model differs from OpenAI; long-context requests need cost modeling before production rollout."
+      ],
+      "best_for": [
+        "Applications needing very long context windows (millions of tokens) without chunking.",
+        "Multimodal tasks spanning text, vision, audio, and video in a single API.",
+        "Google ecosystem integrations where Search, Maps, or URL grounding add direct value."
+      ],
+      "avoid_when": [
+        "Strict data residency requirements that conflict with Google cloud regions.",
+        "The application is tightly coupled to OpenAI-specific features not covered by the compatibility layer."
+      ],
+      "pairs_with": ["LiteLLM", "Instructor", "Model Context Protocol", "Pydantic", "OpenTelemetry"],
+      "capabilities": ["long-context", "function-calling", "structured-outputs", "multimodal", "live-api", "built-in-tools", "thinking-mode", "openai-compatible"],
+      "best_practices": [
+        "Use the OpenAI-compatible endpoint for easy migration from existing OpenAI-based code.",
+        "Use structured outputs with JSON Schema for schema-constrained responses; avoids prompt-only formatting.",
+        "Leverage Google Search tool for grounded, citation-backed responses to factual queries.",
+        "Use URL Context tool to ground responses on specific web pages without manual fetch-and-paste.",
+        "Test long-context requests with representative payload sizes before committing to the context strategy.",
+        "Use thinking mode for complex multi-step reasoning; disable for simple tasks to reduce cost and latency."
+      ],
+      "sources": [
+        "https://ai.google.dev/gemini-api/docs"
+      ]
+    },
+    {
+      "name": "Hugging Face Transformers",
+      "aliases": ["transformers", "huggingface", "hf-transformers"],
+      "layer": "ml-framework",
+      "primary_languages": ["Python"],
+      "delivery_models": ["inference", "fine-tuning", "model-serving"],
+      "strengths": [
+        "Framework for 1M+ pretrained model checkpoints on Hugging Face Hub covering text, vision, audio, video, and multimodal tasks.",
+        "Pipeline class for simple single-line inference: text-generation, ASR, image-segmentation, zero-shot-classification, and more.",
+        "Trainer class for fine-tuning with mixed precision, torch.compile, FlashAttention, and distributed training (FSDP, DeepSpeed).",
+        "generate() method for LLM text generation with sampling, beam search, greedy decode, and streaming.",
+        "Pivot to any inference backend: vLLM, SGLang, TGI (Text Generation Inference), Axolotl, Unsloth.",
+        "3-class architecture: PretrainedConfig (model params), PreTrainedModel (forward pass), Preprocessor (tokenizers/processors).",
+        "Strong community: model cards, datasets, spaces, and Hugging Face Hub integration."
+      ],
+      "tradeoffs": [
+        "Full training stack adds significant dependency weight; use Pipeline for inference-only use cases.",
+        "GPU memory management requires attention; large models need quantization or multi-GPU setup.",
+        "Model license diversity on Hub requires per-model license review before production deployment."
+      ],
+      "best_for": [
+        "Teams loading and fine-tuning open-weight models for specialized domain tasks.",
+        "Inference pipelines over Hub models without building custom model loading code.",
+        "ML experiments that need to pivot across training backends (DeepSpeed, FSDP) or inference backends (vLLM, TGI)."
+      ],
+      "avoid_when": [
+        "The application only calls hosted LLM APIs and does not need local model loading.",
+        "Deployment environment cannot support heavy Python ML dependencies (torch, transformers, etc.)."
+      ],
+      "pairs_with": ["Polars", "DuckDB", "pytest", "uv", "OpenTelemetry"],
+      "capabilities": ["pretrained-models", "pipeline-inference", "fine-tuning", "text-generation", "vision", "audio", "multimodal", "hub-integration"],
+      "best_practices": [
+        "Use pipeline() for quick inference experiments; switch to model + tokenizer for production control.",
+        "Set device_map='auto' for automatic multi-GPU/CPU offload when loading large models.",
+        "Use BitsAndBytesConfig for 4-bit/8-bit quantization to reduce GPU memory requirements.",
+        "Use Trainer with gradient_checkpointing=True and mixed_precision='bf16' for efficient fine-tuning.",
+        "Always review model licenses on the Hub before deploying in production; not all are permissive.",
+        "Pin model revisions (commit hash) in production to prevent silent model updates."
+      ],
+      "sources": [
+        "https://huggingface.co/docs/transformers/index"
+      ]
+    },
+    {
+      "name": "Qdrant",
+      "aliases": ["qdrant"],
+      "layer": "vector-store",
+      "primary_languages": ["Python", "TypeScript", "Rust", "Java", "C#", "Go"],
+      "delivery_models": ["self-hosted", "cloud-managed", "docker", "in-memory"],
+      "strengths": [
+        "AI-native vector search engine built for production: HNSW indexing with high recall and low latency.",
+        "Vector quantization (scalar, product, binary) for significant memory reduction with minimal recall loss.",
+        "Multi-tenancy support: per-tenant isolated namespaces for SaaS workloads.",
+        "Distributed deployment for billion-scale vector search across shards.",
+        "Named vectors allow multiple embedding models per document in a single collection.",
+        "Rich payload support with filtering: search vectors filtered by structured metadata.",
+        "Python qdrant-client, REST, and gRPC interfaces; local in-memory mode for development."
+      ],
+      "tradeoffs": [
+        "Self-hosted deployment requires Qdrant infrastructure management and monitoring.",
+        "HNSW index requires all vectors in memory for full performance; plan capacity for vector size times collection size.",
+        "Cloud offering newer than competitors; evaluate SLA requirements for production workloads."
+      ],
+      "best_for": [
+        "Production vector search with quantization, multi-tenancy, and named vectors.",
+        "High-volume semantic search pipelines requiring distributed deployment at billion-scale.",
+        "Projects that need self-hosted vector storage with no data leaving their infrastructure."
+      ],
+      "avoid_when": [
+        "A lightweight embedded vector store (ChromaDB) is sufficient for the scale.",
+        "The team cannot maintain self-hosted Qdrant or budget for managed cloud."
+      ],
+      "pairs_with": ["OpenAI API", "Anthropic Claude API", "LangChain Retrieval Patterns", "LlamaIndex", "Instructor", "Hugging Face Transformers"],
+      "capabilities": ["hnsw-index", "vector-quantization", "multi-tenancy", "named-vectors", "payload-filtering", "distributed", "grpc-rest"],
+      "best_practices": [
+        "Use scalar quantization as the default first step to reduce memory 4x with minimal recall loss.",
+        "Create payload indexes on frequently filtered fields before loading data for fast filtered search.",
+        "Use named vectors to store multiple embedding model outputs (e.g., sparse + dense) per document.",
+        "Use QdrantClient(location=':memory:') for local tests; switch to URL for integration tests.",
+        "Set on_disk=True for payload and vectors when collection exceeds available RAM.",
+        "Monitor collection segment state; run optimize for collections with many deleted vectors."
+      ],
+      "sources": [
+        "https://qdrant.tech/documentation/",
+        "https://qdrant.tech/documentation/quickstart/"
+      ]
+    },
+    {
+      "name": "Polars",
+      "aliases": ["polars"],
+      "layer": "data-processing",
+      "primary_languages": ["Python", "Rust"],
+      "delivery_models": ["in-process", "streaming", "lazy-evaluation"],
+      "strengths": [
+        "Written in Rust; delivers C/C++-level performance with automatic multi-core parallelism.",
+        "Lazy evaluation API with query optimizer reduces memory allocations and enables predicate pushdown.",
+        "Streaming API processes out-of-core datasets larger than available RAM.",
+        "Apache Arrow compatible for zero-copy interop with other Arrow-native tools.",
+        "GPU support (NVIDIA, open beta) for further acceleration of DataFrame operations.",
+        "SQL interface via pl.SQLContext for teams preferring SQL over DataFrame API.",
+        "First-class cloud storage I/O (S3, GCS, Azure) and database connectors.",
+        "Hugging Face datasets integration; scan_parquet and scan_csv for lazy file reading."
+      ],
+      "tradeoffs": [
+        "API differs significantly from pandas; teams migrating need upfront investment in new idioms.",
+        "Lazy API debugging is less intuitive; .collect() is required to materialize results.",
+        "GPU support is experimental; not production-ready for all operations."
+      ],
+      "best_for": [
+        "Data pipelines requiring high-throughput DataFrame processing with low memory overhead.",
+        "ETL, feature engineering, and analytics workloads that outgrow pandas performance limits.",
+        "Teams processing datasets larger than RAM using the streaming API."
+      ],
+      "avoid_when": [
+        "The team needs the broad pandas ecosystem compatibility (matplotlib, scikit-learn integrations).",
+        "Simple low-volume data transforms where pandas familiarity outweighs performance gains."
+      ],
+      "pairs_with": ["DuckDB", "PostgreSQL", "Hugging Face Transformers", "pytest", "uv"],
+      "capabilities": ["lazy-evaluation", "streaming", "multi-core", "arrow-native", "sql-interface", "cloud-io", "gpu-acceleration"],
+      "best_practices": [
+        "Prefer the lazy API (pl.scan_csv, pl.scan_parquet) and defer .collect() to the last step.",
+        "Use predicate pushdown and projection pushdown: filter and select early in the lazy chain.",
+        "Use pl.String consistently; avoid mixing Python strings and Polars string types.",
+        "Use .with_columns() for vectorized column creation instead of row-wise apply.",
+        "Use streaming=True in .collect() for datasets that exceed available RAM.",
+        "Use pl.SQLContext for SQL-familiar teams: register DataFrames and query with SQL."
+      ],
+      "sources": [
+        "https://docs.pola.rs/"
+      ]
+    },
+    {
+      "name": "DuckDB",
+      "aliases": ["duckdb"],
+      "layer": "data-store",
+      "primary_languages": ["Python", "SQL", "R", "Node.js", "Java", "Go"],
+      "delivery_models": ["in-process", "file-based", "in-memory"],
+      "strengths": [
+        "In-process columnar SQL analytics engine: no server setup, just import and query.",
+        "Reads Parquet, CSV, JSON, Apache Arrow, and Iceberg natively without loading into memory.",
+        "Runs SQL directly on Pandas and Polars DataFrames without copy.",
+        "Cloud storage queries (S3, GCS, Azure Blob) with zero infrastructure setup.",
+        "10-100x faster than SQLite for analytical (OLAP) queries on columnar data.",
+        "Full SQL support including window functions, lateral joins, list comprehensions, and WITH RECURSIVE.",
+        "Zero external dependencies; embeds directly into Python with duckdb.connect().",
+        "File-based persistent DB or in-memory for ephemeral analytics sessions."
+      ],
+      "tradeoffs": [
+        "Not suitable for high-concurrency OLTP workloads; single-writer model limits write throughput.",
+        "No server mode; not appropriate as a shared remote database for multiple services.",
+        "For very large distributed datasets, Polars streaming or a data warehouse may be needed."
+      ],
+      "best_for": [
+        "Local data exploration, ETL pipelines, and feature engineering over Parquet/CSV files.",
+        "Analysts and data engineers who want SQL over files and DataFrames without a database server.",
+        "Lightweight analytical queries embedded in Python applications or notebooks."
+      ],
+      "avoid_when": [
+        "The workload requires concurrent transactional writes or shared multi-service access.",
+        "Data is already in a hosted data warehouse and DuckDB would duplicate infrastructure."
+      ],
+      "pairs_with": ["Polars", "PostgreSQL", "Hugging Face Transformers", "pytest", "Python Asyncio"],
+      "capabilities": ["in-process-sql", "parquet-native", "arrow-native", "cloud-storage-query", "dataframe-query", "zero-dependency"],
+      "best_practices": [
+        "Use duckdb.connect(':memory:') for ephemeral sessions; duckdb.connect('file.db') for persistence.",
+        "Use duckdb.read_parquet('s3://bucket/path/*.parquet') for S3 Parquet scans without boto3 setup.",
+        "Use duckdb.sql('SELECT * FROM df') to query Polars or pandas DataFrames directly by variable name.",
+        "Use COPY TO for efficient bulk export to Parquet, CSV, or JSON formats.",
+        "Prefer DuckDB over SQLite for any analytical query involving aggregations on large datasets.",
+        "Use EXPLAIN ANALYZE to inspect query plans and identify scan/join bottlenecks."
+      ],
+      "sources": [
+        "https://duckdb.org/docs/"
+      ]
+    },
+    {
+      "name": "Terraform",
+      "aliases": ["terraform", "tf"],
+      "layer": "infrastructure-as-code",
+      "primary_languages": ["HCL", "JSON"],
+      "delivery_models": ["local-cli", "hcp-terraform", "ci-cd-pipeline"],
+      "strengths": [
+        "Write/Plan/Apply workflow: declare desired state in HCL, preview changes with plan, then apply.",
+        "Providers for AWS, Azure, GCP, Kubernetes, GitHub, Datadog, Splunk, and thousands more via Terraform Registry.",
+        "State file tracks real infrastructure as source of truth for drift detection and dependency resolution.",
+        "Modules enable reusable, composable infrastructure components shareable across teams.",
+        "Parallel resource creation via dependency graph: independent resources provisioned simultaneously.",
+        "HCP Terraform for team collaboration: remote state, policy enforcement, and audit logging.",
+        "Immutable infrastructure approach: replace rather than upgrade reduces snowflake configuration drift."
+      ],
+      "tradeoffs": [
+        "State file is sensitive; requires secure remote backend (S3+DynamoDB, HCP Terraform) for team use.",
+        "Provider ecosystem quality varies; some providers lag behind cloud provider API releases.",
+        "Plan/apply cycle adds latency compared to direct SDK calls; not suitable for imperative provisioning logic."
+      ],
+      "best_for": [
+        "Multi-cloud or hybrid cloud infrastructure declared as version-controlled code.",
+        "Teams that need infrastructure drift detection, plan-before-apply safety, and audit trails.",
+        "Provisioning repeatable environments (dev/staging/prod) from shared module libraries."
+      ],
+      "avoid_when": [
+        "Infrastructure changes are highly dynamic or require complex imperative logic (use Pulumi or CDK).",
+        "A single cloud provider with strong managed IaC tooling reduces cognitive overhead for the team."
+      ],
+      "pairs_with": ["Docker", "Kubernetes", "GitHub Actions"],
+      "capabilities": ["infrastructure-as-code", "plan-apply-workflow", "state-management", "provider-ecosystem", "modules", "drift-detection"],
+      "best_practices": [
+        "Always run terraform plan before apply in CI/CD; never apply without reviewing the plan output.",
+        "Store state in a remote backend (S3+DynamoDB or HCP Terraform); never commit state files to git.",
+        "Use workspaces or directory-per-environment patterns for dev/staging/prod isolation.",
+        "Pin provider versions in required_providers to prevent breaking changes from provider updates.",
+        "Use terraform fmt and terraform validate in pre-commit hooks for consistent HCL style.",
+        "Use modules for reusable patterns; publish to internal module registry for team-wide reuse."
+      ],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/intro"
+      ]
+    },
+    {
+      "name": "Supabase",
+      "aliases": ["supabase"],
+      "layer": "baas-platform",
+      "primary_languages": ["Python", "TypeScript", "JavaScript", "Dart", "Swift", "Kotlin"],
+      "delivery_models": ["cloud-hosted", "self-hosted", "local-dev"],
+      "strengths": [
+        "Full-stack platform: PostgreSQL + Auth + Storage + Realtime + Edge Functions + pgvector in one service.",
+        "Row Level Security (RLS) on all PostgreSQL tables provides per-row access control at the database layer.",
+        "Auth module supports email/password, OAuth (GitHub, Google, etc.), magic link, and mobile providers.",
+        "Realtime subscriptions to PostgreSQL change events; broadcast and presence channels.",
+        "Storage with RLS access policies for file and media management.",
+        "AI & Vectors module: pgvector integration with built-in embedding generation and similarity search via REST.",
+        "Queues (pgmq) and Cron (pg_cron) modules for async jobs and scheduled tasks without separate infrastructure.",
+        "REST API and GraphQL API auto-generated from schema; Python, JS, Flutter, Swift, Kotlin clients.",
+        "Self-hostable via Docker for data residency and compliance requirements."
+      ],
+      "tradeoffs": [
+        "Supabase client libraries abstract direct PostgreSQL access; complex queries may need raw SQL via RPC.",
+        "Self-hosting requires maintaining multiple interconnected Supabase services.",
+        "Vendor lock-in risk: while PostgreSQL is portable, Supabase Auth and Storage have proprietary APIs."
+      ],
+      "best_for": [
+        "Full-stack web and mobile apps needing auth, database, storage, and real-time without separate services.",
+        "Rapid product prototyping where a managed PostgreSQL backend reduces infrastructure overhead.",
+        "Teams that need pgvector AI search integrated directly with relational data and RLS policies."
+      ],
+      "avoid_when": [
+        "Complex relational schemas require direct PostgreSQL tooling not exposed by Supabase abstractions.",
+        "Data residency requirements conflict with available Supabase cloud regions and self-hosting overhead is prohibitive."
+      ],
+      "pairs_with": ["PostgreSQL", "pgvector", "Next.js", "React", "Playwright", "Pydantic"],
+      "capabilities": ["hosted-postgres", "auth", "realtime", "storage", "edge-functions", "pgvector", "rls", "rest-api", "queues", "cron"],
+      "best_practices": [
+        "Enable RLS on every table from the start; disable only for internal service tables with explicit justification.",
+        "Use supabase-py with the anon key for public client access; service_role key only in secure server contexts.",
+        "Define database changes as SQL migrations in supabase/migrations/ for reproducible schema evolution.",
+        "Use Supabase local dev (supabase start) for consistent local development and migration testing.",
+        "Use pgvector via the AI & Vectors module for semantic search embedded directly in PostgreSQL RLS policies.",
+        "Never expose the service_role key to client-side code; always use per-user JWT tokens for client auth."
+      ],
+      "sources": [
+        "https://supabase.com/docs"
+      ]
+    },
+    {
+      "name": "pre-commit",
+      "aliases": ["pre-commit", "precommit"],
+      "layer": "code-quality",
+      "primary_languages": ["Python", "Node.js", "Ruby", "Rust", "Go", "Julia", "R"],
+      "delivery_models": ["git-hooks", "ci-pipeline"],
+      "strengths": [
+        "Multi-language pre-commit hook manager: one tool coordinates hooks across all project languages.",
+        ".pre-commit-config.yaml declares repos, hooks, and revision pins for reproducible hook configuration.",
+        "pre-commit install sets up git hooks; pre-commit run --all-files for CI full-repo validation.",
+        "pre-commit autoupdate keeps hook revisions current with upstream releases.",
+        "Hook stages cover pre-commit, pre-push, commit-msg, prepare-commit-msg, and post-checkout.",
+        "Local hooks for repo-specific scripts without publishing a separate hook package.",
+        "CI integration: GitHub Actions, GitLab, CircleCI, and Azure Pipelines all have pre-commit patterns."
+      ],
+      "tradeoffs": [
+        "Adds per-commit latency; slow hooks (mypy, full test suite) should be moved to pre-push or CI only.",
+        "Hook environment isolation requires each hook to install its dependencies; initial setup downloads are slow.",
+        "Bypassing with --no-verify is always possible; needs CI enforcement to be a hard gate."
+      ],
+      "best_for": [
+        "Enforcing code quality, formatting, and linting consistently across all contributors.",
+        "Preventing common issues (trailing whitespace, YAML syntax errors, secrets) before they reach CI.",
+        "Large codebases with multiple languages needing unified hook management."
+      ],
+      "avoid_when": [
+        "The team has strong CI-only quality gates and local hooks add friction without clear benefit.",
+        "Hooks are so slow they frequently get bypassed with --no-verify, defeating the purpose."
+      ],
+      "pairs_with": ["Ruff", "mypy", "GitHub Actions", "uv"],
+      "capabilities": ["git-hooks", "multi-language", "ci-integration", "autoupdate", "local-hooks", "hook-stages"],
+      "best_practices": [
+        "Pin hook revisions to tags (rev: v0.x.y) in .pre-commit-config.yaml; run autoupdate in CI quarterly.",
+        "Keep pre-commit hooks fast (Ruff, trailing-whitespace, check-yaml); move slow checks (mypy, tests) to pre-push.",
+        "Run pre-commit run --all-files in CI as a required status check to prevent hook bypass drift.",
+        "Use the standard hooks repo (pre-commit/pre-commit-hooks) for trailing-whitespace, end-of-file-fixer, check-yaml, check-json.",
+        "Add detect-secrets or gitleaks hook to prevent accidental credential commits.",
+        "Use stages: [pre-push] on expensive hooks to balance developer experience with quality enforcement."
+      ],
+      "sources": [
+        "https://pre-commit.com/"
+      ]
+    },
+    {
+      "name": "mypy",
+      "aliases": ["mypy"],
+      "layer": "type-safety",
+      "primary_languages": ["Python"],
+      "delivery_models": ["cli", "ci-pipeline", "ide-integration", "daemon"],
+      "strengths": [
+        "Official Python static type checker; catches type errors before runtime across entire codebases.",
+        "--strict flag enables all optional error checks: disallow_untyped_defs, disallow_any_generics, warn_return_any, etc.",
+        "Protocol support for structural subtyping: define interfaces without inheritance.",
+        "TypeGuard/TypeIs for custom type narrowing functions in isinstance-style patterns.",
+        "TypedDict for typed dictionary schemas; Literal types for restricted value sets.",
+        "Generics with TypeVar, ParamSpec, and TypeVarTuple for type-safe higher-order functions.",
+        "Incremental mode caches results for fast re-checks; mypy daemon (dmypy) for persistent background checking.",
+        "Per-module configuration allows gradual adoption: strict on new modules, lenient on legacy code."
+      ],
+      "tradeoffs": [
+        "Full --strict adoption on an existing untyped codebase requires significant annotation investment.",
+        "Some dynamic Python patterns (metaprogramming, heavy use of **kwargs) resist clean type annotation.",
+        "False positives in complex generic code may require type: ignore suppressions with error codes."
+      ],
+      "best_for": [
+        "Large Python codebases where type errors across module boundaries are a common failure mode.",
+        "Libraries and frameworks where public API contracts must be statically verifiable by consumers.",
+        "Teams adopting gradual typing: start permissive, tighten per-module over time."
+      ],
+      "avoid_when": [
+        "Small scripts or notebooks where type annotation overhead exceeds the benefit.",
+        "Heavy dynamic Python metaclass patterns that fundamentally resist static analysis."
+      ],
+      "pairs_with": ["Python Typing", "Ruff", "pre-commit", "pytest", "uv"],
+      "capabilities": ["static-type-checking", "strict-mode", "protocol", "typeguard", "typevar", "incremental", "daemon-mode", "per-module-config"],
+      "best_practices": [
+        "Configure mypy in pyproject.toml under [tool.mypy]; set python_version and enable strict mode per module.",
+        "Start with strict = false and enable checks incrementally: disallow_untyped_defs first, then warn_return_any.",
+        "Use # type: ignore[error-code] for unavoidable suppressions; never use bare # type: ignore.",
+        "Use Protocol for structural interfaces rather than ABCs when inheritance is not semantically meaningful.",
+        "Use dmypy for fast incremental checks in development; run full mypy in CI on the complete codebase.",
+        "Use from __future__ import annotations for forward references and improved annotation performance.",
+        "Add mypy to pre-commit hooks with stages: [pre-push] to avoid per-commit latency."
+      ],
+      "sources": [
+        "https://mypy.readthedocs.io/en/stable/"
+      ]
+    }
+  ],
+  "integration_patterns": [
+    {
+      "name": "Server-rendered product monolith",
+      "fit_for": ["admin-heavy apps", "business systems", "content and forms workflows"],
+      "components": ["Django", "PostgreSQL", "Redis", "Celery", "Playwright"],
+      "notes": [
+        "Choose when a single team can own product, data, auth, admin, and operational workflows together.",
+        "Prefer over premature service decomposition when speed and governance matter more than independent deployment."
+      ]
+    },
+    {
+      "name": "SPA plus API",
+      "fit_for": ["internal tools", "rich dashboards", "separate frontend/backend ownership"],
+      "components": ["React", "Vite", "FastAPI or NestJS", "PostgreSQL", "Playwright"],
+      "notes": [
+        "Keep the backend API as the system contract and let the SPA stay deployment-independent.",
+        "Use when SSR and BFF behavior add little product value."
+      ]
+    },
+    {
+      "name": "SSR or BFF web platform",
+      "fit_for": ["SEO-sensitive apps", "route-level personalization", "tight auth and data coupling"],
+      "components": ["Next.js", "PostgreSQL", "Prisma", "Playwright", "OpenTelemetry"],
+      "notes": [
+        "Choose when route rendering, mutation, caching, and auth should be designed together.",
+        "Set strict boundaries between server components, route handlers, and external services early."
+      ]
+    },
+    {
+      "name": "API plus background workers",
+      "fit_for": ["automation", "async processing", "export or ingest pipelines"],
+      "components": ["FastAPI", "PostgreSQL", "Redis", "Celery", "OpenTelemetry"],
+      "notes": [
+        "Keep request handlers thin and move non-immediate work to jobs.",
+        "Do not treat queues as durable workflow state unless the job model truly stays short-lived."
+      ]
+    },
+    {
+      "name": "Durable workflow platform",
+      "fit_for": ["approvals", "provisioning", "multi-step integrations", "human-in-the-loop flows"],
+      "components": ["FastAPI or NestJS", "Temporal", "PostgreSQL", "OpenTelemetry"],
+      "notes": [
+        "Choose when retries, waits, timers, and state transitions must be visible and durable.",
+        "Prefer over ad hoc chained jobs when the process itself is a product concern."
+      ]
+    },
+    {
+      "name": "Hybrid retrieval system",
+      "fit_for": ["internal knowledge systems", "policy-aware assistants", "doc plus metadata search"],
+      "components": ["PostgreSQL", "pgvector", "LangChain Retrieval Patterns", "OpenTelemetry"],
+      "notes": [
+        "Keep source-of-truth metadata and relations structured, then layer lexical and semantic retrieval over them.",
+        "Do not let embeddings become the authority model."
+      ]
+    },
+    {
+      "name": "LLM-powered agent platform",
+      "fit_for": ["AI assistants", "tool-using agents", "multi-step automation"],
+      "components": ["OpenAI API or Anthropic Claude API", "MCP", "Pydantic", "FastAPI", "ChromaDB or Weaviate"],
+      "notes": [
+        "Use function calling or MCP tool servers for structured agent actions.",
+        "Validate all LLM outputs through Pydantic models before executing side effects.",
+        "Start with deterministic tool orchestration before adding agentic autonomy."
+      ]
+    },
+    {
+      "name": "RAG pipeline with evaluation",
+      "fit_for": ["knowledge-base Q&A", "document search", "context-augmented generation"],
+      "components": ["LlamaIndex or LangChain", "ChromaDB or pgvector", "OpenAI API", "Pydantic", "pytest"],
+      "notes": [
+        "Follow the five RAG stages: loading, indexing, storing, querying, evaluation.",
+        "Measure retrieval quality separately from generation quality.",
+        "Optimize in order: prompt engineering, then RAG retrieval tuning, then fine-tuning only if needed."
+      ]
+    },
+    {
+      "name": "Python CI/CD quality pipeline",
+      "fit_for": ["Python projects", "open-source libraries", "team codebases"],
+      "components": ["Ruff", "pytest", "GitHub Actions", "Pydantic", "Docker"],
+      "notes": [
+        "Ruff replaces flake8+isort+black as a single fast linter/formatter.",
+        "Use GitHub Actions matrix builds for multi-Python-version testing.",
+        "Pin action versions by SHA, use OIDC for cloud auth, and never interpolate secrets in run scripts."
+      ]
+    },
+    {
+      "name": "Security-hardened API service",
+      "fit_for": ["public APIs", "multi-tenant platforms", "regulated industries"],
+      "components": ["FastAPI or Django", "OWASP API Security", "OWASP Authentication & REST Security", "Pydantic", "PostgreSQL", "OpenTelemetry"],
+      "notes": [
+        "Apply OWASP API Security Top 10 as a design review checklist, not just a post-hoc audit.",
+        "Use Pydantic strict mode for input validation at API boundaries.",
+        "Implement object-level authorization checks in every data access path.",
+        "Use Argon2id/bcrypt for password hashing; require MFA for sensitive operations.",
+        "Set security headers (HSTS, X-Content-Type-Options, CSP) on every response."
+      ]
+    },
+    {
+      "name": "Async Python microservice",
+      "fit_for": ["high-concurrency APIs", "I/O-bound services", "real-time data processing"],
+      "components": ["FastAPI", "Python Asyncio", "PostgreSQL", "Redis", "OpenTelemetry", "Python Logging"],
+      "notes": [
+        "Use asyncio TaskGroup for structured concurrency: automatic cancellation on failure, ExceptionGroup propagation.",
+        "Use asyncio.to_thread for blocking I/O calls (file operations, legacy sync libraries).",
+        "Use logger = logging.getLogger(__name__) for hierarchical log namespacing across modules.",
+        "Use LoggerAdapter to inject request-scoped context (request_id, trace_id) into all log entries."
+      ]
+    },
+    {
+      "name": "Type-safe Python application",
+      "fit_for": ["libraries", "frameworks", "large team codebases", "domain-driven design"],
+      "components": ["Python Typing", "Python Dataclasses", "Pydantic", "Ruff", "pytest", "Hypothesis"],
+      "notes": [
+        "Use Protocol for structural interfaces, TypeVar with bounds for generic functions, ParamSpec for decorator typing.",
+        "Use frozen=True dataclasses for value objects; slots=True for memory optimization.",
+        "Use Pydantic for external input validation at API boundaries; dataclasses for internal data containers.",
+        "Use Hypothesis property-based testing for data transformation invariants and serialization round-trips.",
+        "Run mypy or pyright in CI alongside Ruff for comprehensive static analysis."
+      ]
+    },
+    {
+      "name": "AI agent with prompt discipline",
+      "fit_for": ["LLM-powered assistants", "tool-using agents", "research automation"],
+      "components": ["OpenAI API or Anthropic Claude API", "Prompt Engineering", "MCP", "Pydantic", "FastAPI", "Python Logging"],
+      "notes": [
+        "Use output contracts, verification loops, and completeness contracts for reliable multi-step execution.",
+        "Start with reasoning_effort: none/low for execution-heavy tasks; medium/high for research-heavy; tune by eval results.",
+        "Use strict mode for function calls and structured outputs; validate all LLM outputs through Pydantic before acting.",
+        "Implement tool persistence rules with dependency checks to prevent prerequisite skipping.",
+        "Use research mode (plan-retrieve-synthesize) for multi-source evidence gathering workflows."
+      ]
+    },
+    {
+      "name": "ML inference pipeline",
+      "fit_for": ["ML model serving", "feature engineering", "AI-powered data pipelines"],
+      "components": ["Hugging Face Transformers", "Polars", "FastAPI", "OpenTelemetry"],
+      "notes": [
+        "Use Polars for high-throughput data preprocessing and feature extraction before model inference.",
+        "Serve inference via FastAPI with structured Pydantic response models; instrument all calls with OpenTelemetry.",
+        "Pin model revisions by commit hash in production; review licenses before deployment."
+      ]
+    },
+    {
+      "name": "Full-spectrum LLM multi-agent system",
+      "fit_for": ["production multi-agent AI", "multi-provider LLM platforms", "AI automation with human oversight"],
+      "components": ["LiteLLM", "Instructor", "LangGraph", "Model Context Protocol", "Pydantic", "PostgreSQL", "OpenTelemetry"],
+      "notes": [
+        "Use LiteLLM as the unified gateway for provider flexibility, cost tracking, and fallback routing.",
+        "Use Instructor for structured extraction with automatic validation retry across all providers.",
+        "Use LangGraph for stateful multi-step agent graphs with checkpointing and human-in-the-loop gates.",
+        "Expose tools via MCP servers for standardized discovery across agent hosts.",
+        "Validate all LLM outputs through Pydantic before executing side effects.",
+        "Store agent checkpoints and conversation state in PostgreSQL; instrument with OpenTelemetry."
+      ]
+    }
+  ],
+  "retrieval_guidance": {
+    "principles": [
+      "Structured facts, ownership rules, and dependency edges should remain authoritative.",
+      "Lexical and semantic retrieval should be treated as ranking layers over authoritative structure.",
+      "Hybrid retrieval is preferable to vector-only retrieval when compliance, ownership, or workflow order matters.",
+      "Two-step retrieval is the default; agentic retrieval should be added only when deterministic retrieval is insufficient.",
+      "Optimize in order: prompt engineering first, then evaluation, then RAG retrieval tuning, then fine-tuning only if needed.",
+      "Measure retrieval quality (precision/recall) separately from LLM generation quality (faithfulness/relevance).",
+      "Use cosine similarity as the default distance metric for text embeddings; L2 for normalized-space workloads.",
+      "Validate all LLM-generated outputs through typed schemas (Pydantic, JSON Schema) before acting on them.",
+      "Use structured outputs (JSON Schema with strict: true) to guarantee schema adherence rather than relying on prompt-only formatting instructions.",
+      "Apply verification loops (correctness, grounding, formatting, safety) before finalizing high-impact LLM actions."
+    ],
+    "recommended_layers": [
+      "Registry and state facts (deterministic, authoritative)",
+      "Document metadata, headings, and structured relations",
+      "Concern and dependency relations (graph-structured)",
+      "Lexical retrieval (BM25/TF-IDF over structured index)",
+      "Vector retrieval with embedding search (cosine similarity, HNSW index)",
+      "Optional reranking layer (cross-encoder models for result refinement)",
+      "Optional answer validation and grounding checks"
+    ],
+    "embedding_guidance": {
+      "default_model": "text-embedding-3-small (1536 dimensions, cosine similarity)",
+      "high_fidelity_model": "text-embedding-3-large (3072 dimensions, reducible via dimensions param)",
+      "tokenizer": "cl100k_base",
+      "best_practices": [
+        "Pre-clean text: remove newlines and redundant whitespace before embedding.",
+        "Use cosine similarity (equivalent to dot product on normalized vectors).",
+        "The dimensions parameter allows trading accuracy for smaller index size.",
+        "Chunk documents into semantically coherent sections rather than arbitrary size splits.",
+        "Include document metadata (title, section, source) in chunk context for better retrieval relevance."
+      ]
+    },
+    "vector_index_guidance": {
+      "hnsw": "Default for most workloads. Logarithmic search time, high memory. Tune ef for speed vs recall tradeoff.",
+      "flat": "Best for small collections or multi-tenant setups with <10k objects per tenant. Linear search time.",
+      "dynamic": "Auto-switches flat-to-HNSW at configurable threshold (default 10k). Good for growing multi-tenant datasets.",
+      "ivfflat": "pgvector clustering index. Faster than flat for large datasets but requires periodic re-clustering."
+    },
+    "search_type_guidance": {
+      "keyword_bm25": "Use when exact term matching matters (code identifiers, error messages, configuration keys).",
+      "vector_semantic": "Use when meaning matters more than exact words (natural language queries, concept search).",
+      "hybrid": "Combine BM25 and vector search for best coverage. Use alpha parameter to weight keyword vs semantic.",
+      "reranking": "Apply cross-encoder reranker on top-k results from initial retrieval for higher precision."
+    },
+    "prompt_engineering_guidance": {
+      "output_contracts": "Define exact sections, order, length limits, and format requirements. Apply verbosity controls to specific sections, not globally.",
+      "verification_loops": "Before finalizing: check correctness (requirements), grounding (context/tool outputs), formatting (schema/style), safety (irreversibility).",
+      "completeness_contracts": "Track internal checklist of deliverables. Mark blocked items with reason. For batches: determine scope, track progress, confirm coverage.",
+      "tool_persistence": "Use tools whenever they improve correctness. Don't stop early. If empty results, retry with alternate query/strategy/source.",
+      "research_mode": "3-pass: (1) plan 3-6 sub-questions, (2) retrieve and follow 1-2 second-order leads, (3) synthesize with citations.",
+      "reasoning_effort": "none/low for execution-heavy; medium/high for research-heavy; add completeness/verification first before raising effort.",
+      "citation_rules": "Only cite retrieved sources. Never fabricate citations/URLs/IDs. Attach citations to specific claims.",
+      "empty_result_recovery": "If lookup returns empty: do not conclude immediately. Try alternate query wording, broader filters, prerequisite lookup, or alternate source."
+    },
+    "function_calling_guidance": {
+      "openai_patterns": [
+        "Use strict: true on all function definitions for reliable JSON Schema conformance.",
+        "Keep functions under 20 per turn; use tool search for large tool surfaces.",
+        "Use namespaces to group related tools by domain.",
+        "Use tool_choice: 'required' when at least one call is expected; 'auto' for flexible routing.",
+        "Handle parallel function calls: iterate response.output for all function_call items.",
+        "Pass reasoning items back for reasoning models (GPT-5+)."
+      ],
+      "anthropic_patterns": [
+        "Handle agentic loop: check stop_reason for 'tool_use', execute, return tool_result, repeat.",
+        "Client tools execute in your code; server tools (web_search, code_execution) run on Anthropic infrastructure.",
+        "Tool definitions add ~313-346 tokens of system prompt overhead per request.",
+        "Use strict: true for guaranteed schema conformance."
+      ]
+    },
+    "avoid": [
+      "Treating embeddings as the only context layer",
+      "Mixing stale and canonical documents without authority ranking",
+      "Adding agentic retrieval before deterministic quality checks exist",
+      "Using raw chunk-and-embed without considering document structure and metadata",
+      "Skipping retrieval evaluation: always measure recall@k and precision@k before deploying",
+      "Relying on prompt-only formatting when structured outputs (JSON Schema) can enforce the contract",
+      "Using high reasoning effort as a first resort; add prompt structure before raising effort"
+    ],
+    "sources": [
+      "https://docs.langchain.com/oss/python/langchain/retrieval",
+      "https://github.com/pgvector/pgvector",
+      "https://developers.openai.com/api/docs/guides/embeddings",
+      "https://developers.openai.com/api/docs/guides/function-calling",
+      "https://developers.openai.com/api/docs/guides/structured-outputs",
+      "https://developers.openai.com/api/docs/guides/prompt-guidance",
+      "https://platform.claude.com/docs/en/docs/build-with-claude/tool-use",
+      "https://docs.llamaindex.ai/en/stable/understanding/rag/",
+      "https://docs.weaviate.io/weaviate/concepts/search",
+      "https://docs.trychroma.com/docs/overview/getting-started"
+    ]
+  }
+}

@@ -1,0 +1,4 @@
+# file: C:\ PYTHON APPS\PROGRAMSTART\scripts\programstart_init.py
+# hypothesis_version: 6.151.10
+
+['\n```', '## Project Setup', '## Start Here', '--attach-userjourney', '--attachment-source', '--core-problem', '--delivery-target', '--dest', '--dry-run', '--force', '--known-constraints', '--out-of-scope', '--owner', '--primary-user', '--product-shape', '--project-name', '--secondary-user', '--success-metric', '--team-size', '--variant', 'CORE_PROBLEM', 'DELIVERY_TARGET', 'Delivery target.', 'KNOWN_CONSTRAINTS', 'Known constraints.', 'ONE_LINE_DESCRIPTION', 'OUT_OF_SCOPE', 'Out-of-scope items.', 'PRIMARY_USER', 'PRODUCT_SHAPE', 'PROGRAMBUILD', 'PROJECT_NAME', 'README.md', 'SECONDARY_USER', 'SUCCESS_METRIC', 'Secondary user.', 'Success metric.', 'TEAM_SIZE', 'Team size.', 'USERJOURNEY', '__main__', '```', '```powershell', '```text\n', '```text\\n.*?\\n```', 'enterprise', 'lite', 'product', 'store_true', 'utf-8', 'uv sync --extra dev']

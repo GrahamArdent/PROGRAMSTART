@@ -12,6 +12,9 @@ concurrency:
   group: weekly-research-delta-${{ github.ref }}
   cancel-in-progress: false
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   generate-delta:
     runs-on: ubuntu-latest

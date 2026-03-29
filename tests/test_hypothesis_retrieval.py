@@ -61,10 +61,7 @@ def test_tokenize_nonempty_alphanums_produce_tokens(text: str) -> None:
 # ---------------------------------------------------------------------------
 
 _SIMPLE_INDEX = {
-    "documents": [
-        {"path": f"doc{i}.md", "title": f"Document {i}", "purpose": f"purpose {i}", "headings": []}
-        for i in range(5)
-    ],
+    "documents": [{"path": f"doc{i}.md", "title": f"Document {i}", "purpose": f"purpose {i}", "headings": []} for i in range(5)],
     "concerns": [],
     "knowledge_base": {"stacks": [], "integration_patterns": [], "retrieval_guidance": {}},
     "routes": [],
@@ -147,13 +144,9 @@ _STACK_NAMES = st.text(
 def test_build_corpus_chunk_count_matches_inputs(n_docs: int, n_stacks: int, n_concerns: int) -> None:
     """Number of document/stack/concern chunks should match input counts."""
     index = {
-        "documents": [
-            {"path": f"d{i}.md", "title": f"D{i}", "headings": []}
-            for i in range(n_docs)
-        ],
+        "documents": [{"path": f"d{i}.md", "title": f"D{i}", "headings": []} for i in range(n_docs)],
         "concerns": [
-            {"concern": f"c{i}", "owner_file": f"o{i}.md", "supporting_files": [], "system": "test"}
-            for i in range(n_concerns)
+            {"concern": f"c{i}", "owner_file": f"o{i}.md", "supporting_files": [], "system": "test"} for i in range(n_concerns)
         ],
         "knowledge_base": {
             "stacks": [

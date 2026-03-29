@@ -82,8 +82,10 @@ def test_rag_ask_calls_litellm_and_returns_response() -> None:
     """Verify that ask() falls back to litellm when instructor fails."""
     rag = _build_rag(_minimal_index())
 
-    with patch.object(rag, "_generate_structured", side_effect=ImportError("no instructor")), \
-         patch.object(rag, "_generate_litellm", return_value="Stage order is in PROGRAMBUILD.md."):
+    with (
+        patch.object(rag, "_generate_structured", side_effect=ImportError("no instructor")),
+        patch.object(rag, "_generate_litellm", return_value="Stage order is in PROGRAMBUILD.md."),
+    ):
         response = rag.ask("What is the stage order?")
 
     assert response.answer == "Stage order is in PROGRAMBUILD.md."
@@ -219,6 +221,7 @@ def test_system_prompt_includes_context_placeholder() -> None:
 def test_rag_assistant_default_model() -> None:
     """Default model should come from env or fallback."""
     import os
+
     orig = os.environ.pop("PROGRAMSTART_LLM_MODEL", None)
     try:
         chunks = programstart_retrieval.build_corpus(_minimal_index())

@@ -7,8 +7,8 @@ from scripts import (
     programstart_attach,
     programstart_impact,
     programstart_init,
-    programstart_research_delta,
     programstart_recommend,
+    programstart_research_delta,
     programstart_workflow_state,
 )
 from scripts.programstart_common import load_registry

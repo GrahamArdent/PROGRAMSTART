@@ -144,9 +144,7 @@ def test_knowledge_base_extended_sections() -> None:
                 related_items=["Temporal", "Celery"],
             )
         ],
-        relationships=[
-            KnowledgeRelation(subject="Temporal", relation="alternative_to", object="Celery")
-        ],
+        relationships=[KnowledgeRelation(subject="Temporal", relation="alternative_to", object="Celery")],
         comparisons=[
             VersionComparison(
                 name="Python 3.13 vs 3.14",

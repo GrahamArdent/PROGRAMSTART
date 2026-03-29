@@ -289,9 +289,7 @@ def find_file(index: dict[str, Any], file_path: str) -> dict[str, Any]:
     needle = file_path.lower()
     documents = [doc for doc in index["documents"] if needle in doc["path"].lower()]
     relations = [
-        relation
-        for relation in index["relations"]
-        if needle in relation["from"].lower() or needle in relation["to"].lower()
+        relation for relation in index["relations"] if needle in relation["from"].lower() or needle in relation["to"].lower()
     ]
     concerns = [
         concern
@@ -307,30 +305,24 @@ def matches_kb_text(needle: str, *values: Any) -> bool:
 
     def matches_text(value: str) -> bool:
         normalized_value = value.lower().replace("-", " ").replace("_", " ")
-        return needle in value.lower() or normalized_needle in normalized_value or all(
-            token in normalized_value for token in needle_tokens
+        return (
+            needle in value.lower()
+            or normalized_needle in normalized_value
+            or all(token in normalized_value for token in needle_tokens)
         )
 
     for value in values:
         if isinstance(value, str):
             if matches_text(value):
                 return True
-        if isinstance(value, list) and any(
-            isinstance(item, str)
-            and matches_text(item)
-            for item in value
-        ):
+        if isinstance(value, list) and any(isinstance(item, str) and matches_text(item) for item in value):
             return True
     return False
 
 
 def stack_relationships(knowledge_base: dict[str, Any], stack_matches: list[dict[str, Any]]) -> list[dict[str, Any]]:
     matched_names = {item["name"].lower() for item in stack_matches}
-    matched_aliases = {
-        alias.lower()
-        for item in stack_matches
-        for alias in item.get("aliases", [])
-    }
+    matched_aliases = {alias.lower() for item in stack_matches for alias in item.get("aliases", [])}
     needles = matched_names | matched_aliases
     return [
         item
@@ -341,11 +333,7 @@ def stack_relationships(knowledge_base: dict[str, Any], stack_matches: list[dict
 
 def stack_comparisons(knowledge_base: dict[str, Any], stack_matches: list[dict[str, Any]]) -> list[dict[str, Any]]:
     names = {item["name"].lower() for item in stack_matches}
-    aliases = {
-        alias.lower()
-        for item in stack_matches
-        for alias in item.get("aliases", [])
-    }
+    aliases = {alias.lower() for item in stack_matches for alias in item.get("aliases", [])}
     needles = names | aliases
     return [
         item
@@ -493,13 +481,11 @@ def query_context_index(
             or needle in item["owner_file"].lower()
             or any(needle in value.lower() for value in item.get("supporting_files", []))
         ]
-        relation_targets = {
-            item["path"].lower() for item in matched_documents
-        } | {
-            item["concern"].lower() for item in matched_concerns
-        } | {
-            item["owner_file"].lower() for item in matched_concerns
-        }
+        relation_targets = (
+            {item["path"].lower() for item in matched_documents}
+            | {item["concern"].lower() for item in matched_concerns}
+            | {item["owner_file"].lower() for item in matched_concerns}
+        )
         return {
             "documents": matched_documents,
             "concerns": matched_concerns,
@@ -512,11 +498,7 @@ def query_context_index(
                 or item["from"].lower() in relation_targets
                 or item["to"].lower() in relation_targets
             ],
-            "routes": [
-                item
-                for item in index["routes"]
-                if needle in item["path"].lower() or needle in item["purpose"].lower()
-            ],
+            "routes": [item for item in index["routes"] if needle in item["path"].lower() or needle in item["purpose"].lower()],
             "cli": [item for item in index["commands"]["cli"] if needle in item.lower()],
             "dashboard": [item for item in index["commands"]["dashboard"] if needle in item.lower()],
             "stacks": [

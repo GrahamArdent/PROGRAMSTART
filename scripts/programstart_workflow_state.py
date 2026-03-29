@@ -75,9 +75,7 @@ def preflight_problems(registry: dict[str, Any], system: str) -> list[str]:
     if system == "programbuild":
         problems.extend(programstart_validate.validate_authority_sync(registry))
 
-    changed_files = programstart_drift_check.load_changed_files(
-        argparse.Namespace(changed_file_list=None, files=None)
-    )
+    changed_files = programstart_drift_check.load_changed_files(argparse.Namespace(changed_file_list=None, files=None))
     if changed_files:
         drift_problems, _ = programstart_drift_check.evaluate_drift(registry, changed_files, system)
         problems.extend(drift_problems)

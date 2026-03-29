@@ -33,9 +33,7 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
 # Stop words — minimal set to improve BM25 precision
 # ---------------------------------------------------------------------------
 
-_STOP_WORDS: frozenset[str] = frozenset(
-    "a an and are as at be by for from has have in is it of on or the to was with".split()
-)
+_STOP_WORDS: frozenset[str] = frozenset("a an and are as at be by for from has have in is it of on or the to was with".split())
 
 _TOKEN_RE = re.compile(r"[a-z0-9_]+")
 
@@ -290,9 +288,7 @@ def build_corpus(index: dict[str, Any]) -> list[Chunk]:
 
     # Commands
     for cmd in index.get("commands", {}).get("cli", []):
-        chunks.append(
-            Chunk(source_type="command", source_id=f"cli:{cmd}", text=f"cli command {cmd}", metadata={"kind": "cli"})
-        )
+        chunks.append(Chunk(source_type="command", source_id=f"cli:{cmd}", text=f"cli command {cmd}", metadata={"kind": "cli"}))
     for cmd in index.get("commands", {}).get("dashboard", []):
         chunks.append(
             Chunk(
@@ -405,9 +401,7 @@ class EmbeddingStore:
         try:
             import chromadb  # type: ignore[import-untyped]
         except ImportError:
-            raise ImportError(
-                "ChromaDB is required for vector search. Install with: pip install chromadb"
-            ) from None
+            raise ImportError("ChromaDB is required for vector search. Install with: pip install chromadb") from None
 
         self.chunks = chunks
         if persist_path:
@@ -622,20 +616,18 @@ class RAGAssistant:
         try:
             import litellm  # type: ignore[import-untyped]
         except ImportError:
-            raise ImportError(
-                "LiteLLM is required for RAG. Install with: pip install 'programstart-workflow[rag]'"
-            ) from None
+            raise ImportError("LiteLLM is required for RAG. Install with: pip install 'programstart-workflow[rag]'") from None
 
         response = cast(
             Any,
             litellm.completion(
-            model=self.model,
-            messages=[
-                {"role": "system", "content": system_message},
-                {"role": "user", "content": user_message},
-            ],
-            temperature=0.1,
-            max_tokens=2048,
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": system_message},
+                    {"role": "user", "content": user_message},
+                ],
+                temperature=0.1,
+                max_tokens=2048,
             ),
         )
         return response.choices[0].message.content or ""
@@ -647,8 +639,7 @@ class RAGAssistant:
             import litellm  # type: ignore[import-untyped]
         except ImportError:
             raise ImportError(
-                "Instructor + LiteLLM are required for structured RAG. "
-                "Install with: pip install 'programstart-workflow[rag]'"
+                "Instructor + LiteLLM are required for structured RAG. Install with: pip install 'programstart-workflow[rag]'"
             ) from None
 
         client = instructor.from_litellm(litellm.completion)

@@ -63,10 +63,7 @@ def write_project_readme(
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description=(
-            "Initialize a new PROGRAMSTART project with stamped inputs and "
-            "optional USERJOURNEY attachment."
-        )
+        description=("Initialize a new PROGRAMSTART project with stamped inputs and optional USERJOURNEY attachment.")
     )
     parser.add_argument("--dest", required=True, help="Destination directory for the new planning package.")
     parser.add_argument("--project-name", required=True, help="Project name to stamp into generated files.")
@@ -142,7 +139,6 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":  # pragma: no cover
     warn_direct_script_invocation(
-        "'uv run programstart init --dest <folder> --project-name <name> "
-        "--product-shape <shape>' or 'pb init ...'"
+        "'uv run programstart init --dest <folder> --project-name <name> --product-shape <shape>' or 'pb init ...'"
     )
     raise SystemExit(main())

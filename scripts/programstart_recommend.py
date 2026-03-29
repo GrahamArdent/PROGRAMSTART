@@ -125,7 +125,7 @@ def build_recommendation(
 
     kickoff_files = list(registry.get("workflow_guidance", {}).get("kickoff", {}).get("files", []))
     next_commands = [
-        f"programstart init --dest <folder> --project-name <name> --variant {variant} --product-shape \"{product_shape}\"",
+        f'programstart init --dest <folder> --project-name <name> --variant {variant} --product-shape "{product_shape}"',
         "programstart validate --check bootstrap-assets",
         "programstart next",
         "programstart guide --system programbuild",
@@ -153,9 +153,7 @@ def load_recommendation_inputs(args: argparse.Namespace) -> tuple[str, set[str]]
     product_shape = normalize_shape(args.product_shape or kickoff_values.get("PRODUCT_SHAPE"))
     needs = {item.strip().lower() for item in (args.need or []) if item.strip()}
     inferred_text = " ".join(
-        value
-        for key, value in kickoff_values.items()
-        if key in {"CORE_PROBLEM", "ONE_LINE_DESCRIPTION", "KNOWN_CONSTRAINTS"}
+        value for key, value in kickoff_values.items() if key in {"CORE_PROBLEM", "ONE_LINE_DESCRIPTION", "KNOWN_CONSTRAINTS"}
     ).lower()
     if "ai" in inferred_text:
         needs.add("ai")
@@ -172,11 +170,7 @@ def print_recommendation(recommendation: ProjectRecommendation) -> None:
     print(f"- variant: {recommendation.variant}")
     print(f"- attach USERJOURNEY: {'yes' if recommendation.attach_userjourney else 'no'}")
     print(f"- archetype: {recommendation.archetype}")
-    suggested_stacks = (
-        ", ".join(recommendation.stack_names)
-        if recommendation.stack_names
-        else "none matched current KB"
-    )
+    suggested_stacks = ", ".join(recommendation.stack_names) if recommendation.stack_names else "none matched current KB"
     print(f"- suggested stacks: {suggested_stacks}")
     print("- rationale:")
     for item in recommendation.rationale:
@@ -190,9 +184,7 @@ def print_recommendation(recommendation: ProjectRecommendation) -> None:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(
-        description="Recommend the right PROGRAMSTART project setup and stack profile."
-    )
+    parser = argparse.ArgumentParser(description="Recommend the right PROGRAMSTART project setup and stack profile.")
     parser.add_argument(
         "--product-shape",
         help="Product shape, for example 'web app', 'CLI tool', or 'API service'.",

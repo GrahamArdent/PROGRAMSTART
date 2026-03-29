@@ -20,15 +20,16 @@ import subprocess
 import sys
 import time
 import urllib.request
+from io import TextIOWrapper
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PYTHON = sys.executable
 SERVER = ROOT / "scripts" / "programstart_serve.py"
 
-if hasattr(sys.stdout, "reconfigure"):
+if isinstance(sys.stdout, TextIOWrapper):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-if hasattr(sys.stderr, "reconfigure"):
+if isinstance(sys.stderr, TextIOWrapper):
     sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 

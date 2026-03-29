@@ -66,6 +66,9 @@ jobs:
   validate-process:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 45
+    env:
+      UV_CACHE_DIR: ${{ runner.temp }}/uv-cache
+      PRE_COMMIT_HOME: ${{ runner.temp }}/pre-commit-cache
     strategy:
       fail-fast: false
       matrix:
@@ -89,14 +92,14 @@ jobs:
       - name: Cache uv packages
         uses: actions/cache@v5
         with:
-          path: ~/.cache/uv
+          path: ${{ env.UV_CACHE_DIR }}
           key: uv-${{ runner.os }}-${{ hashFiles('uv.lock') }}
           restore-keys: uv-${{ runner.os }}-
 
       - name: Cache pre-commit hooks
         uses: actions/cache@v5
         with:
-          path: ~/.cache/pre-commit
+          path: ${{ env.PRE_COMMIT_HOME }}
           key: pre-commit-${{ runner.os }}-${{ hashFiles('.pre-commit-config.yaml') }}
           restore-keys: pre-commit-${{ runner.os }}-
 
@@ -124,8 +127,13 @@ jobs:
         run: uv run bandit -r scripts/ -ll --skip "B101,B310" -x tests/
 
       - name: Dependency audit (pip-audit)
-        run: uv run pip-audit --desc
-        continue-on-error: true
+        shell: pwsh
+        run: |
+          uv run pip-audit --desc
+          if ($LASTEXITCODE -ne 0) {
+            Write-Host "pip-audit reported advisory findings; continuing without failing CI."
+            exit 0
+          }
 
       - name: Smoke unified CLI matrix
         run: uv run python scripts/programstart_cli_smoke.py --workspace .

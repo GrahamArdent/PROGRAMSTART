@@ -57,17 +57,17 @@ jobs:
         run: uv run mkdocs build --strict
 
       - name: Configure Pages
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && github.event.repository.private == false
         uses: actions/configure-pages@v5
 
       - name: Upload docs artifact
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && github.event.repository.private == false
         uses: actions/upload-pages-artifact@v3
         with:
           path: site
 
   deploy-pages:
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && github.event.repository.private == false
     needs: build-docs
     runs-on: ubuntu-latest
     timeout-minutes: 15

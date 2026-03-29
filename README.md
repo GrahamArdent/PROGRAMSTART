@@ -266,8 +266,11 @@ Key assets:
 1. `config/process-registry.json` is the machine-readable registry for required files, stage order, metadata rules, source-of-truth sync rules, and optional attachment behavior
 2. `.github/copilot-instructions.md` contains repo-wide Copilot guidance for using PROGRAMBUILD and USERJOURNEY correctly
 3. `.github/instructions/` contains focused instructions for PROGRAMBUILD and USERJOURNEY work
-4. `.github/prompts/` contains reusable prompts for kickoff, next-slice planning, drift audit, and next-step summaries
-5. `scripts/` contains helper scripts for bootstrap, status, validation, drift checks, and integrity refresh
+4. `.github/agents/` contains the core PROGRAMBUILD specialist agents for discovery, architecture/security, and quality/release reviews
+5. `.github/prompts/` contains reusable prompts for kickoff, next-slice planning, drift audit, and next-step summaries
+6. `scripts/` contains helper scripts for bootstrap, status, validation, drift checks, and integrity refresh
+
+`USERJOURNEY/` remains optional. It stays in this repository as a reference attachment and should only be attached to projects that truly need onboarding, consent, activation, or first-run routing planning.
 
 ## Tooling Stack
 
@@ -323,6 +326,12 @@ uv sync --extra dev --extra rag
 nox
 nox -s ci
 ```
+
+GitHub Actions mirrors the main repo checks in three layers:
+
+1. `CI Guardrails` for PR and `main` validation
+2. `Full CI Gate (Scheduled)` for nightly full-gate verification and manual dispatch
+3. targeted docs, release, and weekly research workflows for the non-core lanes
 
 Packaged install path for use outside a dev checkout:
 

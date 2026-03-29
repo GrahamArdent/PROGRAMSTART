@@ -7,6 +7,10 @@ The catalog follows vendor guidance (Anthropic, OpenAI Agents, Microsoft AutoGen
 start with the minimum number of agents that have clear, non-overlapping roles.
 Add specialization only when a bounded role clearly improves output quality.
 
+Workspace implementation status:
+- The three core roles are implemented as reusable workspace agents in `.github/agents/`.
+- `USERJOURNEY/` remains optional and should not be treated as a required attachment when invoking these agents.
+
 ## Catalog Structure
 
 **Core agents (3)** — run in sequence for every product build:
@@ -32,6 +36,8 @@ Every agent report must contain:
 **Replaces:** Research Scout, Product Analyst, UX Flow Designer
 
 **Invocation trigger:** Project kickoff — before any architecture decisions or implementation begins.
+
+**Workspace agent:** `.github/agents/discovery-scoping.agent.md`
 
 **Scope:**
 - Competitive and domain research
@@ -65,6 +71,8 @@ Return:
 
 **Invocation trigger:** After scope is locked and before any implementation begins.
 
+**Workspace agent:** `.github/agents/architecture-security.agent.md`
+
 **Scope:**
 - Service boundaries and API contracts
 - Auth model and trust boundaries
@@ -96,6 +104,8 @@ Return:
 **Invocation trigger:**
 - First run: before implementation begins (establishes test strategy and quality gates).
 - Second run: before release (validates readiness against the strategy set in first run).
+
+**Workspace agent:** `.github/agents/quality-release.agent.md`
 
 **Scope:**
 - Test pyramid targets and fixture strategy
@@ -175,4 +185,4 @@ Return:
 5. Missing structural tests — contract-level assertions absent for the above concerns
 ```
 
-Last updated: 2026-03-27
+Last updated: 2026-03-29

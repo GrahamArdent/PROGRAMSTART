@@ -47,6 +47,14 @@ def test_drift_check_with_authority_only_shows_note(capsys, monkeypatch) -> None
     assert "Drift check passed" in captured
 
 
+def test_drift_check_allows_programbuild_changelog_without_authority(capsys, monkeypatch) -> None:
+    monkeypatch.setattr("sys.argv", ["programstart_drift_check.py", "PROGRAMBUILD/PROGRAMBUILD_CHANGELOG.md"])
+    result = main()
+    captured = capsys.readouterr().out
+    assert result == 0
+    assert "Drift check passed" in captured
+
+
 def test_drift_check_system_filter(capsys, monkeypatch) -> None:
     monkeypatch.setattr("sys.argv", ["programstart_drift_check.py", "--system", "programbuild", "README.md"])
     result = main()

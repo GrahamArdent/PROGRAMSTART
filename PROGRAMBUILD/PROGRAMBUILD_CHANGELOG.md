@@ -12,6 +12,7 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 - implemented the three core PROGRAMBUILD specialist roles as workspace agents in `.github/agents/`
 - clarified in repository docs that `USERJOURNEY/` remains an optional reference attachment and is not required for every bootstrapped project
 - hardened workflow caching and artifact capture, normalized agent/workflow line endings, and reduced bootstrapped nox smoke noise in CI
+- adjusted drift policy so `PROGRAMBUILD_CHANGELOG.md` entries do not require concurrent canonical or file-index edits unless authority or inventory actually changes
 
 ---
 
@@ -25,4 +26,4 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 
 ---
 
-Last updated: 2026-03-27
+Last updated: 2026-03-29

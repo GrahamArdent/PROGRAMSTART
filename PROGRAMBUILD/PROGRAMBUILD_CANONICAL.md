@@ -106,9 +106,10 @@ If a conflict is found:
 - No critical file is renamed without updating all references in the same change.
 - No concern is split across multiple “source of truth” files unless one is explicitly marked derived.
 - Derived summaries must point back to the canonical owner.
+- `PROGRAMBUILD_CHANGELOG.md` records system-level changes but does not, by itself, redefine canonical ownership or file inventory.
 - Material architecture and policy changes should be recorded in `DECISION_LOG.md`, with enterprise work promoting major decisions into ADRs using `PROGRAMBUILD_ADR_TEMPLATE.md`.
 - The template repository should keep project output files in reusable template form. Do not store filled, project-specific feasibility, requirements, architecture, or release documents here.
 
 ---
 
-Last updated: 2026-03-27
+Last updated: 2026-03-29

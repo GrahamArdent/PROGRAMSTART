@@ -1,9 +1,13 @@
 .coverage
+.hypothesis/
 .nox/
 .pytest_cache/
 .ruff_cache/
+.tmp_factory_audit/
 .tmp_bootstrap_*/
+.tmp_bootstrap_real/
 .venv/
+outputs/
 STATUS_DASHBOARD_TEST.md
 *.egg-info/
 __pycache__/

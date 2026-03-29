@@ -1,4 +1,0 @@
-# file: C:\ PYTHON APPS\PROGRAMSTART\scripts\programstart_recommend.py
-# hypothesis_version: 6.151.10
-
-[', ', '- kickoff files:', '- next commands:', '- rationale:', '- suggested stacks: ', '--attach-userjourney', '--json', '--need', '--product-shape', '--regulated', ':', 'CORE_PROBLEM', 'ChromaDB', 'DuckDB', 'FastAPI', 'Hypothesis', 'Instructor', 'KNOWN_CONSTRAINTS', 'LangGraph', 'LiteLLM', 'Next.js', 'ONE_LINE_DESCRIPTION', 'OpenTelemetry', 'PRODUCT_SHAPE', 'Playwright', 'Polars', 'PostgreSQL', 'Pydantic', 'Ruff', 'Temporal', '__main__', 'agent', 'agents', 'ai', 'api service', 'append', 'attach_userjourney', 'audit', 'cli tool', 'data pipeline', 'durable-workflows', 'enterprise', 'files', 'kickoff', 'library', 'lite', 'llm', 'mobile app', 'multi-team', 'name', 'other', 'product', 'programstart next', 'pytest', 'rag', 'regulated', 'semantic-search', 'stacks', 'store_false', 'store_true', 'utf-8', 'uv', 'vector', 'web app', 'workflow_guidance']

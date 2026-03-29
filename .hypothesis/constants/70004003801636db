@@ -1,4 +1,0 @@
-# file: C:\ PYTHON APPS\PROGRAMSTART\scripts\programstart_attach.py
-# hypothesis_version: 6.151.10
-
-['--dry-run', '--force', '--source', '.', 'DELIVERY_GAMEPLAN.md', 'README.md', 'USERJOURNEY', '__main__', 'store_true', 'system', 'userjourney']

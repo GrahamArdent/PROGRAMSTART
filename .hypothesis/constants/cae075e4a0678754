@@ -1,4 +1,0 @@
-# file: C:\ PYTHON APPS\PROGRAMSTART\scripts\programstart_clean.py
-# hypothesis_version: 6.151.10
-
-['*.egg-info', '--dry-run', '--include-dist', '--include-outputs', '.benchmarks', '.coverage', '.mypy_cache', '.nox', '.pytest_cache', '.ruff_cache', '.tmp_bootstrap_*', '.tmp_ci_bootstrap', '.tmp_dist_smoke', 'Removed', 'Would remove', '__main__', 'build', 'dist', 'htmlcov', 'site', 'store_true']

@@ -1,6 +1,10 @@
 # Force consistent line endings across platforms.
 * text=auto eol=lf
 
+# Keep workflow and agent definitions LF-normalized to avoid pre-commit churn.
+.github/workflows/*.yml text eol=lf
+.github/agents/*.agent.md text eol=lf
+
 # Keep Windows scripts with CRLF for native execution.
 *.ps1 text eol=crlf
 *.bat text eol=crlf

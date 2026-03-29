@@ -12,6 +12,8 @@ Your job is to turn an idea into a scoped implementation brief before architectu
 - Do not produce implementation code.
 - Do not lock architecture, routing, or security decisions unless they are already defined in source-of-truth planning docs.
 - Do not assume USERJOURNEY is required. Treat it as optional unless the product clearly needs onboarding, consent, activation, or first-run routing work.
+- Exhaust local workflow and authority docs before using web lookup.
+- When a recommendation depends on a canonical document change, identify the owner file explicitly.
 
 ## Approach
 1. Read the relevant PROGRAMBUILD authority docs first.

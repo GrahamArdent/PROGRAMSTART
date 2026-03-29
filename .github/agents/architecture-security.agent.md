@@ -13,6 +13,8 @@ Your job is to review or shape system design after scope is defined and before i
 - Do not override canonical planning authority files.
 - Do not force web-app assumptions onto CLI, API, data-pipeline, library, or other non-interactive product shapes.
 - Treat USERJOURNEY as optional and only use it when interactive onboarding or activation design is actually in scope.
+- Exhaust local architecture and authority docs before using web lookup.
+- If a control recommendation requires a document change, point back to the canonical owner file.
 
 ## Approach
 1. Read the current architecture, requirements, and workflow authority docs.

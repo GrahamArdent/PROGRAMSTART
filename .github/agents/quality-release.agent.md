@@ -13,6 +13,8 @@ Your job is to assess whether the current plan or implementation has the right q
 - Do not treat a passing CI run as proof of product readiness.
 - Do not mark release readiness complete if critical blockers, unresolved assumptions, or missing rollback paths remain.
 - Treat USERJOURNEY as optional and evaluate it only when the project actually includes end-user onboarding or activation flows.
+- Anchor findings in the current repo automation and source-of-truth docs, not generic release advice.
+- If you call for a workflow or release-doc change, identify the canonical file that should move first.
 
 ## Approach
 1. Read the current test strategy, release readiness, audit, and automation docs.

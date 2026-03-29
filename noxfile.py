@@ -32,6 +32,18 @@ def remove_tree(path: Path) -> None:
     shutil.rmtree(path, onerror=_on_rm_error)
 
 
+def uv_external_env() -> dict[str, str]:
+    env = os.environ.copy()
+    env.pop("VIRTUAL_ENV", None)
+    return env
+
+
+def workspace_bin(workspace: Path, executable: str) -> str:
+    scripts_dir = "Scripts" if os.name == "nt" else "bin"
+    suffix = ".exe" if os.name == "nt" else ""
+    return str(workspace / ".venv" / scripts_dir / f"{executable}{suffix}")
+
+
 @nox.session(reuse_venv=True)
 def lint(session: nox.Session) -> None:
     install_dev(session)
@@ -98,12 +110,15 @@ def smoke(session: nox.Session) -> None:
         "--expect-userjourney",
         "attached",
     )
-    session.run(
-        "python",
-        "scripts/programstart_dashboard_golden.py",
-        "--expect-userjourney",
-        "attached",
-    )
+    if os.name != "nt":
+        session.run(
+            "python",
+            "scripts/programstart_dashboard_golden.py",
+            "--expect-userjourney",
+            "attached",
+        )
+    else:
+        session.log("Skipping dashboard golden screenshots on Windows; baselines are CI/Linux calibrated.")
 
     destination = ROOT / ".tmp_nox_bootstrap"
     if destination.exists():
@@ -120,27 +135,40 @@ def smoke(session: nox.Session) -> None:
         "product",
     )
     session.chdir(destination)
-    session.run("uv", "sync", "--extra", "dev", external=True)
-    session.run("git", "init", external=True)
+    external_uv = uv_external_env()
+    session.run("uv", "sync", "--extra", "dev", external=True, env=external_uv)
+    session.run("git", "init", "-b", "main", external=True)
     session.run("git", "add", ".", external=True)
-    session.run("uv", "run", "pre-commit", "run", "--all-files", external=True)
-    session.run("uv", "run", "programstart", "validate", "--check", "all", external=True)
-    session.run("uv", "run", "python", "scripts/programstart_cli_smoke.py", "--workspace", str(destination), external=True)
-    session.run("python", "scripts/programstart_dashboard_smoke.py", external=True)
+    bootstrap_python = workspace_bin(destination, "python")
+    bootstrap_pre_commit = workspace_bin(destination, "pre-commit")
+    bootstrap_programstart = workspace_bin(destination, "programstart")
+    session.run(bootstrap_pre_commit, "run", "--all-files", external=True)
+    session.run(bootstrap_programstart, "validate", "--check", "all", external=True)
     session.run(
-        "python",
+        bootstrap_python,
+        "scripts/programstart_cli_smoke.py",
+        "--workspace",
+        str(destination),
+        external=True,
+    )
+    session.run(bootstrap_python, "scripts/programstart_dashboard_smoke.py", external=True)
+    session.run(
+        bootstrap_python,
         "scripts/programstart_dashboard_browser_smoke.py",
         "--expect-userjourney",
         "absent",
         external=True,
     )
-    session.run(
-        "python",
-        "scripts/programstart_dashboard_golden.py",
-        "--expect-userjourney",
-        "absent",
-        external=True,
-    )
+    if os.name != "nt":
+        session.run(
+            bootstrap_python,
+            "scripts/programstart_dashboard_golden.py",
+            "--expect-userjourney",
+            "absent",
+            external=True,
+        )
+    else:
+        session.log("Skipping bootstrapped dashboard golden screenshots on Windows; baselines are CI/Linux calibrated.")
     session.chdir(ROOT)
 
 
@@ -179,6 +207,7 @@ def requirements(session: nox.Session) -> None:
         "-o",
         "requirements.txt",
         external=True,
+        env=uv_external_env(),
     )
     session.log("requirements.txt updated")
 

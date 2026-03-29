@@ -11,6 +11,7 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 - added a scheduled full CI gate workflow to run the heavier nox-based quality lane outside normal PR and push validation
 - implemented the three core PROGRAMBUILD specialist roles as workspace agents in `.github/agents/`
 - clarified in repository docs that `USERJOURNEY/` remains an optional reference attachment and is not required for every bootstrapped project
+- hardened workflow caching and artifact capture, normalized agent/workflow line endings, and reduced bootstrapped nox smoke noise in CI
 
 ---
 

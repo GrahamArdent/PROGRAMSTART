@@ -67,8 +67,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 45
     env:
-      UV_CACHE_DIR: ${{ runner.temp }}/uv-cache
-      PRE_COMMIT_HOME: ${{ runner.temp }}/pre-commit-cache
+      UV_CACHE_DIR: .cache/uv
+      PRE_COMMIT_HOME: .cache/pre-commit
     strategy:
       fail-fast: false
       matrix:

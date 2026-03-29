@@ -8,9 +8,14 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: weekly-research-delta-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   generate-delta:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:

@@ -48,9 +48,17 @@ on:
       - 'QUICKSTART.md'
       - 'README.md'
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-guardrails-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate-process:
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
     strategy:
       fail-fast: false
       matrix:

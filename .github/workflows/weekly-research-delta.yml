@@ -1,0 +1,55 @@
+name: Weekly Research Delta
+
+on:
+  schedule:
+    - cron: '0 14 * * 5'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  generate-delta:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - slug: python-runtime
+            track: 'Python runtime and packaging'
+          - slug: llm-retrieval-agent
+            track: 'LLM, retrieval, and agent tooling'
+          - slug: web-platform-delivery
+            track: 'Web and platform delivery'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install uv
+        run: python -m pip install uv
+
+      - name: Cache uv packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/uv
+          key: uv-research-${{ runner.os }}-${{ hashFiles('uv.lock') }}
+          restore-keys: uv-research-${{ runner.os }}-
+
+      - name: Sync development environment
+        run: uv sync --extra dev
+
+      - name: Generate research delta
+        run: uv run programstart research --track "${{ matrix.track }}"
+
+      - name: Upload research artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: research-delta-${{ matrix.slug }}
+          path: outputs/research/*.md
+          if-no-files-found: error

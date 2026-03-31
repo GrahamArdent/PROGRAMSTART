@@ -23,6 +23,7 @@ def test_build_cli_module_command_uses_unified_cli_module() -> None:
 
 def test_cli_commands_contains_expected_public_commands() -> None:
     assert CLI_COMMANDS == (
+        "create",
         "init",
         "attach",
         "recommend",
@@ -36,6 +37,7 @@ def test_cli_commands_contains_expected_public_commands() -> None:
         "advance",
         "next",
         "log",
+        "prompt-eval",
         "progress",
         "guide",
         "drift",
@@ -50,6 +52,19 @@ def test_cli_commands_contains_expected_public_commands() -> None:
 def test_dashboard_allowed_commands_routes_workflow_actions_through_cli() -> None:
     commands = dashboard_allowed_commands("python", ROOT / "scripts")
 
+    assert commands["create.dry"] == [
+        "python",
+        "-m",
+        "scripts.programstart_cli",
+        "create",
+        "--dest",
+        ".tmp_dashboard_create",
+        "--project-name",
+        "DASHBOARD-CREATE",
+        "--product-shape",
+        "CLI tool",
+        "--dry-run",
+    ]
     assert commands["status"] == ["python", "-m", "scripts.programstart_cli", "status"]
     assert commands["recommend"] == ["python", "-m", "scripts.programstart_cli", "recommend"]
     assert commands["context.summary"] == ["python", "-m", "scripts.programstart_cli", "context", "query"]
@@ -61,6 +76,7 @@ def test_dashboard_allowed_commands_routes_workflow_actions_through_cli() -> Non
         "--track",
         "Python runtime and packaging",
     ]
+    assert commands["prompt-eval"] == ["python", "-m", "scripts.programstart_cli", "prompt-eval", "--json"]
     assert commands["state.show"] == ["python", "-m", "scripts.programstart_cli", "state", "show"]
     assert commands["advance.programbuild"] == [
         "python",

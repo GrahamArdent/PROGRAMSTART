@@ -14,6 +14,8 @@
 
 PROGRAMBUILD is the default workflow for every project. USERJOURNEY is optional and should be attached only when the product has real onboarding, consent, activation, or first-run routing work.
 
+Repo boundary rule: PROGRAMSTART work stays inside this repo unless the user explicitly names another repo and asks you to work there.
+
 PROGRAMBUILD tracks 11 stages from _inputs_ to _audit_. When attached, USERJOURNEY tracks 9 phases from _product spec_ to _activation outcomes_.
 
 ---
@@ -85,6 +87,7 @@ Edit the files listed by `pb guide`. The registry knows which files belong to wh
 
 ```powershell
 .\scripts\pb.ps1 validate                       # all checks
+.\scripts\pb.ps1 validate --check repo-boundary # cross-repo consent rule still enforced
 .\scripts\pb.ps1 validate --check workflow-state  # state coherence only
 ```
 
@@ -108,7 +111,37 @@ The advance command records a dated sign-off and moves the next step to `in_prog
 
 ## Starting a New Project
 
-Use bootstrap to create a fresh planning package in another folder:
+Use the factory path to create a fresh standalone project repo in another folder:
+
+```powershell
+programstart create `
+  --dest "C:\Projects\MyNewApp" `
+  --project-name "MyNewApp" `
+  --product-shape "API service" `
+  --owner "Your Name"
+```
+
+This writes a generated kickoff plan to `outputs/factory/create-plan.md` inside the new repo.
+It also writes `outputs/factory/provisioning-plan.md` so GitHub and project-scoped service dependencies stay attached to the generated repo instead of PROGRAMSTART.
+It also writes a runnable starter scaffold under `starter/` based on the chosen product shape.
+The destination must be outside the PROGRAMSTART repo, and the generated repo gets its own local git initialization automatically.
+
+If you want the factory to create the GitHub remote and provision supported services too:
+
+```powershell
+programstart create `
+  --dest "C:\Projects\MyNewApp" `
+  --project-name "MyNewApp" `
+  --product-shape "web app" `
+  --github-repo "your-org/MyNewApp" `
+  --create-github-repo `
+  --provision-services `
+  --supabase-org-id "your-supabase-org-id"
+```
+
+Set `SUPABASE_ACCESS_TOKEN` before the run if you want Supabase automation. Set `VERCEL_ACCESS_TOKEN` before the run if you want Vercel automation. Set `NEON_API_KEY` if you want Neon database automation for API/data-shaped repos. Web shapes now infer both Supabase and Vercel automatically, API services infer Neon, and generated starters emit `.env.example` files with service-specific placeholders plus reusable third-party API env templates. The factory also writes `outputs/factory/setup-surface.md` so new repos have a concrete CLI/auth checklist instead of another blank setup pass. Additional services can still be declared with `--service`.
+
+If you need the lower-level scaffold only, use bootstrap:
 
 ```powershell
 .\scripts\pb.ps1 bootstrap `
@@ -121,7 +154,7 @@ Variants: `lite` (fast planning), `product` (full), `enterprise` (full + audit t
 
 Choose `PRODUCT_SHAPE` in the kickoff packet before you start filling outputs. Then decide whether USERJOURNEY is needed. If the project needs onboarding, consent, or activation planning, attach `USERJOURNEY/` separately from a project-specific source. It is not scaffolded by bootstrap.
 
-Faster path:
+Lower-level stamped path:
 
 ```powershell
 programstart init `
@@ -135,7 +168,8 @@ programstart init `
 Then run:
 
 ```powershell
-programstart recommend
+programstart validate --check engineering-ready
+programstart prompt-eval --json
 programstart impact PROGRAMBUILD/REQUIREMENTS.md
 ```
 
@@ -163,8 +197,9 @@ programstart attach userjourney --source "C:\ PYTHON APPS\PROGRAMSTART\USERJOURN
 | `pb dashboard` | Regenerate `outputs/STATUS_DASHBOARD.md` |
 | `pb status` | Detailed blockers and next actions |
 | `pb help` | Full command list |
-| `pb bootstrap` | Scaffold a new project package |
-| `pb init` | Bootstrap and stamp a new project package |
+| `pb bootstrap` | Scaffold a new standalone project repo |
+| `pb create` | One-shot factory create with generated kickoff and provisioning plans |
+| `pb init` | Bootstrap and stamp a new standalone project repo |
 | `pb recommend` | Recommend the right workflow variant and stacks |
 | `pb impact <target>` | Show affected documents, concerns, and routes |
 | `programstart next` | Same workflow surface without the PowerShell wrapper |

@@ -31,6 +31,41 @@ class ResearchDeltaTemplate:
     output_path: str
 
 
+@dataclass(slots=True)
+class ResearchTrackStatus:
+    track: str
+    owner: str
+    cadence: str
+    linked_domains: list[str]
+    last_review_date: str
+    freshness_days: int
+    days_since_review: int | None
+    days_until_due: int | None
+    status: str
+
+
+@dataclass(slots=True)
+class CoverageDomainStatus:
+    name: str
+    status: str
+    priority: str
+    summary: str
+    current_gaps: list[str]
+    linked_tracks: list[str]
+
+
+@dataclass(slots=True)
+class ResearchStatusReport:
+    review_date: str
+    weekly_review_day: str
+    operating_model: str
+    total_tracks: int
+    due_tracks: int
+    partial_or_seed_domains: int
+    tracks: list[ResearchTrackStatus]
+    domains: list[CoverageDomainStatus]
+
+
 def load_knowledge_base_model() -> KnowledgeBase:
     kb_path = workspace_path("config/knowledge-base.json")
     return KnowledgeBase.model_validate(json.loads(kb_path.read_text(encoding="utf-8")))
@@ -61,6 +96,15 @@ def slugify(value: str) -> str:
 
 def default_output_path(review_date: str, track: ResearchTrack) -> Path:
     return generated_outputs_root() / "research" / f"{review_date}_{slugify(track.name)}_delta.md"
+
+
+def parse_iso_date(value: str) -> date | None:
+    if not value.strip():
+        return None
+    try:
+        return date.fromisoformat(value)
+    except ValueError:
+        return None
 
 
 def render_markdown(template: ResearchDeltaTemplate) -> str:
@@ -118,6 +162,105 @@ def render_markdown(template: ResearchDeltaTemplate) -> str:
     return "\n".join(lines)
 
 
+def build_status(review_date: str | None = None) -> ResearchStatusReport:
+    knowledge_base = load_knowledge_base_model()
+    ledger = knowledge_base.research_ledger
+    current_date = parse_iso_date(review_date or "") or date.today()
+
+    tracks: list[ResearchTrackStatus] = []
+    for track in ledger.tracks:
+        last_review = parse_iso_date(track.last_review_date)
+        days_since_review = (current_date - last_review).days if last_review else None
+        days_until_due = track.freshness_days - days_since_review if days_since_review is not None else None
+        if days_since_review is None:
+            status = "missing_review_date"
+        elif days_since_review > track.freshness_days:
+            status = "due"
+        elif days_since_review == track.freshness_days:
+            status = "due_today"
+        else:
+            status = "fresh"
+
+        tracks.append(
+            ResearchTrackStatus(
+                track=track.name,
+                owner=track.owner,
+                cadence=track.cadence,
+                linked_domains=list(track.linked_domains),
+                last_review_date=track.last_review_date,
+                freshness_days=track.freshness_days,
+                days_since_review=days_since_review,
+                days_until_due=days_until_due,
+                status=status,
+            )
+        )
+
+    domains = [
+        CoverageDomainStatus(
+            name=domain.name,
+            status=domain.status,
+            priority=domain.priority,
+            summary=domain.summary,
+            current_gaps=list(domain.current_gaps),
+            linked_tracks=list(domain.linked_tracks),
+        )
+        for domain in knowledge_base.coverage_domains
+    ]
+
+    partial_or_seed_domains = sum(1 for domain in domains if domain.status in {"seed", "partial"})
+    due_tracks = sum(1 for track in tracks if track.status in {"due", "due_today", "missing_review_date"})
+    return ResearchStatusReport(
+        review_date=str(current_date),
+        weekly_review_day=ledger.weekly_review_day,
+        operating_model=ledger.operating_model,
+        total_tracks=len(tracks),
+        due_tracks=due_tracks,
+        partial_or_seed_domains=partial_or_seed_domains,
+        tracks=tracks,
+        domains=domains,
+    )
+
+
+def render_status(report: ResearchStatusReport) -> str:
+    lines = [
+        "PROGRAMSTART Knowledge Status",
+        f"- review date: {report.review_date}",
+        f"- weekly review day: {report.weekly_review_day or 'unset'}",
+        f"- research tracks: {report.total_tracks}",
+        f"- due tracks: {report.due_tracks}",
+        f"- partial or seed domains: {report.partial_or_seed_domains}",
+        "",
+        "Research Tracks",
+    ]
+    if not report.tracks:
+        lines.append("- none configured")
+    else:
+        for track in report.tracks:
+            timing = (
+                f"last review {track.last_review_date}, due in {track.days_until_due} day(s)"
+                if track.days_until_due is not None
+                else "last review missing"
+            )
+            lines.append(
+                f"- {track.track}: {track.status} | owner={track.owner or 'unassigned'} | freshness={track.freshness_days}d | {timing}"
+            )
+
+    lines.extend(["", "Coverage Domains"])
+    if not report.domains:
+        lines.append("- none configured")
+    else:
+        for domain in report.domains:
+            gap_text = "; ".join(domain.current_gaps[:2]) if domain.current_gaps else "no explicit gaps"
+            lines.append(
+                f"- {domain.name}: {domain.status} | priority={domain.priority or 'unset'} | {gap_text}"
+            )
+    return "\n".join(lines)
+
+
+def has_due_tracks(report: ResearchStatusReport) -> bool:
+    return any(track.status in {"due", "due_today", "missing_review_date"} for track in report.tracks)
+
+
 def build_template(review_date: str, track_name: str | None, output: str | None) -> ResearchDeltaTemplate:
     knowledge_base = load_knowledge_base_model()
     track = find_track(knowledge_base, track_name)
@@ -151,8 +294,22 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--track", help="Research track name. Defaults to the first configured track.")
     parser.add_argument("--date", default=str(date.today()), help="Review date in YYYY-MM-DD format.")
     parser.add_argument("--output", help="Explicit output path for the generated markdown file.")
+    parser.add_argument("--status", action="store_true", help="Print KB coverage and research freshness status instead of generating a template.")
+    parser.add_argument(
+        "--fail-on-due",
+        action="store_true",
+        help="Return exit code 1 when any research track is due, due today, or missing a review date.",
+    )
     parser.add_argument("--json", action="store_true", help="Emit template metadata as JSON.")
     args = parser.parse_args(argv)
+
+    if args.status:
+        report = build_status(args.date)
+        if args.json:
+            print(json.dumps(asdict(report), indent=2))
+        else:
+            print(render_status(report))
+        return 1 if args.fail_on_due and has_due_tracks(report) else 0
 
     template = build_template(args.date, args.track, args.output)
     write_template(template)

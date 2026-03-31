@@ -61,6 +61,15 @@ def build_registry() -> dict:
             ],
             "allowlist_manifest": "USERJOURNEY/USERJOURNEY_INTEGRITY_REFERENCE.json",
         },
+        "repo_boundary_policy": {
+            "enabled": True,
+            "docs": [
+                {
+                    "path": ".github/copilot-instructions.md",
+                    "must_contain": ["Repository boundary is explicit"],
+                }
+            ],
+        },
     }
 
 
@@ -130,6 +139,11 @@ def write_programbuild_authority_docs(tmp_path: Path, control_files: list[str], 
 
 def test_validate_registry_reports_missing_sections() -> None:
     assert validate.validate_registry({})
+
+
+def test_validate_registry_reports_invalid_repo_boundary_policy() -> None:
+    problems = validate.validate_registry({"systems": {}, "sync_rules": [], "repo_boundary_policy": {"enabled": True}})
+    assert any("repo_boundary_policy must declare docs" in item for item in problems)
 
 
 def test_extract_bullets_after_marker_stops_at_next_marker() -> None:
@@ -465,6 +479,12 @@ def test_validate_engineering_ready_detects_open_questions(tmp_path: Path, monke
     assert any("not engineering-ready" in item for item in problems)
 
 
+def test_enforce_engineering_ready_in_all_uses_validation_policy() -> None:
+    registry = build_registry() | {"validation": {"enforce_engineering_ready_in_all": True}}
+    assert validate.enforce_engineering_ready_in_all(registry) is True
+    assert validate.enforce_engineering_ready_in_all(registry, "programbuild") is False
+
+
 def test_validate_workflow_state_handles_valid_and_invalid_states(tmp_path: Path, monkeypatch) -> None:
     registry = build_registry() | {
         "workflow_state": {
@@ -552,6 +572,35 @@ def test_validate_main_all_passes(capsys, monkeypatch) -> None:
     out = capsys.readouterr().out
     assert "Validation passed" in out
     assert result == 0
+
+
+def test_validate_main_all_runs_engineering_ready_when_policy_enabled(capsys, monkeypatch) -> None:
+    monkeypatch.setattr(
+        validate,
+        "load_registry",
+        lambda: {
+            "validation": {"enforce_engineering_ready_in_all": True},
+            "systems": {},
+            "sync_rules": [],
+            "metadata_rules": {"required_prefixes": [], "owner_placeholder": "[ASSIGN]"},
+        },
+    )
+    monkeypatch.setattr(validate, "validate_registry", lambda _registry: [])
+    monkeypatch.setattr(validate, "validate_required_files", lambda _registry, _sf=None: [])
+    monkeypatch.setattr(validate, "validate_metadata", lambda _registry, _sf=None: [])
+    monkeypatch.setattr(validate, "validate_workflow_state", lambda _registry, _sf=None: [])
+    monkeypatch.setattr(validate, "validate_authority_sync", lambda _registry: [])
+    monkeypatch.setattr(validate, "validate_repo_boundary_policy", lambda _registry: [])
+    monkeypatch.setattr(validate, "validate_planning_references", lambda _registry: ([], []))
+    monkeypatch.setattr(validate, "metadata_warnings", lambda _registry, _sf=None: [])
+    monkeypatch.setattr(validate, "validate_engineering_ready", lambda _registry: ["engineering blocked"])
+    monkeypatch.setattr("sys.argv", ["programstart_validate.py", "--check", "all"])
+
+    result = validate.main()
+    out = capsys.readouterr().out
+
+    assert result == 1
+    assert "engineering blocked" in out
 
 
 def test_validate_main_required_files(capsys, monkeypatch) -> None:
@@ -714,6 +763,29 @@ def test_validate_main_authority_sync_failure(capsys, monkeypatch) -> None:
     out = capsys.readouterr().out
     assert result == 1
     assert "authority mismatch" in out
+
+
+def test_validate_repo_boundary_policy_detects_missing_phrase(tmp_path: Path, monkeypatch) -> None:
+    registry = build_registry()
+    policy_file = tmp_path / ".github" / "copilot-instructions.md"
+    policy_file.parent.mkdir(parents=True, exist_ok=True)
+    policy_file.write_text("missing required text\n", encoding="utf-8")
+    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+
+    problems = validate.validate_repo_boundary_policy(registry)
+
+    assert any("repo boundary policy phrase missing" in item for item in problems)
+
+
+def test_validate_main_repo_boundary_failure(capsys, monkeypatch) -> None:
+    monkeypatch.setattr(validate, "validate_repo_boundary_policy", lambda _registry: ["repo boundary drift"])
+    monkeypatch.setattr("sys.argv", ["programstart_validate.py", "--check", "repo-boundary"])
+
+    result = validate.main()
+    out = capsys.readouterr().out
+
+    assert result == 1
+    assert "repo boundary drift" in out
 
 
 def test_metadata_warnings_ignores_assigned_owner(tmp_path: Path, monkeypatch) -> None:

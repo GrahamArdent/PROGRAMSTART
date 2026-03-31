@@ -34,4 +34,6 @@ When a task is about planning, execution order, document authority, drift, or â€
 - Preserve the existing metadata block pattern in planning documents.
 - Keep changes minimal and consistent with the authority model already documented in the repo.
 - If a task changes workflow rules, update `config/process-registry.json` and the relevant markdown authority file in the same change.
+- Repository boundary is explicit: do not inspect, edit, stage, commit, or push another repository unless the user explicitly names that repository and asks for that action.
+- If the task may require work in another repository, stop and ask for express consent before proceeding.
 - For new-project kickoff or stage-by-stage guidance, prefer registry-backed scripts and prompt files over freehand step ordering from chat memory.

@@ -29,6 +29,7 @@ def main() -> int:
     checks = [
         ["help"],
         ["status"],
+        ["prompt-eval", "--json"],
         ["clean", "--dry-run"],
         ["validate", "--check", "workflow-state"],
         ["guide", "--system", "programbuild"],

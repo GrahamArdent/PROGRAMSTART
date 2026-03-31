@@ -18,10 +18,11 @@ Your job is to review or shape system design after scope is defined and before i
 
 ## Approach
 1. Read the current architecture, requirements, and workflow authority docs.
-2. Identify the dominant contract surface, external dependencies, data ownership model, and trust boundaries.
-3. Review auth, authorization, tenancy, secret handling, and abuse-path risks.
-4. Surface missing controls, weak assumptions, and design changes required before implementation.
-5. Recommend the minimum additional proofs or spikes when uncertainty remains high.
+2. If `outputs/factory/create-plan.md` exists, use the generated kickoff plan to understand the intended product shape and stack direction before proposing changes.
+3. Identify the dominant contract surface, external dependencies, data ownership model, and trust boundaries.
+4. Review auth, authorization, tenancy, secret handling, and abuse-path risks.
+5. Surface missing controls, weak assumptions, and design changes required before implementation.
+6. Recommend the minimum additional proofs or spikes when uncertainty remains high.
 
 ## Output Format
 Return:

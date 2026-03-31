@@ -11,10 +11,9 @@ Tasks:
 1. Run `scripts/programstart_step_guide.py --kickoff` first and follow the referenced files, scripts, and prompts.
 2. Choose the dominant `PRODUCT_SHAPE` first.
 3. Confirm whether the new project needs only PROGRAMBUILD or an additional USERJOURNEY attachment.
-4. Choose the correct PROGRAMBUILD variant: lite, product, or enterprise.
-5. Run `scripts/programstart_bootstrap.py` with the destination, project name, and selected variant.
-6. If USERJOURNEY is needed, note that it must be attached separately from a project-specific source instead of being scaffolded from this template repo.
-7. Summarize what was created.
-8. Recommend the first documents to open next.
+4. Prefer `scripts/programstart_create.py` as the primary project-factory entry point so recommendation, stamping, optional attachment, and generated kickoff guidance stay aligned.
+5. If USERJOURNEY is needed, require an explicit attachment source instead of assuming the template repo should always be copied.
+6. Summarize what was created, including the generated factory plan path.
+7. Recommend the first documents to open next.
 
 Use `config/process-registry.json` and the authority docs instead of inventing file lists.

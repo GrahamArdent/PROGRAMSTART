@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 import shutil
 import stat
+import time
 from pathlib import Path
 
 import nox
@@ -29,7 +30,20 @@ def _on_rm_error(func, path: str, _exc_info) -> None:
 
 
 def remove_tree(path: Path) -> None:
-    shutil.rmtree(path, onerror=_on_rm_error)
+    attempts = 6 if os.name == "nt" else 1
+    last_error: PermissionError | None = None
+    for attempt in range(attempts):
+        try:
+            shutil.rmtree(path, onerror=_on_rm_error)
+            return
+        except PermissionError as exc:
+            last_error = exc
+            if attempt == attempts - 1:
+                raise
+            time.sleep(0.5 * (attempt + 1))
+
+    if last_error is not None:
+        raise last_error
 
 
 def uv_external_env() -> dict[str, str]:
@@ -90,6 +104,7 @@ def tests(session: nox.Session) -> None:
 def validate(session: nox.Session) -> None:
     install_dev(session)
     session.run("programstart", "validate", "--check", "all")
+    session.run("programstart", "prompt-eval", "--json")
     session.run("programstart", "validate", "--check", "authority-sync")
     session.run("programstart", "validate", "--check", "planning-references")
     session.run("programstart", "validate", "--check", "workflow-state")
@@ -170,6 +185,15 @@ def smoke(session: nox.Session) -> None:
     else:
         session.log("Skipping bootstrapped dashboard golden screenshots on Windows; baselines are CI/Linux calibrated.")
     session.chdir(ROOT)
+    session.run(
+        "python",
+        "scripts/programstart_factory_smoke.py",
+        "--workspace",
+        str(ROOT),
+        "--dest-root",
+        ".tmp_nox_factory_smoke",
+    )
+    session.chdir(ROOT)
 
 
 @nox.session(reuse_venv=True)
@@ -240,6 +264,7 @@ def clean(session: nox.Session) -> None:
         "site",
         ".nox",
         ".tmp_nox_bootstrap",
+        ".tmp_nox_create",
         ".tmp_dist_smoke",
     ]
     for name in targets:

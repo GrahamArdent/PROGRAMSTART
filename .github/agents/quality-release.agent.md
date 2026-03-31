@@ -18,10 +18,11 @@ Your job is to assess whether the current plan or implementation has the right q
 
 ## Approach
 1. Read the current test strategy, release readiness, audit, and automation docs.
-2. Compare planned guardrails against actual validation, CI, smoke, golden, and packaging coverage.
-3. Separate must-fix launch blockers from acceptable residual risk.
-4. Identify missing tests, release controls, monitoring expectations, and rollback gaps.
-5. Recommend the next highest-value quality or release action.
+2. If `outputs/factory/create-plan.md` exists, use it to compare intended project shape and stack risk against the actual test and release controls.
+3. Compare planned guardrails against actual validation, CI, smoke, golden, compatibility, and packaging coverage.
+4. Separate must-fix launch blockers from acceptable residual risk.
+5. Identify missing tests, release controls, monitoring expectations, and rollback gaps.
+6. Recommend the next highest-value quality or release action.
 
 ## Output Format
 Return:

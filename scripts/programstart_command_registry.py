@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 CLI_COMMANDS: tuple[str, ...] = (
+    "create",
     "init",
     "attach",
     "recommend",
@@ -16,6 +17,7 @@ CLI_COMMANDS: tuple[str, ...] = (
     "advance",
     "next",
     "log",
+    "prompt-eval",
     "progress",
     "guide",
     "drift",
@@ -33,10 +35,21 @@ def build_cli_module_command(python_executable: str, arguments: list[str]) -> li
 
 def dashboard_allowed_commands(python_executable: str, scripts_dir: Path) -> dict[str, list[str]]:
     commands = {
+        "create.dry": [
+            "create",
+            "--dest",
+            ".tmp_dashboard_create",
+            "--project-name",
+            "DASHBOARD-CREATE",
+            "--product-shape",
+            "CLI tool",
+            "--dry-run",
+        ],
         "context.summary": ["context", "query"],
         "recommend": ["recommend"],
         "impact.workflow": ["impact", "workflow"],
         "research.python-runtime": ["research", "--track", "Python runtime and packaging"],
+        "prompt-eval": ["prompt-eval", "--json"],
         "state.show": ["state", "show"],
         "state.show.programbuild": ["state", "show", "--system", "programbuild"],
         "state.show.userjourney": ["state", "show", "--system", "userjourney"],

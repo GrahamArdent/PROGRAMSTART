@@ -18,6 +18,8 @@ Provides BM25-scored full-text search across every searchable surface in the con
 - Document paths, titles, headings, purposes, and owners
 - Concern names, owner files, and supporting files
 - Knowledge base stack names, aliases, capabilities, strengths, risks, and best-for
+- Knowledge base CLI tools, install methods, auth requirements, and recommended commands
+- Knowledge base third-party APIs, env variables, auth surfaces, and provider notes
 - Integration pattern names, components, fit-for, and notes
 - Retrieval guidance principles and recommendations
 - Dashboard routes and their purposes

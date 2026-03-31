@@ -1,0 +1,247 @@
+{
+  "scenarios": [
+    {
+      "name": "cli_tool_baseline",
+      "product_shape": "CLI tool",
+      "needs": [],
+      "regulated": false,
+      "attach_userjourney": false,
+      "expected_variant": "lite",
+      "expected_attach_userjourney": false,
+      "expected_stacks": ["Pydantic", "pytest", "uv"],
+      "required_prompt_terms": [
+        "Product shape: cli tool.",
+        "Variant: lite.",
+        "USERJOURNEY attached: no.",
+        "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md"
+      ],
+      "required_plan_sections": [
+        "## Selected Shape",
+        "## Dynamic Prompt Guidance",
+        "## Kickoff Prompt",
+        "## Starter Scaffold"
+      ],
+      "expected_starter_root": "starter/cli_tool",
+      "expected_starter_files": [
+        "starter/cli_tool/pyproject.toml",
+        "starter/cli_tool/src/cli_tool_baseline/models.py",
+        "starter/cli_tool/tests/test_models_property.py"
+      ],
+      "required_starter_terms": [
+        "from pydantic import BaseModel, Field",
+        "from hypothesis import given"
+      ]
+    },
+    {
+      "name": "api_service_rag_agents",
+      "product_shape": "API service",
+      "needs": ["rag", "agents"],
+      "regulated": false,
+      "attach_userjourney": false,
+      "expected_variant": "product",
+      "expected_attach_userjourney": false,
+      "expected_stacks": ["FastAPI", "LiteLLM", "Instructor", "Temporal"],
+      "required_prompt_terms": [
+        "Product shape: api service.",
+        "Variant: product.",
+        "USERJOURNEY attached: no.",
+        "Do not invent file lists or stage order outside the registry and authority docs."
+      ],
+      "required_plan_sections": [
+        "## Selected Shape",
+        "## Dynamic Prompt Guidance",
+        "## Kickoff Prompt",
+        "## Starter Scaffold"
+      ],
+      "expected_starter_root": "starter/api_service",
+      "expected_starter_files": [
+        "starter/api_service/pyproject.toml",
+        "starter/api_service/app/main.py",
+        "starter/api_service/app/ai.py",
+        "starter/api_service/app/retrieval.py",
+        "starter/api_service/app/workflows.py"
+      ],
+      "required_starter_terms": [
+        "from fastapi import FastAPI",
+        "litellm",
+        "chromadb",
+        "temporal"
+      ]
+    },
+    {
+      "name": "web_app_with_userjourney",
+      "product_shape": "web app",
+      "needs": [],
+      "regulated": false,
+      "attach_userjourney": null,
+      "expected_variant": "product",
+      "expected_attach_userjourney": true,
+      "expected_stacks": ["Next.js", "Playwright", "PostgreSQL"],
+      "required_prompt_terms": [
+        "Product shape: web app.",
+        "Variant: product.",
+        "USERJOURNEY attached: yes.",
+        "PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md"
+      ],
+      "required_plan_sections": [
+        "## Selected Shape",
+        "## Dynamic Prompt Guidance",
+        "## Kickoff Prompt",
+        "## Starter Scaffold"
+      ],
+      "expected_starter_root": "starter/web_app",
+      "expected_starter_files": [
+        "starter/web_app/package.json",
+        "starter/web_app/app/page.tsx",
+        "starter/web_app/e2e/home.spec.ts"
+      ],
+      "required_starter_terms": [
+        "next dev",
+        "recommended product stack",
+        "@playwright/test"
+      ]
+    },
+    {
+      "name": "mobile_subscription_product",
+      "product_shape": "mobile app",
+      "needs": ["subscriptions"],
+      "regulated": false,
+      "attach_userjourney": null,
+      "expected_variant": "product",
+      "expected_attach_userjourney": true,
+      "expected_stacks": ["React Native", "Expo", "Firebase"],
+      "expected_services": ["Firebase"],
+      "expected_apis": ["RevenueCat"],
+      "expected_clis": ["GitHub CLI"],
+      "expected_domains": ["Mobile and cross-platform apps", "Commerce, communication, and product integrations"],
+      "expected_confidence": "medium",
+      "required_warning_domains": ["Mobile and cross-platform apps"],
+      "required_prompt_terms": [
+        "Product shape: mobile app.",
+        "Variant: product.",
+        "USERJOURNEY attached: yes."
+      ],
+      "required_plan_sections": [
+        "## Selected Shape",
+        "## KB Decision Evidence",
+        "## Dynamic Prompt Guidance",
+        "## Kickoff Prompt"
+      ],
+      "expected_starter_root": "starter/mobile_app",
+      "expected_starter_files": [
+        "starter/mobile_app/package.json",
+        "starter/mobile_app/App.tsx",
+        "starter/mobile_app/src/subscriptions.ts"
+      ],
+      "required_starter_terms": [
+        "Expo starter aligned to the recommended mobile stack"
+      ]
+    },
+    {
+      "name": "regulated_b2b_web_app",
+      "product_shape": "web app",
+      "needs": ["sso", "compliance"],
+      "regulated": true,
+      "attach_userjourney": null,
+      "expected_variant": "enterprise",
+      "expected_attach_userjourney": true,
+      "expected_stacks": ["Next.js", "PostgreSQL", "Pydantic"],
+      "expected_services": ["Supabase", "Vercel"],
+      "expected_apis": ["WorkOS", "Vanta"],
+      "expected_clis": ["GitHub CLI"],
+      "expected_domains": ["Identity, security, and regulated delivery"],
+      "expected_confidence": "high",
+      "required_prompt_terms": [
+        "Product shape: web app.",
+        "Variant: enterprise.",
+        "USERJOURNEY attached: yes."
+      ],
+      "required_plan_sections": [
+        "## Selected Shape",
+        "## KB Decision Evidence",
+        "## Repository Boundary And Provisioning",
+        "## Kickoff Prompt"
+      ],
+      "expected_starter_root": "starter/web_app",
+      "expected_starter_files": [
+        "starter/web_app/package.json",
+        "starter/web_app/app/page.tsx"
+      ],
+      "required_starter_terms": [
+        "recommended product stack"
+      ]
+    },
+    {
+      "name": "realtime_collaboration_web_app",
+      "product_shape": "web app",
+      "needs": ["realtime", "collaboration"],
+      "regulated": false,
+      "attach_userjourney": null,
+      "expected_variant": "product",
+      "expected_attach_userjourney": true,
+      "expected_stacks": ["Next.js", "Yjs"],
+      "expected_services": ["Supabase"],
+      "expected_apis": ["Ably"],
+      "expected_clis": ["GitHub CLI"],
+      "expected_domains": ["Realtime collaboration, messaging, and eventing"],
+      "expected_confidence": "high",
+      "required_prompt_terms": [
+        "Product shape: web app.",
+        "Variant: product.",
+        "USERJOURNEY attached: yes."
+      ],
+      "required_plan_sections": [
+        "## Selected Shape",
+        "## KB Decision Evidence",
+        "## Dynamic Prompt Guidance",
+        "## Kickoff Prompt"
+      ],
+      "expected_starter_root": "starter/web_app",
+      "expected_starter_files": [
+        "starter/web_app/package.json",
+        "starter/web_app/app/page.tsx",
+        "starter/web_app/lib/realtime.ts"
+      ],
+      "required_starter_terms": [
+        "recommended product stack",
+        "conflict resolution"
+      ]
+    },
+    {
+      "name": "commerce_integration_web_app",
+      "product_shape": "web app",
+      "needs": ["customer-data", "shipping", "tax"],
+      "regulated": false,
+      "attach_userjourney": null,
+      "expected_variant": "product",
+      "expected_attach_userjourney": true,
+      "expected_stacks": ["Next.js", "PostgreSQL"],
+      "expected_services": ["Supabase", "Vercel"],
+      "expected_apis": ["Segment", "Shippo", "TaxJar"],
+      "expected_clis": ["GitHub CLI"],
+      "expected_domains": ["Commerce, communication, and product integrations"],
+      "expected_confidence": "high",
+      "required_prompt_terms": [
+        "Product shape: web app.",
+        "Variant: product.",
+        "USERJOURNEY attached: yes."
+      ],
+      "required_plan_sections": [
+        "## Selected Shape",
+        "## KB Decision Evidence",
+        "## Dynamic Prompt Guidance",
+        "## Kickoff Prompt"
+      ],
+      "expected_starter_root": "starter/web_app",
+      "expected_starter_files": [
+        "starter/web_app/package.json",
+        "starter/web_app/app/page.tsx",
+        "starter/web_app/lib/commerce.ts"
+      ],
+      "required_starter_terms": [
+        "recommended product stack",
+        "analytics-routing"
+      ]
+    }
+  ]
+}

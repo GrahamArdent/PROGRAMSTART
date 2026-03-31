@@ -1,8 +1,9 @@
 {
-  "version": "2026-03-29",
+  "version": "2026-03-31",
   "workspace": {
     "name": "PROGRAMSTART",
     "description": "Reusable PROGRAMBUILD template workspace with optional project attachments such as USERJOURNEY.",
+    "repo_role": "template_repo",
     "root_readme": "README.md",
     "generated_outputs_root": "outputs",
     "bootstrap_assets": [
@@ -24,6 +25,7 @@
       "requirements.txt",
       "QUICKSTART.md",
       "config/process-registry.json",
+      "config/prompt-eval-scenarios.json",
       "config/knowledge-base.json",
       "docs/dashboard-api.md",
       "docs/defaults-review.md",
@@ -45,6 +47,7 @@
       "scripts/programstart_checklist_progress.py",
       "scripts/programstart_common.py",
       "scripts/programstart_command_registry.py",
+      "scripts/programstart_create.py",
       "scripts/programstart_context.py",
       "scripts/programstart_cli_smoke.py",
       "scripts/programstart_dashboard.py",
@@ -53,14 +56,17 @@
       "scripts/programstart_dashboard_smoke.py",
       "scripts/programstart_dist_smoke.py",
       "scripts/programstart_drift_check.py",
+      "scripts/programstart_factory_smoke.py",
       "scripts/programstart_impact.py",
       "scripts/programstart_init.py",
       "scripts/programstart_log.py",
       "scripts/programstart_research_delta.py",
       "scripts/programstart_models.py",
+      "scripts/programstart_prompt_eval.py",
       "scripts/programstart_refresh_integrity.py",
       "scripts/programstart_retrieval.py",
       "scripts/programstart_recommend.py",
+      "scripts/programstart_starter_scaffold.py",
       "scripts/programstart_serve.py",
       "scripts/programstart_status.py",
       "scripts/programstart_step_guide.py",
@@ -86,6 +92,7 @@
       "tests/test_programstart_log.py",
       "tests/test_programstart_models.py",
       "tests/test_programstart_project_factory.py",
+      "tests/test_programstart_prompt_eval.py",
       "tests/test_programstart_research_delta.py",
       "tests/test_programstart_refresh_integrity.py",
       "tests/test_programstart_retrieval.py",
@@ -106,6 +113,7 @@
       ".github/ISSUE_TEMPLATE/feature_request.md",
       ".github/PULL_REQUEST_TEMPLATE.md",
       ".github/workflows/docs-pages.yml",
+      ".github/workflows/codeql.yml",
       ".github/workflows/full-ci-gate.yml",
       ".github/workflows/process-guardrails.yml",
       ".github/workflows/release-package.yml",
@@ -116,6 +124,35 @@
       ".github/prompts/start-programstart-project.prompt.md",
       ".github/prompts/userjourney-next-slice.prompt.md",
       ".vscode/tasks.json"
+    ]
+  },
+  "validation": {
+    "enforce_engineering_ready_in_all": false
+  },
+  "repo_boundary_policy": {
+    "enabled": true,
+    "docs": [
+      {
+        "path": ".github/copilot-instructions.md",
+        "must_contain": [
+          "Repository boundary is explicit: do not inspect, edit, stage, commit, or push another repository unless the user explicitly names that repository and asks for that action.",
+          "If the task may require work in another repository, stop and ask for express consent before proceeding."
+        ]
+      },
+      {
+        "path": "PROGRAMBUILD/PROGRAMBUILD.md",
+        "must_contain": [
+          "repo-boundary consent rule for AI-assisted work: do not inspect, edit, stage, commit, or push another repository unless the user explicitly names it and asks for that action",
+          "Repository scope is explicit in AI-assisted workflows: keep work inside the current repo unless the user explicitly names another repo and asks for that action."
+        ]
+      },
+      {
+        "path": "QUICKSTART.md",
+        "must_contain": [
+          "Repo boundary rule: PROGRAMSTART work stays inside this repo unless the user explicitly names another repo and asks you to work there.",
+          ".\\scripts\\pb.ps1 validate --check repo-boundary # cross-repo consent rule still enforced"
+        ]
+      }
     ]
   },
   "systems": {
@@ -498,6 +535,7 @@
       ],
       "scripts": [
         "scripts/programstart_bootstrap.py",
+        "scripts/programstart_create.py",
         "scripts/programstart_init.py",
         "scripts/programstart_recommend.py",
         "scripts/programstart_attach.py",

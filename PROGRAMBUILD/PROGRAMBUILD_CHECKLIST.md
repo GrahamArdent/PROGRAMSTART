@@ -73,6 +73,7 @@ This checklist depends on the authority rules in `PROGRAMBUILD_CANONICAL.md` and
 
 - [ ] create the dominant contract layer: routes, endpoints, commands, jobs, or public API
 - [ ] create the boundary helper that fits the shape: auth-aware client, trusted caller wrapper, or operator helper
+- [ ] document and enforce the repo-boundary consent rule for AI-assisted work before touching any other repository
 - [ ] create streaming, scheduler, worker, or lifecycle helper if needed
 - [ ] add alignment tests for the dominant contract surface
 - [ ] add reverse alignment tests where discoverability matters

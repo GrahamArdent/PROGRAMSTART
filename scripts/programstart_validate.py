@@ -50,6 +50,19 @@ def validate_registry(registry: dict) -> list[str]:
     problems: list[str] = []
     if "systems" not in registry or "sync_rules" not in registry:
         problems.append("config/process-registry.json is missing top-level systems or sync_rules keys")
+    policy = cast(dict[str, Any], registry.get("repo_boundary_policy", {}))
+    if policy.get("enabled"):
+        docs = cast(list[dict[str, Any]], policy.get("docs", []))
+        if not docs:
+            problems.append("config/process-registry.json repo_boundary_policy must declare docs when enabled")
+        for index, rule in enumerate(docs, start=1):
+            if not rule.get("path"):
+                problems.append(f"config/process-registry.json repo_boundary_policy docs[{index}] is missing path")
+            must_contain = cast(list[str], rule.get("must_contain", []))
+            if not must_contain:
+                problems.append(
+                    f"config/process-registry.json repo_boundary_policy docs[{index}] must declare at least one required phrase"
+                )
     return problems
 
 
@@ -301,6 +314,13 @@ def validate_engineering_ready(registry: dict) -> list[str]:
     return problems
 
 
+def enforce_engineering_ready_in_all(registry: dict, system_filter: str | None = None) -> bool:
+    if system_filter == "programbuild":
+        return False
+    validation = cast(dict[str, Any], registry.get("validation", {}))
+    return bool(validation.get("enforce_engineering_ready_in_all", False))
+
+
 def expected_bootstrap_assets() -> set[str]:
     root = workspace_path(".")
     expected: set[str] = {
@@ -354,6 +374,27 @@ def validate_bootstrap_assets(registry: dict) -> list[str]:
     for asset in sorted(assets):
         if not workspace_path(asset).exists():
             problems.append(f"bootstrap_assets references missing workspace file: {asset}")
+    return problems
+
+
+def validate_repo_boundary_policy(registry: dict) -> list[str]:
+    policy = cast(dict[str, Any], registry.get("repo_boundary_policy", {}))
+    if not policy.get("enabled"):
+        return []
+
+    problems: list[str] = []
+    for rule in cast(list[dict[str, Any]], policy.get("docs", [])):
+        relative_path = str(rule.get("path", ""))
+        path = workspace_path(relative_path)
+        if not path.exists():
+            problems.append(f"repo boundary policy references missing file: {relative_path}")
+            continue
+        text = path.read_text(encoding="utf-8")
+        for required_phrase in cast(list[str], rule.get("must_contain", [])):
+            if required_phrase not in text:
+                problems.append(
+                    f"repo boundary policy phrase missing from {relative_path}: {required_phrase}"
+                )
     return problems
 
 
@@ -415,6 +456,7 @@ def main() -> int:
             "authority-sync",
             "planning-references",
             "bootstrap-assets",
+            "repo-boundary",
         ],
         default="all",
     )
@@ -436,6 +478,9 @@ def main() -> int:
         problems.extend(validate_metadata(registry, sf))
         problems.extend(validate_workflow_state(registry, sf))
         problems.extend(validate_authority_sync(registry))
+        problems.extend(validate_repo_boundary_policy(registry))
+        if enforce_engineering_ready_in_all(registry, sf):
+            problems.extend(validate_engineering_ready(registry))
         reference_problems, reference_warnings = validate_planning_references(registry)
         problems.extend(reference_problems)
         warnings.extend(metadata_warnings(registry, sf))
@@ -454,6 +499,8 @@ def main() -> int:
         reference_problems, reference_warnings = validate_planning_references(registry)
         problems.extend(reference_problems)
         warnings.extend(reference_warnings)
+    elif args.check == "repo-boundary":
+        problems.extend(validate_repo_boundary_policy(registry))
     elif args.check == "bootstrap-assets":
         problems.extend(validate_bootstrap_assets(registry))
     else:

@@ -16,6 +16,8 @@ classifiers = [
   "Development Status :: 4 - Beta",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Topic :: Office/Business",
   "Topic :: Software Development :: Quality Assurance",
 ]
@@ -62,9 +64,11 @@ programstart-workflow = "scripts.programstart_workflow_state:main"
 programstart-drift = "scripts.programstart_drift_check:main"
 programstart-guide = "scripts.programstart_step_guide:main"
 programstart-init = "scripts.programstart_init:main"
+programstart-create = "scripts.programstart_create:main"
 programstart-attach = "scripts.programstart_attach:main"
 programstart-recommend = "scripts.programstart_recommend:main"
 programstart-impact = "scripts.programstart_impact:main"
+programstart-prompt-eval = "scripts.programstart_prompt_eval:main"
 
 [tool.setuptools]
 packages = ["scripts"]
@@ -129,6 +133,7 @@ source = [
   "scripts.programstart_common",
   "scripts.programstart_validate",
   "scripts.programstart_bootstrap",
+  "scripts.programstart_create",
   "scripts.programstart_status",
   "scripts.programstart_workflow_state",
   "scripts.programstart_drift_check",

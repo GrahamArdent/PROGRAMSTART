@@ -1,7 +1,7 @@
 # PROGRAMSTART
 
 Purpose: A program that builds other programs — a workflow automation toolkit for structured product planning, execution tracking, and intelligent context retrieval.
-Last updated: 2026-03-29
+Last updated: 2026-03-30
 
 ---
 
@@ -11,27 +11,48 @@ PROGRAMSTART is a CLI-driven planning and workflow automation system that guides
 
 **The core idea:** instead of starting every new project with blank documents and tribal knowledge, PROGRAMSTART gives you a validated scaffold, enforces completion gates, tracks drift from source-of-truth documents, and lets you query your own planning context intelligently.
 
+PROGRAMSTART is the source template and orchestration repo. Product code and project infrastructure belong in separately generated repos, never inside this repository.
+
 It also now includes a project-factory layer:
 
-- `programstart init` bootstraps and stamps a new planning repo in one pass
+- `programstart create` turns product shape and capability needs into a stamped standalone repo, optional attachment decision, and generated kickoff/provisioning plans in one pass
+- `programstart init` bootstraps and stamps a new standalone project repo in one pass
 - `programstart attach userjourney --source <path>` adds the optional onboarding attachment later
 - `programstart recommend` turns product shape and needs into workflow and stack guidance
 - `programstart impact <target>` shows the likely downstream blast radius before you edit authority docs
 - `programstart research --track <name>` generates a dated research-delta template from the KB maintenance ledger
+- `programstart research --status` reports which weekly research lanes are due and which KB coverage domains are still only partial or seed-level
 
 The knowledge base is also now more explicit about how it makes decisions:
 
 - stack entries and archetypes capture baseline platform guidance
+- CLI tool entries capture which developer CLIs should be installed and authenticated early
+- third-party API entries capture reusable auth/env surfaces for common vendor integrations
+- coverage domains make the KB honest about which product areas are strong, partial, or still seed-stage
 - decision rules capture recurring architecture choices
 - explicit KB relationships show complements, alternatives, and upgrade paths
 - structured comparisons capture version deltas such as Python 3.13 vs 3.14
-- a weekly research cadence keeps recommendations current without turning the KB into an unbounded note dump
+- a weekly research cadence plus CI-visible freshness status keeps recommendations current without turning the KB into an unbounded note dump
 
 ## How It Works — The Complete Workflow
 
 ### Phase 1: Bootstrap
 
-A new project starts with `programstart bootstrap`. This scaffolds a clean planning repository from validated templates:
+A new project should usually start with `programstart create`. This compiles recommendation logic, stamps a new standalone repo, initializes local git, and writes generated kickoff and provisioning plans:
+
+```
+programstart create --dest ~/projects/new-product --project-name "MyProduct" --product-shape "API service"
+```
+
+If you want PROGRAMSTART to create the GitHub remote and provision supported project services as part of the factory run, opt in explicitly:
+
+```
+programstart create --dest ~/projects/new-product --project-name "MyProduct" --product-shape "web app" --github-repo my-org/my-product --create-github-repo --provision-services --supabase-org-id <org-id>
+```
+
+For Supabase provisioning, set `SUPABASE_ACCESS_TOKEN` in the environment before running the command. For Vercel provisioning, set `VERCEL_ACCESS_TOKEN`. For Neon provisioning, set `NEON_API_KEY` and optionally `NEON_ORG_ID`. The factory infers supported services from the recommended shape/stacks, writes machine-readable results to `outputs/factory/provisioning-state.json`, writes `outputs/factory/setup-surface.md` with recommended CLI installs and reusable API auth surfaces, emits starter `.env.example` files based on inferred services and third-party APIs, and hydrates non-secret provider IDs and URLs into those env templates after supported provisioning runs.
+
+If you need the lower-level primitives, `programstart bootstrap` still scaffolds a clean project repo from validated templates:
 
 ```
 programstart bootstrap --dest ~/projects/new-product --project-name "MyProduct" --variant product
@@ -41,7 +62,10 @@ This creates:
 - A `PROGRAMBUILD/` directory with all required planning documents (FEASIBILITY, REQUIREMENTS, ARCHITECTURE, etc.)
 - A `config/process-registry.json` defining stage order, required files, and sync rules
 - Pre-configured tooling (`.pre-commit-config.yaml`, `noxfile.py`, test harness)
-- Optionally, a `USERJOURNEY/` attachment for interactive end-user products
+- A generated factory plan under `outputs/factory/create-plan.md`
+- A generated provisioning plan under `outputs/factory/provisioning-plan.md`
+- A standalone local git repository for the new project
+- Optionally, a `USERJOURNEY/` attachment for interactive end-user products when the create flow is given an attachment source
 
 For the faster path, use `programstart init` instead of raw bootstrap. It wraps bootstrap, stamps kickoff inputs, updates metadata owners and dates, and can attach `USERJOURNEY` during setup.
 
@@ -54,26 +78,29 @@ PROGRAMSTART enforces a strict stage order. Each stage has required outputs that
 │                        PROGRAMBUILD STAGE ORDER                            │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                             │
+│  0. INPUTS & MODE       → Variant, product shape, kickoff packet          │
+│     └─ Output: kickoff inputs block                                        │
+│                                                                             │
 │  1. FEASIBILITY          → Go/no-go decision, kill criteria                │
-│     └─ Output: FEASIBILITY.md (approved/rejected)                          │
+│     └─ Output: FEASIBILITY.md                                              │
 │                                                                             │
 │  2. RESEARCH             → Market/tech research, stack validation           │
 │     └─ Output: RESEARCH_SUMMARY.md                                         │
 │                                                                             │
-│  3. REQUIREMENTS         → Scope, constraints, acceptance criteria          │
+│  3. REQUIREMENTS & UX    → Scope, constraints, acceptance criteria          │
 │     └─ Output: REQUIREMENTS.md                                             │
 │                                                                             │
-│  4. USER_FLOWS           → Primary workflows, state behavior               │
-│     └─ Output: USER_FLOWS.md                                               │
-│                                                                             │
-│  5. ARCHITECTURE         → System boundaries, contracts, data model         │
+│  4. ARCHITECTURE & RISK  → System boundaries, contracts, risk spikes        │
 │     └─ Output: ARCHITECTURE.md                                             │
 │                                                                             │
-│  6. RISK_SPIKES          → Unknown risks and proof-of-concept results       │
-│     └─ Output: RISK_SPIKES.md                                              │
+│  5. SCAFFOLD & GATES     → Working skeleton and CI gates                    │
+│     └─ Output: automation and skeleton state                               │
 │                                                                             │
-│  7. TEST_STRATEGY        → Test model, coverage plan, automation approach   │
+│  6. TEST_STRATEGY        → Test model, coverage plan, automation approach   │
 │     └─ Output: TEST_STRATEGY.md                                            │
+│                                                                             │
+│  7. IMPLEMENTATION       → Feature code and tests                           │
+│     └─ Output: working feature set                                         │
 │                                                                             │
 │  8. RELEASE_READINESS    → Launch gates, operational checks, rollback plan  │
 │     └─ Output: RELEASE_READINESS.md                                        │
@@ -135,6 +162,7 @@ PROGRAMSTART continuously validates the planning workspace:
 │     ├─ required-files      → all stage outputs present                     │
 │     ├─ metadata            → ownership and dating in every doc             │
 │     ├─ authority-sync      → canonical docs match machine registry         │
+│     ├─ repo-boundary       → cross-repo consent rule remains enforced      │
 │     └─ planning-references → no broken cross-references                    │
 │                                                                             │
 │  programstart drift                                                         │
@@ -149,8 +177,9 @@ PROGRAMSTART continuously validates the planning workspace:
 │     ├─ detect-secrets                                                      │
 │     └─ yamllint                                                            │
 │                                                                             │
-│  pytest (287 tests)                                                         │
+│  pytest (factory + workflow coverage)                                       │
 │     ├─ unit tests for all CLI commands                                     │
+│     ├─ end-to-end project factory tests                                    │
 │     ├─ Pydantic model validation tests                                     │
 │     ├─ Hypothesis property-based tests (BM25, tokenizer, corpus)           │
 │     ├─ RAG integration tests (mocked LLM layer)                            │
@@ -179,7 +208,8 @@ PROGRAMSTART continuously validates the planning workspace:
 │     ├─ programstart_status.py    ← stage, blockers, next actions           │
 │     ├─ programstart_workflow_state.py ← state inspection and advancement   │
 │     ├─ programstart_drift_check.py    ← source-of-truth drift detection    │
-│     ├─ programstart_bootstrap.py      ← project scaffolding               │
+│     ├─ programstart_bootstrap.py      ← low-level project scaffolding     │
+│     ├─ programstart_create.py         ← one-shot factory orchestration    │
 │     ├─ programstart_serve.py          ← dashboard HTTP server             │
 │     └─ programstart_common.py         ← shared utilities                  │
 │                                                                             │
@@ -380,6 +410,7 @@ uv run programstart-retrieval ask "What are the kill criteria?" --structured  # 
 # Project factory helpers
 uv run programstart recommend
 uv run programstart recommend --product-shape "API service" --need rag --need durable-workflows
+uv run programstart prompt-eval --json
 uv run programstart impact PROGRAMBUILD/ARCHITECTURE.md
 uv run programstart attach userjourney --source <path-to-userjourney-folder>
 
@@ -404,6 +435,7 @@ pb clean                           # remove disposable local caches and temp art
 pb dashboard                       # regenerate outputs/STATUS_DASHBOARD.md
 pb init --dest <folder> --project-name <name> --product-shape "CLI tool"
 pb recommend
+pb prompt-eval
 pb impact PROGRAMBUILD/ARCHITECTURE.md
 pb bootstrap --dest <folder> --project-name <name> --variant product
 pb refresh --date 2026-03-29       # regenerate outputs/MANIFEST_* + VERIFICATION_REPORT_*
@@ -434,6 +466,7 @@ Installed console script and module forms are also available:
 20. `programstart attach userjourney --source <path>` — attach the optional USERJOURNEY package later
 21. `programstart recommend` — recommend the workflow variant and stack direction from project inputs
 22. `programstart impact <target>` — inspect related documents, concerns, relations, commands, and routes
+23. `programstart prompt-eval --json` — score generated prompts and factory plans against fixed scenarios
 
 VS Code tasks are provided in `.vscode/tasks.json` so the default editor task runner can drive the hardened workflow without remembering commands.
 
@@ -449,6 +482,8 @@ Integrity baselines are now registry-driven rather than hardcoded inside the scr
 3. manifest collection is also scoped from the registry so temp, generated, and previously emitted integrity artifacts do not inflate the tracked file inventory
 4. generated dashboards, manifests, and verification reports now default to `outputs/` instead of cluttering the repository root
 5. Playwright screenshot goldens now cover the top dashboard shell in attached and PROGRAMBUILD-only modes, plus the attached signoff modal
+6. `programstart create` now emits a runnable starter scaffold under `starter/` in addition to the planning package and factory plan
+7. `programstart prompt-eval` provides a deterministic harness for generated prompt and factory-plan quality checks
 
 ## Safety Notes
 

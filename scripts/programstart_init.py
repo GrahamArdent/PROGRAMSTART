@@ -9,12 +9,13 @@ from pathlib import Path
 
 try:
     from .programstart_attach import attach_userjourney, resolve_attachment_source
-    from .programstart_bootstrap import bootstrap_repository, stamp_owner_and_dates
+    from .programstart_bootstrap import bootstrap_repository, refresh_secrets_baseline, stamp_owner_and_dates
     from .programstart_common import warn_direct_script_invocation
 except ImportError:  # pragma: no cover - standalone script execution fallback
     from programstart_attach import attach_userjourney, resolve_attachment_source  # type: ignore
     from programstart_bootstrap import (  # type: ignore
         bootstrap_repository,
+        refresh_secrets_baseline,
         stamp_owner_and_dates,
     )
     from programstart_common import warn_direct_script_invocation  # type: ignore
@@ -39,23 +40,28 @@ def write_project_readme(
     lines = [
         f"# {project_name}",
         "",
-        one_line_description or "This planning repository was bootstrapped from PROGRAMSTART.",
+        one_line_description or "This standalone project repository was bootstrapped from PROGRAMSTART.",
         "",
         "## Project Setup",
         "",
         f"- PROGRAMBUILD variant: {variant}",
         f"- Product shape: {product_shape}",
         f"- USERJOURNEY attached: {'yes' if attach_userjourney_enabled else 'no'}",
+        "- Repo boundary: separate project repo; do not build inside PROGRAMSTART",
         "",
         "## Start Here",
         "",
         "```powershell",
         "uv sync --extra dev",
         "uv run programstart validate --check bootstrap-assets",
+        "uv run programstart validate --check engineering-ready",
         "uv run programstart next",
         "```",
         "",
-        "Use `programstart recommend` to confirm the current stack and workflow fit before filling stage outputs.",
+        (
+            "Use `programstart create` for the one-shot project-factory path, or `programstart recommend` "
+            "to inspect the current stack and workflow fit before filling stage outputs."
+        ),
         "",
     ]
     path.write_text("\n".join(lines), encoding="utf-8")
@@ -63,9 +69,9 @@ def write_project_readme(
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description=("Initialize a new PROGRAMSTART project with stamped inputs and optional USERJOURNEY attachment.")
+        description=("Initialize a new PROGRAMSTART project repo with stamped inputs and optional USERJOURNEY attachment.")
     )
-    parser.add_argument("--dest", required=True, help="Destination directory for the new planning package.")
+    parser.add_argument("--dest", required=True, help="Destination directory for the new project repo.")
     parser.add_argument("--project-name", required=True, help="Project name to stamp into generated files.")
     parser.add_argument("--variant", choices=["lite", "product", "enterprise"], default="product")
     parser.add_argument("--product-shape", required=True, help="Product shape, for example 'web app' or 'CLI tool'.")
@@ -87,13 +93,17 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     destination_root = Path(args.dest).expanduser().resolve()
-    bootstrap_repository(
-        destination_root,
-        project_name=args.project_name,
-        variant=args.variant,
-        dry_run=args.dry_run,
-        force=args.force,
-    )
+    try:
+        bootstrap_repository(
+            destination_root,
+            project_name=args.project_name,
+            variant=args.variant,
+            dry_run=args.dry_run,
+            force=args.force,
+        )
+    except (FileExistsError, RuntimeError, ValueError) as exc:
+        print(str(exc))
+        return 1
 
     if args.dry_run:
         print(f"STAMP  {destination_root / 'PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md'}")
@@ -132,8 +142,9 @@ def main(argv: list[str] | None = None) -> int:
         if not args.attachment_source:
             raise SystemExit("--attachment-source is required when --attach-userjourney is used")
         attach_userjourney(destination_root, resolve_attachment_source(args.attachment_source), force=args.force, dry_run=False)
+    refresh_secrets_baseline(destination_root, dry_run=False)
 
-    print(f"Initialized planning repository at {destination_root}")
+    print(f"Initialized project repository at {destination_root}")
     return 0
 
 

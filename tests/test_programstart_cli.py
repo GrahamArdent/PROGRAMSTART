@@ -52,6 +52,9 @@ def test_bootstrap_repo_stays_programbuild_only(tmp_path: Path) -> None:
     validate = run_command("scripts/programstart_validate.py", "--check", "all", cwd=destination)
     assert validate.returncode == 0, validate.stdout + validate.stderr
 
+    engineering_ready = run_command("scripts/programstart_validate.py", "--check", "engineering-ready", cwd=destination)
+    assert engineering_ready.returncode == 0, engineering_ready.stdout + engineering_ready.stderr
+
     guide = run_command("scripts/programstart_step_guide.py", "--system", "userjourney", cwd=destination)
     assert guide.returncode == 0, guide.stdout + guide.stderr
     assert "not attached" in guide.stdout.lower()
@@ -156,6 +159,30 @@ def test_unified_cli_next_dispatch(monkeypatch) -> None:
     ]
 
 
+def test_unified_cli_create_dispatch(monkeypatch) -> None:
+    captured: list[list[str]] = []
+
+    def fake_create_main() -> int:
+        captured.append(sys.argv[:])
+        return 0
+
+    monkeypatch.setattr(programstart_cli.programstart_create, "main", fake_create_main)
+    assert programstart_cli.main(["create", "--dest", "tmp", "--project-name", "x", "--product-shape", "CLI tool"]) == 0
+    assert captured == [["programstart create", "--dest", "tmp", "--project-name", "x", "--product-shape", "CLI tool"]]
+
+
+def test_unified_cli_prompt_eval_dispatch(monkeypatch) -> None:
+    captured: list[list[str]] = []
+
+    def fake_prompt_eval_main() -> int:
+        captured.append(sys.argv[:])
+        return 0
+
+    monkeypatch.setattr(programstart_cli.programstart_prompt_eval, "main", fake_prompt_eval_main)
+    assert programstart_cli.main(["prompt-eval", "--json"]) == 0
+    assert captured == [["programstart prompt-eval", "--json"]]
+
+
 def test_unified_cli_help_command(capsys) -> None:
     assert programstart_cli.main(["help"]) == 0
     assert "Unified PROGRAMSTART command-line interface" in capsys.readouterr().out
@@ -173,6 +200,13 @@ def test_unified_cli_next_rejects_extra_args() -> None:
 @pytest.mark.parametrize(
     ("command", "module_name", "argv0", "arguments", "expected_argv"),
     [
+        (
+            "create",
+            "programstart_create",
+            "programstart create",
+            ["--dest", "tmp", "--project-name", "x", "--product-shape", "CLI tool", "--dry-run"],
+            ["programstart create", "--dest", "tmp", "--project-name", "x", "--product-shape", "CLI tool", "--dry-run"],
+        ),
         (
             "init",
             "programstart_init",
@@ -229,6 +263,13 @@ def test_unified_cli_next_rejects_extra_args() -> None:
             "programstart log",
             ["--action", "edited"],
             ["programstart log", "--action", "edited"],
+        ),
+        (
+            "prompt-eval",
+            "programstart_prompt_eval",
+            "programstart prompt-eval",
+            ["--json"],
+            ["programstart prompt-eval", "--json"],
         ),
         ("progress", "programstart_checklist_progress", "programstart progress", [], ["programstart progress"]),
         (

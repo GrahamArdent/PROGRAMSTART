@@ -45,6 +45,70 @@ class IntegrationPattern(BaseModel):
     notes: list[str] = Field(default_factory=list)
 
 
+class ProvisioningServiceEntry(BaseModel):
+    """A project-scoped service that may need provisioning in generated repos."""
+
+    name: str
+    aliases: list[str] = Field(default_factory=list)
+    provider: str = ""
+    category: str = ""
+    trigger_shapes: list[str] = Field(default_factory=list)
+    trigger_needs: list[str] = Field(default_factory=list)
+    trigger_stacks: list[str] = Field(default_factory=list)
+    automation_supported: bool = False
+    required_config: list[str] = Field(default_factory=list)
+    notes: list[str] = Field(default_factory=list)
+
+
+class CliToolEntry(BaseModel):
+    """A developer CLI that can reduce setup friction in generated repos."""
+
+    name: str
+    aliases: list[str] = Field(default_factory=list)
+    provider: str = ""
+    category: str = ""
+    trigger_shapes: list[str] = Field(default_factory=list)
+    trigger_needs: list[str] = Field(default_factory=list)
+    trigger_stacks: list[str] = Field(default_factory=list)
+    trigger_services: list[str] = Field(default_factory=list)
+    trigger_apis: list[str] = Field(default_factory=list)
+    install_methods: list[str] = Field(default_factory=list)
+    recommended_commands: list[str] = Field(default_factory=list)
+    required_config: list[str] = Field(default_factory=list)
+    notes: list[str] = Field(default_factory=list)
+
+
+class ThirdPartyAPIEntry(BaseModel):
+    """A reusable third-party API integration profile for generated repos."""
+
+    name: str
+    aliases: list[str] = Field(default_factory=list)
+    provider: str = ""
+    category: str = ""
+    trigger_shapes: list[str] = Field(default_factory=list)
+    trigger_needs: list[str] = Field(default_factory=list)
+    trigger_stacks: list[str] = Field(default_factory=list)
+    server_env_vars: list[str] = Field(default_factory=list)
+    public_env_vars: list[str] = Field(default_factory=list)
+    base_url: str = ""
+    docs_url: str = ""
+    has_official_cli: bool = False
+    notes: list[str] = Field(default_factory=list)
+
+
+class CoverageDomain(BaseModel):
+    """A broad product or platform area the KB should intentionally cover."""
+
+    name: str
+    status: str = ""
+    priority: str = ""
+    summary: str = ""
+    key_capabilities: list[str] = Field(default_factory=list)
+    representative_tools: list[str] = Field(default_factory=list)
+    current_gaps: list[str] = Field(default_factory=list)
+    linked_tracks: list[str] = Field(default_factory=list)
+
+
 class EmbeddingGuidance(BaseModel):
     """Guidance for embedding configuration."""
 
@@ -92,6 +156,12 @@ class DecisionRule(BaseModel):
     because: str = ""
     avoid: list[str] = Field(default_factory=list)
     related_items: list[str] = Field(default_factory=list)
+    match_product_shapes: list[str] = Field(default_factory=list)
+    match_needs: list[str] = Field(default_factory=list)
+    match_domains: list[str] = Field(default_factory=list)
+    prefer_items: list[str] = Field(default_factory=list)
+    avoid_items: list[str] = Field(default_factory=list)
+    target_layers: list[str] = Field(default_factory=list)
     confidence: str = "medium"
 
 
@@ -126,9 +196,12 @@ class ResearchTrack(BaseModel):
     name: str
     cadence: str = ""
     owner: str = ""
+    freshness_days: int = 7
+    last_review_date: str = ""
     scope: list[str] = Field(default_factory=list)
     trigger_signals: list[str] = Field(default_factory=list)
     required_outputs: list[str] = Field(default_factory=list)
+    linked_domains: list[str] = Field(default_factory=list)
 
 
 class ResearchLedger(BaseModel):
@@ -146,6 +219,10 @@ class KnowledgeBase(BaseModel):
     version: str = ""
     method: str = ""
     stacks: list[StackEntry] = Field(default_factory=list)
+    provisioning_services: list[ProvisioningServiceEntry] = Field(default_factory=list)
+    cli_tools: list[CliToolEntry] = Field(default_factory=list)
+    third_party_apis: list[ThirdPartyAPIEntry] = Field(default_factory=list)
+    coverage_domains: list[CoverageDomain] = Field(default_factory=list)
     integration_patterns: list[IntegrationPattern] = Field(default_factory=list)
     decision_rules: list[DecisionRule] = Field(default_factory=list)
     relationships: list[KnowledgeRelation] = Field(default_factory=list)

@@ -13,12 +13,14 @@ try:
         programstart_bootstrap,
         programstart_checklist_progress,
         programstart_clean,
+        programstart_create,
         programstart_drift_check,
         programstart_context,
         programstart_dashboard,
         programstart_impact,
         programstart_init,
         programstart_log,
+        programstart_prompt_eval,
         programstart_research_delta,
         programstart_refresh_integrity,
         programstart_recommend,
@@ -36,6 +38,7 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
     import programstart_bootstrap
     import programstart_checklist_progress
     import programstart_clean
+    import programstart_create
     import programstart_command_registry
     import programstart_drift_check
     import programstart_context
@@ -43,6 +46,7 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
     import programstart_impact
     import programstart_init
     import programstart_log
+    import programstart_prompt_eval
     import programstart_research_delta
     import programstart_refresh_integrity
     import programstart_recommend
@@ -105,6 +109,8 @@ def build_parser() -> argparse.ArgumentParser:
 def dispatch(command: str, arguments: list[str], parser: argparse.ArgumentParser) -> int:
     if command == "init":
         return run_passthrough(programstart_init.main, "programstart init", arguments)
+    if command == "create":
+        return run_passthrough(programstart_create.main, "programstart create", arguments)
     if command == "attach":
         return run_passthrough(programstart_attach.main, "programstart attach", arguments)
     if command == "recommend":
@@ -129,6 +135,8 @@ def dispatch(command: str, arguments: list[str], parser: argparse.ArgumentParser
         return run_next(arguments)
     if command == "log":
         return run_passthrough(programstart_log.main, "programstart log", arguments)
+    if command == "prompt-eval":
+        return run_passthrough(programstart_prompt_eval.main, "programstart prompt-eval", arguments)
     if command == "progress":
         return run_passthrough(programstart_checklist_progress.main, "programstart progress", arguments)
     if command == "guide":

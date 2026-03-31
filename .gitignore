@@ -3,6 +3,7 @@
 .nox/
 .pytest_cache/
 .ruff_cache/
+.tmp_*/
 .tmp_factory_audit/
 .tmp_bootstrap_*/
 .tmp_bootstrap_real/
@@ -17,3 +18,5 @@ site/
 *.pyc
 *.pyo
 *.pyd
+
+.early.coverage

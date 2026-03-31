@@ -427,6 +427,7 @@ Required guardrails (adapt to product shape — not all apply to every architect
 - route or endpoint contract layer with canonical, deprecated, and planned states
 - auth-aware client (and authenticated streaming helper if applicable)
 - service or handler registration pattern for all endpoints
+- repo-boundary consent rule for AI-assisted work: do not inspect, edit, stage, commit, or push another repository unless the user explicitly names it and asks for that action
 - CI with lint, types, tests, build, and timeouts
 - local bootstrap command with no tribal knowledge
 
@@ -700,6 +701,7 @@ These should be established as early as possible:
 - Dependency review: document critical vendors, third-party services, and fallback behavior before release.
 - Maintain `PROGRAMBUILD_FILE_INDEX.md` whenever a critical file is added, renamed, deprecated, or replaced.
 - Update `PROGRAMBUILD_CANONICAL.md` whenever document authority changes.
+- Repository scope is explicit in AI-assisted workflows: keep work inside the current repo unless the user explicitly names another repo and asks for that action.
 
 ---
 

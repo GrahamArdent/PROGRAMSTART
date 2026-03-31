@@ -47,6 +47,13 @@ def baseline_for(registry: dict[str, Any], name: str) -> dict[str, Any]:
     raise KeyError(f"Missing integrity baseline: {name}")
 
 
+def optional_baseline_for(registry: dict[str, Any], name: str) -> dict[str, Any] | None:
+    try:
+        return baseline_for(registry, name)
+    except KeyError:
+        return None
+
+
 def load_attachment_manifest(registry: dict[str, Any], name: str) -> dict[str, Any] | None:
     baseline = baseline_for(registry, name)
     manifest_path = workspace_path(str(baseline["manifest"]))
@@ -75,27 +82,31 @@ def main() -> int:
         manifest_lines.append(f"{sha256(path)}  {to_posix(path).replace('/', '\\')}")
     manifest_path.write_text("\n".join(manifest_lines) + "\n", encoding="utf-8")
 
-    snapshot_baseline = baseline_for(registry, "programbuild_backup_snapshot")
-    backup_root = workspace_path(str(snapshot_baseline["root"]))
+    snapshot_baseline = optional_baseline_for(registry, "programbuild_backup_snapshot")
+    backup_root = workspace_path(str(snapshot_baseline["root"])) if snapshot_baseline else None
     programbuild_root = workspace_path(registry["systems"]["programbuild"]["root"])
     userjourney_root = workspace_path("USERJOURNEY")
     userjourney_attached = userjourney_root.exists()
-    core_folders_present = programbuild_root.exists() and backup_root.exists()
+    core_folders_present = programbuild_root.exists() and (backup_root.exists() if backup_root else True)
     programbuild_matches_backup = True
     compared_files = 0
     tracked_programbuild_files = (
         registry["systems"]["programbuild"]["control_files"] + registry["systems"]["programbuild"]["output_files"]
     )
-    for relative_path in tracked_programbuild_files:
-        relative_name = Path(relative_path).name
-        backup_file = backup_root / relative_name
-        current_file = programbuild_root / relative_name
-        if backup_file.exists() and current_file.exists():
-            compared_files += 1
-            if sha256(backup_file) != sha256(current_file):
-                programbuild_matches_backup = False
+    if backup_root:
+        for relative_path in tracked_programbuild_files:
+            relative_name = Path(relative_path).name
+            backup_file = backup_root / relative_name
+            current_file = programbuild_root / relative_name
+            if backup_file.exists() and current_file.exists():
+                compared_files += 1
+                if sha256(backup_file) != sha256(current_file):
+                    programbuild_matches_backup = False
 
-    userjourney_reference_manifest = load_attachment_manifest(registry, "userjourney_attachment_reference")
+    userjourney_reference_baseline = optional_baseline_for(registry, "userjourney_attachment_reference")
+    userjourney_reference_manifest = (
+        load_attachment_manifest(registry, "userjourney_attachment_reference") if userjourney_reference_baseline else None
+    )
     userjourney_reference_manifest_present = userjourney_reference_manifest is not None
     userjourney_expected_files = registry["systems"]["userjourney"]["core_files"]
     userjourney_present_files = sum(1 for relative_path in userjourney_expected_files if workspace_path(relative_path).exists())
@@ -114,7 +125,11 @@ def main() -> int:
         f"- Root: {'present' if workspace_path('.').exists() else 'missing'}",
         f"- PROGRAMBUILD/: {'present' if programbuild_root.exists() else 'missing'}",
         f"- USERJOURNEY/: {'present (optional attachment)' if userjourney_attached else 'not attached (optional)'}",
-        f"- {snapshot_baseline['root']}/: {'present' if backup_root.exists() else 'missing'}",
+        (
+            f"- {snapshot_baseline['root']}/: {'present' if backup_root and backup_root.exists() else 'missing'}"
+            if snapshot_baseline
+            else "- Backup snapshot baseline: not configured for this repository"
+        ),
         (
             "- USERJOURNEY integrity manifest: present"
             if userjourney_attached and userjourney_reference_manifest_present
@@ -136,13 +151,25 @@ def main() -> int:
             if userjourney_attached
             else "- USERJOURNEY declared core files present: not applicable (attachment not present)"
         ),
-        f"- Backup snapshot file count: {len(list(backup_root.glob('*.md')))}",
+        (
+            f"- Backup snapshot file count: {len(list(backup_root.glob('*.md')))}"
+            if backup_root
+            else "- Backup snapshot file count: not applicable (no baseline configured)"
+        ),
         f"- Total tracked repo files in manifest: {len(files)}",
         "",
         "## Integrity Checks",
         "",
-        f"- PROGRAMBUILD files compared against backup snapshot using SHA-256: {compared_files} files",
-        f"- PROGRAMBUILD files match backup snapshot: {'yes' if programbuild_matches_backup else 'no'}",
+        (
+            f"- PROGRAMBUILD files compared against backup snapshot using SHA-256: {compared_files} files"
+            if backup_root
+            else "- PROGRAMBUILD backup snapshot comparison: not configured for this repository"
+        ),
+        (
+            f"- PROGRAMBUILD files match backup snapshot: {'yes' if programbuild_matches_backup else 'no'}"
+            if backup_root
+            else "- PROGRAMBUILD files match backup snapshot: not applicable (no baseline configured)"
+        ),
         (
             f"- USERJOURNEY attachment source workspace: {userjourney_source_workspace}"
             if userjourney_attached and userjourney_reference_manifest_present
@@ -169,9 +196,18 @@ def main() -> int:
         "## Result",
         "",
         f"- All required template folders are {'present' if core_folders_present else 'not fully present'}.",
-        f"- PROGRAMBUILD matches the preserved backup snapshot: {'yes' if programbuild_matches_backup else 'no'}.",
-        "- A mismatch against the preserved backup indicates intentional "
-        "workspace evolution unless unexpected edits were made to the backup itself.",
+        (
+            f"- PROGRAMBUILD matches the preserved backup snapshot: {'yes' if programbuild_matches_backup else 'no'}."
+            if backup_root
+            else "- PROGRAMBUILD backup snapshot comparison is not configured for generated project repositories."
+        ),
+        (
+            "- A mismatch against the preserved backup indicates intentional workspace evolution "
+            "unless unexpected edits were made to the backup itself."
+            if backup_root
+            else "- Integrity reporting for generated project repositories focuses on current workspace inventory "
+            "rather than template backup parity."
+        ),
         "- Temp, generated, and previously emitted integrity artifacts are excluded from manifest collection.",
         (
             "- USERJOURNEY attachment integrity is tracked through the declared core files and integrity reference manifest."

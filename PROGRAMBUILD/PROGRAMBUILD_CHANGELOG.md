@@ -6,6 +6,13 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 
 ---
 
+## 2026-03-31
+
+- added a repo-boundary consent policy for AI-assisted workflows so other repositories cannot be inspected, edited, staged, committed, or pushed without explicit user approval
+- added automated validation and CI enforcement for the repo-boundary policy and aligned quick-start guidance with the new rule
+
+---
+
 ## 2026-03-29
 
 - added a scheduled full CI gate workflow to run the heavier nox-based quality lane outside normal PR and push validation
@@ -13,6 +20,7 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 - clarified in repository docs that `USERJOURNEY/` remains an optional reference attachment and is not required for every bootstrapped project
 - hardened workflow caching and artifact capture, normalized agent/workflow line endings, and reduced bootstrapped nox smoke noise in CI
 - adjusted drift policy so `PROGRAMBUILD_CHANGELOG.md` entries do not require concurrent canonical or file-index edits unless authority or inventory actually changes
+- added a one-shot `programstart create` factory flow, bootstrapped project-level readiness policy, runtime compatibility smoke coverage, and CodeQL scanning
 
 ---
 
@@ -26,4 +34,4 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 
 ---
 
-Last updated: 2026-03-29
+Last updated: 2026-03-31

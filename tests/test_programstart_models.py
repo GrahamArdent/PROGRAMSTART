@@ -13,16 +13,19 @@ from pathlib import Path
 import pytest
 
 from scripts.programstart_models import (
+    CliToolEntry,
     ComparisonFinding,
     CommandSet,
     ConcernRecord,
     ContextIndex,
+    CoverageDomain,
     DecisionRule,
     DocumentRecord,
     EmbeddingGuidance,
     IntegrationPattern,
     KnowledgeBase,
     KnowledgeRelation,
+    ProvisioningServiceEntry,
     RAGQueryResponse,
     RelationRecord,
     ResearchLedger,
@@ -31,6 +34,7 @@ from scripts.programstart_models import (
     RouteRecord,
     RuntimeInfo,
     StackEntry,
+    ThirdPartyAPIEntry,
     VersionComparison,
 )
 
@@ -94,6 +98,24 @@ def test_integration_pattern_full() -> None:
     assert len(p.components) == 2
 
 
+def test_provisioning_service_entry_minimal() -> None:
+    entry = ProvisioningServiceEntry(name="Supabase")
+    assert entry.name == "Supabase"
+    assert entry.automation_supported is False
+
+
+def test_cli_tool_entry_minimal() -> None:
+    entry = CliToolEntry(name="GitHub CLI")
+    assert entry.name == "GitHub CLI"
+    assert entry.install_methods == []
+
+
+def test_third_party_api_entry_minimal() -> None:
+    entry = ThirdPartyAPIEntry(name="OpenAI")
+    assert entry.name == "OpenAI"
+    assert entry.server_env_vars == []
+
+
 # ---------------------------------------------------------------------------
 # RetrievalGuidance
 # ---------------------------------------------------------------------------
@@ -128,9 +150,17 @@ def test_knowledge_base_with_stacks() -> None:
     kb = KnowledgeBase(
         version="2026-04-01",
         stacks=[StackEntry(name="FastAPI"), StackEntry(name="React")],
+        provisioning_services=[ProvisioningServiceEntry(name="Supabase", provider="Supabase")],
+        cli_tools=[CliToolEntry(name="GitHub CLI", provider="GitHub")],
+        third_party_apis=[ThirdPartyAPIEntry(name="OpenAI", provider="OpenAI")],
+        coverage_domains=[CoverageDomain(name="Mobile apps", status="seed", priority="high")],
     )
     assert len(kb.stacks) == 2
     assert kb.version == "2026-04-01"
+    assert kb.provisioning_services[0].provider == "Supabase"
+    assert kb.cli_tools[0].provider == "GitHub"
+    assert kb.third_party_apis[0].provider == "OpenAI"
+    assert kb.coverage_domains[0].status == "seed"
 
 
 def test_knowledge_base_extended_sections() -> None:
@@ -154,13 +184,22 @@ def test_knowledge_base_extended_sections() -> None:
         ],
         research_ledger=ResearchLedger(
             operating_model="weekly delta review",
-            tracks=[ResearchTrack(name="Python runtime", cadence="weekly")],
+            tracks=[
+                ResearchTrack(
+                    name="Python runtime",
+                    cadence="weekly",
+                    freshness_days=7,
+                    last_review_date="2026-03-29",
+                    linked_domains=["Developer experience"],
+                )
+            ],
         ),
     )
     assert kb.decision_rules[0].title == "Prefer durable workflows"
     assert kb.relationships[0].relation == "alternative_to"
     assert kb.comparisons[0].findings[0].area == "concurrency"
     assert kb.research_ledger.tracks[0].name == "Python runtime"
+    assert kb.research_ledger.tracks[0].freshness_days == 7
 
 
 # ---------------------------------------------------------------------------

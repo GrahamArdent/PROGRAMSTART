@@ -30,7 +30,7 @@ It then extracts titles, purpose fields, owners, authority fields, dependencies,
 
 ### 3. Research-Backed Knowledge Base Third
 
-The context index also includes a machine-readable knowledge base of stack choices, tradeoffs, integration patterns, and retrieval guidance.
+The context index also includes a machine-readable knowledge base of stack choices, tradeoffs, provisioning services, CLI tools, third-party APIs, integration patterns, and retrieval guidance.
 
 ### 4. Relations Across Everything
 
@@ -76,7 +76,7 @@ The generated context index currently includes:
 - system definitions from the process registry
 - current runtime workflow state
 - key document metadata from PROGRAMBUILD, USERJOURNEY, and docs pages
-- stack and integration guidance from `config/knowledge-base.json`
+- stack, service, CLI, and third-party API guidance from `config/knowledge-base.json`
 - concern ownership extracted from authority tables
 - CLI commands and dashboard command keys
 - dashboard route inventory

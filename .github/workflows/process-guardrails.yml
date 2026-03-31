@@ -123,6 +123,12 @@ jobs:
       - name: Test suite
         run: uv run pytest --cov-report=term-missing --cov-report=xml
 
+      - name: Prompt evaluation
+        run: uv run programstart prompt-eval --json
+
+      - name: Knowledge status smoke
+        run: uv run programstart research --status --json
+
       - name: Security scan (bandit)
         run: uv run bandit -r scripts/ -ll --skip "B101,B310" -x tests/
 
@@ -149,11 +155,17 @@ jobs:
       - name: Validate structure and metadata
         run: uv run programstart validate --check all
 
+      - name: Validate engineering readiness policy
+        run: uv run programstart validate --check engineering-ready
+
       - name: Validate authority sync
         run: uv run programstart validate --check authority-sync
 
       - name: Validate planning references
         run: uv run programstart validate --check planning-references
+
+      - name: Validate repo boundary consent policy
+        run: uv run programstart validate --check repo-boundary
 
       - name: Validate workflow state
         run: uv run programstart validate --check workflow-state
@@ -178,6 +190,9 @@ jobs:
 
       - name: Smoke bootstrap
         run: uv run programstart bootstrap --dest .tmp_ci_bootstrap --project-name CI-SMOKE --variant product
+
+      - name: Smoke one-shot factory create across shapes
+        run: uv run python scripts/programstart_factory_smoke.py --workspace . --dest-root .tmp_ci_factory_smoke --require-web-runtime
 
       - name: Validate bootstrapped repo
         working-directory: .tmp_ci_bootstrap
@@ -243,3 +258,49 @@ jobs:
 
       - name: Check source-of-truth drift
         run: uv run programstart drift --changed-file-list changed_files.txt
+
+  compatibility-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.13', '3.14']
+    env:
+      UV_CACHE_DIR: .cache/uv
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install uv
+        run: python -m pip install uv
+
+      - name: Cache uv packages
+        uses: actions/cache@v5
+        with:
+          path: ${{ env.UV_CACHE_DIR }}
+          key: uv-compat-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('uv.lock') }}
+          restore-keys: uv-compat-${{ runner.os }}-${{ matrix.python-version }}-
+
+      - name: Sync development environment
+        run: uv sync --extra dev
+
+      - name: Factory command dry-run matrix
+        shell: bash
+        run: |
+          uv run programstart create --dest .tmp_compat_create_cli --project-name COMPAT-CLI --product-shape "CLI tool" --dry-run
+          uv run programstart create --dest .tmp_compat_create_api --project-name COMPAT-API --product-shape "API service" --need rag --need agents --dry-run
+          uv run programstart create --dest .tmp_compat_create_web --project-name COMPAT-WEB --product-shape "web app" --attachment-source USERJOURNEY --dry-run
+
+      - name: Dashboard API smoke
+        run: uv run python scripts/programstart_dashboard_smoke.py
+
+      - name: Focused factory tests
+        run: uv run pytest tests/test_programstart_project_factory.py tests/test_programstart_validate.py -q

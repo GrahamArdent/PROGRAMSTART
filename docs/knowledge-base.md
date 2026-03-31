@@ -27,9 +27,13 @@ It does not try to list every framework. It captures a practical working set of 
 
 The machine-readable source lives in `config/knowledge-base.json` and is indexed into the context layer.
 
-The KB now stores five distinct kinds of decision material instead of flattening everything into stack blurbs:
+The KB now stores nine distinct kinds of decision material instead of flattening everything into stack blurbs:
 
 - stacks and integration patterns for baseline platform selection
+- provisioning services for project-scoped hosted resources
+- CLI tool profiles for developer setup and auth workflows
+- third-party API profiles for reusable auth/env templates
+- coverage domains that describe which whole product areas are strong, partial, or still seed-stage in the KB
 - decision rules for recurring architecture choices
 - explicit relationships such as `complements`, `alternative_to`, and `supersedes_for_new_work`
 - structured comparisons for version deltas and migration decisions
@@ -39,10 +43,11 @@ The KB now stores five distinct kinds of decision material instead of flattening
 
 The KB is not just reference material — it is an active part of the PROGRAMSTART retrieval pipeline:
 
-1. **Context Indexing**: `programstart context build` includes KB stacks and integration patterns in the context index, making them searchable alongside planning documents
-2. **BM25 Search**: `programstart-retrieval search "async Python API"` finds relevant stacks by name, alias, capability, or best-for description
+1. **Context Indexing**: `programstart context build` includes KB stacks, CLI tools, third-party APIs, and integration patterns in the context index, making them searchable alongside planning documents
+2. **BM25 Search**: `programstart-retrieval search "async Python API"` finds relevant stacks, CLIs, and API surfaces by name, alias, capability, or auth/env description
 3. **RAG Queries**: `programstart-retrieval ask "What stack should I use for durable workflows?"` retrieves KB entries as context and generates source-cited answers via LiteLLM + Instructor
-4. **Schema Validation**: `programstart-retrieval validate` verifies the KB conforms to the Pydantic `KnowledgeBase` model with typed submodels for stacks, rules, relations, comparisons, and retrieval guidance
+4. **Schema Validation**: `programstart-retrieval validate` verifies the KB conforms to the Pydantic `KnowledgeBase` model with typed submodels for stacks, services, CLIs, API profiles, rules, relations, comparisons, and retrieval guidance
+5. **Coverage Auditing**: `programstart research --status` reports which research tracks are fresh or due and which coverage domains are still only partial or seed-level
 
 ## Knowledge Layers
 
@@ -55,6 +60,8 @@ Use the KB in this order:
 5. weekly research deltas
 
 That separation matters. Facts answer what something is. Rules answer when to choose it. Relations answer what it complements or replaces. Comparisons answer what changed. Research deltas answer whether the recommendation should move.
+
+The CLI and third-party API layers exist because future project setup friction is usually not about deciding between React and Next.js. It is about remembering which official CLI to install, which auth flow to use, which keys belong server-side, and which env vars are public-safe.
 
 ### Active Integrations in PROGRAMSTART
 
@@ -73,6 +80,26 @@ The entries were synthesized from official documentation rather than community r
 The synthesis is still critical rather than promotional. Official docs are useful for capabilities, but they understate migration cost, operational overhead, and architectural misuse. This KB adds those tradeoffs explicitly.
 
 Weekly deep-research is the right follow-on only if it stays delta-oriented. The KB now includes a `research_ledger` section so each recurring review produces a bounded output: what changed, whether the recommendation changed, what evidence supports that, and what confidence level applies.
+
+The KB also includes a `coverage_domains` layer because a system that wants to support "anything" needs to know where it is still thin. That turns the question from vague ambition into explicit scope management: web and API work may be strong, while mobile, desktop, realtime, or data-platform lanes can remain marked as `seed` or `partial` until they are researched properly.
+
+Mobile is now intentionally promoted from pure seed status to a `partial` domain because the KB has first-class React Native, Expo, Flutter, Firebase, EAS CLI, and RevenueCat coverage. That does not mean mobile is complete. It means the KB can now recommend credible default paths while still flagging missing native-first and release-automation depth.
+
+Data engineering is now strong enough to recommend both local-first and platform-scale paths: DuckDB and Polars for embedded analytics, BigQuery and ClickHouse for warehouse or OLAP-heavy workloads, and Dagster or Prefect when pipelines need explicit orchestration instead of unmanaged scripts.
+
+Identity and regulated delivery now include concrete vendor surfaces instead of only security heuristics. Auth0, Clerk, WorkOS, and HashiCorp Vault give the KB first-class hosted identity and secret-management coverage, while the remaining gap is narrowed to compliance automation and a few missing provider comparisons rather than total vendor absence.
+
+Cloud and platform operations are now strong enough to recommend both broad-provider and narrow-hosting paths. AWS, Google Cloud, and Azure cover the major cloud-platform decision surface, while Fly.io gives the KB a credible simpler deploy path for teams that need shipping speed more than full platform breadth.
+
+Regulated delivery is now also strong on actual provider coverage rather than only control checklists. Amazon Cognito, WebAuthn/passkeys, Vanta, and Drata close the most obvious identity and compliance-automation gaps, so the remaining work is deeper policy tooling and regime-specific implementation guidance rather than missing first-class vendors.
+
+Desktop and local-first delivery is no longer a pure seed lane. Tauri, Electron, SQLite, libSQL, and Replicache now give the KB a credible baseline for packaged desktop software and offline-first state ownership, even though richer sync semantics, updater operations, and collaboration patterns still need more depth.
+
+Developer experience is now strong enough to cover more than the Python toolchain. pnpm, npm, Turborepo, Nx, cargo, dotnet CLI, Rust, and .NET give the KB a credible cross-language build and monorepo surface instead of pretending every team ships from one Python-only workflow.
+
+Realtime delivery is now strong enough to move beyond generic websocket hand-waving. Kafka, NATS, RabbitMQ, Yjs, Ably, and Pusher give the KB first-class eventing, broker, and collaborative-state coverage, so the remaining gap is narrower: schema governance, observability, and a few missing managed gateway patterns rather than no realtime lane at all.
+
+Commerce and customer integrations are now strong enough to recommend actual product-integration defaults instead of only generic API placeholders. HubSpot, Salesforce, Intercom, Segment, Shippo, EasyPost, TaxJar, and Avalara give the KB real CRM, support, CDP, shipping, and tax surfaces, while structured comparisons now separate straightforward defaults from escalation paths when subscription, tax, or fulfillment complexity rises.
 
 ## Decision Rules
 
@@ -135,7 +162,48 @@ That ordering avoids a common failure mode where teams pick a frontend framework
 | Qdrant | production vector search at scale | HNSW with quantization, multi-tenancy, named vectors, distributed deployment | HNSW memory requirements; self-hosting maintenance |
 | Polars | high-throughput DataFrame processing | Rust-speed with lazy evaluation, streaming, and Arrow-native zero-copy | pandas ecosystem incompatibility; lazy API debugging overhead |
 | DuckDB | embedded SQL analytics over files | in-process columnar OLAP; reads Parquet/CSV/Arrow without a server | single-writer model; not for OLTP or shared multi-service access |
+| BigQuery | managed warehouse analytics | serverless SQL over large analytical datasets without cluster operations | cost spikes if partitioning and query governance are weak |
+| ClickHouse | high-volume event and observability analytics | fast columnar OLAP for append-heavy datasets | easy to misuse as a general application database |
+| Dagster | asset-oriented data orchestration | explicit data assets, partitions, freshness, and lineage | orchestration graph complexity for simple jobs |
+| Amazon Web Services | broad cloud-platform delivery | mature cloud primitives across compute, storage, networking, and IAM | easy to create platform sprawl without strong defaults |
+| Google Cloud | data- and serverless-friendly cloud platform | strong fit for BigQuery, Cloud Run, GKE, and Firebase-adjacent systems | project and IAM complexity if boundaries are weak |
+| Microsoft Azure | enterprise-oriented cloud platform | strong alignment with Microsoft identity and governance environments | enterprise-cloud overhead for small teams |
+| Fly.io | pragmatic container app hosting | deploy containers with less platform overhead than full cloud ops | not a substitute for deeper data and platform architecture |
+| Tauri | lightweight desktop shell with Rust core | native-feeling desktop packaging with web UI reuse | signing, updater, and Rust build complexity remain real |
+| Electron | mature web-tech desktop runtime | broad ecosystem for packaging, IPC, and desktop integrations | heavier runtime footprint and security-boundary risk |
+| SQLite | embedded local relational storage | simple offline persistence with transactional integrity | local storage alone does not solve sync or conflicts |
+| libSQL | replicated SQLite-compatible local data path | local SQL with a path toward sync and replication | replication still needs explicit system design |
+| Replicache | local-first sync model | optimistic local mutations with explicit server reconciliation | conflict handling and sync contracts still need careful design |
+| Kafka | durable event streaming backbone | replayable ordered logs for event-driven systems | overkill for simple queue or request-driven workflows |
+| NATS | lightweight messaging and pubsub | simple low-latency broker patterns with modest ops footprint | weaker fit than Kafka for durable stream replay requirements |
+| RabbitMQ | conventional brokered messaging | mature queue and routing semantics for worker distribution | can hide long-lived workflow state in broker topology |
+| Yjs | collaborative shared-state CRDT engine | conflict-tolerant realtime document and shared-state sync | still needs explicit transport, persistence, and auth boundaries |
+| Auth0 | hosted identity and OIDC | externalized login, RBAC, tenant-managed auth, broad SDK coverage | tenant/config sprawl and vendor-coupled auth workflows |
+| WorkOS | enterprise identity and provisioning | SSO, SCIM, audit logs, and org-level enterprise features | overbuying enterprise identity for products that do not need it |
+| Amazon Cognito | AWS-native hosted identity | user pools, hosted login, and token flows inside AWS boundaries | easy to inherit AWS identity complexity without clear auth rules |
+| WebAuthn and passkeys | phishing-resistant authentication | stronger passwordless login with authenticator-backed credentials | recovery and fallback flows still need deliberate product design |
+| HashiCorp Vault | centralized secret management | dynamic credentials, policy-driven access, and audit trails | operational overhead if simpler managed secret stores are enough |
+| Vanta | compliance automation and evidence collection | automates evidence gathering across engineering systems | not a substitute for actual control ownership |
+| Drata | compliance automation and monitoring | connects engineering systems to control and audit workflows | automated evidence still needs human review and remediation |
 | Terraform | multi-cloud infrastructure as code | Write/Plan/Apply with drift detection; thousands of providers via Registry | state file sensitivity; declarative model resists imperative logic |
+| pnpm | workspace-aware Node package management | deterministic installs and strong monorepo ergonomics | mixed package-manager repos create avoidable drift |
+| npm | baseline Node package management | ubiquitous package install and script execution surface | weaker workspace ergonomics than more deliberate monorepo setups |
+| Turborepo | JS/TS monorepo task orchestration | cached build graph for multi-package repos | cache and graph complexity if modeled poorly |
+| Nx | graph-aware workspace orchestration | affected builds and project-boundary tooling | overlayering multiple workspace tools creates confusion |
+| cargo | Rust build and package workflow | coherent build, test, and lint surface for Rust projects | toolchain drift and compile times need active management |
+| dotnet CLI | .NET build and test workflow | SDK-driven restore, build, and test commands | IDE-only habits undermine reproducible automation |
+| Rust | native systems and tooling platform | strong fit for native binaries and desktop backends | learning curve and compile times are real costs |
+| .NET | compiled service and desktop platform | mature SDK and build pipeline for enterprise apps | unnecessary overhead if compiled-platform benefits are not needed |
+| Ably | managed realtime transport and presence | global pubsub, presence, and delivery semantics without self-managed broker ops | vendor boundary and pricing can become architectural constraints |
+| Pusher | hosted channels and realtime notifications | fast path to product realtime without building broker infrastructure | simpler feature scope than broader event-platform architectures |
+| HubSpot | CRM and marketing automation platform | pragmatic customer lifecycle and GTM ops surface for product teams | CRM logic can sprawl into hidden product behavior |
+| Salesforce | enterprise CRM platform | deep enterprise process and ecosystem coverage | high customization gravity and integration overhead |
+| Intercom | in-product support and lifecycle messaging | product-native communication surface across support and engagement | message automation can become ungoverned business logic |
+| Segment | customer-data routing platform | one event contract feeding multiple downstream tools | bad instrumentation propagates quickly across systems |
+| Shippo | multi-carrier shipping abstraction | practical rates, labels, and tracking without direct carrier integrations | fulfillment-state ownership can become ambiguous |
+| EasyPost | programmable shipping workflow platform | richer shipment and tracking object model for application workflows | more shipping-domain complexity than simpler checkout flows need |
+| TaxJar | pragmatic sales-tax automation | easier adoption for product-led commerce tax calculation | not a substitute for explicit tax policy ownership |
+| Avalara | enterprise tax automation | deeper jurisdiction and process coverage for complex commerce programs | heavier operating model than straightforward ecommerce needs |
 | Supabase | full-stack BaaS with PostgreSQL core | Auth + Realtime + Storage + pgvector + Queues + Cron in one service | vendor lock-in on Auth/Storage APIs; self-hosting complexity |
 | pre-commit | automated git hook quality gates | multi-language hook runner with revision-pinned .pre-commit-config.yaml | per-commit latency if slow hooks are not moved to pre-push |
 | mypy | Python static type checking | --strict mode, Protocol, TypeGuard, incremental mode, mypy daemon | annotation investment on untyped codebases; some dynamic patterns resist analysis |

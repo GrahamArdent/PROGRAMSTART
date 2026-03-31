@@ -150,6 +150,68 @@ def build_corpus(index: dict[str, Any]) -> list[Chunk]:
             )
         )
 
+    # KB CLI tools
+    for cli_tool in kb.get("cli_tools", []):
+        parts = [cli_tool.get("name", ""), cli_tool.get("provider", ""), cli_tool.get("category", "")]
+        parts.extend(cli_tool.get("aliases", []))
+        parts.extend(cli_tool.get("install_methods", []))
+        parts.extend(cli_tool.get("recommended_commands", []))
+        parts.extend(cli_tool.get("required_config", []))
+        parts.extend(cli_tool.get("notes", []))
+        chunks.append(
+            Chunk(
+                source_type="cli_tool",
+                source_id=cli_tool["name"],
+                text=" ".join(parts),
+                metadata={"name": cli_tool["name"], "provider": cli_tool.get("provider", "")},
+            )
+        )
+
+    # KB third-party APIs
+    for api_entry in kb.get("third_party_apis", []):
+        parts = [api_entry.get("name", ""), api_entry.get("provider", ""), api_entry.get("category", "")]
+        parts.extend(api_entry.get("aliases", []))
+        parts.extend(api_entry.get("server_env_vars", []))
+        parts.extend(api_entry.get("public_env_vars", []))
+        if api_entry.get("base_url"):
+            parts.append(api_entry["base_url"])
+        if api_entry.get("docs_url"):
+            parts.append(api_entry["docs_url"])
+        parts.extend(api_entry.get("notes", []))
+        chunks.append(
+            Chunk(
+                source_type="third_party_api",
+                source_id=api_entry["name"],
+                text=" ".join(parts),
+                metadata={"name": api_entry["name"], "provider": api_entry.get("provider", "")},
+            )
+        )
+
+    # KB coverage domains
+    for domain in kb.get("coverage_domains", []):
+        parts = [
+            domain.get("name", ""),
+            domain.get("status", ""),
+            domain.get("priority", ""),
+            domain.get("summary", ""),
+        ]
+        parts.extend(domain.get("key_capabilities", []))
+        parts.extend(domain.get("representative_tools", []))
+        parts.extend(domain.get("current_gaps", []))
+        parts.extend(domain.get("linked_tracks", []))
+        chunks.append(
+            Chunk(
+                source_type="coverage_domain",
+                source_id=domain["name"],
+                text=" ".join(parts),
+                metadata={
+                    "name": domain["name"],
+                    "status": domain.get("status", ""),
+                    "priority": domain.get("priority", ""),
+                },
+            )
+        )
+
     # KB decision rules
     for rule in kb.get("decision_rules", []):
         parts = [rule.get("title", ""), rule.get("when", ""), rule.get("prefer", ""), rule.get("because", "")]

@@ -1,6 +1,6 @@
 {
-  "version": "2026-03-29",
-  "method": "Primary-source synthesis from official framework, platform, and tooling documentation. Deep research expansion covers AI/LLM toolchains, agentic frameworks, ML/data tools, vector databases, IaC, BaaS, dev tooling, and production comparison guidance with explicit decision rules and maintenance cadence.",
+  "version": "2026-03-30",
+  "method": "Primary-source synthesis from official framework, platform, and tooling documentation. The KB is intentionally decision-oriented: it stores stack guidance, developer setup surfaces, reusable API profiles, explicit coverage domains, and weekly research freshness metadata so scope and staleness can be audited instead of guessed.",
   "stacks": [
     {
       "name": "React",
@@ -1585,6 +1585,652 @@
       ]
     },
     {
+      "name": "BigQuery",
+      "aliases": ["bigquery", "google bigquery"],
+      "layer": "data-warehouse",
+      "primary_languages": ["SQL"],
+      "delivery_models": ["managed-warehouse", "serverless-analytics"],
+      "strengths": [
+        "Managed analytical warehouse removes cluster operations for large-scale SQL workloads.",
+        "Strong fit for event analytics, batch transforms, and BI workloads already close to GCP or Google-managed data surfaces.",
+        "Storage-compute separation supports large scans and scheduled transformations without designing a custom OLAP platform first."
+      ],
+      "tradeoffs": [
+        "Cost discipline matters because unconstrained scans and poorly partitioned tables become expensive quickly.",
+        "Less appropriate when the team needs low-latency operational queries or strict multi-cloud neutrality."
+      ],
+      "best_for": [
+        "Managed warehouse analytics, reporting, and transformation workloads on large datasets.",
+        "Teams that want SQL-first analytics without operating a warehouse cluster themselves."
+      ],
+      "avoid_when": [
+        "The product's primary need is OLTP or request-path transactional storage.",
+        "The team lacks table partitioning, retention, and query-governance discipline."
+      ],
+      "pairs_with": ["Polars", "DuckDB", "PostgreSQL", "OpenTelemetry"],
+      "capabilities": ["managed-warehouse", "serverless-sql", "partitioning", "scheduled-transforms", "bi-analytics"],
+      "best_practices": [
+        "Design partitioning and clustering with the dominant query patterns in mind before data volume grows.",
+        "Treat cost controls, retention windows, and query review as platform policy rather than analyst folklore.",
+        "Keep transformation ownership explicit so the warehouse does not become an unmanaged dumping ground."
+      ],
+      "sources": [
+        "https://cloud.google.com/bigquery/docs/introduction"
+      ]
+    },
+    {
+      "name": "ClickHouse",
+      "aliases": ["clickhouse"],
+      "layer": "analytical-database",
+      "primary_languages": ["SQL"],
+      "delivery_models": ["self-hosted", "cloud-managed", "distributed-olap"],
+      "strengths": [
+        "Column-oriented engine is strong for high-volume aggregations, event analytics, and observability-style workloads.",
+        "Excellent fit when sub-second analytical queries matter more than transactional semantics.",
+        "Compression and engine options can make very large append-heavy datasets operationally practical."
+      ],
+      "tradeoffs": [
+        "Modeling and merge-tree tuning require real operational literacy; it is not a drop-in OLTP replacement.",
+        "Teams can misuse it as a general application database and inherit painful write-path or consistency surprises."
+      ],
+      "best_for": [
+        "Product analytics, observability pipelines, and append-heavy analytical systems.",
+        "Teams that need fast slice-and-dice queries over large event volumes."
+      ],
+      "avoid_when": [
+        "The core workload is transactional business data with relational consistency as the primary constraint.",
+        "The team cannot invest in schema, partitioning, and storage-engine review."
+      ],
+      "pairs_with": ["PostHog", "OpenTelemetry", "Polars", "DuckDB"],
+      "capabilities": ["olap", "columnar-storage", "event-analytics", "distributed-query", "high-volume-ingest"],
+      "best_practices": [
+        "Model the ingestion path and retention policy up front instead of treating raw events as infinite free storage.",
+        "Choose engine and partition keys based on access patterns, not just source event shape.",
+        "Keep transactional application state in a separate system of record."
+      ],
+      "sources": [
+        "https://clickhouse.com/docs/intro"
+      ]
+    },
+    {
+      "name": "Dagster",
+      "aliases": ["dagster"],
+      "layer": "workflow-orchestration",
+      "primary_languages": ["Python"],
+      "delivery_models": ["self-hosted", "cloud-managed", "asset-oriented-orchestration"],
+      "strengths": [
+        "Asset-oriented model makes data dependencies, freshness, and partition lineage explicit instead of hidden in ad hoc jobs.",
+        "Good fit for Python-heavy teams that want orchestration close to code and data assets rather than separate scheduler-only configuration.",
+        "Testing and local development surfaces are stronger than many legacy scheduler-first orchestrators."
+      ],
+      "tradeoffs": [
+        "The asset graph model adds conceptual overhead for teams that only need a few scheduled jobs.",
+        "If ownership boundaries are unclear, the orchestration layer can become a second application framework unintentionally."
+      ],
+      "best_for": [
+        "Data platforms with explicit asset ownership, partitions, and freshness expectations.",
+        "Python data teams that want orchestration, metadata, and testability aligned."
+      ],
+      "avoid_when": [
+        "The need is only a handful of simple cron-like jobs or one-off pipelines.",
+        "The team is not ready to treat data assets and lineage as first-class platform concerns."
+      ],
+      "pairs_with": ["Polars", "DuckDB", "BigQuery", "PostgreSQL"],
+      "capabilities": ["asset-graph", "orchestration", "partitions", "data-lineage", "python-first"],
+      "best_practices": [
+        "Model data products as assets with clear owners instead of hiding them behind generic task names.",
+        "Use partitioning and freshness policies deliberately so the orchestration graph reflects operational expectations.",
+        "Keep business logic in reusable code, not only inside orchestration definitions."
+      ],
+      "sources": [
+        "https://docs.dagster.io/getting-started"
+      ]
+    },
+    {
+      "name": "Prefect",
+      "aliases": ["prefect"],
+      "layer": "workflow-orchestration",
+      "primary_languages": ["Python"],
+      "delivery_models": ["local-orchestrated", "cloud-managed", "hybrid-workflows"],
+      "strengths": [
+        "Lower-ceremony Python orchestration is effective when the team wants observable flows without adopting a large scheduler platform immediately.",
+        "Strong fit for operational Python workflows, data tasks, and automation that need retries, scheduling, and visibility.",
+        "Flow and task model keeps orchestration close to normal Python code."
+      ],
+      "tradeoffs": [
+        "It is easier to start than many orchestration platforms, but that can hide the need for disciplined deployment and state ownership.",
+        "Not the right answer if the team needs warehouse-native modeling or very large lineage-heavy asset graphs by default."
+      ],
+      "best_for": [
+        "Python-first automation and data workflows that need retries, schedules, and operational visibility.",
+        "Teams that want a lighter bridge between scripts and a real orchestrated platform."
+      ],
+      "avoid_when": [
+        "The workload is only a few simple scripts that can stay in CI or cron safely.",
+        "The platform needs a heavier asset-governance and lineage model from the start."
+      ],
+      "pairs_with": ["Polars", "DuckDB", "PostgreSQL", "FastAPI"],
+      "capabilities": ["python-orchestration", "scheduling", "retries", "workflow-observability", "hybrid-execution"],
+      "best_practices": [
+        "Treat deployments, work pools, and secrets management as explicit platform decisions, not console-only defaults.",
+        "Keep reusable transformation code separate from flow wrappers so logic stays testable outside the orchestrator.",
+        "Use Prefect when operational visibility is needed, not as a generic wrapper around every script."
+      ],
+      "sources": [
+        "https://docs.prefect.io/"
+      ]
+    },
+    {
+      "name": "Amazon Web Services",
+      "aliases": ["aws", "amazon web services"],
+      "layer": "cloud-platform",
+      "primary_languages": ["CLI/API", "IaC"],
+      "delivery_models": ["managed-cloud", "hybrid-cloud", "multi-account"],
+      "strengths": [
+        "Broadest general-purpose cloud surface for compute, networking, identity, storage, data, and platform operations.",
+        "Strong default when teams need mature primitives, deep ecosystem coverage, and clear production scaling paths.",
+        "Works well with Terraform, Kubernetes, managed databases, serverless, and multi-account governance models."
+      ],
+      "tradeoffs": [
+        "Breadth creates cognitive overhead quickly; weak guardrails can turn AWS into a sprawl engine.",
+        "Service choice is not architecture by itself; teams still need opinionated account, network, and identity boundaries."
+      ],
+      "best_for": [
+        "Teams that need broad cloud primitives and want room to grow from simple hosting to mature platform operations.",
+        "Products with infrastructure, security, or compliance needs that exceed narrow PaaS defaults."
+      ],
+      "avoid_when": [
+        "A small product can be shipped faster on a simpler managed deploy surface with fewer platform decisions.",
+        "The team lacks appetite for account, IAM, and networking discipline."
+      ],
+      "pairs_with": ["Terraform", "Kubernetes", "Docker", "OpenTelemetry"],
+      "capabilities": ["cloud-primitives", "iam", "managed-services", "networking", "platform-ops"],
+      "best_practices": [
+        "Design account and environment boundaries before service sprawl makes them painful to fix.",
+        "Use short-lived credentials and OIDC-based CI auth instead of long-lived access keys.",
+        "Standardize the default hosting and data patterns so teams are not picking from the full AWS catalog ad hoc."
+      ],
+      "sources": [
+        "https://docs.aws.amazon.com/"
+      ]
+    },
+    {
+      "name": "Google Cloud",
+      "aliases": ["gcp", "google cloud", "google cloud platform"],
+      "layer": "cloud-platform",
+      "primary_languages": ["CLI/API", "IaC"],
+      "delivery_models": ["managed-cloud", "serverless-cloud", "data-platform-cloud"],
+      "strengths": [
+        "Strong fit for teams leaning on data, ML, serverless, or Firebase-adjacent product infrastructure.",
+        "BigQuery, GKE, Cloud Run, and IAM make it effective for data-heavy and containerized platform delivery.",
+        "Good alignment when product analytics, warehouse, and mobile backend surfaces already live in Google's stack."
+      ],
+      "tradeoffs": [
+        "Cross-product naming and permissions can still create platform friction if teams assume the managed surfaces remove architecture work.",
+        "Less attractive when the organization already has strong AWS operating leverage and little Google-native product value."
+      ],
+      "best_for": [
+        "Data-forward products, Cloud Run or GKE delivery, and systems already tied to Firebase or BigQuery.",
+        "Teams that want a cloud platform with strong managed analytics and container surfaces."
+      ],
+      "avoid_when": [
+        "The product only needs simple deployment and would not benefit from GCP-specific data or serverless strengths.",
+        "The org lacks clear IAM and project-boundary conventions."
+      ],
+      "pairs_with": ["BigQuery", "Firebase", "Terraform", "Kubernetes"],
+      "capabilities": ["cloud-primitives", "managed-analytics", "serverless", "containers", "iam"],
+      "best_practices": [
+        "Treat project structure and IAM inheritance as part of platform design, not after-the-fact cleanup.",
+        "Use workload identity and CI federation instead of distributing service-account keys broadly.",
+        "Keep data and application hosting decisions explicit even when both are available inside one vendor ecosystem."
+      ],
+      "sources": [
+        "https://cloud.google.com/docs"
+      ]
+    },
+    {
+      "name": "Microsoft Azure",
+      "aliases": ["azure", "microsoft azure"],
+      "layer": "cloud-platform",
+      "primary_languages": ["CLI/API", "IaC"],
+      "delivery_models": ["managed-cloud", "enterprise-cloud", "hybrid-cloud"],
+      "strengths": [
+        "Strong fit for enterprise environments already standardized on Microsoft identity, networking, and governance surfaces.",
+        "Works well when Entra ID, managed databases, containers, and policy controls need to align inside one platform boundary.",
+        "Good option for organizations that need hybrid-cloud posture and enterprise procurement alignment."
+      ],
+      "tradeoffs": [
+        "Platform breadth and naming complexity still require opinionated defaults; Azure does not remove architecture ambiguity by itself.",
+        "Less attractive for small teams that do not benefit from Microsoft's enterprise ecosystem."
+      ],
+      "best_for": [
+        "Enterprise products already tied to Microsoft identity, compliance, and platform controls.",
+        "Teams that need cloud primitives plus enterprise governance in one operating model."
+      ],
+      "avoid_when": [
+        "A simpler deploy platform would ship the product faster without enterprise-cloud overhead.",
+        "The team is not prepared to standardize identity and subscription boundaries early."
+      ],
+      "pairs_with": ["Terraform", "Kubernetes", "OpenTelemetry"],
+      "capabilities": ["cloud-primitives", "enterprise-governance", "managed-services", "hybrid-cloud", "iam"],
+      "best_practices": [
+        "Set subscription, resource-group, and identity boundaries deliberately instead of inheriting accidental org sprawl.",
+        "Keep authorization design separate from infrastructure naming so RBAC stays reviewable.",
+        "Choose a small set of default hosting and data paths before teams proliferate one-off platform patterns."
+      ],
+      "sources": [
+        "https://learn.microsoft.com/azure/"
+      ]
+    },
+    {
+      "name": "Fly.io",
+      "aliases": ["fly", "fly.io"],
+      "layer": "app-hosting",
+      "primary_languages": ["CLI/API", "Docker"],
+      "delivery_models": ["paas", "container-hosting", "edge-adjacent-hosting"],
+      "strengths": [
+        "Lean deploy surface for containerized apps without forcing teams into full cloud-platform operations immediately.",
+        "Strong fit for API services, worker apps, and product backends that need straightforward deploys and global region options.",
+        "Pairs well with Docker-first pipelines and teams that want simpler ops than Kubernetes or raw cloud primitives."
+      ],
+      "tradeoffs": [
+        "It is a deploy surface, not a complete cloud architecture; persistent data, private networking, and complex platform concerns still need design.",
+        "Teams can outgrow it if they need very broad cloud-provider primitives or deep enterprise platform controls."
+      ],
+      "best_for": [
+        "Small-to-mid-size products that want container deployment with less platform overhead.",
+        "Backend services and internal tools where simple delivery matters more than cloud-vendor breadth."
+      ],
+      "avoid_when": [
+        "The system needs broad native cloud-service composition or tightly governed enterprise infra patterns.",
+        "The team has not standardized how data stores and secrets are owned outside the app deploy surface."
+      ],
+      "pairs_with": ["Docker", "PostgreSQL", "OpenTelemetry"],
+      "capabilities": ["app-hosting", "container-deploy", "global-regions", "simplified-ops"],
+      "best_practices": [
+        "Keep the app image and runtime config explicit; simple deploy UX does not replace release discipline.",
+        "Treat database placement, backups, and secrets as platform decisions rather than fly launch side effects.",
+        "Exercise rollback and scaling paths before assuming the hosted surface is production-ready for your workload."
+      ],
+      "sources": [
+        "https://fly.io/docs/"
+      ]
+    },
+    {
+      "name": "Tauri",
+      "aliases": ["tauri"],
+      "layer": "desktop-shell",
+      "primary_languages": ["Rust", "TypeScript", "JavaScript"],
+      "delivery_models": ["desktop-app", "local-first-desktop"],
+      "strengths": [
+        "Uses native system webviews and a Rust core to keep desktop bundles smaller than Chromium-heavy shells in many cases.",
+        "Strong fit for teams that want a web-tech UI with tighter desktop packaging and system-integration control.",
+        "Pairs naturally with local storage and Rust-backed native capabilities for offline-oriented desktop products."
+      ],
+      "tradeoffs": [
+        "Desktop UX and OS integration still require native packaging, updater, signing, and permission literacy.",
+        "Rust becomes part of the delivery surface even when the UI team is primarily TypeScript-focused."
+      ],
+      "best_for": [
+        "Desktop apps that want a modern web UI but tighter resource usage and a native-feeling packaging path.",
+        "Local-first utilities and internal desktop tools with meaningful filesystem or OS integration."
+      ],
+      "avoid_when": [
+        "The team cannot support Rust in the build and release path.",
+        "The product needs Chromium-level browser parity or deep Electron-specific ecosystem integrations."
+      ],
+      "pairs_with": ["Rust", "SQLite", "libSQL", "pnpm"],
+      "capabilities": ["desktop-shell", "native-packaging", "local-first", "os-integration"],
+      "best_practices": [
+        "Treat signing, auto-update, and filesystem permissions as first-class delivery concerns from the start.",
+        "Keep native commands narrowly scoped and auditable instead of turning the desktop shell into a privileged backend.",
+        "Validate installer and updater behavior on each target OS before calling the app production-ready."
+      ],
+      "sources": [
+        "https://tauri.app/start/"
+      ]
+    },
+    {
+      "name": "Electron",
+      "aliases": ["electron"],
+      "layer": "desktop-shell",
+      "primary_languages": ["TypeScript", "JavaScript"],
+      "delivery_models": ["desktop-app", "cross-platform-desktop"],
+      "strengths": [
+        "Mature desktop runtime with a broad ecosystem for updates, IPC, packaging, and OS integrations.",
+        "Good fit when teams want maximum web-stack reuse and can accept the runtime overhead of bundling Chromium.",
+        "Supports complex desktop product surfaces with established tooling and operational patterns."
+      ],
+      "tradeoffs": [
+        "Bundle size and runtime footprint are materially heavier than lighter-weight desktop shells.",
+        "Security boundaries matter: preload, IPC, and Node integration mistakes create real desktop attack surface."
+      ],
+      "best_for": [
+        "Desktop apps that need broad plugin/library support and direct reuse of mature web frontend workflows.",
+        "Products where shipping one cross-platform desktop shell matters more than minimizing runtime footprint."
+      ],
+      "avoid_when": [
+        "Memory footprint and install size are hard constraints.",
+        "The team is likely to blur renderer and privileged process boundaries."
+      ],
+      "pairs_with": ["React", "SQLite", "libSQL", "pnpm"],
+      "capabilities": ["desktop-shell", "cross-platform-desktop", "ipc", "auto-update", "os-integration"],
+      "best_practices": [
+        "Use context isolation and minimal preload bridges by default; never treat renderer code as trusted.",
+        "Keep desktop persistence and sync logic separated from UI event code so offline behavior stays testable.",
+        "Exercise packaging, notarization, code signing, and update flows on every target platform early."
+      ],
+      "sources": [
+        "https://www.electronjs.org/docs/latest/"
+      ]
+    },
+    {
+      "name": "SQLite",
+      "aliases": ["sqlite"],
+      "layer": "local-data-store",
+      "primary_languages": ["SQL"],
+      "delivery_models": ["embedded-db", "desktop-local-db", "mobile-local-db"],
+      "strengths": [
+        "Reliable embedded relational store for local persistence without a separate database service.",
+        "Strong default for desktop, mobile, and local-first products that need offline data ownership and transactional integrity.",
+        "Simple deployment model makes it effective for packaged apps and operator-light local tools."
+      ],
+      "tradeoffs": [
+        "Single-file local storage does not solve sync, multi-device conflict resolution, or collaborative consistency by itself.",
+        "Not appropriate as a shared networked system of record for multiple remote services."
+      ],
+      "best_for": [
+        "Desktop and local-first apps with meaningful offline persistence needs.",
+        "Packaged applications that need a relational store without operating separate infrastructure."
+      ],
+      "avoid_when": [
+        "The product needs concurrent shared access from multiple remote app instances as the primary model.",
+        "The team is pretending local persistence also covers sync and distributed conflict handling."
+      ],
+      "pairs_with": ["Tauri", "Electron", "libSQL", "Replicache"],
+      "capabilities": ["embedded-db", "offline-storage", "transactions", "local-first"],
+      "best_practices": [
+        "Treat schema migration and corruption recovery as part of the app lifecycle, not incidental implementation detail.",
+        "Keep sync metadata and app-domain tables explicit so local-first behavior remains debuggable.",
+        "Test upgrade paths on real persisted datasets rather than only fresh-dev databases."
+      ],
+      "sources": [
+        "https://www.sqlite.org/docs.html"
+      ]
+    },
+    {
+      "name": "libSQL",
+      "aliases": ["libsql", "turso libsql"],
+      "layer": "local-sync-data-store",
+      "primary_languages": ["SQL"],
+      "delivery_models": ["embedded-db", "replicated-sql", "local-first-sync"],
+      "strengths": [
+        "SQLite-compatible model plus sync/replication-oriented deployment options make it useful for local-first applications that want SQL ergonomics.",
+        "Good fit when a team wants embedded local persistence with a path toward remote replication instead of inventing one from scratch.",
+        "Pairs naturally with desktop shells and offline-first clients that still need a server-backed convergence path."
+      ],
+      "tradeoffs": [
+        "Replication and topology choices still require product decisions about conflict semantics, ownership, and offline guarantees.",
+        "It reduces some sync friction but does not eliminate the need for explicit local-first system design."
+      ],
+      "best_for": [
+        "Desktop and local-first products that want SQLite compatibility with a replication-capable path.",
+        "Teams that need local SQL semantics without giving up eventual server synchronization options."
+      ],
+      "avoid_when": [
+        "The product does not actually benefit from replicated local SQL and would be simpler with plain SQLite or a hosted primary database.",
+        "Conflict semantics and merge rules are not understood by the team."
+      ],
+      "pairs_with": ["SQLite", "Tauri", "Electron", "Replicache"],
+      "capabilities": ["embedded-db", "replication", "local-first", "sqlite-compatible"],
+      "best_practices": [
+        "Define sync ownership and failure-recovery expectations before the first replication rollout.",
+        "Separate app-local responsiveness requirements from server-reconciliation correctness checks.",
+        "Treat replicated local SQL as a system design choice, not only a storage-library swap."
+      ],
+      "sources": [
+        "https://docs.turso.tech/libsql"
+      ]
+    },
+    {
+      "name": "Replicache",
+      "aliases": ["replicache"],
+      "layer": "local-first-sync",
+      "primary_languages": ["TypeScript", "JavaScript"],
+      "delivery_models": ["web-local-first", "desktop-local-first", "offline-sync"],
+      "strengths": [
+        "Gives local-first apps an explicit optimistic-sync and rebase model instead of burying sync behavior in ad hoc cache logic.",
+        "Strong fit when responsiveness, offline tolerance, and server reconciliation all matter to the product behavior.",
+        "Useful for teams that need a deliberate client mutation and conflict-handling model, not just local persistence."
+      ],
+      "tradeoffs": [
+        "The product still needs a well-designed server sync protocol and conflict semantics; the library does not invent those correctly for you.",
+        "Local-first state models add cognitive overhead and require stronger testing around mutation replay and reconciliation."
+      ],
+      "best_for": [
+        "Collaborative or offline-friendly products that need immediate local UX plus eventual server convergence.",
+        "Desktop or web apps where sync correctness is a product concern rather than a storage afterthought."
+      ],
+      "avoid_when": [
+        "The app only needs simple local caching without real offline ownership or conflict semantics.",
+        "The team is not ready to model mutation replay and reconciliation explicitly."
+      ],
+      "pairs_with": ["SQLite", "libSQL", "Tauri", "Electron"],
+      "capabilities": ["local-first", "sync", "offline-mutations", "conflict-handling"],
+      "best_practices": [
+        "Model server pull and push endpoints as application contracts, not incidental transport details.",
+        "Test divergent offline mutation sequences and merge outcomes explicitly.",
+        "Keep local optimistic updates observable so support and debugging can reconstruct sync failures."
+      ],
+      "sources": [
+        "https://doc.replicache.dev/"
+      ]
+    },
+    {
+      "name": "Kafka",
+      "aliases": ["apache kafka", "kafka"],
+      "layer": "event-streaming",
+      "primary_languages": ["JVM ecosystem", "multi-language clients"],
+      "delivery_models": ["event-streaming", "brokered-pubsub", "data-pipeline-backbone"],
+      "strengths": [
+        "Strong fit for durable event streams, replayable pipelines, and high-volume asynchronous system integration.",
+        "Useful when ordered event logs, consumer groups, and retained stream history are product or platform concerns.",
+        "Well-suited to analytics-adjacent and event-driven platform architectures that need more than transient queues."
+      ],
+      "tradeoffs": [
+        "Operational complexity and topic-governance discipline are real; Kafka is easy to overbuy for simpler messaging needs.",
+        "Poor fit when the team actually needs request-response APIs, lightweight queues, or simple presence channels."
+      ],
+      "best_for": [
+        "Event-driven systems, streaming pipelines, and cross-service event backbones with replay requirements.",
+        "Teams that need durable append-only event logs and multiple downstream consumers."
+      ],
+      "avoid_when": [
+        "The workload is simple task queuing or low-volume messaging that does not need retained streams.",
+        "The team is not prepared to own schema, topic, and consumer-group governance."
+      ],
+      "pairs_with": ["OpenTelemetry", "Polars", "ClickHouse"],
+      "capabilities": ["pubsub", "event-log", "replay", "consumer-groups", "stream-processing"],
+      "best_practices": [
+        "Treat topic design and schema evolution as platform contracts, not ad hoc implementation details.",
+        "Use Kafka when replayability and stream retention matter, not just because the system is asynchronous.",
+        "Keep operational ownership explicit for partitions, retention, and consumer lag visibility."
+      ],
+      "sources": [
+        "https://kafka.apache.org/documentation/"
+      ]
+    },
+    {
+      "name": "NATS",
+      "aliases": ["nats"],
+      "layer": "messaging-and-eventing",
+      "primary_languages": ["Go", "multi-language clients"],
+      "delivery_models": ["pubsub", "request-reply", "event-bus"],
+      "strengths": [
+        "Lightweight messaging model is effective for low-latency service communication, pubsub, and request-reply patterns.",
+        "Good fit when the team wants simpler broker operations than Kafka while still supporting evented architectures.",
+        "JetStream extends NATS into more durable delivery patterns without forcing a heavyweight streaming platform by default."
+      ],
+      "tradeoffs": [
+        "It is easier to start than Kafka, but that does not remove the need for message-contract and subject-governance discipline.",
+        "Not the best fit when long-lived retained streams and large-scale replay are the primary requirement."
+      ],
+      "best_for": [
+        "Service-to-service messaging, lower-latency event buses, and operationally simpler pubsub patterns.",
+        "Teams that need brokered messaging without adopting a full Kafka-style platform immediately."
+      ],
+      "avoid_when": [
+        "The product needs retained event logs and replay-heavy downstream analytics as a first-class constraint.",
+        "The team is likely to confuse lightweight messaging with durable workflow state."
+      ],
+      "pairs_with": ["OpenTelemetry", "FastAPI", "Go services"],
+      "capabilities": ["pubsub", "request-reply", "event-bus", "jetstream"],
+      "best_practices": [
+        "Keep subjects and message contracts explicit so low-friction messaging does not become low-governance messaging.",
+        "Use JetStream deliberately for durability instead of assuming all messaging needs a retained log.",
+        "Separate brokered events from durable business workflow state."
+      ],
+      "sources": [
+        "https://docs.nats.io/"
+      ]
+    },
+    {
+      "name": "RabbitMQ",
+      "aliases": ["rabbitmq"],
+      "layer": "messaging-and-queueing",
+      "primary_languages": ["Erlang platform", "multi-language clients"],
+      "delivery_models": ["message-broker", "queues", "routing"],
+      "strengths": [
+        "Good fit for classic queueing, routing, and brokered work distribution where durable logs are not the main concern.",
+        "Exchange and routing-key model is useful for operational messaging and bounded asynchronous processing.",
+        "Mature client support and operational familiarity make it practical for conventional message-broker use cases."
+      ],
+      "tradeoffs": [
+        "It is not a substitute for durable workflow platforms or replay-oriented event streams.",
+        "Routing flexibility can become topology sprawl if teams do not keep broker contracts intentional."
+      ],
+      "best_for": [
+        "Queue-driven integration, bounded asynchronous work dispatch, and conventional brokered routing patterns.",
+        "Teams that want richer broker routing than a basic queue but do not need Kafka-style stream retention."
+      ],
+      "avoid_when": [
+        "The system needs replayable event history as a first-class capability.",
+        "The team is really modeling long-lived workflows and compensations rather than message delivery."
+      ],
+      "pairs_with": ["Celery", "OpenTelemetry"],
+      "capabilities": ["queues", "broker-routing", "message-delivery", "work-dispatch"],
+      "best_practices": [
+        "Treat queue and exchange topology as a contract that deserves review and naming discipline.",
+        "Use RabbitMQ for bounded messaging and dispatch, not as a hidden business-process engine.",
+        "Validate dead-letter, retry, and poison-message handling deliberately."
+      ],
+      "sources": [
+        "https://www.rabbitmq.com/docs"
+      ]
+    },
+    {
+      "name": "Yjs",
+      "aliases": ["yjs"],
+      "layer": "collaboration-state",
+      "primary_languages": ["TypeScript", "JavaScript"],
+      "delivery_models": ["collaborative-state", "crdt", "realtime-sync"],
+      "strengths": [
+        "CRDT model is effective for collaborative editors and shared state where concurrent local updates must merge without central locking.",
+        "Good fit when collaboration semantics are a product feature rather than incidental websocket plumbing.",
+        "Works well with managed transport layers when the app needs both shared state and realtime presence."
+      ],
+      "tradeoffs": [
+        "CRDTs add conceptual complexity and state-debugging overhead; they are not the right answer for every realtime app.",
+        "A collaboration-state library does not remove the need to design permissions, persistence, and transport boundaries."
+      ],
+      "best_for": [
+        "Collaborative editors, shared cursors, multi-user documents, and stateful realtime collaboration.",
+        "Teams that need deterministic merge behavior under concurrent edits."
+      ],
+      "avoid_when": [
+        "The product only needs notifications, presence, or simple pubsub without shared structured state.",
+        "The team is not prepared to reason about merge semantics and persisted collaboration state."
+      ],
+      "pairs_with": ["Ably", "Pusher", "Replicache"],
+      "capabilities": ["crdt", "shared-state", "collaboration", "conflict-free-merging"],
+      "best_practices": [
+        "Keep transport, persistence, and permission logic explicit instead of treating CRDT state as the whole architecture.",
+        "Test merge and reconnect behavior under concurrent offline edits, not only ideal websocket sessions.",
+        "Use CRDTs when shared structured state matters, not for simple event fanout."
+      ],
+      "sources": [
+        "https://docs.yjs.dev/"
+      ]
+    },
+    {
+      "name": "Rust",
+      "aliases": ["rust", "cargo ecosystem"],
+      "layer": "language-platform",
+      "primary_languages": ["Rust"],
+      "delivery_models": ["cli", "desktop-native", "systems-service", "library"],
+      "strengths": [
+        "Strong fit for performance-sensitive tooling, native integrations, and reliability-focused command or desktop backends.",
+        "Cargo ecosystem gives cohesive dependency, build, and test workflows for Rust-first projects.",
+        "Works well as the systems layer behind Tauri, CLIs, and selected service components."
+      ],
+      "tradeoffs": [
+        "Compile times and ownership-model learning curve are real costs for teams without prior Rust experience.",
+        "Not every scripting or internal-automation use case benefits enough to justify the tooling shift."
+      ],
+      "best_for": [
+        "Native tooling, desktop backends, CLIs, and performance-sensitive libraries or services.",
+        "Teams that want strong compile-time guarantees in operationally critical code."
+      ],
+      "avoid_when": [
+        "The team needs the fastest path for simple scripting or glue-code automation.",
+        "Project requirements do not justify the tooling and language transition cost."
+      ],
+      "pairs_with": ["cargo", "Tauri", "SQLite"],
+      "capabilities": ["native-binaries", "memory-safety", "cli-tooling", "desktop-backend"],
+      "best_practices": [
+        "Keep workspace structure, linting, and release profile conventions explicit from the start.",
+        "Use Rust where correctness or systems integration really matters instead of forcing it into simple scripting roles.",
+        "Treat cargo test, clippy, and formatting as baseline quality gates, not optional polish."
+      ],
+      "sources": [
+        "https://doc.rust-lang.org/book/"
+      ]
+    },
+    {
+      "name": ".NET",
+      "aliases": ["dotnet", ".net sdk"],
+      "layer": "language-platform",
+      "primary_languages": ["C#", "F#"],
+      "delivery_models": ["cli", "desktop-native", "service", "library"],
+      "strengths": [
+        "Coherent SDK and CLI make it effective for enterprise services, internal tools, and desktop applications on mature build pipelines.",
+        "Strong fit when teams need a well-supported compiled platform with long-term enterprise tooling and packaging paths.",
+        "Works well for cross-platform services and Windows-heavy desktop or internal-business workloads."
+      ],
+      "tradeoffs": [
+        "The ecosystem is excellent when embraced coherently, but mixing ad hoc project styles weakens that advantage.",
+        "Less attractive for teams that are already deeply standardized on Python or TypeScript and do not need compiled-platform benefits."
+      ],
+      "best_for": [
+        "Enterprise services, desktop applications, and internal tooling with stable build and packaging expectations.",
+        "Teams that benefit from a mature SDK-driven build and test workflow."
+      ],
+      "avoid_when": [
+        "The project only needs lightweight scripting or extremely rapid prototype iteration.",
+        "The team does not benefit enough from the compiled-platform and tooling model."
+      ],
+      "pairs_with": ["dotnet CLI", "GitHub Actions"],
+      "capabilities": ["compiled-platform", "sdk-builds", "desktop-apps", "service-platform"],
+      "best_practices": [
+        "Keep SDK versioning and solution structure explicit so CI and local builds stay aligned.",
+        "Use the dotnet CLI and consistent test/build commands rather than IDE-only workflows.",
+        "Treat packaging, signing, and runtime version policy as part of platform ownership."
+      ],
+      "sources": [
+        "https://learn.microsoft.com/dotnet/"
+      ]
+    },
+    {
       "name": "Terraform",
       "aliases": ["terraform", "tf"],
       "layer": "infrastructure-as-code",
@@ -1673,6 +2319,360 @@
       ]
     },
     {
+      "name": "React Native",
+      "aliases": ["react native", "react-native", "rn"],
+      "layer": "mobile-cross-platform",
+      "primary_languages": ["JavaScript", "TypeScript"],
+      "delivery_models": ["ios", "android", "cross-platform-mobile"],
+      "strengths": [
+        "Shared React mental model reduces context switching for web teams moving into mobile delivery.",
+        "Large ecosystem for auth, analytics, navigation, push, and error-reporting integrations.",
+        "Can share business logic and selected UI primitives with web stacks when boundaries are intentional."
+      ],
+      "tradeoffs": [
+        "Native module dependencies still require iOS and Android build-chain literacy.",
+        "Performance-sensitive screens and platform-specific UX often need native escape hatches."
+      ],
+      "best_for": [
+        "Product teams already invested in React or TypeScript that need one cross-platform mobile surface.",
+        "Consumer or internal mobile apps where one shared product team owns both platforms."
+      ],
+      "avoid_when": [
+        "The product needs extremely deep platform-specific UX or device integration from day one.",
+        "The team cannot support the native iOS and Android toolchains behind the JavaScript layer."
+      ],
+      "pairs_with": ["Expo", "Supabase", "Firebase", "PostHog", "Sentry"],
+      "capabilities": ["cross-platform-mobile", "native-bridge", "mobile-ui", "shared-typescript"],
+      "best_practices": [
+        "Keep platform-specific modules isolated behind explicit boundaries instead of scattering conditionals through UI code.",
+        "Validate navigation, deep-link, push, and offline states on both platforms; emulator parity is not enough.",
+        "Treat release, signing, and store submission as first-class delivery concerns, not late-stage chores."
+      ],
+      "sources": [
+        "https://reactnative.dev/docs/getting-started"
+      ]
+    },
+    {
+      "name": "Expo",
+      "aliases": ["expo"],
+      "layer": "mobile-platform",
+      "primary_languages": ["JavaScript", "TypeScript"],
+      "delivery_models": ["ios", "android", "cross-platform-mobile"],
+      "strengths": [
+        "Managed workflow reduces native build friction for common mobile app delivery paths.",
+        "Expo Router, EAS Build, EAS Update, and dev-client workflows give React Native teams a more coherent mobile platform.",
+        "Good default when the team wants over-the-air updates and store builds without designing a native toolchain from scratch."
+      ],
+      "tradeoffs": [
+        "Managed workflows still have edges where custom native work forces a prebuild or bare workflow shift.",
+        "Teams can underestimate release-channel, signing, and environment management complexity because local startup is simple."
+      ],
+      "best_for": [
+        "Cross-platform mobile products led by JavaScript teams that want the fastest path to shipped iOS and Android builds.",
+        "Apps that benefit from OTA updates, opinionated mobile project structure, and streamlined CI/CD."
+      ],
+      "avoid_when": [
+        "The product needs unsupported native modules or deep platform customization very early.",
+        "The team wants a fully native-first build process and is not looking for managed workflow constraints."
+      ],
+      "pairs_with": ["React Native", "EAS CLI", "Supabase", "PostHog", "Sentry"],
+      "capabilities": ["managed-mobile-workflow", "ota-updates", "app-builds", "mobile-routing"],
+      "best_practices": [
+        "Use EAS profiles to separate preview, internal, and production distribution cleanly.",
+        "Treat runtime config and secrets separately; public app config is not the same thing as server-side secrets.",
+        "Exercise a full store-ready build path early, including signing and native config validation."
+      ],
+      "sources": [
+        "https://docs.expo.dev/"
+      ]
+    },
+    {
+      "name": "Flutter",
+      "aliases": ["flutter"],
+      "layer": "mobile-cross-platform",
+      "primary_languages": ["Dart"],
+      "delivery_models": ["ios", "android", "desktop", "web"],
+      "strengths": [
+        "Single rendering stack produces highly consistent UI across platforms.",
+        "Strong fit for product teams that want one shared codebase across mobile and selected desktop surfaces.",
+        "Good performance characteristics for animation-heavy or brand-sensitive interfaces."
+      ],
+      "tradeoffs": [
+        "Dart introduces a separate language and ecosystem for teams centered on Python or TypeScript.",
+        "Platform conventions can be harder to honor if the team forces one visual system everywhere."
+      ],
+      "best_for": [
+        "Cross-platform products that prioritize UI consistency and one rendering model over web-stack reuse.",
+        "Teams willing to adopt Dart to get mobile and desktop reach from one codebase."
+      ],
+      "avoid_when": [
+        "The team wants direct reuse of React or web frontend talent and code.",
+        "The product needs a narrowly native-first implementation rather than a shared rendering strategy."
+      ],
+      "pairs_with": ["Firebase", "Sentry"],
+      "capabilities": ["cross-platform-mobile", "custom-rendering", "desktop-delivery", "shared-ui-system"],
+      "best_practices": [
+        "Choose Flutter deliberately for rendering consistency, not because it promises zero platform decisions.",
+        "Keep native service integrations isolated and documented so the Dart layer stays portable.",
+        "Test performance and bundle size on representative target devices before committing fully."
+      ],
+      "sources": [
+        "https://docs.flutter.dev/"
+      ]
+    },
+    {
+      "name": "Firebase",
+      "aliases": ["firebase"],
+      "layer": "baas",
+      "primary_languages": ["JavaScript", "TypeScript", "Swift", "Kotlin", "Dart"],
+      "delivery_models": ["mobile-backend", "realtime-backend", "serverless-app"],
+      "strengths": [
+        "Strong mobile-oriented backend surface spanning auth, analytics, push, crash reporting, remote config, and hosted data services.",
+        "Well-suited to mobile products that need a fast path to identity, notifications, instrumentation, and device-facing services.",
+        "Broad client SDK coverage for React Native, Flutter, iOS, Android, and web."
+      ],
+      "tradeoffs": [
+        "Can pull product architecture toward a provider-centric model quickly if data and auth boundaries are not explicit.",
+        "Firestore and other managed abstractions reduce setup friction but can obscure long-term data-shape and portability costs."
+      ],
+      "best_for": [
+        "Mobile-first products needing authentication, messaging, analytics, and realtime capabilities quickly.",
+        "Cross-platform apps where one hosted backend surface should cover iOS, Android, and some web clients."
+      ],
+      "avoid_when": [
+        "The product needs relational-first modeling and direct SQL ownership as a primary design constraint.",
+        "The team wants to avoid strong managed-service coupling across auth, events, and app instrumentation."
+      ],
+      "pairs_with": ["React Native", "Expo", "Flutter", "PostHog", "Sentry"],
+      "capabilities": ["mobile-auth", "push-notifications", "analytics", "crash-reporting", "realtime-data", "serverless-functions"],
+      "best_practices": [
+        "Separate client-safe config from privileged admin credentials; mobile config values are public by design.",
+        "Model notification, analytics, and crash-reporting as product capabilities with ownership, not incidental SDK installs.",
+        "Validate offline sync, auth state restoration, and device token rotation early in development."
+      ],
+      "sources": [
+        "https://firebase.google.com/docs"
+      ]
+    },
+    {
+      "name": "HashiCorp Vault",
+      "aliases": ["vault", "hashicorp vault"],
+      "layer": "secret-management",
+      "primary_languages": ["CLI/API", "HCL"],
+      "delivery_models": ["self-hosted", "hcp-managed"],
+      "strengths": [
+        "Centralized secret storage, dynamic credentials, and policy-driven access reduce credential sprawl across services and pipelines.",
+        "Useful when regulated or multi-team environments need auditable secret access rather than scattered environment-file practices.",
+        "Dynamic secrets and leased credentials are strong for databases and short-lived machine access."
+      ],
+      "tradeoffs": [
+        "Operational overhead is real; Vault is not justified just because plain env vars feel unsophisticated.",
+        "Poor policy design or broad root-token workflows undermine most of the security value quickly."
+      ],
+      "best_for": [
+        "Teams that need centralized secret management, short-lived credentials, and audited access paths.",
+        "Regulated delivery environments where secret handling must be explicit and reviewable."
+      ],
+      "avoid_when": [
+        "A small product can safely use a simpler managed secret store owned by its platform provider.",
+        "The team is not prepared to operate and govern policy-driven secret workflows."
+      ],
+      "pairs_with": ["Terraform", "Kubernetes", "GitHub Actions", "OpenTelemetry"],
+      "capabilities": ["secret-management", "dynamic-credentials", "policy-enforcement", "audit-logging"],
+      "best_practices": [
+        "Prefer short-lived credentials and machine identities over long-lived static secrets whenever the target system supports it.",
+        "Design policies per service and environment boundary; avoid shared broad tokens that erase audit value.",
+        "Treat bootstrap and break-glass access as controlled operational processes, not ad hoc shell commands."
+      ],
+      "sources": [
+        "https://developer.hashicorp.com/vault/docs"
+      ]
+    },
+    {
+      "name": "WebAuthn and passkeys",
+      "aliases": ["passkeys", "webauthn", "fido2 passkeys"],
+      "layer": "identity-security",
+      "primary_languages": ["Browser APIs", "Server verification"],
+      "delivery_models": ["web-authentication", "platform-authentication", "passwordless-auth"],
+      "strengths": [
+        "Phishing-resistant authentication model reduces password reset burden and credential-stuffing exposure.",
+        "Strong fit for consumer and workforce login flows when device-bound or synced authenticators are acceptable.",
+        "Complements hosted identity providers that expose WebAuthn or passkey enrollment as part of login policy."
+      ],
+      "tradeoffs": [
+        "Recovery, fallback, and device enrollment flows still need careful product design; passkeys are not a magic UX shortcut.",
+        "Server verification, origin handling, and authenticator policy details can create subtle implementation mistakes if abstracted poorly."
+      ],
+      "best_for": [
+        "Products that want phishing-resistant sign-in and reduced password dependence.",
+        "Admin, regulated, or high-risk login surfaces where stronger user authentication materially matters."
+      ],
+      "avoid_when": [
+        "The product cannot support clear recovery and step-up flows for users who lose device access.",
+        "The team is treating passkeys as a replacement for authorization, session review, or device trust decisions."
+      ],
+      "pairs_with": ["Auth0", "Clerk", "WorkOS", "Amazon Cognito"],
+      "capabilities": ["passkeys", "webauthn", "phishing-resistant-auth", "passwordless-login"],
+      "best_practices": [
+        "Design recovery and fallback paths explicitly so passkey rollout does not strand legitimate users.",
+        "Use passkeys as part of a broader authentication policy that still includes session review, risk checks, and authorization boundaries.",
+        "Validate origin, relying-party IDs, and device enrollment assumptions during rollout and testing."
+      ],
+      "sources": [
+        "https://www.w3.org/TR/webauthn-3/"
+      ]
+    },
+    {
+      "name": "pnpm",
+      "aliases": ["pnpm"],
+      "provider": "pnpm",
+      "category": "package-manager",
+      "trigger_shapes": ["web app", "mobile app", "desktop app", "other"],
+      "trigger_needs": ["javascript", "typescript", "monorepo", "frontend"],
+      "trigger_stacks": ["React", "Next.js", "Tauri", "Electron"],
+      "trigger_services": [],
+      "trigger_apis": [],
+      "install_methods": [
+        "Install pnpm via Corepack or the official standalone installer for your platform.",
+        "Prefer workspace-aware installation through the repo's declared packageManager metadata or Corepack-managed version."
+      ],
+      "recommended_commands": [
+        "pnpm install",
+        "pnpm -r build",
+        "pnpm -r test"
+      ],
+      "required_config": [],
+      "notes": [
+        "pnpm is a strong default for Node/TypeScript repos that care about deterministic installs, shared dependency storage, and workspace ergonomics.",
+        "Keep workspace and lockfile ownership explicit so monorepo tooling does not drift into package-manager confusion."
+      ]
+    },
+    {
+      "name": "npm",
+      "aliases": ["npm", "node package manager"],
+      "provider": "Node.js",
+      "category": "package-manager",
+      "trigger_shapes": ["web app", "mobile app", "desktop app", "other"],
+      "trigger_needs": ["javascript", "typescript", "frontend"],
+      "trigger_stacks": ["React", "Next.js", "Electron"],
+      "trigger_services": [],
+      "trigger_apis": [],
+      "install_methods": [
+        "npm is distributed with Node.js and is available after installing a supported Node runtime.",
+        "Use the repo lockfile and engines/packageManager metadata to keep CI and local installs aligned."
+      ],
+      "recommended_commands": [
+        "npm install",
+        "npm run build",
+        "npm test"
+      ],
+      "required_config": [],
+      "notes": [
+        "npm remains the baseline package-manager surface for many JavaScript projects and should still be represented explicitly in the KB.",
+        "Prefer one package manager per repo; mixed npm and pnpm workflows create avoidable lockfile and CI drift."
+      ]
+    },
+    {
+      "name": "Turborepo",
+      "aliases": ["turbo", "turborepo"],
+      "provider": "Vercel",
+      "category": "monorepo-build",
+      "trigger_shapes": ["web app", "desktop app", "mobile app", "other"],
+      "trigger_needs": ["monorepo", "multi-package", "build-graph"],
+      "trigger_stacks": ["pnpm", "npm", "Next.js", "Tauri", "Electron"],
+      "trigger_services": [],
+      "trigger_apis": [],
+      "install_methods": [
+        "Install Turborepo in the repo as a dev dependency or bootstrap from the official create flow.",
+        "Use it with a workspace-aware package manager so cache and task graph behavior stay coherent."
+      ],
+      "recommended_commands": [
+        "turbo run build",
+        "turbo run test",
+        "turbo run lint"
+      ],
+      "required_config": ["turbo.json"],
+      "notes": [
+        "Turborepo is a strong default for JS/TS monorepos that need repeatable task graphs and remote/local caching.",
+        "Model outputs, dependencies, and cache boundaries carefully or the monorepo graph becomes opaque instead of faster."
+      ]
+    },
+    {
+      "name": "Nx",
+      "aliases": ["nx"],
+      "provider": "Nx",
+      "category": "monorepo-build",
+      "trigger_shapes": ["web app", "desktop app", "mobile app", "other"],
+      "trigger_needs": ["monorepo", "multi-package", "build-graph"],
+      "trigger_stacks": ["pnpm", "npm", "React", "Next.js"],
+      "trigger_services": [],
+      "trigger_apis": [],
+      "install_methods": [
+        "Install Nx in the repo or create a workspace from the official Nx bootstrap flow.",
+        "Prefer a single workspace graph and plugin strategy instead of layering multiple orchestration tools together."
+      ],
+      "recommended_commands": [
+        "nx graph",
+        "nx run-many -t build",
+        "nx affected -t test"
+      ],
+      "required_config": [],
+      "notes": [
+        "Nx is effective when monorepo teams need graph-aware task execution, affected builds, and stronger project boundary tooling.",
+        "Use Nx deliberately as the workspace orchestrator rather than mixing overlapping monorepo abstractions."
+      ]
+    },
+    {
+      "name": "cargo",
+      "aliases": ["cargo", "rust cargo"],
+      "provider": "Rust",
+      "category": "language-tooling",
+      "trigger_shapes": ["cli tool", "desktop app", "api service", "other"],
+      "trigger_needs": ["rust", "native-binaries", "systems"],
+      "trigger_stacks": ["Rust", "Tauri"],
+      "trigger_services": [],
+      "trigger_apis": [],
+      "install_methods": [
+        "cargo is installed with rustup and the standard Rust toolchain.",
+        "Use rustup to pin or manage toolchain channels explicitly across local and CI environments."
+      ],
+      "recommended_commands": [
+        "cargo build",
+        "cargo test",
+        "cargo clippy"
+      ],
+      "required_config": [],
+      "notes": [
+        "cargo is the canonical build, test, and packaging surface for Rust projects and Tauri backends.",
+        "Treat the toolchain version as part of the repo contract so local and CI builds do not drift."
+      ]
+    },
+    {
+      "name": "dotnet CLI",
+      "aliases": ["dotnet", "dotnet cli"],
+      "provider": ".NET",
+      "category": "language-tooling",
+      "trigger_shapes": ["cli tool", "desktop app", "api service", "other"],
+      "trigger_needs": ["dotnet", "csharp", "compiled-platform"],
+      "trigger_stacks": [".NET"],
+      "trigger_services": [],
+      "trigger_apis": [],
+      "install_methods": [
+        "Install a supported .NET SDK from the official Microsoft distribution for your platform.",
+        "Use global.json when the repo needs a fixed SDK contract across local and CI environments."
+      ],
+      "recommended_commands": [
+        "dotnet restore",
+        "dotnet build",
+        "dotnet test"
+      ],
+      "required_config": [],
+      "notes": [
+        "dotnet CLI is the baseline build, restore, and test surface for .NET projects and should not be hidden behind IDE-only workflows.",
+        "Keep SDK version policy explicit so generated or maintained repos stay reproducible."
+      ]
+    },
+    {
       "name": "pre-commit",
       "aliases": ["pre-commit", "precommit"],
       "layer": "code-quality",
@@ -1758,6 +2758,829 @@
       ],
       "sources": [
         "https://mypy.readthedocs.io/en/stable/"
+      ]
+    }
+  ],
+  "provisioning_services": [
+    {
+      "name": "Supabase",
+      "aliases": ["supabase"],
+      "provider": "Supabase",
+      "category": "baas",
+      "trigger_shapes": ["web app", "mobile app"],
+      "trigger_needs": ["auth", "realtime", "storage"],
+      "trigger_stacks": ["Next.js", "Supabase"],
+      "automation_supported": true,
+      "required_config": ["SUPABASE_ACCESS_TOKEN", "organization_id", "region"],
+      "notes": [
+        "Supabase is a strong default when the generated repo needs managed Postgres, auth, storage, and realtime under one project boundary.",
+        "Provision Supabase against the generated project repo only and keep its keys/env vars out of PROGRAMSTART."
+      ]
+    },
+    {
+      "name": "Vercel",
+      "aliases": ["vercel"],
+      "provider": "Vercel",
+      "category": "hosting",
+      "trigger_shapes": ["web app"],
+      "trigger_needs": ["frontend", "hosting", "ssr"],
+      "trigger_stacks": ["Next.js"],
+      "automation_supported": true,
+      "required_config": ["VERCEL_ACCESS_TOKEN"],
+      "notes": [
+        "Vercel is a strong default hosting target for generated Next.js web repos that will be deployed as standalone web applications.",
+        "Provision the Vercel project against the generated repo boundary; do not attach hosting config to PROGRAMSTART."
+      ]
+    },
+    {
+      "name": "Fly.io",
+      "aliases": ["fly", "fly.io"],
+      "provider": "Fly.io",
+      "category": "hosting",
+      "trigger_shapes": ["api service"],
+      "trigger_needs": [],
+      "trigger_stacks": ["Fly.io"],
+      "automation_supported": true,
+      "required_config": ["FLY_API_TOKEN", "organization (optional)", "region or placement choice"],
+      "notes": [
+        "Fly.io is a pragmatic default when the generated repo needs container-based deployment without forcing full cloud-platform setup on day one.",
+        "Provision the app boundary and runtime config per generated repo; do not treat fly launch defaults as architecture decisions."
+      ]
+    },
+    {
+      "name": "Neon",
+      "aliases": ["neon", "neon postgres", "neon database"],
+      "provider": "Neon",
+      "category": "database",
+      "trigger_shapes": ["api service", "data pipeline"],
+      "trigger_needs": ["database", "postgres", "sql"],
+      "trigger_stacks": [],
+      "automation_supported": true,
+      "required_config": ["NEON_API_KEY", "org_id (optional)", "region_id"],
+      "notes": [
+        "Neon is a strong default managed Postgres target for generated API and data repos that need a dedicated relational system of record without bundling auth or frontend hosting.",
+        "Provision Neon against the generated project repo boundary and write only sanitized connection metadata back into the repo; keep secrets outside version control."
+      ]
+    },
+    {
+      "name": "Firebase",
+      "aliases": ["firebase"],
+      "provider": "Google Firebase",
+      "category": "baas",
+      "trigger_shapes": ["mobile app"],
+      "trigger_needs": ["mobile-auth", "push-notifications", "analytics", "crash-reporting"],
+      "trigger_stacks": ["React Native", "Expo", "Flutter", "Firebase"],
+      "automation_supported": false,
+      "required_config": ["Firebase project", "platform app IDs", "service account or admin credentials for server workflows"],
+      "notes": [
+        "Firebase is a high-leverage mobile backend surface when the generated repo needs auth, analytics, notifications, or crash telemetry without a custom backend-first design.",
+        "Provisioning is not automated yet because platform app registration, signing, and environment wiring are product-specific and should stay explicit."
+      ]
+    }
+  ],
+  "cli_tools": [
+    {
+      "name": "GitHub CLI",
+      "aliases": ["gh", "github cli"],
+      "provider": "GitHub",
+      "category": "scm",
+      "trigger_shapes": ["cli tool", "api service", "web app", "mobile app", "data pipeline", "other"],
+      "trigger_needs": ["repo", "ci", "automation"],
+      "trigger_stacks": [],
+      "trigger_services": [],
+      "trigger_apis": [],
+      "install_methods": [
+        "Install from https://cli.github.com/ or the platform package manager.",
+        "Run gh auth login for interactive auth, or set GH_TOKEN for automation."
+      ],
+      "recommended_commands": [
+        "gh auth login",
+        "gh repo create <owner>/<repo> --private --source . --remote origin",
+        "gh secret set <NAME>"
+      ],
+      "required_config": ["GH_TOKEN (automation only)"],
+      "notes": [
+        "GitHub CLI is the lowest-friction default for repo creation, auth, secrets, and workflow inspection in generated repos.",
+        "Prefer GH_TOKEN in headless automation and keep tokens out of checked-in config files."
+      ]
+    },
+    {
+      "name": "uv",
+      "aliases": ["uv", "astral uv"],
+      "provider": "Astral",
+      "category": "python-tooling",
+      "trigger_shapes": ["cli tool", "api service", "data pipeline", "other"],
+      "trigger_needs": ["python", "automation"],
+      "trigger_stacks": ["Pydantic", "pytest", "Ruff", "FastAPI", "DuckDB", "Polars"],
+      "trigger_services": [],
+      "trigger_apis": [],
+      "install_methods": [
+        "Install uv from https://docs.astral.sh/uv/ or your platform package manager.",
+        "Use uv sync and uv run instead of layering pip, virtualenv, and ad hoc wrappers."
+      ],
+      "recommended_commands": [
+        "uv sync --extra dev",
+        "uv run pytest -q",
+        "uv run programstart validate --check bootstrap-assets"
+      ],
+      "required_config": [],
+      "notes": [
+        "uv is the strongest default Python setup surface for generated repos because it reduces install, venv, and command drift.",
+        "Generated Python starters should assume uv-first commands in README and smoke checks."
+      ]
+    },
+    {
+      "name": "Supabase CLI",
+      "aliases": ["supabase cli", "supabase"],
+      "provider": "Supabase",
+      "category": "baas",
+      "trigger_shapes": ["web app", "mobile app"],
+      "trigger_needs": ["auth", "realtime", "storage"],
+      "trigger_stacks": ["Next.js"],
+      "trigger_services": ["Supabase"],
+      "trigger_apis": [],
+      "install_methods": [
+        "Install the Supabase CLI as a dev dependency or via the standalone binary; global npm install is not supported.",
+        "A Docker-compatible runtime is required for local stack commands like supabase start."
+      ],
+      "recommended_commands": [
+        "npx supabase init",
+        "npx supabase start",
+        "npx supabase db diff -f <migration_name>"
+      ],
+      "required_config": ["Docker-compatible container runtime", "SUPABASE_ACCESS_TOKEN (remote workflows)"],
+      "notes": [
+        "Supabase CLI is useful even when remote provisioning is automated because it bootstraps local Auth, DB, and migration workflows consistently.",
+        "Prefer local dev dependency or npx usage so the generated repo carries the CLI version with the project."
+      ]
+    },
+    {
+      "name": "Vercel CLI",
+      "aliases": ["vercel cli", "vercel"],
+      "provider": "Vercel",
+      "category": "hosting",
+      "trigger_shapes": ["web app"],
+      "trigger_needs": ["hosting", "frontend", "ssr"],
+      "trigger_stacks": ["Next.js"],
+      "trigger_services": ["Vercel"],
+      "trigger_apis": [],
+      "install_methods": [
+        "Install globally with pnpm i -g vercel or another supported package manager.",
+        "Use vercel login interactively or --token in CI/CD."
+      ],
+      "recommended_commands": [
+        "vercel link",
+        "vercel pull",
+        "vercel env pull .env.local"
+      ],
+      "required_config": ["VERCEL_ACCESS_TOKEN (automation only)"],
+      "notes": [
+        "Vercel CLI is the strongest default for pulling remote env vars and linking local repos to hosted projects.",
+        "Prefer vercel env run or vercel pull when you want local parity without manually copying env values."
+      ]
+    },
+    {
+      "name": "AWS CLI",
+      "aliases": ["aws cli", "aws"],
+      "provider": "Amazon Web Services",
+      "category": "cloud",
+      "trigger_shapes": ["api service", "web app", "data pipeline", "other"],
+      "trigger_needs": ["cloud", "hosting", "infrastructure", "secrets"],
+      "trigger_stacks": ["Amazon Web Services", "Terraform"],
+      "trigger_services": [],
+      "trigger_apis": [],
+      "install_methods": [
+        "Install AWS CLI v2 from the official distribution for your platform.",
+        "Configure profiles with aws configure or prefer SSO and federated auth for team environments."
+      ],
+      "recommended_commands": [
+        "aws configure sso",
+        "aws sts get-caller-identity",
+        "aws ecs list-clusters"
+      ],
+      "required_config": ["AWS credentials or federated login"],
+      "notes": [
+        "AWS CLI is the operational default for inspecting identity, networking, storage, and deploy surfaces in AWS environments.",
+        "Prefer federated auth and short-lived credentials over distributing long-lived IAM keys."
+      ]
+    },
+    {
+      "name": "gcloud CLI",
+      "aliases": ["gcloud", "google cloud cli"],
+      "provider": "Google Cloud",
+      "category": "cloud",
+      "trigger_shapes": ["api service", "web app", "data pipeline", "other"],
+      "trigger_needs": ["cloud", "hosting", "serverless", "data-platform"],
+      "trigger_stacks": ["Google Cloud", "BigQuery", "Firebase"],
+      "trigger_services": [],
+      "trigger_apis": [],
+      "install_methods": [
+        "Install the Google Cloud CLI from the official package for your platform.",
+        "Authenticate with gcloud auth login or use workload identity and service-account impersonation for automation."
+      ],
+      "recommended_commands": [
+        "gcloud auth login",
+        "gcloud config set project <project-id>",
+        "gcloud run services list"
+      ],
+      "required_config": ["Google Cloud credentials or federated login"],
+      "notes": [
+        "gcloud is the standard inspection and control surface for GCP projects, Cloud Run, IAM, and service configuration.",
+        "Avoid broad service-account key distribution; prefer workload identity or impersonation for automation."
+      ]
+    },
+    {
+      "name": "Azure CLI",
+      "aliases": ["az cli", "az", "azure cli"],
+      "provider": "Microsoft Azure",
+      "category": "cloud",
+      "trigger_shapes": ["api service", "web app", "data pipeline", "other"],
+      "trigger_needs": ["cloud", "hosting", "identity", "infrastructure"],
+      "trigger_stacks": ["Microsoft Azure", "Terraform"],
+      "trigger_services": [],
+      "trigger_apis": [],
+      "install_methods": [
+        "Install Azure CLI from the official package for your platform.",
+        "Authenticate with az login and prefer managed identities or federated auth for automation."
+      ],
+      "recommended_commands": [
+        "az login",
+        "az account show",
+        "az webapp list"
+      ],
+      "required_config": ["Azure credentials or federated login"],
+      "notes": [
+        "Azure CLI is the standard operational surface for subscriptions, resource groups, app hosting, and identity-aware platform inspection.",
+        "Prefer managed identity and federated workflows instead of embedding service principal secrets in CI."
+      ]
+    },
+    {
+      "name": "Neon CLI",
+      "aliases": ["neon cli", "neon", "neonctl"],
+      "provider": "Neon",
+      "category": "database",
+      "trigger_shapes": ["api service", "data pipeline"],
+      "trigger_needs": ["database", "postgres", "sql"],
+      "trigger_stacks": ["PostgreSQL"],
+      "trigger_services": ["Neon"],
+      "trigger_apis": [],
+      "install_methods": [
+        "Install neonctl globally or run it via npx/bunx for ad hoc setup.",
+        "Authenticate with neon auth or set NEON_API_KEY for automation."
+      ],
+      "recommended_commands": [
+        "neon auth",
+        "neon projects list --output json",
+        "neon connection-string"
+      ],
+      "required_config": ["NEON_API_KEY (automation only)"],
+      "notes": [
+        "Neon CLI reduces database setup friction after provisioning because it handles project, branch, and connection-string inspection from the terminal.",
+        "Context files let developers avoid repeatedly retyping org/project identifiers in local workflows."
+      ]
+    },
+    {
+      "name": "flyctl",
+      "aliases": ["flyctl", "fly cli", "fly"],
+      "provider": "Fly.io",
+      "category": "hosting",
+      "trigger_shapes": ["api service"],
+      "trigger_needs": [],
+      "trigger_stacks": ["Fly.io", "Docker"],
+      "trigger_services": ["Fly.io"],
+      "trigger_apis": [],
+      "install_methods": [
+        "Install flyctl from the official Fly.io package or script for your platform.",
+        "Authenticate with fly auth login or use FLY_API_TOKEN in automation."
+      ],
+      "recommended_commands": [
+        "fly auth login",
+        "fly launch",
+        "fly deploy",
+        "fly logs"
+      ],
+      "required_config": ["FLY_API_TOKEN (automation only)"],
+      "notes": [
+        "flyctl is the core operational surface for app creation, deployment, scaling, and inspection on Fly.io.",
+        "Use it to make deploy intent explicit instead of treating one-time launch defaults as permanent platform design."
+      ]
+    },
+    {
+      "name": "Stripe CLI",
+      "aliases": ["stripe cli", "stripe"],
+      "provider": "Stripe",
+      "category": "payments",
+      "trigger_shapes": [],
+      "trigger_needs": ["payments", "billing", "checkout"],
+      "trigger_stacks": [],
+      "trigger_services": [],
+      "trigger_apis": ["Stripe"],
+      "install_methods": [
+        "Install the Stripe CLI from the official Stripe distribution for your platform.",
+        "Use it primarily in sandbox/test mode for local development and webhook testing."
+      ],
+      "recommended_commands": [
+        "stripe login",
+        "stripe listen --forward-to http://127.0.0.1:3000/api/webhooks/stripe",
+        "stripe trigger payment_intent.succeeded"
+      ],
+      "required_config": [],
+      "notes": [
+        "Stripe CLI is high leverage because local webhook forwarding removes a large amount of payments setup friction.",
+        "Keep live-mode key operations out of repo scripts; use sandbox defaults until go-live."
+      ]
+    },
+    {
+      "name": "sentry-cli",
+      "aliases": ["sentry cli", "sentry-cli"],
+      "provider": "Sentry",
+      "category": "observability",
+      "trigger_shapes": [],
+      "trigger_needs": ["observability", "error-tracking", "monitoring"],
+      "trigger_stacks": ["OpenTelemetry"],
+      "trigger_services": [],
+      "trigger_apis": ["Sentry"],
+      "install_methods": [
+        "Install sentry-cli from the official package or binary for your platform.",
+        "Authenticate with SENTRY_AUTH_TOKEN and configure org/project for release workflows."
+      ],
+      "recommended_commands": [
+        "sentry-cli releases new <release>",
+        "sentry-cli releases files <release> upload-sourcemaps .",
+        "sentry-cli releases finalize <release>"
+      ],
+      "required_config": ["SENTRY_AUTH_TOKEN", "SENTRY_ORG", "SENTRY_PROJECT"],
+      "notes": [
+        "sentry-cli is most useful in build and release surfaces rather than local feature work.",
+        "Use it when the generated repo needs release tracking, source maps, or CI-integrated error ownership."
+      ]
+    },
+    {
+      "name": "EAS CLI",
+      "aliases": ["eas cli", "eas", "expo application services"],
+      "provider": "Expo",
+      "category": "mobile-build",
+      "trigger_shapes": ["mobile app"],
+      "trigger_needs": ["mobile-builds", "ota-updates", "app-distribution"],
+      "trigger_stacks": ["Expo", "React Native"],
+      "trigger_services": [],
+      "trigger_apis": [],
+      "install_methods": [
+        "Install with pnpm add -g eas-cli or use the project-local package manager workflow documented by Expo.",
+        "Authenticate with Expo account credentials or CI tokens before build and submit workflows."
+      ],
+      "recommended_commands": [
+        "eas login",
+        "eas build --platform all",
+        "eas update --branch preview",
+        "eas submit --platform ios"
+      ],
+      "required_config": ["Expo account", "EAS project configuration", "store signing credentials"],
+      "notes": [
+        "EAS CLI is the operational backbone for Expo build, update, preview, and store-submission workflows.",
+        "Use profiles to separate preview, internal, and production channels instead of overloading one build configuration."
+      ]
+    },
+    {
+      "name": "Firebase CLI",
+      "aliases": ["firebase cli", "firebase-tools"],
+      "provider": "Google Firebase",
+      "category": "baas",
+      "trigger_shapes": ["mobile app", "web app"],
+      "trigger_needs": ["auth", "serverless", "hosting", "emulators"],
+      "trigger_stacks": ["Firebase", "React Native", "Expo", "Flutter"],
+      "trigger_services": ["Firebase"],
+      "trigger_apis": [],
+      "install_methods": [
+        "Install with npm or pnpm as firebase-tools for local and CI workflows.",
+        "Authenticate interactively with firebase login or use service-account credentials in CI."
+      ],
+      "recommended_commands": [
+        "firebase login",
+        "firebase projects:list",
+        "firebase emulators:start",
+        "firebase deploy"
+      ],
+      "required_config": ["Firebase project", "Google Cloud credentials for automation"],
+      "notes": [
+        "Firebase CLI is useful for emulator-driven local development and deployment of supporting hosting or function surfaces.",
+        "Mobile client configuration still needs platform-specific app registration and should not be hidden behind the CLI."
+      ]
+    }
+  ],
+  "third_party_apis": [
+    {
+      "name": "OpenAI",
+      "aliases": ["openai api", "openai"],
+      "provider": "OpenAI",
+      "category": "llm",
+      "trigger_shapes": [],
+      "trigger_needs": ["ai", "llm", "rag"],
+      "trigger_stacks": ["LiteLLM", "Instructor"],
+      "server_env_vars": ["OPENAI_API_KEY", "OPENAI_ORGANIZATION_ID", "OPENAI_PROJECT_ID"],
+      "public_env_vars": [],
+      "base_url": "https://api.openai.com/v1",
+      "docs_url": "https://developers.openai.com/api/reference/overview",
+      "has_official_cli": false,
+      "notes": [
+        "Use Bearer auth with OPENAI_API_KEY and keep the key server-side only.",
+        "If the org uses multiple OpenAI organizations or projects, carry OpenAI-Organization and OpenAI-Project headers explicitly."
+      ]
+    },
+    {
+      "name": "Anthropic",
+      "aliases": ["anthropic api", "claude api", "anthropic"],
+      "provider": "Anthropic",
+      "category": "llm",
+      "trigger_shapes": [],
+      "trigger_needs": ["ai", "llm", "rag"],
+      "trigger_stacks": ["LiteLLM", "Instructor"],
+      "server_env_vars": ["ANTHROPIC_API_KEY", "ANTHROPIC_VERSION"],
+      "public_env_vars": [],
+      "base_url": "https://api.anthropic.com",
+      "docs_url": "https://platform.claude.com/docs/en/api/getting-started",
+      "has_official_cli": false,
+      "notes": [
+        "Direct API requests require x-api-key, anthropic-version, and content-type headers.",
+        "Prefer the official SDKs when possible so header/version handling stays centralized and consistent."
+      ]
+    },
+    {
+      "name": "Stripe",
+      "aliases": ["stripe api", "stripe"],
+      "provider": "Stripe",
+      "category": "payments",
+      "trigger_shapes": [],
+      "trigger_needs": ["payments", "billing", "checkout"],
+      "trigger_stacks": [],
+      "server_env_vars": ["STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"],
+      "public_env_vars": ["NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY"],
+      "base_url": "https://api.stripe.com",
+      "docs_url": "https://docs.stripe.com/keys",
+      "has_official_cli": true,
+      "notes": [
+        "Use test-mode keys first and separate webhook signing secrets from API keys.",
+        "Prefer restricted keys for scoped server integrations instead of broad secret keys when feasible."
+      ]
+    },
+    {
+      "name": "Resend",
+      "aliases": ["resend api", "resend"],
+      "provider": "Resend",
+      "category": "email",
+      "trigger_shapes": [],
+      "trigger_needs": ["email", "transactional-email"],
+      "trigger_stacks": [],
+      "server_env_vars": ["RESEND_API_KEY", "RESEND_FROM_EMAIL"],
+      "public_env_vars": [],
+      "base_url": "https://api.resend.com",
+      "docs_url": "https://resend.com/docs/api-reference/introduction",
+      "has_official_cli": false,
+      "notes": [
+        "Resend uses Bearer auth and requires a User-Agent header for direct HTTP requests.",
+        "Keep API keys server-side; treat sending domains and from-address configuration as part of environment setup, not hardcoded source."
+      ]
+    },
+    {
+      "name": "PostHog",
+      "aliases": ["posthog api", "posthog"],
+      "provider": "PostHog",
+      "category": "analytics",
+      "trigger_shapes": ["web app", "mobile app"],
+      "trigger_needs": ["analytics", "product-analytics", "session-replay"],
+      "trigger_stacks": ["Next.js"],
+      "server_env_vars": ["POSTHOG_PERSONAL_API_KEY"],
+      "public_env_vars": ["NEXT_PUBLIC_POSTHOG_KEY", "NEXT_PUBLIC_POSTHOG_HOST"],
+      "base_url": "https://us.i.posthog.com",
+      "docs_url": "https://posthog.com/docs/libraries/js",
+      "has_official_cli": false,
+      "notes": [
+        "PostHog browser setup needs a project token and host; identifying users after login is required for meaningful analytics and replay correlation.",
+        "Treat personal API keys as server/admin credentials and keep them out of browser bundles."
+      ]
+    },
+    {
+      "name": "Sentry",
+      "aliases": ["sentry api", "sentry"],
+      "provider": "Sentry",
+      "category": "observability",
+      "trigger_shapes": [],
+      "trigger_needs": ["observability", "error-tracking", "monitoring"],
+      "trigger_stacks": ["OpenTelemetry"],
+      "server_env_vars": ["SENTRY_AUTH_TOKEN", "SENTRY_ORG", "SENTRY_PROJECT"],
+      "public_env_vars": ["NEXT_PUBLIC_SENTRY_DSN"],
+      "base_url": "https://sentry.io/api/0",
+      "docs_url": "https://docs.sentry.io/api/auth/",
+      "has_official_cli": true,
+      "notes": [
+        "Prefer Bearer auth tokens over legacy API keys for new Sentry API integrations.",
+        "Use the public DSN only in client/runtime surfaces and keep auth tokens for release or admin automation server-side."
+      ]
+    },
+    {
+      "name": "Auth0",
+      "aliases": ["auth0 api", "auth0"],
+      "provider": "Auth0",
+      "category": "identity",
+      "trigger_shapes": ["web app", "mobile app", "api service"],
+      "trigger_needs": ["authentication", "authorization", "oidc", "b2c-auth", "b2b-auth"],
+      "trigger_stacks": ["React", "Next.js", "React Native", "Expo"],
+      "server_env_vars": ["AUTH0_DOMAIN", "AUTH0_CLIENT_ID", "AUTH0_CLIENT_SECRET", "AUTH0_AUDIENCE"],
+      "public_env_vars": ["NEXT_PUBLIC_AUTH0_CLIENT_ID"],
+      "base_url": "https://{tenant}.auth0.com",
+      "docs_url": "https://auth0.com/docs",
+      "has_official_cli": false,
+      "notes": [
+        "Auth0 is a strong default when hosted OIDC, social login, RBAC, and tenant-managed auth flows are preferable to building auth directly into the application.",
+        "Keep client secrets and management API credentials server-side; public client identifiers alone are not sufficient for privileged workflows."
+      ]
+    },
+    {
+      "name": "Clerk",
+      "aliases": ["clerk api", "clerk"],
+      "provider": "Clerk",
+      "category": "identity",
+      "trigger_shapes": ["web app", "mobile app"],
+      "trigger_needs": ["authentication", "session-management", "user-management", "b2c-auth"],
+      "trigger_stacks": ["React", "Next.js", "React Native", "Expo"],
+      "server_env_vars": ["CLERK_SECRET_KEY", "CLERK_JWT_KEY"],
+      "public_env_vars": ["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY", "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY"],
+      "base_url": "https://api.clerk.com",
+      "docs_url": "https://clerk.com/docs",
+      "has_official_cli": false,
+      "notes": [
+        "Clerk is effective for product teams that want polished sign-in, session, and user-management surfaces without designing auth UX from scratch.",
+        "Treat Clerk middleware and session helpers as application-boundary code; do not let provider abstractions obscure authorization rules inside your backend."
+      ]
+    },
+    {
+      "name": "WorkOS",
+      "aliases": ["workos api", "workos"],
+      "provider": "WorkOS",
+      "category": "enterprise-identity",
+      "trigger_shapes": ["web app", "api service"],
+      "trigger_needs": ["sso", "scim", "enterprise-auth", "audit-logs", "organizations"],
+      "trigger_stacks": ["React", "Next.js", "FastAPI", "Django"],
+      "server_env_vars": ["WORKOS_API_KEY", "WORKOS_CLIENT_ID", "WORKOS_WEBHOOK_SECRET"],
+      "public_env_vars": [],
+      "base_url": "https://api.workos.com",
+      "docs_url": "https://workos.com/docs",
+      "has_official_cli": false,
+      "notes": [
+        "WorkOS is a strong fit when B2B products need enterprise SSO, directory sync, audit trails, and org-scoped identity features without building them in-house.",
+        "Model organization membership, role mapping, and SCIM lifecycle rules explicitly; enterprise identity still needs application-level authorization design."
+      ]
+    },
+    {
+      "name": "Amazon Cognito",
+      "aliases": ["cognito", "amazon cognito", "cognito api"],
+      "provider": "Amazon Web Services",
+      "category": "identity",
+      "trigger_shapes": ["web app", "mobile app", "api service"],
+      "trigger_needs": ["authentication", "authorization", "oidc", "hosted-login", "aws-identity"],
+      "trigger_stacks": ["Amazon Web Services", "React", "Next.js", "React Native", "Expo"],
+      "server_env_vars": ["COGNITO_USER_POOL_ID", "COGNITO_APP_CLIENT_ID", "COGNITO_REGION"],
+      "public_env_vars": ["NEXT_PUBLIC_COGNITO_CLIENT_ID"],
+      "base_url": "https://cognito-idp.{region}.amazonaws.com",
+      "docs_url": "https://docs.aws.amazon.com/cognito/",
+      "has_official_cli": true,
+      "notes": [
+        "Cognito is a practical default when the product already lives in AWS and wants hosted identity within the same cloud governance boundary.",
+        "Keep user-pool configuration, hosted UI policy, and token validation rules explicit; cloud adjacency does not remove identity design work."
+      ]
+    },
+    {
+      "name": "Vanta",
+      "aliases": ["vanta api", "vanta"],
+      "provider": "Vanta",
+      "category": "compliance-automation",
+      "trigger_shapes": ["api service", "web app", "other"],
+      "trigger_needs": ["compliance", "audit-readiness", "evidence-collection", "security-program"],
+      "trigger_stacks": ["HashiCorp Vault", "GitHub Actions", "Amazon Web Services", "Google Cloud", "Microsoft Azure"],
+      "server_env_vars": ["VANTA_API_TOKEN"],
+      "public_env_vars": [],
+      "base_url": "https://api.vanta.com",
+      "docs_url": "https://help.vanta.com/hc/en-us",
+      "has_official_cli": false,
+      "notes": [
+        "Vanta is useful when the product needs automated evidence collection, control mapping, and audit-readiness workflows across cloud and SaaS systems.",
+        "Treat compliance automation as evidence plumbing and review support, not a substitute for actual control ownership or security design."
+      ]
+    },
+    {
+      "name": "Drata",
+      "aliases": ["drata api", "drata"],
+      "provider": "Drata",
+      "category": "compliance-automation",
+      "trigger_shapes": ["api service", "web app", "other"],
+      "trigger_needs": ["compliance", "audit-readiness", "evidence-collection", "security-program"],
+      "trigger_stacks": ["HashiCorp Vault", "GitHub Actions", "Amazon Web Services", "Google Cloud", "Microsoft Azure"],
+      "server_env_vars": ["DRATA_API_TOKEN"],
+      "public_env_vars": [],
+      "base_url": "https://public-api.drata.com",
+      "docs_url": "https://help.drata.com/en/collections/4626438-api",
+      "has_official_cli": false,
+      "notes": [
+        "Drata is a strong fit when a team needs compliance evidence collection and control monitoring connected to its engineering systems.",
+        "Keep the distinction clear between automated evidence capture and the human review required for control design, exceptions, and remediation."
+      ]
+    },
+    {
+      "name": "RevenueCat",
+      "aliases": ["revenuecat api", "revenuecat"],
+      "provider": "RevenueCat",
+      "category": "mobile-payments",
+      "trigger_shapes": ["mobile app"],
+      "trigger_needs": ["subscriptions", "in-app-purchases", "entitlements"],
+      "trigger_stacks": ["React Native", "Expo", "Flutter"],
+      "server_env_vars": ["REVENUECAT_SECRET_API_KEY", "REVENUECAT_WEBHOOK_SECRET"],
+      "public_env_vars": ["EXPO_PUBLIC_REVENUECAT_API_KEY"],
+      "base_url": "https://api.revenuecat.com/v1",
+      "docs_url": "https://www.revenuecat.com/docs/api-v1",
+      "has_official_cli": false,
+      "notes": [
+        "RevenueCat reduces store-specific subscription logic by centralizing entitlements and purchase state across iOS and Android.",
+        "Client SDK keys are public-facing app configuration; keep secret API and webhook credentials server-side."
+      ]
+    },
+    {
+      "name": "Ably",
+      "aliases": ["ably api", "ably"],
+      "provider": "Ably",
+      "category": "realtime",
+      "trigger_shapes": [],
+      "trigger_needs": ["realtime", "pubsub", "presence", "collaboration"],
+      "trigger_stacks": ["Yjs"],
+      "server_env_vars": ["ABLY_API_KEY"],
+      "public_env_vars": ["NEXT_PUBLIC_ABLY_CLIENT_KEY"],
+      "base_url": "https://rest.ably.io",
+      "docs_url": "https://ably.com/docs",
+      "has_official_cli": false,
+      "notes": [
+        "Ably is a strong managed default for realtime channels, presence, and event fanout when the team does not want to operate broker infrastructure for user-facing collaboration features.",
+        "Keep publish authority and token issuance server-side; managed realtime does not remove the need for application-level authorization boundaries."
+      ]
+    },
+    {
+      "name": "Pusher",
+      "aliases": ["pusher api", "pusher"],
+      "provider": "Pusher",
+      "category": "realtime",
+      "trigger_shapes": [],
+      "trigger_needs": ["realtime", "pubsub", "presence", "collaboration"],
+      "trigger_stacks": ["Yjs"],
+      "server_env_vars": ["PUSHER_APP_ID", "PUSHER_KEY", "PUSHER_SECRET", "PUSHER_CLUSTER"],
+      "public_env_vars": ["NEXT_PUBLIC_PUSHER_KEY", "NEXT_PUBLIC_PUSHER_CLUSTER"],
+      "base_url": "https://api-<cluster>.pusher.com",
+      "docs_url": "https://pusher.com/docs/",
+      "has_official_cli": false,
+      "notes": [
+        "Pusher is effective for lower-friction hosted websocket delivery, presence, and channel-based realtime app features.",
+        "Treat channel authorization and event naming as explicit app contracts; managed channels are not a substitute for domain modeling."
+      ]
+    },
+    {
+      "name": "HubSpot",
+      "aliases": ["hubspot api", "hubspot"],
+      "provider": "HubSpot",
+      "category": "crm",
+      "trigger_shapes": [],
+      "trigger_needs": ["crm", "customer-data", "sales", "marketing-ops"],
+      "trigger_stacks": [],
+      "server_env_vars": ["HUBSPOT_ACCESS_TOKEN", "HUBSPOT_APP_ID", "HUBSPOT_WEBHOOK_SECRET"],
+      "public_env_vars": [],
+      "base_url": "https://api.hubapi.com",
+      "docs_url": "https://developers.hubspot.com/docs/api/overview",
+      "has_official_cli": false,
+      "notes": [
+        "HubSpot is a practical default when product and go-to-market systems need CRM, marketing, and customer data automation in one vendor surface.",
+        "Keep private app tokens and webhook verification server-side; CRM integrations need explicit field ownership and sync rules."
+      ]
+    },
+    {
+      "name": "Salesforce",
+      "aliases": ["salesforce api", "salesforce"],
+      "provider": "Salesforce",
+      "category": "crm",
+      "trigger_shapes": [],
+      "trigger_needs": ["crm", "enterprise-crm", "sales", "customer-data"],
+      "trigger_stacks": [],
+      "server_env_vars": ["SALESFORCE_CLIENT_ID", "SALESFORCE_CLIENT_SECRET", "SALESFORCE_USERNAME", "SALESFORCE_PASSWORD"],
+      "public_env_vars": [],
+      "base_url": "https://<instance>.salesforce.com/services/data",
+      "docs_url": "https://developer.salesforce.com/docs/apis",
+      "has_official_cli": true,
+      "notes": [
+        "Salesforce is the stronger fit when the business already lives inside enterprise CRM workflows and the integration surface must respect that gravity.",
+        "Treat object ownership, sync cadence, and API limit behavior as first-class integration design constraints."
+      ]
+    },
+    {
+      "name": "Intercom",
+      "aliases": ["intercom api", "intercom"],
+      "provider": "Intercom",
+      "category": "customer-messaging",
+      "trigger_shapes": [],
+      "trigger_needs": ["support", "customer-messaging", "in-app-chat", "crm"],
+      "trigger_stacks": [],
+      "server_env_vars": ["INTERCOM_ACCESS_TOKEN", "INTERCOM_WEBHOOK_SECRET"],
+      "public_env_vars": ["NEXT_PUBLIC_INTERCOM_APP_ID"],
+      "base_url": "https://api.intercom.io",
+      "docs_url": "https://developers.intercom.com/docs/references/rest-api/api.intercom.io",
+      "has_official_cli": false,
+      "notes": [
+        "Intercom is useful when support, messaging, and lifecycle communication need to show up directly in the product surface.",
+        "Keep user identity mapping and message-trigger rules explicit so support automation does not become hidden business logic."
+      ]
+    },
+    {
+      "name": "Segment",
+      "aliases": ["segment api", "segment"],
+      "provider": "Twilio Segment",
+      "category": "customer-data-platform",
+      "trigger_shapes": [],
+      "trigger_needs": ["customer-data", "analytics-routing", "event-pipeline", "marketing-ops"],
+      "trigger_stacks": [],
+      "server_env_vars": ["SEGMENT_WRITE_KEY", "SEGMENT_SPACE_ID", "SEGMENT_TOKEN"],
+      "public_env_vars": ["NEXT_PUBLIC_SEGMENT_WRITE_KEY"],
+      "base_url": "https://api.segment.io",
+      "docs_url": "https://segment.com/docs/",
+      "has_official_cli": false,
+      "notes": [
+        "Segment is useful when the team needs one event contract that can feed analytics, marketing, and downstream customer systems.",
+        "Treat tracking plans and identity resolution as explicit product contracts; event fanout multiplies bad instrumentation quickly."
+      ]
+    },
+    {
+      "name": "Shippo",
+      "aliases": ["shippo api", "shippo"],
+      "provider": "Shippo",
+      "category": "shipping",
+      "trigger_shapes": [],
+      "trigger_needs": ["shipping", "fulfillment", "labels", "logistics"],
+      "trigger_stacks": [],
+      "server_env_vars": ["SHIPPO_API_TOKEN"],
+      "public_env_vars": [],
+      "base_url": "https://api.goshippo.com",
+      "docs_url": "https://docs.goshippo.com/shippoapi/public-api/",
+      "has_official_cli": false,
+      "notes": [
+        "Shippo is a pragmatic shipping abstraction when the product needs carrier labels, rates, and tracking without direct carrier-by-carrier integrations.",
+        "Treat address validation, label purchase, and webhook handling as operational flows, not just API calls."
+      ]
+    },
+    {
+      "name": "EasyPost",
+      "aliases": ["easypost api", "easypost"],
+      "provider": "EasyPost",
+      "category": "shipping",
+      "trigger_shapes": [],
+      "trigger_needs": ["shipping", "fulfillment", "labels", "logistics"],
+      "trigger_stacks": [],
+      "server_env_vars": ["EASYPOST_API_KEY"],
+      "public_env_vars": [],
+      "base_url": "https://api.easypost.com/v2",
+      "docs_url": "https://docs.easypost.com/",
+      "has_official_cli": false,
+      "notes": [
+        "EasyPost is a strong fit when the product needs multi-carrier shipping workflows with programmable shipping objects and tracking surfaces.",
+        "Keep shipping-state ownership explicit because fulfillment failures are operational incidents, not only API retries."
+      ]
+    },
+    {
+      "name": "TaxJar",
+      "aliases": ["taxjar api", "taxjar"],
+      "provider": "TaxJar",
+      "category": "tax",
+      "trigger_shapes": [],
+      "trigger_needs": ["tax", "sales-tax", "checkout", "commerce"],
+      "trigger_stacks": [],
+      "server_env_vars": ["TAXJAR_API_KEY"],
+      "public_env_vars": [],
+      "base_url": "https://api.taxjar.com/v2",
+      "docs_url": "https://developers.taxjar.com/api/reference/",
+      "has_official_cli": false,
+      "notes": [
+        "TaxJar is a pragmatic default for product teams that need sales-tax calculation and filing support without building tax logic directly into checkout systems.",
+        "Keep nexus, filing responsibility, and order-source ownership explicit; tax APIs are not policy engines by themselves."
+      ]
+    },
+    {
+      "name": "Avalara",
+      "aliases": ["avalara api", "avalara", "avatax"],
+      "provider": "Avalara",
+      "category": "tax",
+      "trigger_shapes": [],
+      "trigger_needs": ["tax", "sales-tax", "vat", "commerce", "enterprise-tax"],
+      "trigger_stacks": [],
+      "server_env_vars": ["AVALARA_ACCOUNT_ID", "AVALARA_LICENSE_KEY", "AVALARA_COMPANY_CODE"],
+      "public_env_vars": [],
+      "base_url": "https://sandbox-rest.avatax.com/api/v2",
+      "docs_url": "https://developer.avalara.com/",
+      "has_official_cli": false,
+      "notes": [
+        "Avalara is a stronger fit for larger or more regulated commerce contexts where tax logic, jurisdictions, and enterprise process integration are more complex.",
+        "Treat tax classification, exemption handling, and filing ownership as operational responsibilities that sit above the API integration."
       ]
     }
   ],
@@ -1965,6 +3788,131 @@
       ],
       "related_items": ["Prompt Engineering", "uv", "Python Asyncio"],
       "confidence": "high"
+    },
+    {
+      "title": "Prefer explicit LLM routing and typed response validation for AI product workflows",
+      "when": "The product needs LLM calls, retrieval-augmented generation, or model-facing automation in the primary workflow.",
+      "prefer": "LiteLLM and Instructor with an explicit retrieval layer such as ChromaDB when semantic retrieval is part of the product behavior.",
+      "because": "AI-heavy products need model routing, typed validation, and retrieval boundaries to be explicit instead of buried in generic app code.",
+      "avoid": [
+        "Embedding model-provider calls directly across the app without a routing layer.",
+        "Treating retrieval as a vague future concern when semantic search or grounding is already a requirement."
+      ],
+      "related_items": ["LiteLLM", "Instructor", "ChromaDB", "OpenAI", "Anthropic"],
+      "match_product_shapes": ["api service", "web app"],
+      "match_needs": ["ai", "llm", "rag", "retrieval", "semantic-search", "vector"],
+      "match_domains": ["AI, retrieval, and agent systems"],
+      "prefer_items": ["LiteLLM", "Instructor", "ChromaDB"],
+      "target_layers": ["stacks", "third_party_apis"],
+      "confidence": "high"
+    },
+    {
+      "title": "Prefer durable orchestration for agent and multi-step automation systems",
+      "when": "The product uses agents, tool execution, or long-running multi-step automation that crosses request boundaries.",
+      "prefer": "Temporal and LangGraph-style orchestration rather than implicit in-request control flow or ad hoc queue chains.",
+      "because": "Agent and workflow systems become brittle when state transitions, retries, and tool coordination are not modeled as first-class workflow concerns.",
+      "avoid": [
+        "Keeping agent execution state only in request handlers or transient worker memory.",
+        "Treating queue fanout as equivalent to durable orchestration."
+      ],
+      "related_items": ["Temporal", "LangGraph", "OpenTelemetry", "FastAPI"],
+      "match_product_shapes": ["api service", "web app"],
+      "match_needs": ["agents", "durable-workflows", "workflow", "orchestration"],
+      "match_domains": ["AI, retrieval, and agent systems", "API, workflow, and backend platforms"],
+      "prefer_items": ["Temporal", "LangGraph"],
+      "avoid_items": ["Celery"],
+      "target_layers": ["stacks"],
+      "confidence": "high"
+    },
+    {
+      "title": "Prefer RevenueCat for mobile subscription products",
+      "when": "The product is a mobile app and subscriptions or in-app purchases are first-class requirements.",
+      "prefer": "RevenueCat, React Native or Expo, and Firebase-backed mobile delivery over a web-billing-only default.",
+      "because": "Mobile subscription products need store-aware entitlement handling and purchase normalization rather than a generic web checkout assumption.",
+      "avoid": [
+        "Treating Stripe Billing alone as the subscription authority for app-store purchases.",
+        "Reusing the web-app default stack without a mobile-specific billing surface."
+      ],
+      "related_items": ["RevenueCat", "React Native", "Expo", "Firebase", "Stripe"],
+      "match_product_shapes": ["mobile app"],
+      "match_needs": ["subscriptions", "in-app-purchases", "entitlements"],
+      "match_domains": ["Mobile and cross-platform apps", "Commerce, communication, and product integrations"],
+      "prefer_items": ["RevenueCat", "React Native", "Expo", "Firebase"],
+      "avoid_items": ["Stripe"],
+      "target_layers": ["stacks", "third_party_apis", "provisioning_services"],
+      "confidence": "high"
+    },
+    {
+      "title": "Prefer Yjs plus managed realtime transport for collaborative web products",
+      "when": "The product is a collaborative web app where presence, shared state, or realtime fanout are core user-facing requirements.",
+      "prefer": "Yjs with a managed transport such as Ably, plus a web delivery stack that keeps collaboration behavior explicit.",
+      "because": "Collaborative products need both shared-state conflict handling and a deliberate delivery transport; websocket language alone is too vague.",
+      "avoid": [
+        "Treating generic websocket support as a complete collaboration architecture.",
+        "Adding broker complexity before the product actually needs backend event-stream durability."
+      ],
+      "related_items": ["Yjs", "Ably", "Pusher", "Next.js", "Kafka"],
+      "match_product_shapes": ["web app"],
+      "match_needs": ["realtime", "collaboration", "presence", "pubsub"],
+      "match_domains": ["Realtime collaboration, messaging, and eventing"],
+      "prefer_items": ["Yjs", "Ably", "Pusher"],
+      "avoid_items": ["Kafka"],
+      "target_layers": ["stacks", "third_party_apis"],
+      "confidence": "medium"
+    },
+    {
+      "title": "Prefer enterprise identity and compliance surfaces for regulated B2B web products",
+      "when": "The product is a regulated or enterprise-oriented web app with SSO, audit, or compliance needs.",
+      "prefer": "WorkOS or similar enterprise identity tooling, plus compliance automation and explicit governance surfaces in the recommendation output.",
+      "because": "Regulated B2B products usually fail at org identity, auditability, and evidence collection before they fail at basic route rendering.",
+      "avoid": [
+        "Treating consumer auth defaults as sufficient for enterprise SSO and SCIM workflows.",
+        "Presenting architecture output without explicit compliance or evidence-handling follow-up."
+      ],
+      "related_items": ["WorkOS", "Vanta", "Drata", "GitHub Actions", "Next.js"],
+      "match_product_shapes": ["web app", "api service"],
+      "match_needs": ["sso", "scim", "compliance", "audit", "enterprise-auth"],
+      "match_domains": ["Identity, security, and regulated delivery"],
+      "prefer_items": ["WorkOS", "Vanta", "Drata", "GitHub CLI"],
+      "avoid_items": ["Clerk"],
+      "target_layers": ["third_party_apis", "cli_tools"],
+      "confidence": "high"
+    },
+    {
+      "title": "Prefer managed web product hosting and data defaults for generated app repos",
+      "when": "The product is a web app or mobile app that needs a fast path from planning package to deployable app surface.",
+      "prefer": "Vercel plus Supabase-style managed app and data services before escalating to heavier platform operations.",
+      "because": "Generated product repos need clear deployment and app-data defaults faster than they need bespoke platform engineering.",
+      "avoid": [
+        "Starting with Kubernetes or self-managed platform layers before a product deployment path exists.",
+        "Leaving web and mobile starter outputs without an explicit managed runtime and data surface."
+      ],
+      "related_items": ["Vercel", "Supabase", "Next.js", "React Native", "PostgreSQL"],
+      "match_product_shapes": ["web app", "mobile app"],
+      "match_needs": ["cloud", "hosting", "database", "authentication"],
+      "match_domains": ["Web and frontend product delivery", "Mobile and cross-platform apps", "Cloud, infrastructure, and platform operations"],
+      "prefer_items": ["Vercel", "Supabase"],
+      "avoid_items": ["Kubernetes"],
+      "target_layers": ["provisioning_services"],
+      "confidence": "medium"
+    },
+    {
+      "title": "Prefer explicit commerce integration surfaces for product workflows",
+      "when": "The product needs customer data routing, shipping, or tax behavior as part of its primary workflow.",
+      "prefer": "Segment, Shippo, and TaxJar style integrations as explicit product dependencies instead of generic custom plumbing.",
+      "because": "Commerce-heavy products usually need analytics, fulfillment, and tax ownership called out directly so the generated repo can expose those integration seams early.",
+      "avoid": [
+        "Collapsing analytics, shipping, and tax requirements into one generic integration placeholder.",
+        "Assuming a payment processor alone covers downstream fulfillment and tax behavior."
+      ],
+      "related_items": ["Segment", "Shippo", "TaxJar", "Stripe"],
+      "match_product_shapes": ["web app", "api service"],
+      "match_needs": ["customer-data", "shipping", "tax"],
+      "match_domains": ["Commerce, communication, and product integrations"],
+      "prefer_items": ["Segment", "Shippo", "TaxJar"],
+      "avoid_items": ["Stripe"],
+      "target_layers": ["third_party_apis"],
+      "confidence": "high"
     }
   ],
   "relationships": [
@@ -2047,6 +3995,39 @@
       ],
       "confidence": "high",
       "tags": ["retrieval", "relational-authority"]
+    },
+    {
+      "subject": "Yjs",
+      "relation": "complements",
+      "object": "Ably",
+      "rationale": "Yjs handles shared-state conflict resolution well, while Ably is a pragmatic managed transport and presence layer for delivering collaborative updates to connected clients.",
+      "evidence": [
+        "CRDT collaboration still needs a transport and connection-management layer when teams do not want to operate their own realtime infrastructure."
+      ],
+      "confidence": "medium",
+      "tags": ["realtime", "collaboration"]
+    },
+    {
+      "subject": "Kafka",
+      "relation": "alternative_to",
+      "object": "RabbitMQ",
+      "rationale": "Kafka is the stronger fit for durable event streams and replayable logs, while RabbitMQ is often the better default for brokered task distribution and conventional queue semantics.",
+      "evidence": [
+        "The architectural choice depends on whether the product needs ordered event streams with replay or more traditional message-broker routing patterns."
+      ],
+      "confidence": "high",
+      "tags": ["eventing", "messaging"]
+    },
+    {
+      "subject": "Segment",
+      "relation": "complements",
+      "object": "HubSpot",
+      "rationale": "Segment can normalize and route product events into downstream CRM and marketing systems, while HubSpot remains the customer-ops system where those events become campaigns, lifecycle state, and sales context.",
+      "evidence": [
+        "Customer-data platforms are most useful when they keep instrumentation contracts stable while downstream GTM tooling changes independently."
+      ],
+      "confidence": "high",
+      "tags": ["customer-data", "crm"]
     }
   ],
   "comparisons": [
@@ -2189,6 +4170,99 @@
         "https://github.com/pgvector/pgvector",
         "https://docs.trychroma.com/"
       ]
+    },
+    {
+      "name": "Stripe Billing vs RevenueCat for subscription platforms",
+      "scope": ["product-surface", "platform-coverage", "entitlements", "operational-complexity"],
+      "compared_versions": ["Stripe Billing", "RevenueCat"],
+      "status": "use-revenuecat-for-mobile-subscriptions",
+      "summary": "Stripe Billing is the stronger default for web-native subscription products that own checkout and billing directly, while RevenueCat is the stronger choice once mobile store subscriptions, entitlement sync, and app-store purchase normalization become core requirements.",
+      "related_items": ["Stripe", "RevenueCat", "Expo", "React Native"],
+      "findings": [
+        {
+          "area": "product-surface",
+          "summary": "Stripe Billing is best when the team controls the payment UX and subscription lifecycle directly on the web. RevenueCat becomes stronger when App Store and Play billing semantics must be abstracted behind one entitlement system.",
+          "option_a": "Stripe Billing: best for web checkout, invoices, and direct subscription ownership.",
+          "option_b": "RevenueCat: best for mobile subscription products that need store abstraction and shared entitlement state.",
+          "recommendation": "Use Stripe Billing for web-led SaaS subscriptions and RevenueCat for mobile-first or cross-platform subscription products with in-app purchases.",
+          "migration_risk": "Medium when a product expands from web-only billing into app-store subscriptions later."
+        },
+        {
+          "area": "operational-complexity",
+          "summary": "RevenueCat reduces app-store billing complexity but adds a separate entitlement authority layer. Stripe Billing keeps authority simpler when stores are not involved.",
+          "option_a": "Stripe Billing: fewer moving parts when subscriptions live entirely in your own billing stack.",
+          "option_b": "RevenueCat: lower mobile billing complexity but another vendor boundary to govern.",
+          "recommendation": "Do not force Stripe alone to own mobile store subscriptions; treat RevenueCat as the default escalation point for store-driven entitlement systems.",
+          "migration_risk": "Medium."
+        }
+      ],
+      "decision": "Prefer Stripe Billing when the subscription product is web-native and checkout ownership stays internal. Prefer RevenueCat when App Store and Play subscriptions, entitlement sync, or cross-platform mobile monetization become first-class concerns.",
+      "sources": [
+        "https://docs.stripe.com/billing",
+        "https://www.revenuecat.com/docs"
+      ]
+    },
+    {
+      "name": "TaxJar vs Avalara for commerce tax automation",
+      "scope": ["checkout-complexity", "jurisdiction-depth", "enterprise-process-fit", "operational-ownership"],
+      "compared_versions": ["TaxJar", "Avalara"],
+      "status": "escalate-to-avalara-for-complex-tax-programs",
+      "summary": "TaxJar is a pragmatic default for straightforward sales-tax automation in product-led commerce systems, while Avalara is the stronger choice when tax classification, jurisdiction breadth, and enterprise process integration become materially more complex.",
+      "related_items": ["TaxJar", "Avalara", "Stripe"],
+      "findings": [
+        {
+          "area": "checkout-complexity",
+          "summary": "TaxJar is easier to adopt for common ecommerce sales-tax use cases, while Avalara fits programs where tax calculation is embedded into a broader enterprise-control model.",
+          "option_a": "TaxJar: better for fast-moving product teams that need credible sales-tax automation without heavy enterprise process overhead.",
+          "option_b": "Avalara: better for larger commerce operations with more complex tax footprints and integration requirements.",
+          "recommendation": "Use TaxJar as the default unless tax complexity or enterprise process requirements clearly exceed it.",
+          "migration_risk": "Medium when products expand internationally or inherit complex tax classification needs."
+        },
+        {
+          "area": "operational-ownership",
+          "summary": "Neither tool replaces tax policy ownership; the difference is how much organizational process and configuration depth the platform expects around the integration.",
+          "option_a": "TaxJar: lighter operating model with simpler product-team adoption.",
+          "option_b": "Avalara: heavier operating model but stronger fit for enterprise tax governance.",
+          "recommendation": "Treat Avalara as an escalation path, not the default, unless the tax program is already enterprise-shaped.",
+          "migration_risk": "Medium."
+        }
+      ],
+      "decision": "Prefer TaxJar for straightforward product-led sales-tax automation. Prefer Avalara when the business needs deeper jurisdiction handling, enterprise tax workflows, or broader compliance complexity.",
+      "sources": [
+        "https://developers.taxjar.com/api/reference/",
+        "https://developer.avalara.com/"
+      ]
+    },
+    {
+      "name": "Shippo vs EasyPost for shipping abstractions",
+      "scope": ["carrier-abstraction", "workflow-shape", "api-ergonomics", "fulfillment-operations"],
+      "compared_versions": ["Shippo", "EasyPost"],
+      "status": "choose-by-fulfillment-workflow",
+      "summary": "Shippo is a pragmatic choice for straightforward rate, label, and tracking workflows, while EasyPost is often the stronger fit when teams want a more programmable shipping object model and richer logistics workflow composition.",
+      "related_items": ["Shippo", "EasyPost"],
+      "findings": [
+        {
+          "area": "workflow-shape",
+          "summary": "Shippo works well for common ecommerce shipping flows, while EasyPost is often favored when shipping events and shipment objects need deeper application-level modeling.",
+          "option_a": "Shippo: better for practical label buying and tracking with less upfront modeling overhead.",
+          "option_b": "EasyPost: better for teams that want more programmable shipping primitives inside product workflows.",
+          "recommendation": "Use Shippo as the simpler default unless the fulfillment product requires a richer shipment-domain model.",
+          "migration_risk": "Low to medium depending on carrier and fulfillment complexity."
+        },
+        {
+          "area": "fulfillment-operations",
+          "summary": "Both platforms abstract carriers, but the real decision is how much fulfillment logic the product team wants to keep explicit in its own systems.",
+          "option_a": "Shippo: good when the application mostly needs rates, labels, and tracking events.",
+          "option_b": "EasyPost: good when shipping becomes a more explicit operational subsystem.",
+          "recommendation": "Choose based on the shape of the fulfillment workflow, not feature-list parity alone.",
+          "migration_risk": "Medium if shipping logic is spread across multiple internal systems."
+        }
+      ],
+      "decision": "Prefer Shippo for simpler multi-carrier shipping flows. Prefer EasyPost when the application needs more programmable shipping objects and deeper fulfillment workflow control.",
+      "sources": [
+        "https://docs.goshippo.com/shippoapi/public-api/",
+        "https://docs.easypost.com/"
+      ]
     }
   ],
   "retrieval_guidance": {
@@ -2322,6 +4396,118 @@
       "https://docs.trychroma.com/docs/overview/getting-started"
     ]
   },
+  "coverage_domains": [
+    {
+      "name": "Web and frontend product delivery",
+      "status": "strong",
+      "priority": "high",
+      "summary": "Well-covered for SSR, SPA, and backend-for-frontend web products.",
+      "key_capabilities": ["ssr", "spa", "route-driven rendering", "browser testing", "frontend observability"],
+      "representative_tools": ["React", "Vite", "Next.js", "Playwright", "OpenTelemetry"],
+      "current_gaps": ["Broader Vue/Nuxt and SvelteKit guidance is still missing.", "No dedicated browser-extension stack guidance yet."],
+      "linked_tracks": ["Web and platform delivery"]
+    },
+    {
+      "name": "API, workflow, and backend platforms",
+      "status": "strong",
+      "priority": "high",
+      "summary": "Python and TypeScript backend guidance is mature for typed APIs and durable workflows.",
+      "key_capabilities": ["api contracts", "job orchestration", "durable workflows", "service observability"],
+      "representative_tools": ["FastAPI", "NestJS", "PostgreSQL", "Celery", "Temporal"],
+      "current_gaps": ["Go and JVM service-stack guidance is still absent."],
+      "linked_tracks": ["Python runtime and packaging", "Web and platform delivery"]
+    },
+    {
+      "name": "AI, retrieval, and agent systems",
+      "status": "strong",
+      "priority": "high",
+      "summary": "The KB already covers hosted LLM APIs, agent graphs, retrieval orchestration, vector stores, and structured output tooling.",
+      "key_capabilities": ["tool calling", "structured outputs", "rag", "vector search", "multi-provider routing"],
+      "representative_tools": ["OpenAI", "Anthropic", "Google Gemini API", "LiteLLM", "Instructor", "LangGraph", "LlamaIndex", "Qdrant"],
+      "current_gaps": ["Self-hosted inference serving guidance is thin beyond Transformers references.", "Evaluation tooling coverage should expand beyond retrieval-specific patterns."],
+      "linked_tracks": ["LLM, retrieval, and agent tooling"]
+    },
+    {
+      "name": "Data engineering and analytics",
+      "status": "strong",
+      "priority": "high",
+      "summary": "The KB now covers local analytics, managed warehouses, OLAP stores, and Python-first orchestration well enough to recommend credible default data-platform paths.",
+      "key_capabilities": ["etl", "analytics sql", "columnar processing", "feature pipelines"],
+      "representative_tools": ["DuckDB", "Polars", "BigQuery", "ClickHouse", "Dagster", "Prefect"],
+      "current_gaps": ["Snowflake and lakehouse-specific guidance are still absent.", "Airflow and dbt conventions are not yet represented as first-class KB recommendations."],
+      "linked_tracks": ["Python runtime and packaging", "Data platform and analytics tooling"]
+    },
+    {
+      "name": "Cloud, infrastructure, and platform operations",
+      "status": "strong",
+      "priority": "high",
+      "summary": "The KB now covers both broad cloud-platform choices and a pragmatic deploy surface well enough to recommend credible hosting and platform-operation defaults.",
+      "key_capabilities": ["iac", "hosting", "managed databases", "deployment pipelines", "service provisioning"],
+      "representative_tools": ["Amazon Web Services", "Google Cloud", "Microsoft Azure", "Fly.io", "Terraform", "Docker", "Kubernetes", "Vercel", "Neon"],
+      "current_gaps": ["Cloudflare, Railway, and Render-specific deploy guidance are still absent.", "Deeper provider-specific patterns for managed networking, queues, and secret stores are still thin."],
+      "linked_tracks": ["Web and platform delivery"]
+    },
+    {
+      "name": "Developer experience, quality, and supply chain",
+      "status": "strong",
+      "priority": "high",
+      "summary": "The KB now covers Python, Node/TypeScript monorepos, and compiled-platform build tooling well enough to recommend credible multi-language engineering workflows.",
+      "key_capabilities": ["linting", "typing", "testing", "pre-commit", "ci-cd", "package management"],
+      "representative_tools": ["uv", "pytest", "Ruff", "mypy", "GitHub Actions", "pre-commit", "GitHub CLI", "pnpm", "npm", "Turborepo", "Nx", "cargo", "dotnet CLI", "Rust", ".NET"],
+      "current_gaps": ["Java and JVM build tooling are still absent from first-class KB guidance.", "Package publishing, provenance, and SBOM/signing workflows need deeper coverage beyond baseline CI discipline."],
+      "linked_tracks": ["Python runtime and packaging", "Developer tooling and monorepo delivery"]
+    },
+    {
+      "name": "Identity, security, and regulated delivery",
+      "status": "strong",
+      "priority": "high",
+      "summary": "The KB now covers hosted identity, passkey guidance, secret management, and compliance automation strongly enough to recommend real regulated-delivery starting points.",
+      "key_capabilities": ["authentication", "authorization", "api hardening", "auditability", "secret handling"],
+      "representative_tools": ["Auth0", "Clerk", "WorkOS", "Amazon Cognito", "WebAuthn and passkeys", "HashiCorp Vault", "Vanta", "Drata", "OWASP API Security", "OWASP Authentication & REST Security", "OpenTelemetry"],
+      "current_gaps": ["Fine-grained authorization engines and policy tools are still not represented.", "Deeper region-specific compliance mappings such as FedRAMP or HIPAA implementation guidance remain thin."],
+      "linked_tracks": ["Web and platform delivery", "Integrations and product infrastructure"]
+    },
+    {
+      "name": "Mobile and cross-platform apps",
+      "status": "partial",
+      "priority": "high",
+      "summary": "The KB now covers mainstream cross-platform mobile delivery paths, but native-first and release-ops breadth is still incomplete.",
+      "key_capabilities": ["ios", "android", "shared-ui", "mobile-auth", "push notifications"],
+      "representative_tools": ["React Native", "Expo", "Flutter", "Firebase", "EAS CLI", "RevenueCat"],
+      "current_gaps": ["No first-class SwiftUI or Kotlin Multiplatform guidance yet.", "Mobile-specific CI, signing, and store-release automation still need deeper coverage."],
+      "linked_tracks": ["Web and platform delivery", "Mobile and cross-platform delivery", "Integrations and product infrastructure"]
+    },
+    {
+      "name": "Desktop, local-first, and offline-capable software",
+      "status": "partial",
+      "priority": "medium",
+      "summary": "The KB now covers credible desktop-shell and local-persistence defaults, but collaborative sync and native-release depth are still incomplete.",
+      "key_capabilities": ["desktop shells", "offline sync", "local persistence", "native packaging"],
+      "representative_tools": ["Tauri", "Electron", "SQLite", "libSQL", "Replicache"],
+      "current_gaps": ["Updater, signing, and store-distribution guidance is still thin across target operating systems.", "CRDT-heavy collaboration and richer multi-device conflict-resolution patterns are not yet first-class KB guidance."],
+      "linked_tracks": ["Web and platform delivery", "Desktop and local-first delivery"]
+    },
+    {
+      "name": "Realtime collaboration, messaging, and eventing",
+      "status": "strong",
+      "priority": "medium",
+      "summary": "The KB now covers event brokers, managed pubsub, and collaborative-state building blocks well enough to recommend credible realtime architecture starting points.",
+      "key_capabilities": ["websockets", "pubsub", "event buses", "presence", "collaborative state"],
+      "representative_tools": ["Kafka", "NATS", "RabbitMQ", "Yjs", "Ably", "Pusher"],
+      "current_gaps": ["Socket.IO and managed websocket gateway guidance are still absent.", "Realtime observability and event-schema governance patterns should become more explicit."],
+      "linked_tracks": ["Web and platform delivery", "Realtime and event-driven systems"]
+    },
+    {
+      "name": "Commerce, communication, and product integrations",
+      "status": "strong",
+      "priority": "medium",
+      "summary": "The KB now covers customer platforms, support tooling, analytics routing, and commerce-adjacent shipping and tax surfaces well enough to recommend credible integration defaults.",
+      "key_capabilities": ["payments", "email delivery", "analytics", "customer messaging", "crm integration"],
+      "representative_tools": ["Stripe", "Resend", "PostHog", "HubSpot", "Salesforce", "Intercom", "Segment", "Shippo", "TaxJar"],
+      "current_gaps": ["ERP, billing-ops, and order-management integrations are still absent from first-class KB guidance.", "Broader telecom, support-automation, and lifecycle-marketing execution patterns remain thin."],
+      "linked_tracks": ["Web and platform delivery", "Integrations and product infrastructure", "Commerce and customer platforms"]
+    }
+  ],
   "research_ledger": {
     "operating_model": "Weekly delta review with explicit recommendation changes. Research outputs must separate shipped facts, proposed changes, and unresolved follow-up items.",
     "weekly_review_day": "Friday",
@@ -2337,25 +4523,111 @@
         "name": "Python runtime and packaging",
         "cadence": "weekly",
         "owner": "platform",
+        "freshness_days": 7,
+        "last_review_date": "2026-03-29",
         "scope": ["CPython release notes", "typing changes", "asyncio/runtime changes", "uv and packaging workflow changes"],
         "trigger_signals": ["new CPython release or RC", "uv release with workflow-impacting changes", "base image or CI matrix drift"],
-        "required_outputs": ["comparison delta", "migration risk note", "decision changed or unchanged", "KB relation updates if needed"]
+        "required_outputs": ["comparison delta", "migration risk note", "decision changed or unchanged", "KB relation updates if needed"],
+        "linked_domains": ["API, workflow, and backend platforms", "Data engineering and analytics", "Developer experience, quality, and supply chain"]
       },
       {
         "name": "LLM, retrieval, and agent tooling",
         "cadence": "weekly",
         "owner": "ai-platform",
+        "freshness_days": 7,
+        "last_review_date": "2026-03-29",
         "scope": ["provider API changes", "retrieval framework guidance", "structured output and tool-calling changes", "evaluation patterns"],
         "trigger_signals": ["breaking SDK release", "model deprecation", "new tool-calling or structured output feature"],
-        "required_outputs": ["stack recommendation delta", "integration pattern impact", "evidence links", "confidence review"]
+        "required_outputs": ["stack recommendation delta", "integration pattern impact", "evidence links", "confidence review"],
+        "linked_domains": ["AI, retrieval, and agent systems"]
       },
       {
         "name": "Web and platform delivery",
         "cadence": "weekly",
         "owner": "product-platform",
+        "freshness_days": 7,
+        "last_review_date": "2026-03-29",
         "scope": ["framework release notes", "observability guidance", "deployment and security baseline changes"],
         "trigger_signals": ["major framework release", "security advisory", "deployment pattern change"],
-        "required_outputs": ["best-practice delta", "misuse risk delta", "affected archetypes list"]
+        "required_outputs": ["best-practice delta", "misuse risk delta", "affected archetypes list"],
+        "linked_domains": ["Web and frontend product delivery", "Cloud, infrastructure, and platform operations", "Identity, security, and regulated delivery", "Mobile and cross-platform apps", "Desktop, local-first, and offline-capable software", "Realtime collaboration, messaging, and eventing", "Commerce, communication, and product integrations"]
+      },
+      {
+        "name": "Mobile and cross-platform delivery",
+        "cadence": "weekly",
+        "owner": "mobile-platform",
+        "freshness_days": 7,
+        "last_review_date": "2026-03-30",
+        "scope": ["Expo and React Native release notes", "Flutter release notes", "mobile build and store submission guidance", "push, analytics, and crash tooling changes"],
+        "trigger_signals": ["Expo SDK release", "React Native release", "Flutter stable release", "mobile store policy or signing workflow change"],
+        "required_outputs": ["mobile stack recommendation delta", "build or release-ops impact note", "affected mobile integrations list"],
+        "linked_domains": ["Mobile and cross-platform apps"]
+      },
+      {
+        "name": "Data platform and analytics tooling",
+        "cadence": "weekly",
+        "owner": "data-platform",
+        "freshness_days": 7,
+        "last_review_date": "2026-03-30",
+        "scope": ["warehouse and OLAP releases", "orchestration guidance", "embedded analytics engines", "dataframe and pipeline tooling"],
+        "trigger_signals": ["major warehouse or orchestration release", "significant query-engine feature", "packaging or runtime change affecting data stacks"],
+        "required_outputs": ["data stack delta", "comparison or migration note", "coverage-gap update"],
+        "linked_domains": ["Data engineering and analytics"]
+      },
+      {
+        "name": "Integrations and product infrastructure",
+        "cadence": "weekly",
+        "owner": "integrations-platform",
+        "freshness_days": 7,
+        "last_review_date": "2026-03-30",
+        "scope": ["payments and subscription tooling", "email and messaging providers", "customer data and CRM integrations", "analytics and support platform changes"],
+        "trigger_signals": ["API deprecation", "auth model change", "new webhook or SDK behavior", "major pricing or entitlement change"],
+        "required_outputs": ["integration profile delta", "env/auth surface update", "affected archetypes and API templates list"],
+        "linked_domains": ["Commerce, communication, and product integrations", "Identity, security, and regulated delivery", "Mobile and cross-platform apps"]
+      },
+      {
+        "name": "Desktop and local-first delivery",
+        "cadence": "weekly",
+        "owner": "desktop-platform",
+        "freshness_days": 7,
+        "last_review_date": "2026-03-30",
+        "scope": ["desktop shell releases", "local database and sync-engine changes", "packaging, updater, and signing workflow updates", "offline-first implementation guidance"],
+        "trigger_signals": ["major Tauri or Electron release", "sync-engine release with behavioral changes", "desktop packaging or OS policy change"],
+        "required_outputs": ["desktop/local-first stack delta", "packaging or updater impact note", "sync and conflict-handling guidance update"],
+        "linked_domains": ["Desktop, local-first, and offline-capable software"]
+      },
+      {
+        "name": "Developer tooling and monorepo delivery",
+        "cadence": "weekly",
+        "owner": "developer-platform",
+        "freshness_days": 7,
+        "last_review_date": "2026-03-30",
+        "scope": ["node package-manager changes", "monorepo orchestration tooling", "rust and dotnet build workflow changes", "supply-chain and CI guidance"],
+        "trigger_signals": ["package-manager behavioral change", "major monorepo-tool release", "language-sdk release affecting build or CI workflows"],
+        "required_outputs": ["developer-tooling delta", "build or CI migration note", "workspace-pattern guidance update"],
+        "linked_domains": ["Developer experience, quality, and supply chain"]
+      },
+      {
+        "name": "Realtime and event-driven systems",
+        "cadence": "weekly",
+        "owner": "platform-architecture",
+        "freshness_days": 7,
+        "last_review_date": "2026-03-30",
+        "scope": ["event broker releases", "managed realtime platform changes", "collaborative-state tooling", "schema and transport guidance"],
+        "trigger_signals": ["major broker release", "managed realtime API or pricing change", "CRDT or collaboration-framework update", "event-schema compatibility issue"],
+        "required_outputs": ["realtime stack delta", "broker or transport comparison note", "operability or schema-governance update"],
+        "linked_domains": ["Realtime collaboration, messaging, and eventing"]
+      },
+      {
+        "name": "Commerce and customer platforms",
+        "cadence": "weekly",
+        "owner": "growth-platform",
+        "freshness_days": 7,
+        "last_review_date": "2026-03-30",
+        "scope": ["crm and support platform changes", "customer-data tooling", "shipping and tax provider updates", "subscription and billing platform guidance"],
+        "trigger_signals": ["API deprecation", "entitlement or billing workflow change", "shipping or tax compliance change", "major CRM platform release"],
+        "required_outputs": ["customer-platform delta", "comparison or migration note", "integration-surface risk update"],
+        "linked_domains": ["Commerce, communication, and product integrations"]
       }
     ]
   }

@@ -88,6 +88,34 @@ def _minimal_index() -> dict[str, object]:
                     "notes": ["keep monolithic until deployment boundaries require splitting"],
                 },
             ],
+            "cli_tools": [
+                {
+                    "name": "GitHub CLI",
+                    "provider": "GitHub",
+                    "install_methods": ["gh auth login"],
+                    "recommended_commands": ["gh repo create"],
+                    "notes": ["use GH_TOKEN in automation"],
+                }
+            ],
+            "third_party_apis": [
+                {
+                    "name": "OpenAI",
+                    "provider": "OpenAI",
+                    "server_env_vars": ["OPENAI_API_KEY"],
+                    "base_url": "https://api.openai.com/v1",
+                    "notes": ["keep keys server-side"],
+                }
+            ],
+            "coverage_domains": [
+                {
+                    "name": "Mobile and cross-platform apps",
+                    "status": "seed",
+                    "priority": "high",
+                    "summary": "Native and cross-platform mobile guidance is still thin.",
+                    "current_gaps": ["No React Native guidance"],
+                    "linked_tracks": ["Web and platform delivery"],
+                }
+            ],
             "decision_rules": [
                 {
                     "title": "Prefer durable workflows",
@@ -156,6 +184,8 @@ def _minimal_index() -> dict[str, object]:
                     {
                         "name": "Python runtime",
                         "cadence": "weekly",
+                        "freshness_days": 7,
+                        "last_review_date": "2026-03-29",
                         "scope": ["CPython releases"],
                         "required_outputs": ["comparison delta"],
                     }
@@ -188,6 +218,9 @@ def test_build_corpus_creates_chunks_for_all_source_types() -> None:
     assert "concern" in source_types
     assert "stack" in source_types
     assert "pattern" in source_types
+    assert "cli_tool" in source_types
+    assert "third_party_api" in source_types
+    assert "coverage_domain" in source_types
     assert "decision_rule" in source_types
     assert "kb_relation" in source_types
     assert "comparison" in source_types

@@ -17,10 +17,11 @@ Your job is to turn an idea into a scoped implementation brief before architectu
 
 ## Approach
 1. Read the relevant PROGRAMBUILD authority docs first.
-2. If USERJOURNEY is attached and relevant, use its authority docs for onboarding and activation concerns.
-3. Identify the dominant product shape, core problem, success metric, user types, and kill criteria.
-4. Produce clear P0/P1/P2 scope boundaries, user stories, acceptance criteria, and open questions.
-5. Call out assumptions and any missing decisions that block the next stage.
+2. If `outputs/factory/create-plan.md` exists, use it as the current generated kickoff brief before freehand scoping.
+3. If USERJOURNEY is attached and relevant, use its authority docs for onboarding and activation concerns.
+4. Identify the dominant product shape, core problem, success metric, user types, and kill criteria.
+5. Produce clear P0/P1/P2 scope boundaries, user stories, acceptance criteria, and open questions.
+6. Call out assumptions and any missing decisions that block the next stage.
 
 ## Output Format
 Return:

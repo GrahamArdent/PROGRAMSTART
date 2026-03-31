@@ -47,3 +47,42 @@ def test_render_markdown_contains_required_sections(tmp_path: Path) -> None:
     assert "## Source Changes" in markdown
     assert "## Recommendation Decision" in markdown
     assert "## KB Update Surface" in markdown
+
+
+def test_build_status_reports_tracks_and_domain_gaps() -> None:
+    report = programstart_research_delta.build_status("2026-03-30")
+
+    assert report.total_tracks >= 10
+    assert any(track.track == "Python runtime and packaging" for track in report.tracks)
+    assert any(track.track == "Desktop and local-first delivery" for track in report.tracks)
+    assert any(track.track == "Developer tooling and monorepo delivery" for track in report.tracks)
+    assert any(track.track == "Mobile and cross-platform delivery" for track in report.tracks)
+    assert any(track.track == "Realtime and event-driven systems" for track in report.tracks)
+    assert any(track.track == "Commerce and customer platforms" for track in report.tracks)
+    assert any(domain.status in {"seed", "partial"} for domain in report.domains)
+    assert any(domain.name == "Cloud, infrastructure, and platform operations" and domain.status == "strong" for domain in report.domains)
+    assert any(domain.name == "Commerce, communication, and product integrations" and domain.status == "strong" for domain in report.domains)
+    assert any(domain.name == "Data engineering and analytics" and domain.status == "strong" for domain in report.domains)
+    assert any(domain.name == "Developer experience, quality, and supply chain" and domain.status == "strong" for domain in report.domains)
+    assert any(domain.name == "Desktop, local-first, and offline-capable software" and domain.status == "partial" for domain in report.domains)
+    assert any(domain.name == "Identity, security, and regulated delivery" and domain.status == "strong" for domain in report.domains)
+    assert any(domain.name == "Mobile and cross-platform apps" and domain.status == "partial" for domain in report.domains)
+    assert any(domain.name == "Realtime collaboration, messaging, and eventing" and domain.status == "strong" for domain in report.domains)
+
+
+def test_main_status_json_emits_report(capsys) -> None:
+    result = programstart_research_delta.main(["--status", "--date", "2026-03-30", "--json"])
+    payload = json.loads(capsys.readouterr().out)
+
+    assert result == 0
+    assert payload["review_date"] == "2026-03-30"
+    assert "tracks" in payload
+    assert "domains" in payload
+
+
+def test_main_status_fail_on_due_returns_one(capsys) -> None:
+    result = programstart_research_delta.main(["--status", "--date", "2026-04-10", "--fail-on-due", "--json"])
+    payload = json.loads(capsys.readouterr().out)
+
+    assert result == 1
+    assert payload["due_tracks"] >= 1

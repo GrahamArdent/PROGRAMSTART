@@ -50,6 +50,53 @@ def copy_file(source: Path, destination: Path, dry_run: bool) -> None:
         handle.write(content)
 
 
+def _extract_file_header(source: Path) -> str:
+    """Return only the header block of an output file (up to and including the first '---' separator).
+
+    Output files in the template repo contain PROGRAMSTART's own project content below the
+    header.  When bootstrapping a new project, only the metadata header should be copied so
+    that the file is clearly blank and ready to fill — not pre-filled with content that
+    describes a different project.
+    """
+    try:
+        text = source.read_text(encoding="utf-8")
+    except (UnicodeDecodeError, OSError):
+        return ""
+
+    lines = text.splitlines(keepends=True)
+    header_lines: list[str] = []
+    separator_count = 0
+    for line in lines:
+        header_lines.append(line)
+        if line.strip() == "---":
+            separator_count += 1
+            if separator_count >= 1:
+                break
+
+    return "".join(header_lines)
+
+
+def copy_output_stub(source: Path, destination: Path, dry_run: bool) -> None:
+    """Write only the header block of an output file to the destination.
+
+    This prevents the template repo's own content (PROGRAMSTART's architecture diagrams,
+    test strategy numbers, etc.) from being copied into new projects as if it were their
+    own documentation.
+    """
+    if dry_run:
+        print(f"STUB   {source} -> {destination}")
+        return
+    header = _extract_file_header(source)
+    if not header:
+        # Fallback: copy the full file if we cannot parse a header
+        copy_file(source, destination, dry_run)
+        return
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    with destination.open("w", encoding="utf-8", newline="\n") as handle:
+        handle.write(header)
+        handle.write("\n")
+
+
 def bootstrap_programbuild(destination_root: Path, registry: dict, variant: str, dry_run: bool) -> None:
     state_file = registry["workflow_state"]["programbuild"]["state_file"]
     for relative_path in registry["systems"]["programbuild"]["control_files"]:
@@ -69,7 +116,7 @@ def bootstrap_programbuild(destination_root: Path, registry: dict, variant: str,
     for relative_path in registry["systems"]["programbuild"]["output_files"]:
         source = workspace_path(relative_path)
         destination = destination_root / relative_path
-        copy_file(source, destination, dry_run)
+        copy_output_stub(source, destination, dry_run)
 
 
 def bootstrap_shared_assets(destination_root: Path, registry: dict, dry_run: bool) -> None:

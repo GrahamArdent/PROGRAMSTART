@@ -190,6 +190,12 @@ def main() -> int:
                 print("Advance preflight failed:")
                 for problem in problems:
                     print(f"- {problem}")
+                print("")
+                print("Tip: If these files were just bootstrapped and have not yet been edited,")
+                print("     commit the bootstrapped baseline first ('git add -A && git commit -m ...')")
+                print("     so the drift check has a clean starting point.")
+                print("     If you have genuinely completed this stage and the check is a false positive,")
+                print("     use --skip-preflight and document the reason in DECISION_LOG.md.")
                 return 1
         if dry_run:
             print(f"[dry-run] Would mark {system} '{active_step}' completed (decision={args.decision!r}, date={args.date!r})")

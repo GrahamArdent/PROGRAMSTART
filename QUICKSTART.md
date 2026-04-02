@@ -107,6 +107,13 @@ Edit the files listed by `pb guide`. The registry knows which files belong to wh
 
 The advance command records a dated sign-off and moves the next step to `in_progress`. CI will reject PR merges that skip this gate.
 
+> **Commit before you advance.** The preflight checks git-changed files. If you have modified
+> files from the current stage that are not yet committed, the drift check will treat them as
+> uncommitted future-stage content and block the advance. Run `git add -A && git commit` after
+> completing each stage, then advance. If you are on a freshly bootstrapped project and have
+> not yet made your first commit, run `git add -A && git commit -m "chore: bootstrap project"`
+> before your first advance.
+
 ---
 
 ## Starting a New Project

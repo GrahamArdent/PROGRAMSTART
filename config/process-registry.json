@@ -659,6 +659,18 @@
       },
       "implementation_loop": {
         "description": "Build, test, and iterate — the main development cycle.",
+        "entry_criteria": [
+          "ARCHITECTURE.md is complete and all spikes in RISK_SPIKES.md are resolved or explicitly deferred with a decision.",
+          "TEST_STRATEGY.md is complete with a requirements-to-test traceability matrix covering all P0 requirements.",
+          "Every P0 requirement in REQUIREMENTS.md has at least one named purpose test.",
+          "DECISION_LOG.md is current — no decisions made since the last stage that are not recorded."
+        ],
+        "first_steps": [
+          "Scaffold the project structure — run the appropriate project initializer (e.g. create-next-app, uv init, cargo init) based on your PRODUCT_SHAPE and ARCHITECTURE.md technology decisions.",
+          "Write the first purpose test before writing the first feature. Pick the highest-risk P0 requirement and write its test first so the first line of feature code has something to fail.",
+          "Commit after each meaningful unit of work so the drift check has a clean baseline for the next advance.",
+          "Run 'programstart status' if you are unsure what to do next — it will surface the active stage and any blockers."
+        ],
         "files": [
           "PROGRAMBUILD/TEST_STRATEGY.md",
           "PROGRAMBUILD/DECISION_LOG.md",

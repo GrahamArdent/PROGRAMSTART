@@ -87,6 +87,11 @@
       "capabilities": ["file-system-routing", "ssr", "bff", "seo", "hybrid-rendering"],
       "sources": [
         "https://nextjs.org/docs/app/getting-started/project-structure"
+      ],
+      "scaffolding_notes": [
+        "Never pin an exact version in package.json (e.g. '14.2.3'). Use a semver range such as '^15'. Run 'npm show next version' to confirm the current major before writing the file.",
+        "Next.js has a history of security vulnerabilities in specific patch releases. Using '^<major>' ensures npm install always resolves to the latest patched version within the major.",
+        "Run 'npm install' immediately after writing package.json — do not leave it for the user."
       ]
     },
     {
@@ -2545,6 +2550,11 @@
       "notes": [
         "pnpm is a strong default for Node/TypeScript repos that care about deterministic installs, shared dependency storage, and workspace ergonomics.",
         "Keep workspace and lockfile ownership explicit so monorepo tooling does not drift into package-manager confusion."
+      ],
+      "scaffolding_notes": [
+        "NEVER write exact pinned versions in package.json (e.g. '14.2.3'). Always use semver ranges such as '^15'. Run 'npm show <package> version' or 'pnpm show <package> version' to confirm the current major before writing the file.",
+        "Pinned exact versions prevent automatic pickup of security patches. JavaScript framework ecosystems (Next.js, Nuxt, Remix, SvelteKit, etc.) release security patches as patch versions within a major — a pinned version will never receive them.",
+        "Run 'pnpm install' immediately after writing package.json — do not leave it for the user."
       ]
     },
     {
@@ -2570,6 +2580,11 @@
       "notes": [
         "npm remains the baseline package-manager surface for many JavaScript projects and should still be represented explicitly in the KB.",
         "Prefer one package manager per repo; mixed npm and pnpm workflows create avoidable lockfile and CI drift."
+      ],
+      "scaffolding_notes": [
+        "NEVER write exact pinned versions in package.json (e.g. '14.2.3'). Always use semver ranges such as '^15'. Run 'npm show <package> version' to confirm the current major before writing the file.",
+        "Pinned exact versions prevent automatic pickup of security patches. JavaScript framework ecosystems (Next.js, Nuxt, Remix, SvelteKit, etc.) release security patches as patch versions within a major — a pinned version will never receive them.",
+        "Run 'npm install' immediately after writing package.json — do not leave it for the user."
       ]
     },
     {

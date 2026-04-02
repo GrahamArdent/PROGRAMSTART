@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import argparse
-from datetime import date
+import json
+import subprocess
+from datetime import date, datetime, timezone
+from pathlib import Path
 from typing import Any, cast
 
 try:
@@ -12,6 +15,8 @@ try:
         clr_dim,
         clr_yellow,
         create_default_workflow_state,
+        generated_outputs_root,
+        load_json,
         load_registry,
         load_workflow_state,
         save_workflow_state,
@@ -33,6 +38,8 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
         clr_dim,
         clr_yellow,
         create_default_workflow_state,
+        generated_outputs_root,
+        load_json,
         load_registry,
         load_workflow_state,
         save_workflow_state,
@@ -80,6 +87,89 @@ def preflight_problems(registry: dict[str, Any], system: str) -> list[str]:
         drift_problems, _ = programstart_drift_check.evaluate_drift(registry, changed_files, system)
         problems.extend(drift_problems)
     return problems
+
+
+def _git_head_hash() -> str | None:
+    """Return the current HEAD commit hash, or None if git is unavailable."""
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=10,
+        )
+        if result.returncode == 0:
+            return result.stdout.strip() or None
+    except (OSError, subprocess.TimeoutExpired):
+        pass
+    return None
+
+
+# ---------------------------------------------------------------------------
+# State snapshot and diff
+# ---------------------------------------------------------------------------
+
+
+def _snapshot_dir(registry: dict[str, Any]) -> Path:
+    return generated_outputs_root(registry) / "state-snapshots"
+
+
+def snapshot_state(registry: dict[str, Any], label: str = "") -> Path:
+    """Save a timestamped copy of all workflow state files."""
+    snap_dir = _snapshot_dir(registry)
+    snap_dir.mkdir(parents=True, exist_ok=True)
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    suffix = f"_{label}" if label else ""
+    snap_name = f"state_{timestamp}{suffix}.json"
+    snap_path = snap_dir / snap_name
+
+    payload: dict[str, Any] = {"snapshot_time": timestamp, "label": label, "systems": {}}
+    for system_name in registry.get("systems", {}):
+        state_path = workflow_state_path(registry, system_name)
+        if state_path.exists():
+            payload["systems"][system_name] = load_json(state_path)
+    snap_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    return snap_path
+
+
+def diff_states(old: dict[str, Any], new: dict[str, Any]) -> list[str]:
+    """Compare two state snapshots and return human-readable diffs."""
+    diffs: list[str] = []
+    old_systems = old.get("systems", {})
+    new_systems = new.get("systems", {})
+    all_systems = sorted(set(old_systems) | set(new_systems))
+    for sys_name in all_systems:
+        old_sys = old_systems.get(sys_name, {})
+        new_sys = new_systems.get(sys_name, {})
+        entry_key = "stages" if sys_name == "programbuild" else "phases"
+        old_entries = old_sys.get(entry_key, {})
+        new_entries = new_sys.get(entry_key, {})
+        all_steps = sorted(set(old_entries) | set(new_entries))
+        for step in all_steps:
+            old_e = old_entries.get(step, {})
+            new_e = new_entries.get(step, {})
+            old_status = old_e.get("status", "absent")
+            new_status = new_e.get("status", "absent")
+            if old_status != new_status:
+                diffs.append(f"{sys_name}.{step}: status {old_status} → {new_status}")
+            old_decision = old_e.get("signoff", {}).get("decision", "")
+            new_decision = new_e.get("signoff", {}).get("decision", "")
+            if old_decision != new_decision:
+                diffs.append(f"{sys_name}.{step}: signoff {old_decision or '(none)'} → {new_decision or '(none)'}")
+        old_active = old_sys.get("active_stage" if sys_name == "programbuild" else "active_phase", "")
+        new_active = new_sys.get("active_stage" if sys_name == "programbuild" else "active_phase", "")
+        if old_active != new_active:
+            diffs.append(f"{sys_name}: active step {old_active} → {new_active}")
+    return diffs
+
+
+def list_snapshots(registry: dict[str, Any]) -> list[Path]:
+    """Return all snapshot files sorted by name (oldest first)."""
+    snap_dir = _snapshot_dir(registry)
+    if not snap_dir.exists():
+        return []
+    return sorted(snap_dir.glob("state_*.json"))
 
 
 def main() -> int:
@@ -137,6 +227,15 @@ def main() -> int:
         help="Skip validation and drift preflight checks before advancing.",
     )
 
+    snapshot_parser = subparsers.add_parser("snapshot", help="Save a timestamped copy of current workflow state.")
+    snapshot_parser.add_argument("--label", default="", help="Optional label for the snapshot.")
+
+    diff_parser = subparsers.add_parser("diff", help="Compare two state snapshots or current state vs latest snapshot.")
+    diff_parser.add_argument("--old", default="", help="Path to older snapshot (default: latest saved snapshot).")
+    diff_parser.add_argument("--new", default="", help="Path to newer snapshot (default: current live state).")
+
+    subparsers.add_parser("snapshots", help="List all saved state snapshots.")
+
     args = parser.parse_args()
     registry = load_registry()
 
@@ -168,6 +267,49 @@ def main() -> int:
             print_state(system, state, active_step)
             if system != systems[-1]:
                 print("")
+        return 0
+
+    if args.command == "snapshot":
+        snap_path = snapshot_state(registry, args.label)
+        print(f"Snapshot saved: {snap_path}")
+        return 0
+
+    if args.command == "snapshots":
+        snaps = list_snapshots(registry)
+        if not snaps:
+            print("No snapshots found. Run 'programstart state snapshot' to create one.")
+            return 0
+        print(f"State snapshots ({len(snaps)}):")
+        for s in snaps:
+            print(f"  {s.name}")
+        return 0
+
+    if args.command == "diff":
+        snaps = list_snapshots(registry)
+        if args.old:
+            old_data = load_json(Path(args.old))
+        elif snaps:
+            old_data = load_json(snaps[-1])
+        else:
+            print("No snapshots to compare. Run 'programstart state snapshot' first.")
+            return 1
+        if args.new:
+            new_data = load_json(Path(args.new))
+        else:
+            new_data = {"systems": {}}
+            for system_name in registry.get("systems", {}):
+                state_path = workflow_state_path(registry, system_name)
+                if state_path.exists():
+                    new_data["systems"][system_name] = load_json(state_path)
+        changes = diff_states(old_data, new_data)
+        if not changes:
+            print("No changes detected between snapshots.")
+        else:
+            old_label = args.old or (snaps[-1].name if snaps else "saved")
+            new_label = args.new or "current"
+            print(f"State diff ({old_label} → {new_label}):")
+            for c in changes:
+                print(f"  - {c}")
         return 0
 
     if args.command == "advance":
@@ -206,10 +348,12 @@ def main() -> int:
                 print(f"[dry-run] '{active_step}' is the final {system} step — would mark workflow complete")
             return 0
         current_entry["status"] = "completed"
+        _commit_hash = _git_head_hash()
         current_entry["signoff"] = {
             "decision": args.decision,
             "date": args.date,
             "notes": args.notes,
+            **( {"commit_hash": _commit_hash} if _commit_hash else {} ),
         }
         current_index = steps.index(active_step)
         if current_index + 1 < len(steps):
@@ -248,6 +392,10 @@ def main() -> int:
             signoff["date"] = args.date
         if args.notes:
             signoff["notes"] = args.notes
+        if args.status == "completed" and not signoff.get("commit_hash"):
+            _hash = _git_head_hash()
+            if _hash:
+                signoff["commit_hash"] = _hash
         entry["signoff"] = signoff
     if system == "programbuild" and args.variant:
         state["variant"] = args.variant

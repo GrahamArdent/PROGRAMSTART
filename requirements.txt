@@ -224,7 +224,7 @@ rpds-py==0.30.0
     #   referencing
 ruamel-yaml==0.19.1
     # via check-jsonschema
-ruff==0.15.8
+ruff==0.15.9
     # via programstart-workflow
 six==1.17.0
     # via python-dateutil

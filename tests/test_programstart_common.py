@@ -13,7 +13,9 @@ if str(ROOT) not in sys.path:
 from scripts.programstart_common import (
     _use_color,
     clr_bold,
+    clr_cyan,
     clr_dim,
+    clr_green,
     clr_red,
     clr_yellow,
     collect_registry_integrity_files,
@@ -39,6 +41,7 @@ from scripts.programstart_common import (
     workflow_entry_key,
     workflow_step_files,
     workflow_steps,
+    write_json,
 )
 
 
@@ -130,6 +133,33 @@ def test_terminal_color_helpers_disable_color(monkeypatch) -> None:
     assert clr_yellow("warn") == "warn"
 
 
+def test_color_helpers_non_tty_disables_color(monkeypatch) -> None:
+    monkeypatch.delenv("NO_COLOR", raising=False)
+    monkeypatch.setattr(sys.stdout, "isatty", lambda: False)
+    assert not _use_color()
+    assert clr_green("ok") == "ok"
+    assert clr_cyan("info") == "info"
+    assert clr_red("err") == "err"
+    assert clr_bold("b") == "b"
+    assert clr_dim("d") == "d"
+
+
+def test_color_helpers_all_codes_with_color(monkeypatch) -> None:
+    monkeypatch.delenv("NO_COLOR", raising=False)
+    monkeypatch.setattr(sys.stdout, "isatty", lambda: True)
+    assert "\u001b[32m" in clr_green("pass")
+    assert "\u001b[36m" in clr_cyan("note")
+    assert clr_green("pass").endswith("\u001b[0m")
+    assert clr_cyan("note").endswith("\u001b[0m")
+
+
+def test_status_color_returns_original_text(monkeypatch) -> None:
+    monkeypatch.setenv("NO_COLOR", "1")
+    for status in ("completed", "in_progress", "blocked", "planned", "unknown"):
+        result = status_color(status)
+        assert status in result
+
+
 def test_workflow_helpers_round_trip(tmp_path: Path, monkeypatch) -> None:
     registry = load_registry()
     state_path = tmp_path / "PROGRAMBUILD" / "PROGRAMBUILD_STATE.json"
@@ -140,6 +170,13 @@ def test_workflow_helpers_round_trip(tmp_path: Path, monkeypatch) -> None:
     save_workflow_state(registry, "programbuild", created)
     saved = json.loads(state_path.read_text(encoding="utf-8"))
     assert saved["variant"] == "enterprise"
+
+
+def test_write_json_writes_expected_payload(tmp_path: Path) -> None:
+    target = tmp_path / "nested" / "state.json"
+    write_json(target, {"alpha": 1, "beta": ["two"]})
+
+    assert json.loads(target.read_text(encoding="utf-8")) == {"alpha": 1, "beta": ["two"]}
 
 
 def test_workflow_metadata_helpers() -> None:
@@ -185,6 +222,7 @@ def test_git_changed_files_handles_oserror_and_deduplicates(monkeypatch) -> None
         [
             OSError("git missing"),
             SimpleNamespace(returncode=0, stdout="README.md\nREADME.md\nPROGRAMBUILD\\FEASIBILITY.md\n"),
+            SimpleNamespace(returncode=0, stdout=""),  # ls-files --others
         ]
     )
 

@@ -46,6 +46,7 @@ def test_cli_commands_contains_expected_public_commands() -> None:
         "refresh",
         "dashboard",
         "serve",
+        "health",
     )
 
 

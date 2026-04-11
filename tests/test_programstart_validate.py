@@ -591,6 +591,8 @@ def test_validate_main_all_runs_engineering_ready_when_policy_enabled(capsys, mo
     monkeypatch.setattr(validate, "validate_workflow_state", lambda _registry, _sf=None: [])
     monkeypatch.setattr(validate, "validate_authority_sync", lambda _registry: [])
     monkeypatch.setattr(validate, "validate_repo_boundary_policy", lambda _registry: [])
+    monkeypatch.setattr(validate, "validate_bootstrap_assets", lambda _registry: [])
+    monkeypatch.setattr(validate, "validate_test_coverage", lambda _registry: [])
     monkeypatch.setattr(validate, "validate_planning_references", lambda _registry: ([], []))
     monkeypatch.setattr(validate, "metadata_warnings", lambda _registry, _sf=None: [])
     monkeypatch.setattr(validate, "validate_engineering_ready", lambda _registry: ["engineering blocked"])
@@ -936,3 +938,134 @@ def test_bootstrap_programbuild_writes_variant(tmp_path: Path) -> None:
     state_path = destination / registry["workflow_state"]["programbuild"]["state_file"]
     state = load_json(state_path)
     assert state["variant"] == "enterprise"
+
+
+def test_validate_workflow_state_rejects_invalid_status(tmp_path: Path, monkeypatch) -> None:
+    registry = build_registry() | {
+        "workflow_state": {
+            "programbuild": {
+                "state_file": "PROGRAMBUILD/PROGRAMBUILD_STATE.json",
+                "active_key": "active_stage",
+                "initial_step": "step_a",
+                "step_order": ["step_a"],
+            }
+        }
+    }
+    state_path = tmp_path / "STATE.json"
+    write_json(
+        state_path,
+        {
+            "active_stage": "step_a",
+            "stages": {
+                "step_a": {"status": "running", "signoff": {"decision": "", "date": "", "notes": ""}},
+            },
+        },
+    )
+    monkeypatch.setattr(validate, "workflow_state_path", lambda _r, _s: state_path)
+    monkeypatch.setattr(validate, "load_workflow_state", lambda _r, _s: load_json(state_path))
+    monkeypatch.setattr(validate, "workflow_steps", lambda _r, _s: ["step_a"])
+    monkeypatch.setattr(validate, "workflow_active_step", lambda _r, _s, _st=None: "step_a")
+    monkeypatch.setattr(validate, "workflow_entry_key", lambda _s: "stages")
+
+    problems = validate.validate_workflow_state(registry, "programbuild")
+
+    assert any("invalid status value" in p and "running" in p for p in problems)
+
+
+def test_validate_workflow_state_rejects_bad_date_format(tmp_path: Path, monkeypatch) -> None:
+    registry = build_registry() | {
+        "workflow_state": {
+            "programbuild": {
+                "state_file": "PROGRAMBUILD/PROGRAMBUILD_STATE.json",
+                "active_key": "active_stage",
+                "initial_step": "step_a",
+                "step_order": ["step_a", "step_b"],
+            }
+        }
+    }
+    state_path = tmp_path / "STATE.json"
+    write_json(
+        state_path,
+        {
+            "active_stage": "step_b",
+            "stages": {
+                "step_a": {
+                    "status": "completed",
+                    "signoff": {"decision": "approved", "date": "March 2026", "notes": ""},
+                },
+                "step_b": {"status": "in_progress", "signoff": {"decision": "", "date": "", "notes": ""}},
+            },
+        },
+    )
+    monkeypatch.setattr(validate, "workflow_state_path", lambda _r, _s: state_path)
+    monkeypatch.setattr(validate, "load_workflow_state", lambda _r, _s: load_json(state_path))
+    monkeypatch.setattr(validate, "workflow_steps", lambda _r, _s: ["step_a", "step_b"])
+    monkeypatch.setattr(validate, "workflow_active_step", lambda _r, _s, _st=None: "step_b")
+    monkeypatch.setattr(validate, "workflow_entry_key", lambda _s: "stages")
+
+    problems = validate.validate_workflow_state(registry, "programbuild")
+
+    assert any("invalid signoff date format" in p and "March 2026" in p for p in problems)
+
+
+def test_validate_rule_enforcement_adr_sequence_gap(tmp_path: Path, monkeypatch) -> None:
+    decisions_dir = tmp_path / "docs" / "decisions"
+    decisions_dir.mkdir(parents=True)
+    (decisions_dir / "README.md").write_text("# ADRs", encoding="utf-8")
+    (decisions_dir / "0001-first.md").write_text("# ADR 1", encoding="utf-8")
+    (decisions_dir / "0003-third.md").write_text("# ADR 3", encoding="utf-8")  # gap at 0002
+    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+
+    registry = build_registry() | {"workspace": {"bootstrap_assets": []}}
+    problems = validate.validate_rule_enforcement(registry)
+
+    assert any("ADR sequence gap" in p and "0002" in p for p in problems)
+
+
+def test_validate_rule_enforcement_adr_bad_naming(tmp_path: Path, monkeypatch) -> None:
+    decisions_dir = tmp_path / "docs" / "decisions"
+    decisions_dir.mkdir(parents=True)
+    (decisions_dir / "README.md").write_text("# ADRs", encoding="utf-8")
+    (decisions_dir / "my-decision.md").write_text("# bad name", encoding="utf-8")
+    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+
+    registry = build_registry() | {"workspace": {"bootstrap_assets": []}}
+    problems = validate.validate_rule_enforcement(registry)
+
+    assert any("does not follow NNNN-title.md naming" in p for p in problems)
+
+
+def test_validate_test_coverage_warns_on_missing_test_file(tmp_path: Path, monkeypatch) -> None:
+    scripts_dir = tmp_path / "scripts"
+    scripts_dir.mkdir()
+    tests_dir = tmp_path / "tests"
+    tests_dir.mkdir()
+    (scripts_dir / "programstart_foo.py").write_text("", encoding="utf-8")
+    (scripts_dir / "programstart_bar.py").write_text("", encoding="utf-8")
+    (scripts_dir / "programstart_baz_smoke.py").write_text("", encoding="utf-8")  # excluded
+    (tests_dir / "test_programstart_foo.py").write_text("", encoding="utf-8")  # exists
+    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+
+    warnings = validate.validate_test_coverage({})
+
+    assert any("programstart_bar.py" in w for w in warnings)
+    assert not any("programstart_foo.py" in w for w in warnings)
+    assert not any("programstart_baz_smoke.py" in w for w in warnings)
+
+
+def test_validate_main_test_coverage_passes(capsys, monkeypatch) -> None:
+    monkeypatch.setattr("sys.argv", ["programstart_validate.py", "--check", "test-coverage"])
+    result = validate.main()
+    out = capsys.readouterr().out
+    # Should pass (warnings are not errors)
+    assert result == 0
+    assert "Validation passed" in out
+
+
+def test_validate_main_all_includes_bootstrap_assets(capsys, monkeypatch) -> None:
+    monkeypatch.setattr(validate, "validate_bootstrap_assets", lambda _registry: ["bootstrap gap"])
+    monkeypatch.setattr("sys.argv", ["programstart_validate.py", "--check", "all"])
+    result = validate.main()
+    out = capsys.readouterr().out
+    assert result == 1
+    assert "bootstrap gap" in out

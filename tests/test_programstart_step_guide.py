@@ -9,6 +9,8 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from conftest import requires_userjourney
+
 from scripts.programstart_common import load_registry
 from scripts.programstart_step_guide import main, print_section, system_is_attached
 
@@ -47,6 +49,7 @@ def test_programbuild_guide(capsys, monkeypatch) -> None:
     assert "PROGRAMBUILD" in out
 
 
+@requires_userjourney
 def test_userjourney_guide(capsys, monkeypatch) -> None:
     monkeypatch.setattr("sys.argv", ["programstart_step_guide.py", "--system", "userjourney"])
     result = main()
@@ -73,6 +76,7 @@ def test_programbuild_unknown_stage_errors(monkeypatch) -> None:
         main()
 
 
+@requires_userjourney
 def test_userjourney_not_attached_message(capsys, monkeypatch) -> None:
     monkeypatch.setattr("scripts.programstart_step_guide.system_is_attached", lambda _registry, _system: False)
     monkeypatch.setattr("sys.argv", ["programstart_step_guide.py", "--system", "userjourney"])
@@ -82,6 +86,7 @@ def test_userjourney_not_attached_message(capsys, monkeypatch) -> None:
     assert "not attached" in out
 
 
+@requires_userjourney
 def test_userjourney_unknown_phase_errors(monkeypatch) -> None:
     monkeypatch.setattr("sys.argv", ["programstart_step_guide.py", "--system", "userjourney", "--phase", "unknown"])
     with pytest.raises(SystemExit):

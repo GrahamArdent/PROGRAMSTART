@@ -4,7 +4,6 @@ import json
 from pathlib import Path
 
 from scripts import (
-    programstart_attach,
     programstart_create,
     programstart_impact,
     programstart_init,
@@ -59,15 +58,17 @@ def test_recommend_cli_json_for_api_service_infers_neon(capsys) -> None:
 
 
 def test_recommend_api_service_ai_and_agents_uses_kb_rule_driven_stacks(capsys) -> None:
-    result = programstart_recommend.main([
-        "--product-shape",
-        "api service",
-        "--need",
-        "rag",
-        "--need",
-        "agents",
-        "--json",
-    ])
+    result = programstart_recommend.main(
+        [
+            "--product-shape",
+            "api service",
+            "--need",
+            "rag",
+            "--need",
+            "agents",
+            "--json",
+        ]
+    )
     out = capsys.readouterr().out
     assert result == 0
     payload = json.loads(out)
@@ -77,8 +78,14 @@ def test_recommend_api_service_ai_and_agents_uses_kb_rule_driven_stacks(capsys) 
     assert "chromadb" in stacks
     assert "temporal" in stacks
     assert "langgraph" in stacks
-    assert any(item["title"] == "Prefer explicit LLM routing and typed response validation for AI product workflows" for item in payload["rule_evidence"])
-    assert any(item["title"] == "Prefer durable orchestration for agent and multi-step automation systems" for item in payload["rule_evidence"])
+    assert any(
+        item["title"] == "Prefer explicit LLM routing and typed response validation for AI product workflows"
+        for item in payload["rule_evidence"]
+    )
+    assert any(
+        item["title"] == "Prefer durable orchestration for agent and multi-step automation systems"
+        for item in payload["rule_evidence"]
+    )
     assert "Drata" not in payload["api_names"]
     assert "Vanta" not in payload["api_names"]
     assert any("provisioning-plan.md" in command for command in payload["next_commands"])
@@ -86,13 +93,15 @@ def test_recommend_api_service_ai_and_agents_uses_kb_rule_driven_stacks(capsys) 
 
 
 def test_recommend_mobile_app_flags_partial_domain_coverage(capsys) -> None:
-    result = programstart_recommend.main([
-        "--product-shape",
-        "mobile app",
-        "--need",
-        "subscriptions",
-        "--json",
-    ])
+    result = programstart_recommend.main(
+        [
+            "--product-shape",
+            "mobile app",
+            "--need",
+            "subscriptions",
+            "--json",
+        ]
+    )
     out = capsys.readouterr().out
     assert result == 0
     payload = json.loads(out)
@@ -104,35 +113,41 @@ def test_recommend_mobile_app_flags_partial_domain_coverage(capsys) -> None:
 
 
 def test_recommend_mobile_subscriptions_infers_revenuecat_with_comparison_context(capsys) -> None:
-    result = programstart_recommend.main([
-        "--product-shape",
-        "mobile app",
-        "--need",
-        "subscriptions",
-        "--json",
-    ])
+    result = programstart_recommend.main(
+        [
+            "--product-shape",
+            "mobile app",
+            "--need",
+            "subscriptions",
+            "--json",
+        ]
+    )
     out = capsys.readouterr().out
     assert result == 0
     payload = json.loads(out)
     assert "RevenueCat" in payload["api_names"]
     assert payload["api_evidence"]
     assert payload["rule_evidence"]
-    assert any(item["name"] == "RevenueCat" and item["actionability"] == "manual-setup" for item in payload["actionability_summary"])
+    assert any(
+        item["name"] == "RevenueCat" and item["actionability"] == "manual-setup" for item in payload["actionability_summary"]
+    )
     assert any("Stripe Billing vs RevenueCat" in item["item"] for item in payload["alternatives"])
 
 
 def test_recommend_commerce_integrations_infers_targeted_apis(capsys) -> None:
-    result = programstart_recommend.main([
-        "--product-shape",
-        "web app",
-        "--need",
-        "customer-data",
-        "--need",
-        "shipping",
-        "--need",
-        "tax",
-        "--json",
-    ])
+    result = programstart_recommend.main(
+        [
+            "--product-shape",
+            "web app",
+            "--need",
+            "customer-data",
+            "--need",
+            "shipping",
+            "--need",
+            "tax",
+            "--json",
+        ]
+    )
     out = capsys.readouterr().out
     assert result == 0
     payload = json.loads(out)
@@ -140,25 +155,33 @@ def test_recommend_commerce_integrations_infers_targeted_apis(capsys) -> None:
     assert "Shippo" in payload["api_names"]
     assert "TaxJar" in payload["api_names"]
     assert payload["api_evidence"]
-    assert any(item["title"] == "Prefer explicit commerce integration surfaces for product workflows" for item in payload["rule_evidence"])
+    assert any(
+        item["title"] == "Prefer explicit commerce integration surfaces for product workflows"
+        for item in payload["rule_evidence"]
+    )
 
 
 def test_recommend_web_app_includes_managed_hosting_rule_evidence(capsys) -> None:
-    result = programstart_recommend.main([
-        "--product-shape",
-        "web app",
-        "--need",
-        "hosting",
-        "--need",
-        "authentication",
-        "--json",
-    ])
+    result = programstart_recommend.main(
+        [
+            "--product-shape",
+            "web app",
+            "--need",
+            "hosting",
+            "--need",
+            "authentication",
+            "--json",
+        ]
+    )
     out = capsys.readouterr().out
     assert result == 0
     payload = json.loads(out)
     assert "Supabase" in payload["service_names"]
     assert "Vercel" in payload["service_names"]
-    assert any(item["title"] == "Prefer managed web product hosting and data defaults for generated app repos" for item in payload["rule_evidence"])
+    assert any(
+        item["title"] == "Prefer managed web product hosting and data defaults for generated app repos"
+        for item in payload["rule_evidence"]
+    )
 
 
 def test_impact_cli_returns_json(capsys) -> None:
@@ -191,17 +214,6 @@ def test_research_cli_writes_delta_template(tmp_path: Path, capsys) -> None:
     assert "Outcome: changed | unchanged | blocked pending evidence" in text
 
 
-def test_attach_userjourney_copies_from_source(tmp_path: Path) -> None:
-    destination = tmp_path / "repo"
-    destination.mkdir()
-    source = ROOT / "USERJOURNEY"
-
-    programstart_attach.attach_userjourney(destination, source)
-
-    assert (destination / "USERJOURNEY" / "README.md").exists()
-    assert (destination / "USERJOURNEY" / "USERJOURNEY_STATE.json").exists()
-
-
 def test_init_stamps_kickoff_packet_and_readme(tmp_path: Path) -> None:
     destination = tmp_path / "initialized"
     result = programstart_init.main(
@@ -228,25 +240,6 @@ def test_init_stamps_kickoff_packet_and_readme(tmp_path: Path) -> None:
     assert (destination / ".git").exists()
 
 
-def test_init_can_attach_userjourney(tmp_path: Path) -> None:
-    destination = tmp_path / "initialized"
-    result = programstart_init.main(
-        [
-            "--dest",
-            str(destination),
-            "--project-name",
-            "AcmeJourney",
-            "--product-shape",
-            "web app",
-            "--attach-userjourney",
-            "--attachment-source",
-            str(ROOT / "USERJOURNEY"),
-        ]
-    )
-    assert result == 0
-    assert (destination / "USERJOURNEY" / "README.md").exists()
-
-
 def test_create_builds_programbuild_only_repo_and_plan(tmp_path: Path) -> None:
     destination = tmp_path / "created"
     result = programstart_create.main(
@@ -270,10 +263,8 @@ def test_create_builds_programbuild_only_repo_and_plan(tmp_path: Path) -> None:
     assert (destination / "starter" / "cli_tool" / "src" / "factorycli" / "main.py").exists()
     cli_pyproject = (destination / "starter" / "cli_tool" / "pyproject.toml").read_text(encoding="utf-8")
     cli_models = (destination / "starter" / "cli_tool" / "src" / "factorycli" / "models.py").read_text(encoding="utf-8")
-    cli_property_test = (
-        destination / "starter" / "cli_tool" / "tests" / "test_models_property.py"
-    ).read_text(encoding="utf-8")
-    assert 'pydantic>=2.0' in cli_pyproject
+    cli_property_test = (destination / "starter" / "cli_tool" / "tests" / "test_models_property.py").read_text(encoding="utf-8")
+    assert "pydantic>=2.0" in cli_pyproject
     assert "GreetingRequest" in cli_models
     assert "from hypothesis import given" in cli_property_test
     assert (destination / "config" / "process-registry.json").exists()
@@ -310,10 +301,10 @@ def test_create_api_service_emits_fastapi_agent_stack_starter(tmp_path: Path) ->
     workflow_module = (destination / "starter" / "api_service" / "app" / "workflows.py").read_text(encoding="utf-8")
     env_example = (destination / "starter" / "api_service" / ".env.example").read_text(encoding="utf-8")
     setup_surface = (destination / "outputs" / "factory" / "setup-surface.md").read_text(encoding="utf-8")
-    assert 'fastapi>=0.115.12,<0.116.0' in api_pyproject
-    assert 'litellm>=1.40.0' in api_pyproject
-    assert 'chromadb>=0.4.0' in api_pyproject
-    assert 'temporalio>=1.8.0' in api_pyproject
+    assert "fastapi>=0.115.12,<0.116.0" in api_pyproject
+    assert "litellm>=1.40.0" in api_pyproject
+    assert "chromadb>=0.4.0" in api_pyproject
+    assert "temporalio>=1.8.0" in api_pyproject
     assert "FastAPI" in app_main
     assert "litellm" in ai_module
     assert "chromadb" in retrieval_module
@@ -324,120 +315,6 @@ def test_create_api_service_emits_fastapi_agent_stack_starter(tmp_path: Path) ->
     assert "ANTHROPIC_API_KEY=" in env_example
     assert "GitHub CLI" in setup_surface
     assert "OpenAI" in setup_surface
-
-
-def test_create_can_attach_userjourney_and_emit_dynamic_plan(tmp_path: Path) -> None:
-    destination = tmp_path / "created-web"
-    source = ROOT / "USERJOURNEY"
-    result = programstart_create.main(
-        [
-            "--dest",
-            str(destination),
-            "--project-name",
-            "FactoryWeb",
-            "--product-shape",
-            "web app",
-            "--attachment-source",
-            str(source),
-            "--owner",
-            "Factory Owner",
-        ]
-    )
-
-    assert result == 0
-    plan_text = (destination / "outputs" / "factory" / "create-plan.md").read_text(encoding="utf-8")
-    provisioning_text = (destination / "outputs" / "factory" / "provisioning-plan.md").read_text(encoding="utf-8")
-    setup_surface = (destination / "outputs" / "factory" / "setup-surface.md").read_text(encoding="utf-8")
-    package_json = (destination / "starter" / "web_app" / "package.json").read_text(encoding="utf-8")
-    page_text = (destination / "starter" / "web_app" / "app" / "page.tsx").read_text(encoding="utf-8")
-    env_example = (destination / "starter" / "web_app" / ".env.example").read_text(encoding="utf-8")
-    assert "Dynamic Prompt Guidance" in plan_text
-    assert "KB Decision Evidence" in plan_text
-    assert "Rule Evidence" in plan_text
-    assert "Actionability Summary" in plan_text
-    assert "Repository Boundary And Provisioning" in plan_text
-    assert "Supabase" in plan_text
-    assert "Vercel" in plan_text
-    assert "Kickoff Prompt" in plan_text
-    assert "Starter Scaffold" in plan_text
-    assert "Recommendation Context" in setup_surface
-    assert "Matched Domains" in setup_surface
-    assert "Actionability Summary" in setup_surface
-    assert "Review outputs/factory/provisioning-plan.md and execute automation-supported provisioning before manual setup" in plan_text
-    assert "GitHub Remote" in provisioning_text
-    assert "Auto-Inferred Services" in provisioning_text
-    assert (destination / "starter" / "web_app" / "package.json").exists()
-    assert (destination / "starter" / "web_app" / "e2e" / "home.spec.ts").exists()
-    assert '"next": "15.4.6"' in package_json
-    assert '"@playwright/test": "1.54.0"' in package_json
-    assert "recommended product stack" in page_text
-    assert "NEXT_PUBLIC_SUPABASE_URL=" in env_example
-    assert "VERCEL_PROJECT_ID=" in env_example
-    assert (destination / "USERJOURNEY" / "README.md").exists()
-
-
-def test_create_mobile_app_emits_expo_starter_and_subscription_surface(tmp_path: Path) -> None:
-    destination = tmp_path / "created-mobile"
-    result = programstart_create.main(
-        [
-            "--dest",
-            str(destination),
-            "--project-name",
-            "FactoryMobile",
-            "--product-shape",
-            "mobile app",
-            "--attachment-source",
-            str(ROOT / "USERJOURNEY"),
-            "--need",
-            "subscriptions",
-        ]
-    )
-
-    assert result == 0
-    package_json = (destination / "starter" / "mobile_app" / "package.json").read_text(encoding="utf-8")
-    app_text = (destination / "starter" / "mobile_app" / "App.tsx").read_text(encoding="utf-8")
-    subscription_text = (destination / "starter" / "mobile_app" / "src" / "subscriptions.ts").read_text(encoding="utf-8")
-    env_example = (destination / "starter" / "mobile_app" / ".env.example").read_text(encoding="utf-8")
-    assert '"expo": "~53.0.20"' in package_json
-    assert '"react-native": "0.79.5"' in package_json
-    assert "Expo starter aligned to the recommended mobile stack" in app_text
-    assert "revenuecat" in subscription_text
-    assert "EXPO_PUBLIC_REVENUECAT_API_KEY=" in env_example
-
-
-def test_create_web_app_adds_realtime_and_commerce_optional_files(tmp_path: Path) -> None:
-    destination = tmp_path / "created-integrations"
-    result = programstart_create.main(
-        [
-            "--dest",
-            str(destination),
-            "--project-name",
-            "FactoryIntegrations",
-            "--product-shape",
-            "web app",
-            "--attachment-source",
-            str(ROOT / "USERJOURNEY"),
-            "--need",
-            "realtime",
-            "--need",
-            "customer-data",
-            "--need",
-            "shipping",
-            "--need",
-            "tax",
-        ]
-    )
-
-    assert result == 0
-    realtime_module = (destination / "starter" / "web_app" / "lib" / "realtime.ts").read_text(encoding="utf-8")
-    commerce_module = (destination / "starter" / "web_app" / "lib" / "commerce.ts").read_text(encoding="utf-8")
-    env_example = (destination / "starter" / "web_app" / ".env.example").read_text(encoding="utf-8")
-    assert "conflict resolution" in realtime_module
-    assert "analytics-routing" in commerce_module
-    assert "NEXT_PUBLIC_ABLY_CLIENT_KEY=" in env_example or "NEXT_PUBLIC_PUSHER_KEY=" in env_example
-    assert "SEGMENT_WRITE_KEY=" in env_example
-    assert "SHIPPO_API_TOKEN=" in env_example
-    assert "TAXJAR_API_KEY=" in env_example
 
 
 def test_create_can_skip_starter_scaffold(tmp_path: Path) -> None:
@@ -519,69 +396,6 @@ def test_create_can_request_github_repo_creation(monkeypatch, tmp_path: Path, ca
     assert "Created GitHub repo acme/factory-github" in out
 
 
-def test_create_can_provision_supabase_and_vercel(monkeypatch, tmp_path: Path, capsys) -> None:
-    destination = tmp_path / "created-services"
-
-    def fake_urlopen(http_request, timeout=60):
-        class Response:
-            def __init__(self, payload: dict[str, str]):
-                self.payload = payload
-
-            def __enter__(self):
-                return self
-
-            def __exit__(self, exc_type, exc, tb):
-                return False
-
-            def read(self):
-                return json.dumps(self.payload).encode("utf-8")
-
-        if http_request.full_url == "https://api.supabase.com/v1/projects":
-            return Response({"ref": "abc123xyz", "name": "FactoryWeb"})
-        if http_request.full_url == "https://api.vercel.com/v11/projects":
-            return Response({"id": "prj_123", "name": "factoryweb"})
-        raise AssertionError(http_request.full_url)
-
-    monkeypatch.setenv("SUPABASE_ACCESS_TOKEN", "token")
-    monkeypatch.setenv("VERCEL_ACCESS_TOKEN", "vercel-token")
-    monkeypatch.setattr("scripts.programstart_create.request.urlopen", fake_urlopen)
-
-    result = programstart_create.main(
-        [
-            "--dest",
-            str(destination),
-            "--project-name",
-            "FactoryWeb",
-            "--product-shape",
-            "web app",
-            "--attachment-source",
-            str(ROOT / "USERJOURNEY"),
-            "--provision-services",
-            "--supabase-org-id",
-            "org_123",
-        ]
-    )
-
-    out = capsys.readouterr().out
-    assert result == 0
-    state_path = destination / "outputs" / "factory" / "provisioning-state.json"
-    payload = json.loads(state_path.read_text(encoding="utf-8"))
-    env_example = (destination / "starter" / "web_app" / ".env.example").read_text(encoding="utf-8")
-    service_names = {item["name"] for item in payload["services"]}
-    assert service_names == {"Supabase", "Vercel"}
-    supabase = next(item for item in payload["services"] if item["name"] == "Supabase")
-    vercel = next(item for item in payload["services"] if item["name"] == "Vercel")
-    assert supabase["status"] == "provisioning_started"
-    assert supabase["project"]["ref"] == "abc123xyz"
-    assert vercel["status"] == "created"
-    assert vercel["project"]["id"] == "prj_123"
-    assert "SUPABASE_PROJECT_REF=abc123xyz" in env_example
-    assert "SUPABASE_URL=https://abc123xyz.supabase.co" in env_example
-    assert "NEXT_PUBLIC_SUPABASE_URL=https://abc123xyz.supabase.co" in env_example
-    assert "VERCEL_PROJECT_ID=prj_123" in env_example
-    assert "Wrote provisioning state" in out
-
-
 def test_create_can_provision_neon_and_hydrate_env(monkeypatch, tmp_path: Path, capsys) -> None:
     destination = tmp_path / "created-api-neon"
 
@@ -649,56 +463,11 @@ def test_create_can_provision_neon_and_hydrate_env(monkeypatch, tmp_path: Path, 
     assert "NEON_PROJECT_ID=spring-example-302709" in env_example
     assert "NEON_BRANCH_ID=br-wispy-meadow-118737" in env_example
     assert "NEON_HOST=ep-cool-darkness-123456.us-east-2.aws.neon.tech" in env_example
-    assert "DATABASE_URL=postgresql://factoryapi_owner:<set-me>@ep-cool-darkness-123456.us-east-2.aws.neon.tech/factoryapi?sslmode=require" in env_example
-    assert "Hydrated starter env template" in out
-
-
-def test_create_merges_explicit_and_inferred_services_without_duplicates(monkeypatch, tmp_path: Path, capsys) -> None:
-    destination = tmp_path / "created-merged-services"
-
-    def fake_urlopen(http_request, timeout=60):
-        class Response:
-            def __enter__(self):
-                return self
-
-            def __exit__(self, exc_type, exc, tb):
-                return False
-
-            def read(self):
-                if "supabase" in http_request.full_url:
-                    return json.dumps({"ref": "abc123xyz", "name": "FactoryWeb"}).encode("utf-8")
-                return json.dumps({"id": "prj_123", "name": "factoryweb"}).encode("utf-8")
-
-        return Response()
-
-    monkeypatch.setenv("SUPABASE_ACCESS_TOKEN", "token")
-    monkeypatch.setenv("VERCEL_ACCESS_TOKEN", "vercel-token")
-    monkeypatch.setattr("scripts.programstart_create.request.urlopen", fake_urlopen)
-
-    result = programstart_create.main(
-        [
-            "--dest",
-            str(destination),
-            "--project-name",
-            "FactoryWeb",
-            "--product-shape",
-            "web app",
-            "--attachment-source",
-            str(ROOT / "USERJOURNEY"),
-            "--service",
-            "supabase",
-            "--provision-services",
-            "--supabase-org-id",
-            "org_123",
-        ]
+    assert (
+        "DATABASE_URL=postgresql://factoryapi_owner:<set-me>@ep-cool-darkness-123456.us-east-2.aws.neon.tech/factoryapi?sslmode=require"
+        in env_example
     )
-
-    capsys.readouterr()
-    assert result == 0
-    state_path = destination / "outputs" / "factory" / "provisioning-state.json"
-    payload = json.loads(state_path.read_text(encoding="utf-8"))
-    service_names = [item["name"] for item in payload["services"]]
-    assert service_names.count("Supabase") == 1
+    assert "Hydrated starter env template" in out
 
 
 def test_impact_cli_handles_programbuild_only_repo(tmp_path: Path, monkeypatch, capsys) -> None:

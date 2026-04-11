@@ -60,14 +60,30 @@ def test_build_status_reports_tracks_and_domain_gaps() -> None:
     assert any(track.track == "Realtime and event-driven systems" for track in report.tracks)
     assert any(track.track == "Commerce and customer platforms" for track in report.tracks)
     assert any(domain.status in {"seed", "partial"} for domain in report.domains)
-    assert any(domain.name == "Cloud, infrastructure, and platform operations" and domain.status == "strong" for domain in report.domains)
-    assert any(domain.name == "Commerce, communication, and product integrations" and domain.status == "strong" for domain in report.domains)
+    assert any(
+        domain.name == "Cloud, infrastructure, and platform operations" and domain.status == "strong" for domain in report.domains
+    )
+    assert any(
+        domain.name == "Commerce, communication, and product integrations" and domain.status == "strong"
+        for domain in report.domains
+    )
     assert any(domain.name == "Data engineering and analytics" and domain.status == "strong" for domain in report.domains)
-    assert any(domain.name == "Developer experience, quality, and supply chain" and domain.status == "strong" for domain in report.domains)
-    assert any(domain.name == "Desktop, local-first, and offline-capable software" and domain.status == "partial" for domain in report.domains)
-    assert any(domain.name == "Identity, security, and regulated delivery" and domain.status == "strong" for domain in report.domains)
+    assert any(
+        domain.name == "Developer experience, quality, and supply chain" and domain.status == "strong"
+        for domain in report.domains
+    )
+    assert any(
+        domain.name == "Desktop, local-first, and offline-capable software" and domain.status == "partial"
+        for domain in report.domains
+    )
+    assert any(
+        domain.name == "Identity, security, and regulated delivery" and domain.status == "strong" for domain in report.domains
+    )
     assert any(domain.name == "Mobile and cross-platform apps" and domain.status == "partial" for domain in report.domains)
-    assert any(domain.name == "Realtime collaboration, messaging, and eventing" and domain.status == "strong" for domain in report.domains)
+    assert any(
+        domain.name == "Realtime collaboration, messaging, and eventing" and domain.status == "strong"
+        for domain in report.domains
+    )
 
 
 def test_main_status_json_emits_report(capsys) -> None:

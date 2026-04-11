@@ -7,6 +7,8 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from conftest import requires_userjourney
+
 from scripts.programstart_common import load_registry
 from scripts.programstart_drift_check import load_changed_files, main, system_is_optional_and_absent
 
@@ -16,6 +18,7 @@ def test_system_is_optional_and_absent_programbuild() -> None:
     assert not system_is_optional_and_absent(registry, "programbuild")
 
 
+@requires_userjourney
 def test_system_is_optional_and_absent_userjourney_if_present() -> None:
     registry = load_registry()
     # USERJOURNEY is present in this template repo
@@ -31,7 +34,7 @@ def test_drift_check_passes_when_no_files_changed(capsys, monkeypatch) -> None:
 
 
 def test_drift_check_passes_with_no_violations(capsys, monkeypatch) -> None:
-    monkeypatch.setattr("sys.argv", ["programstart_drift_check.py", "README.md"])
+    monkeypatch.setattr("sys.argv", ["programstart_drift_check.py", "README.md", "noxfile.py"])
     result = main()
     assert result == 0
     assert "Drift check passed" in capsys.readouterr().out
@@ -56,7 +59,7 @@ def test_drift_check_allows_programbuild_changelog_without_authority(capsys, mon
 
 
 def test_drift_check_system_filter(capsys, monkeypatch) -> None:
-    monkeypatch.setattr("sys.argv", ["programstart_drift_check.py", "--system", "programbuild", "README.md"])
+    monkeypatch.setattr("sys.argv", ["programstart_drift_check.py", "--system", "programbuild", "README.md", "noxfile.py"])
     result = main()
     assert result == 0
 

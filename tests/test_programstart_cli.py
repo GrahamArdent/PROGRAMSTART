@@ -149,13 +149,19 @@ def test_unified_cli_next_dispatch(monkeypatch) -> None:
         calls.append(("guide", sys.argv[:]))
         return 0
 
+    def fake_drift_main() -> int:
+        calls.append(("drift", sys.argv[:]))
+        return 0
+
     monkeypatch.setattr(programstart_cli.programstart_status, "main", fake_status_main)
     monkeypatch.setattr(programstart_cli.programstart_step_guide, "main", fake_guide_main)
+    monkeypatch.setattr(programstart_cli.programstart_drift_check, "main", fake_drift_main)
     assert programstart_cli.main(["next"]) == 0
     assert calls == [
         ("status", ["programstart status"]),
         ("guide", ["programstart guide", "--system", "programbuild"]),
         ("guide", ["programstart guide", "--system", "userjourney"]),
+        ("drift", ["programstart drift"]),
     ]
 
 

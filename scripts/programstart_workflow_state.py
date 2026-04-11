@@ -395,15 +395,10 @@ def main() -> int:
             if gate_warning:
                 print(clr_yellow(f"⚠  {gate_warning}"))
         # Cross-stage validation advisory (programbuild, stages 3+).
-        if (
-            system == "programbuild"
-            and not getattr(args, "skip_cross_stage_check", False)
-            and current_index >= 3
-        ):
+        if system == "programbuild" and not getattr(args, "skip_cross_stage_check", False) and current_index >= 3:
             print(
                 clr_yellow(
-                    "⚠  Tip: Run the cross-stage validation prompt before advancing: "
-                    "@workspace /prompt Cross-Stage Validation"
+                    "⚠  Tip: Run the cross-stage validation prompt before advancing: @workspace /prompt Cross-Stage Validation"
                 )
             )
         if dry_run:

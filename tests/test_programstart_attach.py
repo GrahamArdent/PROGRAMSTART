@@ -12,8 +12,8 @@ if str(ROOT) not in sys.path:
 
 from scripts import programstart_attach as attach
 
-
 # ── helpers ────────────────────────────────────────────────────────────────────
+
 
 def make_valid_source(base: Path) -> Path:
     """Create a USERJOURNEY source directory with all required files."""
@@ -25,6 +25,7 @@ def make_valid_source(base: Path) -> Path:
 
 
 # ── resolve_attachment_source ──────────────────────────────────────────────────
+
 
 def test_resolve_source_accepts_direct_userjourney_dir(tmp_path: Path) -> None:
     uj = tmp_path / "USERJOURNEY"
@@ -54,6 +55,7 @@ def test_resolve_source_raises_when_no_userjourney_child(tmp_path: Path) -> None
 
 # ── validate_attachment_source ─────────────────────────────────────────────────
 
+
 def test_validate_returns_empty_when_all_required_files_present(tmp_path: Path) -> None:
     for name in attach.REQUIRED_USERJOURNEY_FILES:
         (tmp_path / name).write_text("x", encoding="utf-8")
@@ -73,6 +75,7 @@ def test_validate_returns_all_files_when_directory_empty(tmp_path: Path) -> None
 
 
 # ── attach_userjourney ─────────────────────────────────────────────────────────
+
 
 def test_attach_dry_run_prints_without_copying(tmp_path: Path, capsys: pytest.CaptureFixture) -> None:
     source = make_valid_source(tmp_path)
@@ -146,6 +149,7 @@ def test_attach_raises_filenotfounderror_for_missing_required_source_files(tmp_p
 
 
 # ── main ───────────────────────────────────────────────────────────────────────
+
 
 def test_main_returns_zero_on_success(tmp_path: Path) -> None:
     resolved = tmp_path / "USERJOURNEY"

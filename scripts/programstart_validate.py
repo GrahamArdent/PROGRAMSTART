@@ -582,9 +582,7 @@ def validate_adr_coverage(registry: dict) -> list[str]:
         found = any(dec_id in content for content in adr_texts.values())
         if not found:
             decision_text = row.get("Decision", "").strip()
-            warnings.append(
-                f"{dec_id} ({decision_text[:60]}) is {status} but has no corresponding ADR in docs/decisions/"
-            )
+            warnings.append(f"{dec_id} ({decision_text[:60]}) is {status} but has no corresponding ADR in docs/decisions/")
     return warnings
 
 

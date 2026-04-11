@@ -12,7 +12,6 @@ if str(ROOT) not in sys.path:
 
 from scripts import programstart_init as init_script
 
-
 # ── replace_starter_inputs_block ──────────────────────────────────────────────
 
 _KICKOFF_TEMPLATE = """\
@@ -47,9 +46,7 @@ def test_replace_starter_inputs_block_preserves_surrounding_content(tmp_path: Pa
 
 
 def test_replace_starter_inputs_block_only_replaces_first_block(tmp_path: Path) -> None:
-    content = (
-        "```text\nKEY: value1\n```\n\nOther:\n\n```text\nKEY: value2\n```\n"
-    )
+    content = "```text\nKEY: value1\n```\n\nOther:\n\n```text\nKEY: value2\n```\n"
     path = tmp_path / "doc.md"
     path.write_text(content, encoding="utf-8")
     init_script.replace_starter_inputs_block(path, {"KEY": "replaced"})
@@ -61,6 +58,7 @@ def test_replace_starter_inputs_block_only_replaces_first_block(tmp_path: Path) 
 
 
 # ── write_project_readme ───────────────────────────────────────────────────────
+
 
 def test_write_project_readme_contains_project_name(tmp_path: Path) -> None:
     path = tmp_path / "README.md"
@@ -135,16 +133,18 @@ def test_write_project_readme_uses_one_line_description(tmp_path: Path) -> None:
 
 # ── main (integration via mocked dependencies) ────────────────────────────────
 
+
 def test_main_returns_one_on_bootstrap_fileexistserror(tmp_path: Path) -> None:
     dest = tmp_path / "dest"
-    with patch.object(
-        init_script, "bootstrap_repository", side_effect=FileExistsError("already exists")
-    ):
+    with patch.object(init_script, "bootstrap_repository", side_effect=FileExistsError("already exists")):
         result = init_script.main(
             [
-                "--dest", str(dest),
-                "--project-name", "MyApp",
-                "--product-shape", "web app",
+                "--dest",
+                str(dest),
+                "--project-name",
+                "MyApp",
+                "--product-shape",
+                "web app",
             ]
         )
     assert result == 1
@@ -155,9 +155,12 @@ def test_main_dry_run_prints_stamp_lines(tmp_path: Path, capsys: pytest.CaptureF
     with patch.object(init_script, "bootstrap_repository"):
         result = init_script.main(
             [
-                "--dest", str(dest),
-                "--project-name", "DryApp",
-                "--product-shape", "cli tool",
+                "--dest",
+                str(dest),
+                "--project-name",
+                "DryApp",
+                "--product-shape",
+                "cli tool",
                 "--dry-run",
             ]
         )
@@ -179,9 +182,12 @@ def test_main_stamps_kickoff_packet_and_readme(tmp_path: Path) -> None:
     ):
         result = init_script.main(
             [
-                "--dest", str(dest),
-                "--project-name", "RealApp",
-                "--product-shape", "web app",
+                "--dest",
+                str(dest),
+                "--project-name",
+                "RealApp",
+                "--product-shape",
+                "web app",
             ]
         )
     assert result == 0
@@ -204,10 +210,14 @@ def test_main_calls_stamp_owner_when_owner_provided(tmp_path: Path) -> None:
     ):
         init_script.main(
             [
-                "--dest", str(dest),
-                "--project-name", "BrandedApp",
-                "--product-shape", "api service",
-                "--owner", "Alice",
+                "--dest",
+                str(dest),
+                "--project-name",
+                "BrandedApp",
+                "--product-shape",
+                "api service",
+                "--owner",
+                "Alice",
             ]
         )
     mock_stamp.assert_called_once()

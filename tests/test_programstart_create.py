@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-import json
 import sys
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 from urllib import error as urllib_error
 
 import pytest
@@ -15,8 +14,8 @@ if str(ROOT) not in sys.path:
 from scripts import programstart_create as create
 from scripts.programstart_recommend import ProjectRecommendation
 
-
 # ── helpers ────────────────────────────────────────────────────────────────────
+
 
 def _make_recommendation(
     product_shape: str = "web app",
@@ -37,6 +36,7 @@ def _make_recommendation(
 
 # ── normalize_shape ────────────────────────────────────────────────────────────
 
+
 def test_normalize_shape_lowercases_and_strips() -> None:
     assert create.normalize_shape("  Web App  ") == "web app"
 
@@ -46,6 +46,7 @@ def test_normalize_shape_handles_empty_string() -> None:
 
 
 # ── slugify_project_name ───────────────────────────────────────────────────────
+
 
 def test_slugify_replaces_spaces_with_dashes() -> None:
     assert create.slugify_project_name("My Cool App") == "my-cool-app"
@@ -61,12 +62,14 @@ def test_slugify_returns_fallback_for_blank() -> None:
 
 # ── default_github_repo_name ───────────────────────────────────────────────────
 
+
 def test_default_github_repo_name_slugifies_project_name() -> None:
     result = create.default_github_repo_name("My New App")
     assert result == "my-new-app"
 
 
 # ── merge_service_names ────────────────────────────────────────────────────────
+
 
 def test_merge_service_names_combines_recommendation_and_explicit() -> None:
     rec = _make_recommendation(service_names=["Supabase"])
@@ -99,6 +102,7 @@ def test_merge_service_names_returns_sorted() -> None:
 
 # ── sanitize_connection_uri ────────────────────────────────────────────────────
 
+
 def test_sanitize_connection_uri_removes_password() -> None:
     uri = "postgresql://user:supersecret@db.example.com:5432/mydb"
     result = create.sanitize_connection_uri(uri)
@@ -128,6 +132,7 @@ def test_sanitize_connection_uri_redacts_password_marker() -> None:
 
 # ── first_connection_uri ───────────────────────────────────────────────────────
 
+
 def test_first_connection_uri_reads_connection_uri_key() -> None:
     payload = {"connection_uri": "postgresql://user@host/db"}
     result = create.first_connection_uri(payload)
@@ -154,6 +159,7 @@ def test_first_connection_uri_returns_empty_when_not_found() -> None:
 
 # ── merge_env_values ───────────────────────────────────────────────────────────
 
+
 def test_merge_env_values_applies_updates() -> None:
     base = {"KEY_A": "old", "KEY_B": "unchanged"}
     updates = {"KEY_A": "new"}
@@ -175,6 +181,7 @@ def test_merge_env_values_strips_newlines_from_values() -> None:
 
 
 # ── upsert_env_lines ───────────────────────────────────────────────────────────
+
 
 def test_upsert_env_lines_updates_existing_key() -> None:
     existing = "KEY_A=old\nKEY_B=keep\n"
@@ -202,6 +209,7 @@ def test_upsert_env_lines_preserves_comments() -> None:
 
 
 # ── http_json_request error handling ──────────────────────────────────────────
+
 
 def test_http_json_request_raises_runtime_on_http_error() -> None:
     mock_exc = urllib_error.HTTPError(
@@ -236,6 +244,7 @@ def test_http_json_request_raises_runtime_on_url_error() -> None:
 
 # ── main (integration via mocked dependencies) ────────────────────────────────
 
+
 def test_main_returns_zero_on_dry_run(tmp_path: Path) -> None:
     dest = tmp_path / "new_project"
     mock_rec = _make_recommendation(product_shape="cli tool", variant="lite")
@@ -251,9 +260,12 @@ def test_main_returns_zero_on_dry_run(tmp_path: Path) -> None:
     ):
         result = create.main(
             [
-                "--dest", str(dest),
-                "--project-name", "test-cli",
-                "--product-shape", "cli tool",
+                "--dest",
+                str(dest),
+                "--project-name",
+                "test-cli",
+                "--product-shape",
+                "cli tool",
                 "--dry-run",
             ]
         )
@@ -280,9 +292,12 @@ def test_main_passes_product_shape_to_build_recommendation(tmp_path: Path) -> No
     ):
         create.main(
             [
-                "--dest", str(dest),
-                "--project-name", "my-api",
-                "--product-shape", "api service",
+                "--dest",
+                str(dest),
+                "--project-name",
+                "my-api",
+                "--product-shape",
+                "api service",
                 "--dry-run",
             ]
         )

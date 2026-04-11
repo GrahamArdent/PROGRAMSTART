@@ -1088,9 +1088,7 @@ _DECISION_LOG_TEMPLATE = """\
 
 
 def test_adr_coverage_no_warning_when_adr_references_decision(tmp_path, monkeypatch) -> None:
-    log = _DECISION_LOG_TEMPLATE.format(
-        rows="| DEC-001 | 2026-01-01 | inputs | Adopt foo | ACTIVE | — | Solo | foo.py |"
-    )
+    log = _DECISION_LOG_TEMPLATE.format(rows="| DEC-001 | 2026-01-01 | inputs | Adopt foo | ACTIVE | — | Solo | foo.py |")
     (tmp_path / "PROGRAMBUILD").mkdir()
     (tmp_path / "PROGRAMBUILD" / "DECISION_LOG.md").write_text(log, encoding="utf-8")
     decisions = tmp_path / "docs" / "decisions"
@@ -1103,9 +1101,7 @@ def test_adr_coverage_no_warning_when_adr_references_decision(tmp_path, monkeypa
 
 
 def test_adr_coverage_warning_when_no_matching_adr(tmp_path, monkeypatch) -> None:
-    log = _DECISION_LOG_TEMPLATE.format(
-        rows="| DEC-002 | 2026-01-01 | inputs | Use bar | ACTIVE | — | Solo | bar.py |"
-    )
+    log = _DECISION_LOG_TEMPLATE.format(rows="| DEC-002 | 2026-01-01 | inputs | Use bar | ACTIVE | — | Solo | bar.py |")
     (tmp_path / "PROGRAMBUILD").mkdir()
     (tmp_path / "PROGRAMBUILD" / "DECISION_LOG.md").write_text(log, encoding="utf-8")
     decisions = tmp_path / "docs" / "decisions"
@@ -1121,9 +1117,7 @@ def test_adr_coverage_warning_when_no_matching_adr(tmp_path, monkeypatch) -> Non
 
 
 def test_adr_coverage_ignores_superseded_decisions(tmp_path, monkeypatch) -> None:
-    log = _DECISION_LOG_TEMPLATE.format(
-        rows="| DEC-003 | 2026-01-01 | inputs | Old choice | SUPERSEDED | — | Solo | old.py |"
-    )
+    log = _DECISION_LOG_TEMPLATE.format(rows="| DEC-003 | 2026-01-01 | inputs | Old choice | SUPERSEDED | — | Solo | old.py |")
     (tmp_path / "PROGRAMBUILD").mkdir()
     (tmp_path / "PROGRAMBUILD" / "DECISION_LOG.md").write_text(log, encoding="utf-8")
     (tmp_path / "docs" / "decisions").mkdir(parents=True)

@@ -7,11 +7,9 @@
 
 from __future__ import annotations
 
-import json
 import logging
 import sys
 from pathlib import Path
-from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -24,12 +22,9 @@ from scripts.programstart_bootstrap import (
 from scripts.programstart_prompt_eval import evaluate_scenario, load_scenarios
 from scripts.programstart_recommend import (
     build_recommendation,
-    build_stack_candidates,
-    expand_capability_terms,
     matching_integration_patterns,
     normalize_prompt_guidance,
 )
-
 
 # ---------------------------------------------------------------------------
 # 1. New prompt-eval scenarios
@@ -277,8 +272,7 @@ def test_integration_patterns_boost_stacks_in_real_kb() -> None:
     )
     # Check that stack evidence includes pattern matching reasons
     pattern_mentioned = any(
-        any("integration pattern" in str(r).lower() for r in item.get("reasons", []))
-        for item in rec.stack_evidence
+        any("integration pattern" in str(r).lower() for r in item.get("reasons", [])) for item in rec.stack_evidence
     )
     assert pattern_mentioned, "Expected at least one stack to mention integration pattern matching"
 
@@ -293,8 +287,7 @@ def test_integration_patterns_do_not_inflate_unrelated_shapes() -> None:
     )
     # No stack should mention integration patterns for a plain CLI tool with no needs
     pattern_mentioned = any(
-        any("integration pattern" in str(r).lower() for r in item.get("reasons", []))
-        for item in rec.stack_evidence
+        any("integration pattern" in str(r).lower() for r in item.get("reasons", [])) for item in rec.stack_evidence
     )
     assert not pattern_mentioned, "Plain CLI tool should not get integration pattern boosts"
 

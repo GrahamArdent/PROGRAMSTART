@@ -11,8 +11,8 @@ if str(ROOT) not in sys.path:
 from scripts import programstart_recommend as recommend
 from scripts.programstart_recommend import ProjectRecommendation
 
-
 # ── normalize_text ─────────────────────────────────────────────────────────────
+
 
 def test_normalize_text_lowercases() -> None:
     assert recommend.normalize_text("Hello World") == "hello world"
@@ -32,6 +32,7 @@ def test_normalize_text_empty_string() -> None:
 
 # ── tokenize_text ──────────────────────────────────────────────────────────────
 
+
 def test_tokenize_text_returns_set_of_tokens() -> None:
     tokens = recommend.tokenize_text("web app with auth")
     assert "web" in tokens
@@ -45,6 +46,7 @@ def test_tokenize_text_ignores_empty_tokens() -> None:
 
 
 # ── expand_capability_terms ────────────────────────────────────────────────────
+
 
 def test_expand_capability_terms_maps_alias_to_canonical() -> None:
     expanded = recommend.expand_capability_terms({"llm"})
@@ -67,6 +69,7 @@ def test_expand_capability_terms_empty_input() -> None:
 
 # ── normalized_trigger_set ─────────────────────────────────────────────────────
 
+
 def test_normalized_trigger_set_lowercases_values() -> None:
     result = recommend.normalized_trigger_set(["Web App", "CLI Tool"])
     assert "web app" in result
@@ -79,6 +82,7 @@ def test_normalized_trigger_set_drops_empty_strings() -> None:
 
 
 # ── normalize_shape ────────────────────────────────────────────────────────────
+
 
 def test_normalize_shape_lowercases_and_strips() -> None:
     assert recommend.normalize_shape("  Web App  ") == "web app"
@@ -93,6 +97,7 @@ def test_normalize_shape_returns_other_for_none() -> None:
 
 
 # ── infer_variant ──────────────────────────────────────────────────────────────
+
 
 def test_infer_variant_regulated_returns_enterprise() -> None:
     assert recommend.infer_variant("web app", set(), regulated=True) == "enterprise"
@@ -118,6 +123,7 @@ def test_infer_variant_audit_need_returns_enterprise() -> None:
 
 
 # ── build_recommendation (integration via mocked KB) ──────────────────────────
+
 
 def _minimal_kb() -> dict:
     return {
@@ -214,6 +220,7 @@ def test_build_recommendation_cli_tool_no_complex_needs_is_lite() -> None:
 
 
 # ── main ───────────────────────────────────────────────────────────────────────
+
 
 def test_main_text_mode_returns_zero() -> None:
     mock_rec = ProjectRecommendation(

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
 from scripts.programstart_health_probe import (
@@ -194,6 +193,13 @@ def test_diff_states_detects_changes() -> None:
 
 
 def test_diff_states_no_changes() -> None:
-    state = {"systems": {"programbuild": {"active_stage": "feasibility", "stages": {"feasibility": {"status": "in_progress", "signoff": {"decision": ""}}}}}}
+    state = {
+        "systems": {
+            "programbuild": {
+                "active_stage": "feasibility",
+                "stages": {"feasibility": {"status": "in_progress", "signoff": {"decision": ""}}},
+            }
+        }
+    }
     diffs = diff_states(state, state)
     assert diffs == []

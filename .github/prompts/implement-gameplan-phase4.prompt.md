@@ -73,7 +73,7 @@ These make the confidence tiers visible in the VS Code task runner.
 
 ## Step 3: Document confidence tiers in README (Phase 4)
 
-- [ ] Add a "Confidence Tiers" or "Quality Gates" section to `README.md` 
+- [ ] Add a "Confidence Tiers" or "Quality Gates" section to `README.md`
 - Explain the three tiers:
   1. **Quick** (`nox -s quick`): lint + typecheck. Use during active editing for fast feedback.
   2. **Safe Gate** (`nox -s gate_safe`): lint + typecheck + tests + validate + read-only smoke + docs. Use before committing. Local pre-merge confidence.

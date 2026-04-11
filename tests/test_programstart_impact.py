@@ -11,8 +11,8 @@ if str(ROOT) not in sys.path:
 
 from scripts import programstart_impact as impact
 
-
 # ── helpers ────────────────────────────────────────────────────────────────────
+
 
 def _empty_result() -> dict:
     return {
@@ -50,6 +50,7 @@ def _minimal_index() -> dict:
 
 # ── print_impact_summary ───────────────────────────────────────────────────────
 
+
 def test_print_impact_summary_shows_target(capsys) -> None:
     result = _empty_result()
     impact.print_impact_summary("consent.md", result)
@@ -84,6 +85,7 @@ def test_print_impact_summary_lists_concerns(capsys) -> None:
 
 
 # ── main ───────────────────────────────────────────────────────────────────────
+
 
 def test_main_text_mode_returns_zero(tmp_path) -> None:
     index = _minimal_index()

@@ -3,6 +3,7 @@
 These tests are only copied to project repos when USERJOURNEY is attached.
 They require the USERJOURNEY directory to exist.
 """
+
 from __future__ import annotations
 
 import sys
@@ -16,6 +17,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from conftest import requires_userjourney
+
 from scripts.programstart_workflow_state import main, print_state
 
 pytestmark = requires_userjourney

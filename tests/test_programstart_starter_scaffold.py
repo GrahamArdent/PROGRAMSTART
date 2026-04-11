@@ -10,8 +10,8 @@ if str(ROOT) not in sys.path:
 from scripts import programstart_starter_scaffold as scaffold
 from scripts.programstart_recommend import ProjectRecommendation
 
-
 # ── helpers ────────────────────────────────────────────────────────────────────
+
 
 def _make_recommendation(
     product_shape: str,
@@ -32,6 +32,7 @@ def _make_recommendation(
 
 # ── slugify_project_name ───────────────────────────────────────────────────────
 
+
 def test_slugify_replaces_spaces_with_underscores() -> None:
     assert scaffold.slugify_project_name("My Project") == "my_project"
 
@@ -49,6 +50,7 @@ def test_slugify_lowercases_result() -> None:
 
 
 # ── has_stack / has_service / has_api ──────────────────────────────────────────
+
 
 def test_has_stack_returns_true_for_present_stack() -> None:
     rec = _make_recommendation("web app", stack_names=["Next.js", "Playwright"])
@@ -87,6 +89,7 @@ def test_has_api_returns_false_when_not_present() -> None:
 
 # ── toml_string_list ───────────────────────────────────────────────────────────
 
+
 def test_toml_string_list_empty_returns_bracket_pair() -> None:
     assert scaffold.toml_string_list([]) == "[]"
 
@@ -103,6 +106,7 @@ def test_toml_string_list_multiple_items_include_commas() -> None:
 
 
 # ── build_starter_scaffold_plan ────────────────────────────────────────────────
+
 
 def test_build_starter_scaffold_plan_cli_tool_uses_starter_cli_root() -> None:
     rec = _make_recommendation("cli tool")
@@ -178,6 +182,7 @@ def test_build_starter_scaffold_plan_hypothesis_adds_property_test() -> None:
 
 
 # ── write_starter_scaffold ─────────────────────────────────────────────────────
+
 
 def test_write_starter_scaffold_creates_all_files(tmp_path: Path) -> None:
     rec = _make_recommendation("cli tool")

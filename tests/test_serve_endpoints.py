@@ -13,8 +13,8 @@ import threading
 from http.server import HTTPServer
 from pathlib import Path
 from typing import Any
-from urllib.request import Request, urlopen
 from urllib.error import HTTPError
+from urllib.request import Request, urlopen
 
 import pytest
 
@@ -23,7 +23,6 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from scripts.programstart_serve import DashboardHandler
-
 
 # ---------------------------------------------------------------------------
 # Fixture: ephemeral test server

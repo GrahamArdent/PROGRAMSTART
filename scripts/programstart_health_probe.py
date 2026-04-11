@@ -13,9 +13,9 @@ import json
 import re
 import subprocess
 from dataclasses import asdict, dataclass, field
-from datetime import date, datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, cast
+from typing import Any
 
 try:
     from .programstart_common import (
@@ -100,7 +100,7 @@ def _load_target_state(target_root: Path, registry: dict, system: str) -> dict[s
     state_cfg = registry.get("workflow_state", {}).get(system, {})
     state_file = state_cfg.get("file", "")
     if not state_file:
-        fallback = f"PROGRAMBUILD/PROGRAMBUILD_STATE.json" if system == "programbuild" else "USERJOURNEY/USERJOURNEY_STATE.json"
+        fallback = "PROGRAMBUILD/PROGRAMBUILD_STATE.json" if system == "programbuild" else "USERJOURNEY/USERJOURNEY_STATE.json"
         state_file = fallback
     return _load_json_from(target_root / state_file)
 
@@ -197,7 +197,9 @@ def _check_metadata(target_root: Path, registry: dict, system: str) -> list[str]
     return problems
 
 
-def _check_authority_sync(target_root: Path, registry: dict, changed_files: list[str], system: str | None = None) -> tuple[list[str], list[str]]:
+def _check_authority_sync(
+    target_root: Path, registry: dict, changed_files: list[str], system: str | None = None
+) -> tuple[list[str], list[str]]:
     """Evaluate sync rule violations for given changed files."""
     violations: list[str] = []
     notes: list[str] = []
@@ -311,8 +313,8 @@ def _signoff_info(state: dict, system: str) -> tuple[str, str, str, int | None, 
     days_since = None
     if last_date:
         try:
-            last_dt = datetime.strptime(last_date, "%Y-%m-%d").replace(tzinfo=timezone.utc)
-            days_since = (datetime.now(timezone.utc) - last_dt).days
+            last_dt = datetime.strptime(last_date, "%Y-%m-%d").replace(tzinfo=UTC)
+            days_since = (datetime.now(UTC) - last_dt).days
         except ValueError:
             pass
     return last_date, last_decision, last_commit_hash, days_since, completed, blocked
@@ -452,7 +454,7 @@ def probe_target(target_root: Path) -> HealthProbeReport:
     """Run the full read-only health probe against a target repo."""
     report = HealthProbeReport(
         target=str(target_root),
-        probe_time=datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        probe_time=datetime.now(UTC).isoformat(timespec="seconds"),
     )
 
     registry = _load_target_registry(target_root)
@@ -497,7 +499,9 @@ def print_multi_summary(reports: list[HealthProbeReport]) -> None:
     for r in reports:
         name = Path(r.target).name
         systems = ", ".join(s.system[:4] for s in r.systems) or "none"
-        issues = sum(len(s.drift_violations) + len(s.validation_problems) + len(s.missing_files) for s in r.systems) + len(r.structural_problems)
+        issues = sum(len(s.drift_violations) + len(s.validation_problems) + len(s.missing_files) for s in r.systems) + len(
+            r.structural_problems
+        )
         last_signoff = "none"
         for s in r.systems:
             if s.last_signoff_date:
@@ -514,7 +518,7 @@ def print_multi_summary(reports: list[HealthProbeReport]) -> None:
 def print_report(report: HealthProbeReport) -> None:
     """Print a human-readable health report."""
     print()
-    print(f"  PROGRAMSTART Health Probe")
+    print("  PROGRAMSTART Health Probe")
     print(f"  Target:   {report.target}")
     print(f"  Time:     {report.probe_time}")
     print(f"  Registry: {report.registry_version}")
@@ -537,14 +541,18 @@ def print_report(report: HealthProbeReport) -> None:
         print(f"    Control files:     {sys_report.present_control_files}/{sys_report.total_control_files}")
         print(f"    Output files:      {sys_report.present_output_files}/{sys_report.total_output_files}")
         if sys_report.checklist_total:
-            print(f"    Checklist:         {sys_report.checklist_checked}/{sys_report.checklist_total} ({sys_report.checklist_pct}%)")
+            print(
+                f"    Checklist:         {sys_report.checklist_checked}/{sys_report.checklist_total} ({sys_report.checklist_pct}%)"
+            )
         print(f"    Completed steps:   {', '.join(sys_report.completed_steps) or 'none'}")
         if sys_report.blocked_steps:
             print(f"    Blocked steps:     {', '.join(sys_report.blocked_steps)}")
         if sys_report.last_signoff_date:
-            print(f"    Last signoff:      {sys_report.last_signoff_date} ({sys_report.last_signoff_decision}) — {sys_report.days_since_last_signoff}d ago")
+            print(
+                f"    Last signoff:      {sys_report.last_signoff_date} ({sys_report.last_signoff_decision}) — {sys_report.days_since_last_signoff}d ago"
+            )
         else:
-            print(f"    Last signoff:      none")
+            print("    Last signoff:      none")
 
         if sys_report.missing_files:
             print(f"    Missing files ({len(sys_report.missing_files)}):")

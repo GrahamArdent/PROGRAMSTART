@@ -4,6 +4,7 @@ These tests require the USERJOURNEY directory to exist in the template repo
 because they use it as an --attachment-source for init/create/attach operations.
 Only copied to project repos when USERJOURNEY is attached.
 """
+
 from __future__ import annotations
 
 import json
@@ -89,7 +90,10 @@ def test_create_can_attach_userjourney_and_emit_dynamic_plan(tmp_path: Path) -> 
     assert "Recommendation Context" in setup_surface
     assert "Matched Domains" in setup_surface
     assert "Actionability Summary" in setup_surface
-    assert "Review outputs/factory/provisioning-plan.md and execute automation-supported provisioning before manual setup" in plan_text
+    assert (
+        "Review outputs/factory/provisioning-plan.md and execute automation-supported provisioning before manual setup"
+        in plan_text
+    )
     assert "GitHub Remote" in provisioning_text
     assert "Auto-Inferred Services" in provisioning_text
     assert (destination / "starter" / "web_app" / "package.json").exists()

@@ -12,7 +12,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from scripts.programstart_common import load_registry
-from scripts.programstart_workflow_state import main, print_state, system_is_optional_and_absent, _check_challenge_gate_log
+from scripts.programstart_workflow_state import _check_challenge_gate_log, main, print_state, system_is_optional_and_absent
 
 
 def test_system_is_optional_and_absent(monkeypatch) -> None:
@@ -298,9 +298,7 @@ def test_check_challenge_gate_log_no_matching_entry(monkeypatch, tmp_path) -> No
     gate = tmp_path / "PROGRAMBUILD" / "PROGRAMBUILD_CHALLENGE_GATE.md"
     gate.parent.mkdir(parents=True)
     gate.write_text(
-        "### Challenge Gate Log\n\n"
-        "| From Stage | To Stage | Date | Proceed? | Notes |\n"
-        "|---|---|---|---|---|\n",
+        "### Challenge Gate Log\n\n| From Stage | To Stage | Date | Proceed? | Notes |\n|---|---|---|---|---|\n",
         encoding="utf-8",
     )
     monkeypatch.setattr(
@@ -318,9 +316,7 @@ def test_advance_dry_run_shows_gate_warning(capsys, monkeypatch, tmp_path) -> No
     gate = tmp_path / "PROGRAMBUILD" / "PROGRAMBUILD_CHALLENGE_GATE.md"
     gate.parent.mkdir(parents=True)
     gate.write_text(
-        "### Challenge Gate Log\n\n"
-        "| From Stage | To Stage | Date | Proceed? |\n"
-        "|---|---|---|---|\n",
+        "### Challenge Gate Log\n\n| From Stage | To Stage | Date | Proceed? |\n|---|---|---|---|\n",
         encoding="utf-8",
     )
     monkeypatch.setattr(

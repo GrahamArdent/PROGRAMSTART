@@ -13,8 +13,8 @@ if str(ROOT) not in sys.path:
 
 from scripts import programstart_bootstrap as bootstrap
 
-
 # ── helpers ────────────────────────────────────────────────────────────────────
+
 
 def _minimal_registry(tmp_path: Path) -> dict:
     return {
@@ -39,6 +39,7 @@ def _minimal_registry(tmp_path: Path) -> dict:
 
 # ── write_file ─────────────────────────────────────────────────────────────────
 
+
 def test_write_file_dry_run_prints_create(tmp_path: Path, capsys: pytest.CaptureFixture) -> None:
     target = tmp_path / "sub" / "file.txt"
     bootstrap.write_file(target, "hello", dry_run=True)
@@ -54,6 +55,7 @@ def test_write_file_creates_file_with_content(tmp_path: Path) -> None:
 
 
 # ── copy_file ──────────────────────────────────────────────────────────────────
+
 
 def test_copy_file_dry_run_prints_copy(tmp_path: Path, capsys: pytest.CaptureFixture) -> None:
     src = tmp_path / "source.md"
@@ -75,6 +77,7 @@ def test_copy_file_copies_text_content(tmp_path: Path) -> None:
 
 # ── ensure_external_project_repo ──────────────────────────────────────────────
 
+
 def test_ensure_external_raises_when_dest_inside_template(tmp_path: Path) -> None:
     nested = tmp_path / "nested_project"
     nested.mkdir()
@@ -93,6 +96,7 @@ def test_ensure_external_passes_when_dest_is_sibling(tmp_path: Path) -> None:
 
 
 # ── stamp_bootstrapped_registry ───────────────────────────────────────────────
+
 
 def test_stamp_bootstrapped_registry_dry_run_prints(tmp_path: Path, capsys: pytest.CaptureFixture) -> None:
     bootstrap.stamp_bootstrapped_registry(tmp_path, project_name="my-app", dry_run=True)
@@ -114,6 +118,7 @@ def test_stamp_bootstrapped_registry_writes_correct_fields(tmp_path: Path) -> No
 
 
 # ── sanitize_bootstrapped_secrets_baseline ────────────────────────────────────
+
 
 def test_sanitize_removes_registry_from_baseline(tmp_path: Path) -> None:
     baseline = {"results": {"config/process-registry.json": ["secret"], "other.py": ["hit"]}}
@@ -142,6 +147,7 @@ def test_sanitize_dry_run_skips_file(tmp_path: Path) -> None:
 
 # ── write_bootstrap_readme ─────────────────────────────────────────────────────
 
+
 def test_write_bootstrap_readme_contains_project_name(tmp_path: Path) -> None:
     bootstrap.write_bootstrap_readme(tmp_path, "FancyProject", "product", dry_run=False)
     readme = (tmp_path / "README.md").read_text(encoding="utf-8")
@@ -154,9 +160,7 @@ def test_write_bootstrap_readme_contains_variant(tmp_path: Path) -> None:
     assert "enterprise" in readme
 
 
-def test_write_bootstrap_readme_dry_run_prints_without_creating(
-    tmp_path: Path, capsys: pytest.CaptureFixture
-) -> None:
+def test_write_bootstrap_readme_dry_run_prints_without_creating(tmp_path: Path, capsys: pytest.CaptureFixture) -> None:
     bootstrap.write_bootstrap_readme(tmp_path, "DryRunProject", "lite", dry_run=True)
     captured = capsys.readouterr()
     assert "CREATE" in captured.out
@@ -164,6 +168,7 @@ def test_write_bootstrap_readme_dry_run_prints_without_creating(
 
 
 # ── bootstrap_repository (error paths) ────────────────────────────────────────
+
 
 def test_bootstrap_repository_raises_on_nonempty_dest_without_force(tmp_path: Path) -> None:
     dest = tmp_path / "dest"
@@ -187,6 +192,7 @@ def test_bootstrap_repository_raises_when_dest_inside_template(tmp_path: Path) -
 
 
 # ── main ───────────────────────────────────────────────────────────────────────
+
 
 def test_main_returns_one_on_fileexistserror(tmp_path: Path) -> None:
     import sys as _sys

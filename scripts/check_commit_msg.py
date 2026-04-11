@@ -22,9 +22,7 @@ BODY_LINE_MAX = 120
 
 # Matches: type[!][(scope)][!]: description
 _SUBJECT_RE = re.compile(
-    r"^(?P<type>"
-    + "|".join(VALID_TYPES)
-    + r")"
+    r"^(?P<type>" + "|".join(VALID_TYPES) + r")"
     r"(?:\((?P<scope>[^)]+)\))?"
     r"(?P<breaking>!)?"
     r":\s+.+"
@@ -58,15 +56,11 @@ def validate(message: str) -> list[str]:
         )
 
     if len(subject) > SUBJECT_MAX:
-        errors.append(
-            f"Subject line is too long ({len(subject)} chars, max {SUBJECT_MAX})."
-        )
+        errors.append(f"Subject line is too long ({len(subject)} chars, max {SUBJECT_MAX}).")
 
     for i, line in enumerate(lines[2:], start=3):
         if len(line) > BODY_LINE_MAX:
-            errors.append(
-                f"Body line {i} is too long ({len(line)} chars, max {BODY_LINE_MAX})."
-            )
+            errors.append(f"Body line {i} is too long ({len(line)} chars, max {BODY_LINE_MAX}).")
 
     return errors
 

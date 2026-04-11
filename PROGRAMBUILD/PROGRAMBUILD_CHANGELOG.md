@@ -6,6 +6,20 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 
 ---
 
+## 2026-04-11 (Phase 3 — Deferred Automation: Repo Check, ADR Coverage, Staleness)
+
+- created `scripts/programstart_repo_clean_check.py` — git working-tree cleanliness helper with `capture_git_status()`, `assert_repo_clean()`, `assert_repo_unchanged()`, and CLI entry point
+- added 10 tests in `tests/test_programstart_repo_clean_check.py`
+- added P3 cross-stage validation advisory to `programstart advance` — at stage 3+ prints a reminder to run the cross-stage validation prompt; suppressed by `--skip-cross-stage-check`
+- added 3 cross-stage advisory tests in `tests/test_programstart_workflow_state.py`
+- added `programstart validate --check adr-coverage` — parses DECISION_LOG.md Decision Register and warns when ACTIVE/ACCEPTED decisions have no corresponding ADR in `docs/decisions/`
+- added 6 ADR coverage tests in `tests/test_programstart_validate.py`
+- added P8 re-entry staleness detection to `programstart status` — warns when last signoff date is >28 days old, escalates at >56 days; suppressed by `--skip-staleness-check` or `PROGRAMSTART_SKIP_STALENESS=1`
+- added 6 staleness tests in `tests/test_programstart_status.py`
+- created `.github/prompts/implement-gameplan-phase3.prompt.md` execution prompt
+
+---
+
 ## 2026-04-11 (Phase 2 — Architecture Alignment and Implementation Sync)
 
 - added Part H (Architecture and Requirements Alignment) to `PROGRAMBUILD_CHALLENGE_GATE.md` with 6 questions checking ARCHITECTURE.md contracts, REQUIREMENTS.md feasibility, USER_FLOWS.md integrity, and DECISION_LOG.md currency

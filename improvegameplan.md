@@ -1767,13 +1767,13 @@ Every item has: delivery step number, file(s) to change, code example reference,
 | Challenge Gate Part H (architecture alignment check) | ~~Phase 2~~ DONE | Implemented 2026-04-11 — 8 parts, gate log header, variant table, prompts updated |
 | Product-JIT prompt file (`product-jit-check.prompt.md`) | ~~Phase 2~~ DONE | Implemented 2026-04-11 — registered in bootstrap_assets |
 | Implementation-alignment sync rules | ~~Phase 2~~ DONE | Implemented 2026-04-11 — architecture_decision_alignment + requirements_test_alignment |
-| `programstart_repo_clean_check.py` | Phase 1.5 | Useful but not blocking smoke split |
+| `programstart_repo_clean_check.py` | ~~Phase 1.5~~ DONE | Implemented 2026-04-11 — capture_git_status, assert_repo_clean, assert_repo_unchanged, CLI, 10 tests |
 | `serve.py` read-only route guard | ~~Phase 1.5~~ DONE | Implemented 2026-04-11 — PROGRAMSTART_READONLY env var, 5 tests |
 | `gate-safe` nox session | ~~Phase 1.5~~ DONE | Implemented 2026-04-11 — nox -s gate_safe |
 | P2 Challenge Gate automation | ~~Phase 2+~~ DONE | Implemented 2026-04-11 — advance warns on missing gate log entry, --skip-gate-check bypass |
-| P3 Cross-Stage Validation automation | Phase 2+ | Requires contradiction detection tooling |
-| P8 Re-Entry staleness detection | Phase 3+ | Requires state timestamp analysis |
-| P7 ADR existence checking | Phase 2+ | Requires decision-to-ADR mapping |
+| P3 Cross-Stage Validation automation | ~~Phase 2+~~ DONE | Implemented 2026-04-11 — advance advisory at stage 3+, --skip-cross-stage-check bypass, 3 tests |
+| P8 Re-Entry staleness detection | ~~Phase 3+~~ DONE | Implemented 2026-04-11 — status warns >28d/escalates >56d, --skip-staleness-check + env var, 6 tests |
+| P7 ADR existence checking | ~~Phase 2+~~ DONE | Implemented 2026-04-11 — validate --check adr-coverage, parses DECISION_LOG, 6 tests |
 
 ### 15.4 Commit Strategy
 

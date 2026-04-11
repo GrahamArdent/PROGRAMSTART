@@ -380,11 +380,14 @@ def validate_bootstrap_assets(registry: dict) -> list[str]:
     workspace = registry.get("workspace", {})
     assets = set(cast(list[str], workspace.get("bootstrap_assets", [])))
     uj_assets = set(cast(list[str], workspace.get("userjourney_bootstrap_assets", [])))
+    uj_absent = system_is_optional_and_absent(registry, "userjourney")
     all_assets = assets | uj_assets
     missing = sorted(expected_bootstrap_assets() - all_assets)
     if missing:
         problems.append("bootstrap_assets is missing current workspace files: " + ", ".join(missing))
     for asset in sorted(all_assets):
+        if uj_absent and asset in uj_assets:
+            continue
         if not workspace_path(asset).exists():
             problems.append(f"bootstrap_assets references missing workspace file: {asset}")
     return problems

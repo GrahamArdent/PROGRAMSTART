@@ -1,0 +1,29 @@
+# .gitlint — Conventional Commits reference configuration
+#
+# NOTE: This file documents the commit message rules for this repository.
+# Enforcement is handled by scripts/check_commit_msg.py (pre-commit commit-msg hook)
+# rather than gitlint directly, because gitlint depends on the Unix-only 'sh' library.
+#
+# The rules below serve as the canonical specification for check_commit_msg.py.
+
+[general]
+fail-without-commits = false
+ignore-merge-commits = true
+ignore-revert-commits = false
+ignore-fixup-commits = false
+ignore-squash-commits = false
+
+[title-conventional-commits]
+# Valid types: feat, fix, docs, chore, ci, refactor, test
+# BREAKING CHANGE footer required for schema/stage/file renames.
+minor-types = feat
+patch-types = fix,docs,chore,ci,refactor,test
+
+[title-max-length]
+line-length = 100
+
+[body-max-line-length]
+line-length = 120
+
+[ignore-by-title]
+regex = ^(Merge|WIP:|chore\(release\))

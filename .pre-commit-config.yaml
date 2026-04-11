@@ -79,3 +79,17 @@ repos:
         language: system
         pass_filenames: false
         files: ^(PROGRAMBUILD/|USERJOURNEY/|config/|scripts/|README\.md|QUICKSTART\.md|pyproject\.toml|schemas/)
+
+      - id: programstart-drift
+        name: programstart drift check
+        entry: uv run programstart drift
+        language: system
+        pass_filenames: true
+        files: ^(PROGRAMBUILD/|USERJOURNEY/|config/process-registry\.json)
+
+      - id: conventional-commits
+        name: commit message (Conventional Commits)
+        language: system
+        entry: uv run python scripts/check_commit_msg.py
+        stages: [commit-msg]
+        pass_filenames: true

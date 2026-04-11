@@ -29,6 +29,16 @@ updates:
         patterns:
           - "playwright"
           - "uv"
+      security-tools:
+        patterns:
+          - "bandit"
+          - "pip-audit"
+          - "detect-secrets"
+      test-extras:
+        patterns:
+          - "hypothesis"
+          - "pillow"
+          - "yamllint"
 
   - package-ecosystem: "github-actions"
     directory: "/"

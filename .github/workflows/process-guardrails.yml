@@ -161,6 +161,12 @@ jobs:
       - name: Validate authority sync
         run: uv run programstart validate --check authority-sync
 
+      - name: Validate rule enforcement
+        run: uv run programstart validate --check rule-enforcement
+
+      - name: Drift gate
+        run: uv run programstart drift
+
       - name: Validate planning references
         run: uv run programstart validate --check planning-references
 

@@ -42,6 +42,8 @@ dev = [
   "uv>=0.8.17",
   "yamllint>=1.37.0",
   "hypothesis>=6.100.0",
+  # mypy removed: pyright is the active type checker (pre-commit, nox, CI).
+  # Running both creates redundant gates with conflicting error sets.
 ]
 vector = [
   "chromadb>=0.4.0",

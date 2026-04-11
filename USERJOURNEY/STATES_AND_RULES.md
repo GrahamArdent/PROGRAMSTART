@@ -2,7 +2,7 @@
 
 Purpose: Define lifecycle states, routing rules, and activation logic for new and returning users.
 Owner: Solo operator
-Last updated: 2026-03-27
+Last updated: 2026-04-01
 Depends on: PRODUCT_SPEC.md, USER_FLOWS.md
 Authority: Canonical state and routing model for onboarding
 

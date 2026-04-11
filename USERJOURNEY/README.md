@@ -2,7 +2,7 @@
 
 Purpose: Canonical index for the new-user journey, signup, onboarding, and consent design.
 Owner: Solo operator
-Last updated: 2026-03-27
+Last updated: 2026-03-31
 Depends on: Existing auth flow, workspace routing, product goals
 Authority: Canonical index for the USERJOURNEY folder
 
@@ -65,7 +65,7 @@ Out of scope:
 
 ## Product Summary
 
-The current app already supports login, signup, and auth callback handling in the V6 frontend. The missing layer is the intentional first-time user journey and the legal/consent structure around resume uploads, job-description processing, and AI-assisted suggestions.
+The current app already supports login, signup, and auth callback handling in the existing product surface. The missing layer is the intentional first-time user journey and the legal/consent structure around resume uploads, job-description processing, and AI-assisted suggestions.
 
 ## Intended Outcome
 

@@ -2,7 +2,7 @@
 
 Purpose: Define required legal surfaces and consent requirements for signup and onboarding.
 Owner: Solo operator
-Last updated: 2026-03-27
+Last updated: 2026-03-31
 Depends on: PRODUCT_SPEC.md
 Authority: Canonical consent and policy requirements for the new-user journey
 
@@ -103,6 +103,13 @@ Policy refresh default:
 
 1. force re-acceptance only after material Terms or Privacy changes
 2. allow non-material updates to be communicated without blocking workspace access
+
+## Consent Checkpoint Rules
+
+1. Terms acceptance and Privacy acceptance belong to the signup checkpoint and must not be inferred from later workspace usage.
+2. AI notice acknowledgement belongs to the first upload or first generation checkpoint and must not be inferred from generic session activity.
+3. Activation and workspace access do not retroactively prove that the required consent checkpoints were satisfied.
+4. Operator dashboard routes in this template repository are planning surfaces only and are not evidence that end-user consent checkpoints exist in product code.
 
 ## UX Rules
 

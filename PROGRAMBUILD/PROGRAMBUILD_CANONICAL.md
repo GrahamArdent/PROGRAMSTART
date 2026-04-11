@@ -9,13 +9,15 @@ If two planning documents disagree, this file decides which one is authoritative
 
 ## 1. Canonical Rules
 
-1. Validated code and validated tests outrank any planning document.
+The key words MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY in this section are interpreted as described in [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119).
+
+1. Validated code and validated tests MUST outrank any planning document.
 2. This file defines which planning document is authoritative for each concern.
 3. `PROGRAMBUILD_FILE_INDEX.md` is the official inventory of critical planning files.
-4. No duplicate authority is allowed. One concern, one primary owner.
-5. If a file is deprecated or replaced, the file index and this file must be updated in the same change.
-6. The PROGRAMSTART repository is a template repository. Filled project outputs belong in the project repository created from this template, not in the template repository itself.
-7. `USERJOURNEY/` is not part of the reusable PROGRAMBUILD template system. If used, it is a project attachment that may be present or absent depending on the project.
+4. No duplicate authority is allowed. One concern, one primary owner. A file MUST NOT be canonical for more than one concern.
+5. If a file is deprecated or replaced, the file index and this file MUST be updated in the same change.
+6. The PROGRAMSTART repository is a template repository. Filled project outputs MUST belong in the project repository created from this template, not in the template repository itself.
+7. `USERJOURNEY/` is not part of the reusable PROGRAMBUILD template system. If used, it is a project attachment that MAY be present or absent depending on the project.
 
 ---
 
@@ -35,6 +37,9 @@ System control files:
 - `PROGRAMBUILD_KICKOFF_PACKET.md`
 - `PROGRAMBUILD_SUBAGENTS.md`
 - `PROGRAMBUILD_CHECKLIST.md`
+- `PROGRAMBUILD_IDEA_INTAKE.md`
+- `PROGRAMBUILD_CHALLENGE_GATE.md`
+- `PROGRAMBUILD_GAMEPLAN.md`
 - `PROGRAMBUILD.md`
 - `PROGRAMBUILD_LITE.md`
 - `PROGRAMBUILD_PRODUCT.md`
@@ -65,11 +70,16 @@ Project execution outputs:
 | enterprise process | `PROGRAMBUILD_ENTERPRISE.md` |
 | document authority and naming rules | `PROGRAMBUILD_CANONICAL.md` |
 | critical file inventory and status | `PROGRAMBUILD_FILE_INDEX.md` |
-| ADR structure and status vocabulary | `PROGRAMBUILD_ADR_TEMPLATE.md` |
+| ADR structure and MADR format | `PROGRAMBUILD_ADR_TEMPLATE.md` |
+| architecture decision records index | `docs/decisions/README.md` |
+| commit message format and enforcement | `.github/instructions/conventional-commits.instructions.md` |
 | system-level change history | `PROGRAMBUILD_CHANGELOG.md` |
 | new-project starter packet | `PROGRAMBUILD_KICKOFF_PACKET.md` |
 | subagent definitions and prompt templates | `PROGRAMBUILD_SUBAGENTS.md` |
 | execution checklist format | `PROGRAMBUILD_CHECKLIST.md` |
+| idea decomposition and pre-feasibility challenge | `PROGRAMBUILD_IDEA_INTAKE.md` |
+| stage transition validation | `PROGRAMBUILD_CHALLENGE_GATE.md` |
+| execution sequencing and cross-stage validation | `PROGRAMBUILD_GAMEPLAN.md` |
 | project viability decision | `FEASIBILITY.md` |
 | material project decisions and reversals | `DECISION_LOG.md` |
 | external research and stack validation | `RESEARCH_SUMMARY.md` |
@@ -81,6 +91,8 @@ Project execution outputs:
 | launch and operational gate | `RELEASE_READINESS.md` |
 | post-build drift and risk findings | `AUDIT_REPORT.md` |
 | post-launch outcomes and lessons learned | `POST_LAUNCH_REVIEW.md` |
+| automation gate definitions and nox session composition | `./noxfile.py` |
+| editor task surface and operator workflow shortcuts | `.vscode/tasks.json` |
 
 ---
 
@@ -112,4 +124,4 @@ If a conflict is found:
 
 ---
 
-Last updated: 2026-03-29
+Last updated: 2026-03-31

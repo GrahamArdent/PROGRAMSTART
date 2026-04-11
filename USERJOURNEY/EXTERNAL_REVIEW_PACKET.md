@@ -2,7 +2,7 @@
 
 Purpose: Review-ready packet for the remaining legal and operational approvals that block USERJOURNEY finalization.
 Owner: Solo operator
-Last updated: 2026-03-27
+Last updated: 2026-03-31
 Depends on: OPEN_QUESTIONS.md, LEGAL_REVIEW_NOTES.md, LEGAL_AND_CONSENT.md, TERMS_OF_SERVICE_DRAFT.md, PRIVACY_POLICY_DRAFT.md
 Authority: Derived review packet only; source of truth remains the linked authority docs
 
@@ -23,6 +23,7 @@ The product is a resume workflow platform that:
 3. uses AI-assisted features for content improvement and tailoring
 4. treats `first_value_achieved` as the canonical activation event
 5. should not publish legal or operational promises that exceed verified capability
+6. requires consent checkpoints to be attributable to signup or AI-notice acknowledgement rather than inferred from generic workspace usage
 
 ## Decisions Needed
 

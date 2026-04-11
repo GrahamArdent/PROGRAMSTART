@@ -2,7 +2,7 @@
 
 Purpose: Draft screen copy and product language for signup, verification, onboarding, consent, and first-run activation.
 Owner: Solo operator
-Last updated: 2026-03-27
+Last updated: 2026-04-01
 Depends on: PRODUCT_SPEC.md, USER_FLOWS.md, LEGAL_AND_CONSENT.md
 Authority: Working UX copy draft for the USERJOURNEY package
 
@@ -11,6 +11,8 @@ Authority: Working UX copy draft for the USERJOURNEY package
 ## Guidance
 
 This is product copy direction, not final brand copy. It is designed to reduce ambiguity, set expectations, and improve trust during first-run.
+
+This draft applies to the planned end-user onboarding route family. It does not describe or validate the local operator dashboard in this template repository.
 
 ## Screen 1: Auth Entry
 
@@ -161,7 +163,13 @@ Upload resume
 
 Parsing is a starting point. You will be able to correct anything that looks wrong before continuing.
 
-## Screen 8: Review Imported Resume
+### File Validation Error
+
+We could not accept that file. Make sure it is a PDF, DOCX, or TXT file and try again.
+
+### Parse Failure
+
+We were not able to read the content in that file. It may be password-protected, scanned as an image, or in a format we do not yet support. Try exporting as a plain DOCX or PDF, or use the start-from-scratch option instead.
 
 ### Heading
 
@@ -234,6 +242,36 @@ Your first draft is ready. Add experience details, strengthen bullets, or tailor
 ### If Tailoring Was Selected
 
 Paste a job description to start tailoring your resume to a real opportunity.
+
+## Screen 12: Minimal Workspace (Skipped Setup)
+
+### Persistent Setup Banner
+
+Setup is not complete. Some features will ask for required steps before you can use them.
+
+### Banner CTA
+
+Complete setup
+
+### Workspace Entry Heading
+
+You are in your workspace
+
+### Supporting Copy
+
+You skipped guided setup, so no resume has been created yet. You can explore the workspace now, but upload and AI features will walk you through required steps the first time you use them.
+
+### Empty-State Copy
+
+No resume yet. Complete setup to create your first profile and unlock full workspace features.
+
+### Recovery CTA
+
+Start setup now
+
+### Inline Reminder (visible until activation)
+
+Your workspace is ready, but you have not yet reached your first usable result. Complete setup when you are ready.
 
 ## Tone Rules
 

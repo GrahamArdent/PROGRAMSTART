@@ -6,12 +6,75 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 
 ---
 
-## 2026-03-31
+## 2026-04-11 (Phase 1 — Product-JIT and Automation Hardening)
 
-- added a repo-boundary consent policy for AI-assisted workflows so other repositories cannot be inspected, edited, staged, committed, or pushed without explicit user approval
-- added automated validation and CI enforcement for the repo-boundary policy and aligned quick-start guidance with the new rule
+- added ARCHITECTURE.md, REQUIREMENTS.md, USER_FLOWS.md to `implementation_loop.files` in `config/process-registry.json` so `programstart guide` surfaces product authority docs during implementation
+- added 3 product authority rows (architecture, requirements, user flows) to `source-of-truth.instructions.md` authority table
+- added new "Product-level JIT during implementation" section to `source-of-truth.instructions.md` with re-read-before-each-feature rules
+- added 3 product-JIT lines to `.github/copilot-instructions.md` Workflow Expectations
+- added task 6 (implementation product-doc reminder) to `programstart-stage-guide.prompt.md`
+- created `scripts/programstart_dashboard_smoke_readonly.py` — read-only dashboard smoke exercising only GET endpoints, safe against root workspace
+- wired `programstart drift` before and after the validate chain in `noxfile.py` validate session
+- added `programstart drift` to `run_next()` in `scripts/programstart_cli.py` so `programstart next` includes drift
+- added `guide --system userjourney` and `drift` to `scripts/programstart_cli_smoke.py` checks
+- added Drift Check, JIT Check, and Safe Gate tasks to `.vscode/tasks.json`
+- added `.tmp_factory_smoke` and `.tmp_nox_factory_smoke` cleanup targets to `noxfile.py` clean session
+- recorded smoke safety policy as DEC-001 in DECISION_LOG.md
+- created `.github/prompts/implement-gameplan-phase1.prompt.md` implementation prompt
+- updated QUICKSTART.md day-to-day loop to include drift before and after editing
+- added VS Code tasks reference table to README.md validation section
 
 ---
+
+## 2026-04-11 (Automation Gate Authority Registration)
+
+- added `noxfile.py` and `.vscode/tasks.json` to `PROGRAMBUILD_CANONICAL.md` authority map as canonical owners for automation gate definitions and editor task surface respectively
+- added `noxfile.py` and `.vscode/tasks.json` to `PROGRAMBUILD_FILE_INDEX.md` Section 3 (Tooling and Enforcement Files) with purpose descriptions
+- added `automation_gate_jit_alignment` sync rule to `config/process-registry.json` binding `noxfile.py`, `.vscode/tasks.json`, and `source-of-truth.instructions.md` as a coherent JIT automation bundle; dependent files are `copilot-instructions.md`, `QUICKSTART.md`, and `README.md`
+
+---
+
+## 2026-03-31 (Phase 4 — Self-Audit Fixes)
+
+- fixed `PROGRAMBUILD.md` Section 1 "How To Use" to start with Idea Intake as the first step, not the inputs block
+- added Idea Intake, Challenge Gate, and Gameplan to the control files list at the top of `PROGRAMBUILD.md`
+- added all three new control files to the "Required critical files" list in `PROGRAMBUILD.md` Section 4
+- replaced the stale 9-agent subagent table in `PROGRAMBUILD.md` with the 5-agent model matching `PROGRAMBUILD_SUBAGENTS.md`
+- added Idea Intake, Challenge Gate, and Gameplan references to the Authority sections of `PROGRAMBUILD_LITE.md`, `PROGRAMBUILD_PRODUCT.md`, and `PROGRAMBUILD_ENTERPRISE.md`
+- replaced stale subagent tables in all three variant files to match the consolidated agent model
+- added Idea Intake challenge step and per-stage Challenge Gate items to `PROGRAMBUILD_KICKOFF_PACKET.md`
+- fixed `DECISION_LOG.md` template to match Challenge Gate Part F reversal format: added `Replaces` column, updated status vocabulary to PROPOSED / ACTIVE / REVERSED / SUPERSEDED
+- fixed `PROGRAMBUILD_CHECKLIST.md` gate log table from 6-column format to 10-column Challenge Gate format
+- added the missing Stage 0 → Stage 1 gate to `PROGRAMBUILD_CHECKLIST.md` (was collapsed into one entry)
+- moved the Idea Intake → Stage 0 gate into Setup section; Feasibility section now correctly starts with Stage 0 → Stage 1
+- updated last-updated dates on Lite, Product, Enterprise, Kickoff Packet, Checklist, and Decision Log
+
+## 2026-03-31 (Phase 3 — Gap Fixes: Decision Reversal, Re-Entry, Dependency Health, Template Feedback, Estimation)
+
+- added Part F (Decision Reversal Check) to `PROGRAMBUILD_CHALLENGE_GATE.md` with REVERSED/SUPERSEDED status model and reconciliation rules
+- added Part G (Dependency and KB Health Check) to `PROGRAMBUILD_CHALLENGE_GATE.md` wired into KB `supersedes_for_new_work` and research delta system
+- added Re-Entry Protocol to `PROGRAMBUILD_CHALLENGE_GATE.md` for projects resuming after a significant pause
+- added Template Improvement Review to `PROGRAMBUILD_GAMEPLAN.md` Stage 10 with lesson-type-to-target mapping table and mandatory-update rule for 3+ recurring lessons
+- added KB dependency health checks to `PROGRAMBUILD_GAMEPLAN.md` Stages 4, 7, and 8
+- added T-shirt estimation method and per-area sizing table to `FEASIBILITY.md` template
+- added template improvement proposals to Stage 17 prompt in `PROGRAMBUILD.md`
+- added KB dependency hygiene and decision reversal discipline to `PROGRAMBUILD.md` Section 18 (Operating Practices)
+- updated `programstart-stage-transition.prompt.md` to reference Parts F and G and the Re-Entry Protocol
+- updated `PROGRAMBUILD_CHECKLIST.md` with new items for Challenge Gate, KB check, decision reversals, purpose test enforcement, template review, and Re-Entry Protocol
+
+## 2026-03-31 (Phase 2 — Gap Fixes: Idea Intake, Challenge Gate, Gameplan, Purpose Tests, Cross-Stage Validation)
+
+- created `PROGRAMBUILD_IDEA_INTAKE.md`: 7-question structured challenge interview that runs before the inputs block
+- created `PROGRAMBUILD_CHALLENGE_GATE.md`: 5-part (expanded to 7) stage-transition checklist preventing silent drift, scope creep, and assumption rot
+- created `PROGRAMBUILD_GAMEPLAN.md`: chained execution sequence connecting every stage to its prompt, inputs, validation checks, and outputs
+- added purpose test and theatre test definitions, litmus test, enforcement rules, and template to `TEST_STRATEGY.md`
+- added `PROGRAMBUILD_IDEA_INTAKE.md`, `PROGRAMBUILD_CHALLENGE_GATE.md`, and `PROGRAMBUILD_GAMEPLAN.md` to `PROGRAMBUILD_CANONICAL.md` authority map
+- added the three new control files to `PROGRAMBUILD_FILE_INDEX.md`
+- added all three new files, new prompts, and stage-transition workflow guidance to `config/process-registry.json`
+- created `.github/prompts/programstart-cross-stage-validation.prompt.md`
+- created `.github/prompts/programstart-stage-transition.prompt.md`
+
+
 
 ## 2026-03-29
 

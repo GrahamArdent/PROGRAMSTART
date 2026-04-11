@@ -45,6 +45,33 @@ Status values: `Pending`, `Selected`, `Ready`, `Blocked`, `Completed`
 | Slice 8 | Pending | first-value handoff and intent persistence rules approved | activation handoff requires at least one of import (Slice 6) or scratch (Slice 7) to be structurally complete; intent persistence rules must avoid double-counting partial completions |
 | Slice 9 | Pending | event taxonomy and policy-version handling approved | analytics event taxonomy and consent-version recording must be added last after the behavioral flow is stable; premature instrumentation locks in wrong funnel semantics |
 
+## Desired Outcome Delivery Tracker
+
+| Desired outcome | Owning slices | Current repo status | Current proof status | Next concrete step |
+|---|---|---|---|---|
+| higher signup-to-activation conversion | 2, 3, 4, 6, 7, 8 | Planned only | No end-user route or activation proof in this template repo | define signup, callback, and first-value handoff contracts before code starts |
+| lower confusion in the first session | 2, 4, 5 | Planned only | No end-user onboarding surface proof in this template repo | freeze auth-entry, welcome, and notice surfaces with explicit next-action copy |
+| stronger trust through better disclosure | 1, 5, 9 | Planning defaults frozen | No end-user gate implementation proof yet | finalize consent checkpoint metadata and notice-gate behavior |
+| better separation between account creation and real product activation | 1, 3, 4, 8, 9 | Planning defaults frozen | No callback or workspace guard implementation proof yet | define branch matrix for activated, not-onboarded, and skip-state users |
+| cleaner legal audit trail for consent events | 1, 5, 9 | Planning defaults frozen | No persisted consent-record proof yet | define where Terms, Privacy, and AI notice acceptance are stored and versioned |
+
+## Route Readiness Snapshot
+
+| Planned route or state | Slice | Status | Blocking dependency |
+|---|---|---|---|
+| `/auth/login` | 2 | Planned | UX surface freeze |
+| `/auth/signup` | 2 | Planned | consent model freeze |
+| `/auth/verify-pending` | 2 | Planned | signup contract freeze |
+| `/auth/callback` | 3 | Planned | Slice 2 contract stability |
+| `/onboarding/welcome` | 4 | Planned | Slice 3 guard semantics |
+| `/onboarding/notice` | 5 | Planned | Slice 1 consent checkpoint rules |
+| `/onboarding/import` | 6 | Planned | Slice 5 gate behavior |
+| `/onboarding/review-import` | 6 | Planned | import parsing contract |
+| `/onboarding/start` | 7 | Planned | scratch-flow ownership freeze |
+| `/onboarding/goal` | 8 | Planned | first-profile creation path complete |
+| `/workspace` with `unactivated_skip` state | 4, 8 | Planned | Slice 3 route guards |
+| `/workspace` activated handoff | 8 | Planned | first-value milestone definition |
+
 ## Phase 0: Decision Freeze
 
 ### Scope

@@ -2,7 +2,7 @@
 
 Purpose: Freeze the proposed route map and state model before implementation planning expands.
 Owner: Solo operator
-Last updated: 2026-03-27
+Last updated: 2026-03-31
 Depends on: STATES_AND_RULES.md, USER_FLOWS.md
 Authority: Canonical routing and state baseline for onboarding planning
 
@@ -11,6 +11,8 @@ Authority: Canonical routing and state baseline for onboarding planning
 ## Purpose
 
 This document prevents routing drift during implementation planning. It is a planning baseline, not a final code contract.
+
+The local operator dashboard in this template repository is not part of the end-user onboarding route family defined here.
 
 ## Frozen Principles
 

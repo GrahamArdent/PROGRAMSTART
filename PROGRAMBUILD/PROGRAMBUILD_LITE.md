@@ -8,6 +8,9 @@ The goal is speed without abandoning the guardrails that prevent the most common
 Authority:
 - `PROGRAMBUILD_CANONICAL.md` defines source-of-truth rules
 - `PROGRAMBUILD_FILE_INDEX.md` is the lookup table for critical files
+- `PROGRAMBUILD_IDEA_INTAKE.md` runs before Stage 0 — challenge the idea before filling the inputs block
+- `PROGRAMBUILD_CHALLENGE_GATE.md` runs at every stage transition — Parts A, C, and F are required minimum for Lite
+- `PROGRAMBUILD_GAMEPLAN.md` defines the execution order with cross-stage validation
 
 ---
 
@@ -62,12 +65,15 @@ Attach `USERJOURNEY/` only if the lite project still has real onboarding, consen
 
 ## Suggested Subagents
 
-| Subagent | Use for |
+See `PROGRAMBUILD_SUBAGENTS.md` for full prompts and workspace agent files.
+
+| Agent | Use for |
 |---|---|
-| Research Scout | quick stack and competitor validation |
-| UX Flow Designer | primary workflow and empty/error states |
+| Discovery & Scoping | quick domain research, scope, and top workflows |
+| Architecture & Security | essential contract surface and trust boundary |
+| Quality & Release | smoke plan and short launch checklist |
+| Risk Spike Agent | when an unknown is rated medium or high impact |
 | Contract Auditor | route and auth drift check |
-| Test Planner | smoke test plan and fixture list |
 
 ---
 
@@ -106,4 +112,4 @@ Produce:
 
 ---
 
-Last updated: 2026-03-27
+Last updated: 2026-03-31

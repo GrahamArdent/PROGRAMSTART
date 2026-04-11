@@ -2,7 +2,7 @@
 
 Purpose: Define concrete implementation slices and test scope before coding begins.
 Owner: Solo operator
-Last updated: 2026-03-27
+Last updated: 2026-03-31
 Depends on: IMPLEMENTATION_PLAN.md, IMPLEMENTATION_TRACKER.md, ACCEPTANCE_CRITERIA.md
 Authority: Canonical pre-coding execution sequence for USERJOURNEY
 
@@ -213,6 +213,35 @@ Onboarding funnel and policy-version acceptance can be measured and re-checked.
 7. Slice 7
 8. Slice 8
 9. Slice 9
+
+## Outcome-To-Slice Backlog
+
+This matrix converts the desired-outcome analysis into an execution-ready backlog. Use it to decide which slice owns each missing capability.
+
+| Desired outcome | Primary slice owner | Route or state anchors | First files to review | Required proof |
+|---|---|---|---|---|
+| higher signup-to-activation conversion | Slices 2, 3, 4, 6, 7, 8 | `/auth/signup`, `/auth/verify-pending`, `/auth/callback`, onboarding family, `/workspace` | `frontend/app/auth/signup/page.tsx`, `frontend/app/auth/callback/route.ts`, onboarding route surfaces, `profilesApi.ts` | route tests, onboarding flow tests, activation event test |
+| lower confusion in the first session | Slices 2, 4, 5 | `/auth/login`, `/auth/signup`, `/onboarding/welcome`, `/onboarding/notice` | `frontend/app/auth/login/page.tsx`, `frontend/app/auth/signup/page.tsx`, onboarding welcome and notice surfaces | content assertions, route-state tests, browser flow test |
+| stronger trust through better disclosure | Slices 1, 5, 9 | consent checkpoints plus `/onboarding/notice` | consent metadata layer, notice surface, analytics layer | notice-gate tests, consent event tests, versioning tests |
+| better separation between account creation and real product activation | Slices 1, 3, 4, 8, 9 | `/auth/verify-pending`, `/auth/callback`, unactivated skip state, `/workspace` | `frontend/app/auth/callback/route.ts`, `frontend/lib/auth-context.tsx`, `frontend/app/page.tsx`, dashboard surfaces | callback branching tests, guard tests, first-value event tests |
+| cleaner legal audit trail for consent events | Slices 1, 5, 9 | signup checkpoint and AI-notice checkpoint | consent metadata model, auth/session state layer, analytics layer | persisted consent-record tests, policy-version tests |
+
+## Route-To-Proof Backlog
+
+| Planned route or state | Owning slice | Primary outcome protected | Minimum test type required |
+|---|---|---|---|
+| `/auth/login` | Slice 2 | lower confusion in the first session | browser or component rendering test |
+| `/auth/signup` | Slice 2 | higher signup-to-activation conversion | validation test plus consent-contract test |
+| `/auth/verify-pending` | Slice 2 | better separation between account creation and activation | route and recovery test |
+| `/auth/callback` | Slice 3 | better separation between account creation and real product activation | callback branch matrix test |
+| `/onboarding/welcome` | Slice 4 | lower confusion in the first session | path-selection test |
+| `/onboarding/notice` | Slice 5 | stronger trust through better disclosure | gating and acknowledgement test |
+| `/onboarding/import` | Slice 6 | higher signup-to-activation conversion | upload validation test |
+| `/onboarding/review-import` | Slice 6 | higher signup-to-activation conversion | parse-review confirmation test |
+| `/onboarding/start` | Slice 7 | higher signup-to-activation conversion | starter-profile creation test |
+| `/onboarding/goal` | Slice 8 | better separation between profile creation and first value | goal-persistence test |
+| `/workspace` with `unactivated_skip` state | Slice 4 and Slice 8 | better separation between account creation and real product activation | skip-state guard test |
+| `/workspace` activated handoff | Slice 8 | higher signup-to-activation conversion | first-value handoff test |
 
 ## Why This Order
 

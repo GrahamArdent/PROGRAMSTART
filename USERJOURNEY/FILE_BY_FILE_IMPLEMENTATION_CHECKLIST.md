@@ -2,7 +2,7 @@
 
 Purpose: File-level, non-code implementation checklist for onboarding and consent work in the current repo.
 Owner: Solo operator
-Last updated: 2026-03-27
+Last updated: 2026-03-31
 Depends on: EXECUTION_SLICES.md, IMPLEMENTATION_PLAN.md, ROUTE_AND_STATE_FREEZE.md
 Authority: Canonical file-level implementation planning checklist for this repo
 
@@ -20,7 +20,7 @@ This checklist is intentionally conservative. It names files that are likely to 
 
 ## Frontend Auth And Entry Files
 
-### `v6_clean_repo_candidate/v6_nextjs_migration/frontend/app/auth/login/page.tsx`
+### `frontend/app/auth/login/page.tsx`
 
 Status: Likely change
 
@@ -30,7 +30,7 @@ Checklist:
 2. confirm returning-user emphasis remains clear
 3. confirm links and recovery behavior stay aligned with signup and callback states
 
-### `v6_clean_repo_candidate/v6_nextjs_migration/frontend/app/auth/signup/page.tsx`
+### `frontend/app/auth/signup/page.tsx`
 
 Status: Likely change
 
@@ -40,7 +40,7 @@ Checklist:
 2. define verification-pending handoff cleanly
 3. avoid turning signup into a long intake form
 
-### `v6_clean_repo_candidate/v6_nextjs_migration/frontend/app/auth/callback/route.ts`
+### `frontend/app/auth/callback/route.ts`
 
 Status: High-risk change
 
@@ -52,7 +52,7 @@ Checklist:
 
 ## Frontend Session And Routing Files
 
-### `v6_clean_repo_candidate/v6_nextjs_migration/frontend/lib/auth-context.tsx`
+### `frontend/lib/auth-context.tsx`
 
 Status: Likely change
 
@@ -62,7 +62,7 @@ Checklist:
 2. avoid bloating this context into a full workflow engine
 3. keep session state and onboarding state responsibilities explicit
 
-### `v6_clean_repo_candidate/v6_nextjs_migration/frontend/app/page.tsx`
+### `frontend/app/page.tsx`
 
 Status: Validate before changing
 
@@ -78,7 +78,7 @@ This file is already overloaded. Treat it as a high-risk integration point, not 
 
 ## Frontend Existing Workspace Surfaces
 
-### `v6_clean_repo_candidate/v6_nextjs_migration/frontend/components/dashboard/DashboardHome.tsx`
+### Dashboard home surface
 
 Status: Possible change
 
@@ -87,7 +87,7 @@ Checklist:
 1. define whether it supports a minimal skip-state workspace variant
 2. ensure it can present incomplete-state next actions without pretending the user is activated
 
-### `v6_clean_repo_candidate/v6_nextjs_migration/frontend/components/dashboard/Sidebar.tsx`
+### Workspace navigation surface
 
 Status: Possible change
 
@@ -98,7 +98,7 @@ Checklist:
 
 ## Frontend Builder And Profile Flow Files
 
-### `v6_clean_repo_candidate/v6_nextjs_migration/frontend/components/builder/StartFromScratchModal.tsx`
+### `frontend/components/builder/StartFromScratchModal.tsx`
 
 Status: High-interest, high-risk reuse candidate
 
@@ -108,7 +108,7 @@ Checklist:
 2. separate reusable creation logic from modal-specific assumptions
 3. do not assume the current modal presentation is acceptable for first-run onboarding
 
-### `v6_clean_repo_candidate/v6_nextjs_migration/frontend/lib/profilesApi.ts`
+### `frontend/lib/profilesApi.ts`
 
 Status: Likely review
 
@@ -119,7 +119,7 @@ Checklist:
 
 ## Backend And Persistence Files
 
-### `v6_clean_repo_candidate/v6_nextjs_migration/backend/app/routes/profiles.py`
+### `backend/app/routes/profiles.py`
 
 Status: Likely review
 
@@ -128,7 +128,7 @@ Checklist:
 1. identify what onboarding-related profile creation metadata may eventually need support
 2. confirm profile creation contract is compatible with import and scratch onboarding paths
 
-### `v6_clean_repo_candidate/v6_nextjs_migration/backend/app/supabase_client.py`
+### Backend account metadata client
 
 Status: Likely review
 
@@ -146,6 +146,29 @@ These are not current files, but they are planned responsibilities that likely d
 3. import review surface
 4. skip-state workspace treatment
 5. onboarding metadata fetch / guard layer
+
+## Outcome-To-File Backlog
+
+Use this as the first-pass implementation shortlist. It is intentionally narrower than a full code-edit list.
+
+| Desired outcome | Route or state anchor | First files to inspect | Protect from accidental scope growth |
+|---|---|---|---|
+| higher signup-to-activation conversion | signup, callback, onboarding import/scratch, goal handoff | `frontend/app/auth/signup/page.tsx`, `frontend/app/auth/callback/route.ts`, onboarding route surfaces, `frontend/lib/profilesApi.ts`, `backend/app/routes/profiles.py` | `frontend/app/page.tsx` until route guards are explicit |
+| lower confusion in the first session | auth entry, welcome, AI notice | `frontend/app/auth/login/page.tsx`, `frontend/app/auth/signup/page.tsx`, onboarding welcome surface, onboarding notice surface | current dashboard shell should not absorb onboarding orientation |
+| stronger trust through better disclosure | signup consent + AI notice checkpoint | `frontend/app/auth/signup/page.tsx`, onboarding notice surface, `frontend/lib/auth-context.tsx`, metadata model | avoid hiding consent logic in purely presentational components |
+| better separation between account creation and real product activation | callback, workspace guards, skip-state workspace | `frontend/app/auth/callback/route.ts`, `frontend/lib/auth-context.tsx`, `frontend/app/page.tsx`, `DashboardHome.tsx`, `Sidebar.tsx` | do not let `app/page.tsx` become the onboarding router |
+| cleaner legal audit trail for consent events | consent metadata and policy version handling | `frontend/lib/auth-context.tsx`, backend account metadata model, backend account metadata client | do not rely on local-only client storage |
+
+## Required Test Types By File Area
+
+| File area | Minimum proof before merge |
+|---|---|
+| auth entry and signup pages | form validation tests, consent-contract tests, browser smoke for entry messaging |
+| auth callback and route guards | branch-matrix tests covering activated, not-onboarded, skip-state, and failure cases |
+| onboarding welcome and notice surfaces | route rendering tests plus gate-behavior tests |
+| import and scratch flows | profile-creation integration tests plus browser flow coverage |
+| workspace skip-state treatment | guard tests and UI assertion for persistent `Complete setup` recovery CTA |
+| consent metadata and policy version handling | persistence tests, re-acceptance tests, analytics event tests |
 
 ## Slice Mapping
 

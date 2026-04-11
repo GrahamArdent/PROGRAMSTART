@@ -8,6 +8,9 @@ This is the recommended default for most real applications.
 Authority:
 - `PROGRAMBUILD_CANONICAL.md` defines source-of-truth rules
 - `PROGRAMBUILD_FILE_INDEX.md` is the lookup table for critical files
+- `PROGRAMBUILD_IDEA_INTAKE.md` runs before Stage 0 — challenge the idea before filling the inputs block
+- `PROGRAMBUILD_CHALLENGE_GATE.md` runs at every stage transition — all 7 parts required; Part G required at Stages 4+
+- `PROGRAMBUILD_GAMEPLAN.md` defines the execution order with full cross-stage validation
 
 ---
 
@@ -61,17 +64,15 @@ Attach `USERJOURNEY/` only when the product has real end-user onboarding, consen
 
 ## Suggested Subagents
 
-| Subagent | Use for | Output |
+See `PROGRAMBUILD_SUBAGENTS.md` for full prompts and workspace agent files.
+
+| Agent | Use for | Output |
 |---|---|---|
-| Research Scout | stack and market validation | research summary |
-| Product Analyst | requirements and acceptance criteria | requirements draft |
-| UX Flow Designer | user journeys and failure states | user flows |
-| Architecture Reviewer | contracts, auth, and boundaries | architecture review |
-| Risk Spike Agent | unknowns around integrations, AI, streaming, or auth | spike report |
-| Test Planner | full pyramid, registry, and fixture strategy | test strategy |
-| Contract Auditor | route, auth, and schema alignment checks | audit findings |
-| Decision Recorder | decision log and ADR updates after major changes | decision record |
-| Release Readiness Reviewer | launch, rollback, monitoring, and runbook review | readiness report |
+| Discovery & Scoping | domain research, scope, user stories, kill criteria, user flows | research + requirements draft |
+| Architecture & Security | system boundaries, API contracts, auth model, threat model | architecture review + security findings |
+| Quality & Release | test strategy, release readiness, launch gate | test strategy + readiness report |
+| Risk Spike Agent | unknowns rated medium or high impact in RISK_SPIKES.md | spike report |
+| Contract Auditor | route, auth, schema, and contract drift at Stage 9 | audit findings |
 
 ---
 
@@ -110,4 +111,4 @@ Produce:
 
 ---
 
-Last updated: 2026-03-27
+Last updated: 2026-03-31

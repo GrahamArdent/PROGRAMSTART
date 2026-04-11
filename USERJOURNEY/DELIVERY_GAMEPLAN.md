@@ -2,7 +2,7 @@
 
 Purpose: Provide the implementation-ready gameplan that keeps USERJOURNEY decisions, docs, and code-touch planning synchronized.
 Owner: Solo operator
-Last updated: 2026-03-27
+Last updated: 2026-03-31
 Depends on: README.md, DECISION_LOG.md, ROUTE_AND_STATE_FREEZE.md, IMPLEMENTATION_TRACKER.md, EXECUTION_SLICES.md, FILE_BY_FILE_IMPLEMENTATION_CHECKLIST.md
 Authority: Canonical cross-document execution and sync guide for USERJOURNEY
 
@@ -109,11 +109,11 @@ Primary docs:
 
 Primary repo files to inspect first:
 
-1. `v6_clean_repo_candidate/v6_nextjs_migration/frontend/app/auth/login/page.tsx`
-2. `v6_clean_repo_candidate/v6_nextjs_migration/frontend/app/auth/signup/page.tsx`
-3. `v6_clean_repo_candidate/v6_nextjs_migration/frontend/components/dashboard/DashboardHome.tsx`
-4. `v6_clean_repo_candidate/v6_nextjs_migration/frontend/components/dashboard/Sidebar.tsx`
-5. `v6_clean_repo_candidate/v6_nextjs_migration/frontend/components/builder/StartFromScratchModal.tsx`
+1. `frontend/app/auth/login/page.tsx`
+2. `frontend/app/auth/signup/page.tsx`
+3. dashboard home surface
+4. workspace navigation surface
+5. `frontend/components/builder/StartFromScratchModal.tsx`
 
 Outcome:
 
@@ -136,11 +136,11 @@ Primary docs:
 
 Primary repo files to inspect first:
 
-1. `v6_clean_repo_candidate/v6_nextjs_migration/frontend/app/auth/callback/route.ts`
-2. `v6_clean_repo_candidate/v6_nextjs_migration/frontend/lib/auth-context.tsx`
-3. `v6_clean_repo_candidate/v6_nextjs_migration/frontend/app/page.tsx`
-4. `v6_clean_repo_candidate/v6_nextjs_migration/backend/app/routes/profiles.py`
-5. `v6_clean_repo_candidate/v6_nextjs_migration/backend/app/supabase_client.py`
+1. `frontend/app/auth/callback/route.ts`
+2. `frontend/lib/auth-context.tsx`
+3. `frontend/app/page.tsx`
+4. `backend/app/routes/profiles.py`
+5. backend account metadata client
 
 Outcome:
 

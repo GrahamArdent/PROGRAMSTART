@@ -2,7 +2,7 @@
 
 Purpose: Testable acceptance criteria for signup, onboarding, consent, and first-run activation.
 Owner: Solo operator
-Last updated: 2026-03-27
+Last updated: 2026-04-01
 Depends on: PRODUCT_SPEC.md, USER_FLOWS.md, STATES_AND_RULES.md
 Authority: Canonical acceptance criteria for USERJOURNEY behavior
 
@@ -36,6 +36,8 @@ Translate the new-user journey into precise, testable requirements that design, 
 1. Given a new user creates an account, when signup succeeds, then the accepted Terms version and Privacy version are conceptually recordable.
 2. Given a user reaches first upload or first AI generation, when the AI/data notice has not yet been acknowledged, then the user must be shown that notice before continuing.
 3. Given a user declines optional marketing consent, when signup otherwise succeeds, then onboarding continues normally.
+4. Given the AI/data notice is displayed, when the user closes the modal or navigates away without explicitly confirming it, then the notice acknowledgement state is not advanced and the triggering action remains blocked.
+5. Given Terms or Privacy Policy have been updated in a material way, when a returning user authenticates, then the user must explicitly re-accept the updated version before accessing normal workspace functionality.
 
 ## Onboarding Criteria
 
@@ -70,3 +72,10 @@ Translate the new-user journey into precise, testable requirements that design, 
 
 1. Given a user enters the flow, when key milestones occur, then analytics events can be emitted for signup, verification, onboarding start, first profile creation, first value, and onboarding completion.
 2. Given onboarding drop-off occurs, when analytics are reviewed, then the product team can identify the stage where abandonment happened.
+
+## Outcome And Route Guardrails
+
+1. Given the product reports activation, when the event is emitted, then activation must correspond to `first_value_achieved` rather than route entry alone.
+2. Given a user is verified but not yet activated, when routing occurs, then the user must remain within the onboarding route family or the explicit unactivated workspace state rather than the normal activated workspace.
+3. Given consent events are audited, when the product records them, then Terms acceptance, Privacy acceptance, and AI notice acknowledgement must be attributable to their correct checkpoints rather than inferred from generic workspace access.
+4. Given the template repository exposes operator dashboard routes, when those routes are tested, then they must not be treated as evidence that the end-user onboarding route family has been implemented.

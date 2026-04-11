@@ -2,7 +2,7 @@
 
 Purpose: Define expected outcomes, analytics checkpoints, and activation metrics for the new-user journey.
 Owner: Solo operator
-Last updated: 2026-03-27
+Last updated: 2026-03-31
 Depends on: PRODUCT_SPEC.md, STATES_AND_RULES.md
 Authority: Canonical analytics and outcome model for onboarding success
 
@@ -21,6 +21,73 @@ Expected outcomes from implementing this spec:
 3. stronger trust through better disclosure
 4. better separation between account creation and real product activation
 5. cleaner legal audit trail for consent events
+
+## Outcome To Route And Milestone Mapping
+
+Not every desired outcome is a route concern. Some outcomes are delivered by a route transition, some by a state transition, and some by analytics or consent records.
+
+| Desired outcome | Primary route or state anchor | Primary milestone or evidence |
+|---|---|---|
+| higher signup-to-activation conversion | `/auth/signup` -> `/auth/verify-pending` -> onboarding route family -> `/workspace` | `first_value_achieved` occurs more often after signup |
+| lower confusion in the first session | `/auth/login`, `/auth/signup`, `/onboarding/welcome`, `/onboarding/notice` | lower abandonment before `first_profile_created`; fewer users stall before path selection |
+| stronger trust through better disclosure | `/onboarding/notice` and required consent capture before risky actions | `ai_notice_seen`, `ai_notice_acknowledged`, versioned legal acceptance records |
+| better separation between account creation and real product activation | `/auth/verify-pending`, `/auth/callback`, onboarding route family, `/workspace` with unactivated skip state | verified users are not counted as activated until `first_value_achieved` |
+| cleaner legal audit trail for consent events | signup and notice checkpoints rather than a single route | timestamped, versioned consent events for Terms, Privacy, and AI notice acknowledgement |
+
+## Planned Route Anchors
+
+The route family that supports these outcomes is defined in `ROUTE_AND_STATE_FREEZE.md` and `USER_FLOWS.md`.
+
+| Outcome checkpoint | Planned logical route or state |
+|---|---|
+| auth entry viewed | `/auth/login` and `/auth/signup` |
+| signup accepted, verification still pending | `/auth/verify-pending` |
+| verification callback branches user by state | `/auth/callback` |
+| onboarding orientation and path choice | `/onboarding/welcome` |
+| AI and data disclosure gate | `/onboarding/notice` |
+| import resume path | `/onboarding/import` |
+| import review and confirmation | `/onboarding/review-import` |
+| start-from-scratch path | `/onboarding/start` |
+| choose first goal after profile creation | `/onboarding/goal` |
+| skip-guided-onboarding recovery path | `/workspace` with `unactivated_skip` state |
+| activated handoff | `/workspace` |
+
+## Outcomes Without A Single Route
+
+The following desired outcomes should not be treated as single-page or single-route requirements:
+
+1. `first_value_achieved` is a milestone, not a route. It occurs when the user reaches a usable artifact or tailoring workflow.
+2. cleaner legal audit trail for consent events depends on stored event records and versioning, not a standalone screen.
+3. higher signup-to-activation conversion is an aggregate funnel result, not a route.
+4. better analytics around onboarding drop-off depends on event coverage across multiple steps, not one page.
+
+## Current Template-Repo Reality
+
+This template repository does **not** currently implement the end-user onboarding route family above.
+
+What exists today in code is the local operator dashboard route set in `scripts/programstart_serve.py`:
+
+1. `/` and `/index.html`
+2. `/api/state`
+3. `/api/doc`
+4. `/api/run`
+5. `/api/uj-phase`
+6. `/api/uj-slice`
+7. `/api/workflow-signoff`
+8. `/api/workflow-advance`
+9. `/api/bootstrap`
+
+Those routes support planning, inspection, and workflow control. They do not satisfy the planned user-facing onboarding outcomes by themselves.
+
+## Current Gaps By Desired Outcome
+
+| Desired outcome | Planned route support exists in docs | Implemented route support exists in this repo | Gap summary |
+|---|---|---|---|
+| higher signup-to-activation conversion | Yes | No | requires real auth, onboarding, and first-value product flow implementation |
+| lower confusion in the first session | Yes | No | requires end-user entry, welcome, and notice surfaces |
+| stronger trust through better disclosure | Yes | No | requires enforced AI notice and consent event recording in product code |
+| better separation between account creation and real product activation | Yes | No | requires callback branching, activation milestone storage, and unactivated skip-state handling |
+| cleaner legal audit trail for consent events | Partially | No | requires persisted versioned consent records, not just planning docs |
 
 ## Primary Funnel
 

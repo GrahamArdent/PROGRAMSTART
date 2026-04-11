@@ -2,7 +2,7 @@
 
 Purpose: Canonical inventory of onboarding-related screens, states, and ownership.
 Owner: Solo operator
-Last updated: 2026-03-27
+Last updated: 2026-03-31
 Depends on: UX_COPY_DRAFT.md, USER_FLOWS.md, ROUTE_AND_STATE_FREEZE.md
 Authority: Canonical screen inventory for USERJOURNEY
 
@@ -47,6 +47,8 @@ Authority: Canonical screen inventory for USERJOURNEY
 
 1. The minimal workspace must keep a persistent, high-visibility `Complete setup` action until activation.
 2. Target role collection should happen after import review or starter profile creation, not on the welcome screen for import-first users.
+3. The operator dashboard in this template repo is not a substitute for the end-user onboarding surface family.
+4. Route-shaped onboarding outcomes are not considered implemented until the corresponding end-user surfaces exist in product code.
 
 ## Screen Discipline Rules
 

@@ -21,19 +21,24 @@ Control files:
 - `PROGRAMBUILD_KICKOFF_PACKET.md` is the standardized starter pack for new projects
 - `PROGRAMBUILD_SUBAGENTS.md` is the subagent catalog with reusable prompts
 - `PROGRAMBUILD_CHECKLIST.md` is the execution checklist version of this system
+- `PROGRAMBUILD_IDEA_INTAKE.md` is the pre-feasibility challenge interview — run this before filling the inputs block
+- `PROGRAMBUILD_CHALLENGE_GATE.md` is the stage-transition checklist — run this at every stage boundary
+- `PROGRAMBUILD_GAMEPLAN.md` is the chained execution sequence with cross-stage validation — use this to run stages in the correct order
 
 ---
 
 ## 1. How To Use This File
 
-1. Fill in the Inputs block.
-2. Decide the dominant `PRODUCT_SHAPE`, whether `USERJOURNEY/` is needed, and which variant fits the risk and team model.
-3. Read `PROGRAMBUILD_CANONICAL.md` first and treat it as authoritative when documents disagree.
-4. Use `PROGRAMBUILD_FILE_INDEX.md` to locate the right planning artifact.
-5. Complete each stage in order.
-6. Do not start the next stage until the current stage output is reviewed.
-7. Treat every interface between layers as a contract that must be explicit and tested in both directions.
-8. Use this playbook inside the project repository created from the template. Do not keep filled project outputs in the template repository.
+1. Run `PROGRAMBUILD_IDEA_INTAKE.md` before filling the inputs block. The Idea Intake interview challenges the raw idea before any planning begins.
+2. Fill in the Inputs block using the Idea Intake output.
+3. Decide the dominant `PRODUCT_SHAPE`, whether `USERJOURNEY/` is needed, and which variant fits the risk and team model.
+4. Read `PROGRAMBUILD_CANONICAL.md` first and treat it as authoritative when documents disagree.
+5. Use `PROGRAMBUILD_FILE_INDEX.md` to locate the right planning artifact.
+6. Follow `PROGRAMBUILD_GAMEPLAN.md` to run stages in the correct order with cross-stage validation at each boundary.
+7. Run `PROGRAMBUILD_CHALLENGE_GATE.md` at every stage transition. This is not optional.
+8. Do not start the next stage until the current stage output is reviewed and the Challenge Gate passes.
+9. Treat every interface between layers as a contract that must be explicit and tested in both directions.
+10. Use this playbook inside the project repository created from the template. Do not keep filled project outputs in the template repository.
 
 ---
 
@@ -132,6 +137,9 @@ Required critical files:
 - `PROGRAMBUILD_KICKOFF_PACKET.md`
 - `PROGRAMBUILD_SUBAGENTS.md`
 - `PROGRAMBUILD_CHECKLIST.md`
+- `PROGRAMBUILD_IDEA_INTAKE.md`
+- `PROGRAMBUILD_CHALLENGE_GATE.md`
+- `PROGRAMBUILD_GAMEPLAN.md`
 
 Recommended stage outputs for each project:
 - `FEASIBILITY.md`
@@ -152,19 +160,22 @@ Recommended stage outputs for each project:
 
 If you are using an AI workflow with subagents, assign specialized work instead of asking one agent to do everything.
 
-Recommended subagents:
+See `PROGRAMBUILD_SUBAGENTS.md` for full agent definitions, prompts, and invocation triggers.
 
-| Subagent | Use for | Deliverable |
+Core agents (run in sequence for every build):
+
+| Agent | Use for | Workspace agent |
 |---|---|---|
-| Research Scout | competitor scan, stack validation, compliance scan, tooling survey | research summary with sources |
-| Product Analyst | user stories, acceptance criteria, scope boundaries, kill criteria | requirements draft |
-| UX Flow Designer | primary user workflows, empty/error states, navigation, accessibility flow | workflow map and UX notes |
-| Architecture Reviewer | topology, boundaries, data ownership, API contracts, auth model | architecture review |
-| Risk Spike Agent | prototype risky integrations, auth flow, streaming, file processing, AI cost assumptions | spike report |
-| Contract Auditor | compare declared routes or endpoints, handlers, schemas, and auth enforcement | alignment report |
-| Test Planner | test matrix, fixture strategy, smoke/regression split, golden baseline policy | test strategy |
-| Security Reviewer | threat modeling, auth matrix, secret handling, tenancy rules, abuse cases | security findings |
-| Release Readiness Reviewer | rollback, monitoring, SLOs, deployment gates, operational gaps | launch readiness report |
+| Discovery & Scoping | domain research, scope, user stories, kill criteria, user flows | `.github/agents/discovery-scoping.agent.md` |
+| Architecture & Security | system boundaries, API contracts, auth model, threat model | `.github/agents/architecture-security.agent.md` |
+| Quality & Release | test strategy, release readiness, launch gate | `.github/agents/quality-release.agent.md` |
+
+On-demand agents (trigger only when the condition is met):
+
+| Agent | Trigger | Use for |
+|---|---|---|
+| Risk Spike Agent | unknown rated medium or high impact in RISK_SPIKES.md | prototype risky integrations, auth flow, streaming, AI cost |
+| Contract Auditor | Stage 9 audit or any mid-implementation alignment check | route, auth, schema, and contract drift |
 
 Guidance:
 - Use subagents for parallel research and review work.
@@ -676,10 +687,13 @@ Include:
 4. Decision reversals or confirmations
 5. Lessons learned
 6. Follow-up actions with owners
+7. Template improvement proposals — for each systemic lesson, propose a specific
+   update to a PROGRAMBUILD template file (see PROGRAMBUILD_GAMEPLAN.md Stage 10
+   for the Template Improvement Review format and target mapping)
 ```
 
 Gate:
-Do not treat the project as complete until lessons learned and follow-up ownership are recorded.
+Do not treat the project as complete until lessons learned, follow-up ownership, and template improvement proposals are recorded. If 3+ projects produce the same systemic lesson without a template update, the system has a feedback failure.
 
 ---
 
@@ -688,7 +702,7 @@ Do not treat the project as complete until lessons learned and follow-up ownersh
 These should be established as early as possible:
 
 - Environment parity: CI and production should be materially similar.
-- Dependency hygiene: pin dependencies, review updates on a schedule, and run dependency scanning in CI.
+- Dependency hygiene: pin dependencies, review updates on a schedule, and run dependency scanning in CI. Use the KB (`config/knowledge-base.json`) and `programstart research --status` to check for superseded, deprecated, or stale dependencies at every Challenge Gate from Stage 4 onward.
 - Secret management: no secrets in code, examples only in committed env templates.
 - Migration discipline: versioned migrations, tested in CI, with rollback thought through before merge.
 - Feature flags: use for incomplete or high-risk releases, and define removal criteria.
@@ -696,6 +710,7 @@ These should be established as early as possible:
 - Accessibility: build it into component and E2E tests, not as a cleanup pass.
 - Error boundaries and user-facing fallbacks: every async path must fail safely.
 - ADRs: record material architecture and policy decisions when they change.
+- Decision reversal discipline: when a decision is overridden, add a new `REVERSED` entry referencing the original decision ID, and mark the original `SUPERSEDED`. Both entries must exist. See `PROGRAMBUILD_CHALLENGE_GATE.md` Part F for the format.
 - Ownership clarity: assign a named owner or `[ASSIGN]` placeholder in every output file until ownership is confirmed.
 - Requirements traceability: map requirement IDs to architecture choices and release-blocking tests.
 - Dependency review: document critical vendors, third-party services, and fallback behavior before release.

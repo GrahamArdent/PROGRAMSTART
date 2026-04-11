@@ -7,6 +7,9 @@ Use this version for regulated, multi-team, or high-consequence systems where au
 Authority:
 - `PROGRAMBUILD_CANONICAL.md` defines source-of-truth rules
 - `PROGRAMBUILD_FILE_INDEX.md` is the lookup table for critical files
+- `PROGRAMBUILD_IDEA_INTAKE.md` runs before Stage 0 — challenge the idea before filling the inputs block
+- `PROGRAMBUILD_CHALLENGE_GATE.md` runs at every stage transition — all 7 parts required at all stages; approver sign-off required on each gate log entry
+- `PROGRAMBUILD_GAMEPLAN.md` defines the execution order with full cross-stage validation and retained evidence
 
 ---
 
@@ -72,17 +75,15 @@ If the product is non-interactive, replace journey-centric assumptions with oper
 
 ## Suggested Subagents
 
-| Subagent | Use for | Output |
+See `PROGRAMBUILD_SUBAGENTS.md` for full prompts and workspace agent files.
+
+| Agent | Use for | Output |
 |---|---|---|
-| Research Scout | market, stack, and standards review | sourced research summary |
-| Compliance Analyst | data handling and control obligations | compliance notes |
-| Security Reviewer | threat model, auth matrix, isolation rules, abuse cases | security report |
-| Architecture Reviewer | system boundaries, service ownership, data flows | architecture review |
+| Discovery & Scoping | domain research, scope, control traceability, standards review | research + requirements + compliance notes |
+| Architecture & Security | system boundaries, API contracts, data classification, threat model | architecture review + security report |
+| Quality & Release | control-to-test mapping, release readiness, DR and rollback validation | test strategy + readiness report |
 | Risk Spike Agent | proofs for risky integrations or operational assumptions | spike evidence |
-| Test Planner | traceability from controls to tests | test strategy |
-| Decision Recorder | ADRs, decision log updates, and reversals | decision record |
-| Contract Auditor | route, schema, auth, and ownership drift review | audit report |
-| Release Readiness Reviewer | rollback, DR, support, alerts, and change control | readiness report |
+| Contract Auditor | route, schema, auth, and ownership drift review with owner and due dates | audit report |
 
 ---
 
@@ -122,4 +123,4 @@ Produce:
 
 ---
 
-Last updated: 2026-03-27
+Last updated: 2026-03-31

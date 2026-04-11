@@ -5,9 +5,12 @@
 Use this file to start a new project with the same naming conventions, the same critical file set, and the same authority model every time.
 
 Before using this packet:
+- run `programstart bootstrap --dest <path/to/new-project> --project-name <name> --variant <lite|product|enterprise>` to create the project repo from this template
 - read `PROGRAMBUILD_CANONICAL.md`
 - use `PROGRAMBUILD_FILE_INDEX.md` as the reference list
-- choose one process file: `PROGRAMBUILD_LITE.md`, `PROGRAMBUILD_PRODUCT.md`, or `PROGRAMBUILD_ENTERPRISE.md`
+- run `PROGRAMBUILD_IDEA_INTAKE.md` before filling the inputs block — use `programstart recommend` at the end to validate your variant and stack choices
+- use `PROGRAMBUILD_GAMEPLAN.md` as the execution sequence guide
+- run `PROGRAMBUILD_CHALLENGE_GATE.md` at every stage transition — follow each gate pass with `programstart advance --system programbuild`
 
 ---
 
@@ -54,6 +57,22 @@ Use `PRODUCT_SHAPE` to choose which later-stage guidance applies. Technology cho
 
 ## 3. Stage Startup Checklist
 
+### Idea Intake
+- run `PROGRAMBUILD_IDEA_INTAKE.md` before filling the inputs block
+- answer all 7 challenge questions; do not skip or combine
+- review answers against the red flag table
+- run `programstart recommend --product-shape "<shape>" --need <need1> --need <need2>` to get KB-backed variant, stack, and coverage recommendations before locking the inputs block
+- stop and record why in `DECISION_LOG.md` if the recommendation is "stop"
+
+### Stage Transitions
+- run the Challenge Gate from `PROGRAMBUILD_CHALLENGE_GATE.md` at every stage boundary
+- Lite minimum: Parts A, C, and F
+- Product and Enterprise: all 7 parts (Part G required at Stages 4+)
+- if resuming after a pause, run the Re-Entry Protocol instead
+- after each gate pass, run `programstart advance --system programbuild` to move workflow state to the next stage
+- run `programstart log --system programbuild` at any time to review the full sign-off history
+- run `programstart progress --system programbuild` to check checklist completion percentage
+
 ### Kickoff Decision Matrix
 
 Lock these decisions before filling stage outputs so the rest of the workflow inherits the right assumptions.
@@ -77,6 +96,8 @@ Lock these decisions before filling stage outputs so the rest of the workflow in
 - decide whether this project needs the optional `USERJOURNEY/` attachment based on whether the product includes interactive end-user onboarding, consent, activation, or first-run routing
 
 ### Feasibility
+- run Challenge Gate (Idea Intake → Stage 0), then `programstart advance --system programbuild`
+- run Challenge Gate (Stage 0 → Stage 1), then `programstart advance --system programbuild`
 - define the problem clearly
 - state top risks
 - define kill criteria
@@ -85,6 +106,8 @@ Lock these decisions before filling stage outputs so the rest of the workflow in
 - record the decision in `DECISION_LOG.md`
 
 ### Research
+- run Challenge Gate (Stage 1 → Stage 2), then `programstart advance --system programbuild`
+- run `programstart retrieval "<your topic>"` to query the KB before going to external sources — the KB has curated stack guidance, comparisons, and decision rules
 - validate the stack
 - identify existing solutions
 - record compliance concerns
@@ -92,12 +115,15 @@ Lock these decisions before filling stage outputs so the rest of the workflow in
 - log low-confidence decisions and follow-up spikes
 
 ### Requirements And UX
+- run Challenge Gate (Stage 2 → Stage 3), then `programstart advance --system programbuild`
 - define P0 and P1 scope
 - write measurable acceptance criteria
 - capture primary user flows if users interact with the system directly
 - define loading, empty, error, and retry states where an operator or end user can observe them
 
 ### Architecture And Risk Spikes
+- run Challenge Gate (Stage 3 → Stage 4), then `programstart advance --system programbuild`
+- run `programstart impact "<dependency or concern>"` to see which downstream docs are affected before committing an architecture decision
 - apply the `PRODUCT_SHAPE` checklist first so you do not force a web-app contract model onto a CLI, API service, library, or background automation
 - define the contract surface: API, command, job, event, or public library API
 - define the auth or trust matrix
@@ -108,20 +134,30 @@ Lock these decisions before filling stage outputs so the rest of the workflow in
 - promote material architecture changes into ADRs if required
 
 ### Scaffold And Guardrails
+- run Challenge Gate (Stage 4 → Stage 5), then `programstart advance --system programbuild`
 - create the contract layer that fits the shape: routes, endpoints, commands, job definitions, or public API boundaries
 - create the auth-aware client, trusted caller wrapper, operator helper, or equivalent boundary control
 - add structural tests
 - create CI with explicit timeouts
 
 ### Test Strategy
+- run Challenge Gate (Stage 5 → Stage 6), then `programstart advance --system programbuild`
 - apply the `PRODUCT_SHAPE` testing checklist before choosing browser E2E, service contract, command, or job-level coverage
+- default to desired-outcome coverage first; treat purpose tests as the primary proof of value delivery
+- do not count theatre tests as outcome coverage; use them only when they protect a real contract, structure, or regression class
 - define test layers
 - define fixture strategy
 - define golden policy
 - define requirements-to-test traceability
 - define endpoint-to-test registry
 
+### Template Quality Standard
+- every bootstrapped repo should inherit the same testing rigor as this template: explicit contracts, regression coverage, and validated workflow checks
+- desired outcome testing is the highest-priority evidence for product correctness
+- golden, structural, smoke, and regression tests support the system, but they do not replace purpose tests tied to real user or operator outcomes
+
 ### Release Readiness
+- run Challenge Gate (Stage 7 → Stage 8), then `programstart advance --system programbuild`
 - define rollback and migration plan
 - define monitoring and alerts
 - define SLO and SLI targets
@@ -129,11 +165,13 @@ Lock these decisions before filling stage outputs so the rest of the workflow in
 - define support ownership
 
 ### Audit
+- run Challenge Gate (Stage 8 → Stage 9), then `programstart advance --system programbuild`
 - verify contract, access-control, schema, and drift integrity
 - verify planned-route and deprecated-route safety
 - record severity, impact, and prevention guardrails
 
 ### Post-Launch Review
+- run Challenge Gate (Stage 9 → Stage 10), then `programstart advance --system programbuild`
 - compare actual outcomes to the success metric
 - record incidents, support notes, and adoption friction
 - capture lessons learned and follow-up owners
@@ -167,4 +205,4 @@ Every kickoff file must state:
 
 ---
 
-Last updated: 2026-03-27
+Last updated: 2026-03-31

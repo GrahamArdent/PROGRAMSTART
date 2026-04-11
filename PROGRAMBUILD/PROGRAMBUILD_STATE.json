@@ -6,10 +6,19 @@
     "inputs_and_mode_selection": {
       "status": "in_progress",
       "signoff": {
-        "decision": "",
-        "date": "",
-        "notes": ""
-      }
+        "decision": "approved",
+        "date": "2026-04-01",
+        "notes": "Ship \u00a6 it now",
+        "saved_at": "2026-04-01"
+      },
+      "signoff_history": [
+        {
+          "decision": "approved",
+          "date": "2026-04-01",
+          "notes": "Ship \u00a6 it now",
+          "saved_at": "2026-04-01"
+        }
+      ]
     },
     "feasibility": {
       "status": "planned",

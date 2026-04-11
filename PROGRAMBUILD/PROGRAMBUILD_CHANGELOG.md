@@ -6,6 +6,18 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 
 ---
 
+## 2026-04-11 (Phase 2 — Architecture Alignment and Implementation Sync)
+
+- added Part H (Architecture and Requirements Alignment) to `PROGRAMBUILD_CHALLENGE_GATE.md` with 6 questions checking ARCHITECTURE.md contracts, REQUIREMENTS.md feasibility, USER_FLOWS.md integrity, and DECISION_LOG.md currency
+- updated Challenge Gate log header, variant table, prompt template, and re-entry protocol to reference 8 parts
+- created `.github/prompts/product-jit-check.prompt.md` — reusable pre-coding alignment prompt against product authority docs
+- added `architecture_decision_alignment` sync rule binding ARCHITECTURE.md → DECISION_LOG.md (non-blocking, advisory)
+- added `requirements_test_alignment` sync rule binding REQUIREMENTS.md → TEST_STRATEGY.md (blocking)
+- added Challenge Gate log entry check to `programstart advance` — warns when no gate log row matches the current stage transition, with `--skip-gate-check` bypass flag
+- added 4 tests for Challenge Gate log check in `test_programstart_workflow_state.py`
+
+---
+
 ## 2026-04-11 (Phase 1.5 — Gate-Safe Session and Read-Only Route Guard)
 
 - added `gate_safe` nox session (lint, typecheck, tests, validate, docs) as local pre-merge confidence gate

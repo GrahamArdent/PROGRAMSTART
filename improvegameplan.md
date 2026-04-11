@@ -1764,13 +1764,13 @@ Every item has: delivery step number, file(s) to change, code example reference,
 
 | Item | Deferred To | Reason |
 |---|---|---|
-| Challenge Gate Part H (architecture alignment check) | Phase 2 | Requires careful design of mid-implementation check questions |
-| Product-JIT prompt file (`product-jit-check.prompt.md`) | Phase 2 | Depends on Fixes 1-3 being proven first |
-| Implementation-alignment sync rules | Phase 2 | Requires design for code-vs-doc drift detection |
+| Challenge Gate Part H (architecture alignment check) | ~~Phase 2~~ DONE | Implemented 2026-04-11 — 8 parts, gate log header, variant table, prompts updated |
+| Product-JIT prompt file (`product-jit-check.prompt.md`) | ~~Phase 2~~ DONE | Implemented 2026-04-11 — registered in bootstrap_assets |
+| Implementation-alignment sync rules | ~~Phase 2~~ DONE | Implemented 2026-04-11 — architecture_decision_alignment + requirements_test_alignment |
 | `programstart_repo_clean_check.py` | Phase 1.5 | Useful but not blocking smoke split |
-| `serve.py` read-only route guard | Phase 1.5 | Smoke split makes this unnecessary for Phase 1 |
-| `gate-safe` nox session | Phase 1.5 | VS Code Safe Gate task covers the same intent |
-| P2 Challenge Gate automation | Phase 2+ | Requires `programstart advance` to check gate log |
+| `serve.py` read-only route guard | ~~Phase 1.5~~ DONE | Implemented 2026-04-11 — PROGRAMSTART_READONLY env var, 5 tests |
+| `gate-safe` nox session | ~~Phase 1.5~~ DONE | Implemented 2026-04-11 — nox -s gate_safe |
+| P2 Challenge Gate automation | ~~Phase 2+~~ DONE | Implemented 2026-04-11 — advance warns on missing gate log entry, --skip-gate-check bypass |
 | P3 Cross-Stage Validation automation | Phase 2+ | Requires contradiction detection tooling |
 | P8 Re-Entry staleness detection | Phase 3+ | Requires state timestamp analysis |
 | P7 ADR existence checking | Phase 2+ | Requires decision-to-ADR mapping |

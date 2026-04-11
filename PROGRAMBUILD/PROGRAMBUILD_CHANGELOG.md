@@ -6,6 +6,22 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 
 ---
 
+## 2026-04-11 (Phase 4 — Confidence Tiers and Gate Reframe)
+
+- split nox `smoke` session into `smoke_readonly` (read-only root-workspace, safe anytime) and `smoke_isolated` (bootstrapped temp workspaces, mutating) — `smoke` now delegates to both via `session.notify()`
+- added `quick` nox session — lint + typecheck only for fast feedback (~10s)
+- updated `gate_safe` nox session — now includes `smoke_readonly` for read-only smoke confidence before merge
+- updated `nox.options.sessions` default list to `smoke_readonly` + `smoke_isolated`
+- added VS Code tasks: `Quick Check`, `Read-only Smoke`, `Isolated Smoke`, `Package Smoke`
+- updated `Safe Gate` VS Code task to use `nox -s gate_safe` instead of inline session list
+- added "Quality Gates — Confidence Tiers" section to README.md documenting the 3-tier model
+- updated QUICKSTART.md nox command reference to reflect new session structure
+- fixed `validate_bootstrap_assets` — userjourney test files are now skipped when USERJOURNEY is absent (fixes `test_bootstrap_repo_stays_programbuild_only`)
+- created `.github/prompts/implement-gameplan-phase4.prompt.md` execution prompt
+- smoke diagnostic output reviewed — both readonly and CLI smoke already produce actionable `[PASS]/[FAIL]` output per check with URLs, status codes, and stderr excerpts
+
+---
+
 ## 2026-04-11 (Phase 3 — Deferred Automation: Repo Check, ADR Coverage, Staleness)
 
 - created `scripts/programstart_repo_clean_check.py` — git working-tree cleanliness helper with `capture_git_status()`, `assert_repo_clean()`, `assert_repo_unchanged()`, and CLI entry point

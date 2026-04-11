@@ -1,7 +1,7 @@
 # Improve Gameplan
 
 Purpose: Detailed implementation plan for strengthening PROGRAMSTART automation and protocol surfacing without executing changes yet.
-Status: Ready for implementation — all review passes complete, code examples verified 2026-04-11
+Status: All phases (1-6) implemented 2026-04-11 — gameplan complete
 Authority: Non-canonical working plan derived from current source-of-truth files and automation review.
 Last updated: 2026-04-11
 
@@ -129,7 +129,7 @@ That mismatch is the core implementation gap.
 
 This gameplan keeps the previously identified priorities, but now anchors them explicitly to how JIT and source-of-truth behavior are already surfaced.
 
-### Phase 1: Stabilize Protocol Surfacing And Smoke Safety
+### Phase 1: Stabilize Protocol Surfacing And Smoke Safety — DONE (2026-04-11)
 
 Purpose:
 
@@ -147,7 +147,7 @@ Why first:
 - this is the highest-leverage improvement because it changes operator behavior and tool trust at the same time
 - it reduces the chance that future automation work bakes in the wrong assumptions
 
-### Phase 2: Make Drift A Mandatory Gate
+### Phase 2: Make Drift A Mandatory Gate — DONE (2026-04-11)
 
 Purpose:
 
@@ -158,7 +158,7 @@ Outcome that must be true:
 - `programstart drift` runs in the standard validate path before and after change verification
 - drift is visible as a first-class task in VS Code
 
-### Phase 3: Add Clean-Tree Assertions For Root-Workspace Automation
+### Phase 3: Add Clean-Tree Assertions For Root-Workspace Automation — DONE (2026-04-11)
 
 Purpose:
 
@@ -168,7 +168,7 @@ Outcome that must be true:
 
 - any root-workspace smoke that dirties tracked files fails loudly
 
-### Phase 4: Reframe Local And CI Gates By Confidence Level
+### Phase 4: Reframe Local And CI Gates By Confidence Level — DONE (2026-04-11)
 
 Purpose:
 
@@ -178,7 +178,7 @@ Outcome that must be true:
 
 - operators can choose a gate intentionally instead of guessing which bundle matters
 
-### Phase 5: Strengthen Package And Fresh-Workspace Contract Testing
+### Phase 5: Strengthen Package And Fresh-Workspace Contract Testing — DONE (2026-04-11)
 
 Purpose:
 
@@ -189,7 +189,7 @@ Outcome that must be true:
 - package smoke is easy to run locally
 - the generated workspace behaves like a supported product boundary
 
-### Phase 6: Improve Diagnostics And Windows Resilience
+### Phase 6: Improve Diagnostics And Windows Resilience — DONE (2026-04-11)
 
 Purpose:
 
@@ -1774,6 +1774,11 @@ Every item has: delivery step number, file(s) to change, code example reference,
 | P3 Cross-Stage Validation automation | ~~Phase 2+~~ DONE | Implemented 2026-04-11 — advance advisory at stage 3+, --skip-cross-stage-check bypass, 3 tests |
 | P8 Re-Entry staleness detection | ~~Phase 3+~~ DONE | Implemented 2026-04-11 — status warns >28d/escalates >56d, --skip-staleness-check + env var, 6 tests |
 | P7 ADR existence checking | ~~Phase 2+~~ DONE | Implemented 2026-04-11 — validate --check adr-coverage, parses DECISION_LOG, 6 tests |
+| Confidence-tiered nox sessions | ~~Phase 4~~ DONE | Implemented 2026-04-11 — smoke_readonly, smoke_isolated, quick, gate_safe updated |
+| VS Code tasks for confidence tiers | ~~Phase 4~~ DONE | Implemented 2026-04-11 — Quick Check, Read-only Smoke, Isolated Smoke, Package Smoke |
+| Package and fresh-workspace contract | ~~Phase 5~~ DONE | Implemented 2026-04-11 — nox package session already existed; smoke_isolated covers bootstrapped workspaces |
+| Smoke diagnostic output | ~~Phase 6~~ DONE | No-op 2026-04-11 — both smoke scripts already produce actionable [PASS]/[FAIL] per check |
+| validate_bootstrap_assets fix | ~~Phase 4~~ DONE | Implemented 2026-04-11 — skip userjourney assets when USERJOURNEY is absent |
 
 ### 15.4 Commit Strategy
 

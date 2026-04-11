@@ -212,8 +212,10 @@ programstart attach userjourney --source "C:\ PYTHON APPS\PROGRAMSTART\USERJOURN
 | `pb recommend` | Recommend the right workflow variant and stacks |
 | `pb impact <target>` | Show affected documents, concerns, and routes |
 | `programstart next` | Same workflow surface without the PowerShell wrapper |
-| `nox` | Run lint, type, test, smoke, and docs sessions |
-| `nox -s ci` | Run the full local CI-equivalent gate, including package and security checks |
+| `nox` | Run default sessions: lint, type, test, validate, smoke (readonly + isolated), docs |
+| `nox -s quick` | Fast feedback: lint + typecheck only (~10s) |
+| `nox -s gate_safe` | Local pre-merge gate: lint, typecheck, tests, validate, readonly smoke, docs |
+| `nox -s ci` | Full CI-equivalent gate: everything including package and security |
 | `mkdocs build --strict` | Build the searchable docs site |
 
 ---

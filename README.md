@@ -312,6 +312,27 @@ Key assets:
 
 `USERJOURNEY/` remains optional. It stays in this repository as a reference attachment and should only be attached to projects that truly need onboarding, consent, activation, or first-run routing planning.
 
+## Quality Gates — Confidence Tiers
+
+Three tiers let you choose the right level of confidence for the situation:
+
+| Tier | Command | What it runs | When to use |
+|---|---|---|---|
+| **Quick** | `nox -s quick` | lint + typecheck | During active editing, fast feedback (~10s) |
+| **Safe Gate** | `nox -s gate_safe` | lint, typecheck, tests, validate, read-only smoke, docs | Before committing. Local pre-merge confidence |
+| **Full CI** | `nox -s ci` | Everything: lint, typecheck, tests, validate, smoke (readonly + isolated), docs, package, security | Before pushing or preparing a release |
+
+**Smoke sub-tiers** (available individually):
+
+| Session | Command | What it runs |
+|---|---|---|
+| `smoke_readonly` | `nox -s smoke_readonly` | Read-only dashboard + browser smoke against the live workspace. Safe anytime, no mutations. |
+| `smoke_isolated` | `nox -s smoke_isolated` | Bootstrapped temp workspace + mutating dashboard + factory smoke. Creates temp dirs. |
+| `smoke` | `nox -s smoke` | Both `smoke_readonly` + `smoke_isolated` |
+| `package` | `nox -s package` | Build wheel + installed distribution smoke |
+
+VS Code tasks map to these tiers: `Quick Check`, `Safe Gate`, `Full CI Gate`, `Read-only Smoke`, `Isolated Smoke`, `Package Smoke`.
+
 ## Tooling Stack
 
 The repository includes a hardened development and automation stack:
@@ -362,9 +383,10 @@ python -m playwright install chromium
 # Full setup with RAG capabilities
 uv sync --extra dev --extra rag
 
-# Run all quality checks
-nox
-nox -s ci
+# Quality checks by confidence tier
+nox -s quick        # fast: lint + typecheck
+nox -s gate_safe    # safe: lint + typecheck + tests + validate + readonly smoke + docs
+nox -s ci           # full: everything including isolated smoke, package, security
 ```
 
 GitHub Actions mirrors the main repo checks in three layers:

@@ -271,6 +271,11 @@ def main() -> int:
         action="store_true",
         help="Skip Challenge Gate log entry check before advancing.",
     )
+    advance_parser.add_argument(
+        "--skip-cross-stage-check",
+        action="store_true",
+        help="Skip cross-stage validation advisory before advancing.",
+    )
 
     snapshot_parser = subparsers.add_parser("snapshot", help="Save a timestamped copy of current workflow state.")
     snapshot_parser.add_argument("--label", default="", help="Optional label for the snapshot.")
@@ -389,6 +394,18 @@ def main() -> int:
             gate_warning = _check_challenge_gate_log(active_step)
             if gate_warning:
                 print(clr_yellow(f"⚠  {gate_warning}"))
+        # Cross-stage validation advisory (programbuild, stages 3+).
+        if (
+            system == "programbuild"
+            and not getattr(args, "skip_cross_stage_check", False)
+            and current_index >= 3
+        ):
+            print(
+                clr_yellow(
+                    "⚠  Tip: Run the cross-stage validation prompt before advancing: "
+                    "@workspace /prompt Cross-Stage Validation"
+                )
+            )
         if dry_run:
             print(f"[dry-run] Would mark {system} '{active_step}' completed (decision={args.decision!r}, date={args.date!r})")
             if current_index + 1 < len(steps):

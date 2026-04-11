@@ -349,3 +349,89 @@ def test_advance_dry_run_shows_gate_warning(capsys, monkeypatch, tmp_path) -> No
     assert result == 0
     assert "No Challenge Gate log entry" in out
     assert "Would advance" in out
+
+
+# --- Cross-stage validation advisory tests ---
+
+
+def _make_advance_state(active: str, next_step: str):
+    return {
+        "active_stage": active,
+        "stages": {
+            active: {"status": "in_progress", "signoff": {"decision": "", "date": "", "notes": ""}},
+            next_step: {"status": "planned", "signoff": {"decision": "", "date": "", "notes": ""}},
+        },
+    }
+
+
+_ALL_STEPS = [
+    "inputs_and_mode_selection",
+    "feasibility",
+    "research",
+    "requirements_and_ux",
+    "architecture_and_risk_spikes",
+    "scaffold_and_guardrails",
+]
+
+
+def test_cross_stage_advisory_not_shown_at_early_stages(capsys, monkeypatch) -> None:
+    """Stages 0-2 should NOT show the cross-stage advisory."""
+    active = "inputs_and_mode_selection"
+    state = _make_advance_state(active, "feasibility")
+    monkeypatch.setattr("scripts.programstart_workflow_state.load_workflow_state", lambda _r, _s: state)
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workflow_active_step",
+        lambda _r, _s, _state=None: active,
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workflow_steps",
+        lambda _r, _s: _ALL_STEPS,
+    )
+    monkeypatch.setattr("sys.argv", ["ws", "advance", "--system", "programbuild", "--dry-run"])
+    result = main()
+    out = capsys.readouterr().out
+    assert result == 0
+    assert "Cross-Stage Validation" not in out
+
+
+def test_cross_stage_advisory_shown_at_stage_3(capsys, monkeypatch) -> None:
+    """Stage 3 (requirements_and_ux) should show the advisory."""
+    active = "requirements_and_ux"
+    state = _make_advance_state(active, "architecture_and_risk_spikes")
+    monkeypatch.setattr("scripts.programstart_workflow_state.load_workflow_state", lambda _r, _s: state)
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workflow_active_step",
+        lambda _r, _s, _state=None: active,
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workflow_steps",
+        lambda _r, _s: _ALL_STEPS,
+    )
+    monkeypatch.setattr("sys.argv", ["ws", "advance", "--system", "programbuild", "--dry-run"])
+    result = main()
+    out = capsys.readouterr().out
+    assert result == 0
+    assert "Cross-Stage Validation" in out
+
+
+def test_cross_stage_advisory_suppressed_by_flag(capsys, monkeypatch) -> None:
+    """--skip-cross-stage-check should suppress the advisory."""
+    active = "requirements_and_ux"
+    state = _make_advance_state(active, "architecture_and_risk_spikes")
+    monkeypatch.setattr("scripts.programstart_workflow_state.load_workflow_state", lambda _r, _s: state)
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workflow_active_step",
+        lambda _r, _s, _state=None: active,
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workflow_steps",
+        lambda _r, _s: _ALL_STEPS,
+    )
+    monkeypatch.setattr(
+        "sys.argv",
+        ["ws", "advance", "--system", "programbuild", "--dry-run", "--skip-cross-stage-check"],
+    )
+    result = main()
+    out = capsys.readouterr().out
+    assert result == 0
+    assert "Cross-Stage Validation" not in out

@@ -35,6 +35,7 @@ from urllib.parse import parse_qs, urlparse
 ROOT = Path(__file__).resolve().parents[1]
 PYTHON = sys.executable
 SCRIPTS = Path(__file__).resolve().parent
+READONLY_MODE = os.environ.get("PROGRAMSTART_READONLY", "").strip().lower() in ("1", "true", "yes")
 
 try:
     from .programstart_command_registry import dashboard_allowed_commands
@@ -2653,6 +2654,9 @@ class DashboardHandler(BaseHTTPRequestHandler):
             self.end_headers()
 
     def do_POST(self) -> None:  # noqa: N802
+        if READONLY_MODE:
+            self._send_json({"error": "server is in read-only mode"}, 405)
+            return
         parsed = urlparse(self.path)
         if parsed.path == "/api/uj-phase":
             length = int(self.headers.get("Content-Length", 0))

@@ -205,6 +205,13 @@ def docs(session: nox.Session) -> None:
 
 
 @nox.session(reuse_venv=True)
+def gate_safe(session: nox.Session) -> None:
+    """Run a local pre-merge confidence gate (no mutating smoke)."""
+    for name in ("lint", "typecheck", "tests", "validate", "docs"):
+        session.notify(name)
+
+
+@nox.session(reuse_venv=True)
 def package(session: nox.Session) -> None:
     """Build a wheel and smoke the installed console script."""
     install_dev(session)

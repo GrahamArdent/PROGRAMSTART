@@ -6,6 +6,15 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 
 ---
 
+## 2026-04-11 (Phase 1.5 — Gate-Safe Session and Read-Only Route Guard)
+
+- added `gate_safe` nox session (lint, typecheck, tests, validate, docs) as local pre-merge confidence gate
+- added `PROGRAMSTART_READONLY` environment variable guard to `serve.py` — when set, all POST endpoints return 405
+- added readonly mode integration tests to `test_serve_endpoints.py` (5 endpoints covered)
+- created `.github/prompts/implement-gameplan-phase2.prompt.md` execution prompt for Phase 1.5 + Phase 2
+
+---
+
 ## 2026-04-11 (Phase 1 — Product-JIT and Automation Hardening)
 
 - added ARCHITECTURE.md, REQUIREMENTS.md, USER_FLOWS.md to `implementation_loop.files` in `config/process-registry.json` so `programstart guide` surfaces product authority docs during implementation

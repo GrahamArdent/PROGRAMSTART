@@ -140,6 +140,7 @@
       ".github/prompts/userjourney-next-slice.prompt.md",
       ".github/prompts/propagate-canonical-change.prompt.md",
       ".github/prompts/implement-gameplan-phase1.prompt.md",
+      ".github/prompts/implement-gameplan-phase2.prompt.md",
       ".github/instructions/conventional-commits.instructions.md",
       ".gitlint",
       "scripts/check_commit_msg.py",

@@ -379,3 +379,42 @@ class TestGetStateJson:
         assert "userjourney" in result
         uj = result["userjourney"]
         assert "attached" in uj
+
+
+# ─────────── READONLY_MODE guard ─────────────────────────────────────────
+
+
+class TestReadonlyModeGuard:
+    """When PROGRAMSTART_READONLY=1 every POST must return 405."""
+
+    @pytest.fixture(scope="class")
+    def readonly_url(self, monkeypatch_class):
+        import scripts.programstart_serve as serve_mod
+
+        original = serve_mod.READONLY_MODE
+        serve_mod.READONLY_MODE = True
+        server = HTTPServer(("127.0.0.1", 0), DashboardHandler)
+        port = server.server_address[1]
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        yield f"http://127.0.0.1:{port}"
+        server.shutdown()
+        serve_mod.READONLY_MODE = original
+
+    @pytest.fixture(scope="class")
+    def monkeypatch_class(self):
+        from _pytest.monkeypatch import MonkeyPatch
+
+        mp = MonkeyPatch()
+        yield mp
+        mp.undo()
+
+    @pytest.mark.parametrize(
+        "path",
+        ["/api/uj-phase", "/api/uj-slice", "/api/workflow-signoff", "/api/workflow-advance", "/api/run"],
+    )
+    def test_post_blocked(self, readonly_url: str, path: str) -> None:
+        status, _headers, body = _post_json(f"{readonly_url}{path}", {"command": "status"})
+        assert status == 405
+        data = json.loads(body)
+        assert "read-only" in data["error"]

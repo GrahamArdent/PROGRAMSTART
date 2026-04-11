@@ -224,8 +224,41 @@
       "label": "PROGRAMSTART: Safe Gate",
       "type": "shell",
       "command": "uv",
-      "args": ["run", "nox", "-s", "lint", "typecheck", "tests", "validate", "docs"],
+      "args": ["run", "nox", "-s", "gate_safe"],
       "presentation": { "reveal": "always", "panel": "shared", "clear": true, "focus": true },
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "PROGRAMSTART: Quick Check",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "nox", "-s", "quick"],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "PROGRAMSTART: Read-only Smoke",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "nox", "-s", "smoke_readonly"],
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "PROGRAMSTART: Isolated Smoke",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "nox", "-s", "smoke_isolated"],
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "PROGRAMSTART: Package Smoke",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "nox", "-s", "package"],
       "group": "test",
       "problemMatcher": []
     }

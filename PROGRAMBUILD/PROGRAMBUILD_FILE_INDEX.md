@@ -23,7 +23,7 @@ If a file is missing from this index, it is not a recognized control file in thi
 | `PROGRAMBUILD_SUBAGENTS.md` | catalog | active | subagent roles and prompts | subagent guidance |
 | `PROGRAMBUILD_CHECKLIST.md` | checklist | active | execution checklist format | execution tracking |
 | `PROGRAMBUILD_IDEA_INTAKE.md` | protocol | active | idea decomposition and pre-feasibility challenge | idea intake |
-| `PROGRAMBUILD_CHALLENGE_GATE.md` | protocol | active | stage transition validation and drift prevention | stage transition gates |
+| `PROGRAMBUILD_CHALLENGE_GATE.md` | protocol | active | 8-part stage transition validation (A–H) with architecture alignment | stage transition gates |
 | `PROGRAMBUILD_GAMEPLAN.md` | playbook | active | chained execution sequence with cross-stage validation | execution sequencing |
 
 ---

@@ -78,7 +78,7 @@ Project execution outputs:
 | subagent definitions and prompt templates | `PROGRAMBUILD_SUBAGENTS.md` |
 | execution checklist format | `PROGRAMBUILD_CHECKLIST.md` |
 | idea decomposition and pre-feasibility challenge | `PROGRAMBUILD_IDEA_INTAKE.md` |
-| stage transition validation | `PROGRAMBUILD_CHALLENGE_GATE.md` |
+| stage transition validation (8 parts: A–H) | `PROGRAMBUILD_CHALLENGE_GATE.md` |
 | execution sequencing and cross-stage validation | `PROGRAMBUILD_GAMEPLAN.md` |
 | project viability decision | `FEASIBILITY.md` |
 | material project decisions and reversals | `DECISION_LOG.md` |

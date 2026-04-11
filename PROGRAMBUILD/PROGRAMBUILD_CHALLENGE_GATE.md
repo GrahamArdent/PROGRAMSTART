@@ -141,6 +141,25 @@ Check whether the external dependencies and technology choices recorded in `ARCH
 
 **If any dependency is deprecated or superseded:** Record the finding in `DECISION_LOG.md` and decide: migrate, accept the risk, or spike an alternative.
 
+### Part H — Architecture And Requirements Alignment
+
+*Run at Stages 6+ (Test Strategy onward). Required during implementation (Stage 7).*
+
+Check whether the implemented code and design still match the product authority documents.
+
+| Question | Answer |
+|---|---|
+| Have any `ARCHITECTURE.md` contracts been changed in code without updating the doc? | Yes / No — if yes, list them |
+| Have any new contracts, endpoints, or auth rules been added in code without documenting in `ARCHITECTURE.md`? | Yes / No — if yes, list them |
+| Does the implemented auth model still match `ARCHITECTURE.md`? | Yes / No / Not yet implemented |
+| Are any P0 requirements in `REQUIREMENTS.md` now impossible given the current implementation? | Yes / No — if yes, name them |
+| Has any planned `USER_FLOWS.md` flow been silently dropped or changed? | Yes / No — if yes, name it |
+| Has `DECISION_LOG.md` been updated for every architecture-level decision made during this stage? | Yes / No — if no, record them now |
+
+**If any contract divergence exists:** Update `ARCHITECTURE.md` first (canonical-before-dependent), then update tests and code to match. Record the change in `DECISION_LOG.md`.
+
+**If any P0 requirement is impossible:** Stop. This is a potential kill criterion. Escalate to `FEASIBILITY.md` and run Part A again.
+
 ---
 
 ## Recording The Result
@@ -149,9 +168,9 @@ After completing all parts, record one line in this log:
 
 ### Challenge Gate Log
 
-| From Stage | To Stage | Date | Kill Criteria OK | Assumptions OK | Scope OK | Skipped Work OK | Decisions OK | Dependencies OK | Proceed? | Notes |
-|---|---|---|---|---|---|---|---|---|---|---|
-| | | | ✅/⚠️/❌ | ✅/⚠️/❌ | ✅/⚠️/❌ | ✅/⚠️/❌ | ✅/⚠️/❌ | ✅/⚠️/❌/n/a | Yes / No / Conditional | |
+| From Stage | To Stage | Date | Kill Criteria OK | Assumptions OK | Scope OK | Skipped Work OK | Decisions OK | Dependencies OK | Architecture OK | Proceed? | Notes |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| | | | ✅/⚠️/❌ | ✅/⚠️/❌ | ✅/⚠️/❌ | ✅/⚠️/❌ | ✅/⚠️/❌ | ✅/⚠️/❌/n/a | ✅/⚠️/❌/n/a | Yes / No / Conditional | |
 
 Status codes:
 - ✅ All clear
@@ -170,9 +189,9 @@ This moves the workflow state to the next stage so `programstart status`, `progr
 
 | Variant | Gate Rigor |
 |---|---|
-| Lite | Complete Parts A, C, and F minimum. Others optional but recommended. Part G optional at all stages. |
-| Product | Complete all seven parts. Record the log entry. Part G required at Stages 4+. |
-| Enterprise | Complete all seven parts. Log entry required. Approver sign-off required. Evidence retained. Part G required at all stages. |
+| Lite | Complete Parts A, C, and F minimum. Others optional but recommended. Part G optional at all stages. Part H optional. |
+| Product | Complete all eight parts. Record the log entry. Part G required at Stages 4+. Part H required at Stages 6+. |
+| Enterprise | Complete all eight parts. Log entry required. Approver sign-off required. Evidence retained. Part G required at all stages. Part H required at Stages 6+. |
 
 ---
 
@@ -199,7 +218,7 @@ Run this protocol instead of (not in addition to) the normal Challenge Gate when
    - Is this still true? (Check facts, not just format.)
    - Has anything external changed that invalidates this?
    - Are the dependencies and tools referenced here still current? (Use `programstart research --status` and check the KB.)
-3. **Run a full Challenge Gate (all 7 parts) for the transition into the next stage.** This replaces the normal gate — it does not add to it.
+3. **Run a full Challenge Gate (all 8 parts) for the transition into the next stage.** This replaces the normal gate — it does not add to it.
 4. **Record a Re-Entry row in the Challenge Gate Log** with the note: `RE-ENTRY after [N] weeks — prior stages re-validated`. Then run `programstart advance --system programbuild` to re-sync workflow state to the correct stage.
 5. **If any prior stage output is stale:** Update that output before proceeding. Record the update in `DECISION_LOG.md`.
 6. **If a kill criterion became true during the pause:** Stop. Record the finding. Do not resume.
@@ -217,7 +236,7 @@ Run the Re-Entry Protocol from PROGRAMBUILD_CHALLENGE_GATE.md.
    Flag any that have been superseded, deprecated, or had breaking changes.
 3. Run `programstart research --status` and report any overdue research tracks.
 4. Re-read FEASIBILITY.md kill criteria. Any now true?
-5. Run the full 7-part Challenge Gate for the next stage transition.
+5. Run the full 8-part Challenge Gate for the next stage transition.
 6. Produce the Re-Entry log entry.
 7. Recommend: resume, resume with updates, or stop.
 ```
@@ -238,14 +257,14 @@ Context:
 - The inputs block and scope are in PROGRAMBUILD.md and REQUIREMENTS.md.
 - The decision log is in DECISION_LOG.md.
 
-For each of the 7 parts (Kill Criteria, Assumption Decay, Scope Integrity, Skipped Work, Blast Radius, Decision Reversals, Dependency Health):
+For each of the 8 parts (Kill Criteria, Assumption Decay, Scope Integrity, Skipped Work, Blast Radius, Decision Reversals, Dependency Health, Architecture Alignment):
 1. Ask the questions.
 2. Challenge vague or dismissive answers.
 3. If a red flag appears, name it explicitly and recommend an action.
 4. Do not let "it's probably fine" pass as an answer.
 5. For Part G, use the KB (config/knowledge-base.json) and `programstart research --status` as primary sources.
 
-After all 7 parts:
+After all 8 parts:
 - Produce the one-line log entry.
 - State clearly: proceed, proceed with conditions, or stop.
 - If stopping, explain exactly what must be resolved first.

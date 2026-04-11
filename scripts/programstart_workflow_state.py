@@ -78,6 +78,46 @@ def preflight_problems(registry: dict[str, Any], system: str) -> list[str]:
     problems: list[str] = []
     problems.extend(programstart_validate.validate_required_files(registry, system))
     problems.extend(programstart_validate.validate_metadata(registry, system))
+
+
+def _check_challenge_gate_log(active_step: str) -> str | None:
+    """Return a warning message if no Challenge Gate log entry covers *active_step* as 'From Stage'.
+
+    Returns ``None`` when a matching row is found or the gate file does not exist.
+    """
+    gate_path = workspace_path("PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md")
+    if not gate_path.exists():
+        return None
+    try:
+        text = gate_path.read_text(encoding="utf-8")
+    except OSError:
+        return None
+    # Normalise the step name for fuzzy matching (e.g. "inputs_and_mode_selection" or
+    # "Inputs and Mode Selection" should both match the From Stage column).
+    normalised = active_step.replace("_", " ").lower().strip()
+    in_log_table = False
+    for line in text.splitlines():
+        stripped = line.strip()
+        if stripped.startswith("| From Stage"):
+            in_log_table = True
+            continue
+        if in_log_table and stripped.startswith("|---"):
+            continue
+        if in_log_table and stripped.startswith("|"):
+            # Extract first cell (From Stage).
+            cells = [c.strip() for c in stripped.split("|")]
+            # cells[0] is '' (before first |), cells[1] is From Stage.
+            if len(cells) >= 2:
+                from_stage = cells[1].replace("_", " ").lower().strip()
+                if from_stage == normalised:
+                    return None  # Found a matching row.
+        elif in_log_table and not stripped.startswith("|"):
+            in_log_table = False
+    return (
+        f"No Challenge Gate log entry found for stage '{active_step}'. "
+        "Run the Challenge Gate protocol and record the result before advancing. "
+        "Use --skip-gate-check to bypass this warning."
+    )
     problems.extend(programstart_validate.validate_workflow_state(registry, system))
     if system == "programbuild":
         problems.extend(programstart_validate.validate_authority_sync(registry))
@@ -226,6 +266,11 @@ def main() -> int:
         action="store_true",
         help="Skip validation and drift preflight checks before advancing.",
     )
+    advance_parser.add_argument(
+        "--skip-gate-check",
+        action="store_true",
+        help="Skip Challenge Gate log entry check before advancing.",
+    )
 
     snapshot_parser = subparsers.add_parser("snapshot", help="Save a timestamped copy of current workflow state.")
     snapshot_parser.add_argument("--label", default="", help="Optional label for the snapshot.")
@@ -339,6 +384,11 @@ def main() -> int:
                 print("     If you have genuinely completed this stage and the check is a false positive,")
                 print("     use --skip-preflight and document the reason in DECISION_LOG.md.")
                 return 1
+        # Challenge Gate log check (programbuild only, warning not blocking).
+        if system == "programbuild" and not getattr(args, "skip_gate_check", False):
+            gate_warning = _check_challenge_gate_log(active_step)
+            if gate_warning:
+                print(clr_yellow(f"⚠  {gate_warning}"))
         if dry_run:
             print(f"[dry-run] Would mark {system} '{active_step}' completed (decision={args.decision!r}, date={args.date!r})")
             if current_index + 1 < len(steps):

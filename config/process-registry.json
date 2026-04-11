@@ -141,6 +141,7 @@
       ".github/prompts/propagate-canonical-change.prompt.md",
       ".github/prompts/implement-gameplan-phase1.prompt.md",
       ".github/prompts/implement-gameplan-phase2.prompt.md",
+      ".github/prompts/product-jit-check.prompt.md",
       ".github/instructions/conventional-commits.instructions.md",
       ".gitlint",
       "scripts/check_commit_msg.py",
@@ -520,6 +521,30 @@
       ],
       "require_authority_when_dependents_change": true,
       "description": "Nox sessions, editor tasks, and the JIT source-of-truth protocol instruction file must stay aligned. When any of the three authority files change, review the others for alignment before updating copilot-instructions.md, QUICKSTART.md, or README.md."
+    },
+    {
+      "name": "architecture_decision_alignment",
+      "system": "programbuild",
+      "authority_files": [
+        "PROGRAMBUILD/ARCHITECTURE.md"
+      ],
+      "dependent_files": [
+        "PROGRAMBUILD/DECISION_LOG.md"
+      ],
+      "require_authority_when_dependents_change": false,
+      "description": "When ARCHITECTURE.md contracts change, DECISION_LOG.md should be reviewed for a corresponding entry. Decisions can be added independently, but architecture changes without a logged decision may indicate undocumented drift."
+    },
+    {
+      "name": "requirements_test_alignment",
+      "system": "programbuild",
+      "authority_files": [
+        "PROGRAMBUILD/REQUIREMENTS.md"
+      ],
+      "dependent_files": [
+        "PROGRAMBUILD/TEST_STRATEGY.md"
+      ],
+      "require_authority_when_dependents_change": true,
+      "description": "Test strategy must stay aligned with requirements. When requirements change, review TEST_STRATEGY.md for coverage gaps. When TEST_STRATEGY.md changes, confirm the change is driven by a requirements update."
     }
   ],
   "metadata_rules": {

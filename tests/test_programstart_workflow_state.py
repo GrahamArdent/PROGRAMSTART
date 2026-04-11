@@ -12,7 +12,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from scripts.programstart_common import load_registry
-from scripts.programstart_workflow_state import main, print_state, system_is_optional_and_absent
+from scripts.programstart_workflow_state import main, print_state, system_is_optional_and_absent, _check_challenge_gate_log
 
 
 def test_system_is_optional_and_absent(monkeypatch) -> None:
@@ -143,6 +143,7 @@ def test_main_advance_writes_next_step(capsys, monkeypatch) -> None:
         lambda _registry, _system: ["inputs_and_mode_selection", "feasibility"],
     )
     monkeypatch.setattr("scripts.programstart_workflow_state.preflight_problems", lambda _registry, _system: [])
+    monkeypatch.setattr("scripts.programstart_workflow_state._check_challenge_gate_log", lambda _step: None)
     monkeypatch.setattr(
         "scripts.programstart_workflow_state.save_workflow_state", lambda _registry, _system, value: saved.update(value)
     )
@@ -173,6 +174,7 @@ def test_main_advance_keeps_existing_next_step_status(capsys, monkeypatch) -> No
         lambda _registry, _system: ["inputs_and_mode_selection", "feasibility"],
     )
     monkeypatch.setattr("scripts.programstart_workflow_state.preflight_problems", lambda _registry, _system: [])
+    monkeypatch.setattr("scripts.programstart_workflow_state._check_challenge_gate_log", lambda _step: None)
     monkeypatch.setattr(
         "scripts.programstart_workflow_state.save_workflow_state", lambda _registry, _system, value: saved.update(value)
     )
@@ -259,3 +261,91 @@ def test_main_set_rejects_unknown_step(monkeypatch) -> None:
     )
     with pytest.raises(SystemExit):
         main()
+
+
+# --- Challenge Gate log check tests ---
+
+
+def test_check_challenge_gate_log_missing_file(monkeypatch, tmp_path) -> None:
+    """When the gate file does not exist, return None (no warning)."""
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workspace_path",
+        lambda p: tmp_path / p,
+    )
+    assert _check_challenge_gate_log("inputs_and_mode_selection") is None
+
+
+def test_check_challenge_gate_log_matching_entry(monkeypatch, tmp_path) -> None:
+    """When a matching From Stage row exists, return None."""
+    gate = tmp_path / "PROGRAMBUILD" / "PROGRAMBUILD_CHALLENGE_GATE.md"
+    gate.parent.mkdir(parents=True)
+    gate.write_text(
+        "### Challenge Gate Log\n\n"
+        "| From Stage | To Stage | Date | Proceed? | Notes |\n"
+        "|---|---|---|---|---|\n"
+        "| inputs_and_mode_selection | feasibility | 2026-04-11 | Yes | clean |\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workspace_path",
+        lambda p: tmp_path / p,
+    )
+    assert _check_challenge_gate_log("inputs_and_mode_selection") is None
+
+
+def test_check_challenge_gate_log_no_matching_entry(monkeypatch, tmp_path) -> None:
+    """When no matching row exists, return a warning string."""
+    gate = tmp_path / "PROGRAMBUILD" / "PROGRAMBUILD_CHALLENGE_GATE.md"
+    gate.parent.mkdir(parents=True)
+    gate.write_text(
+        "### Challenge Gate Log\n\n"
+        "| From Stage | To Stage | Date | Proceed? | Notes |\n"
+        "|---|---|---|---|---|\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workspace_path",
+        lambda p: tmp_path / p,
+    )
+    result = _check_challenge_gate_log("inputs_and_mode_selection")
+    assert result is not None
+    assert "No Challenge Gate log entry" in result
+    assert "--skip-gate-check" in result
+
+
+def test_advance_dry_run_shows_gate_warning(capsys, monkeypatch, tmp_path) -> None:
+    """During dry-run the gate warning appears but advance still proceeds."""
+    gate = tmp_path / "PROGRAMBUILD" / "PROGRAMBUILD_CHALLENGE_GATE.md"
+    gate.parent.mkdir(parents=True)
+    gate.write_text(
+        "### Challenge Gate Log\n\n"
+        "| From Stage | To Stage | Date | Proceed? |\n"
+        "|---|---|---|---|\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workspace_path",
+        lambda p: tmp_path / p,
+    )
+    state = {
+        "active_stage": "inputs_and_mode_selection",
+        "stages": {
+            "inputs_and_mode_selection": {"status": "in_progress", "signoff": {"decision": "", "date": "", "notes": ""}},
+            "feasibility": {"status": "planned", "signoff": {"decision": "", "date": "", "notes": ""}},
+        },
+    }
+    monkeypatch.setattr("scripts.programstart_workflow_state.load_workflow_state", lambda _r, _s: state)
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workflow_active_step",
+        lambda _r, _s, _state=None: "inputs_and_mode_selection",
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workflow_steps",
+        lambda _r, _s: ["inputs_and_mode_selection", "feasibility"],
+    )
+    monkeypatch.setattr("sys.argv", ["ws", "advance", "--system", "programbuild", "--dry-run"])
+    result = main()
+    out = capsys.readouterr().out
+    assert result == 0
+    assert "No Challenge Gate log entry" in out
+    assert "Would advance" in out

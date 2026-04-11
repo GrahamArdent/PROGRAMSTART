@@ -1069,3 +1069,89 @@ def test_validate_main_all_includes_bootstrap_assets(capsys, monkeypatch) -> Non
     out = capsys.readouterr().out
     assert result == 1
     assert "bootstrap gap" in out
+
+
+# ---------- ADR coverage ----------
+
+
+_DECISION_LOG_TEMPLATE = """\
+# DECISION_LOG.md
+
+## Decision Register
+
+| ID | Date | Stage | Decision | Status | Replaces | Owner | Related file |
+|---|---|---|---|---|---|---|---|
+{rows}
+
+## Decision Details
+"""
+
+
+def test_adr_coverage_no_warning_when_adr_references_decision(tmp_path, monkeypatch) -> None:
+    log = _DECISION_LOG_TEMPLATE.format(
+        rows="| DEC-001 | 2026-01-01 | inputs | Adopt foo | ACTIVE | — | Solo | foo.py |"
+    )
+    (tmp_path / "PROGRAMBUILD").mkdir()
+    (tmp_path / "PROGRAMBUILD" / "DECISION_LOG.md").write_text(log, encoding="utf-8")
+    decisions = tmp_path / "docs" / "decisions"
+    decisions.mkdir(parents=True)
+    (decisions / "0001-adopt-foo.md").write_text("Relates to DEC-001\n", encoding="utf-8")
+    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+
+    warnings = validate.validate_adr_coverage({})
+    assert warnings == []
+
+
+def test_adr_coverage_warning_when_no_matching_adr(tmp_path, monkeypatch) -> None:
+    log = _DECISION_LOG_TEMPLATE.format(
+        rows="| DEC-002 | 2026-01-01 | inputs | Use bar | ACTIVE | — | Solo | bar.py |"
+    )
+    (tmp_path / "PROGRAMBUILD").mkdir()
+    (tmp_path / "PROGRAMBUILD" / "DECISION_LOG.md").write_text(log, encoding="utf-8")
+    decisions = tmp_path / "docs" / "decisions"
+    decisions.mkdir(parents=True)
+    # ADR exists but references a different decision
+    (decisions / "0001-something-else.md").write_text("Unrelated content\n", encoding="utf-8")
+    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+
+    warnings = validate.validate_adr_coverage({})
+    assert len(warnings) == 1
+    assert "DEC-002" in warnings[0]
+    assert "ACTIVE" in warnings[0]
+
+
+def test_adr_coverage_ignores_superseded_decisions(tmp_path, monkeypatch) -> None:
+    log = _DECISION_LOG_TEMPLATE.format(
+        rows="| DEC-003 | 2026-01-01 | inputs | Old choice | SUPERSEDED | — | Solo | old.py |"
+    )
+    (tmp_path / "PROGRAMBUILD").mkdir()
+    (tmp_path / "PROGRAMBUILD" / "DECISION_LOG.md").write_text(log, encoding="utf-8")
+    (tmp_path / "docs" / "decisions").mkdir(parents=True)
+    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+
+    warnings = validate.validate_adr_coverage({})
+    assert warnings == []
+
+
+def test_adr_coverage_no_warning_when_no_decisions(tmp_path, monkeypatch) -> None:
+    log = _DECISION_LOG_TEMPLATE.format(rows="")
+    (tmp_path / "PROGRAMBUILD").mkdir()
+    (tmp_path / "PROGRAMBUILD" / "DECISION_LOG.md").write_text(log, encoding="utf-8")
+    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+
+    warnings = validate.validate_adr_coverage({})
+    assert warnings == []
+
+
+def test_adr_coverage_no_warning_when_decision_log_missing(tmp_path, monkeypatch) -> None:
+    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+    warnings = validate.validate_adr_coverage({})
+    assert warnings == []
+
+
+def test_validate_main_adr_coverage_passes(capsys, monkeypatch) -> None:
+    monkeypatch.setattr("sys.argv", ["programstart_validate.py", "--check", "adr-coverage"])
+    result = validate.main()
+    out = capsys.readouterr().out
+    assert result == 0
+    assert "Validation passed" in out

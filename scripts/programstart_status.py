@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import argparse
+import os
+from datetime import date, datetime
 
 try:
     from .programstart_common import (
@@ -10,6 +12,7 @@ try:
         parse_markdown_table,
         warn_direct_script_invocation,
         workflow_active_step,
+        workflow_entry_key,
         workspace_path,
     )
 except ImportError:  # pragma: no cover - standalone script execution fallback
@@ -20,6 +23,7 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
         parse_markdown_table,
         warn_direct_script_invocation,
         workflow_active_step,
+        workflow_entry_key,
         workspace_path,
     )
 
@@ -133,19 +137,67 @@ def summarize_userjourney(registry: dict) -> list[str]:
     return lines
 
 
+def staleness_warnings(
+    registry: dict,
+    system: str,
+    *,
+    today: date | None = None,
+) -> list[str]:
+    """Return staleness warnings if the most recent signoff date is old."""
+    state = load_workflow_state(registry, system)
+    entry_key = workflow_entry_key(system)
+    entries = state.get(entry_key, {})
+    latest: date | None = None
+    for _step, entry in entries.items():
+        raw = (entry.get("signoff") or {}).get("date", "")
+        if not raw:
+            continue
+        try:
+            d = datetime.strptime(raw, "%Y-%m-%d").date()
+        except ValueError:
+            continue
+        if latest is None or d > latest:
+            latest = d
+    if latest is None:
+        return []
+    ref = today or date.today()
+    gap = (ref - latest).days
+    lines: list[str] = []
+    if gap > 56:
+        lines.append(
+            f"\033[33m⚠  Last {system} state change was {gap} days ago. "
+            "Strongly consider running the Re-Entry Protocol "
+            "(PROGRAMBUILD_CHALLENGE_GATE.md) before continuing.\033[0m"
+        )
+    elif gap > 28:
+        lines.append(
+            f"\033[33m⚠  Last {system} state change was {gap} days ago. "
+            "Consider running the Re-Entry Protocol "
+            "(PROGRAMBUILD_CHALLENGE_GATE.md) before continuing.\033[0m"
+        )
+    return lines
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Summarize current PROGRAMSTART workflow status.")
     parser.add_argument("--system", choices=["all", "programbuild", "userjourney"], default="all")
+    parser.add_argument("--skip-staleness-check", action="store_true", help="Suppress staleness warnings.")
     args = parser.parse_args()
+
+    skip_staleness = args.skip_staleness_check or os.environ.get("PROGRAMSTART_SKIP_STALENESS", "") == "1"
 
     registry = load_registry()
     output: list[str] = []
     if args.system in {"all", "programbuild"}:
         output.extend(summarize_programbuild(registry))
+        if not skip_staleness:
+            output.extend(staleness_warnings(registry, "programbuild"))
     if args.system == "all":
         output.append("")
     if args.system in {"all", "userjourney"}:
         output.extend(summarize_userjourney(registry))
+        if not skip_staleness and system_is_attached(registry, "userjourney"):
+            output.extend(staleness_warnings(registry, "userjourney"))
 
     print("\n".join(output))
     return 0

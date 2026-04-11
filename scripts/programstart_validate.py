@@ -549,6 +549,42 @@ def validate_rule_enforcement(registry: dict) -> list[str]:
     return problems
 
 
+def validate_adr_coverage(registry: dict) -> list[str]:
+    """Warn about DECISION_LOG.md entries that have no corresponding ADR in docs/decisions/."""
+    warnings: list[str] = []
+    decision_log = workspace_path("PROGRAMBUILD/DECISION_LOG.md")
+    if not decision_log.exists():
+        return warnings
+    text = decision_log.read_text(encoding="utf-8")
+    rows = parse_markdown_table(text, "Decision Register")
+    if not rows:
+        return warnings
+
+    decisions_dir = workspace_path("docs/decisions")
+    adr_texts: dict[str, str] = {}
+    if decisions_dir.exists():
+        for adr_path in decisions_dir.glob("*.md"):
+            if adr_path.name == "README.md":
+                continue
+            adr_texts[adr_path.name] = adr_path.read_text(encoding="utf-8")
+
+    for row in rows:
+        dec_id = row.get("ID", "").strip()
+        status = row.get("Status", "").strip().upper()
+        if status not in ("ACTIVE", "ACCEPTED"):
+            continue
+        if not dec_id:
+            continue
+        # Check if any ADR references this decision ID
+        found = any(dec_id in content for content in adr_texts.values())
+        if not found:
+            decision_text = row.get("Decision", "").strip()
+            warnings.append(
+                f"{dec_id} ({decision_text[:60]}) is {status} but has no corresponding ADR in docs/decisions/"
+            )
+    return warnings
+
+
 def validate_test_coverage(registry: dict) -> list[str]:
     """Warn about scripts/programstart_*.py files that have no matching tests/test_programstart_*.py."""
     warnings: list[str] = []
@@ -630,6 +666,7 @@ def main() -> int:
             "repo-boundary",
             "rule-enforcement",
             "test-coverage",
+            "adr-coverage",
         ],
         default="all",
     )
@@ -661,6 +698,7 @@ def main() -> int:
         warnings.extend(metadata_warnings(registry, sf))
         warnings.extend(reference_warnings)
         warnings.extend(validate_test_coverage(registry))
+        warnings.extend(validate_adr_coverage(registry))
     elif args.check == "required-files":
         problems.extend(validate_registry(registry))
         problems.extend(validate_required_files(registry, sf))
@@ -683,6 +721,8 @@ def main() -> int:
         problems.extend(validate_rule_enforcement(registry))
     elif args.check == "test-coverage":
         warnings.extend(validate_test_coverage(registry))
+    elif args.check == "adr-coverage":
+        warnings.extend(validate_adr_coverage(registry))
     else:
         problems.extend(validate_engineering_ready(registry))
 

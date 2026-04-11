@@ -15,7 +15,8 @@ nox.options.sessions = [
     "typecheck",
     "tests",
     "validate",
-    "smoke",
+    "smoke_readonly",
+    "smoke_isolated",
     "docs",
 ]
 
@@ -117,10 +118,11 @@ def validate(session: nox.Session) -> None:
 
 
 @nox.session(reuse_venv=True)
-def smoke(session: nox.Session) -> None:
+def smoke_readonly(session: nox.Session) -> None:
+    """Read-only root-workspace smoke — safe to run anytime, no mutations."""
     install_dev(session)
     session.run("python", "-m", "playwright", "install", "chromium")
-    session.run("python", "scripts/programstart_dashboard_smoke.py")
+    session.run("python", "scripts/programstart_dashboard_smoke_readonly.py")
     session.run(
         "python",
         "scripts/programstart_dashboard_browser_smoke.py",
@@ -136,6 +138,13 @@ def smoke(session: nox.Session) -> None:
         )
     else:
         session.log("Skipping dashboard golden screenshots on Windows; baselines are CI/Linux calibrated.")
+
+
+@nox.session(reuse_venv=True)
+def smoke_isolated(session: nox.Session) -> None:
+    """Mutating smoke in bootstrapped temp workspaces — exercises POST routes and factory."""
+    install_dev(session)
+    session.run("python", "-m", "playwright", "install", "chromium")
 
     destination = ROOT / ".tmp_nox_bootstrap"
     if destination.exists():
@@ -199,6 +208,13 @@ def smoke(session: nox.Session) -> None:
 
 
 @nox.session(reuse_venv=True)
+def smoke(session: nox.Session) -> None:
+    """Run all smoke tiers (read-only + isolated). Backwards compatible."""
+    for name in ("smoke_readonly", "smoke_isolated"):
+        session.notify(name)
+
+
+@nox.session(reuse_venv=True)
 def docs(session: nox.Session) -> None:
     install_dev(session)
     session.run("mkdocs", "build", "--strict")
@@ -206,8 +222,15 @@ def docs(session: nox.Session) -> None:
 
 @nox.session(reuse_venv=True)
 def gate_safe(session: nox.Session) -> None:
-    """Run a local pre-merge confidence gate (no mutating smoke)."""
-    for name in ("lint", "typecheck", "tests", "validate", "docs"):
+    """Run a local pre-merge confidence gate (includes read-only smoke)."""
+    for name in ("lint", "typecheck", "tests", "validate", "smoke_readonly", "docs"):
+        session.notify(name)
+
+
+@nox.session(reuse_venv=True)
+def quick(session: nox.Session) -> None:
+    """Fast feedback — lint + typecheck only (~10s)."""
+    for name in ("lint", "typecheck"):
         session.notify(name)
 
 

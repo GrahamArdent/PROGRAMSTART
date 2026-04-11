@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import subprocess
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any, cast
 
@@ -119,7 +119,7 @@ def snapshot_state(registry: dict[str, Any], label: str = "") -> Path:
     """Save a timestamped copy of all workflow state files."""
     snap_dir = _snapshot_dir(registry)
     snap_dir.mkdir(parents=True, exist_ok=True)
-    timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    timestamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     suffix = f"_{label}" if label else ""
     snap_name = f"state_{timestamp}{suffix}.json"
     snap_path = snap_dir / snap_name
@@ -353,7 +353,7 @@ def main() -> int:
             "decision": args.decision,
             "date": args.date,
             "notes": args.notes,
-            **( {"commit_hash": _commit_hash} if _commit_hash else {} ),
+            **({"commit_hash": _commit_hash} if _commit_hash else {}),
         }
         current_index = steps.index(active_step)
         if current_index + 1 < len(steps):

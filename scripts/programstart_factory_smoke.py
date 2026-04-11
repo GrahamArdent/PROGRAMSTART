@@ -220,11 +220,7 @@ def smoke_api_server_starter(repo_root: Path) -> None:
             ".",
             "python",
             "-c",
-            (
-                "from app.main import app; "
-                "import uvicorn; "
-                f"uvicorn.run(app, host='127.0.0.1', port={port}, log_level='warning')"
-            ),
+            (f"from app.main import app; import uvicorn; uvicorn.run(app, host='127.0.0.1', port={port}, log_level='warning')"),
         ],
         starter_root,
     )

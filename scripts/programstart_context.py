@@ -3,6 +3,7 @@ from __future__ import annotations
 # ruff: noqa: I001
 
 import argparse
+import functools
 import json
 import re
 from pathlib import Path
@@ -128,9 +129,14 @@ def extract_documents(registry: dict[str, Any]) -> list[dict[str, Any]]:
     return [record for record in records if record is not None]
 
 
+@functools.lru_cache(maxsize=1)
 def load_knowledge_base() -> dict[str, Any]:
     knowledge_base_path = workspace_path("config/knowledge-base.json")
-    return KnowledgeBase.model_validate(json.loads(knowledge_base_path.read_text(encoding="utf-8"))).model_dump()
+    payload = json.loads(knowledge_base_path.read_text(encoding="utf-8"))
+    retrieval_guidance = dict(payload.get("retrieval_guidance", {}))
+    if not payload.get("prompt_engineering_guidance") and retrieval_guidance.get("prompt_engineering_guidance"):
+        payload["prompt_engineering_guidance"] = retrieval_guidance.get("prompt_engineering_guidance", {})
+    return KnowledgeBase.model_validate(payload).model_dump()
 
 
 def extract_programbuild_concerns() -> list[dict[str, Any]]:

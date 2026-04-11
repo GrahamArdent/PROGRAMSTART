@@ -5,6 +5,8 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
+import warnings
 from fnmatch import fnmatch
 from pathlib import Path
 from typing import Any
@@ -72,6 +74,10 @@ def detect_workspace_root(start_dir: Path | None = None) -> Path:
         if (candidate / "config" / "process-registry.json").exists():
             return candidate
 
+    warnings.warn(
+        f"detect_workspace_root: no process-registry.json found from {current}; falling back to PACKAGE_ROOT ({PACKAGE_ROOT})",
+        stacklevel=2,
+    )
     return PACKAGE_ROOT
 
 
@@ -88,7 +94,11 @@ def load_json(path: Path) -> dict[str, Any]:
 
 def write_json(path: Path, content: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(content, indent=2) + "\n", encoding="utf-8")
+    payload = json.dumps(content, indent=2) + "\n"
+    with tempfile.NamedTemporaryFile("w", encoding="utf-8", delete=False, dir=path.parent) as handle:
+        handle.write(payload)
+        temp_path = Path(handle.name)
+    temp_path.replace(path)
 
 
 def workspace_path(relative_path: str) -> Path:
@@ -280,6 +290,7 @@ def git_changed_files() -> list[str]:
     commands = [
         ["git", "diff", "--name-only", "--cached"],
         ["git", "diff", "--name-only"],
+        ["git", "ls-files", "--others", "--exclude-standard"],  # untracked new files
     ]
     changed: list[str] = []
 

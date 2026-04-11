@@ -201,6 +201,33 @@
       "isBackground": true,
       "presentation": { "reveal": "always", "panel": "dedicated", "clear": true, "focus": true },
       "problemMatcher": []
+    },
+    {
+      "label": "PROGRAMSTART: Drift Check",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "programstart", "drift"],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "PROGRAMSTART: JIT Check",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "programstart", "guide", "--system", "programbuild"],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "dependsOn": ["PROGRAMSTART: Drift Check"],
+      "dependsOrder": "sequence"
+    },
+    {
+      "label": "PROGRAMSTART: Safe Gate",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "nox", "-s", "lint", "typecheck", "tests", "validate", "docs"],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "focus": true },
+      "group": "test",
+      "problemMatcher": []
     }
   ]
 }

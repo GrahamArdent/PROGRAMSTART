@@ -33,6 +33,8 @@ def main() -> int:
         ["clean", "--dry-run"],
         ["validate", "--check", "workflow-state"],
         ["guide", "--system", "programbuild"],
+        ["guide", "--system", "userjourney"],
+        ["drift"],
         ["state", "show"],
         ["next"],
     ]

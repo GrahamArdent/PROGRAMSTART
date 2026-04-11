@@ -58,8 +58,10 @@ Or use **VS Code**: press `Ctrl+Shift+P` → **Tasks: Run Task** → **PROGRAMST
 ```
   ┌─────────────────────────────────────────────┐
   │  pb next          ← "where am I & what now?" │
+  │  pb drift         ← "is my baseline clean?"  │
   │  (do the work in the listed authority files) │
   │  pb validate      ← "is everything correct?" │
+  │  pb drift         ← "did I introduce drift?" │
   │  pb advance       ← "I'm done, move forward" │
   └─────────────────────────────────────────────┘
 ```

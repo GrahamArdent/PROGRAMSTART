@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import logging
 import math
 import os
 import re
@@ -663,15 +664,63 @@ class RAGAssistant:
         results = self.searcher.search(question, top_k=top_k, method=method, alpha=alpha)
         context = self._format_context(results)
         system_message = _SYSTEM_PROMPT.format(context=context)
-
-        return self._generate_structured(system_message, question)
+        try:
+            return self._validate_cited_sources(self._generate_structured(system_message, question), results)
+        except Exception as exc:
+            logging.getLogger(__name__).warning(
+                "Structured generation failed (%s: %s), falling back to plain LiteLLM",
+                type(exc).__name__,
+                exc,
+            )
+            fallback = self._generate_litellm(system_message, question)
+            return RAGQueryResponse(
+                answer=fallback,
+                reasoning="Structured output was unavailable; returned validated plain-text fallback.",
+                confidence="low",
+                cited_sources=[],
+            )
 
     def _generate(self, system_message: str, user_message: str) -> str | RAGQueryResponse:
         """Call the configured LLM via LiteLLM (unified multi-provider interface)."""
         try:
             return self._generate_structured(system_message, user_message)
-        except Exception:
+        except Exception as exc:
+            logging.getLogger(__name__).warning(
+                "Structured generation failed (%s: %s), falling back to plain LiteLLM",
+                type(exc).__name__,
+                exc,
+            )
             return self._generate_litellm(system_message, user_message)
+
+    def _validate_cited_sources(
+        self,
+        response: RAGQueryResponse,
+        results: list[SearchResult],
+    ) -> RAGQueryResponse:
+        valid_sources: dict[str, str] = {}
+        for item in results:
+            canonical = f"{item.source_type}: {item.source_id}"
+            compact = f"{item.source_type}:{item.source_id}"
+            valid_sources[canonical.lower()] = canonical
+            valid_sources[compact.lower()] = canonical
+
+        filtered_sources: list[str] = []
+        for item in response.cited_sources:
+            key = str(item).strip().lower()
+            if key in valid_sources:
+                filtered_sources.append(valid_sources[key])
+        if len(filtered_sources) == len(response.cited_sources):
+            return response
+        return response.model_copy(
+            update={
+                "cited_sources": filtered_sources,
+                "confidence": "low",
+                "reasoning": (
+                    (response.reasoning + " ").strip()
+                    + "Some cited sources were discarded because they were not present in the retrieved context."
+                ).strip(),
+            }
+        )
 
     def _generate_litellm(self, system_message: str, user_message: str) -> str:
         """Call the configured LLM via LiteLLM's unified API."""

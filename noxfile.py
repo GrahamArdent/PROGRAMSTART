@@ -103,6 +103,7 @@ def tests(session: nox.Session) -> None:
 @nox.session(reuse_venv=True)
 def validate(session: nox.Session) -> None:
     install_dev(session)
+    session.run("programstart", "drift")
     session.run("programstart", "validate", "--check", "all")
     session.run("programstart", "prompt-eval", "--json")
     session.run("programstart", "validate", "--check", "authority-sync")
@@ -112,6 +113,7 @@ def validate(session: nox.Session) -> None:
     session.run("programstart", "guide", "--system", "programbuild")
     session.run("programstart", "guide", "--system", "userjourney")
     session.run("programstart", "state", "show")
+    session.run("programstart", "drift")
 
 
 @nox.session(reuse_venv=True)
@@ -265,7 +267,9 @@ def clean(session: nox.Session) -> None:
         ".nox",
         ".tmp_nox_bootstrap",
         ".tmp_nox_create",
+        ".tmp_nox_factory_smoke",
         ".tmp_dist_smoke",
+        ".tmp_factory_smoke",
     ]
     for name in targets:
         target = ROOT / name

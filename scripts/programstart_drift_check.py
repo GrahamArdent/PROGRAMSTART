@@ -61,8 +61,13 @@ def evaluate_drift(registry: dict[str, Any], changed_files: list[str], system: s
             notes.append(f"{rule['name']}: authority files changed without dependent files: {', '.join(touched_authority)}")
 
     systems = [system] if system else ["programbuild", "userjourney"]
+    is_template_repo = registry.get("workspace", {}).get("repo_role") == "template_repo"
     for system_name in systems:
         if system_is_optional_and_absent(registry, system_name):
+            continue
+        if is_template_repo:
+            # Template repos are maintained at any stage — step-order gating does not apply.
+            # Sync rules (authority/dependent file pairing) still apply.
             continue
         state = load_workflow_state(registry, system_name)
         config = workflow_state_config(registry, system_name)

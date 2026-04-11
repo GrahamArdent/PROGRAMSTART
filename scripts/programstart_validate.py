@@ -149,9 +149,17 @@ def validate_authority_sync(registry: dict) -> list[str]:
 
     known_programbuild_files = set(expected_control) | set(expected_outputs)
     for row in parse_markdown_table(canonical_text, "3. Authority Map"):
-        target = Path(clean_md(row.get("Canonical file", ""))).name
-        if target and target not in known_programbuild_files:
-            problems.append(f"PROGRAMBUILD_CANONICAL.md authority map references unknown file: {target}")
+        raw = clean_md(row.get("Canonical file", ""))
+        if not raw:
+            continue
+        if "/" in raw:
+            # Cross-system or docs/ path — validate it exists rather than checking set membership
+            if not workspace_path(raw).exists():
+                problems.append(f"PROGRAMBUILD_CANONICAL.md authority map references missing file: {raw}")
+        else:
+            target = Path(raw).name
+            if target and target not in known_programbuild_files:
+                problems.append(f"PROGRAMBUILD_CANONICAL.md authority map references unknown file: {target}")
 
     declared_files_by_system = {
         "programbuild": set(registry["systems"]["programbuild"]["control_files"])
@@ -328,6 +336,7 @@ def expected_bootstrap_assets() -> set[str]:
         ".editorconfig",
         ".gitattributes",
         ".gitignore",
+        ".gitlint",
         ".pre-commit-config.yaml",
         ".python-version",
         ".yamllint",
@@ -349,6 +358,7 @@ def expected_bootstrap_assets() -> set[str]:
     patterns = [
         "config/*.json",
         "docs/*.md",
+        "docs/decisions/*.md",
         "scripts/*.py",
         "schemas/*.json",
         "tests/*.py",
@@ -367,11 +377,14 @@ def expected_bootstrap_assets() -> set[str]:
 
 def validate_bootstrap_assets(registry: dict) -> list[str]:
     problems: list[str] = []
-    assets = set(cast(list[str], registry.get("workspace", {}).get("bootstrap_assets", [])))
-    missing = sorted(expected_bootstrap_assets() - assets)
+    workspace = registry.get("workspace", {})
+    assets = set(cast(list[str], workspace.get("bootstrap_assets", [])))
+    uj_assets = set(cast(list[str], workspace.get("userjourney_bootstrap_assets", [])))
+    all_assets = assets | uj_assets
+    missing = sorted(expected_bootstrap_assets() - all_assets)
     if missing:
         problems.append("bootstrap_assets is missing current workspace files: " + ", ".join(missing))
-    for asset in sorted(assets):
+    for asset in sorted(all_assets):
         if not workspace_path(asset).exists():
             problems.append(f"bootstrap_assets references missing workspace file: {asset}")
     return problems
@@ -392,10 +405,164 @@ def validate_repo_boundary_policy(registry: dict) -> list[str]:
         text = path.read_text(encoding="utf-8")
         for required_phrase in cast(list[str], rule.get("must_contain", [])):
             if required_phrase not in text:
-                problems.append(
-                    f"repo boundary policy phrase missing from {relative_path}: {required_phrase}"
-                )
+                problems.append(f"repo boundary policy phrase missing from {relative_path}: {required_phrase}")
     return problems
+
+
+def validate_rule_enforcement(registry: dict) -> list[str]:
+    """Verify that structural rules from the authority model are enforced.
+
+    Checks:
+    1. Every authority file referenced in sync_rules exists.
+    2. Every system has a canonical authority doc and a file index.
+    3. Agent definitions reference valid systems.
+    4. Health probe, assessment prompts, and enforcement scripts exist.
+    5. All CLI commands in registry are covered by the dispatch.
+    """
+    problems: list[str] = []
+
+    # 1. Sync rule files exist (skip rules for optional absent systems)
+    for rule in registry.get("sync_rules", []):
+        rule_system = rule.get("system", "")
+        if rule_system and rule_system in registry.get("systems", {}) and system_is_optional_and_absent(registry, rule_system):
+            continue
+        for f in rule.get("authority_files", []):
+            if not workspace_path(f).exists():
+                problems.append(f"sync_rules[{rule['name']}]: authority file missing: {f}")
+        for f in rule.get("dependent_files", []):
+            if not workspace_path(f).exists():
+                problems.append(f"sync_rules[{rule['name']}]: dependent file missing: {f}")
+
+    # 2. Every system has canonical + index
+    for system_name, sys_cfg in registry.get("systems", {}).items():
+        root = sys_cfg.get("root", "")
+        if system_is_optional_and_absent(registry, system_name):
+            continue
+        if system_name == "programbuild":
+            canonical = workspace_path(f"{root}/PROGRAMBUILD_CANONICAL.md")
+            file_index = workspace_path(f"{root}/PROGRAMBUILD_FILE_INDEX.md")
+            if not canonical.exists():
+                problems.append(f"{system_name}: missing PROGRAMBUILD_CANONICAL.md")
+            if not file_index.exists():
+                problems.append(f"{system_name}: missing PROGRAMBUILD_FILE_INDEX.md")
+
+    # 3. Required assessment infrastructure
+    required_infra = [
+        "scripts/programstart_health_probe.py",
+        "scripts/programstart_validate.py",
+        "scripts/programstart_drift_check.py",
+        "scripts/programstart_status.py",
+        "scripts/programstart_workflow_state.py",
+        "scripts/check_commit_msg.py",
+        ".github/prompts/audit-process-drift.prompt.md",
+        ".github/prompts/programstart-cross-stage-validation.prompt.md",
+        ".github/prompts/programstart-stage-transition.prompt.md",
+        ".github/prompts/programstart-what-next.prompt.md",
+        ".github/prompts/propagate-canonical-change.prompt.md",
+        ".github/instructions/source-of-truth.instructions.md",
+        ".github/instructions/conventional-commits.instructions.md",
+        ".github/agents/architecture-security.agent.md",
+        ".github/agents/discovery-scoping.agent.md",
+        ".github/agents/quality-release.agent.md",
+        "docs/decisions/README.md",
+    ]
+    for path in required_infra:
+        if not workspace_path(path).exists():
+            problems.append(f"missing required assessment infrastructure: {path}")
+
+    # 4. Instruction files exist and reference valid patterns
+    instruction_files = [
+        ".github/instructions/programbuild.instructions.md",
+        ".github/instructions/userjourney.instructions.md",
+    ]
+    for path in instruction_files:
+        if not workspace_path(path).exists():
+            problems.append(f"missing instruction file: {path}")
+
+    # 6. bootstrap_assets coverage: any new instruction file, decision record, or
+    #    enforcement script (check_*.py) in bootstrap_assets must appear in either
+    #    required_infra or a sync_rule. This catches new governance files added to
+    #    bootstrap without being wired into enforcement.
+    bootstrap_assets = set(cast(list[str], registry.get("workspace", {}).get("bootstrap_assets", [])))
+    all_synced_files: set[str] = set()
+    for rule in registry.get("sync_rules", []):
+        all_synced_files.update(rule.get("authority_files", []))
+        all_synced_files.update(rule.get("dependent_files", []))
+    required_infra_set = set(required_infra)
+    known_instruction_files = set(instruction_files)
+    covered = required_infra_set | all_synced_files | known_instruction_files
+
+    def _should_cover(asset: str) -> bool:
+        """Return True if this asset type requires enforcement coverage."""
+        if asset.startswith(".github/instructions/") and asset.endswith(".md"):
+            return True
+        if asset.startswith("docs/decisions/") and asset.endswith(".md"):
+            return True
+        name = Path(asset).name
+        if asset.startswith("scripts/") and name.startswith("check_") and name.endswith(".py"):
+            return True
+        return False
+
+    for asset in sorted(bootstrap_assets):
+        if not _should_cover(asset):
+            continue
+        if asset not in covered:
+            problems.append(
+                f"bootstrap_assets governance file not covered by required_infra, instruction_files, or any sync_rule: {asset}"
+            )
+
+    # 7. ADR number sequencing — docs/decisions/NNNN-title.md must be sequential with no gaps
+    decisions_dir = workspace_path("docs/decisions")
+    if decisions_dir.exists():
+        adr_numbers: list[int] = []
+        for adr_path in sorted(decisions_dir.glob("*.md")):
+            if adr_path.name == "README.md":
+                continue
+            m = re.match(r"^(\d{4})-", adr_path.name)
+            if m:
+                adr_numbers.append(int(m.group(1)))
+            else:
+                problems.append(f"docs/decisions file does not follow NNNN-title.md naming: {adr_path.name}")
+        for expected, actual in enumerate(sorted(adr_numbers), start=1):
+            if actual != expected:
+                problems.append(f"docs/decisions ADR sequence gap: expected {expected:04d} but found {actual:04d}")
+                break
+
+    # 5. copilot-instructions.md references key rules
+    copilot_path = workspace_path(".github/copilot-instructions.md")
+    if copilot_path.exists():
+        text = copilot_path.read_text(encoding="utf-8")
+        required_phrases = [
+            "Repository boundary is explicit",
+            "process-registry.json",
+            "scripts/programstart_status.py",
+            "scripts/programstart_validate.py",
+            "scripts/programstart_drift_check.py",
+            "Conventional Commits",
+            "docs/decisions",
+            "RFC 2119",
+        ]
+        for phrase in required_phrases:
+            if phrase not in text:
+                problems.append(f"copilot-instructions.md missing rule reference: {phrase}")
+
+    return problems
+
+
+def validate_test_coverage(registry: dict) -> list[str]:
+    """Warn about scripts/programstart_*.py files that have no matching tests/test_programstart_*.py."""
+    warnings: list[str] = []
+    scripts_dir = workspace_path("scripts")
+    tests_dir = workspace_path("tests")
+    if not scripts_dir.exists():
+        return warnings
+    for script in sorted(scripts_dir.glob("programstart_*.py")):
+        if script.name.endswith("_smoke.py"):
+            continue
+        test_file = tests_dir / f"test_{script.name}"
+        if not test_file.exists():
+            warnings.append(f"no test file for script: scripts/{script.name} (expected tests/test_{script.name})")
+    return warnings
 
 
 def validate_workflow_state(registry: dict, system_filter: str | None = None) -> list[str]:
@@ -426,6 +593,8 @@ def validate_workflow_state(registry: dict, system_filter: str | None = None) ->
             status = str(entry.get("status", "planned"))
             decision = str(cast(dict[str, Any], entry.get("signoff", {})).get("decision", ""))
             signoff_date = str(cast(dict[str, Any], entry.get("signoff", {})).get("date", ""))
+            if status not in {"planned", "in_progress", "completed", "blocked"}:
+                problems.append(f"{system} step '{step}' has invalid status value: '{status}'")
             if status == "in_progress":
                 in_progress_steps.append(step)
             if index < active_index and status != "completed":
@@ -434,6 +603,8 @@ def validate_workflow_state(registry: dict, system_filter: str | None = None) ->
                 problems.append(f"{system} step '{step}' is missing approved sign-off before active step '{active_step}'")
             if index < active_index and not signoff_date:
                 problems.append(f"{system} step '{step}' is missing sign-off date before active step '{active_step}'")
+            if signoff_date and not re.fullmatch(r"\d{4}-\d{2}-\d{2}", signoff_date):
+                problems.append(f"{system} step '{step}' has invalid signoff date format: '{signoff_date}' (expected YYYY-MM-DD)")
             if index > active_index and status == "completed":
                 problems.append(f"{system} step '{step}' cannot be completed after the active step '{active_step}'")
         if len(in_progress_steps) != 1:
@@ -457,6 +628,8 @@ def main() -> int:
             "planning-references",
             "bootstrap-assets",
             "repo-boundary",
+            "rule-enforcement",
+            "test-coverage",
         ],
         default="all",
     )
@@ -479,12 +652,15 @@ def main() -> int:
         problems.extend(validate_workflow_state(registry, sf))
         problems.extend(validate_authority_sync(registry))
         problems.extend(validate_repo_boundary_policy(registry))
+        problems.extend(validate_rule_enforcement(registry))
+        problems.extend(validate_bootstrap_assets(registry))
         if enforce_engineering_ready_in_all(registry, sf):
             problems.extend(validate_engineering_ready(registry))
         reference_problems, reference_warnings = validate_planning_references(registry)
         problems.extend(reference_problems)
         warnings.extend(metadata_warnings(registry, sf))
         warnings.extend(reference_warnings)
+        warnings.extend(validate_test_coverage(registry))
     elif args.check == "required-files":
         problems.extend(validate_registry(registry))
         problems.extend(validate_required_files(registry, sf))
@@ -503,6 +679,10 @@ def main() -> int:
         problems.extend(validate_repo_boundary_policy(registry))
     elif args.check == "bootstrap-assets":
         problems.extend(validate_bootstrap_assets(registry))
+    elif args.check == "rule-enforcement":
+        problems.extend(validate_rule_enforcement(registry))
+    elif args.check == "test-coverage":
+        warnings.extend(validate_test_coverage(registry))
     else:
         problems.extend(validate_engineering_ready(registry))
 

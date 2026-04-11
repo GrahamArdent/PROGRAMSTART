@@ -29,6 +29,23 @@ REQUIRED_USERJOURNEY_FILES = {
 }
 
 
+def _copy_userjourney_bootstrap_assets(destination_root: Path, registry: dict) -> None:
+    """Copy USERJOURNEY-specific test files listed in the registry into the project repo."""
+    template_root = workspace_path(".")
+    for relative_path in registry.get("workspace", {}).get("userjourney_bootstrap_assets", []):
+        source = template_root / relative_path
+        if not source.exists():
+            continue
+        dest = destination_root / relative_path
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            content = source.read_text(encoding="utf-8")
+            with dest.open("w", encoding="utf-8", newline="\n") as handle:
+                handle.write(content)
+        except UnicodeDecodeError:
+            shutil.copy2(source, dest)
+
+
 def resolve_attachment_source(source: str) -> Path:
     candidate = Path(source).expanduser().resolve()
     if candidate.is_dir() and candidate.name == "USERJOURNEY":
@@ -71,6 +88,9 @@ def attach_userjourney(
     state_path = destination / "USERJOURNEY_STATE.json"
     if not state_path.exists():
         write_json(state_path, create_default_workflow_state(registry, "userjourney"))
+
+    # Copy USERJOURNEY-specific test and asset files into the project repo
+    _copy_userjourney_bootstrap_assets(destination_root, registry)
 
 
 def main(argv: list[str] | None = None) -> int:

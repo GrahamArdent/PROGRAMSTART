@@ -1,5 +1,5 @@
 {
-  "version": "2026-03-31",
+  "version": "2026-04-11",
   "workspace": {
     "name": "PROGRAMSTART",
     "description": "Reusable PROGRAMBUILD template workspace with optional project attachments such as USERJOURNEY.",
@@ -54,6 +54,7 @@
       "scripts/programstart_dashboard_golden.py",
       "scripts/programstart_dashboard_browser_smoke.py",
       "scripts/programstart_dashboard_smoke.py",
+      "scripts/programstart_dashboard_smoke_readonly.py",
       "scripts/programstart_dist_smoke.py",
       "scripts/programstart_drift_check.py",
       "scripts/programstart_factory_smoke.py",
@@ -68,6 +69,7 @@
       "scripts/programstart_recommend.py",
       "scripts/programstart_starter_scaffold.py",
       "scripts/programstart_serve.py",
+      "scripts/programstart_health_probe.py",
       "scripts/programstart_status.py",
       "scripts/programstart_step_guide.py",
       "scripts/programstart_validate.py",
@@ -80,6 +82,7 @@
       "tests/test_programstart_checklist_progress.py",
       "tests/test_programstart_cli.py",
       "tests/test_programstart_clean.py",
+      "tests/test_audit_fixes.py",
       "tests/test_programstart_command_registry.py",
       "tests/test_programstart_common.py",
       "tests/test_programstart_context.py",
@@ -98,8 +101,17 @@
       "tests/test_programstart_retrieval.py",
       "tests/test_rag_integration.py",
       "tests/test_programstart_serve.py",
+      "tests/test_programstart_health_probe.py",
+      "tests/test_serve_endpoints.py",
       "tests/test_programstart_status.py",
       "tests/test_programstart_step_guide.py",
+      "tests/test_programstart_attach.py",
+      "tests/test_programstart_bootstrap.py",
+      "tests/test_programstart_create.py",
+      "tests/test_programstart_impact.py",
+      "tests/test_programstart_init.py",
+      "tests/test_programstart_recommend.py",
+      "tests/test_programstart_starter_scaffold.py",
       "tests/test_programstart_validate.py",
       "tests/test_programstart_workflow_state.py",
       ".github/copilot-instructions.md",
@@ -109,6 +121,7 @@
       ".github/dependabot.yml",
       ".github/instructions/programbuild.instructions.md",
       ".github/instructions/userjourney.instructions.md",
+      ".github/instructions/source-of-truth.instructions.md",
       ".github/ISSUE_TEMPLATE/bug_report.md",
       ".github/ISSUE_TEMPLATE/feature_request.md",
       ".github/PULL_REQUEST_TEMPLATE.md",
@@ -121,9 +134,26 @@
       ".github/prompts/audit-process-drift.prompt.md",
       ".github/prompts/programstart-stage-guide.prompt.md",
       ".github/prompts/programstart-what-next.prompt.md",
+      ".github/prompts/programstart-cross-stage-validation.prompt.md",
+      ".github/prompts/programstart-stage-transition.prompt.md",
       ".github/prompts/start-programstart-project.prompt.md",
       ".github/prompts/userjourney-next-slice.prompt.md",
+      ".github/prompts/propagate-canonical-change.prompt.md",
+      ".github/prompts/implement-gameplan-phase1.prompt.md",
+      ".github/instructions/conventional-commits.instructions.md",
+      ".gitlint",
+      "scripts/check_commit_msg.py",
+      "docs/decisions/README.md",
+      "docs/decisions/0001-use-programbuild-workflow-system.md",
+      "docs/decisions/0002-adopt-conventional-commits.md",
+      "docs/decisions/0003-adopt-madr-for-architecture-decisions.md",
       ".vscode/tasks.json"
+    ],
+    "userjourney_bootstrap_assets": [
+      "tests/test_programstart_dashboard_userjourney.py",
+      "tests/test_programstart_status_userjourney.py",
+      "tests/test_programstart_workflow_state_userjourney.py",
+      "tests/test_programstart_project_factory_userjourney.py"
     ]
   },
   "validation": {
@@ -171,7 +201,10 @@
         "PROGRAMBUILD/PROGRAMBUILD_ENTERPRISE.md",
         "PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md",
         "PROGRAMBUILD/PROGRAMBUILD_SUBAGENTS.md",
-        "PROGRAMBUILD/PROGRAMBUILD_CHECKLIST.md"
+        "PROGRAMBUILD/PROGRAMBUILD_CHECKLIST.md",
+        "PROGRAMBUILD/PROGRAMBUILD_IDEA_INTAKE.md",
+        "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
+        "PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md"
       ],
       "output_files": [
         "PROGRAMBUILD/FEASIBILITY.md",
@@ -298,7 +331,10 @@
         "PROGRAMBUILD/PROGRAMBUILD_ADR_TEMPLATE.md",
         "PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md",
         "PROGRAMBUILD/PROGRAMBUILD_SUBAGENTS.md",
-        "PROGRAMBUILD/PROGRAMBUILD_CHECKLIST.md"
+        "PROGRAMBUILD/PROGRAMBUILD_CHECKLIST.md",
+        "PROGRAMBUILD/PROGRAMBUILD_IDEA_INTAKE.md",
+        "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
+        "PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md"
       ],
       "require_authority_when_dependents_change": true,
       "description": "Changes to Program Build control behavior should update the canonical and file index docs in the same change."
@@ -357,7 +393,7 @@
         "PROGRAMBUILD/PROGRAMBUILD_PRODUCT.md",
         "PROGRAMBUILD/PROGRAMBUILD_ENTERPRISE.md"
       ],
-      "require_authority_when_dependents_change": false,
+      "require_authority_when_dependents_change": true,
       "description": "Variant playbooks should stay compatible with the master playbook stage order and naming rules. Review PROGRAMBUILD.md when variants change."
     },
     {
@@ -440,12 +476,49 @@
       "description": "Implementation sequence changes must start in the tracker and then flow to slices, file checklist, and delivery gameplan."
     },
     {
-      "name": "cross_system_isolation",
+      "name": "decisions_adr_template",
       "system": "cross",
-      "authority_files": [],
-      "dependent_files": [],
+      "authority_files": [
+        "PROGRAMBUILD/PROGRAMBUILD_ADR_TEMPLATE.md"
+      ],
+      "dependent_files": [
+        "docs/decisions/README.md",
+        "docs/decisions/0001-use-programbuild-workflow-system.md",
+        "docs/decisions/0002-adopt-conventional-commits.md",
+        "docs/decisions/0003-adopt-madr-for-architecture-decisions.md"
+      ],
       "require_authority_when_dependents_change": false,
-      "description": "PROGRAMBUILD and USERJOURNEY are separate systems. USERJOURNEY may be absent because it is an optional project attachment. Changes inside one system should not silently alter the other. If a cross-system change is needed, update both systems explicitly and note the dependency in config/process-registry.json."
+      "description": "ADR format is defined in PROGRAMBUILD_ADR_TEMPLATE.md. New decision records in docs/decisions/ must follow that template. If the template format changes, review existing records for alignment."
+    },
+    {
+      "name": "commit_enforcement_alignment",
+      "system": "cross",
+      "authority_files": [
+        ".github/instructions/conventional-commits.instructions.md"
+      ],
+      "dependent_files": [
+        "scripts/check_commit_msg.py",
+        ".pre-commit-config.yaml",
+        ".gitlint"
+      ],
+      "require_authority_when_dependents_change": true,
+      "description": "The Conventional Commits instruction file is the authority for commit message rules. Changes to the enforcement script, pre-commit config, or gitlint spec must be consistent with it."
+    },
+    {
+      "name": "automation_gate_jit_alignment",
+      "system": "cross",
+      "authority_files": [
+        "noxfile.py",
+        ".vscode/tasks.json",
+        ".github/instructions/source-of-truth.instructions.md"
+      ],
+      "dependent_files": [
+        ".github/copilot-instructions.md",
+        "QUICKSTART.md",
+        "README.md"
+      ],
+      "require_authority_when_dependents_change": true,
+      "description": "Nox sessions, editor tasks, and the JIT source-of-truth protocol instruction file must stay aligned. When any of the three authority files change, review the others for alignment before updating copilot-instructions.md, QUICKSTART.md, or README.md."
     }
   ],
   "metadata_rules": {
@@ -544,7 +617,9 @@
       ],
       "prompts": [
         ".github/prompts/start-programstart-project.prompt.md",
-        ".github/prompts/programstart-stage-guide.prompt.md"
+        ".github/prompts/programstart-stage-guide.prompt.md",
+        ".github/prompts/programstart-stage-transition.prompt.md",
+        ".github/prompts/programstart-cross-stage-validation.prompt.md"
       ]
     },
     "programbuild": {
@@ -554,7 +629,9 @@
           "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
           "PROGRAMBUILD/PROGRAMBUILD_FILE_INDEX.md",
           "PROGRAMBUILD/PROGRAMBUILD.md",
-          "PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md"
+          "PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md",
+          "PROGRAMBUILD/PROGRAMBUILD_IDEA_INTAKE.md",
+          "PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md"
         ],
         "scripts": [
           "scripts/programstart_step_guide.py",
@@ -571,14 +648,17 @@
         "files": [
           "PROGRAMBUILD/FEASIBILITY.md",
           "PROGRAMBUILD/DECISION_LOG.md",
-          "PROGRAMBUILD/PROGRAMBUILD_CHECKLIST.md"
+          "PROGRAMBUILD/PROGRAMBUILD_CHECKLIST.md",
+          "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
+          "PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md"
         ],
         "scripts": [
           "scripts/programstart_validate.py",
           "scripts/programstart_step_guide.py"
         ],
         "prompts": [
-          ".github/prompts/programstart-stage-guide.prompt.md"
+          ".github/prompts/programstart-stage-guide.prompt.md",
+          ".github/prompts/programstart-stage-transition.prompt.md"
         ]
       },
       "research": {
@@ -586,14 +666,17 @@
         "files": [
           "PROGRAMBUILD/RESEARCH_SUMMARY.md",
           "PROGRAMBUILD/DECISION_LOG.md",
-          "PROGRAMBUILD/RISK_SPIKES.md"
+          "PROGRAMBUILD/RISK_SPIKES.md",
+          "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
+          "PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md"
         ],
         "scripts": [
           "scripts/programstart_validate.py",
           "scripts/programstart_step_guide.py"
         ],
         "prompts": [
-          ".github/prompts/programstart-stage-guide.prompt.md"
+          ".github/prompts/programstart-stage-guide.prompt.md",
+          ".github/prompts/programstart-stage-transition.prompt.md"
         ]
       },
       "requirements_and_ux": {
@@ -601,14 +684,17 @@
         "files": [
           "PROGRAMBUILD/REQUIREMENTS.md",
           "PROGRAMBUILD/USER_FLOWS.md",
-          "PROGRAMBUILD/DECISION_LOG.md"
+          "PROGRAMBUILD/DECISION_LOG.md",
+          "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
+          "PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md"
         ],
         "scripts": [
           "scripts/programstart_drift_check.py",
           "scripts/programstart_step_guide.py"
         ],
         "prompts": [
-          ".github/prompts/programstart-stage-guide.prompt.md"
+          ".github/prompts/programstart-stage-guide.prompt.md",
+          ".github/prompts/programstart-stage-transition.prompt.md"
         ]
       },
       "architecture_and_risk_spikes": {
@@ -616,14 +702,17 @@
         "files": [
           "PROGRAMBUILD/ARCHITECTURE.md",
           "PROGRAMBUILD/RISK_SPIKES.md",
-          "PROGRAMBUILD/DECISION_LOG.md"
+          "PROGRAMBUILD/DECISION_LOG.md",
+          "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
+          "PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md"
         ],
         "scripts": [
           "scripts/programstart_drift_check.py",
           "scripts/programstart_step_guide.py"
         ],
         "prompts": [
-          ".github/prompts/programstart-stage-guide.prompt.md"
+          ".github/prompts/programstart-stage-guide.prompt.md",
+          ".github/prompts/programstart-stage-transition.prompt.md"
         ]
       },
       "scaffold_and_guardrails": {
@@ -631,7 +720,9 @@
         "files": [
           "PROGRAMBUILD/ARCHITECTURE.md",
           "PROGRAMBUILD/TEST_STRATEGY.md",
-          "PROGRAMBUILD/PROGRAMBUILD_CHECKLIST.md"
+          "PROGRAMBUILD/PROGRAMBUILD_CHECKLIST.md",
+          "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
+          "PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md"
         ],
         "scripts": [
           "scripts/programstart_drift_check.py",
@@ -639,7 +730,8 @@
           "scripts/programstart_step_guide.py"
         ],
         "prompts": [
-          ".github/prompts/programstart-stage-guide.prompt.md"
+          ".github/prompts/programstart-stage-guide.prompt.md",
+          ".github/prompts/programstart-stage-transition.prompt.md"
         ]
       },
       "test_strategy": {
@@ -654,7 +746,8 @@
           "scripts/programstart_step_guide.py"
         ],
         "prompts": [
-          ".github/prompts/programstart-stage-guide.prompt.md"
+          ".github/prompts/programstart-stage-guide.prompt.md",
+          ".github/prompts/programstart-stage-transition.prompt.md"
         ]
       },
       "implementation_loop": {
@@ -672,16 +765,22 @@
           "Run 'programstart status' if you are unsure what to do next — it will surface the active stage and any blockers."
         ],
         "files": [
+          "PROGRAMBUILD/ARCHITECTURE.md",
+          "PROGRAMBUILD/REQUIREMENTS.md",
+          "PROGRAMBUILD/USER_FLOWS.md",
           "PROGRAMBUILD/TEST_STRATEGY.md",
           "PROGRAMBUILD/DECISION_LOG.md",
-          "PROGRAMBUILD/PROGRAMBUILD_CHECKLIST.md"
+          "PROGRAMBUILD/PROGRAMBUILD_CHECKLIST.md",
+          "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
+          "PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md"
         ],
         "scripts": [
           "scripts/programstart_checklist_progress.py",
           "scripts/programstart_step_guide.py"
         ],
         "prompts": [
-          ".github/prompts/programstart-stage-guide.prompt.md"
+          ".github/prompts/programstart-stage-guide.prompt.md",
+          ".github/prompts/programstart-stage-transition.prompt.md"
         ]
       },
       "release_readiness": {
@@ -696,7 +795,8 @@
           "scripts/programstart_step_guide.py"
         ],
         "prompts": [
-          ".github/prompts/programstart-stage-guide.prompt.md"
+          ".github/prompts/programstart-stage-guide.prompt.md",
+          ".github/prompts/programstart-stage-transition.prompt.md"
         ]
       },
       "audit_and_drift_control": {
@@ -712,7 +812,8 @@
         ],
         "prompts": [
           ".github/prompts/audit-process-drift.prompt.md",
-          ".github/prompts/programstart-stage-guide.prompt.md"
+          ".github/prompts/programstart-stage-guide.prompt.md",
+          ".github/prompts/programstart-stage-transition.prompt.md"
         ]
       },
       "post_launch_review": {
@@ -727,8 +828,22 @@
           "scripts/programstart_refresh_integrity.py"
         ],
         "prompts": [
-          ".github/prompts/programstart-stage-guide.prompt.md"
+          ".github/prompts/programstart-stage-guide.prompt.md",
+          ".github/prompts/programstart-stage-transition.prompt.md"
         ]
+      },
+      "stage_subagents": {
+        "inputs_and_mode_selection": ["Product Analyst"],
+        "feasibility": ["Research Scout", "Product Analyst"],
+        "research": ["Research Scout"],
+        "requirements_and_ux": ["Product Analyst", "UX Flow Designer"],
+        "architecture_and_risk_spikes": ["Architecture Reviewer", "Risk Spike Agent", "Security Reviewer"],
+        "scaffold_and_guardrails": ["Contract Auditor"],
+        "test_strategy": ["Test Planner"],
+        "implementation_loop": ["Contract Auditor", "Test Planner"],
+        "release_readiness": ["Release Readiness Reviewer"],
+        "audit_and_drift_control": ["Contract Auditor", "Security Reviewer"],
+        "post_launch_review": ["Release Readiness Reviewer"]
       }
     },
     "userjourney": {

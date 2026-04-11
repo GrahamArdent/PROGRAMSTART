@@ -7,16 +7,18 @@ from pathlib import Path
 from typing import Any
 
 try:
-    from .programstart_common import load_registry, warn_direct_script_invocation, workspace_path
+    from .programstart_common import ROOT, load_registry, warn_direct_script_invocation, workspace_path
     from .programstart_create import default_github_repo_name, render_factory_plan
+    from .programstart_health_probe import probe_target
     from .programstart_recommend import build_recommendation
     from .programstart_starter_scaffold import build_starter_scaffold_plan
 except ImportError:  # pragma: no cover - standalone script execution fallback
     from programstart_create import default_github_repo_name, render_factory_plan  # type: ignore
+    from programstart_health_probe import probe_target  # type: ignore
     from programstart_recommend import build_recommendation  # type: ignore
     from programstart_starter_scaffold import build_starter_scaffold_plan  # type: ignore
 
-    from programstart_common import load_registry, warn_direct_script_invocation, workspace_path  # type: ignore
+    from programstart_common import ROOT, load_registry, warn_direct_script_invocation, workspace_path  # type: ignore
 
 
 @dataclass(slots=True)
@@ -40,6 +42,9 @@ class PromptEvalScenario:
     required_warning_domains: list[str] = field(default_factory=list)
     expected_starter_files: list[str] = field(default_factory=list)
     required_starter_terms: list[str] = field(default_factory=list)
+    required_prompt_sections: list[str] = field(default_factory=list)
+    forbidden_prompt_terms: list[str] = field(default_factory=list)
+    require_prompt_guidance: bool = True
 
 
 def load_scenarios() -> list[PromptEvalScenario]:
@@ -112,6 +117,20 @@ def evaluate_scenario(scenario: PromptEvalScenario) -> dict[str, Any]:
         if term not in recommendation.generated_prompt:
             failures.append(f"generated prompt missing term: {term}")
 
+    for section in scenario.required_prompt_sections:
+        if section not in recommendation.generated_prompt:
+            failures.append(f"generated prompt missing section marker: {section}")
+
+    for term in scenario.forbidden_prompt_terms:
+        if term in recommendation.generated_prompt:
+            failures.append(f"generated prompt contains forbidden term: {term}")
+
+    if scenario.require_prompt_guidance:
+        if not recommendation.prompt_principles:
+            failures.append("prompt guidance missing principles")
+        if not recommendation.prompt_patterns:
+            failures.append("prompt guidance missing patterns")
+
     for section in scenario.required_plan_sections:
         if section not in plan_text:
             failures.append(f"factory plan missing section: {section}")
@@ -138,6 +157,9 @@ def evaluate_scenario(scenario: PromptEvalScenario) -> dict[str, Any]:
         + (1 if scenario.expected_confidence else 0)
         + len(scenario.required_warning_domains)
         + len(scenario.required_prompt_terms)
+        + len(scenario.required_prompt_sections)
+        + len(scenario.forbidden_prompt_terms)
+        + (2 if scenario.require_prompt_guidance else 0)
         + len(scenario.required_plan_sections)
         + len(scenario.expected_starter_files)
         + len(scenario.required_starter_terms)
@@ -156,12 +178,124 @@ def evaluate_scenario(scenario: PromptEvalScenario) -> dict[str, Any]:
     }
 
 
+def evaluate_assessment_tools(registry: dict[str, Any]) -> list[dict[str, Any]]:
+    """Run assessment tool coverage checks against the current workspace."""
+    results: list[dict[str, Any]] = []
+
+    # 1. Health probe produces valid report
+    probe_failures: list[str] = []
+    report = probe_target(ROOT)
+    if not report.probe_time:
+        probe_failures.append("probe_time is empty")
+    if not report.registry_version:
+        probe_failures.append("registry_version is empty")
+    if not report.overall_health:
+        probe_failures.append("overall_health is empty")
+    if report.overall_health not in {"healthy", "warnings", "degraded", "critical"}:
+        probe_failures.append(f"unexpected health classification: {report.overall_health}")
+    if not report.systems:
+        probe_failures.append("no systems found in probe report")
+    for sys_report in report.systems:
+        if not sys_report.system:
+            probe_failures.append("system name is empty in system report")
+        if sys_report.total_control_files == 0 and sys_report.system == "programbuild":
+            probe_failures.append("programbuild has 0 total control files")
+    checks = 6 + len(report.systems)
+    results.append(
+        {
+            "name": "assessment_health_probe",
+            "passed": not probe_failures,
+            "score": checks - len(probe_failures),
+            "score_total": checks,
+            "failures": probe_failures,
+        }
+    )
+
+    # 2. Validate script covers all check types
+    validate_failures: list[str] = []
+    expected_checks = [
+        "required-files",
+        "metadata",
+        "workflow-state",
+        "authority-sync",
+        "planning-references",
+        "bootstrap-assets",
+        "repo-boundary-policy",
+    ]
+    try:
+        from . import programstart_validate as pv
+    except ImportError:
+        import programstart_validate as pv  # type: ignore[no-redef]
+    for check_name in expected_checks:
+        fn_name = f"validate_{check_name.replace('-', '_')}"
+        if not hasattr(pv, fn_name):
+            validate_failures.append(f"validate script missing function: {fn_name}")
+    results.append(
+        {
+            "name": "assessment_validate_coverage",
+            "passed": not validate_failures,
+            "score": len(expected_checks) - len(validate_failures),
+            "score_total": len(expected_checks),
+            "failures": validate_failures,
+        }
+    )
+
+    # 3. Assessment prompts exist
+    prompt_failures: list[str] = []
+    required_prompts = [
+        ".github/prompts/audit-process-drift.prompt.md",
+        ".github/prompts/programstart-cross-stage-validation.prompt.md",
+        ".github/prompts/programstart-what-next.prompt.md",
+        ".github/prompts/programstart-stage-transition.prompt.md",
+        ".github/prompts/propagate-canonical-change.prompt.md",
+    ]
+    for prompt_path in required_prompts:
+        if not workspace_path(prompt_path).exists():
+            prompt_failures.append(f"missing assessment prompt: {prompt_path}")
+    results.append(
+        {
+            "name": "assessment_prompt_coverage",
+            "passed": not prompt_failures,
+            "score": len(required_prompts) - len(prompt_failures),
+            "score_total": len(required_prompts),
+            "failures": prompt_failures,
+        }
+    )
+
+    # 4. Agent definitions exist
+    agent_failures: list[str] = []
+    required_agents = [
+        ".github/agents/architecture-security.agent.md",
+        ".github/agents/discovery-scoping.agent.md",
+        ".github/agents/quality-release.agent.md",
+    ]
+    for agent_path in required_agents:
+        if not workspace_path(agent_path).exists():
+            agent_failures.append(f"missing agent definition: {agent_path}")
+    results.append(
+        {
+            "name": "assessment_agent_coverage",
+            "passed": not agent_failures,
+            "score": len(required_agents) - len(agent_failures),
+            "score_total": len(required_agents),
+            "failures": agent_failures,
+        }
+    )
+
+    return results
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Evaluate generated kickoff prompts and starter scaffolds against fixed scenarios."
     )
     parser.add_argument("--scenario", action="append", help="Optional scenario name filter. Can be used multiple times.")
     parser.add_argument("--json", action="store_true", help="Emit machine-readable JSON.")
+    parser.add_argument(
+        "--include-assessment",
+        action="store_true",
+        help="Also run assessment tool coverage checks (health probe, validate, drift).",
+    )
     args = parser.parse_args(argv)
 
     registry = load_registry()
@@ -171,6 +305,12 @@ def main(argv: list[str] | None = None) -> int:
         scenarios = [scenario for scenario in scenarios if scenario.name in allowed]
 
     results = [evaluate_scenario(scenario) for scenario in scenarios]
+
+    assessment_results: list[dict[str, Any]] = []
+    if args.include_assessment:
+        assessment_results = evaluate_assessment_tools(registry)
+        results.extend(assessment_results)
+
     passed = sum(1 for item in results if item["passed"])
     payload = {
         "workspace": registry.get("workspace", {}).get("name", "PROGRAMSTART"),

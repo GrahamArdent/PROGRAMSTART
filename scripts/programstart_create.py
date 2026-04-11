@@ -132,7 +132,9 @@ def upsert_env_lines(existing_text: str, env_values: dict[str, str]) -> str:
     return "\n".join(lines).rstrip() + "\n"
 
 
-def hydrate_starter_env_example(destination_root: Path, starter_plan: StarterScaffoldPlan, services: list[dict[str, object]]) -> Path | None:
+def hydrate_starter_env_example(
+    destination_root: Path, starter_plan: StarterScaffoldPlan, services: list[dict[str, object]]
+) -> Path | None:
     env_values: dict[str, str] = {}
     for service in services:
         env_values = merge_env_values(env_values, {key: str(value) for key, value in mapping_value(service.get("env")).items()})
@@ -377,9 +379,7 @@ def provision_requested_services(
         if normalized == "supabase":
             organization_id = supabase_org_id or os.environ.get("SUPABASE_ORGANIZATION_ID", "").strip()
             if not organization_id:
-                raise RuntimeError(
-                    "Supabase provisioning requires --supabase-org-id or SUPABASE_ORGANIZATION_ID."
-                )
+                raise RuntimeError("Supabase provisioning requires --supabase-org-id or SUPABASE_ORGANIZATION_ID.")
             region = supabase_region or os.environ.get("SUPABASE_REGION", "us-east-1").strip() or "us-east-1"
             results.append(
                 provision_supabase_project(
@@ -444,36 +444,53 @@ def render_factory_plan(
     prompt_anti_patterns = "\n".join(f"- {item}" for item in payload["prompt_anti_patterns"]) or "- none"
     stack_names = ", ".join(payload["stack_names"]) if payload["stack_names"] else "none matched current KB"
     matched_domains = "\n".join(f"- {item}" for item in payload.get("matched_domains", [])) or "- none"
-    coverage_warnings = "\n".join(
-        f"- {item['domain']}: {item['status']} | {item['gaps']}" for item in payload.get("coverage_warnings", [])
-    ) or "- none"
-    stack_evidence = "\n".join(
-        f"- {item['name']}: score={item['score']} | {'; '.join(item.get('reasons', [])[:2])}"
-        for item in payload.get("stack_evidence", [])[:5]
-    ) or "- none"
-    service_evidence = "\n".join(
-        f"- {item['name']}: score={item['score']} | {'; '.join(item.get('reasons', [])[:2])}"
-        for item in payload.get("service_evidence", [])[:5]
-    ) or "- none"
-    api_evidence = "\n".join(
-        f"- {item['name']}: score={item['score']} | {'; '.join(item.get('reasons', [])[:2])}"
-        for item in payload.get("api_evidence", [])[:5]
-    ) or "- none"
-    cli_evidence = "\n".join(
-        f"- {item['name']}: score={item['score']} | {'; '.join(item.get('reasons', [])[:2])}"
-        for item in payload.get("cli_evidence", [])[:5]
-    ) or "- none"
-    rule_evidence = "\n".join(
-        f"- {item['title']}: {item['because']} ({item['confidence']})" for item in payload.get("rule_evidence", [])[:5]
-    ) or "- none"
-    actionability_summary = "\n".join(
-        f"- {item['name']} ({item['category']}): {item['actionability']} | {item['reason']}"
-        for item in payload.get("actionability_summary", [])[:8]
-    ) or "- none"
-    alternatives = "\n".join(
-        f"- {item['item']} ({item['category']}): {item['rationale']}"
-        for item in payload.get("alternatives", [])[:4]
-    ) or "- none"
+    coverage_warnings = (
+        "\n".join(f"- {item['domain']}: {item['status']} | {item['gaps']}" for item in payload.get("coverage_warnings", []))
+        or "- none"
+    )
+    stack_evidence = (
+        "\n".join(
+            f"- {item['name']}: score={item['score']} | {'; '.join(item.get('reasons', [])[:2])}"
+            for item in payload.get("stack_evidence", [])[:5]
+        )
+        or "- none"
+    )
+    service_evidence = (
+        "\n".join(
+            f"- {item['name']}: score={item['score']} | {'; '.join(item.get('reasons', [])[:2])}"
+            for item in payload.get("service_evidence", [])[:5]
+        )
+        or "- none"
+    )
+    api_evidence = (
+        "\n".join(
+            f"- {item['name']}: score={item['score']} | {'; '.join(item.get('reasons', [])[:2])}"
+            for item in payload.get("api_evidence", [])[:5]
+        )
+        or "- none"
+    )
+    cli_evidence = (
+        "\n".join(
+            f"- {item['name']}: score={item['score']} | {'; '.join(item.get('reasons', [])[:2])}"
+            for item in payload.get("cli_evidence", [])[:5]
+        )
+        or "- none"
+    )
+    rule_evidence = (
+        "\n".join(f"- {item['title']}: {item['because']} ({item['confidence']})" for item in payload.get("rule_evidence", [])[:5])
+        or "- none"
+    )
+    actionability_summary = (
+        "\n".join(
+            f"- {item['name']} ({item['category']}): {item['actionability']} | {item['reason']}"
+            for item in payload.get("actionability_summary", [])[:8]
+        )
+        or "- none"
+    )
+    alternatives = (
+        "\n".join(f"- {item['item']} ({item['category']}): {item['rationale']}" for item in payload.get("alternatives", [])[:4])
+        or "- none"
+    )
     services_lines = "\n".join(f"- {item}" for item in services) or "- none declared"
     service_notes = "\n".join(f"- {item}" for item in payload.get("service_notes", [])) or "- none"
     cli_lines = "\n".join(f"- {item}" for item in payload.get("cli_tool_names", [])) or "- none"
@@ -585,24 +602,35 @@ def render_setup_surface(
     api_entries: list[dict[str, object]],
 ) -> str:
     matched_domains = "\n".join(f"- {item}" for item in recommendation.matched_domains) or "- none"
-    coverage_warnings = "\n".join(
-        f"- {item['domain']}: {item['status']} | {item['gaps']}" for item in recommendation.coverage_warnings
-    ) or "- none"
-    cli_evidence = "\n".join(
-        f"- {item['name']}: score={item['score']} | {'; '.join(item.get('reasons', [])[:2])}"
-        for item in recommendation.cli_evidence[:5]
-    ) or "- none"
-    api_evidence = "\n".join(
-        f"- {item['name']}: score={item['score']} | {'; '.join(item.get('reasons', [])[:2])}"
-        for item in recommendation.api_evidence[:5]
-    ) or "- none"
-    rule_evidence = "\n".join(
-        f"- {item['title']}: {item['because']} ({item['confidence']})" for item in recommendation.rule_evidence[:5]
-    ) or "- none"
-    actionability_summary = "\n".join(
-        f"- {item['name']} ({item['category']}): {item['actionability']} | {item['reason']}"
-        for item in recommendation.actionability_summary[:8]
-    ) or "- none"
+    coverage_warnings = (
+        "\n".join(f"- {item['domain']}: {item['status']} | {item['gaps']}" for item in recommendation.coverage_warnings)
+        or "- none"
+    )
+    cli_evidence = (
+        "\n".join(
+            f"- {item['name']}: score={item['score']} | {'; '.join(item.get('reasons', [])[:2])}"
+            for item in recommendation.cli_evidence[:5]
+        )
+        or "- none"
+    )
+    api_evidence = (
+        "\n".join(
+            f"- {item['name']}: score={item['score']} | {'; '.join(item.get('reasons', [])[:2])}"
+            for item in recommendation.api_evidence[:5]
+        )
+        or "- none"
+    )
+    rule_evidence = (
+        "\n".join(f"- {item['title']}: {item['because']} ({item['confidence']})" for item in recommendation.rule_evidence[:5])
+        or "- none"
+    )
+    actionability_summary = (
+        "\n".join(
+            f"- {item['name']} ({item['category']}): {item['actionability']} | {item['reason']}"
+            for item in recommendation.actionability_summary[:8]
+        )
+        or "- none"
+    )
     cli_sections: list[str] = []
     for entry in cli_entries:
         install_methods = "\n".join(f"- {item}" for item in entry.get("install_methods", [])) or "- see provider docs"
@@ -799,23 +827,39 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--product-shape", required=True, help="Product shape, for example 'web app' or 'CLI tool'.")
     parser.add_argument("--variant", choices=["lite", "product", "enterprise"], help="Override the recommended variant.")
     parser.add_argument("--need", action="append", help="Repeated capability need, for example --need rag --need agents.")
-    parser.add_argument("--service", action="append", help="Repeated external service dependency, for example --service supabase.")
+    parser.add_argument(
+        "--service", action="append", help="Repeated external service dependency, for example --service supabase."
+    )
     parser.add_argument("--regulated", action="store_true", help="Use stronger governance defaults.")
     parser.add_argument("--attach-userjourney", dest="attach_userjourney", action="store_true")
     parser.add_argument("--no-attach-userjourney", dest="attach_userjourney", action="store_false")
     parser.add_argument("--attachment-source", default="", help="USERJOURNEY source path when attaching.")
-    parser.add_argument("--github-repo", default="", help="GitHub repo name to target for this generated project, for example owner/my-new-app.")
+    parser.add_argument(
+        "--github-repo", default="", help="GitHub repo name to target for this generated project, for example owner/my-new-app."
+    )
     parser.add_argument("--github-visibility", choices=["private", "public", "internal"], default="private")
-    parser.add_argument("--create-github-repo", action="store_true", help="Create the GitHub remote for the generated project via gh.")
-    parser.add_argument("--provision-services", action="store_true", help="Provision supported external services for the generated project.")
+    parser.add_argument(
+        "--create-github-repo", action="store_true", help="Create the GitHub remote for the generated project via gh."
+    )
+    parser.add_argument(
+        "--provision-services", action="store_true", help="Provision supported external services for the generated project."
+    )
     parser.add_argument("--supabase-org-id", default="", help="Supabase organization id for hosted project provisioning.")
-    parser.add_argument("--supabase-region", default="", help="Supabase region for hosted project provisioning, for example us-east-1.")
+    parser.add_argument(
+        "--supabase-region", default="", help="Supabase region for hosted project provisioning, for example us-east-1."
+    )
     parser.add_argument("--supabase-plan", choices=["free", "pro"], default="free")
     parser.add_argument("--vercel-team-id", default="", help="Optional Vercel team id for project provisioning.")
     parser.add_argument("--vercel-team-slug", default="", help="Optional Vercel team slug for project provisioning.")
     parser.add_argument("--neon-org-id", default="", help="Optional Neon organization id for project provisioning.")
     parser.add_argument("--neon-region", default="aws-us-east-1", help="Neon region id for project provisioning.")
-    parser.add_argument("--neon-pg-version", type=int, choices=[14, 15, 16, 17], default=17, help="Neon PostgreSQL version for hosted project provisioning.")
+    parser.add_argument(
+        "--neon-pg-version",
+        type=int,
+        choices=[14, 15, 16, 17],
+        default=17,
+        help="Neon PostgreSQL version for hosted project provisioning.",
+    )
     parser.add_argument("--one-line-description", default="", help="Short project description.")
     parser.add_argument("--primary-user", default="", help="Primary user or operator.")
     parser.add_argument("--secondary-user", default="", help="Secondary user.")

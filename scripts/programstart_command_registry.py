@@ -26,6 +26,7 @@ CLI_COMMANDS: tuple[str, ...] = (
     "refresh",
     "dashboard",
     "serve",
+    "health",
 )
 
 
@@ -59,6 +60,8 @@ def dashboard_allowed_commands(python_executable: str, scripts_dir: Path) -> dic
         "status": ["status"],
         "validate": ["validate"],
         "validate.workflow-state": ["validate", "--check", "workflow-state"],
+        "validate.bootstrap-assets": ["validate", "--check", "bootstrap-assets"],
+        "validate.rule-enforcement": ["validate", "--check", "rule-enforcement"],
         "log": ["log"],
         "drift": ["drift"],
         "advance.programbuild.dry": ["advance", "--system", "programbuild", "--dry-run"],
@@ -67,6 +70,8 @@ def dashboard_allowed_commands(python_executable: str, scripts_dir: Path) -> dic
         "advance.userjourney": ["advance", "--system", "userjourney"],
         "progress": ["progress"],
         "dashboard": ["dashboard"],
+        "health": ["health"],
+        "health.json": ["health", "--json"],
     }
 
     allowed = {key: build_cli_module_command(python_executable, value) for key, value in commands.items()}

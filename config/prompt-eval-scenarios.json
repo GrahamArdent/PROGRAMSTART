@@ -10,10 +10,16 @@
       "expected_attach_userjourney": false,
       "expected_stacks": ["Pydantic", "pytest", "uv"],
       "required_prompt_terms": [
-        "Product shape: cli tool.",
-        "Variant: lite.",
-        "USERJOURNEY attached: no.",
+        "Product shape: cli tool",
+        "Variant: lite",
+        "USERJOURNEY attached: no",
         "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md"
+      ],
+      "required_prompt_sections": [
+        "## Prompt Principles",
+        "## Prompt Patterns",
+        "## Anti-Patterns",
+        "## Coverage Warnings"
       ],
       "required_plan_sections": [
         "## Selected Shape",
@@ -42,10 +48,16 @@
       "expected_attach_userjourney": false,
       "expected_stacks": ["FastAPI", "LiteLLM", "Instructor", "Temporal"],
       "required_prompt_terms": [
-        "Product shape: api service.",
-        "Variant: product.",
-        "USERJOURNEY attached: no.",
+        "Product shape: api service",
+        "Variant: product",
+        "USERJOURNEY attached: no",
         "Do not invent file lists or stage order outside the registry and authority docs."
+      ],
+      "required_prompt_sections": [
+        "## Prompt Principles",
+        "## Prompt Patterns",
+        "## Anti-Patterns",
+        "## Coverage Warnings"
       ],
       "required_plan_sections": [
         "## Selected Shape",
@@ -78,10 +90,16 @@
       "expected_attach_userjourney": true,
       "expected_stacks": ["Next.js", "Playwright", "PostgreSQL"],
       "required_prompt_terms": [
-        "Product shape: web app.",
-        "Variant: product.",
-        "USERJOURNEY attached: yes.",
+        "Product shape: web app",
+        "Variant: product",
+        "USERJOURNEY attached: yes",
         "PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md"
+      ],
+      "required_prompt_sections": [
+        "## Prompt Principles",
+        "## Prompt Patterns",
+        "## Anti-Patterns",
+        "## Coverage Warnings"
       ],
       "required_plan_sections": [
         "## Selected Shape",
@@ -117,9 +135,9 @@
       "expected_confidence": "medium",
       "required_warning_domains": ["Mobile and cross-platform apps"],
       "required_prompt_terms": [
-        "Product shape: mobile app.",
-        "Variant: product.",
-        "USERJOURNEY attached: yes."
+        "Product shape: mobile app",
+        "Variant: product",
+        "USERJOURNEY attached: yes"
       ],
       "required_plan_sections": [
         "## Selected Shape",
@@ -152,9 +170,9 @@
       "expected_domains": ["Identity, security, and regulated delivery"],
       "expected_confidence": "high",
       "required_prompt_terms": [
-        "Product shape: web app.",
-        "Variant: enterprise.",
-        "USERJOURNEY attached: yes."
+        "Product shape: web app",
+        "Variant: enterprise",
+        "USERJOURNEY attached: yes"
       ],
       "required_plan_sections": [
         "## Selected Shape",
@@ -186,9 +204,9 @@
       "expected_domains": ["Realtime collaboration, messaging, and eventing"],
       "expected_confidence": "high",
       "required_prompt_terms": [
-        "Product shape: web app.",
-        "Variant: product.",
-        "USERJOURNEY attached: yes."
+        "Product shape: web app",
+        "Variant: product",
+        "USERJOURNEY attached: yes"
       ],
       "required_plan_sections": [
         "## Selected Shape",
@@ -222,9 +240,9 @@
       "expected_domains": ["Commerce, communication, and product integrations"],
       "expected_confidence": "high",
       "required_prompt_terms": [
-        "Product shape: web app.",
-        "Variant: product.",
-        "USERJOURNEY attached: yes."
+        "Product shape: web app",
+        "Variant: product",
+        "USERJOURNEY attached: yes"
       ],
       "required_plan_sections": [
         "## Selected Shape",
@@ -241,6 +259,69 @@
       "required_starter_terms": [
         "recommended product stack",
         "analytics-routing"
+      ]
+    },
+    {
+      "name": "data_pipeline_ml_training",
+      "product_shape": "data pipeline",
+      "needs": ["ml", "training"],
+      "regulated": false,
+      "attach_userjourney": false,
+      "expected_variant": "product",
+      "expected_attach_userjourney": false,
+      "expected_stacks": ["FastAPI", "DuckDB", "Polars", "Pydantic", "Weights & Biases", "Hugging Face Transformers", "scikit-learn"],
+      "expected_services": ["Neon"],
+      "expected_clis": ["uv"],
+      "expected_domains": ["AI, retrieval, and agent systems", "Data engineering and analytics"],
+      "expected_confidence": "high",
+      "required_prompt_terms": [
+        "Product shape: data pipeline",
+        "Variant: product",
+        "USERJOURNEY attached: no"
+      ],
+      "required_plan_sections": [
+        "## Selected Shape",
+        "## KB Decision Evidence",
+        "## Dynamic Prompt Guidance",
+        "## Kickoff Prompt"
+      ],
+      "expected_starter_root": "starter/data_pipeline",
+      "expected_starter_files": [
+        "starter/data_pipeline/pyproject.toml"
+      ],
+      "required_starter_terms": [
+        "polars"
+      ]
+    },
+    {
+      "name": "cli_tool_ml_agents",
+      "product_shape": "CLI tool",
+      "needs": ["ml", "agents"],
+      "regulated": false,
+      "attach_userjourney": false,
+      "expected_variant": "product",
+      "expected_attach_userjourney": false,
+      "expected_stacks": ["Pydantic", "pytest", "uv", "LiteLLM", "Instructor", "LangGraph", "Weights & Biases", "Hugging Face Transformers"],
+      "expected_clis": ["uv", "GitHub CLI"],
+      "expected_domains": ["AI, retrieval, and agent systems", "Developer experience, quality, and supply chain"],
+      "expected_confidence": "high",
+      "required_prompt_terms": [
+        "Product shape: cli tool",
+        "Variant: product",
+        "USERJOURNEY attached: no"
+      ],
+      "required_plan_sections": [
+        "## Selected Shape",
+        "## KB Decision Evidence",
+        "## Dynamic Prompt Guidance",
+        "## Kickoff Prompt"
+      ],
+      "expected_starter_root": "starter/cli_tool",
+      "expected_starter_files": [
+        "starter/cli_tool/pyproject.toml"
+      ],
+      "required_starter_terms": [
+        "from pydantic import BaseModel, Field"
       ]
     }
   ]

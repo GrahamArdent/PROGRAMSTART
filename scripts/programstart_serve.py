@@ -38,8 +38,35 @@ SCRIPTS = Path(__file__).resolve().parent
 
 try:
     from .programstart_command_registry import dashboard_allowed_commands
+    from .programstart_common import (
+        extract_numbered_items,
+        git_changed_files,
+        load_registry,
+        load_workflow_state,
+        parse_markdown_table,
+        save_workflow_state,
+        workflow_active_step,
+        workflow_entry_key,
+        workflow_state_config,
+        workflow_steps,
+        workspace_path,
+    )
 except ImportError:  # pragma: no cover - standalone script execution fallback
-    from programstart_command_registry import dashboard_allowed_commands
+    from programstart_command_registry import dashboard_allowed_commands  # type: ignore
+
+    from programstart_common import (  # type: ignore
+        extract_numbered_items,
+        git_changed_files,
+        load_registry,
+        load_workflow_state,
+        parse_markdown_table,
+        save_workflow_state,
+        workflow_active_step,
+        workflow_entry_key,
+        workflow_state_config,
+        workflow_steps,
+        workspace_path,
+    )
 
 # ---------------------------------------------------------------------------
 # Allowed commands — strict whitelist, no shell interpolation possible
@@ -47,6 +74,9 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
 ALLOWED_COMMANDS: dict[str, list[str]] = dashboard_allowed_commands(PYTHON, SCRIPTS)
 
 _ANSI_RE = re.compile(r"\033\[[0-9;]*m")
+_ALLOWED_EXTRA_ARGS: frozenset[str] = frozenset({"--decision", "--notes", "--date", "--system", "approved", "hold", "blocked"})
+_MAX_EXTRA_ARGS = 8
+_MAX_EXTRA_ARG_LENGTH = 2000
 
 
 def strip_ansi(text: str) -> str:
@@ -59,9 +89,12 @@ def run_command(command_key: str, extra_args: list[str] | None = None) -> dict[s
         return {"output": f"Error: unknown command '{command_key}'", "exit_code": 1}
     cmd = ALLOWED_COMMANDS[command_key][:]
     if extra_args:
-        allowed_extras = {"--decision", "--notes", "--date", "--system", "approved", "hold", "blocked"}
+        if len(extra_args) > _MAX_EXTRA_ARGS:
+            return {"output": f"Error: too many extra args (max {_MAX_EXTRA_ARGS})", "exit_code": 1}
         for arg in extra_args:
-            if arg not in allowed_extras:
+            if len(arg) > _MAX_EXTRA_ARG_LENGTH:
+                return {"output": f"Error: extra arg exceeds {_MAX_EXTRA_ARG_LENGTH} char limit", "exit_code": 1}
+            if arg not in _ALLOWED_EXTRA_ARGS:
                 return {"output": f"Error: extra arg '{arg}' not permitted", "exit_code": 1}
         cmd.extend(extra_args)
     env = {**os.environ, "NO_COLOR": "1"}
@@ -73,7 +106,10 @@ def run_command(command_key: str, extra_args: list[str] | None = None) -> dict[s
 # ---------------------------------------------------------------------------
 # Bootstrap — validated separately; accepts user-supplied path and name
 # ---------------------------------------------------------------------------
-_SAFE_PATH_RE = re.compile(r"^[A-Za-z]:[/\\][A-Za-z0-9 /\\._-]{1,259}$")
+_SAFE_PATH_RE = re.compile(
+    r"^[A-Za-z]:[/\\][A-Za-z0-9 /\\._-]{1,259}$"  # Windows
+    r"|^/[A-Za-z0-9 /._-]{1,259}$"  # Unix
+)
 _SAFE_NAME_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_-]{0,63}$")
 _SAFE_VARIANTS = frozenset({"lite", "product", "enterprise"})
 
@@ -119,29 +155,6 @@ def run_bootstrap(
 def get_state_json() -> dict[str, Any]:
     """Return both workflow states as JSON-serialisable dicts plus guidance metadata."""
     try:
-        sys.path.insert(0, str(SCRIPTS))
-        try:
-            from .programstart_common import (  # noqa: PLC0415
-                extract_numbered_items,
-                load_registry,
-                load_workflow_state,
-                parse_markdown_table,
-                workflow_active_step,
-                workflow_entry_key,
-                workflow_steps,
-                workspace_path,
-            )
-        except ImportError:
-            from programstart_common import (  # noqa: PLC0415
-                extract_numbered_items,
-                load_registry,
-                load_workflow_state,
-                parse_markdown_table,
-                workflow_active_step,
-                workflow_entry_key,
-                workflow_steps,
-                workspace_path,
-            )
 
         def clean_md(value: str) -> str:
             return value.strip().strip("`")
@@ -472,19 +485,7 @@ def get_state_json() -> dict[str, Any]:
                 "evidence_expectation": clean_md(row.get("Evidence expectation", "")),
             }
 
-        stage_subagents = {
-            "inputs_and_mode_selection": ["Product Analyst"],
-            "feasibility": ["Research Scout", "Product Analyst"],
-            "research": ["Research Scout"],
-            "requirements_and_ux": ["Product Analyst", "UX Flow Designer"],
-            "architecture_and_risk_spikes": ["Architecture Reviewer", "Risk Spike Agent", "Security Reviewer"],
-            "scaffold_and_guardrails": ["Contract Auditor"],
-            "test_strategy": ["Test Planner"],
-            "implementation_loop": ["Contract Auditor", "Test Planner"],
-            "release_readiness": ["Release Readiness Reviewer"],
-            "audit_and_drift_control": ["Contract Auditor", "Security Reviewer"],
-            "post_launch_review": ["Release Readiness Reviewer"],
-        }
+        stage_subagents = dict(registry.get("workflow_guidance", {}).get("programbuild", {}).get("stage_subagents", {}))
 
         result["catalog"] = {
             "control_docs": control_docs,
@@ -539,6 +540,12 @@ def get_doc_preview(relative_path: str) -> dict[str, Any]:
         return {"error": "file not found"}
     if target.suffix.lower() not in {".md", ".txt", ".json", ".py", ".ps1", ".yml", ".yaml"}:
         return {"error": "file type not previewable"}
+    try:
+        size = target.stat().st_size
+    except OSError:
+        return {"error": "unable to stat file"}
+    if size > 65536:
+        return {"error": "file too large for preview (>64 KB)"}
     text = target.read_text(encoding="utf-8")
     lines = text.splitlines()
     return {
@@ -549,6 +556,12 @@ def get_doc_preview(relative_path: str) -> dict[str, Any]:
     }
 
 
+def sanitize_markdown_table_cell(value: str) -> str:
+    """Keep user-entered text from corrupting markdown table structure."""
+    sanitized = value.replace("\r", " ").replace("\n", " ").replace("|", "¦")
+    return " ".join(sanitized.split())
+
+
 def update_implementation_tracker_phase(phase: str, status: str, blockers: str) -> dict[str, Any]:
     """Update the USERJOURNEY implementation tracker phase overview row."""
     if not (ROOT / "USERJOURNEY").exists():
@@ -556,7 +569,7 @@ def update_implementation_tracker_phase(phase: str, status: str, blockers: str) 
     valid_statuses = {"Planned", "In Progress", "Blocked", "Completed"}
     phase = phase.strip()
     status = status.strip()
-    blockers = blockers.strip()
+    blockers = sanitize_markdown_table_cell(blockers.strip())
     if phase not in {str(i) for i in range(9)}:
         return {"output": "Error: phase must be 0-8.", "exit_code": 1}
     if status not in valid_statuses:
@@ -600,7 +613,7 @@ def update_implementation_tracker_slice(slice_name: str, status: str, notes: str
     valid_statuses = {"Pending", "Selected", "Ready", "Blocked", "Completed"}
     slice_name = slice_name.strip()
     status = status.strip()
-    notes = notes.strip()
+    notes = sanitize_markdown_table_cell(notes.strip())
     if slice_name not in {f"Slice {i}" for i in range(1, 10)}:
         return {"output": "Error: slice must be Slice 1 through Slice 9.", "exit_code": 1}
     if status not in valid_statuses:
@@ -641,24 +654,6 @@ def save_workflow_signoff(system: str, decision: str, signoff_date: str, notes: 
     if system not in {"programbuild", "userjourney"}:
         return {"output": "Error: unknown system.", "exit_code": 1}
 
-    sys.path.insert(0, str(SCRIPTS))
-    try:
-        from .programstart_common import (  # noqa: PLC0415
-            load_registry,
-            load_workflow_state,
-            save_workflow_state,
-            workflow_active_step,
-            workflow_entry_key,
-        )
-    except ImportError:
-        from programstart_common import (  # noqa: PLC0415
-            load_registry,
-            load_workflow_state,
-            save_workflow_state,
-            workflow_active_step,
-            workflow_entry_key,
-        )
-
     registry = load_registry()
     state = load_workflow_state(registry, system)
     active_step = workflow_active_step(registry, system, state)
@@ -668,7 +663,7 @@ def save_workflow_signoff(system: str, decision: str, signoff_date: str, notes: 
     signoff_record = {
         "decision": decision.strip(),
         "date": signoff_date.strip(),
-        "notes": notes.strip(),
+        "notes": sanitize_markdown_table_cell(notes.strip()),
         "saved_at": date.today().isoformat(),
     }
     entry["signoff"] = signoff_record
@@ -688,26 +683,6 @@ def advance_workflow_with_signoff(
     if system not in {"programbuild", "userjourney"}:
         return {"output": "Error: unknown system.", "exit_code": 1}
 
-    sys.path.insert(0, str(SCRIPTS))
-    try:
-        from .programstart_common import (  # noqa: PLC0415
-            load_registry,
-            load_workflow_state,
-            save_workflow_state,
-            workflow_active_step,
-            workflow_entry_key,
-            workflow_steps,
-        )
-    except ImportError:
-        from programstart_common import (  # noqa: PLC0415
-            load_registry,
-            load_workflow_state,
-            save_workflow_state,
-            workflow_active_step,
-            workflow_entry_key,
-            workflow_steps,
-        )
-
     registry = load_registry()
     state = load_workflow_state(registry, system)
     active_step = workflow_active_step(registry, system, state)
@@ -720,7 +695,7 @@ def advance_workflow_with_signoff(
 
     decision_value = decision.strip() or "approved"
     date_value = signoff_date.strip() or date.today().isoformat()
-    notes_value = notes.strip()
+    notes_value = sanitize_markdown_table_cell(notes.strip())
     current_index = steps.index(active_step)
     if dry_run:
         if current_index + 1 < len(steps):
@@ -762,28 +737,6 @@ def advance_workflow_with_signoff(
 
 def build_drift_summary() -> dict[str, Any]:
     """Return a dashboard-friendly drift summary based on current changed files and sync rules."""
-    sys.path.insert(0, str(SCRIPTS))
-    try:
-        from .programstart_common import (  # noqa: PLC0415
-            git_changed_files,
-            load_registry,
-            load_workflow_state,
-            workflow_active_step,
-            workflow_state_config,
-            workflow_steps,
-            workspace_path,
-        )
-    except ImportError:
-        from programstart_common import (  # noqa: PLC0415
-            git_changed_files,
-            load_registry,
-            load_workflow_state,
-            workflow_active_step,
-            workflow_state_config,
-            workflow_steps,
-            workspace_path,
-        )
-
     registry = load_registry()
     changed_files = git_changed_files()
     changed_set = set(changed_files)
@@ -816,21 +769,21 @@ def build_drift_summary() -> dict[str, Any]:
         root = system_cfg.get("root", "")
         if system_cfg.get("optional") and root and not workspace_path(root).exists():
             continue
-            state = load_workflow_state(registry, system)
-            config = workflow_state_config(registry, system)
-            step_order = workflow_steps(registry, system)
-            active_step = workflow_active_step(registry, system, state)
-            active_index = step_order.index(active_step)
-            step_files = config.get("step_files", {})
-            for changed_file in changed_files:
-                owning_step = next((step for step in step_order if changed_file in step_files.get(step, [])), None)
-                if owning_step is None:
-                    continue
-                owning_index = step_order.index(owning_step)
-                if owning_index > active_index:
-                    violations.append(
-                        f"{system}: {changed_file} belongs to future step '{owning_step}' while active step is '{active_step}'"
-                    )
+        state = load_workflow_state(registry, system)
+        config = workflow_state_config(registry, system)
+        step_order = workflow_steps(registry, system)
+        active_step = workflow_active_step(registry, system, state)
+        active_index = step_order.index(active_step)
+        step_files = config.get("step_files", {})
+        for changed_file in changed_files:
+            owning_step = next((step for step in step_order if changed_file in step_files.get(step, [])), None)
+            if owning_step is None:
+                continue
+            owning_index = step_order.index(owning_step)
+            if owning_index > active_index:
+                violations.append(
+                    f"{system}: {changed_file} belongs to future step '{owning_step}' while active step is '{active_step}'"
+                )
 
     return {
         "changed_files": changed_files,
@@ -943,10 +896,17 @@ HTML = r"""<!DOCTYPE html>
   .terminal.error { border-color: var(--red); }
   .terminal.success { border-color: var(--green); }
   .terminal-bar { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; flex-wrap: wrap; }
-  .terminal-bar .label { font-size: 11px; color: var(--dim); flex: 1; min-width: 140px; }
+  .terminal-status { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 220px; }
+  .terminal-bar .label { font-size: 11px; color: var(--dim); }
+  .terminal-bar .detail { font-size: 10px; color: var(--dim); }
   .spinner { display: none; width: 12px; height: 12px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
   .spinner.active { display: inline-block; }
   @keyframes spin { to { transform: rotate(360deg); } }
+  .app-toast { position: fixed; right: 20px; bottom: 20px; z-index: 120; min-width: 240px; max-width: 360px; background: rgba(24,24,37,0.96); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 10px 12px; box-shadow: 0 12px 32px rgba(0,0,0,0.32); font-size: 11px; line-height: 1.45; }
+  .app-toast.hidden { display: none; }
+  .app-toast.success { border-color: var(--green); }
+  .app-toast.error { border-color: var(--red); }
+  .app-toast.info { border-color: var(--accent); }
 
   /* Modal */
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 100; }
@@ -966,6 +926,36 @@ HTML = r"""<!DOCTYPE html>
   .status-bar .dot.green { background: var(--green); }
   .status-bar .dot.yellow { background: var(--yellow); }
   .status-bar .dot.red { background: var(--red); }
+  .focus-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .focus-card { background: rgba(202,211,245,0.03); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+  .focus-kicker { font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 6px; }
+  .focus-title { font-size: 16px; color: var(--text); font-weight: 600; margin-bottom: 6px; }
+  .focus-body { font-size: 12px; color: var(--text); line-height: 1.5; }
+  .focus-meta { font-size: 11px; color: var(--dim); margin-top: 8px; }
+  .focus-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .card-summary { font-size: 11px; color: var(--dim); line-height: 1.45; margin-bottom: 10px; }
+  .disclosure { margin-top: 10px; border-top: 1px solid var(--border); padding-top: 10px; }
+  .disclosure summary, .accordion summary { cursor: pointer; list-style: none; color: var(--accent); font-size: 11px; }
+  .disclosure summary::-webkit-details-marker, .accordion summary::-webkit-details-marker { display: none; }
+  .disclosure summary::after, .accordion summary::after { content: 'Show'; color: var(--dim); margin-left: 8px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .disclosure[open] summary::after, .accordion[open] summary::after { content: 'Hide'; }
+  .secondary-actions { margin-top: 10px; padding-top: 0; border-top: none; }
+  .accordion > summary { margin-bottom: 10px; }
+  .section-intro { font-size: 11px; color: var(--dim); line-height: 1.45; margin-bottom: 10px; }
+  .tab-strip { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .tab-btn { background: transparent; border: 1px solid var(--border); color: var(--dim); padding: 6px 10px; border-radius: 999px; cursor: pointer; font-size: 11px; }
+  .tab-btn:hover { color: var(--text); border-color: var(--accent); }
+  .tab-btn.active { color: #1e1e2e; background: var(--accent); border-color: var(--accent); font-weight: 600; }
+  .tab-panel.hidden { display: none; }
+  .stack { display: flex; flex-direction: column; gap: 14px; }
+  .data-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  .data-table th, .data-table td { border-bottom: 1px solid var(--border); padding: 8px 10px; text-align: left; vertical-align: top; }
+  .data-table th { color: var(--dim); text-transform: uppercase; letter-spacing: 0.5px; font-size: 10px; }
+  .helper-box { background: rgba(138, 173, 244, 0.08); border: 1px solid rgba(138, 173, 244, 0.28); border-radius: 8px; padding: 10px 12px; margin: 12px 0; }
+  .helper-box h4 { font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 6px; }
+  .helper-box p { font-size: 11px; color: var(--text); line-height: 1.45; }
+  .helper-list { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+  .helper-step { font-size: 11px; color: var(--text); line-height: 1.45; }
 
   .variant-opt { display: flex; align-items: center; gap: 7px; font-size: 12px; cursor: pointer; padding: 4px 6px; border-radius: 4px; }
   .variant-opt:hover { background: rgba(202,211,245,0.04); }
@@ -1007,7 +997,7 @@ HTML = r"""<!DOCTYPE html>
   .recent-project { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; background: rgba(202,211,245,0.03); border: 1px solid var(--border); border-radius: 8px; padding: 10px; }
   .recent-project .title { font-size: 11px; color: var(--text); min-width: 160px; }
   .recent-project .path { font-size: 10px; color: var(--dim); flex: 1; min-width: 220px; }
-  @media (max-width: 900px) { .exec-grid, .launcher-grid, .table-row, .table-row.phase { grid-template-columns: 1fr; } }
+  @media (max-width: 900px) { .exec-grid, .launcher-grid, .table-row, .table-row.phase, .focus-grid { grid-template-columns: 1fr; } }
   @media (max-width: 900px) { .mini-form { grid-template-columns: 1fr; } }
   @media (max-width: 700px) { .row, .guide-grid { grid-template-columns: 1fr; } }
 </style>
@@ -1025,11 +1015,20 @@ HTML = r"""<!DOCTYPE html>
 <main>
   <!-- Status bar -->
   <div class="status-bar">
-    <div class="status-item"><span id="dot-pb" class="dot yellow"></span> PB: <strong id="sb-pb">...</strong></div>
-    <div class="status-item"><span id="dot-uj" class="dot yellow"></span> UJ: <strong id="sb-uj">...</strong></div>
+    <div class="status-item"><span id="dot-pb" class="dot yellow"></span> PROGRAMBUILD: <strong id="sb-pb">...</strong></div>
+    <div class="status-item"><span id="dot-uj" class="dot yellow"></span> USERJOURNEY: <strong id="sb-uj">...</strong></div>
     <div class="status-item" id="sb-blockers"></div>
     <div style="flex:1"></div>
     <div class="status-item" id="sb-updated"></div>
+  </div>
+
+  <div class="section" id="focus-section">
+    <h2>What To Do Now</h2>
+    <div class="section-intro">Start here. This view highlights the next meaningful step for each workflow and keeps the heavier operational surfaces further down the page.</div>
+    <div class="focus-grid">
+      <div id="focus-pb" class="focus-card"><span class="meta">Loading PROGRAMBUILD focus...</span></div>
+      <div id="focus-uj" class="focus-card"><span class="meta">Loading USERJOURNEY focus...</span></div>
+    </div>
   </div>
 
   <!-- System cards -->
@@ -1040,16 +1039,23 @@ HTML = r"""<!DOCTYPE html>
         <span id="pb-active" class="badge active">...</span>
         <span id="pb-progress-label" class="meta"></span>
       </div>
+      <div id="pb-summary" class="card-summary">Loading current stage summary...</div>
       <div class="progress-bar"><div id="pb-bar" class="progress-fill green" style="width:0%"></div></div>
       <div id="pb-steps" class="steps"></div>
       <div class="actions">
-        <button class="btn ghost" onclick="runCmd('guide.programbuild')">Guide</button>
-        <button class="btn ghost" onclick="runCmd('drift')">Drift Check</button>
-        <button class="btn ghost" onclick="runCmd('progress')">Progress</button>
-        <button class="btn ghost" onclick="openAdvanceModal('programbuild', 'signoff')">Signoff</button>
-        <button class="btn warning" onclick="runCmd('advance.programbuild.dry')">Dry-run</button>
+        <button class="btn ghost" onclick="openGuide('programbuild')">Continue</button>
         <button class="btn primary" onclick="openAdvanceModal('programbuild', 'advance')">Advance</button>
       </div>
+      <details class="disclosure">
+        <summary>More PROGRAMBUILD actions</summary>
+        <div class="actions secondary-actions">
+          <button class="btn ghost" onclick="runCmd('guide.programbuild')">Refresh Guide</button>
+          <button class="btn ghost" onclick="runCmd('progress')">Progress</button>
+          <button class="btn ghost" onclick="runCmd('drift')">Drift Check</button>
+          <button class="btn ghost" onclick="openAdvanceModal('programbuild', 'signoff')">Save Signoff</button>
+          <button class="btn warning" onclick="runCmd('advance.programbuild.dry')">Dry-run Advance</button>
+        </div>
+      </details>
     </div>
 
     <div class="card" id="card-uj">
@@ -1058,22 +1064,30 @@ HTML = r"""<!DOCTYPE html>
         <span id="uj-active" class="badge active">...</span>
         <span id="uj-progress-label" class="meta"></span>
       </div>
+      <div id="uj-summary" class="card-summary">Loading current phase summary...</div>
       <div class="progress-bar"><div id="uj-bar" class="progress-fill green" style="width:0%"></div></div>
       <div id="uj-steps" class="steps"></div>
       <div class="actions">
-        <button class="btn ghost" onclick="runCmd('guide.userjourney')">Guide</button>
-        <button class="btn ghost" onclick="runCmd('drift')">Drift Check</button>
-        <button class="btn ghost" onclick="runCmd('status')">Status</button>
-        <button class="btn ghost" onclick="openAdvanceModal('userjourney', 'signoff')">Signoff</button>
-        <button class="btn warning" onclick="runCmd('advance.userjourney.dry')">Dry-run</button>
-        <button class="btn primary" onclick="openAdvanceModal('userjourney', 'advance')">Advance</button>
+        <button class="btn ghost" id="uj-continue-btn" onclick="openGuide('userjourney')">Continue</button>
+        <button class="btn primary" id="uj-advance-btn" onclick="openAdvanceModal('userjourney', 'advance')">Advance</button>
       </div>
+      <details class="disclosure" id="uj-more-actions">
+        <summary>More USERJOURNEY actions</summary>
+        <div class="actions secondary-actions">
+          <button class="btn ghost" id="uj-refresh-guide-btn" onclick="runCmd('guide.userjourney')">Refresh Guide</button>
+          <button class="btn ghost" id="uj-status-btn" onclick="runCmd('status')">Status</button>
+          <button class="btn ghost" id="uj-drift-btn" onclick="runCmd('drift')">Drift Check</button>
+          <button class="btn ghost" id="uj-signoff-btn" onclick="openAdvanceModal('userjourney', 'signoff')">Save Signoff</button>
+          <button class="btn warning" id="uj-dry-run-btn" onclick="runCmd('advance.userjourney.dry')">Dry-run Advance</button>
+        </div>
+      </details>
     </div>
   </div>
 
   <!-- Guide panels -->
   <div class="section" id="guide-section">
-    <h2>Active Step Guide <button class="btn ghost" style="margin-left:auto" onclick="runCmd('guide.kickoff')">Kickoff Guide</button></h2>
+    <h2>Recommended Next Steps <button class="btn ghost" style="margin-left:auto" onclick="runCmd('guide.kickoff')">Kickoff Guide</button></h2>
+    <div class="section-intro">Use this section to understand the current step, why it matters, and which files or checks need attention next.</div>
     <div class="guide-grid">
       <div class="guide-block">
         <h3 id="guide-pb-title">PROGRAMBUILD</h3>
@@ -1088,150 +1102,186 @@ HTML = r"""<!DOCTYPE html>
     </div>
   </div>
 
-  <div class="row">
-    <div class="section" id="control-section">
-      <h2>Control Docs</h2>
-      <div id="control-meta" class="meta">Loading control docs...</div>
-      <div id="control-docs-list" class="catalog-list"><span class="meta">Loading...</span></div>
-    </div>
-
-    <div class="section" id="subagent-section">
-      <h2>Subagents <span id="subagent-variant-badge" class="badge variant" style="display:none"></span></h2>
-      <div id="subagent-summary" class="meta">Loading subagent catalog...</div>
-      <div id="subagent-report-req" class="pill-row"></div>
-      <div id="subagent-cards" class="subagent-list"><span class="meta">Loading...</span></div>
+  <div class="section" id="workspace-tabs">
+    <h2>Workspace Areas</h2>
+    <div class="section-intro">Switch between planning references, project setup, delivery tracking, and diagnostics without scrolling through everything at once.</div>
+    <div class="tab-strip">
+      <button class="tab-btn active" id="tab-btn-references" onclick="activateTab('references')">References</button>
+      <button class="tab-btn" id="tab-btn-setup" onclick="activateTab('setup')">New Project Setup</button>
+      <button class="tab-btn" id="tab-btn-execution" onclick="activateTab('execution')">Delivery Plan</button>
+      <button class="tab-btn" id="tab-btn-diagnostics" onclick="activateTab('diagnostics')">Validation And Drift</button>
     </div>
   </div>
 
-  <div class="section" id="kickoff-section">
-    <h2>Kickoff Handoff</h2>
-    <div id="kickoff-summary" class="meta">Loading kickoff packet...</div>
+  <div class="tab-panel" id="tab-panel-references">
     <div class="row">
-      <div class="guide-block">
-        <h3>Kickoff File Set</h3>
-        <div id="kickoff-files" class="handoff-list"><span class="meta">Loading...</span></div>
+      <div class="section" id="control-section">
+        <h2>Source-Of-Truth Documents</h2>
+        <div class="section-intro">Canonical documents, indexes, and file authorities for the current workflow.</div>
+        <div id="control-meta" class="meta">Loading control docs...</div>
+        <div id="control-docs-list" class="catalog-list"><span class="meta">Loading...</span></div>
       </div>
-      <div class="guide-block">
-        <h3>Stage Startup Checklist</h3>
-        <div id="kickoff-checklist" class="handoff-list"><span class="meta">Loading...</span></div>
-      </div>
-    </div>
-    <div id="kickoff-last-project" class="handoff-card" style="margin-top:10px"></div>
-    <div class="guide-block" style="margin-top:12px">
-      <h3>Recent Projects</h3>
-      <div id="recent-projects" class="recent-projects"><span class="meta">No recent projects yet.</span></div>
-    </div>
-  </div>
 
-  <div class="section" id="uj-execution-section">
-    <h2>USERJOURNEY Execution</h2>
-    <div id="uj-exec-summary" class="meta">Loading execution tracker...</div>
-    <div class="mini-form">
-      <div>
-        <label>Phase</label>
-        <select id="uj-phase-select"></select>
-      </div>
-      <div>
-        <label>Status</label>
-        <select id="uj-phase-status">
-          <option>Planned</option>
-          <option>In Progress</option>
-          <option>Blocked</option>
-          <option>Completed</option>
-        </select>
-      </div>
-      <div>
-        <label>Blockers</label>
-        <input id="uj-phase-blockers" placeholder="unresolved open questions">
-      </div>
-      <div>
-        <button class="btn primary" onclick="updateUserJourneyPhase()">Save Phase</button>
-      </div>
-    </div>
-    <div class="mini-form">
-      <div>
-        <label>Current Slice</label>
-        <select id="uj-slice-select"></select>
-      </div>
-      <div>
-        <label>Status</label>
-        <select id="uj-slice-status">
-          <option>Pending</option>
-          <option>Selected</option>
-          <option>Ready</option>
-          <option>Blocked</option>
-          <option>Completed</option>
-        </select>
-      </div>
-      <div>
-        <label>Notes</label>
-        <input id="uj-slice-note" placeholder="why this slice is current, ready, or blocked">
-      </div>
-      <div>
-        <button class="btn ghost" onclick="updateUserJourneySlice()">Save Slice</button>
-      </div>
-    </div>
-    <div class="exec-grid">
-      <div class="guide-block">
-        <h3>Phase Overview</h3>
-        <div id="uj-phase-overview" class="table-ish"><span class="meta">Loading...</span></div>
-      </div>
-      <div class="guide-block">
-        <h3>Current Slice Path</h3>
-        <div id="uj-slice-focus" class="catalog-list"><span class="meta">Loading...</span></div>
-      </div>
-    </div>
-    <div class="exec-grid" style="margin-top:12px">
-      <div class="guide-block">
-        <h3>File Review Targets</h3>
-        <div id="uj-file-review" class="catalog-list"><span class="meta">Loading...</span></div>
-      </div>
-      <div class="guide-block">
-        <h3>Critical Risks</h3>
-        <div id="uj-risks" class="catalog-list"><span class="meta">Loading...</span></div>
+      <div class="section" id="subagent-section">
+        <h2>Recommended Assistants <span id="subagent-variant-badge" class="badge variant" style="display:none"></span></h2>
+        <div class="section-intro">Suggested assistant roles and prompts for the current stage and planning variant.</div>
+        <div id="subagent-summary" class="meta">Loading subagent catalog...</div>
+        <div id="subagent-report-req" class="pill-row"></div>
+        <div id="subagent-cards" class="subagent-list"><span class="meta">Loading...</span></div>
       </div>
     </div>
   </div>
 
-  <div class="section" id="drift-section">
-    <h2>Sync And Drift</h2>
-    <div id="drift-summary" class="meta">Loading drift summary...</div>
-    <div class="exec-grid">
-      <div class="guide-block">
-        <h3>Violations And Notes</h3>
-        <div id="drift-violations" class="catalog-list"><span class="meta">Loading...</span></div>
+  <div class="tab-panel hidden" id="tab-panel-setup">
+    <div class="section" id="kickoff-section">
+      <h2>New Project Setup</h2>
+      <div class="section-intro">Create a new planning workspace, inspect the startup documents, and reopen recent projects from here.</div>
+      <div id="kickoff-summary" class="meta">Loading kickoff packet...</div>
+      <div class="row">
+        <div class="guide-block">
+          <h3>Start With These Files</h3>
+          <div id="kickoff-files" class="handoff-list"><span class="meta">Loading...</span></div>
+        </div>
+        <div class="guide-block">
+          <h3>Startup Checklist</h3>
+          <div id="kickoff-checklist" class="handoff-list"><span class="meta">Loading...</span></div>
+        </div>
       </div>
-      <div class="guide-block">
-        <h3>Changed Files</h3>
-        <div id="drift-files" class="catalog-list"><span class="meta">Loading...</span></div>
+      <div id="kickoff-last-project" class="handoff-card" style="margin-top:10px"></div>
+      <div class="guide-block" style="margin-top:12px">
+        <h3>Recent Projects</h3>
+        <div id="recent-projects" class="recent-projects"><span class="meta">No recent projects yet.</span></div>
       </div>
-    </div>
-    <div class="guide-block" style="margin-top:12px">
-      <h3>Sync Rules</h3>
-      <div id="drift-rules" class="catalog-list"><span class="meta">Loading...</span></div>
     </div>
   </div>
 
-  <!-- Command output -->
-  <div class="section">
-    <h2>Command Output</h2>
-    <div class="terminal-bar">
-      <span class="label" id="cmd-label">Ready</span>
-      <div id="cmd-spinner" class="spinner"></div>
-      <button class="btn ghost" onclick="clearOutput()">Clear</button>
-      <button class="btn success" onclick="preflightCheck()">Pre-flight Check</button>
-      <button class="btn ghost" onclick="runCmd('validate')">Validate</button>
-      <button class="btn ghost" onclick="runCmd('smoke.dashboard')">Smoke</button>
-      <button class="btn ghost" onclick="runCmd('smoke.browser')">Browser</button>
-      <button class="btn ghost" onclick="runCmd('validate.workflow-state')">State Check</button>
-      <button class="btn ghost" onclick="runCmd('drift')">Drift</button>
-      <button class="btn ghost" onclick="runCmd('status')">Status</button>
-      <button class="btn ghost" onclick="runCmd('log')">Log</button>
-      <button class="btn ghost" onclick="runCmd('progress')">Progress</button>
+  <div class="tab-panel hidden" id="tab-panel-execution">
+    <div class="section" id="uj-execution-section">
+      <h2>Delivery Plan</h2>
+      <div class="section-intro">Track phases, slices, file review targets, and delivery risks for USERJOURNEY work.</div>
+      <div id="uj-exec-summary" class="meta">Loading execution tracker...</div>
+      <div class="mini-form">
+        <div>
+          <label>Phase</label>
+          <select id="uj-phase-select"></select>
+        </div>
+        <div>
+          <label>Status</label>
+          <select id="uj-phase-status">
+            <option>Planned</option>
+            <option>In Progress</option>
+            <option>Blocked</option>
+            <option>Completed</option>
+          </select>
+        </div>
+        <div>
+          <label>Blockers</label>
+          <input id="uj-phase-blockers" placeholder="unresolved open questions">
+        </div>
+        <div>
+          <button class="btn primary" onclick="updateUserJourneyPhase()">Save Phase</button>
+        </div>
+      </div>
+      <div class="mini-form">
+        <div>
+          <label>Current Slice</label>
+          <select id="uj-slice-select"></select>
+        </div>
+        <div>
+          <label>Status</label>
+          <select id="uj-slice-status">
+            <option>Pending</option>
+            <option>Selected</option>
+            <option>Ready</option>
+            <option>Blocked</option>
+            <option>Completed</option>
+          </select>
+        </div>
+        <div>
+          <label>Notes</label>
+          <input id="uj-slice-note" placeholder="why this slice is current, ready, or blocked">
+        </div>
+        <div>
+          <button class="btn ghost" onclick="updateUserJourneySlice()">Save Slice</button>
+        </div>
+      </div>
+      <div class="exec-grid">
+        <div class="guide-block">
+          <h3>Phase Overview</h3>
+          <div id="uj-phase-overview" class="table-ish"><span class="meta">Loading...</span></div>
+        </div>
+        <div class="guide-block">
+          <h3>Current Slice</h3>
+          <div id="uj-slice-focus" class="catalog-list"><span class="meta">Loading...</span></div>
+        </div>
+      </div>
+      <div class="exec-grid" style="margin-top:12px">
+        <div class="guide-block">
+          <h3>Files To Review</h3>
+          <div id="uj-file-review" class="catalog-list"><span class="meta">Loading...</span></div>
+        </div>
+        <div class="guide-block">
+          <h3>Delivery Risks</h3>
+          <div id="uj-risks" class="catalog-list"><span class="meta">Loading...</span></div>
+        </div>
+      </div>
     </div>
-    <div id="output" class="terminal hidden"></div>
+  </div>
+
+  <div class="tab-panel hidden" id="tab-panel-diagnostics">
+    <div class="stack">
+      <div class="section" id="drift-section">
+        <h2>Workflow Health</h2>
+        <div class="section-intro">Inspect drift, sync-rule violations, and changed files when something looks out of alignment.</div>
+        <div id="drift-summary" class="meta">Loading drift summary...</div>
+        <div class="exec-grid">
+          <div class="guide-block">
+            <h3>Violations And Notes</h3>
+            <div id="drift-violations" class="catalog-list"><span class="meta">Loading...</span></div>
+          </div>
+          <div class="guide-block">
+            <h3>Changed Files</h3>
+            <div id="drift-files" class="catalog-list"><span class="meta">Loading...</span></div>
+          </div>
+        </div>
+        <div class="guide-block" style="margin-top:12px">
+          <h3>Sync Rules</h3>
+          <div id="drift-rules" class="catalog-list"><span class="meta">Loading...</span></div>
+        </div>
+      </div>
+
+      <div class="section" id="console-section">
+        <h2>Validation Console</h2>
+        <div class="section-intro">Run validations, smoke checks, and quick status commands when you need operational detail.</div>
+        <div class="terminal-bar">
+          <div class="terminal-status">
+            <span class="label" id="cmd-label">Ready</span>
+            <span class="detail" id="cmd-detail">Use the console for validation, smoke checks, and workflow commands.</span>
+          </div>
+          <div id="cmd-spinner" class="spinner"></div>
+          <button class="btn ghost" onclick="clearOutput()">Clear</button>
+          <button class="btn success" onclick="preflightCheck()">Pre-flight Check</button>
+        </div>
+        <div class="terminal-bar" style="border-top:none;padding-top:4px;margin-top:-6px;gap:4px;flex-wrap:wrap">
+          <span class="meta" style="margin-right:4px">Checks:</span>
+          <button class="btn ghost" onclick="runCmd('validate')">Validate</button>
+          <button class="btn ghost" onclick="runCmd('validate.workflow-state')">State Check</button>
+          <button class="btn ghost" onclick="runCmd('drift')">Drift</button>
+          <span class="meta" style="margin:0 6px">Smoke:</span>
+          <button class="btn ghost" onclick="runCmd('smoke.dashboard')">Dashboard</button>
+          <button class="btn ghost" onclick="runCmd('smoke.browser')">Browser</button>
+          <span class="meta" style="margin:0 6px">Workflow:</span>
+          <button class="btn ghost" onclick="runCmd('status')">Status</button>
+          <button class="btn ghost" onclick="runCmd('log')">Log</button>
+          <button class="btn ghost" onclick="runCmd('progress')">Progress</button>
+        </div>
+        <div id="output" class="terminal hidden"></div>
+      </div>
+    </div>
   </div>
 </main>
+
+  <div id="app-toast" class="app-toast hidden" role="status" aria-live="polite"></div>
 
 <div id="doc-preview" class="doc-preview hidden">
   <div class="doc-preview-header">
@@ -1250,14 +1300,18 @@ HTML = r"""<!DOCTYPE html>
     <p class="meta" id="modal-desc">This will mark the active step as completed and move the next step to in_progress.</p>
     <div id="modal-preflight" style="margin:8px 0;font-size:11px;color:var(--dim)"></div>
     <label>Decision</label>
-    <input id="modal-decision" value="approved" placeholder="approved, hold, blocked">
+    <select id="modal-decision">
+      <option value="approved">approved</option>
+      <option value="hold">hold</option>
+      <option value="blocked">blocked</option>
+    </select>
     <label>Date</label>
-    <input id="modal-date" value="2026-03-27" placeholder="YYYY-MM-DD">
+    <input id="modal-date" type="date" placeholder="YYYY-MM-DD">
     <label>Notes (optional)</label>
     <textarea id="modal-notes" placeholder="Why is this stage being completed?"></textarea>
-    <div id="modal-history-section" style="display:none;margin-top:8px">
+    <div id="modal-history-section" style="margin-top:8px">
       <label>Signoff History</label>
-      <div id="modal-history" style="font-size:11px;max-height:110px;overflow-y:auto;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:6px 8px;color:var(--dim)"></div>
+      <div id="modal-history" style="font-size:11px;max-height:110px;overflow-y:auto;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:6px 8px;color:var(--dim)"><span class="meta">No previous signoffs recorded.</span></div>
     </div>
     <div class="modal-actions">
       <button class="btn ghost" onclick="closeAdvanceModal()">Cancel</button>
@@ -1270,29 +1324,46 @@ HTML = r"""<!DOCTYPE html>
 <!-- Bootstrap / New Project modal -->
 <div id="bootstrap-modal" class="modal-overlay hidden">
   <div class="modal" style="width:500px;max-width:95vw">
-    <h3>New Project</h3>
-    <p class="meta" style="margin-bottom:10px">Bootstrap a fresh planning package into a new folder. This workspace stays as the template.</p>
-    <label>Project name</label>
+    <h3>Create Planning Workspace</h3>
+    <p class="meta" style="margin-bottom:10px">This screen creates a new standalone planning repo from the PROGRAMSTART template. It does not define the product idea yet.</p>
+    <div class="helper-box">
+      <h4>What This Screen Does</h4>
+      <p>It creates a fresh planning workspace, stamps in the repo name and planning rigor, copies the core PROGRAMBUILD files, and initializes a new git repository outside the template repo.</p>
+    </div>
+    <div class="helper-box">
+      <h4>What Happens Next</h4>
+      <div class="helper-list">
+        <div class="helper-step">1. Preview the workspace to confirm the path and files look correct.</div>
+        <div class="helper-step">2. Create the workspace as a new standalone repo.</div>
+        <div class="helper-step">3. Open that new folder in VS Code.</div>
+        <div class="helper-step">4. Define what you are building in the kickoff packet, canonical docs, and variant playbook.</div>
+        <div class="helper-step">5. Run the first planning step from the new repo.</div>
+      </div>
+    </div>
+    <label>New repo name</label>
     <input id="bs-name" placeholder="MyNewApp" autocomplete="off" oninput="bsNameChanged(this)">
-    <label>Destination folder</label>
-    <input id="bs-dest" placeholder="C:\Projects\MyNewApp" autocomplete="off" oninput="this.dataset.manual='1';document.getElementById('bs-create-btn').disabled=true">
-    <label style="display:block;margin-top:10px">Variant</label>
+    <div id="bs-name-err" class="meta" style="color:var(--red);min-height:14px;font-size:11px"></div>
+    <label>Where to create it</label>
+    <input id="bs-dest" placeholder="C:\Projects\MyNewApp" autocomplete="off" oninput="bsDestChanged(this)">
+    <div id="bs-dest-err" class="meta" style="color:var(--red);min-height:14px;font-size:11px"></div>
+    <label style="display:block;margin-top:10px">Planning rigor</label>
     <div style="display:flex;flex-direction:column;gap:3px;margin-top:5px">
-      <label class="variant-opt"><input type="radio" name="bsVariant" value="lite"> <strong>lite</strong> <span class="meta">solo / quick idea validation</span></label>
-      <label class="variant-opt"><input type="radio" name="bsVariant" value="product" checked> <strong>product</strong> <span class="meta">standard full build</span></label>
-      <label class="variant-opt"><input type="radio" name="bsVariant" value="enterprise"> <strong>enterprise</strong> <span class="meta">full + audit trail + compliance track</span></label>
+      <label class="variant-opt"><input type="radio" name="bsVariant" value="lite"> <strong>lite</strong> <span class="meta">lean planning for fast idea validation</span></label>
+      <label class="variant-opt"><input type="radio" name="bsVariant" value="product" checked> <strong>product</strong> <span class="meta">standard product planning workflow</span></label>
+      <label class="variant-opt"><input type="radio" name="bsVariant" value="enterprise"> <strong>enterprise</strong> <span class="meta">adds heavier audit and compliance structure</span></label>
     </div>
     <label class="variant-opt" style="margin-top:10px">
-      USERJOURNEY is attached separately only when the project needs onboarding, consent, activation, or first-run routing.
+      USERJOURNEY is added separately later, and only when the product needs onboarding, consent, activation, or first-run routing.
     </label>
+    <div class="meta" style="margin-top:8px">Preview first. The create button stays disabled until the preview passes.</div>
     <div id="bs-preview-wrap" style="display:none;margin-top:10px">
-      <div class="guide-label">Dry-run preview</div>
+      <div class="guide-label">Workspace preview</div>
       <div id="bs-preview-out" class="terminal" style="max-height:180px;margin-top:4px;font-size:10px;line-height:1.4"></div>
     </div>
     <div class="modal-actions">
       <button class="btn ghost" onclick="closeBootstrapModal()">Cancel</button>
-      <button class="btn warning" onclick="previewBootstrap()">Dry-run Preview</button>
-      <button class="btn primary" id="bs-create-btn" onclick="createProject()" disabled>Create Project</button>
+      <button class="btn warning" onclick="previewBootstrap()">Preview Workspace</button>
+      <button class="btn primary" id="bs-create-btn" onclick="createProject()" disabled>Create Workspace</button>
     </div>
   </div>
 </div>
@@ -1306,6 +1377,54 @@ let _cachedState = null;
 let _subagentMap = {};
 let _docPreviewPath = null;
 let _advanceMode = 'advance';
+let _cmdStatusTimer = null;
+let _cmdStatusStartedAt = 0;
+let _toastTimer = null;
+
+function defaultCommandDetail() {
+  return 'Use the console for validation, smoke checks, and workflow commands.';
+}
+
+function setCommandStatus(title, detail = defaultCommandDetail()) {
+  document.getElementById('cmd-label').textContent = title;
+  document.getElementById('cmd-detail').textContent = detail;
+}
+
+function stopCommandTimer(finalDetail = '') {
+  if (_cmdStatusTimer) {
+    clearInterval(_cmdStatusTimer);
+    _cmdStatusTimer = null;
+  }
+  _cmdStatusStartedAt = 0;
+  if (finalDetail) document.getElementById('cmd-detail').textContent = finalDetail;
+}
+
+function startCommandTimer(title, detailPrefix) {
+  stopCommandTimer();
+  _cmdStatusStartedAt = Date.now();
+  const render = () => {
+    const elapsedSeconds = Math.max(0, Math.round((Date.now() - _cmdStatusStartedAt) / 1000));
+    setCommandStatus(title, `${detailPrefix} ${elapsedSeconds}s elapsed.`);
+  };
+  render();
+  _cmdStatusTimer = setInterval(render, 1000);
+}
+
+function finishCommandStatus(title, detailPrefix) {
+  const elapsedSeconds = _cmdStatusStartedAt ? Math.max(0, Math.round((Date.now() - _cmdStatusStartedAt) / 1000)) : 0;
+  stopCommandTimer(`${detailPrefix}${elapsedSeconds ? ` ${elapsedSeconds}s total.` : ''}`.trim());
+  document.getElementById('cmd-label').textContent = title;
+}
+
+function showToast(message, kind = 'info') {
+  const toast = document.getElementById('app-toast');
+  toast.textContent = message;
+  toast.className = `app-toast ${kind}`;
+  if (_toastTimer) clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => {
+    toast.className = 'app-toast hidden';
+  }, 2200);
+}
 
 function getRecentProjects() {
   return JSON.parse(localStorage.getItem('programstartRecentProjects') || '[]');
@@ -1348,6 +1467,7 @@ async function loadAll() {
     const data = await r.json();
     if (data.error) { console.error(data.error); return; }
     _cachedState = data;
+    renderFocusPanel(data);
     renderSystem('pb', data.programbuild);
     renderSystem('uj', data.userjourney);
     renderControlDocs(data.catalog, data.programbuild);
@@ -1356,20 +1476,22 @@ async function loadAll() {
     renderUserJourneyExecution(data.catalog);
     renderDriftDashboard(data.catalog);
     // Status bar
-    document.getElementById('sb-pb').textContent = data.programbuild.active;
-    document.getElementById('sb-uj').textContent = data.userjourney.attached ? data.userjourney.active : 'not attached';
+    const pbPct = data.programbuild.total > 0 ? Math.round((data.programbuild.completed / data.programbuild.total) * 100) : 0;
+    const ujPct = data.userjourney.total > 0 ? Math.round((data.userjourney.completed / data.userjourney.total) * 100) : 0;
+    document.getElementById('sb-pb').textContent = `${data.programbuild.active} (${pbPct}%)`;
+    document.getElementById('sb-uj').textContent = data.userjourney.attached ? `${data.userjourney.active} (${ujPct}%)` : 'optional';
     const oq = data.userjourney.attached ? (data.userjourney.open_questions || 0) : 0;
     const blockerEl = document.getElementById('sb-blockers');
     const ujBlockerBadge = document.getElementById('uj-blockers');
     if (!data.userjourney.attached) {
-      blockerEl.innerHTML = `<span class="dot yellow"></span> USERJOURNEY optional and not attached`;
+      blockerEl.innerHTML = `<span class="dot yellow"></span> USERJOURNEY is optional and not attached`;
       ujBlockerBadge.style.display = 'none';
     } else if (oq > 0) {
       blockerEl.innerHTML = `<span class="dot red"></span> ${oq} external decision${oq>1?'s':''} unresolved`;
-      ujBlockerBadge.textContent = `${oq} blocked decisions`;
+      ujBlockerBadge.textContent = `${oq} blocker${oq>1?'s':''}`;
       ujBlockerBadge.style.display = '';
     } else {
-      blockerEl.innerHTML = `<span class="dot green"></span> No blockers`;
+      blockerEl.innerHTML = `<span class="dot green"></span> No active blockers`;
       ujBlockerBadge.style.display = 'none';
     }
     const now = new Date().toLocaleTimeString();
@@ -1388,14 +1510,111 @@ function updateDot(id, sys) {
   else el.className = 'dot yellow';
 }
 
+function jumpToSection(id) {
+  const tabMap = {
+    'control-section': 'references',
+    'subagent-section': 'references',
+    'kickoff-section': 'setup',
+    'uj-execution-section': 'execution',
+    'drift-section': 'diagnostics',
+    'console-section': 'diagnostics',
+  };
+  if (tabMap[id]) activateTab(tabMap[id]);
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.scrollIntoView({behavior: 'smooth', block: 'start'});
+}
+
+function activateTab(name) {
+  const tabs = ['references', 'setup', 'execution', 'diagnostics'];
+  for (const tab of tabs) {
+    document.getElementById(`tab-btn-${tab}`).classList.toggle('active', tab === name);
+    document.getElementById(`tab-panel-${tab}`).classList.toggle('hidden', tab !== name);
+  }
+}
+
+function openGuide(system) {
+  jumpToSection('guide-section');
+  runCmd(system === 'programbuild' ? 'guide.programbuild' : 'guide.userjourney');
+}
+
+function renderFocusPanel(data) {
+  const pb = data.programbuild;
+  const uj = data.userjourney;
+  const pbDesc = (pb.descriptions || {})[pb.active] || 'Review the current PROGRAMBUILD step and confirm the required evidence before advancing.';
+  const pbNote = pb.completed === pb.total
+    ? 'PROGRAMBUILD is complete.'
+    : `Current stage: ${pb.active}. ${pb.completed} of ${pb.total} complete.`;
+  const pbFiles = (pb.step_files || {})[pb.active] || [];
+  const pbDeliverables = pbFiles.length
+    ? `<div class="focus-deliverables"><div class="focus-meta" style="margin-bottom:4px">Key deliverables for this stage:</div><ul style="margin:0 0 0 16px;padding:0">${pbFiles.slice(0, 6).map(f => `<li class="meta">${esc(f)}</li>`).join('')}</ul></div>`
+    : '';
+  document.getElementById('focus-pb').innerHTML = `
+    <div class="focus-kicker">PROGRAMBUILD</div>
+    <div class="focus-title">Stay on the active stage</div>
+    <div class="focus-body">${esc(pbDesc)}</div>
+    ${pbDeliverables}
+    <div class="focus-meta">${esc(pbNote)}</div>
+    <div class="focus-actions">
+      <button class="btn primary" onclick="openGuide('programbuild')">Review Next Step</button>
+      <button class="btn ghost" onclick="jumpToSection('control-section')">Open References</button>
+    </div>`;
+
+  if (!uj.attached) {
+    document.getElementById('focus-uj').innerHTML = `
+      <div class="focus-kicker">USERJOURNEY</div>
+      <div class="focus-title">Keep this optional until it is needed</div>
+      <div class="focus-body">Attach USERJOURNEY only when the product includes onboarding, consent, activation, or first-run routing that needs explicit planning.</div>
+      <div class="focus-meta">Current mode: PROGRAMBUILD-only.</div>
+      <div class="focus-actions">
+        <button class="btn primary" onclick="jumpToSection('kickoff-section')">Review Attachment Rules</button>
+        <button class="btn ghost" onclick="openBootstrapModal()">New Project</button>
+      </div>`;
+    return;
+  }
+
+  const ujDesc = (uj.descriptions || {})[uj.active] || 'Review the active USERJOURNEY phase and the current delivery slice before advancing.';
+  const openQuestions = uj.open_questions || 0;
+  const blockerText = openQuestions > 0
+    ? `${openQuestions} external decision${openQuestions > 1 ? 's' : ''} still block progress.`
+    : 'No blocking external decisions are currently recorded.';
+  document.getElementById('focus-uj').innerHTML = `
+    <div class="focus-kicker">USERJOURNEY</div>
+    <div class="focus-title">Resolve the active phase with less context switching</div>
+    <div class="focus-body">${esc(ujDesc)}</div>
+    <div class="focus-meta">${esc(blockerText)}</div>
+    <div class="focus-actions">
+      <button class="btn primary" onclick="openGuide('userjourney')">Review Next Step</button>
+      <button class="btn ghost" onclick="jumpToSection('uj-execution-section')">Open Delivery Tracker</button>
+    </div>`;
+}
+
 function renderSystem(prefix, sys) {
   const isPB = prefix === 'pb';
   if (!sys.attached && !isPB) {
     document.getElementById(`${prefix}-active`).textContent = 'Optional attachment not present';
     document.getElementById(`${prefix}-bar`).style.width = '0%';
     document.getElementById(`${prefix}-progress-label`).textContent = 'optional';
+    document.getElementById(`${prefix}-summary`).textContent = 'USERJOURNEY is not active in this workspace. Attach it only when the product needs onboarding, consent, activation, or first-run routing design.';
     document.getElementById(`${prefix}-steps`).innerHTML = '<div class="meta">Attach USERJOURNEY only for projects that need interactive onboarding, consent, activation, or first-run routing.</div>';
+    document.getElementById('uj-continue-btn').disabled = true;
+    document.getElementById('uj-advance-btn').disabled = true;
+    document.getElementById('uj-refresh-guide-btn').disabled = true;
+    document.getElementById('uj-status-btn').disabled = true;
+    document.getElementById('uj-drift-btn').disabled = true;
+    document.getElementById('uj-signoff-btn').disabled = true;
+    document.getElementById('uj-dry-run-btn').disabled = true;
+    document.getElementById('uj-more-actions').open = false;
     return;
+  }
+  if (!isPB) {
+    document.getElementById('uj-continue-btn').disabled = false;
+    document.getElementById('uj-advance-btn').disabled = false;
+    document.getElementById('uj-refresh-guide-btn').disabled = false;
+    document.getElementById('uj-status-btn').disabled = false;
+    document.getElementById('uj-drift-btn').disabled = false;
+    document.getElementById('uj-signoff-btn').disabled = false;
+    document.getElementById('uj-dry-run-btn').disabled = false;
   }
   document.getElementById(`${prefix}-active`).textContent =
     (isPB ? 'Stage: ' : 'Phase: ') + sys.active;
@@ -1403,6 +1622,11 @@ function renderSystem(prefix, sys) {
   document.getElementById(`${prefix}-bar`).style.width = pct + '%';
   document.getElementById(`${prefix}-progress-label`).textContent =
     `${sys.completed}/${sys.total} (${pct}%)`;
+  const currentDesc = (sys.descriptions || {})[sys.active] || '';
+  const blockedCount = sys.blocked || 0;
+  document.getElementById(`${prefix}-summary`).textContent = currentDesc
+    ? `${currentDesc} ${blockedCount > 0 ? `${blockedCount} blocked item${blockedCount > 1 ? 's' : ''} need attention.` : `Progress is ${pct}% complete.`}`
+    : `Current ${isPB ? 'stage' : 'phase'}: ${sys.active}. ${blockedCount > 0 ? `${blockedCount} blocked item${blockedCount > 1 ? 's' : ''} need attention.` : `Progress is ${pct}% complete.`}`;
   if (isPB && sys.variant) {
     document.getElementById('pb-variant').textContent = sys.variant;
   }
@@ -1712,7 +1936,9 @@ function renderUserJourneyExecution(catalog) {
   const sliceOptions = sliceReadiness.length
     ? sliceReadiness.map((row) => String(row.Slice || ''))
     : slices.map((row) => row.title.split(':')[0]);
-  sliceSelect.innerHTML = sliceOptions.map((name) => `<option value="${esc(name)}">${esc(name)}</option>`).join('');
+  sliceSelect.innerHTML = sliceOptions.length
+    ? sliceOptions.map((name) => `<option value="${esc(name)}">${esc(name)}</option>`).join('')
+    : '<option disabled selected>No slices loaded</option>';
   sliceSelect.value = currentSliceName;
   sliceStatus.value = String(currentSliceRow?.Status || 'Pending');
   sliceNote.value = String(currentSliceRow?.Notes || '');
@@ -1824,12 +2050,20 @@ function renderDriftDashboard(catalog) {
   for (const rule of (drift.sync_rules || []).slice(0, 6)) {
     const div = document.createElement('div');
     div.className = 'catalog-item';
+    const authorities = (rule.touched_authority || []);
+    const dependents = (rule.touched_dependents || []);
     div.innerHTML = `
       <h3>${esc(rule.name)}</h3>
       <div class="catalog-meta">system: ${esc(rule.system || 'n/a')}</div>
-      <div class="pill-row">
-        ${(rule.touched_authority || []).map((item) => `<span class="pill">authority: ${esc(item)}</span>`).join('')}
-        ${(rule.touched_dependents || []).map((item) => `<span class="pill dim">dependent: ${esc(item)}</span>`).join('')}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px">
+        <div>
+          <div class="meta" style="margin-bottom:4px;font-weight:500">Authority files</div>
+          ${authorities.length ? authorities.map(item => `<div class="pill" style="margin:2px 0">${esc(item)}</div>`).join('') : '<div class="meta">none</div>'}
+        </div>
+        <div>
+          <div class="meta" style="margin-bottom:4px;font-weight:500">Dependent files</div>
+          ${dependents.length ? dependents.map(item => `<div class="pill dim" style="margin:2px 0">${esc(item)}</div>`).join('') : '<div class="meta">none</div>'}
+        </div>
       </div>`;
     rulesEl.appendChild(div);
   }
@@ -1851,8 +2085,10 @@ async function updateUserJourneyPhase() {
   const out = document.getElementById('output');
   out.className = `terminal ${(result.exit_code === 0) ? 'success' : 'error'}`;
   out.textContent = result.output || '(no output)';
-  document.getElementById('cmd-label').textContent = result.exit_code === 0 ? 'USERJOURNEY phase updated' : 'USERJOURNEY phase update failed';
-  if (result.exit_code === 0) await loadAll();
+  const ok = result.exit_code === 0;
+  document.getElementById('cmd-label').textContent = ok ? 'USERJOURNEY phase updated' : 'USERJOURNEY phase update failed';
+  showToast(ok ? `Phase ${phase} set to ${status}` : 'Phase update failed', ok ? 'success' : 'error');
+  if (ok) await loadAll();
 }
 
 async function updateUserJourneySlice() {
@@ -1868,8 +2104,10 @@ async function updateUserJourneySlice() {
   const out = document.getElementById('output');
   out.className = `terminal ${(result.exit_code === 0) ? 'success' : 'error'}`;
   out.textContent = result.output || '(no output)';
-  document.getElementById('cmd-label').textContent = result.exit_code === 0 ? 'USERJOURNEY slice updated' : 'USERJOURNEY slice update failed';
-  if (result.exit_code === 0) await loadAll();
+  const ok = result.exit_code === 0;
+  document.getElementById('cmd-label').textContent = ok ? 'USERJOURNEY slice updated' : 'USERJOURNEY slice update failed';
+  showToast(ok ? `${slice} set to ${status}` : 'Slice update failed', ok ? 'success' : 'error');
+  if (ok) await loadAll();
 }
 
 async function postWorkflowAction(path, body, successLabel, failureLabel) {
@@ -1914,9 +2152,11 @@ async function copySubagentPrompt(name) {
 async function copyText(text, okLabel, failLabel = 'Clipboard blocked') {
   try {
     await navigator.clipboard.writeText(text);
-    document.getElementById('cmd-label').textContent = okLabel;
+    setCommandStatus(okLabel, 'Clipboard updated for the next manual step.');
+    showToast(okLabel, 'success');
   } catch {
-    document.getElementById('cmd-label').textContent = failLabel;
+    setCommandStatus(failLabel, 'Copy failed. Use the visible output panel text instead.');
+    showToast(failLabel, 'error');
   }
 }
 
@@ -1924,7 +2164,7 @@ function showStarterCommands(text) {
   const out = document.getElementById('output');
   out.className = 'terminal success';
   out.textContent = text;
-  document.getElementById('cmd-label').textContent = 'Starter commands';
+  setCommandStatus('Starter commands', 'Copied commands can be pasted into a fresh terminal in the new repo.');
 }
 
 async function openDocPreview(relativePath) {
@@ -1962,13 +2202,13 @@ function runCmd(key, extraArgs) {
 }
 
 async function _runCmdImpl(key, extraArgs) {
-  const label = document.getElementById('cmd-label');
   const spinner = document.getElementById('cmd-spinner');
   const out = document.getElementById('output');
-  label.textContent = `Running: ${key}`;
+  startCommandTimer(`Running: ${key}`, 'Executing command in the workspace console.');
   spinner.className = 'spinner active';
   out.className = 'terminal';
   out.textContent = '';
+  jumpToSection('console-section');
   const body = {command: key};
   if (extraArgs) body.args = extraArgs;
   try {
@@ -1980,7 +2220,10 @@ async function _runCmdImpl(key, extraArgs) {
     const result = await r.json();
     spinner.className = 'spinner';
     const ok = result.exit_code === 0;
-    label.textContent = `${key} — ${ok ? 'OK' : 'FAILED (exit ' + result.exit_code + ')'}`;
+    finishCommandStatus(
+      `${key} — ${ok ? 'OK' : 'FAILED (exit ' + result.exit_code + ')'}`,
+      ok ? 'Command completed.' : 'Command failed.'
+    );
     out.textContent = result.output || '(no output)';
     out.className = `terminal ${ok ? 'success' : 'error'}`;
     out.scrollTop = out.scrollHeight;
@@ -2000,9 +2243,10 @@ async function _runCmdImpl(key, extraArgs) {
     return result;
   } catch (e) {
     spinner.className = 'spinner';
-    label.textContent = `${key} — ERROR`;
+    finishCommandStatus(`${key} — ERROR`, 'Network error while reaching the dashboard API.');
     out.textContent = 'Network error: ' + e.message;
     out.className = 'terminal error';
+    showToast(`${key} failed`, 'error');
     return {output: e.message, exit_code: -1};
   }
 }
@@ -2052,18 +2296,35 @@ function renderGuide(prefix, raw) {
 }
 
 // ── Pre-flight check (validate + drift + state-check) ─────────────
+let _lastPreflightResult = null;
+let _lastPreflightTime = 0;
+const _PREFLIGHT_CACHE_MS = 60000;
+
 async function preflightCheck() {
+  const now = Date.now();
+  if (_lastPreflightResult && (now - _lastPreflightTime) < _PREFLIGHT_CACHE_MS) {
+    const out = document.getElementById('output');
+    out.textContent = _lastPreflightResult.output;
+    out.className = `terminal ${_lastPreflightResult.ok ? 'success' : 'error'}`;
+    setCommandStatus(
+      _lastPreflightResult.ok ? 'Pre-flight: ALL PASSED (cached)' : 'Pre-flight: ISSUES FOUND (cached)',
+      `Cached result from ${Math.round((now - _lastPreflightTime) / 1000)}s ago. Re-run after ${Math.round((_PREFLIGHT_CACHE_MS - (now - _lastPreflightTime)) / 1000)}s.`
+    );
+    return;
+  }
   const out = document.getElementById('output');
-  const label = document.getElementById('cmd-label');
   const spinner = document.getElementById('cmd-spinner');
   out.className = 'terminal';
   out.textContent = '';
-  label.textContent = 'Pre-flight: validate → state-check → drift...';
+  startCommandTimer('Pre-flight check', 'Running validate, state check, then drift.');
   spinner.className = 'spinner active';
 
   let allOutput = '';
   let allOk = true;
-  for (const cmd of ['validate', 'validate.workflow-state', 'drift']) {
+  const commands = ['validate', 'validate.workflow-state', 'drift'];
+  for (let idx = 0; idx < commands.length; idx += 1) {
+    const cmd = commands[idx];
+    setCommandStatus('Pre-flight check', `Running ${cmd} (${idx + 1}/${commands.length}).`);
     const body = {command: cmd};
     const r = await fetch('/api/run', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
     const result = await r.json();
@@ -2072,10 +2333,15 @@ async function preflightCheck() {
     if (!ok) allOk = false;
   }
   spinner.className = 'spinner';
-  label.textContent = allOk ? 'Pre-flight: ALL PASSED' : 'Pre-flight: ISSUES FOUND';
+  finishCommandStatus(
+    allOk ? 'Pre-flight: ALL PASSED' : 'Pre-flight: ISSUES FOUND',
+    allOk ? 'Validation, state check, and drift all completed.' : 'Review the console output before advancing.'
+  );
   out.textContent = allOutput.trim();
   out.className = `terminal ${allOk ? 'success' : 'error'}`;
   out.scrollTop = out.scrollHeight;
+  _lastPreflightResult = { output: allOutput.trim(), ok: allOk };
+  _lastPreflightTime = Date.now();
 }
 
 // ── Advance modal ──────────────────────────────────────────────────
@@ -2110,14 +2376,20 @@ function openAdvanceModal(system, mode = 'advance') {
         ${saved ? `<span style="color:var(--dim)"> (saved ${saved})</span>` : ''}
         ${noteHtml}</div>`;
     }).join('');
-    histSection.style.display = '';
   } else {
-    histSection.style.display = 'none';
+    histDiv.innerHTML = '<span class="meta">No previous signoffs recorded.</span>';
   }
   document.getElementById('modal-preflight').innerHTML = '';
   document.getElementById('advance-modal').className = 'modal-overlay';
   document.getElementById('modal-dry-btn').style.display = mode === 'advance' ? '' : 'none';
   document.getElementById('modal-confirm-btn').textContent = mode === 'advance' ? 'Advance' : 'Save Signoff';
+
+  function setAdvanceModalPending(isPending) {
+    for (const id of ['modal-decision', 'modal-date', 'modal-notes', 'modal-dry-btn', 'modal-confirm-btn']) {
+      const node = document.getElementById(id);
+      if (node) node.disabled = isPending;
+    }
+  }
 
   (async () => {
     const pf = document.getElementById('modal-preflight');
@@ -2126,6 +2398,7 @@ function openAdvanceModal(system, mode = 'advance') {
       document.getElementById('modal-confirm-btn').disabled = false;
       return;
     }
+    setAdvanceModalPending(true);
     pf.innerHTML = '<span style="color:var(--dim)">Running pre-flight (validate + state check)...</span>';
     let checks = [];
     for (const cmd of ['validate.workflow-state', `advance.${system}.dry`]) {
@@ -2142,6 +2415,7 @@ function openAdvanceModal(system, mode = 'advance') {
     }
     if (!allOk) html += `<div style="color:var(--red);margin-top:4px">Fix issues before advancing.</div>`;
     pf.innerHTML = html;
+    setAdvanceModalPending(false);
     document.getElementById('modal-confirm-btn').disabled = !allOk;
   })();
 }
@@ -2208,6 +2482,21 @@ function bsNameChanged(input) {
   const dest = document.getElementById('bs-dest');
   if (!dest.dataset.manual && name) dest.value = `C:\\Projects\\${name}`;
   document.getElementById('bs-create-btn').disabled = true;
+  const errEl = document.getElementById('bs-name-err');
+  if (!name) { errEl.textContent = ''; return; }
+  const safeNameRe = /^[A-Za-z0-9][A-Za-z0-9 _.-]{0,63}$/;
+  errEl.textContent = safeNameRe.test(name) ? '' : 'Name must start with a letter or digit and contain only letters, digits, spaces, underscores, hyphens, or dots (max 64 chars).';
+  if (dest.value) bsDestChanged(dest);
+}
+
+function bsDestChanged(input) {
+  input.dataset.manual = '1';
+  document.getElementById('bs-create-btn').disabled = true;
+  const dest = input.value.trim();
+  const errEl = document.getElementById('bs-dest-err');
+  if (!dest) { errEl.textContent = ''; return; }
+  const safePathRe = /^[A-Za-z]:\\[A-Za-z0-9 \\_.-]{1,259}$|^\/[A-Za-z0-9 \/._-]{1,259}$/;
+  errEl.textContent = safePathRe.test(dest) ? '' : 'Path must be a valid absolute Windows (C:\\...) or Unix (/...) path with safe characters.';
 }
 
 function closeBootstrapModal() {
@@ -2228,9 +2517,10 @@ async function previewBootstrap() {
   const out = document.getElementById('bs-preview-out');
   const createBtn = document.getElementById('bs-create-btn');
   wrap.style.display = '';
-  out.textContent = 'Running dry-run...';
+  out.textContent = 'Previewing workspace creation...';
   out.className = 'terminal';
   createBtn.disabled = true;
+  setCommandStatus('Previewing bootstrap', 'Checking destination, variant, and generated file plan.');
   const r = await fetch('/api/bootstrap', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
@@ -2241,15 +2531,18 @@ async function previewBootstrap() {
   const ok = result.exit_code === 0;
   out.className = `terminal ${ok ? 'success' : 'error'}`;
   createBtn.disabled = !ok;
+  setCommandStatus(
+    ok ? 'Bootstrap preview ready' : 'Bootstrap preview failed',
+    ok ? 'Review the preview, then create the new workspace.' : 'Fix the reported preview issues before creating the workspace.'
+  );
 }
 
 async function createProject() {
   const params = _getBootstrapParams(false);
   closeBootstrapModal();
-  const label = document.getElementById('cmd-label');
   const spinner = document.getElementById('cmd-spinner');
   const out = document.getElementById('output');
-  label.textContent = `Creating: ${params.project_name}...`;
+  startCommandTimer(`Creating: ${params.project_name}...`, 'Scaffolding the new workspace and recording local handoff metadata.');
   spinner.className = 'spinner active';
   out.className = 'terminal';
   out.textContent = '';
@@ -2261,14 +2554,21 @@ async function createProject() {
   const result = await r.json();
   spinner.className = 'spinner';
   const ok = result.exit_code === 0;
-  label.textContent = ok ? `Project created: ${params.project_name}` : `Bootstrap failed (exit ${result.exit_code})`;
+  finishCommandStatus(
+    ok ? `Project created: ${params.project_name}` : `Bootstrap failed (exit ${result.exit_code})`,
+    ok ? 'Workspace scaffold completed.' : 'Bootstrap did not complete cleanly.'
+  );
   out.textContent = result.output || '(no output)';
   if (ok) {
     const created = { ...params, created_at: new Date().toISOString() };
     localStorage.setItem('programstartLastBootstrap', JSON.stringify(created));
     addRecentProject(created);
     if (_cachedState?.catalog) renderKickoffHandoff(_cachedState.catalog, _cachedState.programbuild);
-    out.textContent += `\n\n─────\nDone! Open your new project in VS Code:\n  code "${params.dest}"\nThen start with Canonical, File Index, Kickoff Packet, and your chosen variant playbook.`;
+    out.innerHTML += `<br><br>─────<br>Workspace created. Next steps:<br>  1. <a href="${vscodeHref(params.dest)}" style="color:var(--link)">Open the new repo in VS Code</a><br>  2. Start with Canonical, File Index, Kickoff Packet, and your chosen variant playbook.<br>  3. Define what you are building in those docs.<br>  4. Run the first planning step from the new repo:<br>     .\\scripts\\pb.ps1 next<br>     .\\scripts\\pb.ps1 validate`;
+    activateTab('setup');
+    showToast(`Workspace created for ${params.project_name}`, 'success');
+  } else {
+    showToast(`Bootstrap failed for ${params.project_name}`, 'error');
   }
   out.className = `terminal ${ok ? 'success' : 'error'}`;
   out.scrollTop = out.scrollHeight;
@@ -2278,7 +2578,8 @@ function clearOutput() {
   const out = document.getElementById('output');
   out.className = 'terminal hidden';
   out.textContent = '';
-  document.getElementById('cmd-label').textContent = 'Ready';
+  stopCommandTimer();
+  setCommandStatus('Ready');
 }
 
 // ── Init ───────────────────────────────────────────────────────────
@@ -2289,8 +2590,22 @@ function clearOutput() {
   await runCmd('guide.userjourney');
 })();
 
-// Auto-refresh state every 30s
-setInterval(loadAll, 30000);
+// Auto-refresh state every 30s (gated on command queue to avoid mid-operation refresh)
+let _loadAllPending = false;
+setInterval(() => {
+  if (_loadAllPending) return;
+  _loadAllPending = true;
+  _cmdQueue = _cmdQueue.then(() => loadAll()).finally(() => { _loadAllPending = false; });
+}, 30000);
+
+// Escape key dismisses modals and doc preview
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeAdvanceModal();
+    closeBootstrapModal();
+    closeDocPreview();
+  }
+});
 </script>
 </body>
 </html>

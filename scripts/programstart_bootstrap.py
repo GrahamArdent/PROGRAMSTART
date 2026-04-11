@@ -142,7 +142,10 @@ def stamp_bootstrapped_registry(destination_root: Path, *, project_name: str, dr
     if dry_run:
         print(f"STAMP  {registry_path}")
         return
-    registry = json.loads(registry_path.read_text(encoding="utf-8"))
+    try:
+        registry = json.loads(registry_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"Cannot parse bootstrapped registry at {registry_path}: {exc}") from exc
     workspace = dict(registry.get("workspace", {}))
     workspace["repo_role"] = "project_repo"
     workspace["project_name"] = project_name
@@ -164,7 +167,10 @@ def sanitize_bootstrapped_secrets_baseline(destination_root: Path, dry_run: bool
     if dry_run or not baseline_path.exists():
         return
 
-    payload = json.loads(baseline_path.read_text(encoding="utf-8"))
+    try:
+        payload = json.loads(baseline_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"Cannot parse secrets baseline at {baseline_path}: {exc}") from exc
     results = dict(payload.get("results", {}))
     results.pop("config\\process-registry.json", None)
     results.pop("config/process-registry.json", None)

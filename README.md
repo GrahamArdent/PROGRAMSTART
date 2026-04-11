@@ -188,6 +188,16 @@ PROGRAMSTART continuously validates the planning workspace:
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
+VS Code tasks (`Ctrl+Shift+P` → **Tasks: Run Task**) surface the most common checks:
+
+| Task | What it does |
+|---|---|
+| **PROGRAMSTART: What To Do Next** | `programstart next` — status + guide + drift in one command |
+| **PROGRAMSTART: Drift Check** | `programstart drift` — source-of-truth sync check |
+| **PROGRAMSTART: JIT Check** | Runs drift then guide (sequenced) |
+| **PROGRAMSTART: Safe Gate** | `nox -s lint typecheck tests validate docs` — full quality gate without mutating smoke |
+| **PROGRAMSTART: Validate All** | `programstart validate` — all structural checks |
+
 ## Architecture — How the Components Fit Together
 
 ```
@@ -488,5 +498,5 @@ Integrity baselines are now registry-driven rather than hardcoded inside the scr
 ## Safety Notes
 
 1. the original flat exports were copied into `BACKUPS/2026-03-27_pre-structure_flat_export_snapshot/` before any moves were made
-2. the full USERJOURNEY package was copied from the Resume Creator V6 source workspace into `USERJOURNEY/` as a project attachment, not as a reusable template
+2. the full USERJOURNEY package was copied from a prior source workspace into `USERJOURNEY/` as a project attachment, not as a reusable template
 3. this workspace is organized non-destructively around preserved copies, not a single fragile export

@@ -133,6 +133,14 @@ class PromptEngineeringGuidance(BaseModel):
     principles: list[str] = Field(default_factory=list)
     patterns: list[str] = Field(default_factory=list)
     anti_patterns: list[str] = Field(default_factory=list)
+    output_contracts: str = ""
+    verification_loops: str = ""
+    completeness_contracts: str = ""
+    tool_persistence: str = ""
+    research_mode: str = ""
+    reasoning_effort: str = ""
+    citation_rules: str = ""
+    empty_result_recovery: str = ""
 
 
 class KnowledgeRelation(BaseModel):

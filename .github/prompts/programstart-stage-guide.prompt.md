@@ -13,5 +13,6 @@ Tasks:
 3. Return the scripts to run first.
 4. Return the prompts that should be used instead of relying on chat memory.
 5. If the requested step is missing from the registry, say so explicitly instead of inventing a sequence.
+6. For the implementation_loop stage: remind the operator that ARCHITECTURE.md, REQUIREMENTS.md, and USER_FLOWS.md are living authorities during coding. They must be re-read before each feature, not just at stage entry. If the guide output includes these files, call them out as "re-read before each feature" rather than "read once at stage start."
 
 Prefer the registry-backed guide output over ad hoc step ordering.

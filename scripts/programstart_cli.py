@@ -30,6 +30,7 @@ try:
         programstart_step_guide,
         programstart_validate,
         programstart_workflow_state,
+        programstart_health_probe,
     )
     from .programstart_common import warn_direct_script_invocation
     from .programstart_command_registry import CLI_COMMANDS
@@ -56,6 +57,7 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
     import programstart_step_guide
     import programstart_validate
     import programstart_workflow_state
+    import programstart_health_probe
 
     from programstart_common import warn_direct_script_invocation
 
@@ -91,6 +93,7 @@ def run_next(arguments: list[str]) -> int:
         run_passthrough(programstart_status.main, "programstart status", []),
         run_passthrough(programstart_step_guide.main, "programstart guide", ["--system", "programbuild"]),
         run_passthrough(programstart_step_guide.main, "programstart guide", ["--system", "userjourney"]),
+        run_passthrough(programstart_drift_check.main, "programstart drift", []),
     ]
     return next((code for code in steps if code != 0), 0)
 
@@ -153,6 +156,8 @@ def dispatch(command: str, arguments: list[str], parser: argparse.ArgumentParser
         return run_passthrough(programstart_dashboard.main, "programstart dashboard", arguments)
     if command == "serve":
         return run_passthrough(programstart_serve.main, "programstart serve", arguments)
+    if command == "health":
+        return run_passthrough(programstart_health_probe.main, "programstart health", arguments)
     if command == "help":
         parser.print_help()
         return 0

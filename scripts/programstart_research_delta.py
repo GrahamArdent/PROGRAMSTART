@@ -251,9 +251,7 @@ def render_status(report: ResearchStatusReport) -> str:
     else:
         for domain in report.domains:
             gap_text = "; ".join(domain.current_gaps[:2]) if domain.current_gaps else "no explicit gaps"
-            lines.append(
-                f"- {domain.name}: {domain.status} | priority={domain.priority or 'unset'} | {gap_text}"
-            )
+            lines.append(f"- {domain.name}: {domain.status} | priority={domain.priority or 'unset'} | {gap_text}")
     return "\n".join(lines)
 
 
@@ -294,7 +292,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--track", help="Research track name. Defaults to the first configured track.")
     parser.add_argument("--date", default=str(date.today()), help="Review date in YYYY-MM-DD format.")
     parser.add_argument("--output", help="Explicit output path for the generated markdown file.")
-    parser.add_argument("--status", action="store_true", help="Print KB coverage and research freshness status instead of generating a template.")
+    parser.add_argument(
+        "--status", action="store_true", help="Print KB coverage and research freshness status instead of generating a template."
+    )
     parser.add_argument(
         "--fail-on-due",
         action="store_true",

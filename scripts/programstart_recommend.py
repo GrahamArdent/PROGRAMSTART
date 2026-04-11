@@ -6,6 +6,7 @@ import argparse
 import json
 import re
 from dataclasses import asdict, dataclass, field
+from datetime import datetime, UTC
 from pathlib import Path
 from typing import Any
 
@@ -47,25 +48,40 @@ class ProjectRecommendation:
     alternatives: list[dict[str, str]] = field(default_factory=list)
     confidence: str = "medium"
     generated_prompt: str = ""
+    prompt_generated_at: str = ""
 
 
 TOKEN_SPLIT_RE = re.compile(r"[^a-z0-9]+")
 CAPABILITY_ALIASES: dict[str, set[str]] = {
     "ai": {"ai", "llm", "language model"},
     "rag": {"rag", "retrieval", "semantic search", "semantic-search", "vector"},
-    "agents": {"agents", "agent", "tool use", "tool-use"},
+    "agents": {"agents", "agent", "tool use", "tool-use", "mcp", "tool server", "tool-server"},
+    "ml": {
+        "ml",
+        "machine learning",
+        "machine-learning",
+        "training",
+        "fine-tuning",
+        "fine tuning",
+        "experiment tracking",
+        "experiment-tracking",
+    },
     "durable-workflows": {"durable workflows", "durable-workflows", "workflow", "orchestration"},
     "authentication": {"authentication", "auth", "login", "mobile auth", "mobile-auth"},
     "authorization": {"authorization", "rbac", "permissions"},
     "sso": {"sso", "single sign on", "single-sign-on", "scim", "enterprise auth", "enterprise-auth"},
     "compliance": {"compliance", "audit", "audit readiness", "security program", "regulated"},
+    "observability": {"observability", "monitoring", "tracing", "metrics", "logging"},
     "realtime": {"realtime", "real time", "pubsub", "presence", "collaboration", "websockets"},
     "subscriptions": {"subscriptions", "subscription", "billing", "in app purchases", "in-app-purchases", "entitlements"},
+    "payments": {"payments", "checkout", "payment processing", "payment-processing", "stripe"},
+    "email": {"email", "email delivery", "email-delivery", "transactional email", "transactional-email"},
     "customer-data": {"customer data", "customer-data", "crm", "support", "analytics routing"},
     "shipping": {"shipping", "fulfillment", "labels", "logistics"},
     "tax": {"tax", "sales tax", "sales-tax", "vat"},
     "cloud": {"cloud", "hosting", "deploy", "deployment", "infrastructure", "serverless"},
     "database": {"database", "postgres", "sql", "storage"},
+    "testing": {"testing", "test automation", "test-automation", "e2e testing", "e2e-testing"},
     "monorepo": {"monorepo", "multi package", "multi-package", "build graph", "build-graph"},
     "python": {"python", "automation"},
     "javascript": {"javascript", "typescript", "frontend"},
@@ -200,6 +216,35 @@ def stack_risk_text(entry: dict[str, Any]) -> str:
     return normalize_text(" ".join(parts))
 
 
+def matching_integration_patterns(
+    *,
+    product_shape: str,
+    needs: set[str],
+    knowledge_base: dict[str, Any],
+) -> dict[str, list[str]]:
+    """Return a map of stack name (lowered) -> list of pattern names that matched."""
+    normalized_needs = expand_capability_terms(needs)
+    pattern_boosts: dict[str, list[str]] = {}
+    for pattern in knowledge_base.get("integration_patterns", []):
+        fit_for_text = normalize_text(" ".join(pattern.get("fit_for", [])))
+        pattern_name = str(pattern.get("name", ""))
+        matched = False
+        for need in normalized_needs:
+            if need and need in fit_for_text:
+                matched = True
+                break
+        if not matched and normalize_text(product_shape) in fit_for_text:
+            matched = True
+        if not matched:
+            continue
+        for component in pattern.get("components", []):
+            key = component.lower()
+            if key not in pattern_boosts:
+                pattern_boosts[key] = []
+            pattern_boosts[key].append(pattern_name)
+    return pattern_boosts
+
+
 def shape_profile(product_shape: str) -> tuple[str, list[str], set[str], list[str]]:
     if product_shape == "cli tool":
         return (
@@ -257,36 +302,40 @@ def infer_domain_names(product_shape: str, needs: set[str], regulated: bool, kno
     for item in base_domains:
         add_domain(item)
 
-    domain_map = {
-        "ai": "AI, retrieval, and agent systems",
-        "llm": "AI, retrieval, and agent systems",
-        "rag": "AI, retrieval, and agent systems",
-        "vector": "AI, retrieval, and agent systems",
-        "semantic-search": "AI, retrieval, and agent systems",
-        "agents": "AI, retrieval, and agent systems",
-        "durable-workflows": "API, workflow, and backend platforms",
-        "realtime": "Realtime collaboration, messaging, and eventing",
-        "pubsub": "Realtime collaboration, messaging, and eventing",
-        "presence": "Realtime collaboration, messaging, and eventing",
-        "collaboration": "Realtime collaboration, messaging, and eventing",
-        "subscriptions": "Commerce, communication, and product integrations",
-        "in-app-purchases": "Commerce, communication, and product integrations",
-        "entitlements": "Commerce, communication, and product integrations",
-        "crm": "Commerce, communication, and product integrations",
-        "customer-data": "Commerce, communication, and product integrations",
-        "shipping": "Commerce, communication, and product integrations",
-        "tax": "Commerce, communication, and product integrations",
-        "authentication": "Identity, security, and regulated delivery",
-        "authorization": "Identity, security, and regulated delivery",
-        "sso": "Identity, security, and regulated delivery",
-        "compliance": "Identity, security, and regulated delivery",
-        "audit": "Identity, security, and regulated delivery",
-        "local-first": "Desktop, local-first, and offline-capable software",
-        "offline": "Desktop, local-first, and offline-capable software",
-        "desktop": "Desktop, local-first, and offline-capable software",
-        "hosting": "Cloud, infrastructure, and platform operations",
-        "deploy": "Cloud, infrastructure, and platform operations",
-    }
+    domain_map: dict[str, str] = {}
+    for canonical, aliases in CAPABILITY_ALIASES.items():
+        _need_to_domain: dict[str, str] = {
+            "ai": "AI, retrieval, and agent systems",
+            "rag": "AI, retrieval, and agent systems",
+            "agents": "AI, retrieval, and agent systems",
+            "ml": "AI, retrieval, and agent systems",
+            "durable-workflows": "API, workflow, and backend platforms",
+            "realtime": "Realtime collaboration, messaging, and eventing",
+            "subscriptions": "Commerce, communication, and product integrations",
+            "payments": "Commerce, communication, and product integrations",
+            "email": "Commerce, communication, and product integrations",
+            "customer-data": "Commerce, communication, and product integrations",
+            "shipping": "Commerce, communication, and product integrations",
+            "tax": "Commerce, communication, and product integrations",
+            "authentication": "Identity, security, and regulated delivery",
+            "authorization": "Identity, security, and regulated delivery",
+            "sso": "Identity, security, and regulated delivery",
+            "compliance": "Identity, security, and regulated delivery",
+            "observability": "Cloud, infrastructure, and platform operations",
+            "cloud": "Cloud, infrastructure, and platform operations",
+            "database": "Cloud, infrastructure, and platform operations",
+            "desktop": "Desktop, local-first, and offline-capable software",
+            "testing": "Developer experience, quality, and supply chain",
+            "monorepo": "Developer experience, quality, and supply chain",
+            "python": "Developer experience, quality, and supply chain",
+            "javascript": "Web and frontend product delivery",
+            "mobile": "Mobile and cross-platform apps",
+        }
+        target_domain = _need_to_domain.get(canonical)
+        if target_domain:
+            domain_map[canonical] = target_domain
+            for alias in aliases:
+                domain_map[normalize_text(alias)] = target_domain
     for need in sorted(expand_capability_terms(needs)):
         mapped = domain_map.get(need)
         if mapped:
@@ -339,9 +388,13 @@ def preferred_rule_items_for_layer(
 def actionability_follow_up_commands(actionability_summary: list[dict[str, str]]) -> list[str]:
     commands: list[str] = []
     if any(item.get("actionability") == "advice-only" for item in actionability_summary):
-        commands.append("Review outputs/factory/create-plan.md to confirm stack, rule, and architecture guidance before implementation")
+        commands.append(
+            "Review outputs/factory/create-plan.md to confirm stack, rule, and architecture guidance before implementation"
+        )
     if any(item.get("actionability") == "automation-supported" for item in actionability_summary):
-        commands.append("Review outputs/factory/provisioning-plan.md and execute automation-supported provisioning before manual setup")
+        commands.append(
+            "Review outputs/factory/provisioning-plan.md and execute automation-supported provisioning before manual setup"
+        )
     if any(item.get("actionability") == "manual-setup" for item in actionability_summary):
         commands.append("Use outputs/factory/setup-surface.md to complete manual CLI installs, auth steps, and API env wiring")
     return commands
@@ -508,7 +561,9 @@ def build_stack_candidates(
     needs: set[str],
     regulated: bool,
     knowledge_base: dict[str, Any],
-) -> tuple[str, list[str], list[dict[str, object]], list[str], list[dict[str, str]], list[dict[str, str]], list[dict[str, str]], str]:
+) -> tuple[
+    str, list[str], list[dict[str, object]], list[str], list[dict[str, str]], list[dict[str, str]], list[dict[str, str]], str
+]:
     archetype, baseline_stacks, intent_terms, matched_domain_names = shape_profile(product_shape)
     selected_domain_names = infer_domain_names(product_shape, needs, regulated, knowledge_base)
     selected_domains = [
@@ -536,6 +591,11 @@ def build_stack_candidates(
 
     comparisons = knowledge_base.get("comparisons", [])
     relations = knowledge_base.get("relationships", [])
+    pattern_boosts = matching_integration_patterns(
+        product_shape=product_shape,
+        needs=needs,
+        knowledge_base=knowledge_base,
+    )
     candidates: list[dict[str, object]] = []
 
     for entry in knowledge_base.get("stacks", []):
@@ -563,6 +623,11 @@ def build_stack_candidates(
                 supporting_domains.append(str(domain.get("name", "")))
                 reasons.append(f"Representative tool for {domain.get('name', '')} ({status or 'unknown'} coverage).")
 
+        matched_patterns = pattern_boosts.get(normalized_name, [])
+        if matched_patterns:
+            score += min(6, len(matched_patterns) * 3)
+            reasons.append(f"Matches integration patterns: {', '.join(matched_patterns[:2])}.")
+
         for term in sorted(intent_terms):
             if term and term in text_blob:
                 matched_terms.append(term)
@@ -571,7 +636,9 @@ def build_stack_candidates(
             score += min(10, len(matched_terms) * 2)
             reasons.append(f"Matches intent terms: {', '.join(matched_terms[:4])}.")
 
-        if regulated and any(token in text_blob for token in ("security", "audit", "validation", "auth", "observability", "compliance")):
+        if regulated and any(
+            token in text_blob for token in ("security", "audit", "validation", "auth", "observability", "compliance")
+        ):
             score += 3
             reasons.append("Improves governance, validation, or observability for regulated work.")
 
@@ -644,9 +711,7 @@ def build_stack_candidates(
             continue
         evidence_reasons = list(candidate.get("reasons", []))
         related_decisions = [
-            item.get("decision", "")
-            for item in comparisons
-            if name in item.get("related_items", []) and item.get("decision", "")
+            item.get("decision", "") for item in comparisons if name in item.get("related_items", []) and item.get("decision", "")
         ]
         if related_decisions:
             evidence_reasons.append(related_decisions[0])
@@ -704,6 +769,8 @@ def build_stack_candidates(
         confidence = "low"
     elif coverage_warnings:
         confidence = "medium"
+    elif len(ordered_candidates) < 3:
+        confidence = "medium"
     else:
         confidence = "high"
 
@@ -730,28 +797,93 @@ def build_generated_prompt(
     kickoff_files: list[str],
     rationale: list[str],
     prompt_principles: list[str],
+    prompt_patterns: list[str],
+    prompt_anti_patterns: list[str],
+    coverage_warnings: list[dict[str, str]],
     service_names: list[str],
     cli_tool_names: list[str],
     api_names: list[str],
 ) -> str:
     files_line = ", ".join(kickoff_files) if kickoff_files else "registry kickoff files"
-    rationale_line = "; ".join(rationale[:3]) if rationale else "Use registry-backed defaults."
-    principles_line = "; ".join(prompt_principles[:3]) if prompt_principles else "Be explicit about assumptions and next actions."
     services_line = ", ".join(service_names) if service_names else "none inferred"
     cli_line = ", ".join(cli_tool_names) if cli_tool_names else "none inferred"
     apis_line = ", ".join(api_names) if api_names else "none inferred"
-    return (
-        "Create a new project kickoff plan from the current PROGRAMSTART workflow assets. "
-        f"Product shape: {product_shape}. Variant: {variant}. "
-        f"USERJOURNEY attached: {'yes' if attach_userjourney else 'no'}. "
-        f"Start from these authoritative files: {files_line}. "
-        f"Provision project-scoped services in the generated repo only: {services_line}. "
-        f"Recommended setup CLIs: {cli_line}. "
-        f"Saved third-party API templates: {apis_line}. "
-        f"Decision rationale: {rationale_line}. "
-        f"Prompt principles: {principles_line}. "
-        "Do not invent file lists or stage order outside the registry and authority docs."
+    coverage_lines = (
+        "\n".join(f"- {item['domain']}: {item['gaps']}" for item in coverage_warnings[:4]) if coverage_warnings else "none"
     )
+    sections = [
+        "## Task\nCreate a new project kickoff plan from the current PROGRAMSTART workflow assets.",
+        "## Reasoning Steps\n"
+        "1. Identify which authority files govern the active stage and variant.\n"
+        "2. Confirm the product shape, variant, and USERJOURNEY attachment decision.\n"
+        "3. Map each recommended stack and service to a concrete kickoff action.\n"
+        "4. Flag any coverage gaps that need resolution before locking.\n"
+        "5. Produce the plan in the file structure required by the registry.",
+        f"## Project Context\n"
+        f"- Product shape: {product_shape}\n"
+        f"- Variant: {variant}\n"
+        f"- USERJOURNEY attached: {'yes' if attach_userjourney else 'no'}\n"
+        f"- Authoritative files: {files_line}",
+        f"## Infrastructure\n- Services: {services_line}\n- Setup CLIs: {cli_line}\n- API templates: {apis_line}",
+        "## Decision Rationale\n" + "\n".join(f"- {r}" for r in rationale[:6]),
+        "## Prompt Principles\n" + "\n".join(f"- {p}" for p in prompt_principles[:8]),
+        "## Prompt Patterns\n" + "\n".join(f"- {p}" for p in prompt_patterns[:8]),
+        "## Anti-Patterns\n"
+        + "\n".join(
+            f"- {p}"
+            for p in (
+                prompt_anti_patterns[:8] if prompt_anti_patterns else ["Do not invent unsupported files, rules, or citations."]
+            )
+        ),
+        f"## Coverage Warnings\n{coverage_lines}",
+        "## Constraints\n"
+        "- Do not invent file lists or stage order outside the registry and authority docs.\n"
+        "- Provision project-scoped services in the generated repo only.",
+    ]
+    return "\n\n".join(sections)
+
+
+def normalize_prompt_guidance(prompt_guidance: dict[str, Any]) -> tuple[list[str], list[str], list[str]]:
+    def clean_items(items: list[str]) -> list[str]:
+        seen: set[str] = set()
+        cleaned: list[str] = []
+        for item in items:
+            value = str(item).strip()
+            if not value:
+                continue
+            key = value.lower()
+            if key in seen:
+                continue
+            seen.add(key)
+            cleaned.append(value)
+        return cleaned
+
+    principles = clean_items(
+        [
+            *list(prompt_guidance.get("principles", [])),
+            str(prompt_guidance.get("output_contracts", "")),
+            str(prompt_guidance.get("verification_loops", "")),
+            str(prompt_guidance.get("completeness_contracts", "")),
+        ]
+    )
+    patterns = clean_items(
+        [
+            *list(prompt_guidance.get("patterns", [])),
+            str(prompt_guidance.get("tool_persistence", "")),
+            str(prompt_guidance.get("research_mode", "")),
+            str(prompt_guidance.get("reasoning_effort", "")),
+            str(prompt_guidance.get("citation_rules", "")),
+            str(prompt_guidance.get("empty_result_recovery", "")),
+        ]
+    )
+    anti_patterns = clean_items(list(prompt_guidance.get("anti_patterns", [])))
+    if not anti_patterns:
+        anti_patterns = [
+            "Do not invent unsupported files, rules, or citations.",
+            "Do not skip verification or assume tool output is complete.",
+            "Do not add features, stages, or documents outside the registry authority model.",
+        ]
+    return principles, patterns, anti_patterns
 
 
 def parse_kickoff_inputs(path: Path) -> dict[str, str]:
@@ -777,7 +909,9 @@ def normalize_shape(value: str | None) -> str:
 def infer_variant(product_shape: str, needs: set[str], regulated: bool) -> str:
     if regulated or {"audit", "regulated", "multi-team"} & needs:
         return "enterprise"
-    if product_shape in {"cli tool", "library"} and not ({"agents", "rag", "durable-workflows"} & needs):
+    if product_shape in {"cli tool", "library"} and not (
+        {"agents", "rag", "durable-workflows", "ml", "training", "fine-tuning", "machine learning", "machine-learning"} & needs
+    ):
         return "lite"
     return "product"
 
@@ -863,11 +997,22 @@ def build_recommendation(
     normalized_needs = expand_capability_terms(needs)
     variant = infer_variant(product_shape, normalized_needs, regulated)
     should_attach = attach_userjourney if attach_userjourney is not None else product_shape in {"web app", "mobile app"}
-    archetype, stack_names, stack_evidence, matched_domains, coverage_warnings, alternatives, rule_evidence, confidence = build_stack_candidates(
-        product_shape,
-        normalized_needs,
-        regulated,
-        knowledge_base,
+
+    # #24: Detect needs that don't match any CAPABILITY_ALIASES canonical key
+    recognized_canonical = set(CAPABILITY_ALIASES.keys())
+    recognized_all = set()
+    for aliases in CAPABILITY_ALIASES.values():
+        recognized_all |= {normalize_text(a) for a in aliases}
+    recognized_all |= recognized_canonical
+    unrecognized_needs = sorted(n for n in needs if normalize_text(n) and normalize_text(n) not in recognized_all)
+
+    archetype, stack_names, stack_evidence, matched_domains, coverage_warnings, alternatives, rule_evidence, confidence = (
+        build_stack_candidates(
+            product_shape,
+            normalized_needs,
+            regulated,
+            knowledge_base,
+        )
     )
     rationale = [
         f"Recommendation is scored from KB stack fit, coverage domains, and explicit relationships for {product_shape}.",
@@ -937,14 +1082,16 @@ def build_recommendation(
 
     if should_attach:
         rationale.append("The product shape implies real end-user onboarding or activation design work.")
+    if unrecognized_needs:
+        rationale.append(
+            f"Unrecognized capability needs (not in KB aliases): {', '.join(unrecognized_needs)}. These were not factored into stack or service selection."
+        )
     if service_evidence:
         rationale.append(f"Inferred services: {', '.join(str(item['name']) for item in service_evidence[:3])}.")
     if api_evidence:
         rationale.append(f"Inferred third-party APIs: {', '.join(str(item['name']) for item in api_evidence[:3])}.")
 
-    prompt_principles = list(prompt_guidance.get("principles", []))
-    prompt_patterns = list(prompt_guidance.get("patterns", []))
-    prompt_anti_patterns = list(prompt_guidance.get("anti_patterns", []))
+    prompt_principles, prompt_patterns, prompt_anti_patterns = normalize_prompt_guidance(prompt_guidance)
     generated_prompt = build_generated_prompt(
         product_shape=product_shape,
         variant=variant,
@@ -952,6 +1099,9 @@ def build_recommendation(
         kickoff_files=kickoff_files,
         rationale=rationale,
         prompt_principles=prompt_principles,
+        prompt_patterns=prompt_patterns,
+        prompt_anti_patterns=prompt_anti_patterns,
+        coverage_warnings=coverage_warnings,
         service_names=service_names,
         cli_tool_names=cli_tool_names,
         api_names=api_names,
@@ -986,6 +1136,7 @@ def build_recommendation(
         alternatives=combined_alternatives,
         confidence=confidence,
         generated_prompt=generated_prompt,
+        prompt_generated_at=datetime.now(UTC).isoformat(timespec="seconds"),
     )
 
 
@@ -1000,6 +1151,72 @@ def load_recommendation_inputs(args: argparse.Namespace) -> tuple[str, set[str]]
         if any(normalize_text(alias) in normalize_text(inferred_text) for alias in aliases):
             needs.add(canonical)
     return product_shape, expand_capability_terms(needs)
+
+
+def re_evaluate_project(project_dir: str) -> dict[str, Any]:
+    """Re-evaluate an existing project against the current PROGRAMSTART knowledge base.
+
+    Reads the target project's kickoff inputs, re-runs the recommendation engine
+    with the current (possibly updated) KB, and returns a comparison report
+    showing what changed.
+    """
+    target = Path(project_dir).resolve()
+    kickoff_path = target / "PROGRAMBUILD" / "PROGRAMBUILD_KICKOFF_PACKET.md"
+    kickoff_values = parse_kickoff_inputs(kickoff_path)
+
+    product_shape = normalize_shape(kickoff_values.get("PRODUCT_SHAPE"))
+    needs: set[str] = set()
+    inferred_text = " ".join(
+        value for key, value in kickoff_values.items() if key in {"CORE_PROBLEM", "ONE_LINE_DESCRIPTION", "KNOWN_CONSTRAINTS"}
+    ).lower()
+    for canonical, aliases in CAPABILITY_ALIASES.items():
+        if any(normalize_text(alias) in normalize_text(inferred_text) for alias in aliases):
+            needs.add(canonical)
+    needs = expand_capability_terms(needs)
+    regulated = "regulated" in inferred_text or "compliance" in inferred_text
+
+    current_rec = build_recommendation(
+        product_shape=product_shape,
+        needs=needs,
+        regulated=regulated,
+        attach_userjourney=None,
+    )
+
+    # Load the project's existing state for comparison
+    target_registry_path = target / "config" / "process-registry.json"
+    target_state: dict[str, Any] = {}
+    if target_registry_path.exists():
+        target_registry = json.loads(target_registry_path.read_text(encoding="utf-8"))
+        target_state["registry_version"] = target_registry.get("version", "unknown")
+        target_state["variant"] = ""
+        pb_state_path = target / "PROGRAMBUILD" / "PROGRAMBUILD_STATE.json"
+        if pb_state_path.exists():
+            pb_state = json.loads(pb_state_path.read_text(encoding="utf-8"))
+            target_state["variant"] = pb_state.get("variant", "")
+
+    # Build comparison
+    current_kb = load_knowledge_base()
+    kb_version = current_kb.get("version", "unknown")
+
+    deltas: list[str] = []
+    if target_state.get("variant") and target_state["variant"] != current_rec.variant:
+        deltas.append(f"Variant drift: project uses '{target_state['variant']}', current KB recommends '{current_rec.variant}'")
+    if target_state.get("registry_version") and target_state["registry_version"] != load_registry().get("version", ""):
+        deltas.append(
+            f"Registry version drift: project has '{target_state['registry_version']}', current is '{load_registry().get('version', '')}'"
+        )
+
+    return {
+        "project_dir": str(target),
+        "kickoff_inputs": kickoff_values,
+        "product_shape": product_shape,
+        "inferred_needs": sorted(needs),
+        "current_recommendation": asdict(current_rec),
+        "kb_version": kb_version,
+        "project_state": target_state,
+        "deltas": deltas,
+        "re_evaluated_at": datetime.now(UTC).isoformat(timespec="seconds"),
+    }
 
 
 def print_recommendation(recommendation: ProjectRecommendation) -> None:
@@ -1107,8 +1324,36 @@ def main(argv: list[str] | None = None) -> int:
         help="Force PROGRAMBUILD-only flow.",
     )
     parser.add_argument("--json", action="store_true", help="Emit JSON instead of text.")
+    parser.add_argument(
+        "--re-evaluate",
+        metavar="PROJECT_DIR",
+        help="Re-evaluate an existing project against the current knowledge base.",
+    )
     parser.set_defaults(attach_userjourney=None)
     args = parser.parse_args(argv)
+
+    if args.re_evaluate:
+        result = re_evaluate_project(args.re_evaluate)
+        if args.json:
+            print(json.dumps(result, indent=2))
+        else:
+            print("PROGRAMSTART Re-evaluation Report")
+            print(f"- project: {result['project_dir']}")
+            print(f"- product shape: {result['product_shape']}")
+            print(f"- inferred needs: {', '.join(result['inferred_needs']) or 'none'}")
+            print(f"- KB version: {result['kb_version']}")
+            print(f"- re-evaluated at: {result['re_evaluated_at']}")
+            rec = result["current_recommendation"]
+            print(f"- recommended variant: {rec['variant']}")
+            print(f"- recommended stacks: {', '.join(rec['stack_names']) or 'none'}")
+            print(f"- confidence: {rec['confidence']}")
+            if result["deltas"]:
+                print("- deltas detected:")
+                for d in result["deltas"]:
+                    print(f"  - {d}")
+            else:
+                print("- deltas: none — project aligns with current KB")
+        return 0
 
     product_shape, needs = load_recommendation_inputs(args)
     recommendation = build_recommendation(

@@ -120,3 +120,6 @@ jobs:
 
       - name: Dashboard API smoke
         run: uv run python scripts/programstart_dashboard_smoke.py
+
+      - name: Run fast test subset
+        run: uv run pytest -x --timeout=60 -q

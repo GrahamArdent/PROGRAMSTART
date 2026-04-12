@@ -77,12 +77,12 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
         with:
           fetch-depth: 0
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -90,14 +90,14 @@ jobs:
         run: python -m pip install uv
 
       - name: Cache uv packages
-        uses: actions/cache@v5
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7  # v5
         with:
           path: ${{ env.UV_CACHE_DIR }}
           key: uv-${{ runner.os }}-${{ hashFiles('uv.lock') }}
           restore-keys: uv-${{ runner.os }}-
 
       - name: Cache pre-commit hooks
-        uses: actions/cache@v5
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7  # v5
         with:
           path: ${{ env.PRE_COMMIT_HOME }}
           key: pre-commit-${{ runner.os }}-${{ hashFiles('.pre-commit-config.yaml') }}
@@ -146,7 +146,7 @@ jobs:
 
       - name: Upload coverage report
         if: runner.os == 'Linux'
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7
         with:
           name: coverage-report
           path: coverage.xml
@@ -234,7 +234,7 @@ jobs:
 
       - name: Upload template golden failures
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7
         with:
           name: golden-failures-template-${{ runner.os }}
           path: outputs/golden-failures/**
@@ -242,7 +242,7 @@ jobs:
 
       - name: Upload bootstrapped golden failures
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7
         with:
           name: golden-failures-bootstrap-${{ runner.os }}
           path: .tmp_ci_bootstrap/outputs/golden-failures/**
@@ -276,12 +276,12 @@ jobs:
       UV_CACHE_DIR: .cache/uv
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
         with:
           fetch-depth: 0
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -289,7 +289,7 @@ jobs:
         run: python -m pip install uv
 
       - name: Cache uv packages
-        uses: actions/cache@v5
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7  # v5
         with:
           path: ${{ env.UV_CACHE_DIR }}
           key: uv-compat-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('uv.lock') }}

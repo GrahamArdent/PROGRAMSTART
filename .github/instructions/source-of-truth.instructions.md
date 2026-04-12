@@ -86,3 +86,10 @@ you MUST also apply JIT to *product* authority docs:
 - If implementation design contradicts `ARCHITECTURE.md`, update `ARCHITECTURE.md` first (canonical-before-dependent).
 - If you discover a new contract, endpoint, or auth rule not in `ARCHITECTURE.md`, record it in `DECISION_LOG.md` and update `ARCHITECTURE.md` in the same commit.
 - Every 3–5 features, re-read the full contracts section of `ARCHITECTURE.md` to catch silent drift.
+
+## Temporal semantics
+
+- "MUST outrank" (`PROGRAMBUILD_CANONICAL.md` rule 1) applies **retroactively**: when an existing conflict between validated code and a planning document is discovered, code is the source of truth.
+- "MUST update the authority document first" applies **prospectively**: before writing new code that would contradict an authority doc, update the doc first.
+- "Before" in canonical-before-dependent means in the same commit or PR, not in a separate change.
+- "Never from memory" means re-read on each new session or after context window reset, not just across conversations.

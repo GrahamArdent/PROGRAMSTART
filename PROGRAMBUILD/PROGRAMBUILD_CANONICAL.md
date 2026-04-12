@@ -11,7 +11,7 @@ If two planning documents disagree, this file decides which one is authoritative
 
 The key words MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY in this section are interpreted as described in [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119).
 
-1. Validated code and validated tests MUST outrank any planning document.
+1. Validated code and validated tests MUST outrank any planning document when conflicts are discovered retroactively. However, developers MUST update the relevant authority document before introducing new code that would contradict it (see `copilot-instructions.md` Workflow Expectations and `source-of-truth.instructions.md` Temporal Semantics).
 2. This file defines which planning document is authoritative for each concern.
 3. `PROGRAMBUILD_FILE_INDEX.md` is the official inventory of critical planning files.
 4. No duplicate authority is allowed. One concern, one primary owner. A file MUST NOT be canonical for more than one concern.

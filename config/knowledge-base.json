@@ -1,5 +1,5 @@
 {
-  "version": "2026-03-30",
+  "version": "2026-04-12",
   "method": "Primary-source synthesis from official framework, platform, and tooling documentation. The KB is intentionally decision-oriented: it stores stack guidance, developer setup surfaces, reusable API profiles, explicit coverage domains, and weekly research freshness metadata so scope and staleness can be audited instead of guessed.",
   "stacks": [
     {
@@ -151,7 +151,7 @@
       "scaffolding_notes": [
         "Never pin an exact version in package.json (e.g. '14.2.3'). Use a semver range such as '^15'. Run 'npm show next version' to confirm the current major before writing the file.",
         "Next.js has a history of security vulnerabilities in specific patch releases. Using '^<major>' ensures npm install always resolves to the latest patched version within the major.",
-        "Run 'npm install' immediately after writing package.json — do not leave it for the user."
+        "Run 'npm install' immediately after writing package.json \u2014 do not leave it for the user."
       ]
     },
     {
@@ -4080,8 +4080,8 @@
       ],
       "scaffolding_notes": [
         "NEVER write exact pinned versions in package.json (e.g. '14.2.3'). Always use semver ranges such as '^15'. Run 'npm show <package> version' or 'pnpm show <package> version' to confirm the current major before writing the file.",
-        "Pinned exact versions prevent automatic pickup of security patches. JavaScript framework ecosystems (Next.js, Nuxt, Remix, SvelteKit, etc.) release security patches as patch versions within a major — a pinned version will never receive them.",
-        "Run 'pnpm install' immediately after writing package.json — do not leave it for the user."
+        "Pinned exact versions prevent automatic pickup of security patches. JavaScript framework ecosystems (Next.js, Nuxt, Remix, SvelteKit, etc.) release security patches as patch versions within a major \u2014 a pinned version will never receive them.",
+        "Run 'pnpm install' immediately after writing package.json \u2014 do not leave it for the user."
       ]
     },
     {
@@ -4126,8 +4126,8 @@
       ],
       "scaffolding_notes": [
         "NEVER write exact pinned versions in package.json (e.g. '14.2.3'). Always use semver ranges such as '^15'. Run 'npm show <package> version' to confirm the current major before writing the file.",
-        "Pinned exact versions prevent automatic pickup of security patches. JavaScript framework ecosystems (Next.js, Nuxt, Remix, SvelteKit, etc.) release security patches as patch versions within a major — a pinned version will never receive them.",
-        "Run 'npm install' immediately after writing package.json — do not leave it for the user."
+        "Pinned exact versions prevent automatic pickup of security patches. JavaScript framework ecosystems (Next.js, Nuxt, Remix, SvelteKit, etc.) release security patches as patch versions within a major \u2014 a pinned version will never receive them.",
+        "Run 'npm install' immediately after writing package.json \u2014 do not leave it for the user."
       ]
     },
     {
@@ -4768,7 +4768,7 @@
         "library"
       ],
       "strengths": [
-        "Single Vite pipeline for dev, build, and test — no separate transpiler config.",
+        "Single Vite pipeline for dev, build, and test \u2014 no separate transpiler config.",
         "Jest-compatible API: drop-in replacement for most test suites with minimal migration effort.",
         "Instant watch mode via Vite HMR; only reruns tests affected by file changes.",
         "Native TypeScript and JSX support without extra config.",
@@ -4832,14 +4832,14 @@
       "strengths": [
         "Utility-first classes eliminate context switching between HTML and CSS files.",
         "Design system constraints (spacing, color, typography) enforced through the theme, not convention.",
-        "CSS output stays small and stops growing linearly — only used classes are generated.",
+        "CSS output stays small and stops growing linearly \u2014 only used classes are generated.",
         "Built-in dark mode, responsive variants, and state variants (hover, focus, disabled) with no extra config.",
         "Arbitrary value syntax handles one-off values without leaving the utility model.",
         "v4 is pure CSS with no JS build step; integrates with any framework or template language."
       ],
       "tradeoffs": [
         "Class attribute verbosity: long class lists on individual elements require discipline or component abstraction.",
-        "Conflicting utility classes resolve by stylesheet order, not HTML order — requires careful composition.",
+        "Conflicting utility classes resolve by stylesheet order, not HTML order \u2014 requires careful composition.",
         "Team adoption curve for developers accustomed to BEM or CSS-in-JS mental models.",
         "Does not include a component library; pairs with shadcn/ui, Headless UI, or Radix UI for accessible components."
       ],
@@ -4910,7 +4910,7 @@
         "E-commerce and publishing platforms where SEO and Core Web Vitals are primary KPIs."
       ],
       "avoid_when": [
-        "Building highly interactive app-like experiences (admin dashboards, collaborative tools, realtime UIs) — use Next.js or SvelteKit.",
+        "Building highly interactive app-like experiences (admin dashboards, collaborative tools, realtime UIs) \u2014 use Next.js or SvelteKit.",
         "Team needs a large prebuilt component library ecosystem that assumes a single SPA framework.",
         "Auth-heavy flows with complex client-side session state that benefit from full React hydration."
       ],
@@ -5435,7 +5435,7 @@
         "mpa"
       ],
       "strengths": [
-        "Adds AJAX, WebSockets, SSE to HTML via attributes — no JS required",
+        "Adds AJAX, WebSockets, SSE to HTML via attributes \u2014 no JS required",
         "Works with any server-side stack (Django, FastAPI, Rails, PHP)",
         "Dramatically reduces client-side complexity for server-driven UIs",
         "Sub-10 kB, zero build step"
@@ -5545,7 +5545,7 @@
       "strengths": [
         "Web-standard fetch/form-action model reduces client JS to minimum",
         "Nested routing with loader/action pattern co-locates data with UI",
-        "Progressive enhancement by default — works without JS",
+        "Progressive enhancement by default \u2014 works without JS",
         "Runs on any JS runtime (Node, Cloudflare, Deno, Bun) via adapters"
       ],
       "tradeoffs": [
@@ -5596,13 +5596,13 @@
         "static"
       ],
       "strengths": [
-        "Copy-paste component primitives — you own the code, no library lock-in",
+        "Copy-paste component primitives \u2014 you own the code, no library lock-in",
         "Built on Radix UI primitives for accessibility compliance",
         "Tailwind CSS styling, easy to customise design tokens",
         "New components added regularly with official CLI"
       ],
       "tradeoffs": [
-        "Components are pasted into your repo — updates require manual re-sync",
+        "Components are pasted into your repo \u2014 updates require manual re-sync",
         "Tightly coupled to Tailwind CSS and Radix UI",
         "Not a traditional npm package; different mental model"
       ],
@@ -5756,7 +5756,7 @@
         "Supports devtools, persist, immer middleware"
       ],
       "tradeoffs": [
-        "No opinionated structure — large apps may diverge without conventions",
+        "No opinionated structure \u2014 large apps may diverge without conventions",
         "Less ecosystem tooling than Redux Toolkit for complex async flows"
       ],
       "best_for": [
@@ -5817,7 +5817,7 @@
         "Complex optimistic update patterns with full rollback"
       ],
       "avoid_when": [
-        "Simple local or cross-component state (overkill — use Zustand)",
+        "Simple local or cross-component state (overkill \u2014 use Zustand)",
         "Server state caching (use TanStack Query or RTK Query but not both)"
       ],
       "pairs_with": [
@@ -5963,7 +5963,7 @@
       ],
       "tradeoffs": [
         "TypeScript-only; useless in non-TS codebases",
-        "Not a REST or GraphQL API — can't be consumed by non-TS clients easily",
+        "Not a REST or GraphQL API \u2014 can't be consumed by non-TS clients easily",
         "Monorepo expected; cross-repo usage is awkward"
       ],
       "best_for": [
@@ -6070,7 +6070,7 @@
         "microservices"
       ],
       "strengths": [
-        "Binary Protobuf serialization is ~5–10x smaller and faster than JSON",
+        "Binary Protobuf serialization is ~5\u201310x smaller and faster than JSON",
         "Strong contract via .proto IDL enables polyglot clients",
         "HTTP/2 multiplexing: bidirectional streaming built-in",
         "Code generation for all major languages from proto files"
@@ -6180,7 +6180,7 @@
         "Integrates with ESLint via eslint-config-prettier"
       ],
       "tradeoffs": [
-        "Opinionated — some rules are not configurable by design",
+        "Opinionated \u2014 some rules are not configurable by design",
         "Slower than Biome; for large codebases consider migrating",
         "HTML formatting can be surprising with whitespace-sensitive markup"
       ],
@@ -6241,7 +6241,7 @@
         "Teams familiar with the Jest API wanting stable, proven tooling"
       ],
       "avoid_when": [
-        "New Vite-based projects (prefer Vitest — native ESM, zero config)",
+        "New Vite-based projects (prefer Vitest \u2014 native ESM, zero config)",
         "Performance-sensitive CI pipelines running thousands of test files"
       ],
       "pairs_with": [
@@ -6331,7 +6331,7 @@
       ],
       "strengths": [
         "Ubiquitous; largest Node.js HTTP middleware ecosystem",
-        "Minimal and un-opinionated — full control over architecture",
+        "Minimal and un-opinionated \u2014 full control over architecture",
         "Vast documentation and community resources",
         "Nearly every npm package has an Express middleware adapter"
       ],
@@ -6443,7 +6443,7 @@
       ],
       "strengths": [
         "All-in-one: runtime, bundler, test runner, package manager in one binary",
-        "3–5x faster startup than Node.js; optimised for edge and serverless",
+        "3\u20135x faster startup than Node.js; optimised for edge and serverless",
         "Native TypeScript, TSX, and JSX execution without transpile step",
         "Drop-in Node.js compatibility for most npm packages"
       ],
@@ -6547,7 +6547,7 @@
       ],
       "strengths": [
         "Type-safe SQL query builder; schema defined in TypeScript",
-        "Zero runtime overhead — compiles to SQL at build time",
+        "Zero runtime overhead \u2014 compiles to SQL at build time",
         "Supports PostgreSQL, MySQL, SQLite, and Cloudflare D1",
         "Drizzle Studio GUI for DB inspection"
       ],
@@ -6762,7 +6762,7 @@
         "server"
       ],
       "strengths": [
-        "SQLAlchemy-native migration framework — uses SQLAlchemy's metadata model",
+        "SQLAlchemy-native migration framework \u2014 uses SQLAlchemy's metadata model",
         "Autogenerate migrations from ORM model changes",
         "Branching, merging, and squashing of migration history",
         "Works with PostgreSQL, MySQL, SQLite, Oracle"
@@ -6770,7 +6770,7 @@
       "tradeoffs": [
         "Python-only; tied to SQLAlchemy ecosystem",
         "Autogenerate doesn't catch all schema changes (indexes, sequences)",
-        "Migration scripts are raw SQL + Python — requires SQL knowledge to review"
+        "Migration scripts are raw SQL + Python \u2014 requires SQL knowledge to review"
       ],
       "best_for": [
         "FastAPI or Django (when using SQLAlchemy) needing schema migrations",
@@ -6831,7 +6831,7 @@
         "Lightweight data transformation at the network edge"
       ],
       "avoid_when": [
-        "Long-running compute (>50 ms CPU) — use AWS Lambda or Fargate",
+        "Long-running compute (>50 ms CPU) \u2014 use AWS Lambda or Fargate",
         "Node.js-only packages that can't run in V8 isolates"
       ],
       "pairs_with": [
@@ -7187,7 +7187,7 @@
       ],
       "strengths": [
         "LPU (Language Processing Unit) hardware delivers fastest inference available",
-        "100–500 tokens/sec for Llama 3, Mixtral, Gemma — significantly faster than OpenAI",
+        "100\u2013500 tokens/sec for Llama 3, Mixtral, Gemma \u2014 significantly faster than OpenAI",
         "OpenAI-compatible REST API for drop-in replacement",
         "Generous free tier for experimentation"
       ],
@@ -7453,7 +7453,7 @@
         "Extensions and plugins for custom authentication flows"
       ],
       "tradeoffs": [
-        "Java-based; resource-heavy — ~512 MB RAM minimum",
+        "Java-based; resource-heavy \u2014 ~512 MB RAM minimum",
         "Steep configuration learning curve for realms and clients",
         "Self-hosted maintenance is non-trivial (upgrades, HA setup)"
       ],
@@ -7619,7 +7619,7 @@
         "Browser module for Playwright-like E2E perf testing"
       ],
       "tradeoffs": [
-        "JS runtime is k6-specific; not Node — npm packages not available",
+        "JS runtime is k6-specific; not Node \u2014 npm packages not available",
         "Distributed local load generation requires k6 Operator or k6 Cloud",
         "Less feature-rich than Gatling for complex protocol simulations"
       ],
@@ -7727,7 +7727,7 @@
         "Built-in radar fraud detection and chargeback protection"
       ],
       "tradeoffs": [
-        "2.9% + 30¢ per transaction; expensive at high volume vs. Adyen",
+        "2.9% + 30\u00a2 per transaction; expensive at high volume vs. Adyen",
         "Webhook idempotency requires careful server-side event deduplication",
         "Complex for multi-party marketplace splits (Connect)"
       ],
@@ -7947,8 +7947,8 @@
         "TypeScript-first with typed route params since v7"
       ],
       "tradeoffs": [
-        "React Native only — no web equivalent",
-        "v6→v7 migration required TypeScript generics changes",
+        "React Native only \u2014 no web equivalent",
+        "v6\u2192v7 migration required TypeScript generics changes",
         "Complex nested navigators can make type definitions verbose"
       ],
       "best_for": [
@@ -11170,7 +11170,7 @@
         "cadence": "weekly",
         "owner": "platform",
         "freshness_days": 7,
-        "last_review_date": "2026-03-29",
+        "last_review_date": "2026-04-12",
         "scope": [
           "CPython release notes",
           "typing changes",
@@ -11199,7 +11199,7 @@
         "cadence": "weekly",
         "owner": "ai-platform",
         "freshness_days": 7,
-        "last_review_date": "2026-03-29",
+        "last_review_date": "2026-04-12",
         "scope": [
           "provider API changes",
           "retrieval framework guidance",
@@ -11226,7 +11226,7 @@
         "cadence": "weekly",
         "owner": "product-platform",
         "freshness_days": 7,
-        "last_review_date": "2026-03-29",
+        "last_review_date": "2026-04-12",
         "scope": [
           "framework release notes",
           "observability guidance",
@@ -11257,7 +11257,7 @@
         "cadence": "weekly",
         "owner": "mobile-platform",
         "freshness_days": 7,
-        "last_review_date": "2026-03-30",
+        "last_review_date": "2026-04-12",
         "scope": [
           "Expo and React Native release notes",
           "Flutter release notes",
@@ -11284,7 +11284,7 @@
         "cadence": "weekly",
         "owner": "data-platform",
         "freshness_days": 7,
-        "last_review_date": "2026-03-30",
+        "last_review_date": "2026-04-12",
         "scope": [
           "warehouse and OLAP releases",
           "orchestration guidance",
@@ -11310,7 +11310,7 @@
         "cadence": "weekly",
         "owner": "integrations-platform",
         "freshness_days": 7,
-        "last_review_date": "2026-03-30",
+        "last_review_date": "2026-04-12",
         "scope": [
           "payments and subscription tooling",
           "email and messaging providers",
@@ -11339,7 +11339,7 @@
         "cadence": "weekly",
         "owner": "desktop-platform",
         "freshness_days": 7,
-        "last_review_date": "2026-03-30",
+        "last_review_date": "2026-04-12",
         "scope": [
           "desktop shell releases",
           "local database and sync-engine changes",
@@ -11365,7 +11365,7 @@
         "cadence": "weekly",
         "owner": "developer-platform",
         "freshness_days": 7,
-        "last_review_date": "2026-03-30",
+        "last_review_date": "2026-04-12",
         "scope": [
           "node package-manager changes",
           "monorepo orchestration tooling",
@@ -11391,7 +11391,7 @@
         "cadence": "weekly",
         "owner": "platform-architecture",
         "freshness_days": 7,
-        "last_review_date": "2026-03-30",
+        "last_review_date": "2026-04-12",
         "scope": [
           "event broker releases",
           "managed realtime platform changes",
@@ -11418,7 +11418,7 @@
         "cadence": "weekly",
         "owner": "growth-platform",
         "freshness_days": 7,
-        "last_review_date": "2026-03-30",
+        "last_review_date": "2026-04-12",
         "scope": [
           "crm and support platform changes",
           "customer-data tooling",

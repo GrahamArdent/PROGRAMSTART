@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import datetime
 import json
 import re
 from fnmatch import fnmatch
@@ -602,6 +603,32 @@ def validate_test_coverage(registry: dict) -> list[str]:
     return warnings
 
 
+def validate_kb_freshness(_registry: dict) -> list[str]:
+    """Warn about knowledge-base tracks whose last_review_date exceeds freshness_days."""
+    warnings: list[str] = []
+    kb_path = workspace_path("config/knowledge-base.json")
+    if not kb_path.exists():
+        return warnings
+    kb = json.loads(kb_path.read_text(encoding="utf-8"))
+    today = datetime.date.today()
+    for track in kb.get("research_ledger", {}).get("tracks", []):
+        name = track.get("name", "<unnamed>")
+        freshness_days = track.get("freshness_days")
+        last_review = track.get("last_review_date")
+        if freshness_days is None or last_review is None:
+            warnings.append(f"KB track '{name}' missing freshness_days or last_review_date")
+            continue
+        try:
+            review_date = datetime.date.fromisoformat(last_review)
+        except ValueError:
+            warnings.append(f"KB track '{name}' has invalid last_review_date: {last_review}")
+            continue
+        age = (today - review_date).days
+        if age > freshness_days:
+            warnings.append(f"KB track '{name}' is stale: last reviewed {last_review} ({age}d ago, limit {freshness_days}d)")
+    return warnings
+
+
 def validate_workflow_state(registry: dict, system_filter: str | None = None) -> list[str]:
     systems = [system_filter] if system_filter else ["programbuild", "userjourney"]
     problems: list[str] = []
@@ -668,6 +695,7 @@ def main() -> int:
             "rule-enforcement",
             "test-coverage",
             "adr-coverage",
+            "kb-freshness",
         ],
         default="all",
     )
@@ -700,6 +728,7 @@ def main() -> int:
         warnings.extend(reference_warnings)
         warnings.extend(validate_test_coverage(registry))
         warnings.extend(validate_adr_coverage(registry))
+        warnings.extend(validate_kb_freshness(registry))
     elif args.check == "required-files":
         problems.extend(validate_registry(registry))
         problems.extend(validate_required_files(registry, sf))
@@ -724,6 +753,8 @@ def main() -> int:
         warnings.extend(validate_test_coverage(registry))
     elif args.check == "adr-coverage":
         warnings.extend(validate_adr_coverage(registry))
+    elif args.check == "kb-freshness":
+        warnings.extend(validate_kb_freshness(registry))
     else:
         problems.extend(validate_engineering_ready(registry))
 

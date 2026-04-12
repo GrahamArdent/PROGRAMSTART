@@ -6,6 +6,20 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 
 ---
 
+## 2026-04-12 (Post-Gameplan — Remaining Deferred Items)
+
+- extracted shared dashboard smoke lifecycle helpers into scripts/programstart_smoke_helpers.py (T9)
+  - choose_port, request_json, request_text, wait_for_server, safe_shutdown, start_dashboard_server
+  - refactored 3 dashboard smoke scripts to import from shared module
+  - 10 unit tests for extracted helpers
+- added KB freshness validation to programstart validate (Section 22.1)
+  - validate_kb_freshness parses research_ledger tracks and warns on stale reviews
+  - wired as --check kb-freshness and included in --check all warnings
+  - 6 unit tests for freshness edge cases
+- registered new files in config/process-registry.json bootstrap_assets
+
+---
+
 ## 2026-04-12 (Phase 10 — Gameplan Completion)
 
 - created MADR 4.0 ADR records for DEC-001 through DEC-004 (ADR-0004 to ADR-0007)

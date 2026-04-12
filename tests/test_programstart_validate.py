@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 
@@ -1145,6 +1146,77 @@ def test_adr_coverage_no_warning_when_decision_log_missing(tmp_path, monkeypatch
 
 def test_validate_main_adr_coverage_passes(capsys, monkeypatch) -> None:
     monkeypatch.setattr("sys.argv", ["programstart_validate.py", "--check", "adr-coverage"])
+    result = validate.main()
+    out = capsys.readouterr().out
+    assert result == 0
+    assert "Validation passed" in out
+
+
+# ---------- KB freshness ----------
+
+
+def test_kb_freshness_no_warning_when_fresh(tmp_path, monkeypatch) -> None:
+    import datetime
+
+    today = datetime.date.today().isoformat()
+    kb = {"research_ledger": {"tracks": [{"name": "Test track", "freshness_days": 7, "last_review_date": today}]}}
+    kb_path = tmp_path / "config" / "knowledge-base.json"
+    kb_path.parent.mkdir(parents=True)
+    kb_path.write_text(json.dumps(kb), encoding="utf-8")
+    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+
+    warnings = validate.validate_kb_freshness({})
+    assert warnings == []
+
+
+def test_kb_freshness_warns_when_stale(tmp_path, monkeypatch) -> None:
+    import datetime
+
+    stale_date = (datetime.date.today() - datetime.timedelta(days=15)).isoformat()
+    kb = {"research_ledger": {"tracks": [{"name": "Stale track", "freshness_days": 7, "last_review_date": stale_date}]}}
+    kb_path = tmp_path / "config" / "knowledge-base.json"
+    kb_path.parent.mkdir(parents=True)
+    kb_path.write_text(json.dumps(kb), encoding="utf-8")
+    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+
+    warnings = validate.validate_kb_freshness({})
+    assert len(warnings) == 1
+    assert "Stale track" in warnings[0]
+    assert "stale" in warnings[0]
+
+
+def test_kb_freshness_warns_when_fields_missing(tmp_path, monkeypatch) -> None:
+    kb = {"research_ledger": {"tracks": [{"name": "Incomplete track"}]}}
+    kb_path = tmp_path / "config" / "knowledge-base.json"
+    kb_path.parent.mkdir(parents=True)
+    kb_path.write_text(json.dumps(kb), encoding="utf-8")
+    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+
+    warnings = validate.validate_kb_freshness({})
+    assert len(warnings) == 1
+    assert "missing" in warnings[0]
+
+
+def test_kb_freshness_warns_on_bad_date(tmp_path, monkeypatch) -> None:
+    kb = {"research_ledger": {"tracks": [{"name": "Bad date", "freshness_days": 7, "last_review_date": "not-a-date"}]}}
+    kb_path = tmp_path / "config" / "knowledge-base.json"
+    kb_path.parent.mkdir(parents=True)
+    kb_path.write_text(json.dumps(kb), encoding="utf-8")
+    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+
+    warnings = validate.validate_kb_freshness({})
+    assert len(warnings) == 1
+    assert "invalid" in warnings[0]
+
+
+def test_kb_freshness_returns_empty_when_no_kb_file(tmp_path, monkeypatch) -> None:
+    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+    warnings = validate.validate_kb_freshness({})
+    assert warnings == []
+
+
+def test_validate_main_kb_freshness_passes(capsys, monkeypatch) -> None:
+    monkeypatch.setattr("sys.argv", ["programstart_validate.py", "--check", "kb-freshness"])
     result = validate.main()
     out = capsys.readouterr().out
     assert result == 0

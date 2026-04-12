@@ -6,6 +6,16 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 
 ---
 
+## 2026-04-12 (Phase 9 — Maintainability And Architecture Cleanup)
+
+- extracted 8 markdown parsing helpers from get_state_json() into scripts/programstart_markdown_parsers.py with 20 unit tests (T5)
+- accepted sys.argv mutation pattern as-is, recorded as DEC-003 (T6)
+- clarified PROGRAMBUILD_CANONICAL.md rule 1 temporal semantics, recorded as DEC-004 (T10)
+- added /api/health endpoint delegating to programstart_health_probe.probe_target() (T11)
+- added temporal semantics section to source-of-truth.instructions.md
+
+---
+
 ## 2026-04-11 (Phase 8 — CI Matrix And Test Coverage)
 
 - added pytest step to compatibility-smoke job in full-ci-gate.yml for Python 3.13/3.14 (T4)

@@ -16,9 +16,13 @@ That constraint keeps research from becoming an ever-growing archive with no dec
 
 Use `programstart research --track <name>` to generate a dated delta template in `outputs/research/`. That keeps weekly reviews consistent and forces each pass to produce comparable artifacts.
 
+After the review is actually complete, run `programstart research --track <name> --mark-reviewed --date YYYY-MM-DD` to update that track's `last_review_date` in the KB. Generating a template does not count as a refresh by itself.
+
 Use `programstart research --status` before each weekly pass. That status report is the fast health check for the KB itself: which research tracks are due, which ones are fresh, and which broad coverage domains are still marked `partial` or `seed`.
 
 Use `programstart research --status --fail-on-due` in automation when you want the command to return a non-zero exit code for overdue or unreviewed tracks.
+
+The scheduled workflow also opens or updates a GitHub issue when one or more tracks are overdue, and closes that issue automatically once all tracks are current again.
 
 Each weekly pass should produce four outputs:
 

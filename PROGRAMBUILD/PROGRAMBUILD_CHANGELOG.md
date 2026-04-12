@@ -8,6 +8,8 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 
 ## 2026-04-12 (Post-Gameplan — Remaining Deferred Items)
 
+- fixed KB weekly refresh workflow so reviews can be explicitly recorded with `programstart research --mark-reviewed`
+- updated weekly research automation to open or update a GitHub issue when KB tracks are overdue and close it once current
 - extracted shared dashboard smoke lifecycle helpers into scripts/programstart_smoke_helpers.py (T9)
   - choose_port, request_json, request_text, wait_for_server, safe_shutdown, start_dashboard_server
   - refactored 3 dashboard smoke scripts to import from shared module

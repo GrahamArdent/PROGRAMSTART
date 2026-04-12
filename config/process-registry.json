@@ -528,6 +528,20 @@
       "description": "The Conventional Commits instruction file is the authority for commit message rules. Changes to the enforcement script, pre-commit config, or gitlint spec must be consistent with it."
     },
     {
+      "name": "knowledge_base_docs_alignment",
+      "system": "cross",
+      "authority_files": [
+        "config/knowledge-base.json",
+        "docs/knowledge-base.md",
+        "docs/knowledge-ops.md"
+      ],
+      "dependent_files": [
+        "README.md"
+      ],
+      "require_authority_when_dependents_change": true,
+      "description": "README.md knowledge-base workflow guidance must stay aligned with the KB data model and the canonical knowledge-base operations docs. README changes about KB refresh behavior require a paired authority-file change."
+    },
+    {
       "name": "automation_gate_jit_alignment",
       "system": "cross",
       "authority_files": [
@@ -537,11 +551,10 @@
       ],
       "dependent_files": [
         ".github/copilot-instructions.md",
-        "QUICKSTART.md",
-        "README.md"
+        "QUICKSTART.md"
       ],
       "require_authority_when_dependents_change": true,
-      "description": "Nox sessions, editor tasks, and the JIT source-of-truth protocol instruction file must stay aligned. When any of the three authority files change, review the others for alignment before updating copilot-instructions.md, QUICKSTART.md, or README.md."
+      "description": "Nox sessions, editor tasks, and the JIT source-of-truth protocol instruction file must stay aligned. When any of the three authority files change, review the others for alignment before updating copilot-instructions.md or QUICKSTART.md."
     },
     {
       "name": "architecture_decision_alignment",

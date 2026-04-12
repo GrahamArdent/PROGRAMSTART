@@ -102,3 +102,65 @@ def test_main_status_fail_on_due_returns_one(capsys) -> None:
 
     assert result == 1
     assert payload["due_tracks"] >= 1
+
+
+def test_mark_reviewed_updates_track_and_kb_version(tmp_path: Path, monkeypatch, capsys) -> None:
+    kb_path = tmp_path / "config" / "knowledge-base.json"
+    kb_path.parent.mkdir(parents=True)
+    kb_path.write_text(
+        json.dumps(
+            {
+                "version": "2026-03-30",
+                "research_ledger": {
+                    "tracks": [
+                        {
+                            "name": "Python runtime and packaging",
+                            "freshness_days": 7,
+                            "last_review_date": "2026-03-30",
+                        }
+                    ]
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(programstart_research_delta, "workspace_path", lambda rel: tmp_path / rel)
+
+    result = programstart_research_delta.main(
+        [
+            "--track",
+            "Python runtime and packaging",
+            "--date",
+            "2026-04-12",
+            "--mark-reviewed",
+            "--json",
+        ]
+    )
+    payload = json.loads(capsys.readouterr().out)
+    updated = json.loads(kb_path.read_text(encoding="utf-8"))
+
+    assert result == 0
+    assert payload["track"] == "Python runtime and packaging"
+    assert payload["review_date"] == "2026-04-12"
+    assert updated["version"] == "2026-04-12"
+    assert updated["research_ledger"]["tracks"][0]["last_review_date"] == "2026-04-12"
+
+
+def test_mark_reviewed_requires_track() -> None:
+    try:
+        programstart_research_delta.main(["--mark-reviewed", "--date", "2026-04-12"])
+    except SystemExit as exc:
+        assert str(exc) == "--mark-reviewed requires --track"
+    else:  # pragma: no cover - defensive guard
+        raise AssertionError("Expected SystemExit")
+
+
+def test_mark_reviewed_rejects_status_combo() -> None:
+    try:
+        programstart_research_delta.main(
+            ["--track", "Python runtime and packaging", "--mark-reviewed", "--status", "--date", "2026-04-12"]
+        )
+    except SystemExit as exc:
+        assert str(exc) == "--mark-reviewed cannot be combined with --status"
+    else:  # pragma: no cover - defensive guard
+        raise AssertionError("Expected SystemExit")

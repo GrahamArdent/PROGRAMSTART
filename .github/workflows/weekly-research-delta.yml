@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  issues: write
 
 concurrency:
   group: weekly-research-delta-${{ github.ref }}
@@ -51,7 +52,99 @@ jobs:
           uv run programstart research --status --json > outputs/research/knowledge-status.json
 
       - name: Enforce weekly research freshness
+        id: freshness
+        continue-on-error: true
         run: uv run programstart research --status --fail-on-due
+
+      - name: Sync KB refresh issue
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_API_URL: ${{ github.api_url }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          STATUS_PATH: outputs/research/knowledge-status.json
+        run: |
+          python - <<'PY'
+          from __future__ import annotations
+
+          import json
+          import os
+          import urllib.request
+
+          issue_title = "Weekly KB refresh due"
+          repo_owner, repo_name = os.environ["GITHUB_REPOSITORY"].split("/", 1)
+          api_base = f"{os.environ['GITHUB_API_URL']}/repos/{repo_owner}/{repo_name}"
+
+          with open(os.environ["STATUS_PATH"], encoding="utf-8") as handle:
+            report = json.load(handle)
+
+          due_tracks = [
+            track
+            for track in report.get("tracks", [])
+            if track.get("status") in {"due", "due_today", "missing_review_date"}
+          ]
+
+          body_lines = [
+            "Weekly KB refresh is overdue.",
+            "",
+            f"Review date: {report.get('review_date', 'unknown')}",
+            f"Due tracks: {len(due_tracks)}",
+            "",
+            "Tracks:",
+          ]
+          for track in due_tracks:
+            body_lines.append(
+              f"- {track['track']} | status={track['status']} | last_review_date={track['last_review_date']} | freshness={track['freshness_days']}d"
+            )
+          body_lines.extend(
+            [
+              "",
+              "Review flow:",
+              "1. Run `uv run programstart research --track \"<track>\"` to generate the delta template.",
+              "2. Complete the review and apply any KB content changes needed.",
+              "3. Run `uv run programstart research --track \"<track>\" --mark-reviewed --date YYYY-MM-DD` to record completion.",
+            ]
+          )
+          body = "\n".join(body_lines)
+
+          headers = {
+            "Accept": "application/vnd.github+json",
+            "Authorization": f"Bearer {os.environ['GITHUB_TOKEN']}",
+            "X-GitHub-Api-Version": "2022-11-28",
+          }
+
+          def request(method: str, url: str, payload: dict | None = None) -> dict | list:
+            data = None if payload is None else json.dumps(payload).encode("utf-8")
+            req = urllib.request.Request(url, data=data, headers=headers, method=method)
+            with urllib.request.urlopen(req) as response:
+              return json.load(response)
+
+          open_issues = request("GET", f"{api_base}/issues?state=open&per_page=100")
+          existing = next(
+            (
+              issue
+              for issue in open_issues
+              if issue.get("title") == issue_title and "pull_request" not in issue
+            ),
+            None,
+          )
+
+          if due_tracks:
+            if existing:
+              request("PATCH", f"{api_base}/issues/{existing['number']}", {"body": body})
+            else:
+              request("POST", f"{api_base}/issues", {"title": issue_title, "body": body})
+          elif existing:
+            closed_body = (
+              existing.get("body", "")
+              + "\n\nResolved automatically because no KB research tracks are currently due."
+            ).strip()
+            request("PATCH", f"{api_base}/issues/{existing['number']}", {"state": "closed", "body": closed_body})
+          PY
+
+      - name: Fail when research is due
+        if: steps.freshness.outcome == 'failure'
+        run: exit 1
 
       - name: Upload knowledge status artifact
         if: always()

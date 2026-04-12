@@ -9,10 +9,10 @@ from datetime import date
 from pathlib import Path
 
 try:
-    from .programstart_common import generated_outputs_root, warn_direct_script_invocation, workspace_path
+    from .programstart_common import generated_outputs_root, load_json, warn_direct_script_invocation, workspace_path, write_json
     from .programstart_models import KnowledgeBase, ResearchTrack
 except ImportError:  # pragma: no cover - standalone script execution fallback
-    from programstart_common import generated_outputs_root, warn_direct_script_invocation, workspace_path  # type: ignore
+    from programstart_common import generated_outputs_root, load_json, warn_direct_script_invocation, workspace_path, write_json  # type: ignore
     from programstart_models import KnowledgeBase, ResearchTrack  # type: ignore
 
 
@@ -64,6 +64,14 @@ class ResearchStatusReport:
     partial_or_seed_domains: int
     tracks: list[ResearchTrackStatus]
     domains: list[CoverageDomainStatus]
+
+
+@dataclass(slots=True)
+class ReviewCompletionResult:
+    track: str
+    review_date: str
+    kb_path: str
+    kb_version: str
 
 
 def load_knowledge_base_model() -> KnowledgeBase:
@@ -259,6 +267,40 @@ def has_due_tracks(report: ResearchStatusReport) -> bool:
     return any(track.status in {"due", "due_today", "missing_review_date"} for track in report.tracks)
 
 
+def mark_track_reviewed(track_name: str, review_date: str) -> ReviewCompletionResult:
+    parsed_date = parse_iso_date(review_date)
+    if parsed_date is None:
+        raise SystemExit(f"Invalid review date: {review_date}. Expected YYYY-MM-DD.")
+
+    kb_path = workspace_path("config/knowledge-base.json")
+    kb = load_json(kb_path)
+    tracks = list(kb.get("research_ledger", {}).get("tracks", []))
+
+    needle = track_name.lower()
+    matched_track: dict[str, object] | None = None
+    for track in tracks:
+        name = str(track.get("name", ""))
+        lower_name = name.lower()
+        if needle == lower_name or needle in lower_name:
+            matched_track = track
+            break
+
+    if matched_track is None:
+        available = ", ".join(str(track.get("name", "")) for track in tracks)
+        raise SystemExit(f"Unknown research track: {track_name}. Available tracks: {available}")
+
+    matched_track["last_review_date"] = str(parsed_date)
+    kb["version"] = str(parsed_date)
+    write_json(kb_path, kb)
+
+    return ReviewCompletionResult(
+        track=str(matched_track.get("name", track_name)),
+        review_date=str(parsed_date),
+        kb_path=str(kb_path),
+        kb_version=str(kb.get("version", "")),
+    )
+
+
 def build_template(review_date: str, track_name: str | None, output: str | None) -> ResearchDeltaTemplate:
     knowledge_base = load_knowledge_base_model()
     track = find_track(knowledge_base, track_name)
@@ -293,6 +335,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--date", default=str(date.today()), help="Review date in YYYY-MM-DD format.")
     parser.add_argument("--output", help="Explicit output path for the generated markdown file.")
     parser.add_argument(
+        "--mark-reviewed",
+        action="store_true",
+        help="Update the selected research track's last_review_date and KB version after completing a review.",
+    )
+    parser.add_argument(
         "--status", action="store_true", help="Print KB coverage and research freshness status instead of generating a template."
     )
     parser.add_argument(
@@ -302,6 +349,23 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--json", action="store_true", help="Emit template metadata as JSON.")
     args = parser.parse_args(argv)
+
+    if args.mark_reviewed and args.status:
+        raise SystemExit("--mark-reviewed cannot be combined with --status")
+
+    if args.mark_reviewed:
+        if not args.track:
+            raise SystemExit("--mark-reviewed requires --track")
+
+        result = mark_track_reviewed(args.track, args.date)
+        if args.json:
+            print(json.dumps(asdict(result), indent=2))
+        else:
+            print(
+                f"Marked research track '{result.track}' reviewed on {result.review_date}; "
+                f"updated {result.kb_path}"
+            )
+        return 0
 
     if args.status:
         report = build_status(args.date)

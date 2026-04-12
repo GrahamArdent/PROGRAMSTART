@@ -81,6 +81,8 @@ The synthesis is still critical rather than promotional. Official docs are usefu
 
 Weekly deep-research is the right follow-on only if it stays delta-oriented. The KB now includes a `research_ledger` section so each recurring review produces a bounded output: what changed, whether the recommendation changed, what evidence supports that, and what confidence level applies.
 
+A weekly delta template is not, by itself, a completed refresh. The refresh is only recorded when the completed review updates the KB and `programstart research --track <name> --mark-reviewed --date YYYY-MM-DD` advances that track's `last_review_date`.
+
 The KB also includes a `coverage_domains` layer because a system that wants to support "anything" needs to know where it is still thin. That turns the question from vague ambition into explicit scope management: web and API work may be strong, while mobile, desktop, realtime, or data-platform lanes can remain marked as `seed` or `partial` until they are researched properly.
 
 Mobile is now intentionally promoted from pure seed status to a `partial` domain because the KB has first-class React Native, Expo, Flutter, Firebase, EAS CLI, and RevenueCat coverage. That does not mean mobile is complete. It means the KB can now recommend credible default paths while still flagging missing native-first and release-automation depth.

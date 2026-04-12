@@ -21,6 +21,7 @@ It also now includes a project-factory layer:
 - `programstart recommend` turns product shape and needs into workflow and stack guidance
 - `programstart impact <target>` shows the likely downstream blast radius before you edit authority docs
 - `programstart research --track <name>` generates a dated research-delta template from the KB maintenance ledger
+- `programstart research --track <name> --mark-reviewed --date YYYY-MM-DD` records that the weekly review actually completed and advances the track freshness date
 - `programstart research --status` reports which weekly research lanes are due and which KB coverage domains are still only partial or seed-level
 
 The knowledge base is also now more explicit about how it makes decisions:
@@ -32,7 +33,7 @@ The knowledge base is also now more explicit about how it makes decisions:
 - decision rules capture recurring architecture choices
 - explicit KB relationships show complements, alternatives, and upgrade paths
 - structured comparisons capture version deltas such as Python 3.13 vs 3.14
-- a weekly research cadence plus CI-visible freshness status keeps recommendations current without turning the KB into an unbounded note dump
+- a weekly research cadence plus CI-visible freshness status and issue-based overdue alerts keeps recommendations current without turning the KB into an unbounded note dump
 
 ## How It Works — The Complete Workflow
 

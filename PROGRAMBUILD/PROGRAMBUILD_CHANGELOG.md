@@ -6,6 +6,14 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 
 ---
 
+## 2026-04-11 (Phase 8 — CI Matrix And Test Coverage)
+
+- added pytest step to compatibility-smoke job in full-ci-gate.yml for Python 3.13/3.14 (T4)
+- added CLI-to-task cross-validation test verifying .vscode/tasks.json subcommands exist in CLI_COMMANDS (T12)
+- deferred T9 smoke helper extraction — duplication is minimal (< 15 lines, differing implementations)
+
+---
+
 ## 2026-04-11 (Phase 7 — Security Hardening)
 
 - replaced 14 hardcoded npm package versions with semver ranges in starter scaffold (T1)

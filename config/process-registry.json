@@ -145,6 +145,7 @@
       ".github/prompts/implement-gameplan-phase2.prompt.md",
       ".github/prompts/implement-gameplan-phase3.prompt.md",
       ".github/prompts/implement-gameplan-phase4.prompt.md",
+      ".github/prompts/implement-gameplan-phase7.prompt.md",
       ".github/prompts/product-jit-check.prompt.md",
       ".github/instructions/conventional-commits.instructions.md",
       ".gitlint",

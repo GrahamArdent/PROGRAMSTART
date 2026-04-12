@@ -6,6 +6,17 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 
 ---
 
+## 2026-04-12 (Phase 10 — Gameplan Completion)
+
+- created MADR 4.0 ADR records for DEC-001 through DEC-004 (ADR-0004 to ADR-0007)
+- updated docs/decisions/README.md index with all four new ADRs
+- added unit tests for programstart_dashboard_smoke_readonly.py (import, choose_port, POST-absence, CLI flags)
+- registered all new files in config/process-registry.json bootstrap_assets
+- marked improvegameplan.md Phases 7-9 as DONE with completion dates
+- all validation warnings cleared; gameplan complete
+
+---
+
 ## 2026-04-12 (Phase 9 — Maintainability And Architecture Cleanup)
 
 - extracted 8 markdown parsing helpers from get_state_json() into scripts/programstart_markdown_parsers.py with 20 unit tests (T5)

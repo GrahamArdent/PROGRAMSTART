@@ -502,7 +502,11 @@
         "docs/decisions/README.md",
         "docs/decisions/0001-use-programbuild-workflow-system.md",
         "docs/decisions/0002-adopt-conventional-commits.md",
-        "docs/decisions/0003-adopt-madr-for-architecture-decisions.md"
+        "docs/decisions/0003-adopt-madr-for-architecture-decisions.md",
+        "docs/decisions/0004-root-workspace-smoke-readonly.md",
+        "docs/decisions/0005-cap-signoff-history-at-100-entries.md",
+        "docs/decisions/0006-accept-sys-argv-mutation-pattern.md",
+        "docs/decisions/0007-clarify-canonical-rule-1-temporal-semantics.md"
       ],
       "require_authority_when_dependents_change": false,
       "description": "ADR format is defined in PROGRAMBUILD_ADR_TEMPLATE.md. New decision records in docs/decisions/ must follow that template. If the template format changes, review existing records for alignment."

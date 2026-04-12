@@ -380,6 +380,26 @@ class TestGetStateJson:
         assert "attached" in uj
 
 
+# ─────────── /api/health endpoint ────────────────────────────────────────
+
+
+class TestHealthEndpoint:
+    """GET /api/health returns structured health probe data."""
+
+    def test_health_returns_200(self, server_url: str) -> None:
+        status, headers, body = _get(f"{server_url}/api/health")
+        assert status == 200
+        assert "application/json" in headers.get("Content-Type", "")
+
+    def test_health_has_expected_keys(self, server_url: str) -> None:
+        status, _headers, body = _get(f"{server_url}/api/health")
+        assert status == 200
+        data = json.loads(body)
+        assert "overall_health" in data
+        assert "systems" in data
+        assert "probe_time" in data
+
+
 # ─────────── READONLY_MODE guard ─────────────────────────────────────────
 
 

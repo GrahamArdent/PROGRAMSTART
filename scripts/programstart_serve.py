@@ -62,6 +62,7 @@ try:
         extract_subagents,
         system_is_attached,
     )
+    from .programstart_health_probe import probe_target as _probe_target
 except ImportError:  # pragma: no cover - standalone script execution fallback
     from programstart_command_registry import dashboard_allowed_commands  # type: ignore
 
@@ -88,6 +89,7 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
         extract_subagents,
         system_is_attached,
     )
+    from programstart_health_probe import probe_target as _probe_target  # type: ignore
 
 # ---------------------------------------------------------------------------
 # Allowed commands — strict whitelist, no shell interpolation possible
@@ -2481,6 +2483,11 @@ class DashboardHandler(BaseHTTPRequestHandler):
             path = query.get("path", [""])[0]
             data = get_doc_preview(path)
             self._send_json(data, 200 if "error" not in data else 400)
+        elif parsed.path == "/api/health":
+            from dataclasses import asdict as _asdict
+
+            report = _probe_target(ROOT)
+            self._send_json(_asdict(report))
         else:
             self.send_response(404)
             self.end_headers()

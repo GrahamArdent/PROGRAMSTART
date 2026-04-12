@@ -2,7 +2,7 @@
 
 Purpose: Running record of material project decisions, reversals, and rationale.
 Owner: Solo operator
-Last updated: 2026-04-11
+Last updated: 2026-04-12
 Depends on: FEASIBILITY.md, RESEARCH_SUMMARY.md, ARCHITECTURE.md
 Authority: Canonical for project decision history
 
@@ -27,6 +27,8 @@ Authority: Canonical for project decision history
 |---|---|---|---|---|---|---|---|
 | DEC-001 | 2026-04-11 | inputs_and_mode_selection | Root-workspace smoke MUST be read-only; mutating dashboard smoke MUST run only in isolated temp workspaces | ACTIVE | — | Solo operator | noxfile.py, scripts/programstart_dashboard_smoke.py |
 | DEC-002 | 2026-04-11 | inputs_and_mode_selection | signoff_history arrays in STATE.json capped at 100 entries (FIFO trim); oldest dropped when exceeded; warning logged to stderr | ACTIVE | — | Solo operator | scripts/programstart_serve.py |
+| DEC-003 | 2026-04-12 | inputs_and_mode_selection | Accept sys.argv mutation pattern in temporary_argv() as-is — single-threaded CLI, properly restores in finally block | ACTIVE | — | Solo operator | scripts/programstart_cli.py |
+| DEC-004 | 2026-04-12 | inputs_and_mode_selection | Clarify CANONICAL rule 1 with temporal semantics: code outranks docs retroactively; developers MUST update docs proactively | ACTIVE | — | Solo operator | PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md |
 
 ## Decision Details
 
@@ -46,5 +48,21 @@ Authority: Canonical for project decision history
 - Why: 100 entries covers ~50 stage transitions with 2 signoffs each — more than sufficient for even multi-year projects. Git history already preserves all prior state file versions, so no data is permanently lost.
 - Alternatives considered: (1) Archive to separate file — adds complexity for no practical value. (2) No cap — eventual data bloat in STATE.json. (3) Warning-only at threshold — doesn't prevent growth.
 - Consequences: Old signoff entries are dropped after 100. Operators see a stderr warning when this occurs. git history retains all prior states for forensic needs.
+
+### DEC-003
+
+- Context: `run_passthrough()` in `scripts/programstart_cli.py` uses `temporary_argv()` to mutate `sys.argv` before calling subcommand `main()` functions. This is not thread-safe.
+- Decision: Accept the pattern as-is. No refactoring needed.
+- Why: The CLI is single-threaded by design. The context manager properly restores `sys.argv` in a `finally` block. Refactoring would require changing every script's `main()` signature for no practical benefit.
+- Alternatives considered: (1) Refactor all `main()` functions to accept optional `argv` parameter — high churn, no benefit for single-threaded CLI. (2) Replace with subprocess calls — slower, more complex. (3) Thread-local storage — unnecessary complexity for single-threaded program.
+- Consequences: Pattern is documented. If the CLI ever becomes multi-threaded, this becomes a known refactoring target. Revisit only if threading is introduced.
+
+### DEC-004
+
+- Context: PROGRAMBUILD_CANONICAL.md rule 1 says "Validated code and validated tests MUST outrank any planning document." Meanwhile, copilot-instructions.md says "Do not ship code that contradicts an authority doc." These create apparent tension without temporal qualification.
+- Decision: Add temporal clarification to rule 1. "MUST outrank" applies retroactively when conflicts are discovered. Developers MUST update authority docs proactively before introducing contradictory code.
+- Why: Without clarification, rule 1 could be read as license to skip doc updates entirely. The temporal distinction resolves the tension between the two guidelines.
+- Alternatives considered: (1) Remove rule 1 — weakens the practical escape hatch when code diverges from stale docs. (2) Add clarification only in source-of-truth.instructions.md — leaves CANONICAL itself ambiguous.
+- Consequences: Rule 1 is now precise. The copilot-instructions.md prospective rules and the CANONICAL retroactive rules work together without contradiction.
 
 ---

@@ -6,6 +6,18 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 
 ---
 
+## 2026-04-11 (Phase 7 — Security Hardening)
+
+- replaced 14 hardcoded npm package versions with semver ranges in starter scaffold (T1)
+- added Data Grounding Rule to 5 prompts that read user-authored planning docs (T2)
+- capped signoff_history at 100 entries with FIFO trim in save_workflow_signoff and advance_workflow_with_signoff (T3)
+- replaced `.parents` path traversal check with `is_relative_to()` in get_doc_preview (T7)
+- added `agent: "agent"` frontmatter to product-jit-check.prompt.md (T8)
+- pinned all GitHub Actions to commit SHAs across 6 workflow files (T13)
+- recorded signoff history cap policy decision as DEC-002 in DECISION_LOG
+
+---
+
 ## 2026-04-11 (Phase 4 — Confidence Tiers and Gate Reframe)
 
 - split nox `smoke` session into `smoke_readonly` (read-only root-workspace, safe anytime) and `smoke_isolated` (bootstrapped temp workspaces, mutating) — `smoke` now delegates to both via `session.notify()`

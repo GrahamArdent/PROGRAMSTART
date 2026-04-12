@@ -98,8 +98,8 @@ def test_create_can_attach_userjourney_and_emit_dynamic_plan(tmp_path: Path) -> 
     assert "Auto-Inferred Services" in provisioning_text
     assert (destination / "starter" / "web_app" / "package.json").exists()
     assert (destination / "starter" / "web_app" / "e2e" / "home.spec.ts").exists()
-    assert '"next": "15.4.6"' in package_json
-    assert '"@playwright/test": "1.54.0"' in package_json
+    assert '"next": "^16"' in package_json
+    assert '"@playwright/test": "^1"' in package_json
     assert "recommended product stack" in page_text
     assert "NEXT_PUBLIC_SUPABASE_URL=" in env_example
     assert "VERCEL_PROJECT_ID=" in env_example
@@ -129,7 +129,7 @@ def test_create_mobile_app_emits_expo_starter_and_subscription_surface(tmp_path:
     subscription_text = (destination / "starter" / "mobile_app" / "src" / "subscriptions.ts").read_text(encoding="utf-8")
     env_example = (destination / "starter" / "mobile_app" / ".env.example").read_text(encoding="utf-8")
     assert '"expo": "~53.0.20"' in package_json
-    assert '"react-native": "0.79.5"' in package_json
+    assert '"react-native": "^0.85"' in package_json
     assert "Expo starter aligned to the recommended mobile stack" in app_text
     assert "revenuecat" in subscription_text
     assert "EXPO_PUBLIC_REVENUECAT_API_KEY=" in env_example

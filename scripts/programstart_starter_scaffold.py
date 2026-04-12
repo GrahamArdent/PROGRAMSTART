@@ -510,13 +510,13 @@ def build_api_optional_files(project_name: str, recommendation: ProjectRecommend
 def build_web_app_plan(project_name: str, recommendation: ProjectRecommendation) -> StarterScaffoldPlan:
     root_dir = "starter/web_app"
     dev_dependency_lines = [
-        '    "typescript": "5.8.3",\n',
-        '    "@types/node": "24.2.0",\n',
-        '    "@types/react": "19.1.11",\n',
-        '    "@types/react-dom": "19.1.7"\n',
+        '    "typescript": "^6",\n',
+        '    "@types/node": "^25",\n',
+        '    "@types/react": "^19",\n',
+        '    "@types/react-dom": "^19"\n',
     ]
     if has_stack(recommendation, "Playwright"):
-        dev_dependency_lines.insert(0, '    "@playwright/test": "1.54.0",\n')
+        dev_dependency_lines.insert(0, '    "@playwright/test": "^1",\n')
     package_json = (
         "{\n"
         f'  "name": "{slugify_project_name(project_name)}-web",\n'
@@ -528,9 +528,9 @@ def build_web_app_plan(project_name: str, recommendation: ProjectRecommendation)
         '    "lint": "next lint"\n'
         "  },\n"
         '  "dependencies": {\n'
-        '    "next": "15.4.6",\n'
-        '    "react": "19.1.0",\n'
-        '    "react-dom": "19.1.0"\n'
+        '    "next": "^16",\n'
+        '    "react": "^19",\n'
+        '    "react-dom": "^19"\n'
         "  },\n"
         '  "devDependencies": {\n' + "".join(dev_dependency_lines) + "  }\n" + "}\n"
     )
@@ -681,11 +681,11 @@ def build_mobile_app_plan(project_name: str, recommendation: ProjectRecommendati
     dependency_lines = [
         '    "expo": "~53.0.20",\n',
         '    "expo-status-bar": "~2.2.3",\n',
-        '    "react": "19.0.0",\n',
-        '    "react-native": "0.79.5"\n',
+        '    "react": "^19",\n',
+        '    "react-native": "^0.85"\n',
     ]
     if has_stack(recommendation, "Firebase"):
-        dependency_lines.insert(-1, '    "firebase": "11.1.0",\n')
+        dependency_lines.insert(-1, '    "firebase": "^12",\n')
     package_json = (
         "{\n"
         f'  "name": "{slugify_project_name(project_name)}-mobile",\n'
@@ -698,8 +698,8 @@ def build_mobile_app_plan(project_name: str, recommendation: ProjectRecommendati
         "  },\n"
         '  "dependencies": {\n' + "".join(dependency_lines) + "  },\n"
         '  "devDependencies": {\n'
-        '    "typescript": "5.8.3",\n'
-        '    "@types/react": "19.1.11"\n'
+        '    "typescript": "^6",\n'
+        '    "@types/react": "^19"\n'
         "  }\n" + "}\n"
     )
     return StarterScaffoldPlan(

@@ -178,3 +178,42 @@ def test_advance_workflow_with_signoff_completes_current_and_promotes_next(monke
     assert saved["stages"]["inputs_and_mode_selection"]["status"] == "completed"
     assert saved["stages"]["feasibility"]["status"] == "in_progress"
     assert saved["stages"]["inputs_and_mode_selection"]["signoff_history"][0]["notes"] == "Ready ¦ now"
+
+
+def test_signoff_history_capped_at_max(monkeypatch) -> None:
+    """signoff_history must not exceed MAX_SIGNOFF_HISTORY entries (T3)."""
+    saved: dict[str, Any] = {}
+    existing_history = [
+        {"decision": "approved", "date": f"2026-01-{i:02d}", "notes": f"entry {i}", "saved_at": f"2026-01-{i:02d}"}
+        for i in range(1, 106)  # 105 existing entries
+    ]
+    state = {
+        "active_stage": "inputs_and_mode_selection",
+        "stages": {
+            "inputs_and_mode_selection": {
+                "status": "in_progress",
+                "signoff": {},
+                "signoff_history": list(existing_history),
+            },
+        },
+    }
+    registry = {"systems": {"programbuild": {}}}
+
+    monkeypatch.setattr(programstart_serve, "load_registry", lambda: registry)
+    monkeypatch.setattr(programstart_serve, "load_workflow_state", lambda _registry, _system: deepcopy(state))
+    monkeypatch.setattr(
+        programstart_serve,
+        "workflow_active_step",
+        lambda _registry, _system, _state=None: "inputs_and_mode_selection",
+    )
+    monkeypatch.setattr(programstart_serve, "workflow_entry_key", lambda _system: "stages")
+    monkeypatch.setattr(programstart_serve, "save_workflow_state", lambda _registry, _system, value: saved.update(value))
+
+    result = save_workflow_signoff("programbuild", "approved", "2026-06-01", "cap test")
+
+    assert result["exit_code"] == 0
+    history = saved["stages"]["inputs_and_mode_selection"]["signoff_history"]
+    assert len(history) <= programstart_serve.MAX_SIGNOFF_HISTORY
+    assert history[-1]["notes"] == "cap test"
+    # Oldest entries should have been trimmed
+    assert history[0]["notes"] != "entry 1"

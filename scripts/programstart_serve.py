@@ -78,6 +78,7 @@ _ANSI_RE = re.compile(r"\033\[[0-9;]*m")
 _ALLOWED_EXTRA_ARGS: frozenset[str] = frozenset({"--decision", "--notes", "--date", "--system", "approved", "hold", "blocked"})
 _MAX_EXTRA_ARGS = 8
 _MAX_EXTRA_ARG_LENGTH = 2000
+MAX_SIGNOFF_HISTORY = 100
 
 
 def strip_ansi(text: str) -> str:
@@ -535,7 +536,7 @@ def get_doc_preview(relative_path: str) -> dict[str, Any]:
     if not normalized.startswith(allowed_prefixes):
         return {"error": "path not allowed"}
     target = (ROOT / normalized).resolve()
-    if ROOT.resolve() not in target.parents and target != ROOT.resolve():
+    if not target.is_relative_to(ROOT.resolve()):
         return {"error": "path escapes workspace"}
     if not target.exists() or not target.is_file():
         return {"error": "file not found"}
@@ -668,7 +669,15 @@ def save_workflow_signoff(system: str, decision: str, signoff_date: str, notes: 
         "saved_at": date.today().isoformat(),
     }
     entry["signoff"] = signoff_record
-    entry.setdefault("signoff_history", []).append(signoff_record)
+    history = entry.setdefault("signoff_history", [])
+    history.append(signoff_record)
+    if len(history) > MAX_SIGNOFF_HISTORY:
+        print(
+            f"Warning: signoff_history for {system} {active_step} exceeded "
+            f"{MAX_SIGNOFF_HISTORY} entries; oldest trimmed",
+            file=sys.stderr,
+        )
+        entry["signoff_history"] = history[-MAX_SIGNOFF_HISTORY:]
     save_workflow_state(registry, system, state)
     return {"output": f"Saved signoff metadata for {system} {active_step}", "exit_code": 0}
 
@@ -721,7 +730,15 @@ def advance_workflow_with_signoff(
     }
     current_entry["status"] = "completed"
     current_entry["signoff"] = advance_record
-    current_entry.setdefault("signoff_history", []).append(advance_record)
+    history = current_entry.setdefault("signoff_history", [])
+    history.append(advance_record)
+    if len(history) > MAX_SIGNOFF_HISTORY:
+        print(
+            f"Warning: signoff_history for {system} {active_step} exceeded "
+            f"{MAX_SIGNOFF_HISTORY} entries; oldest trimmed",
+            file=sys.stderr,
+        )
+        current_entry["signoff_history"] = history[-MAX_SIGNOFF_HISTORY:]
     if current_index + 1 < len(steps):
         next_step = steps[current_index + 1]
         next_entry = cast(dict[str, Any], entries[next_step])

@@ -90,6 +90,7 @@
       "tests/test_programstart_context.py",
       "tests/test_programstart_dashboard.py",
       "tests/test_programstart_dashboard_golden.py",
+      "tests/test_programstart_dashboard_smoke_readonly.py",
       "tests/test_programstart_drift_check.py",
       "tests/golden/dashboard/absent-shell.png",
       "tests/golden/dashboard/attached-shell.png",

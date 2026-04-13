@@ -359,55 +359,50 @@ If any item is not complete, STOP and resolve it first.
 
 This table shows which sections each shaping prompt currently has. ✅ = present, ❌ = absent, ⚠️ = incomplete/inconsistent, N/A = not applicable.
 
-| Section | S0 idea | S1 feas | S2 research | S3 reqs | S4 arch | S5 scaffold | S6 test | S8 release | S10 post-launch |
-|---|---|---|---|---|---|---|---|---|---|
-| 1. YAML frontmatter | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| 2. Data Grounding Rule | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| 3. Protocol Declaration | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| 4. Pre-flight drift | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| 5. Authority Loading | ✅ | ✅ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ |
-| 6. Upstream Verification | N/A | ⚠️ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| 7. Protocol Steps | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| 8. Output Ordering | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| 9. DECISION_LOG mandate | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| 10. Verification Gate | ✅ | ✅ | ✅ | ✅ | ⚠️ | ✅ | ✅ | ✅ | ✅ |
-| 11. Workflow Routing | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| O1. PRODUCT_SHAPE | N/A | N/A | N/A | ✅ | ✅ | ✅ | ✅ | ❌ | N/A |
-| O2. Kill Criteria Re-check | N/A | N/A | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | N/A |
-| O3. Entry Criteria | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
+| Section | S0 idea | S1 feas | S2 research | S3 reqs | S4 arch | S5 scaffold | S6 test | S8 release | S9 audit | S10 post-launch |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 1. YAML frontmatter | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 2. Data Grounding Rule | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 3. Protocol Declaration | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 4. Pre-flight drift | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 5. Authority Loading | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 6. Upstream Verification | N/A | ⚠️ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 7. Protocol Steps | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 8. Output Ordering | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 9. DECISION_LOG mandate | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 10. Verification Gate | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 11. Workflow Routing | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| O1. PRODUCT_SHAPE | N/A | N/A | N/A | ✅ | ✅ | ✅ | ✅ | ✅ | N/A (exempt) | N/A |
+| O2. Kill Criteria Re-check | N/A | N/A | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | N/A |
+| O3. Entry Criteria | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
 
 **Notes on ⚠️ cells**:
-- **§5 Authority Loading (Stages 2-10)**: Loads `PROGRAMBUILD_CANONICAL.md §N` instead of `PROGRAMBUILD.md §N`. Protocol Declaration correctly cites PROGRAMBUILD.md but Authority Loading doesn't. See Gap-3 in `promptaudit.md`.
 - **§6 Upstream Verification (S1)**: Implicit — loads IDEA_INTAKE.md for context but has no dedicated verification step.
-- **§10 Verification Gate (S4)**: Runs only `--check architecture-contracts`. Should also run `--check risk-spikes`.
 
-**Stage 9 (audit_and_drift_control)**: No shaping prompt exists. `audit-process-drift.prompt.md` is a utility tool, not a stage-advancing shaping prompt. See Gap-1 in `promptaudit.md`.
+**Stage 9 (audit_and_drift_control)**: `shape-audit.prompt.md` created in stage4gameplan Phase D (Gap-1 closed 2026-04-13). `audit-process-drift.prompt.md` is a utility tool, now classified as exempt (Gap-6 closed 2026-04-13).
 
 ---
 
 ## What Still Needs Doing
 
-Ordered by priority:
+Ordered by priority. Gaps 1–4, 6 closed in stage4gameplan 2026-04-13.
 
-### High Priority
+### Remaining Open
 
-1. **Create `shape-audit.prompt.md`** for Stage 9 (audit_and_drift_control)
-   - The only stage with a validator (`--check audit-complete`) but no operator-facing shaping prompt
-   - Authority section: `PROGRAMBUILD/PROGRAMBUILD.md §16`
+1. **Gap-5: USERJOURNEY has no shape prompts** — 22 of 26 USERJOURNEY files unprotected (no stage-specific prompts for decision freeze, legal drafts, or UX surfaces phases)
 
-2. **Add `## Output Ordering` section to all 9 shaping prompts**
-   - PROMPT_STANDARD §8 is the only mandatory section missing from every prompt
-   - Each prompt needs the section, the relevant `sync_rules` entry, and the write order
+2. **Gap-7: shape-research has an undocumented `## Notes` section** — low priority; deferred to future cleanup pass
 
-3. **Fix Authority Loading inconsistency in Stages 2-10**
-   - Decide: `PROGRAMBUILD.md §N` or `PROGRAMBUILD_CANONICAL.md §N`?
-   - Both should be loaded (PROGRAMBUILD_CANONICAL for stage boundaries, PROGRAMBUILD.md for protocol steps)
-   - Update Authority Loading in 7 affected prompts
+3. **Cross-stage validation invoked** (❌ across all prompts) — deferred to Phase F
 
-### Medium Priority
+4. **`sync_rules` explicitly cited** (❌ across all prompts, beyond the Output Ordering sections) — deferred to Phase G
 
-4. **Fix `shape-architecture` Verification Gate**
-   - Add `uv run programstart validate --check risk-spikes` to the gate (currently only runs `--check architecture-contracts`)
+### Previously High Priority (now closed)
+
+~~1. Create shape-audit.prompt.md for Stage 9~~ — DONE 2026-04-13
+~~2. Add Output Ordering section to all 9 prompts~~ — DONE 2026-04-13
+~~3. Fix Authority Loading inconsistency in Stages 2-10~~ — DONE 2026-04-13
+~~4. Fix shape-architecture Verification Gate~~ — DONE 2026-04-13
 
 5. **Add PRODUCT_SHAPE Conditioning to `shape-release-readiness`**
    - CLI vs. web app vs. API have different smoke check and rollback requirements

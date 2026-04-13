@@ -74,12 +74,6 @@ def print_state(system: str, state: dict[str, Any], active_step: str) -> None:
         print(f"- {name}: {status_color(str(status))}{suffix}{clr_cyan(marker)}")
 
 
-def preflight_problems(registry: dict[str, Any], system: str) -> list[str]:
-    problems: list[str] = []
-    problems.extend(programstart_validate.validate_required_files(registry, system))
-    problems.extend(programstart_validate.validate_metadata(registry, system))
-
-
 def _check_challenge_gate_log(active_step: str) -> str | None:
     """Return a warning message if no Challenge Gate log entry covers *active_step* as 'From Stage'.
 
@@ -118,6 +112,16 @@ def _check_challenge_gate_log(active_step: str) -> str | None:
         "Run the Challenge Gate protocol and record the result before advancing. "
         "Use --skip-gate-check to bypass this warning."
     )
+
+
+def preflight_problems(
+    registry: dict[str, Any],
+    system: str,
+    active_step: str | None = None,
+) -> list[str]:
+    problems: list[str] = []
+    problems.extend(programstart_validate.validate_required_files(registry, system))
+    problems.extend(programstart_validate.validate_metadata(registry, system))
     problems.extend(programstart_validate.validate_workflow_state(registry, system))
     if system == "programbuild":
         problems.extend(programstart_validate.validate_authority_sync(registry))
@@ -126,6 +130,28 @@ def _check_challenge_gate_log(active_step: str) -> str | None:
     if changed_files:
         drift_problems, _ = programstart_drift_check.evaluate_drift(registry, changed_files, system)
         problems.extend(drift_problems)
+
+    # --- Stage-gate content checks (programbuild only) ---
+    if system == "programbuild" and active_step:
+        stage_checks: dict[str, str | list[str]] = {
+            "inputs_and_mode_selection": "intake-complete",
+            "feasibility": "feasibility-criteria",
+            "research": "research-complete",
+            "requirements_and_ux": "requirements-complete",
+            "architecture_and_risk_spikes": ["architecture-contracts", "risk-spikes"],
+            "scaffold_and_guardrails": "scaffold-complete",
+            "test_strategy": "test-strategy-complete",
+            "implementation_loop": "implementation-entry",
+            "release_readiness": "release-ready",
+            "audit_and_drift_control": "audit-complete",
+        }
+        check_names = stage_checks.get(active_step)
+        if check_names:
+            if isinstance(check_names, str):
+                check_names = [check_names]
+            for check_name in check_names:
+                problems.extend(programstart_validate.run_stage_gate_check(registry, check_name))
+
     return problems
 
 
@@ -377,7 +403,7 @@ def main() -> int:
         current_index = steps.index(active_step)
         dry_run: bool = getattr(args, "dry_run", False)
         if not dry_run and not getattr(args, "skip_preflight", False):
-            problems = preflight_problems(registry, system)
+            problems = preflight_problems(registry, system, active_step)
             if problems:
                 print("Advance preflight failed:")
                 for problem in problems:

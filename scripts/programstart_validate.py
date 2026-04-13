@@ -47,6 +47,463 @@ def system_is_optional_and_absent(registry: dict, system_name: str) -> bool:
     return bool(system.get("optional")) and not workspace_path(system["root"]).exists()
 
 
+def _check_decision_log_entries(stage_name: str) -> list[str]:
+    """Check DECISION_LOG.md has at least one entry referencing a stage.
+
+    Returns a list of warning-level problems (empty = pass).
+    """
+    log_path = workspace_path("PROGRAMBUILD/DECISION_LOG.md")
+    if not log_path.exists():
+        return [f"DECISION_LOG.md does not exist (expected for {stage_name})"]
+    text = log_path.read_text(encoding="utf-8")
+
+    rows = parse_markdown_table(text, "Decision Register")
+    if not rows:
+        return [f"DECISION_LOG.md: no entries in Decision Register (expected for {stage_name})"]
+
+    stage_refs = [r for r in rows if stage_name.lower() in r.get("Stage", "").lower()]
+    if not stage_refs:
+        return [f"DECISION_LOG.md: no entries reference stage '{stage_name}'"]
+    return []
+
+
+def run_stage_gate_check(registry: dict, check_name: str) -> list[str]:
+    """Dispatch a stage-gate content check by name.
+
+    Called from preflight_problems() during 'advance'. Each check validates
+    that a stage's outputs meet structural quality requirements before the
+    workflow advances to the next stage.
+    """
+    dispatch: dict[str, Any] = {
+        "intake-complete": validate_intake_complete,
+        "feasibility-criteria": validate_feasibility_criteria,
+        "research-complete": validate_research_complete,
+        "requirements-complete": validate_requirements_complete,
+        "architecture-contracts": validate_architecture_contracts,
+        "risk-spikes": validate_risk_spikes,
+        "test-strategy-complete": validate_test_strategy_complete,
+        "scaffold-complete": validate_scaffold_complete,
+        "implementation-entry": validate_implementation_entry_criteria,
+        "release-ready": validate_release_ready,
+        "audit-complete": validate_audit_complete,
+    }
+    fn = dispatch.get(check_name)
+    if fn is None:
+        return []
+    return fn(registry)
+
+
+def validate_intake_complete(_registry: dict) -> list[str]:
+    """Check that KICKOFF_PACKET fields and IDEA_INTAKE questions are filled."""
+    problems: list[str] = []
+
+    # 1. Check KICKOFF_PACKET required fields
+    kickoff_path = workspace_path("PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md")
+    if not kickoff_path.exists():
+        problems.append("PROGRAMBUILD_KICKOFF_PACKET.md does not exist (See: shape-idea.prompt.md)")
+        return problems
+    kickoff_text = kickoff_path.read_text(encoding="utf-8")
+
+    required_fields = [
+        "PROJECT_NAME",
+        "ONE_LINE_DESCRIPTION",
+        "PRIMARY_USER",
+        "CORE_PROBLEM",
+        "SUCCESS_METRIC",
+        "PRODUCT_SHAPE",
+    ]
+    for field in required_fields:
+        match = re.search(rf"^{field}:[ \t]*(.*)$", kickoff_text, re.MULTILINE)
+        if not match:
+            problems.append(f"PROGRAMBUILD_KICKOFF_PACKET.md: {field} field not found")
+        else:
+            value = match.group(1).strip()
+            # Strip the hint text for PRODUCT_SHAPE
+            if field == "PRODUCT_SHAPE":
+                value = re.sub(r"\[.*\]", "", value).strip()
+            if not value:
+                problems.append(f"PROGRAMBUILD_KICKOFF_PACKET.md: {field} is empty")
+
+    # 2. Check IDEA_INTAKE code block fields
+    intake_path = workspace_path("PROGRAMBUILD/PROGRAMBUILD_IDEA_INTAKE.md")
+    if not intake_path.exists():
+        problems.append("PROGRAMBUILD_IDEA_INTAKE.md does not exist")
+        return problems
+    intake_text = intake_path.read_text(encoding="utf-8")
+
+    required_blocks = [
+        "PROBLEM_RAW",
+        "WHO_HAS_THIS_PROBLEM",
+        "CURRENT_SOLUTION",
+        "SUCCESS_OUTCOME",
+        "CHEAPEST_VALIDATION",
+    ]
+    for block in required_blocks:
+        match = re.search(rf"^{block}:[ \t]*(.*)$", intake_text, re.MULTILINE)
+        if not match or not match.group(1).strip():
+            problems.append(f"PROGRAMBUILD_IDEA_INTAKE.md: {block} is empty")
+
+    # 3. Check minimum exclusions (NOT_BUILDING_1 through NOT_BUILDING_3+)
+    not_building = re.findall(r"^NOT_BUILDING_\d+:[ \t]*(.+)$", intake_text, re.MULTILINE)
+    filled = [n for n in not_building if n.strip()]
+    if len(filled) < 3:
+        problems.append(f"PROGRAMBUILD_IDEA_INTAKE.md: {len(filled)} NOT_BUILDING entries filled, need at least 3")
+
+    # 4. Check minimum kill signals (KILL_SIGNAL_1 through KILL_SIGNAL_3+)
+    kill_signals = re.findall(r"^KILL_SIGNAL_\d+:[ \t]*(.+)$", intake_text, re.MULTILINE)
+    filled_kills = [k for k in kill_signals if k.strip()]
+    if len(filled_kills) < 3:
+        problems.append(f"PROGRAMBUILD_IDEA_INTAKE.md: {len(filled_kills)} KILL_SIGNAL entries filled, need at least 3")
+
+    problems.extend(_check_decision_log_entries("inputs_and_mode_selection"))
+
+    return problems
+
+
+def validate_feasibility_criteria(_registry: dict) -> list[str]:
+    """Check kill criteria structure and go/no-go decision in FEASIBILITY.md."""
+    problems: list[str] = []
+    feas_path = workspace_path("PROGRAMBUILD/FEASIBILITY.md")
+    if not feas_path.exists():
+        problems.append("FEASIBILITY.md does not exist (See: shape-feasibility.prompt.md)")
+        return problems
+    text = feas_path.read_text(encoding="utf-8")
+
+    # Extract Kill Criteria section (between ## Kill Criteria and next ##)
+    kill_match = re.search(
+        r"^## Kill Criteria\s*\n(.*?)(?=^## |\Z)",
+        text,
+        re.MULTILINE | re.DOTALL,
+    )
+    if not kill_match:
+        problems.append("FEASIBILITY.md: no '## Kill Criteria' section found")
+        return problems
+
+    kill_section = kill_match.group(1)
+    # Extract bullet items (- criterion)
+    bullets = re.findall(r"^- (.+)$", kill_section, re.MULTILINE)
+    # Filter out template placeholders
+    real_criteria = [b.strip() for b in bullets if b.strip() and b.strip() != "criterion"]
+
+    if len(real_criteria) < 3:
+        problems.append(f"FEASIBILITY.md: {len(real_criteria)} kill criteria found, need at least 3")
+
+    # Check each criterion follows "If/When [condition], then [action]" format
+    if_then_pattern = re.compile(
+        r"(?i)^(if|when)\s+.+,\s+(then\s+)?"
+        r"(stop|kill|abort|pivot|project is killed|redirect|pause|no.go)"
+    )
+    for i, criterion in enumerate(real_criteria, 1):
+        if not if_then_pattern.search(criterion):
+            display = f"'{criterion[:60]}...'" if len(criterion) > 60 else f"'{criterion}'"
+            problems.append(f"FEASIBILITY.md: kill criterion {i} is not in 'If [condition], then [action]' format: {display}")
+
+    # Check Recommendation section has a decision
+    rec_match = re.search(
+        r"^## Recommendation\s*\n(.*?)(?=^## |\Z)",
+        text,
+        re.MULTILINE | re.DOTALL,
+    )
+    if rec_match:
+        rec_text = rec_match.group(1)
+        if re.search(r"go\s*/\s*limited spike\s*/\s*no.go", rec_text, re.IGNORECASE):
+            problems.append(
+                "FEASIBILITY.md: Recommendation still contains the template option list — "
+                "replace 'go / limited spike / no-go' with a single decision"
+            )
+        elif not re.search(r"(?i)\b(go|no.go|limited spike|stop|investigate)\b", rec_text):
+            problems.append("FEASIBILITY.md: Recommendation section has no go/no-go decision")
+    else:
+        problems.append("FEASIBILITY.md: no '## Recommendation' section found")
+
+    problems.extend(_check_decision_log_entries("feasibility_and_kill_criteria"))
+
+    return problems
+
+
+def validate_research_complete(_registry: dict) -> list[str]:
+    """Check RESEARCH_SUMMARY.md exists and has at least one ## section heading."""
+    problems: list[str] = []
+    research_path = workspace_path("PROGRAMBUILD/RESEARCH_SUMMARY.md")
+    if not research_path.exists():
+        problems.append(
+            "RESEARCH_SUMMARY.md: file does not exist (See: shape-research.prompt.md)"
+        )
+        return problems
+    content = research_path.read_text(encoding="utf-8")
+    if not re.search(r"^## ", content, re.MULTILINE):
+        problems.append(
+            "RESEARCH_SUMMARY.md: no ## section headings found "
+            "(expected structured research output with at least one section)"
+        )
+    return problems
+
+
+def validate_requirements_complete(_registry: dict) -> list[str]:
+    """Check requirements have IDs, priorities, acceptance criteria, and flow references."""
+    problems: list[str] = []
+
+    req_path = workspace_path("PROGRAMBUILD/REQUIREMENTS.md")
+    if not req_path.exists():
+        problems.append("REQUIREMENTS.md does not exist (See: shape-requirements.prompt.md)")
+        return problems
+    req_text = req_path.read_text(encoding="utf-8")
+
+    # Parse the Functional Requirements table
+    req_rows = parse_markdown_table(req_text, "Functional Requirements")
+    # Filter out template placeholder rows (empty Requirement column)
+    real_rows = [r for r in req_rows if r.get("Requirement", "").strip()]
+
+    if not real_rows:
+        problems.append("REQUIREMENTS.md: no functional requirements defined")
+        return problems
+
+    # Validate each requirement row
+    for row in real_rows:
+        req_id = row.get("ID", "").strip()
+        priority = row.get("Priority", "").strip()
+
+        if not req_id:
+            problems.append("REQUIREMENTS.md: requirement row has no ID")
+            continue
+        if not priority:
+            problems.append(f"REQUIREMENTS.md: {req_id} has no priority")
+        elif priority not in ("P0", "P1", "P2"):
+            problems.append(f"REQUIREMENTS.md: {req_id} has invalid priority '{priority}'")
+
+    # Check user stories have acceptance criteria
+    stories = re.findall(r"### Story \d+.*?(?=### Story |^## |\Z)", req_text, re.DOTALL | re.MULTILINE)
+    for i, story in enumerate(stories, 1):
+        if "Acceptance criteria:" in story:
+            criteria_text = story.split("Acceptance criteria:")[1]
+            criteria_text = re.split(r"\n##", criteria_text)[0]
+            real_criteria = [
+                line.strip() for line in criteria_text.splitlines() if line.strip().startswith("-") and line.strip() != "-"
+            ]
+            if not real_criteria:
+                problems.append(f"REQUIREMENTS.md: Story {i} has empty acceptance criteria")
+
+    # Check cross-reference to USER_FLOWS.md
+    flow_path = workspace_path("PROGRAMBUILD/USER_FLOWS.md")
+    if flow_path.exists():
+        flow_text = flow_path.read_text(encoding="utf-8")
+        for row in real_rows:
+            req_id = row.get("ID", "").strip()
+            if req_id and not re.search(r"\b" + re.escape(req_id) + r"\b", flow_text):
+                problems.append(f"USER_FLOWS.md: no reference to requirement {req_id}")
+    else:
+        problems.append("USER_FLOWS.md does not exist")
+
+    return problems
+
+
+def validate_architecture_contracts(_registry: dict) -> list[str]:
+    """Check ARCHITECTURE.md has required sections and real content."""
+    problems: list[str] = []
+
+    arch_path = workspace_path("PROGRAMBUILD/ARCHITECTURE.md")
+    if not arch_path.exists():
+        problems.append("ARCHITECTURE.md does not exist (See: shape-architecture.prompt.md)")
+        return problems
+    text = arch_path.read_text(encoding="utf-8")
+
+    # Check for Data Model section (various naming conventions)
+    has_data_model = bool(
+        re.search(
+            r"^## .*(Data Model|Data.*Ownership|Entity|Schema)",
+            text,
+            re.MULTILINE | re.IGNORECASE,
+        )
+    )
+    if not has_data_model:
+        problems.append("ARCHITECTURE.md: no data model section found")
+
+    # Check for contracts/surface section (product-shape dependent)
+    has_contracts = bool(
+        re.search(
+            r"^## .*(Contract|Command Surface|System Boundar|API|Endpoint|Interface)",
+            text,
+            re.MULTILINE | re.IGNORECASE,
+        )
+    )
+    if not has_contracts:
+        problems.append("ARCHITECTURE.md: no contracts, command surface, or system boundaries section found")
+
+    # Check Technology Decision Table has real entries
+    tech_rows = parse_markdown_table(text, "Technology Decision Table")
+    real_tech = [r for r in tech_rows if r.get("Choice", "").strip()]
+    if not real_tech:
+        problems.append("ARCHITECTURE.md: Technology Decision Table has no entries")
+
+    # Check System Topology section is not just the template placeholder
+    topo_match = re.search(
+        r"^## System Topology\s*\n(.*?)(?=^## |\Z)",
+        text,
+        re.MULTILINE | re.DOTALL,
+    )
+    if topo_match:
+        topo_text = topo_match.group(1).strip()
+        if not topo_text:
+            problems.append("ARCHITECTURE.md: System Topology section is empty")
+    else:
+        problems.append("ARCHITECTURE.md: no System Topology section found")
+
+    problems.extend(_check_decision_log_entries("architecture_and_contracts"))
+
+    return problems
+
+
+def validate_risk_spikes(_registry: dict) -> list[str]:
+    """Check RISK_SPIKES.md has at least one real spike entry with required fields."""
+    problems: list[str] = []
+
+    spikes_path = workspace_path("PROGRAMBUILD/RISK_SPIKES.md")
+    if not spikes_path.exists():
+        problems.append("RISK_SPIKES.md does not exist (See: shape-architecture.prompt.md, PROGRAMBUILD.md §11)")
+        return problems
+
+    text = spikes_path.read_text(encoding="utf-8")
+    if not text.strip():
+        problems.append("RISK_SPIKES.md is empty")
+        return problems
+
+    rows = parse_markdown_table(text, "Spike Register")
+    real_rows = [r for r in rows if r.get("Spike", "").strip() and r.get("Spike", "").strip() not in ("", "spike")]
+
+    if not real_rows:
+        problems.append("RISK_SPIKES.md: Spike Register has no entries")
+        return problems
+
+    for row in real_rows:
+        spike_id = row.get("Spike", "").strip()
+        if not row.get("Pass criteria", "").strip():
+            problems.append(f"RISK_SPIKES.md: spike '{spike_id}' has no pass criteria (acceptance criteria)")
+        if not row.get("Method", "").strip():
+            problems.append(f"RISK_SPIKES.md: spike '{spike_id}' has no method (time-box/approach)")
+
+    return problems
+
+
+def validate_test_strategy_complete(_registry: dict) -> list[str]:
+    """Check TEST_STRATEGY.md exists and has at least one test category and requirement reference."""
+    problems: list[str] = []
+
+    ts_path = workspace_path("PROGRAMBUILD/TEST_STRATEGY.md")
+    if not ts_path.exists():
+        problems.append("TEST_STRATEGY.md does not exist (See: shape-test-strategy.prompt.md)")
+        return problems
+
+    text = ts_path.read_text(encoding="utf-8")
+
+    # Check for at least one test category/layer definition (table row with real content)
+    rows = parse_markdown_table(text, "Test Pyramid Targets")
+    real_rows = [r for r in rows if r.get("Layer", "").strip()]
+    if not real_rows:
+        problems.append("TEST_STRATEGY.md: Test Pyramid Targets has no test categories defined")
+
+    # Check for at least one requirement ID reference (FR-NNN or NFR-NNN)
+    if not re.search(r"\b(FR|NFR)-\d+\b", text):
+        problems.append("TEST_STRATEGY.md: no requirement IDs (FR-NNN or NFR-NNN) referenced")
+
+    return problems
+
+
+def validate_scaffold_complete(_registry: dict) -> list[str]:
+    """Check scaffold outputs: project config file and CI directory present."""
+    problems: list[str] = []
+
+    # Check for a project configuration file (pyproject.toml, package.json, or Cargo.toml)
+    config_candidates = [
+        workspace_path("pyproject.toml"),
+        workspace_path("package.json"),
+        workspace_path("Cargo.toml"),
+        workspace_path("go.mod"),
+    ]
+    has_project_config = any(p.exists() for p in config_candidates)
+    if not has_project_config:
+        problems.append(
+            "Scaffold: no project configuration file found (expected pyproject.toml, package.json, Cargo.toml, or go.mod)"
+        )
+
+    # Check for CI configuration
+    ci_candidates = [
+        workspace_path(".github/workflows"),
+        workspace_path(".circleci"),
+        workspace_path(".gitlab-ci.yml"),
+        workspace_path("Jenkinsfile"),
+    ]
+    has_ci = any(p.exists() for p in ci_candidates)
+    if not has_ci:
+        problems.append(
+            "Scaffold: no CI configuration found (expected .github/workflows/, .circleci/, .gitlab-ci.yml, or Jenkinsfile)"
+        )
+
+    return problems
+
+
+def validate_implementation_entry_criteria(registry: dict) -> list[str]:
+    """Check that all Stage 7 prerequisites are satisfied."""
+    problems: list[str] = []
+    problems.extend(validate_architecture_contracts(registry))
+    problems.extend(validate_test_strategy_complete(registry))
+    problems.extend(validate_risk_spikes(registry))
+    return problems
+
+
+def validate_release_ready(_registry: dict) -> list[str]:
+    """Check RELEASE_READINESS.md exists and has a go/no-go decision."""
+    problems: list[str] = []
+
+    rr_path = workspace_path("PROGRAMBUILD/RELEASE_READINESS.md")
+    if not rr_path.exists():
+        problems.append("RELEASE_READINESS.md does not exist (See: shape-release-readiness.prompt.md)")
+        return problems
+
+    text = rr_path.read_text(encoding="utf-8")
+
+    # Check Go / No-Go Decision section has a real decision
+    decision_match = re.search(
+        r"^## Go / No-Go Decision\s*\n(.*?)(?=^## |\Z)",
+        text,
+        re.MULTILINE | re.DOTALL,
+    )
+    if not decision_match:
+        problems.append("RELEASE_READINESS.md: no '## Go / No-Go Decision' section found")
+    else:
+        decision_text = decision_match.group(1).strip()
+        if not decision_text or decision_text.lower() == "decision:":
+            problems.append(
+                "RELEASE_READINESS.md: Go / No-Go Decision section is empty — replace 'Decision:' with the actual decision"
+            )
+        elif not re.search(r"(?i)\b(go|no.go|hold|approved|blocked)\b", decision_text):
+            problems.append(
+                "RELEASE_READINESS.md: Go / No-Go Decision has no clear decision keyword "
+                "(expected: go, no-go, hold, approved, or blocked)"
+            )
+
+    return problems
+
+
+def validate_audit_complete(_registry: dict) -> list[str]:
+    """Check AUDIT_REPORT.md exists and has a findings list."""
+    problems: list[str] = []
+
+    audit_path = workspace_path("PROGRAMBUILD/AUDIT_REPORT.md")
+    if not audit_path.exists():
+        problems.append("AUDIT_REPORT.md does not exist (See: PROGRAMBUILD.md §16)")
+        return problems
+
+    text = audit_path.read_text(encoding="utf-8")
+
+    rows = parse_markdown_table(text, "Findings")
+    real_rows = [r for r in rows if r.get("Finding", "").strip()]
+
+    if not real_rows:
+        problems.append("AUDIT_REPORT.md: Findings table has no entries — complete the audit before marking Stage 9 done")
+
+    return problems
+
+
 def validate_registry(registry: dict) -> list[str]:
     problems: list[str] = []
     if "systems" not in registry or "sync_rules" not in registry:
@@ -696,6 +1153,16 @@ def main() -> int:
             "test-coverage",
             "adr-coverage",
             "kb-freshness",
+            "intake-complete",
+            "feasibility-criteria",
+            "requirements-complete",
+            "architecture-contracts",
+            "risk-spikes",
+            "test-strategy-complete",
+            "scaffold-complete",
+            "implementation-entry",
+            "release-ready",
+            "audit-complete",
         ],
         default="all",
     )
@@ -755,6 +1222,26 @@ def main() -> int:
         warnings.extend(validate_adr_coverage(registry))
     elif args.check == "kb-freshness":
         warnings.extend(validate_kb_freshness(registry))
+    elif args.check == "intake-complete":
+        problems.extend(validate_intake_complete(registry))
+    elif args.check == "feasibility-criteria":
+        problems.extend(validate_feasibility_criteria(registry))
+    elif args.check == "requirements-complete":
+        problems.extend(validate_requirements_complete(registry))
+    elif args.check == "architecture-contracts":
+        problems.extend(validate_architecture_contracts(registry))
+    elif args.check == "risk-spikes":
+        problems.extend(validate_risk_spikes(registry))
+    elif args.check == "test-strategy-complete":
+        problems.extend(validate_test_strategy_complete(registry))
+    elif args.check == "scaffold-complete":
+        problems.extend(validate_scaffold_complete(registry))
+    elif args.check == "implementation-entry":
+        problems.extend(validate_implementation_entry_criteria(registry))
+    elif args.check == "release-ready":
+        problems.extend(validate_release_ready(registry))
+    elif args.check == "audit-complete":
+        problems.extend(validate_audit_complete(registry))
     else:
         problems.extend(validate_engineering_ready(registry))
 

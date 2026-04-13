@@ -37,6 +37,7 @@ A clean baseline is required. Fix any reported issues before continuing.
 Read the following authority files completely before proceeding:
 
 - `PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md` §12 — stage definition and required outputs
+- `PROGRAMBUILD/PROGRAMBUILD.md` §12 — procedural protocol for Stage 5 work
 - `PROGRAMBUILD/ARCHITECTURE.md` — system topology, contracts, PRODUCT_SHAPE
 - `PROGRAMBUILD/USER_FLOWS.md` — flows the scaffold must support
 - `PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md` — PRODUCT_SHAPE and constraints

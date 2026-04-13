@@ -37,6 +37,7 @@ A clean baseline is required. Fix any reported issues before continuing.
 Read the following authority files completely before proceeding:
 
 - `PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md` §11 — stage definition and required outputs
+- `PROGRAMBUILD/PROGRAMBUILD.md` §11 — procedural protocol for Stage 4 work
 - `PROGRAMBUILD/REQUIREMENTS.md` — functional and non-functional requirements
 - `PROGRAMBUILD/USER_FLOWS.md` — user journeys and flow definitions
 - `PROGRAMBUILD/RISK_SPIKES.md` — technical risks and spike candidates

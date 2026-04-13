@@ -37,6 +37,7 @@ A clean baseline is required. Fix any reported issues before continuing.
 Read the following authority files completely before proceeding:
 
 - `PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md` §9 — stage definition and required outputs
+- `PROGRAMBUILD/PROGRAMBUILD.md` §9 — procedural protocol for Stage 2 work
 - `PROGRAMBUILD/FEASIBILITY.md` — unknowns, assumptions, kill criteria
 - `PROGRAMBUILD/RISK_SPIKES.md` — risks needing investigation
 - `PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md` — product shape and constraints

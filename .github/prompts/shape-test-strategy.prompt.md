@@ -37,6 +37,7 @@ A clean baseline is required. Fix any reported issues before continuing.
 Read the following authority files completely before proceeding:
 
 - `PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md` §13 — stage definition and required outputs
+- `PROGRAMBUILD/PROGRAMBUILD.md` §13 — procedural protocol for Stage 6 work
 - `PROGRAMBUILD/REQUIREMENTS.md` — functional and non-functional requirements
 - `PROGRAMBUILD/USER_FLOWS.md` — user journeys needing coverage
 - `PROGRAMBUILD/ARCHITECTURE.md` — system topology and contracts

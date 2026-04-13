@@ -29,6 +29,8 @@ Authority: Canonical for project decision history
 | DEC-002 | 2026-04-11 | inputs_and_mode_selection | signoff_history arrays in STATE.json capped at 100 entries (FIFO trim); oldest dropped when exceeded; warning logged to stderr | ACTIVE | — | Solo operator | scripts/programstart_serve.py |
 | DEC-003 | 2026-04-12 | inputs_and_mode_selection | Accept sys.argv mutation pattern in temporary_argv() as-is — single-threaded CLI, properly restores in finally block | ACTIVE | — | Solo operator | scripts/programstart_cli.py |
 | DEC-004 | 2026-04-12 | inputs_and_mode_selection | Clarify CANONICAL rule 1 with temporal semantics: code outranks docs retroactively; developers MUST update docs proactively | ACTIVE | — | Solo operator | PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md |
+| DEC-005 | 2026-04-12 | inputs_and_mode_selection | Cross-cutting prompts registered via `cross_cutting_prompts` array at workflow_guidance level, merged by step_guide at display time — avoids polluting every stage's prompts array | ACTIVE | — | Solo operator | config/process-registry.json, scripts/programstart_step_guide.py |
+| DEC-006 | 2026-04-13 | inputs_and_mode_selection | Both `PROGRAMBUILD_CANONICAL.md §N` and `PROGRAMBUILD.md §N` required in shaping prompt Authority Loading — CANONICAL provides stage boundaries and required output list; PROGRAMBUILD.md provides procedural protocol for how to do the work | ACTIVE | — | Solo operator | .github/prompts/shape-*.prompt.md |
 
 ## Decision Details
 
@@ -64,5 +66,21 @@ Authority: Canonical for project decision history
 - Why: Without clarification, rule 1 could be read as license to skip doc updates entirely. The temporal distinction resolves the tension between the two guidelines.
 - Alternatives considered: (1) Remove rule 1 — weakens the practical escape hatch when code diverges from stale docs. (2) Add clarification only in source-of-truth.instructions.md — leaves CANONICAL itself ambiguous.
 - Consequences: Rule 1 is now precise. The copilot-instructions.md prospective rules and the CANONICAL retroactive rules work together without contradiction.
+
+### DEC-005
+
+- Context: Stage guide prompts were being mixed into per-stage prompts arrays, causing duplication across all stages.
+- Decision: Register cross-cutting prompts (programstart-stage-guide, programstart-stage-transition) via a `cross_cutting_prompts` array at the workflow_guidance level. The step_guide script merges them at display time.
+- Why: Avoids polluting every stage's prompts array with identical entries. Single registration point.
+- Alternatives considered: Add them to every stage's prompts array — creates maintenance burden (N copies).
+- Consequences: programstart guide shows cross-cutting prompts at every stage without separate registration per stage.
+
+### DEC-006
+
+- Context: Shaping prompts (shape-research, shape-requirements, shape-architecture, shape-scaffold, shape-test-strategy, shape-release-readiness, shape-post-launch-review) cited `PROGRAMBUILD_CANONICAL.md §N` in Authority Loading but not `PROGRAMBUILD.md §N`, even though Protocol Declaration already cited PROGRAMBUILD.md §N. This created a gap: CANONICAL provides stage boundaries and required output list; PROGRAMBUILD.md provides the procedural protocol for how to do the work.
+- Decision: Add `PROGRAMBUILD.md §N` bullet immediately after `PROGRAMBUILD_CANONICAL.md §N` in Authority Loading of all 7 affected stage shaping prompts.
+- Why: Protocol Declaration tells the AI what authority section to follow, but if that file isn't pre-loaded in Authority Loading, the AI may proceed without reading it. Loading both ensures complete authority coverage.
+- Alternatives considered: Remove Protocol Declaration's PROGRAMBUILD.md reference — weakens the protocol clarity.
+- Consequences: All 7 stage shaping prompts now pre-load both authority files before beginning work.
 
 ---

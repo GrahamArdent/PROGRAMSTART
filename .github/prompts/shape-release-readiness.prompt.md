@@ -37,6 +37,7 @@ A clean baseline is required. Fix any reported issues before continuing.
 Read the following authority files completely before proceeding:
 
 - `PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md` §15 — stage definition and required outputs
+- `PROGRAMBUILD/PROGRAMBUILD.md` §15 — procedural protocol for Stage 8 work
 - `PROGRAMBUILD/ARCHITECTURE.md` — system topology and deployment model
 - `PROGRAMBUILD/TEST_STRATEGY.md` — test results and coverage
 - `PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md` — success metric and constraints

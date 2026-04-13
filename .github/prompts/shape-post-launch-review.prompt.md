@@ -37,6 +37,7 @@ A clean baseline is required. Fix any reported issues before continuing.
 Read the following authority files completely before proceeding:
 
 - `PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md` §17 — stage definition and required outputs
+- `PROGRAMBUILD/PROGRAMBUILD.md` §17 — procedural protocol for Stage 10 work
 - `PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md` — original success metric
 - `PROGRAMBUILD/RELEASE_READINESS.md` — release decision and known risks
 - `PROGRAMBUILD/AUDIT_REPORT.md` — audit findings and accepted residual risks

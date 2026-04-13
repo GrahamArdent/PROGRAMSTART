@@ -77,7 +77,7 @@ Note: Stage 7 (implementation_loop) uses `implement-gameplan-phase*.prompt.md` f
 
 | Protocol Element | S0 idea | S1 feasibility | S2 research | S3 requirements | S4 architecture | S5 scaffold | S6 test-strategy | S8 release | S9 audit | S10 post-launch |
 |---|---|---|---|---|---|---|---|---|---|---|
-| **JIT Step 1**: Protocol Declaration referencing JIT Steps 1-4 | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ |
+| **JIT Step 1**: Protocol Declaration referencing JIT Steps 1-4 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **JIT Step 2**: Pre-flight drift baseline | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **JIT Step 3**: Output Ordering section (canonical-before-dependent) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **JIT Step 4**: Verification Gate (validate + drift after) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
@@ -93,12 +93,12 @@ Note: Stage 7 (implementation_loop) uses `implement-gameplan-phase*.prompt.md` f
 
 **Legend**: ✅ fully implemented, ⚠️ present but incomplete, ❌ absent, N/A not applicable at this stage.
 
-**Score (post stage6gameplan Phases C–D): ~107/117 meaningful cells ✅ (10 prompts × 13 protocol elements, minus N/A cells). ~10/117 ⚠️ partial (JIT Step 1 across all prompts). ~0/117 ❌.**
+**Score (post stage6gameplan + PA-16 fixup): 117/117 meaningful cells ✅ (10 prompts × 13 protocol elements, minus N/A cells). 0 ⚠️. 0 ❌.**
 
-**Key notes on partial cells (⚠️):**
-- **JIT Step 1** (all): Prompts declare a Protocol Declaration section stating JIT Steps 1-4 apply. But they don't run `programstart guide` to derive the minimal file set — they load a pre-specified file list instead. Technically still hardcoded file loading rather than registry-derived.
-- **PROGRAMBUILD.md §N** (Stages 2-10): Protocol Declaration correctly cites `PROGRAMBUILD.md §N`, but the Authority Loading section loads `PROGRAMBUILD_CANONICAL.md §N` instead. shape-idea and shape-feasibility correctly load `PROGRAMBUILD.md §N` in both places. This inconsistency means Stages 2-10 are still not reading the actual protocol authority.
-- **Verification Gate S4**: shape-architecture only runs `--check architecture-contracts`. The `stage_checks` dict now runs BOTH `architecture-contracts` AND `risk-spikes`. The prompt's gate is incomplete — operators following it will pass architecture-contracts but not run risk-spikes separately.
+**Key notes:**
+- All 10 PB shaping prompts now run `programstart guide --system programbuild` in Pre-flight alongside the drift baseline, making JIT Step 1 concrete rather than merely declared.
+- Verification Gate S4 (shape-architecture): runs `--check architecture-contracts`, `--check risk-spikes`, and `--check risk-spikes-resolved` — fully covers `stage_checks["architecture_and_risk_spikes"]`.
+- All Authority Loading sections (S2–S10) load both `PROGRAMBUILD_CANONICAL.md §N` (stage definition) and `PROGRAMBUILD.md §N` (procedural protocol) — consistent with Protocol Declaration.
 
 ---
 

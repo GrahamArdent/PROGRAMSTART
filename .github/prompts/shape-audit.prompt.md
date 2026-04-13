@@ -28,9 +28,11 @@ Before any edits, run:
 
 ```bash
 uv run programstart drift
+uv run programstart guide --system programbuild
 ```
 
 If drift reports violations, STOP and resolve them before proceeding.
+The guide output confirms the minimal file set for this stage (JIT Step 1).
 A clean baseline is required.
 
 ## Authority Loading

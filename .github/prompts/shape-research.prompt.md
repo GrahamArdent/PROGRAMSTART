@@ -28,9 +28,11 @@ Before any edits, run:
 
 ```bash
 uv run programstart drift
+uv run programstart guide --system programbuild
 ```
 
-A clean baseline is required. Fix any reported issues before continuing.
+A clean baseline is required. Fix any drift issues before continuing.
+The guide output confirms the minimal file set for this stage (JIT Step 1).
 
 ## Authority Loading
 

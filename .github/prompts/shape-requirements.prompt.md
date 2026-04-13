@@ -51,6 +51,8 @@ before continuing.
 Working on Stage 3 (N > 1): review the Stage 2 output (`RESEARCH_SUMMARY.md`) for
 consistency with current assumptions before proceeding.
 
+For cross-stage consistency, also run `programstart-cross-stage-validation.prompt.md` to verify upstream stages have not drifted relative to this stage's inputs.
+
 ## PRODUCT_SHAPE Conditioning
 
 Read `PRODUCT_SHAPE` from `PROGRAMBUILD_KICKOFF_PACKET.md`. The product shape

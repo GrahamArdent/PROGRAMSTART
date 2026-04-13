@@ -54,6 +54,8 @@ If any open question is an **engineering blocker** that affects routing or state
 
 If any resolved decision recorded in DECISION_LOG.md contradicts an item currently marked open in OPEN_QUESTIONS.md, resolve the inconsistency in OPEN_QUESTIONS.md first before updating ROUTE_AND_STATE_FREEZE.md.
 
+For cross-stage consistency, also run `programstart-cross-stage-validation.prompt.md` to verify upstream stages have not drifted relative to this stage's inputs.
+
 ## Protocol
 
 1. **Load the Source of Truth Matrix.** Read `DELIVERY_GAMEPLAN.md` and identify the rows for "resolved defaults and product decisions" and "route structure and state boundaries". Note which files are listed as authority vs. dependent for each concern.

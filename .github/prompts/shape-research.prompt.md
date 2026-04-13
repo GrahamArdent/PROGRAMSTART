@@ -51,6 +51,8 @@ before continuing.
 Working on Stage 2 (N > 1): review the Stage 1 output (`FEASIBILITY.md`) for
 consistency with the current state before proceeding — assumptions may have shifted.
 
+For cross-stage consistency, also run `programstart-cross-stage-validation.prompt.md` to verify upstream stages have not drifted relative to this stage's inputs.
+
 ## Protocol
 
 1. **Load context.** Read the following files:

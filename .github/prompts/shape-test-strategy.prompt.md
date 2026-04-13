@@ -50,6 +50,8 @@ If any kill criterion has been triggered, stop and flag it before continuing.
 Working on Stage 6 (N > 1): review the Stage 5 output (scaffold and CI) for consistency
 — test strategy must target the actual scaffold structure, not the planned one.
 
+For cross-stage consistency, also run `programstart-cross-stage-validation.prompt.md` to verify upstream stages have not drifted relative to this stage's inputs.
+
 ## PRODUCT_SHAPE Conditioning
 
 Read `PRODUCT_SHAPE` from `PROGRAMBUILD_KICKOFF_PACKET.md`. The dominant test

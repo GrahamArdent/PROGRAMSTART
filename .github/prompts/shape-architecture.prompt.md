@@ -51,6 +51,8 @@ If any kill criterion has been triggered, stop and flag it before continuing.
 Working on Stage 4 (N > 1): review the Stage 3 output (`REQUIREMENTS.md` and `USER_FLOWS.md`)
 for consistency with the current problem statement before proceeding.
 
+For cross-stage consistency, also run `programstart-cross-stage-validation.prompt.md` to verify upstream stages have not drifted relative to this stage's inputs.
+
 ## PRODUCT_SHAPE Conditioning
 
 Read `PRODUCT_SHAPE` from `PROGRAMBUILD_KICKOFF_PACKET.md`. The product shape

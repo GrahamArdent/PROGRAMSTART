@@ -50,6 +50,8 @@ If any kill criterion has been triggered, stop and flag it before continuing.
 Working on Stage 8 (N > 1): review the Stage 6-7 outputs (`TEST_STRATEGY.md` and
 implementation status) for consistency — release gate reflects the actual build, not the plan.
 
+For cross-stage consistency, also run `programstart-cross-stage-validation.prompt.md` to verify upstream stages have not drifted relative to this stage's inputs.
+
 ## PRODUCT_SHAPE Conditioning
 
 Read `PRODUCT_SHAPE` from `PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md`. The product shape determines smoke check method and rollback approach:

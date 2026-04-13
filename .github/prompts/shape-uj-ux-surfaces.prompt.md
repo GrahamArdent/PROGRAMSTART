@@ -61,6 +61,8 @@ If any proposed surface conflicts with a frozen decision, **STOP** and flag it.
 during this phase. UX surface design operates within the frozen route model.
 If a surface design requires a route change, STOP and run `shape-uj-decision-freeze.prompt.md` first.
 
+For cross-stage consistency, also run `programstart-cross-stage-validation.prompt.md` to verify upstream stages have not drifted relative to this stage's inputs.
+
 ## Protocol
 
 1. **Load the Source of Truth Matrix.** Read `DELIVERY_GAMEPLAN.md` and identify the "UX surfaces and copy" row. Note which files are authority vs. dependent for this concern.

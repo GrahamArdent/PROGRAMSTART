@@ -50,6 +50,8 @@ If any kill criterion has been triggered, stop and flag it before continuing.
 Working on Stage 5 (N > 1): review the Stage 4 output (`ARCHITECTURE.md`) for
 consistency — scaffold must match the approved architecture, not assumptions.
 
+For cross-stage consistency, also run `programstart-cross-stage-validation.prompt.md` to verify upstream stages have not drifted relative to this stage's inputs.
+
 ## PRODUCT_SHAPE Conditioning
 
 Read `PRODUCT_SHAPE` from `PROGRAMBUILD_KICKOFF_PACKET.md`. Apply only the

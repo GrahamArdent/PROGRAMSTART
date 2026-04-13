@@ -104,4 +104,6 @@ Both MUST pass. All reported issues must be resolved before advancing.
 
 ## Next Steps
 
+For cross-stage consistency, also run `programstart-cross-stage-validation.prompt.md` to verify upstream stages have not drifted relative to this stage's inputs.
+
 After completing this prompt, run the `programstart-stage-transition` prompt to validate and advance to the next stage.

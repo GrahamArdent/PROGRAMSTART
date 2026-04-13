@@ -57,6 +57,8 @@ If any criterion is triggered:
 2. Follow the action specified in the criterion (stop / kill / pivot / pause / redirect / no-go)
 3. Do NOT proceed with remaining protocol steps
 
+For cross-stage consistency, also run `programstart-cross-stage-validation.prompt.md` to verify upstream stages have not drifted relative to this stage's inputs.
+
 ## Protocol
 
 1. **Load protocol.** Read `PROGRAMBUILD/PROGRAMBUILD.md §16` for the full audit procedure. Do not rely solely on the steps below — follow the authority section.

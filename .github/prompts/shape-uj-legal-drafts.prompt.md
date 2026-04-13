@@ -57,6 +57,8 @@ If any item is a **legal or operational blocker** that has not been resolved (e.
 
 **Critical constraint**: Do not invent legal text that is not traceable to a decision in `DECISION_LOG.md` or a note in `LEGAL_REVIEW_NOTES.md`. Every legal assertion in a draft must be authorized by a prior decision. See `DELIVERY_GAMEPLAN.md`: "Do not let implementation invent legal text that is not reflected in these docs."
 
+For cross-stage consistency, also run `programstart-cross-stage-validation.prompt.md` to verify upstream stages have not drifted relative to this stage's inputs.
+
 ## Protocol
 
 1. **Load the Source of Truth Matrix.** Read `DELIVERY_GAMEPLAN.md` Step 1 ("Close Remaining External Decisions") and the Source of Truth Matrix "legal and consent requirements" row. Note which files are authority vs. dependent.

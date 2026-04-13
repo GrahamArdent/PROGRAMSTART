@@ -106,6 +106,8 @@ Both MUST pass. All reported issues must be resolved before advancing.
 
 ## Next Steps
 
+For cross-stage consistency, also run `programstart-cross-stage-validation.prompt.md` to verify upstream stages have not drifted relative to this stage's inputs.
+
 Stage 10 is the final stage. After completing this prompt, the project is closed.
 If template improvements were proposed, create a tracking issue or commit the
 changes directly to the relevant PROGRAMBUILD template files in this repository.

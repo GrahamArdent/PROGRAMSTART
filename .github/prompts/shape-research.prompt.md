@@ -103,16 +103,14 @@ You MUST update `PROGRAMBUILD/DECISION_LOG.md` with any research-driven decision
 Before marking Stage 2 complete, run:
 
 ```bash
+uv run programstart validate --check research-complete
 uv run programstart validate --check all
 uv run programstart drift
 ```
 
 Both MUST pass. All reported issues must be resolved before advancing.
 
-## Notes
-
-- There is no automated validation check for research quality. Research completeness is evaluated through the Challenge Gate protocol at stage transition.
-- Research should be time-boxed. If a question cannot be resolved within reasonable effort, record it as a known unknown and move forward.
+> **Note**: There is no automated validation check for research quality. Research completeness is evaluated through the Challenge Gate protocol at stage transition. Research should be time-boxed — if a question cannot be resolved within reasonable effort, record it as a known unknown and move forward.
 
 ## Next Steps
 

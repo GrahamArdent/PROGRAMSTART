@@ -125,6 +125,7 @@ Before marking Stage 4 complete, run:
 
 ```bash
 uv run programstart validate --check architecture-contracts
+uv run programstart validate --check risk-spikes
 uv run programstart drift
 ```
 

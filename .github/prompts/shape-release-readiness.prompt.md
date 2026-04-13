@@ -50,6 +50,15 @@ If any kill criterion has been triggered, stop and flag it before continuing.
 Working on Stage 8 (N > 1): review the Stage 6-7 outputs (`TEST_STRATEGY.md` and
 implementation status) for consistency — release gate reflects the actual build, not the plan.
 
+## PRODUCT_SHAPE Conditioning
+
+Read `PRODUCT_SHAPE` from `PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md`. The product shape determines smoke check method and rollback approach:
+
+- **CLI tool**: Smoke check = run the binary with `--version` or `--help` and confirm exit 0. No database migration risk. Rollback = redeploy previous artifact/binary.
+- **Web app**: Smoke check = GET primary route returns HTTP 200. Runbook must include a database migration rollback plan and blue/green or zero-downtime deploy procedure.
+- **API service**: Smoke check = health endpoint returns HTTP 200. Runbook must include a contract compatibility check and canary or staged rollback procedure.
+- **Other shapes**: Default to the closest analogue above. Flag any shape-specific rollback complexity in the runbook.
+
 ## Protocol
 
 1. **Load output target.** Read `PROGRAMBUILD/RELEASE_READINESS.md` template.

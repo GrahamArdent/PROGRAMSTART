@@ -152,6 +152,15 @@ def preflight_problems(
             for check_name in check_names:
                 problems.extend(programstart_validate.run_stage_gate_check(registry, check_name))
 
+    # --- Stage-gate content checks (userjourney only) ---
+    if system == "userjourney" and active_step:
+        uj_phase_checks: dict[str, str] = {
+            "phase_0": "engineering-ready",
+        }
+        check_name = uj_phase_checks.get(active_step)
+        if check_name:
+            problems.extend(programstart_validate.run_stage_gate_check(registry, check_name))
+
     return problems
 
 

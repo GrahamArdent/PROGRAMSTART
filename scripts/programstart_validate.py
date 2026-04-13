@@ -87,6 +87,7 @@ def run_stage_gate_check(registry: dict, check_name: str) -> list[str]:
         "implementation-entry": validate_implementation_entry_criteria,
         "release-ready": validate_release_ready,
         "audit-complete": validate_audit_complete,
+        "engineering-ready": validate_engineering_ready,
     }
     fn = dispatch.get(check_name)
     if fn is None:

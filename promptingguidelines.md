@@ -2,7 +2,7 @@
 
 Purpose: Practical reference for writing, reviewing, and upgrading `.prompt.md` files in `.github/prompts/`.
 Authority: Derived from `PROMPT_STANDARD.md`, `promptaudit.md`, and `source-of-truth.instructions.md`.
-Last updated: 2026-04-12
+Last updated: 2026-04-13
 
 **Companion documents**:
 - `PROMPT_STANDARD.md` — canonical template with copy-paste section bodies (use that for the exact wording)
@@ -389,9 +389,9 @@ Ordered by priority. Gaps 1–4, 6 closed in stage4gameplan 2026-04-13. See `sta
 
 ### Remaining Open
 
-1. **Gap-5: USERJOURNEY has no shape prompts** — 22 of 26 USERJOURNEY files unprotected (no stage-specific prompts for decision freeze, legal drafts, or UX surfaces phases)
+~~1. **Gap-5: USERJOURNEY has no shape prompts** — 22 of 26 USERJOURNEY files unprotected~~ — CLOSED 2026-04-13 (stage5gameplan Phase C)
 
-2. **Gap-7: shape-research has an undocumented `## Notes` section** — low priority; deferred to future cleanup pass
+~~2. **Gap-7: shape-research has an undocumented `## Notes` section**~~ — CLOSED 2026-04-13 (stage5gameplan Phase A)
 
 3. **Cross-stage validation invoked** (❌ across all prompts) — deferred to Phase F
 
@@ -410,13 +410,11 @@ Ordered by priority. Gaps 1–4, 6 closed in stage4gameplan 2026-04-13. See `sta
 
 ### Lower Priority (but tracked)
 
-7. **Create USERJOURNEY shaping prompts** (Gap-5)
-   - At minimum: UJ Phase 0 (decision freeze), Phase 1 (legal drafts), Phase 2 (UX surfaces)
-   - 22 of 26 USERJOURNEY authority/dependent files currently have no prompt coverage
+~~7. **Create USERJOURNEY shaping prompts** (Gap-5)~~ — DONE 2026-04-13
+   - `shape-uj-decision-freeze.prompt.md`, `shape-uj-legal-drafts.prompt.md`, `shape-uj-ux-surfaces.prompt.md` created
 
-8. **Create `validate_research_complete()`**
-   - Stage 2 is the only early stage with a shaping prompt but no content gate
-   - automation.md Finding 2-A (CONSIDER verdict)
+~~8. **Create `validate_research_complete()`**~~ — DONE 2026-04-13
+   - Stage 2 research gate implemented; 4 tests added
 
 9. **Add sync_rules citations to Protocol Steps**
    - Protocol steps currently don't tell the AI which sync_rule governs write ordering

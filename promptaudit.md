@@ -1,7 +1,7 @@
 # Prompt & Source-of-Truth Audit
 
 Purpose: Critical audit of how source-of-truth files, protocols, and authority rules are (or are not) referenced across the entire PROGRAMSTART codebase. Identifies where prompts, scripts, validators, and instruction files interact — and where they don't.
-Last updated: 2026-04-13 (stage4gameplan Phases A-E complete — Output Ordering added to all 9 prompts; Authority Loading fixed for stages 2-10; architecture gate + release-readiness PRODUCT_SHAPE conditioning; shape-audit.prompt.md created for Stage 9; audit-process-drift upgraded to utility prompt)
+Last updated: 2026-04-13 (stage5gameplan Phases A–C complete — Gap-7 closed: Notes section removed from shape-research; PA-8 closed: validate_research_complete() implemented; Gap-5 closed: 3 USERJOURNEY shaping prompts created)
 Method: Full codebase trace of every SoT file declared in `config/process-registry.json` across all prompts, scripts, validators, instruction files, and tests.
 
 **Companion document**: `automation.md` audits the same system from the automation gap angle. Findings here are cross-referenced with Finding IDs (e.g., 5-A, 7-B) from that audit where they overlap.
@@ -470,7 +470,7 @@ Based on everything defined in the authority docs, a properly wired prompt shoul
 |---|---|---|---|
 | PA-6 | **Three operator-facing prompts are orphaned** — product-jit-check, propagate-canonical-change, cross-stage-validation | ✅ RESOLVED (Phase B, C) — `implementation_loop.prompts` and `cross_cutting_prompts` added to registry; all now discoverable via `programstart guide` | — |
 | PA-7 | **RISK_SPIKES.md has no validator and no dedicated tests** | ✅ RESOLVED (Phase F) — `validate_risk_spikes()` added, 6 dedicated tests | — |
-| PA-8 | **RESEARCH_SUMMARY.md has no validator and no dedicated tests** | UNRESOLVED — `validate_research_complete()` not yet implemented | See automation.md Finding 2-A (CONSIDER verdict) |
+| PA-8 | **RESEARCH_SUMMARY.md has no validator and no dedicated tests** | ✅ RESOLVED — `validate_research_complete()` implemented, 4 tests added (stage5gameplan Phase B 2026-04-13) |
 | PA-9 | **5 of 5 USERJOURNEY sync_rules have zero prompt enforcement** | UNRESOLVED | See Gap-5 in Part 13 |
 | PA-10 | **10 USERJOURNEY authority/dependent files have zero prompt + zero script coverage** | UNRESOLVED — only uj-next-slice covers 4 of 26 UJ files | See Gap-5 in Part 13 |
 | PA-11 | **No prompt routes to any other prompt** | ✅ RESOLVED (Phase I) — all 9 shaping prompts now end with `## Next Steps` routing to `programstart-stage-transition`; stage-transition has a routing table to next shape prompt | — |
@@ -518,8 +518,8 @@ Items 1–7 from the original order are complete. Remaining work:
 
 **Active remaining priorities (see `stage5gameplan.md`):**
 
-12. **Address USERJOURNEY prompt gap** — create phase-specific prompts for decision freeze, legal drafts, UX surfaces (Gap-5). Phase C of stage5gameplan.
-13. **Add `validate_research_complete()`** (automation.md Finding 2-A) — Stage 2 is the only early stage with a shaping prompt but no content gate. Phase B of stage5gameplan.
+12. ✅ **Address USERJOURNEY prompt gap** — `shape-uj-decision-freeze.prompt.md`, `shape-uj-legal-drafts.prompt.md`, `shape-uj-ux-surfaces.prompt.md` created (Gap-5). Phase C of stage5gameplan — DONE 2026-04-13
+13. ✅ **Add `validate_research_complete()`** (automation.md Finding 2-A) — Stage 2 research gate implemented, 4 tests added. Phase B of stage5gameplan — DONE 2026-04-13
 
 ---
 
@@ -558,14 +558,10 @@ Concise list of open work after Phase A-I implementation. Each item has an ID th
 
 ---
 
-### Gap-5: USERJOURNEY has no shape prompts (22 of 26 files unprotected)
+### Gap-5: USERJOURNEY has no shape prompts (22 of 26 files unprotected) — **CLOSED 2026-04-13**
 
 **Scope**: All USERJOURNEY authority and dependent files  
-**What's missing**: Phase-specific shaping prompts for USERJOURNEY that follow PROMPT_STANDARD. `userjourney-next-slice.prompt.md` covers implementation slicing but not planning/decision/legal phases.  
-**Minimum viable set**:
-  - Phase 0: decision freeze — covers `ROUTE_AND_STATE_FREEZE.md`, `STATES_AND_RULES.md`, `DECISION_LOG.md` (UJ)
-  - Phase 1: legal drafts — covers `LEGAL_AND_CONSENT.md`, `TERMS_OF_SERVICE_DRAFT.md`, `PRIVACY_POLICY_DRAFT.md`, `EXTERNAL_REVIEW_PACKET.md`
-  - Phase 2: UX surfaces — covers `SCREEN_INVENTORY.md`, `UX_COPY_DRAFT.md`, `USER_FLOWS.md` (UJ), `ACCEPTANCE_CRITERIA.md`  
+**Resolution**: Three USERJOURNEY shaping prompts created in stage5gameplan Phase C: `shape-uj-decision-freeze.prompt.md` (phases 0 and 3), `shape-uj-legal-drafts.prompt.md` (phase 1), `shape-uj-ux-surfaces.prompt.md` (phase 2). All follow PROMPT_STANDARD with 10 mandatory `##` sections. Registered in process-registry.json workflow_guidance.userjourney phases and bootstrap_assets.  
 **Corresponds to**: PA-9, PA-10, automation.md UJ-A, UJ-B.
 
 ---
@@ -577,10 +573,7 @@ Concise list of open work after Phase A-I implementation. Each item has an ID th
 
 ---
 
-### Gap-7: shape-research has an undocumented `## Notes` section
+### Gap-7: shape-research has an undocumented `## Notes` section — **CLOSED 2026-04-13**
 
 **Scope**: `shape-research.prompt.md`  
-**What's there**: An unstructured `## Notes` section appears between `## Verification Gate` and `## Next Steps`. This heading is not in PROMPT_STANDARD — it is an ad-hoc addition.  
-**Impact**: Low. The section is informational and does not affect functionality. But it creates a discrepancy with PROMPT_STANDARD heading list.  
-**Recommended fix**: Merge any useful content into the adjacent sections and remove the `## Notes` heading. Consider whether the content belongs in the operator-facing Next Steps or in a doc comment outside the PROMPT_STANDARD heading structure.  
-**Deferred**: flagged for a future cleanup pass.
+**Resolution**: `## Notes` section removed in stage5gameplan Phase A. Notes content merged into `## Verification Gate` as a blockquote paragraph. `--check research-complete` added to the Verification Gate bash block.

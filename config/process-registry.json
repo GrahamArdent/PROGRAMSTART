@@ -120,6 +120,13 @@
       "tests/test_programstart_recommend.py",
       "tests/test_programstart_starter_scaffold.py",
       "tests/test_programstart_validate.py",
+      "tests/test_programstart_validate_intake.py",
+      "tests/test_programstart_validate_feasibility.py",
+      "tests/test_programstart_validate_requirements.py",
+      "tests/test_programstart_validate_architecture.py",
+      "tests/test_programstart_validate_decision_log.py",
+      "tests/test_programstart_validate_risk_spikes.py",
+      "tests/test_programstart_validate_stage_gates.py",
       "tests/test_programstart_workflow_state.py",
       ".github/copilot-instructions.md",
       ".github/agents/architecture-security.agent.md",
@@ -154,7 +161,22 @@
       ".github/prompts/implement-gameplan-phase8.prompt.md",
       ".github/prompts/implement-gameplan-phase9.prompt.md",
       ".github/prompts/implement-gameplan-phase10.prompt.md",
+      ".github/prompts/implement-stage2-gameplan.prompt.md",
+      ".github/prompts/implement-stage4-gameplan.prompt.md",
+      ".github/prompts/implement-phase-f.prompt.md",
+      ".github/prompts/shape-idea.prompt.md",
+      ".github/prompts/shape-feasibility.prompt.md",
+      ".github/prompts/shape-research.prompt.md",
+      ".github/prompts/shape-requirements.prompt.md",
+      ".github/prompts/shape-architecture.prompt.md",
+      ".github/prompts/shape-scaffold.prompt.md",
+      ".github/prompts/shape-test-strategy.prompt.md",
+      ".github/prompts/shape-release-readiness.prompt.md",
+      ".github/prompts/shape-post-launch-review.prompt.md",
+      ".github/prompts/shape-audit.prompt.md",
       ".github/prompts/product-jit-check.prompt.md",
+      ".github/prompts/implement-protocol-alignment.prompt.md",
+      ".github/prompts/PROMPT_STANDARD.md",
       ".github/instructions/conventional-commits.instructions.md",
       ".gitlint",
       "scripts/check_commit_msg.py",
@@ -682,6 +704,10 @@
         ".github/prompts/programstart-cross-stage-validation.prompt.md"
       ]
     },
+    "cross_cutting_prompts": [
+      ".github/prompts/propagate-canonical-change.prompt.md",
+      ".github/prompts/programstart-cross-stage-validation.prompt.md"
+    ],
     "programbuild": {
       "inputs_and_mode_selection": {
         "description": "Choose the PROGRAMBUILD variant (lite/product/enterprise), fill in the kickoff packet, and set executive scope.",
@@ -700,7 +726,8 @@
         ],
         "prompts": [
           ".github/prompts/start-programstart-project.prompt.md",
-          ".github/prompts/programstart-stage-guide.prompt.md"
+          ".github/prompts/programstart-stage-guide.prompt.md",
+          ".github/prompts/shape-idea.prompt.md"
         ]
       },
       "feasibility": {
@@ -718,7 +745,8 @@
         ],
         "prompts": [
           ".github/prompts/programstart-stage-guide.prompt.md",
-          ".github/prompts/programstart-stage-transition.prompt.md"
+          ".github/prompts/programstart-stage-transition.prompt.md",
+          ".github/prompts/shape-feasibility.prompt.md"
         ]
       },
       "research": {
@@ -736,7 +764,8 @@
         ],
         "prompts": [
           ".github/prompts/programstart-stage-guide.prompt.md",
-          ".github/prompts/programstart-stage-transition.prompt.md"
+          ".github/prompts/programstart-stage-transition.prompt.md",
+          ".github/prompts/shape-research.prompt.md"
         ]
       },
       "requirements_and_ux": {
@@ -754,7 +783,8 @@
         ],
         "prompts": [
           ".github/prompts/programstart-stage-guide.prompt.md",
-          ".github/prompts/programstart-stage-transition.prompt.md"
+          ".github/prompts/programstart-stage-transition.prompt.md",
+          ".github/prompts/shape-requirements.prompt.md"
         ]
       },
       "architecture_and_risk_spikes": {
@@ -772,7 +802,8 @@
         ],
         "prompts": [
           ".github/prompts/programstart-stage-guide.prompt.md",
-          ".github/prompts/programstart-stage-transition.prompt.md"
+          ".github/prompts/programstart-stage-transition.prompt.md",
+          ".github/prompts/shape-architecture.prompt.md"
         ]
       },
       "scaffold_and_guardrails": {
@@ -791,7 +822,8 @@
         ],
         "prompts": [
           ".github/prompts/programstart-stage-guide.prompt.md",
-          ".github/prompts/programstart-stage-transition.prompt.md"
+          ".github/prompts/programstart-stage-transition.prompt.md",
+          ".github/prompts/shape-scaffold.prompt.md"
         ]
       },
       "test_strategy": {
@@ -807,7 +839,8 @@
         ],
         "prompts": [
           ".github/prompts/programstart-stage-guide.prompt.md",
-          ".github/prompts/programstart-stage-transition.prompt.md"
+          ".github/prompts/programstart-stage-transition.prompt.md",
+          ".github/prompts/shape-test-strategy.prompt.md"
         ]
       },
       "implementation_loop": {
@@ -840,7 +873,16 @@
         ],
         "prompts": [
           ".github/prompts/programstart-stage-guide.prompt.md",
-          ".github/prompts/programstart-stage-transition.prompt.md"
+          ".github/prompts/programstart-stage-transition.prompt.md",
+          ".github/prompts/product-jit-check.prompt.md",
+          ".github/prompts/implement-gameplan-phase1.prompt.md",
+          ".github/prompts/implement-gameplan-phase2.prompt.md",
+          ".github/prompts/implement-gameplan-phase3.prompt.md",
+          ".github/prompts/implement-gameplan-phase4.prompt.md",
+          ".github/prompts/implement-gameplan-phase7.prompt.md",
+          ".github/prompts/implement-gameplan-phase8.prompt.md",
+          ".github/prompts/implement-gameplan-phase9.prompt.md",
+          ".github/prompts/implement-gameplan-phase10.prompt.md"
         ]
       },
       "release_readiness": {
@@ -856,7 +898,8 @@
         ],
         "prompts": [
           ".github/prompts/programstart-stage-guide.prompt.md",
-          ".github/prompts/programstart-stage-transition.prompt.md"
+          ".github/prompts/programstart-stage-transition.prompt.md",
+          ".github/prompts/shape-release-readiness.prompt.md"
         ]
       },
       "audit_and_drift_control": {
@@ -871,6 +914,7 @@
           "scripts/programstart_step_guide.py"
         ],
         "prompts": [
+          ".github/prompts/shape-audit.prompt.md",
           ".github/prompts/audit-process-drift.prompt.md",
           ".github/prompts/programstart-stage-guide.prompt.md",
           ".github/prompts/programstart-stage-transition.prompt.md"
@@ -889,7 +933,8 @@
         ],
         "prompts": [
           ".github/prompts/programstart-stage-guide.prompt.md",
-          ".github/prompts/programstart-stage-transition.prompt.md"
+          ".github/prompts/programstart-stage-transition.prompt.md",
+          ".github/prompts/shape-post-launch-review.prompt.md"
         ]
       },
       "stage_subagents": {

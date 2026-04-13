@@ -393,9 +393,13 @@ Ordered by priority. Gaps 1–4, 6 closed in stage4gameplan 2026-04-13. See `sta
 
 ~~2. **Gap-7: shape-research has an undocumented `## Notes` section**~~ — CLOSED 2026-04-13 (stage5gameplan Phase A)
 
-3. **Cross-stage validation invoked** (❌ across all prompts) — deferred to Phase F
+~~3. **Cross-stage validation invoked** (❌ across all prompts)~~ — CLOSED 2026-04-13 (stage6gameplan Phase C — one-liner added to all 13 shaping prompts)
 
-4. **`sync_rules` explicitly cited** (❌ across all prompts, beyond the Output Ordering sections) — deferred to Phase G
+~~4. **`sync_rules` explicitly cited** (❌ across all prompts, beyond the Output Ordering sections)~~ — CLOSED 2026-04-13 (stage6gameplan Phase D — ordering notes added to all 10 PB Protocol sections)
+
+### Permanently Deferred
+
+No items currently deferred.
 
 ### Previously High Priority (now closed)
 
@@ -416,6 +420,5 @@ Ordered by priority. Gaps 1–4, 6 closed in stage4gameplan 2026-04-13. See `sta
 ~~8. **Create `validate_research_complete()`**~~ — DONE 2026-04-13
    - Stage 2 research gate implemented; 4 tests added
 
-9. **Add sync_rules citations to Protocol Steps**
-   - Protocol steps currently don't tell the AI which sync_rule governs write ordering
-   - This is a "make the implicit explicit" improvement for long-term drift prevention
+~~9. **Add sync_rules citations to Protocol Steps**~~ — CLOSED 2026-04-13 (stage6gameplan Phase D)
+   - sync_rule ordering notes added to `## Protocol` section of all 10 PB shaping prompts

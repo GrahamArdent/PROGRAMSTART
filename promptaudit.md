@@ -1,7 +1,7 @@
 # Prompt & Source-of-Truth Audit
 
 Purpose: Critical audit of how source-of-truth files, protocols, and authority rules are (or are not) referenced across the entire PROGRAMSTART codebase. Identifies where prompts, scripts, validators, and instruction files interact — and where they don't.
-Last updated: 2026-04-13 (stage5gameplan Phases A–C complete — Gap-7 closed: Notes section removed from shape-research; PA-8 closed: validate_research_complete() implemented; Gap-5 closed: 3 USERJOURNEY shaping prompts created)
+Last updated: 2026-04-13 (stage6gameplan Phases C–D complete: cross-stage validation ref added to all 13 shaping prompts; sync_rules ordering notes added to all 10 PB shaping protocols)
 Method: Full codebase trace of every SoT file declared in `config/process-registry.json` across all prompts, scripts, validators, instruction files, and tests.
 
 **Companion document**: `automation.md` audits the same system from the automation gap angle. Findings here are cross-referenced with Finding IDs (e.g., 5-A, 7-B) from that audit where they overlap.
@@ -87,13 +87,13 @@ Note: Stage 7 (implementation_loop) uses `implement-gameplan-phase*.prompt.md` f
 | **Data Grounding Rule** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **Verification Gate (correct --check value)** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **Next-prompt routing (## Next Steps)** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| **Cross-stage validation invoked** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| **`sync_rules` explicitly cited** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **Cross-stage validation invoked** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **`sync_rules` explicitly cited** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **PRODUCT_SHAPE Conditioning** | N/A | N/A | N/A | ✅ | ✅ | ✅ | ✅ | ✅ | N/A (exempt) | N/A |
 
 **Legend**: ✅ fully implemented, ⚠️ present but incomplete, ❌ absent, N/A not applicable at this stage.
 
-**Score (post stage4gameplan Phases A-E): ~90/117 meaningful cells ✅ (10 prompts × 13 protocol elements, minus N/A cells). ~10/117 ⚠️ partial (JIT Step 1 across all prompts). ~17/117 ❌ (cross-stage validation and sync_rules citation — deferred to Phases F/G).**
+**Score (post stage6gameplan Phases C–D): ~107/117 meaningful cells ✅ (10 prompts × 13 protocol elements, minus N/A cells). ~10/117 ⚠️ partial (JIT Step 1 across all prompts). ~0/117 ❌.**
 
 **Key notes on partial cells (⚠️):**
 - **JIT Step 1** (all): Prompts declare a Protocol Declaration section stating JIT Steps 1-4 apply. But they don't run `programstart guide` to derive the minimal file set — they load a pre-specified file list instead. Technically still hardcoded file loading rather than registry-derived.
@@ -471,8 +471,8 @@ Based on everything defined in the authority docs, a properly wired prompt shoul
 | PA-6 | **Three operator-facing prompts are orphaned** — product-jit-check, propagate-canonical-change, cross-stage-validation | ✅ RESOLVED (Phase B, C) — `implementation_loop.prompts` and `cross_cutting_prompts` added to registry; all now discoverable via `programstart guide` | — |
 | PA-7 | **RISK_SPIKES.md has no validator and no dedicated tests** | ✅ RESOLVED (Phase F) — `validate_risk_spikes()` added, 6 dedicated tests | — |
 | PA-8 | **RESEARCH_SUMMARY.md has no validator and no dedicated tests** | ✅ RESOLVED — `validate_research_complete()` implemented, 4 tests added (stage5gameplan Phase B 2026-04-13) |
-| PA-9 | **5 of 5 USERJOURNEY sync_rules have zero prompt enforcement** | UNRESOLVED | See Gap-5 in Part 13 |
-| PA-10 | **10 USERJOURNEY authority/dependent files have zero prompt + zero script coverage** | UNRESOLVED — only uj-next-slice covers 4 of 26 UJ files | See Gap-5 in Part 13 |
+| PA-9 | **5 of 5 USERJOURNEY sync_rules have zero prompt enforcement** | PARTIALLY RESOLVED (Phase C+D stage6) — 3 UJ shaping prompts now include cross-stage validation ref and sync_rules ordering note but full UJ phase-by-phase enforcement still absent | See Gap-5 in Part 13 |
+| PA-10 | **10 USERJOURNEY authority/dependent files have zero prompt + zero script coverage** | PARTIALLY RESOLVED (Phase C stage6) — 3 UJ prompts now include cross-stage validation one-liner; uj-next-slice still covers only 4 of 26 UJ files | See Gap-5 in Part 13 |
 | PA-11 | **No prompt routes to any other prompt** | ✅ RESOLVED (Phase I) — all 9 shaping prompts now end with `## Next Steps` routing to `programstart-stage-transition`; stage-transition has a routing table to next shape prompt | — |
 | PA-12 | **step_files vs. guidance divergence** — enforcement tracks 2 files per stage while guidance lists 5-7 | UNRESOLVED — intentional design decision, no change needed unless a specific file-tracking gap causes a problem | — |
 
@@ -481,7 +481,7 @@ Based on everything defined in the authority docs, a properly wired prompt shoul
 | ID | Finding | Status | Remaining Work |
 |---|---|---|---|
 | PA-13 | **Instruction files and prompts operate independently** — instructions use `applyTo` path triggers that don't inject into prompt execution | UNRESOLVED — architectural limitation of VS Code `applyTo` | Low priority; PROMPT_STANDARD.md is now the prompt-level equivalent of instructions |
-| PA-14 | **Cross-stage validation exists as a prompt but is disconnected** | PARTIALLY RESOLVED (Phase C) — `cross-stage-validation` registered in `cross_cutting_prompts`; discoverable via guide. Not auto-invoked by shaping prompts. | Could add a call suggestion in Verification Gate of each prompt |
+| PA-14 | **Cross-stage validation exists as a prompt but is disconnected** | ✅ RESOLVED (Phase C stage6) — one-liner invoking `programstart validate --check all` added to all 13 shaping prompts (10 PB + 3 UJ) | — |
 | PA-15 | **Validation error messages don't reference prompts or PROGRAMBUILD.md sections** | PARTIALLY RESOLVED (Phase I) — stage-transition routing table added; main validators still emit generic error strings | Could add prompt references to individual validator error messages |
 | PA-16 | **Stage-transition prompt doesn't route to the next shaping prompt** | ✅ RESOLVED (Phase I) — routing table added to stage-transition | — |
 | PA-17 | **USER_FLOWS.md (PB) has no dedicated tests** | UNRESOLVED | Low priority; covered by requirements validator cross-reference |

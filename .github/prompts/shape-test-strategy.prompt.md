@@ -65,6 +65,8 @@ Adapt the protocol steps below to the confirmed shape.
 
 ## Protocol
 
+> **Ordering note**: This write order follows `sync_rule: requirements_test_alignment` and `sync_rule: programbuild_architecture_contracts` in `config/process-registry.json`. TEST_STRATEGY.md depends on both REQUIREMENTS.md and ARCHITECTURE.md (authority files). Read both authority files before writing TEST_STRATEGY.md.
+
 1. **Load output target.** Read `PROGRAMBUILD/TEST_STRATEGY.md` template to understand the sections to fill.
 
 2. **Define the test pyramid targets.** For each applicable test layer:

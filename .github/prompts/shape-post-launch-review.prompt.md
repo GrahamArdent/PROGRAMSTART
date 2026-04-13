@@ -44,6 +44,8 @@ Read the following authority files completely before proceeding:
 
 ## Protocol
 
+> **Ordering note**: POST_LAUNCH_REVIEW.md is a terminal output with no downstream dependents in `config/process-registry.json`. Success metrics referenced in this review come from FEASIBILITY.md (authority under `sync_rule: programbuild_feasibility_cascade`). Read FEASIBILITY.md before writing the launch summary.
+
 1. **Load output target.** Read `PROGRAMBUILD/POST_LAUNCH_REVIEW.md` template.
 
 2. **Write the launch summary.**

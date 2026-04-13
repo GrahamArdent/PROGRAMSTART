@@ -44,6 +44,8 @@ Read the following files before starting protocol steps:
 
 ## Protocol
 
+> **Ordering note**: This write order follows `sync_rule: programbuild_feasibility_cascade` in `config/process-registry.json`. FEASIBILITY.md is the authority file; DECISION_LOG.md, RESEARCH_SUMMARY.md, REQUIREMENTS.md, and RISK_SPIKES.md are dependents. Do not update a dependent before its authority file is complete.
+
 1. **Load context.** Read the following files for current project state:
    - `PROGRAMBUILD/PROGRAMBUILD_IDEA_INTAKE.md` — the validated interview outputs
    - `PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md` — the inputs block

@@ -43,6 +43,8 @@ Read the following files before starting protocol steps:
 
 ## Protocol
 
+> **Ordering note**: Outputs follow `sync_rule: programbuild_control_inventory` in `config/process-registry.json`. PROGRAMBUILD_KICKOFF_PACKET.md drives the kickoff file index (PROGRAMBUILD_FILE_INDEX.md). Write to PROGRAMBUILD_KICKOFF_PACKET.md before updating PROGRAMBUILD_FILE_INDEX.md.
+
 1. **Load the protocol.** Read `PROGRAMBUILD/PROGRAMBUILD_IDEA_INTAKE.md` to get the 7 interview questions and the challenge review red flag table. Do NOT hardcode questions — use the file as the source of truth.
 
 2. **Load the output target.** Read `PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md` to understand the inputs block fields you will seed.

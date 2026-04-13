@@ -65,6 +65,8 @@ Adapt the protocol steps below to fit the confirmed shape.
 
 ## Protocol
 
+> **Ordering note**: This write order follows `sync_rule: programbuild_requirements_scope` in `config/process-registry.json`. REQUIREMENTS.md is the authority file; USER_FLOWS.md, ARCHITECTURE.md, and TEST_STRATEGY.md are dependents. Do not update a dependent before REQUIREMENTS.md is complete.
+
 1. **Load context.** Read the following files:
    - `PROGRAMBUILD/FEASIBILITY.md` — confirmed problem, viability assumptions, kill criteria
    - `PROGRAMBUILD/RESEARCH_SUMMARY.md` — validated assumptions, new risks, stack recommendations

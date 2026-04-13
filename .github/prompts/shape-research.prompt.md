@@ -55,6 +55,8 @@ For cross-stage consistency, also run `programstart-cross-stage-validation.promp
 
 ## Protocol
 
+> **Ordering note**: This write order follows `sync_rule: programbuild_feasibility_cascade` in `config/process-registry.json`. FEASIBILITY.md is the authority source for research assumptions; RESEARCH_SUMMARY.md is a dependent. If research reveals a change to assumptions, update FEASIBILITY.md before updating RESEARCH_SUMMARY.md.
+
 1. **Load context.** Read the following files:
    - `PROGRAMBUILD/FEASIBILITY.md` — identify unknowns, assumptions marked as uncertain, and open questions
    - `PROGRAMBUILD/RISK_SPIKES.md` — identify risks needing investigation

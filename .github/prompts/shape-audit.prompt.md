@@ -61,6 +61,8 @@ For cross-stage consistency, also run `programstart-cross-stage-validation.promp
 
 ## Protocol
 
+> **Ordering note**: Audit outputs follow `sync_rule: programbuild_control_inventory` in `config/process-registry.json`. AUDIT_REPORT.md reviews all outputs against PROGRAMBUILD_CANONICAL.md and PROGRAMBUILD_FILE_INDEX.md (authority sources). Read both authority files before writing AUDIT_REPORT.md.
+
 1. **Load protocol.** Read `PROGRAMBUILD/PROGRAMBUILD.md §16` for the full audit procedure. Do not rely solely on the steps below — follow the authority section.
 
 2. **Walk each completed stage.** For stages 0–8, verify:

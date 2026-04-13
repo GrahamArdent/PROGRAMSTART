@@ -63,6 +63,8 @@ Read `PRODUCT_SHAPE` from `PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md`. The pro
 
 ## Protocol
 
+> **Ordering note**: This write order follows `sync_rule: programbuild_architecture_contracts` in `config/process-registry.json`. RELEASE_READINESS.md is an explicit dependent of ARCHITECTURE.md. Read ARCHITECTURE.md before writing RELEASE_READINESS.md. If release planning reveals a contract change, update ARCHITECTURE.md first.
+
 1. **Load output target.** Read `PROGRAMBUILD/RELEASE_READINESS.md` template.
 
 2. **Define launch scope.**

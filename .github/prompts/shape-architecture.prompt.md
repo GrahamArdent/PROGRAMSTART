@@ -65,6 +65,8 @@ Adapt the protocol steps below to fit the confirmed shape.
 
 ## Protocol
 
+> **Ordering note**: This write order follows `sync_rule: programbuild_architecture_contracts` in `config/process-registry.json`. ARCHITECTURE.md is the authority file; TEST_STRATEGY.md, RELEASE_READINESS.md, and RISK_SPIKES.md are dependents. Do not update a dependent before ARCHITECTURE.md is complete.
+
 1. **Load context.** Read the following files:
    - `PROGRAMBUILD/REQUIREMENTS.md` — functional and non-functional requirements
    - `PROGRAMBUILD/USER_FLOWS.md` — user journeys and flow definitions

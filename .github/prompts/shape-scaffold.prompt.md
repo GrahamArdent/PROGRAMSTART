@@ -65,6 +65,8 @@ Do not invent route layers, UI shells, or browser tooling for shapes that do not
 
 ## Protocol
 
+> **Ordering note**: Scaffold reads from `sync_rule: programbuild_architecture_contracts` in `config/process-registry.json`. ARCHITECTURE.md is the authority source for scaffold decisions. Any scaffold outcome that affects RISK_SPIKES.md must be recorded after ARCHITECTURE.md is finalized.
+
 1. **Confirm scaffold scope.** Re-read `ARCHITECTURE.md` §System Topology and `PROGRAMBUILD_KICKOFF_PACKET.md`.
    Do not begin implementing product features. Scaffold only.
 

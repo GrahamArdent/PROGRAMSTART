@@ -385,7 +385,7 @@ This table shows which sections each shaping prompt currently has. ✅ = present
 
 ## What Still Needs Doing
 
-Ordered by priority. Gaps 1–4, 6 closed in stage4gameplan 2026-04-13.
+Ordered by priority. Gaps 1–4, 6 closed in stage4gameplan 2026-04-13. See `stage5gameplan.md` for the active plan.
 
 ### Remaining Open
 
@@ -404,11 +404,9 @@ Ordered by priority. Gaps 1–4, 6 closed in stage4gameplan 2026-04-13.
 ~~3. Fix Authority Loading inconsistency in Stages 2-10~~ — DONE 2026-04-13
 ~~4. Fix shape-architecture Verification Gate~~ — DONE 2026-04-13
 
-5. **Add PRODUCT_SHAPE Conditioning to `shape-release-readiness`**
-   - CLI vs. web app vs. API have different smoke check and rollback requirements
+~~5. Add PRODUCT_SHAPE Conditioning to `shape-release-readiness`~~ — DONE 2026-04-13
 
-6. **Upgrade `audit-process-drift.prompt.md` to follow PROMPT_STANDARD**
-   - Currently missing Protocol Declaration, Pre-flight, Authority Loading, DECISION_LOG mandate, Verification Gate
+~~6. Upgrade `audit-process-drift.prompt.md` to follow PROMPT_STANDARD~~ — DONE 2026-04-13 (reclassified as utility prompt)
 
 ### Lower Priority (but tracked)
 

@@ -6,9 +6,9 @@ Method: Full codebase trace of every SoT file declared in `config/process-regist
 
 **Companion document**: `automation.md` audits the same system from the automation gap angle. Findings here are cross-referenced with Finding IDs (e.g., 5-A, 7-B) from that audit where they overlap.
 
-**Implementation plan**: `stage3gameplan.md` — status COMPLETE. All 9 phases (A-I) executed. Post-impl gate passed 2026-04-12.
+**Implementation plans**: `stage3gameplan.md` — COMPLETE (Phases A-I, 2026-04-12). `stage4gameplan.md` — COMPLETE (Phases A-E, 2026-04-13). `stage5gameplan.md` — active plan for remaining gaps.
 
-**Remaining gaps**: See Part 13 for a concise list of what still needs doing after Phase A-I.
+**Remaining gaps**: See Part 13 for a concise list of what still needs doing. See `stage5gameplan.md` for the active implementation plan.
 
 ---
 
@@ -41,14 +41,15 @@ PROGRAMSTART has three enforcement layers. Each was designed independently. They
 │  LAYER 2: Shaping Prompts (.prompt.md)                          │
 │  Define task steps: read X, write Y, validate Z                 │
 │  Trigger: operator invokes prompt by name                       │
-│  Status (post Phase A-I): All 9 shaping prompts now have        │
-│           Protocol Declaration, Pre-flight drift, Authority     │
-│           Loading, DECISION_LOG mandate, Verification Gate,     │
-│           and Next-prompt routing. PROGRAMBUILD_CANONICAL.md    │
-│           is loaded vs. PROGRAMBUILD.md — inconsistency remains │
-│           in Stages 2-10. Output Ordering section still absent. │
+│  Status (post stage4gameplan): All 10 shaping prompts (incl.   │
+│           shape-audit S9) have Protocol Declaration, Pre-flight,│
+│           Authority Loading (PROGRAMBUILD.md §N + CANONICAL §N),│
+│           Output Ordering, DECISION_LOG mandate, Verification   │
+│           Gate, and Next-prompt routing. JIT Step 1 still       │
+│           hardcodes file list (not registry-derived). See       │
+│           Part 2 matrix for remaining ⚠️ cells.                 │
 └──────────────────────────────┬──────────────────────────────────┘
-                               │ (partially connected after Phase A-I)
+                               │ (more connected after stage4gameplan)
 ┌──────────────────────────────▼──────────────────────────────────┐
 │  LAYER 3: Scripts & Validators (scripts/*.py)                   │
 │  Define structural checks: file existence, content parsing      │
@@ -457,10 +458,10 @@ Based on everything defined in the authority docs, a properly wired prompt shoul
 
 | ID | Finding | Status | Remaining Work |
 |---|---|---|---|
-| PA-1 | **Zero shaping prompts reference the JIT protocol** — no drift check, no canonical ordering, no verify-after | ⚠️ PARTIALLY RESOLVED (Phase A, D, H) — all 9 prompts now have Protocol Declaration, Pre-flight, Authority Loading, Verification Gate | Output Ordering section still absent from all prompts; JIT Step 1 is declared but not registry-driven |
-| PA-2 | **PROGRAMBUILD.md is never loaded by any shaping prompt** — prompts hardcode protocol summaries | ⚠️ PARTIALLY RESOLVED (Phase D, H) — shape-idea and shape-feasibility load `PROGRAMBUILD.md §N`; Stages 2-10 load `PROGRAMBUILD_CANONICAL.md §N` instead | Inconsistency between Protocol Declaration (says PROGRAMBUILD.md) and Authority Loading (says PROGRAMBUILD_CANONICAL.md) in Stages 2-10. See Gap-3 in Part 13 |
-| PA-3 | **Kill criteria evaporate after Stage 1** — no shaping prompt re-reads them | ✅ RESOLVED (Phase D, H) — all Stages 2–6 and 8 now have dedicated Kill Criteria Re-check sections | Stage 9 (no shaping prompt) remains unguarded |
-| PA-4 | **Four output files have zero prompt + zero validator + zero tests** — TEST_STRATEGY, RELEASE_READINESS, AUDIT_REPORT, POST_LAUNCH_REVIEW | ✅ RESOLVED for S5/S6/S8/S10 (Phase G, H); ⚠️ PARTIAL for S9 — validator exists but no shaping prompt | AUDIT_REPORT still has no shaping prompt. See Gap-1 in Part 13 |
+| PA-1 | **Zero shaping prompts reference the JIT protocol** — no drift check, no canonical ordering, no verify-after | ⚠️ PARTIALLY RESOLVED (Phase A, D, H, stage4gameplan A) — all 10 prompts now have Protocol Declaration, Pre-flight, Authority Loading, Output Ordering, Verification Gate | JIT Step 1 is declared but not registry-driven (hardcoded file loading, not derived from `programstart guide`) — architectural gap, deferred |
+| PA-2 | **PROGRAMBUILD.md is never loaded by any shaping prompt** — prompts hardcode protocol summaries | ✅ RESOLVED (Phase D, H, stage4gameplan Phase B) — all 10 prompts now load both `PROGRAMBUILD.md §N` and `PROGRAMBUILD_CANONICAL.md §N` in Authority Loading | — |
+| PA-3 | **Kill criteria evaporate after Stage 1** — no shaping prompt re-reads them | ✅ RESOLVED (Phase D, H, stage4gameplan Phase D) — all Stages 2–6, 8, and 9 now have dedicated Kill Criteria Re-check sections | — |
+| PA-4 | **Four output files have zero prompt + zero validator + zero tests** — TEST_STRATEGY, RELEASE_READINESS, AUDIT_REPORT, POST_LAUNCH_REVIEW | ✅ RESOLVED (Phase G, H, stage4gameplan Phase D) — all 10 stages including S9 now have shaping prompts and validators | — |
 | PA-5 | **DECISION_LOG.md is conditional in 4/5 prompts while the GAMEPLAN mandates it at every stage** | ✅ RESOLVED (Phase A, D, E, H) — all 9 prompts now have mandatory DECISION_LOG language; validator enforcement added for 3 stages via `_check_decision_log_entries` | Validator enforcement for Stages 0, 7, 10 still uses weaker checks. See automation.md Finding 0-C |
 
 ### HIGH (creates silent gaps in SoT coverage)
@@ -507,15 +508,18 @@ Items 1–7 from the original order are complete. Remaining work:
 6. ✅ **Add DECISION_LOG validators** — `_check_decision_log_entries` wired into 3 validators (Phase E)
 7. ✅ **Add RISK_SPIKES validator** — `validate_risk_spikes()` added (Phase F)
 
-**Active remaining priorities:**
+**Completed in stage4gameplan Phases A–E (2026-04-13):**
 
-8. **Create `shape-audit.prompt.md` for Stage 9** (Gap-1) — audit_and_drift_control is the only stage with a validator but no shaping prompt
-9. **Add Output Ordering section to all 9 shaping prompts** (Gap-2) — PROMPT_STANDARD §8 is not implemented in any current prompt
-10. **Fix PROGRAMBUILD.md vs PROGRAMBUILD_CANONICAL.md inconsistency in Stages 2–10** (Gap-3) — Protocol Declaration cites PROGRAMBUILD.md but Authority Loading loads PROGRAMBUILD_CANONICAL.md
-11. **Fix shape-architecture Verification Gate** — add `--check risk-spikes` alongside `--check architecture-contracts`
-12. **Address USERJOURNEY prompt gap** — create phase-specific prompts at minimum for Phase 0 (decision freeze), Phase 1 (legal drafts), Phase 3 (state routing) (Gap-5)
-13. **Add `validate_research_complete()`** (automation.md Finding 2-A) — Stage 2 is the only early stage with a shaping prompt but no content gate
-14. **Add PRODUCT_SHAPE Conditioning to `shape-release-readiness`** (Gap-4)
+8. ✅ **Create `shape-audit.prompt.md` for Stage 9** (Gap-1) — DONE
+9. ✅ **Add Output Ordering section to all 9 shaping prompts** (Gap-2) — DONE
+10. ✅ **Fix PROGRAMBUILD.md vs PROGRAMBUILD_CANONICAL.md inconsistency in Stages 2–10** (Gap-3) — DONE
+11. ✅ **Fix shape-architecture Verification Gate** — DONE
+14. ✅ **Add PRODUCT_SHAPE Conditioning to `shape-release-readiness`** (Gap-4) — DONE
+
+**Active remaining priorities (see `stage5gameplan.md`):**
+
+12. **Address USERJOURNEY prompt gap** — create phase-specific prompts for decision freeze, legal drafts, UX surfaces (Gap-5). Phase C of stage5gameplan.
+13. **Add `validate_research_complete()`** (automation.md Finding 2-A) — Stage 2 is the only early stage with a shaping prompt but no content gate. Phase B of stage5gameplan.
 
 ---
 

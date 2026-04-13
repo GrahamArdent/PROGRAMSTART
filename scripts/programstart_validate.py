@@ -125,6 +125,18 @@ def validate_intake_complete(_registry: dict) -> list[str]:
                 value = re.sub(r"\[.*\]", "", value).strip()
             if not value:
                 problems.append(f"PROGRAMBUILD_KICKOFF_PACKET.md: {field} is empty")
+            elif field == "PRODUCT_SHAPE":
+                VALID_PRODUCT_SHAPES = frozenset({
+                    "web-app", "mobile-app", "api-service", "cli-tool",
+                    "data-pipeline", "browser-extension", "desktop-app",
+                    "library/sdk", "platform/marketplace", "ai-agent/assistant",
+                })
+                if value.lower().replace(" ", "-") not in VALID_PRODUCT_SHAPES:
+                    problems.append(
+                        f"PROGRAMBUILD_KICKOFF_PACKET.md: PRODUCT_SHAPE '{value}' is not a recognized shape. "
+                        "Valid shapes: web-app, mobile-app, API-service, CLI-tool, data-pipeline, "
+                        "browser-extension, desktop-app, library/SDK, platform/marketplace, AI-agent/assistant"
+                    )
 
     # 2. Check IDEA_INTAKE code block fields
     intake_path = workspace_path("PROGRAMBUILD/PROGRAMBUILD_IDEA_INTAKE.md")
@@ -289,6 +301,11 @@ def validate_requirements_complete(_registry: dict) -> list[str]:
     flow_path = workspace_path("PROGRAMBUILD/USER_FLOWS.md")
     if flow_path.exists():
         flow_text = flow_path.read_text(encoding="utf-8")
+        if not re.search(r"^#{2,3} .+", flow_text, re.MULTILINE):
+            problems.append(
+                "USER_FLOWS.md: no ## or ### section headings found "
+                "(expected at least one flow definition section)"
+            )
         for row in real_rows:
             req_id = row.get("ID", "").strip()
             if req_id and not re.search(r"\b" + re.escape(req_id) + r"\b", flow_text):
@@ -1177,13 +1194,16 @@ def main() -> int:
             "repo-boundary",
             "rule-enforcement",
             "test-coverage",
+            "template-test-coverage",
             "adr-coverage",
             "kb-freshness",
             "intake-complete",
             "feasibility-criteria",
+            "research-complete",
             "requirements-complete",
             "architecture-contracts",
             "risk-spikes",
+            "risk-spikes-resolved",
             "test-strategy-complete",
             "scaffold-complete",
             "implementation-entry",
@@ -1242,7 +1262,7 @@ def main() -> int:
         problems.extend(validate_bootstrap_assets(registry))
     elif args.check == "rule-enforcement":
         problems.extend(validate_rule_enforcement(registry))
-    elif args.check == "test-coverage":
+    elif args.check == "test-coverage" or args.check == "template-test-coverage":
         warnings.extend(validate_test_coverage(registry))
     elif args.check == "adr-coverage":
         warnings.extend(validate_adr_coverage(registry))
@@ -1252,12 +1272,18 @@ def main() -> int:
         problems.extend(validate_intake_complete(registry))
     elif args.check == "feasibility-criteria":
         problems.extend(validate_feasibility_criteria(registry))
+    elif args.check == "research-complete":
+        problems.extend(validate_research_complete(registry))
     elif args.check == "requirements-complete":
         problems.extend(validate_requirements_complete(registry))
     elif args.check == "architecture-contracts":
         problems.extend(validate_architecture_contracts(registry))
     elif args.check == "risk-spikes":
         problems.extend(validate_risk_spikes(registry))
+    elif args.check == "risk-spikes-resolved":
+        problems.extend(validate_risk_spike_resolution(registry))
+    elif args.check == "engineering-ready":
+        problems.extend(validate_engineering_ready(registry))
     elif args.check == "test-strategy-complete":
         problems.extend(validate_test_strategy_complete(registry))
     elif args.check == "scaffold-complete":

@@ -1055,7 +1055,7 @@ def test_validate_test_coverage_warns_on_missing_test_file(tmp_path: Path, monke
 
 
 def test_validate_main_test_coverage_passes(capsys, monkeypatch) -> None:
-    monkeypatch.setattr("sys.argv", ["programstart_validate.py", "--check", "test-coverage"])
+    monkeypatch.setattr("sys.argv", ["programstart_validate.py", "--check", "template-test-coverage"])
     result = validate.main()
     out = capsys.readouterr().out
     # Should pass (warnings are not errors)

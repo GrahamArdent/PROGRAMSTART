@@ -19,7 +19,7 @@ Last updated: 2026-04-12
 - Knowing which optional sections apply to which stages
 - Checking what the current prompt system still lacks
 
-All `.prompt.md` files except the internal build prompts (`implement-gameplan-phase*`, `implement-stage2-gameplan`, `implement-phase-f`, `implement-protocol-alignment`) MUST follow this standard.
+All `.prompt.md` files except the internal build prompts (`implement-gameplan-phase*`, `implement-stage2-gameplan`, `implement-phase-f`, `implement-protocol-alignment`, `implement-stage4-gameplan`) and utility prompts (`audit-process-drift.prompt.md`) MUST follow this standard.
 
 ---
 

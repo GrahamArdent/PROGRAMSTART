@@ -138,7 +138,7 @@ def preflight_problems(
             "feasibility": "feasibility-criteria",
             "research": "research-complete",
             "requirements_and_ux": "requirements-complete",
-            "architecture_and_risk_spikes": ["architecture-contracts", "risk-spikes"],
+            "architecture_and_risk_spikes": ["architecture-contracts", "risk-spikes", "risk-spikes-resolved"],
             "scaffold_and_guardrails": "scaffold-complete",
             "test_strategy": "test-strategy-complete",
             "implementation_loop": "implementation-entry",

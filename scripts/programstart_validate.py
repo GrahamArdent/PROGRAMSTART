@@ -81,6 +81,7 @@ def run_stage_gate_check(registry: dict, check_name: str) -> list[str]:
         "requirements-complete": validate_requirements_complete,
         "architecture-contracts": validate_architecture_contracts,
         "risk-spikes": validate_risk_spikes,
+        "risk-spikes-resolved": validate_risk_spike_resolution,
         "test-strategy-complete": validate_test_strategy_complete,
         "scaffold-complete": validate_scaffold_complete,
         "implementation-entry": validate_implementation_entry_criteria,
@@ -384,6 +385,29 @@ def validate_risk_spikes(_registry: dict) -> list[str]:
     return problems
 
 
+def validate_risk_spike_resolution(_registry: dict) -> list[str]:
+    """Check all RISK_SPIKES.md rows have a resolved/deferred/accepted status."""
+    problems: list[str] = []
+    spikes_path = workspace_path("PROGRAMBUILD/RISK_SPIKES.md")
+    if not spikes_path.exists():
+        return problems  # file-existence is checked by validate_risk_spikes; no duplication
+    rows = parse_markdown_table(spikes_path.read_text(encoding="utf-8"), "Spike Register")
+    real_rows = [r for r in rows if r.get("Spike", "").strip() and r.get("Spike", "").strip() not in ("", "spike")]
+    if not real_rows:
+        return problems  # empty table handled by validate_risk_spikes
+    RESOLVED_VALUES = {"resolved", "deferred", "accepted", "pass", "done", "closed"}
+    for row in real_rows:
+        # Use or-chaining: Result column exists but may be empty; fall through to Decision/Status
+        result = (row.get("Result") or row.get("Decision") or row.get("Status", "")).strip().lower()
+        if not result or (result not in RESOLVED_VALUES and not any(v in result for v in RESOLVED_VALUES)):
+            spike_id = row.get("Spike", "unknown").strip()
+            problems.append(
+                f"RISK_SPIKES.md: spike '{spike_id}' has unresolved status '{result or 'empty'}' "
+                "(expected one of: resolved, deferred, accepted, or equivalent)"
+            )
+    return problems
+
+
 def validate_test_strategy_complete(_registry: dict) -> list[str]:
     """Check TEST_STRATEGY.md exists and has at least one test category and requirement reference."""
     problems: list[str] = []
@@ -447,6 +471,7 @@ def validate_implementation_entry_criteria(registry: dict) -> list[str]:
     problems.extend(validate_architecture_contracts(registry))
     problems.extend(validate_test_strategy_complete(registry))
     problems.extend(validate_risk_spikes(registry))
+    problems.extend(validate_risk_spike_resolution(registry))
     return problems
 
 

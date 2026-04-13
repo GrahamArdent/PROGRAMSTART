@@ -176,6 +176,9 @@
       ".github/prompts/shape-release-readiness.prompt.md",
       ".github/prompts/shape-post-launch-review.prompt.md",
       ".github/prompts/shape-audit.prompt.md",
+      ".github/prompts/shape-uj-decision-freeze.prompt.md",
+      ".github/prompts/shape-uj-legal-drafts.prompt.md",
+      ".github/prompts/shape-uj-ux-surfaces.prompt.md",
       ".github/prompts/product-jit-check.prompt.md",
       ".github/prompts/implement-protocol-alignment.prompt.md",
       ".github/prompts/PROMPT_STANDARD.md",
@@ -969,7 +972,8 @@
         ],
         "prompts": [
           ".github/prompts/userjourney-next-slice.prompt.md",
-          ".github/prompts/programstart-stage-guide.prompt.md"
+          ".github/prompts/programstart-stage-guide.prompt.md",
+          ".github/prompts/shape-uj-decision-freeze.prompt.md"
         ]
       },
       "phase_1": {
@@ -987,7 +991,8 @@
         ],
         "prompts": [
           ".github/prompts/userjourney-next-slice.prompt.md",
-          ".github/prompts/programstart-stage-guide.prompt.md"
+          ".github/prompts/programstart-stage-guide.prompt.md",
+          ".github/prompts/shape-uj-legal-drafts.prompt.md"
         ]
       },
       "phase_2": {
@@ -1004,7 +1009,8 @@
         ],
         "prompts": [
           ".github/prompts/userjourney-next-slice.prompt.md",
-          ".github/prompts/programstart-stage-guide.prompt.md"
+          ".github/prompts/programstart-stage-guide.prompt.md",
+          ".github/prompts/shape-uj-ux-surfaces.prompt.md"
         ]
       },
       "phase_3": {
@@ -1021,7 +1027,8 @@
         ],
         "prompts": [
           ".github/prompts/userjourney-next-slice.prompt.md",
-          ".github/prompts/programstart-stage-guide.prompt.md"
+          ".github/prompts/programstart-stage-guide.prompt.md",
+          ".github/prompts/shape-uj-decision-freeze.prompt.md"
         ]
       },
       "phase_4": {

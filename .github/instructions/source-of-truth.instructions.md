@@ -74,6 +74,7 @@ Both MUST pass before moving on.
 | Legal and consent behaviour | `USERJOURNEY/LEGAL_AND_CONSENT.md` |
 | Decisions and reversals | `USERJOURNEY/DECISION_LOG.md` |
 | Registry of all rules | `config/process-registry.json` |
+| Prompt standard | `.github/prompts/PROMPT_STANDARD.md` |
 
 ## Product-level JIT during implementation
 

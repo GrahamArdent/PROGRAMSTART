@@ -108,10 +108,7 @@ def test_vscode_tasks_reference_valid_commands() -> None:
         # Skip flags (e.g. --dry-run) that aren't subcommands
         if subcommand.startswith("-"):
             continue
-        assert subcommand in CLI_COMMANDS, (
-            f"Task {task['label']!r} uses unknown subcommand {subcommand!r}; "
-            f"valid: {CLI_COMMANDS}"
-        )
+        assert subcommand in CLI_COMMANDS, f"Task {task['label']!r} uses unknown subcommand {subcommand!r}; valid: {CLI_COMMANDS}"
         checked += 1
 
     assert checked >= 5, f"Expected at least 5 programstart tasks, found {checked}"

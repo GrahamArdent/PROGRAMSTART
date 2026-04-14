@@ -75,7 +75,12 @@ def main() -> int:
         print(f"PROGRAMBUILD Stage: {stage}")
         print_section("Files", cast(list[str], section.get("files", [])))
         print_section("Scripts", cast(list[str], section.get("scripts", [])))
-        print_section("Prompts", cast(list[str], section.get("prompts", [])))
+        stage_prompts = list(cast(list[str], section.get("prompts", [])))
+        cross_cutting = cast(list[str], guidance.get("cross_cutting_prompts", []))
+        for p in cross_cutting:
+            if p not in stage_prompts:
+                stage_prompts.append(p)
+        print_section("Prompts", stage_prompts)
         return 0
 
     if args.system == "userjourney":

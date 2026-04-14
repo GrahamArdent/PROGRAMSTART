@@ -514,7 +514,7 @@ def test_advance_preflight_blocks_when_problems(capsys, monkeypatch) -> None:
     )
     monkeypatch.setattr(
         "scripts.programstart_workflow_state.preflight_problems",
-        lambda _registry, _system: ["metadata incomplete"],
+        lambda _registry, _system, _a=None: ["metadata incomplete"],
     )
     monkeypatch.setattr("sys.argv", ["programstart_workflow_state.py", "advance", "--system", "programbuild"])
 
@@ -542,7 +542,7 @@ def test_advance_skip_preflight_allows_progress(capsys, monkeypatch) -> None:
         "scripts.programstart_workflow_state.workflow_steps",
         lambda _registry, _system: ["inputs_and_mode_selection", "feasibility"],
     )
-    monkeypatch.setattr("scripts.programstart_workflow_state.preflight_problems", lambda _registry, _system: ["bad"])
+    monkeypatch.setattr("scripts.programstart_workflow_state.preflight_problems", lambda _r, _s, _a=None: ["bad"])
     monkeypatch.setattr(
         "scripts.programstart_workflow_state.save_workflow_state",
         lambda _registry, _system, value: saved.update(value),

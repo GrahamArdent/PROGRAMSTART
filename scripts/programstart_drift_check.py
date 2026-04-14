@@ -104,6 +104,7 @@ def main() -> int:
     parser.add_argument("files", nargs="*", help="Changed files to evaluate.")
     parser.add_argument("--changed-file-list", help="Path to a newline-delimited changed files list.")
     parser.add_argument("--system", choices=["programbuild", "userjourney"], help="Only check rules for this system.")
+    parser.add_argument("--strict", action="store_true", help="Treat notes as violations (exit 1 if any notes).")
     args = parser.parse_args()
 
     changed_files = load_changed_files(args)
@@ -125,6 +126,11 @@ def main() -> int:
         return 1
 
     print("Drift check passed.")
+    if args.strict and notes:
+        print("Drift check failed (strict mode) — notes treated as violations:")
+        for note in notes:
+            print(f"- {note}")
+        return 1
     if notes:
         print("Notes:")
         for note in notes:

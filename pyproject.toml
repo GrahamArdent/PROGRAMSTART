@@ -122,7 +122,7 @@ venv = ".venv"
 reportMissingTypeStubs = false
 
 [tool.pytest.ini_options]
-addopts = "-ra"
+addopts = "-ra --strict-markers"
 testpaths = ["tests"]
 
 [tool.coverage.run]
@@ -156,6 +156,8 @@ source = [
   "scripts.programstart_prompt_eval",
   "scripts.programstart_health_probe",
   "scripts.programstart_research_delta",
+  "scripts.check_commit_msg",
+  "scripts.programstart_repo_clean_check",
 ]
 
 [tool.coverage.report]

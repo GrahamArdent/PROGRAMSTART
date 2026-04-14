@@ -35,3 +35,21 @@ Tasks:
 
 Read the actual documents. Do not rely on memory or assumptions about their content.
 Do not let "it's probably fine" pass as an answer to any challenge question.
+
+## Next Prompt (Stage Routing)
+
+After a successful transition, start the target stage using its shaping prompt:
+
+| Target stage | Next prompt to run |
+|---|---|
+| Stage 0 — inputs_and_mode_selection | `shape-idea.prompt.md` |
+| Stage 1 — feasibility_and_kill_criteria | `shape-feasibility.prompt.md` |
+| Stage 2 — research_and_unknowns | `shape-research.prompt.md` |
+| Stage 3 — requirements_and_flows | `shape-requirements.prompt.md` |
+| Stage 4 — architecture_and_contracts | `shape-architecture.prompt.md` |
+| Stage 5 — scaffold_and_guardrails | `shape-scaffold.prompt.md` |
+| Stage 6 — test_strategy | `shape-test-strategy.prompt.md` |
+| Stage 7 — implementation_loop | Use `product-jit-check.prompt.md` before each feature |
+| Stage 8 — release_readiness | `shape-release-readiness.prompt.md` |
+| Stage 9 — audit_and_drift_control | Use `audit-process-drift.prompt.md` |
+| Stage 10 — post_launch_review | `shape-post-launch-review.prompt.md` |

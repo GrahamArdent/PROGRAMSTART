@@ -212,3 +212,86 @@ def test_drift_check_allows_completed_prior_steps(capsys, monkeypatch) -> None:
     out = capsys.readouterr().out
     assert result == 0
     assert "Drift check passed" in out
+
+
+# ---------------------------------------------------------------------------
+# Phase K tests — --strict flag
+# ---------------------------------------------------------------------------
+
+
+def test_strict_exits_1_on_notes(capsys, monkeypatch) -> None:
+    monkeypatch.setattr(
+        "sys.argv", ["programstart_drift_check.py", "--strict", "PROGRAMBUILD/PROGRAMBUILD.md"]
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_drift_check.load_registry",
+        lambda: {
+            "sync_rules": [
+                {
+                    "name": "test_rule",
+                    "system": "programbuild",
+                    "authority_files": ["PROGRAMBUILD/PROGRAMBUILD.md"],
+                    "dependent_files": ["PROGRAMBUILD/DEP.md"],
+                }
+            ],
+            "systems": {"programbuild": {}, "userjourney": {"optional": True, "root": "_missing"}},
+        },
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_drift_check.system_is_optional_and_absent",
+        lambda _r, system: system == "userjourney",
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_drift_check.load_workflow_state",
+        lambda _r, _s: {"stages": {"s1": {"status": "in_progress", "signoff": {"decision": "", "date": ""}}}},
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_drift_check.workflow_state_config",
+        lambda _r, _s: {"step_files": {}},
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_drift_check.workflow_steps",
+        lambda _r, _s: ["s1"],
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_drift_check.workflow_active_step",
+        lambda _r, _s, _state=None: "s1",
+    )
+    result = main()
+    out = capsys.readouterr().out
+    assert result == 1
+    assert "strict mode" in out
+
+
+def test_strict_exits_0_when_no_notes(capsys, monkeypatch) -> None:
+    monkeypatch.setattr(
+        "sys.argv", ["programstart_drift_check.py", "--strict", "PROGRAMBUILD/PROGRAMBUILD.md"]
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_drift_check.load_registry",
+        lambda: {"sync_rules": [], "systems": {"programbuild": {}, "userjourney": {"optional": True, "root": "_missing"}}},
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_drift_check.system_is_optional_and_absent",
+        lambda _r, system: system == "userjourney",
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_drift_check.load_workflow_state",
+        lambda _r, _s: {"stages": {"s1": {"status": "in_progress", "signoff": {"decision": "", "date": ""}}}},
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_drift_check.workflow_state_config",
+        lambda _r, _s: {"step_files": {}},
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_drift_check.workflow_steps",
+        lambda _r, _s: ["s1"],
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_drift_check.workflow_active_step",
+        lambda _r, _s, _state=None: "s1",
+    )
+    result = main()
+    out = capsys.readouterr().out
+    assert result == 0
+    assert "Drift check passed" in out

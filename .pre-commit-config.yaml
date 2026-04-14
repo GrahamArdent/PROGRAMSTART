@@ -75,14 +75,14 @@ repos:
 
       - id: programstart-validate
         name: programstart validate
-        entry: uv run programstart validate --check all
+        entry: uv run programstart validate --check all --strict
         language: system
         pass_filenames: false
         files: ^(PROGRAMBUILD/|USERJOURNEY/|config/|scripts/|README\.md|QUICKSTART\.md|pyproject\.toml|schemas/)
 
       - id: programstart-drift
         name: programstart drift check
-        entry: uv run programstart drift
+        entry: uv run programstart drift --strict
         language: system
         pass_filenames: true
         files: ^(PROGRAMBUILD/|USERJOURNEY/|config/process-registry\.json)

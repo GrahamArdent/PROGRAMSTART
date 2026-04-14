@@ -74,6 +74,8 @@ VALID_CHECKS: frozenset[str] = frozenset(
         "implementation-entry",
         "release-ready",
         "audit-complete",
+        "post-launch-review",
+        "coverage-source",
     }
 )
 

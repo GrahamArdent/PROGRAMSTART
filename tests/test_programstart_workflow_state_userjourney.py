@@ -61,7 +61,7 @@ def test_main_advance_final_step(capsys, monkeypatch) -> None:
         "scripts.programstart_workflow_state.workflow_active_step", lambda _registry, _system, _state=None: "phase_9"
     )
     monkeypatch.setattr("scripts.programstart_workflow_state.workflow_steps", lambda _registry, _system: ["phase_9"])
-    monkeypatch.setattr("scripts.programstart_workflow_state.preflight_problems", lambda _registry, _system: [])
+    monkeypatch.setattr("scripts.programstart_workflow_state.preflight_problems", lambda _r, _s, _a=None: [])
     monkeypatch.setattr(
         "scripts.programstart_workflow_state.save_workflow_state", lambda _registry, _system, value: saved.update(value)
     )

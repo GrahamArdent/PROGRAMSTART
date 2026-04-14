@@ -2,7 +2,7 @@
 
 Purpose: Project viability, kill criteria, and go/no-go decision.
 Owner: Product Lead
-Last updated: 2026-03-27
+Last updated: 2026-04-12
 Depends on: Program inputs block
 Authority: Canonical for project viability
 

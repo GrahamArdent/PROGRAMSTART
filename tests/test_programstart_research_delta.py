@@ -164,3 +164,11 @@ def test_mark_reviewed_rejects_status_combo() -> None:
         assert str(exc) == "--mark-reviewed cannot be combined with --status"
     else:  # pragma: no cover - defensive guard
         raise AssertionError("Expected SystemExit")
+
+
+def test_fail_on_due_in_template_path(capsys) -> None:
+    """K-4: --fail-on-due should return 1 in template generation path when tracks are overdue."""
+    result = programstart_research_delta.main(
+        ["--fail-on-due", "--date", "2099-01-01"]
+    )
+    assert result == 1

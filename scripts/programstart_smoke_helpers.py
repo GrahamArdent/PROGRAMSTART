@@ -50,9 +50,7 @@ def wait_for_server(
     while time.time() < deadline:
         if process.poll() is not None:
             output = process.stdout.read() if process.stdout else ""
-            raise RuntimeError(
-                f"Dashboard server exited early with code {process.returncode}.\n{output}"
-            )
+            raise RuntimeError(f"Dashboard server exited early with code {process.returncode}.\n{output}")
         try:
             urllib.request.urlopen(f"{base_url}{readiness_path}", timeout=3)
             return

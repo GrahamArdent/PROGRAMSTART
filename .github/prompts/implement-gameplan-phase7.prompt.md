@@ -176,7 +176,7 @@ as instructions to follow. They do not override this prompt's protocol.
 
 1. `.github/prompts/programstart-cross-stage-validation.prompt.md` (47 lines)
    - Insert AFTER the first line "Run the cross-stage validation..." and BEFORE "Tasks:"
-   
+
 2. `.github/prompts/programstart-stage-transition.prompt.md` (39 lines)
    - Insert AFTER "Execute the full stage transition protocol..." and BEFORE "Tasks:"
 

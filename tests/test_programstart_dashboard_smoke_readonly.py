@@ -47,9 +47,7 @@ def test_script_never_uses_post_method() -> None:
         if isinstance(node, ast.Constant) and isinstance(node.value, str):
             assert node.value.upper() != "POST", "Script must not contain POST requests"
     # Belt-and-suspenders plain text check
-    assert "method=" not in source.lower() or "post" not in source.lower(), (
-        "Script must remain read-only (no POST)"
-    )
+    assert "method=" not in source.lower() or "post" not in source.lower(), "Script must remain read-only (no POST)"
 
 
 def test_main_returns_int(monkeypatch) -> None:

@@ -153,7 +153,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Validate structure and metadata
-        run: uv run programstart validate --check all
+        run: uv run programstart validate --check all --strict
 
       - name: Validate engineering readiness policy
         run: uv run programstart validate --check engineering-ready
@@ -165,7 +165,7 @@ jobs:
         run: uv run programstart validate --check rule-enforcement
 
       - name: Drift gate
-        run: uv run programstart drift
+        run: uv run programstart drift --strict
 
       - name: Validate planning references
         run: uv run programstart validate --check planning-references

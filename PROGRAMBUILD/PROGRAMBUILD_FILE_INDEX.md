@@ -64,7 +64,25 @@ These files live outside the `PROGRAMBUILD/` folder but are part of the build sy
 
 ---
 
-## 4. Index Rules
+## 5. Shaping Prompts
+
+These prompts live in `.github/prompts/` and are registered in `config/process-registry.json` under `workflow_guidance`. All must conform to `.github/prompts/PROMPT_STANDARD.md`.
+
+| File | Stage | Purpose |
+|---|---|---|
+| `shape-idea.prompt.md` | 0 — inputs_and_mode_selection | Interactive idea decomposition and pre-feasibility challenge |
+| `shape-feasibility.prompt.md` | 1 — feasibility_and_kill_criteria | Kill criteria definition and go/no-go recommendation |
+| `shape-research.prompt.md` | 2 — research_and_unknowns | Structured investigation and evidence gathering |
+| `shape-requirements.prompt.md` | 3 — requirements_and_flows | Functional requirements, user stories, and user flows |
+| `shape-architecture.prompt.md` | 4 — architecture_and_contracts | System topology, contracts, and technology decisions |
+| `shape-scaffold.prompt.md` | 5 — scaffold_and_guardrails | Project skeleton, CI pipeline, and structural tests |
+| `shape-test-strategy.prompt.md` | 6 — test_strategy | Test pyramid, coverage targets, and requirements traceability |
+| `shape-release-readiness.prompt.md` | 8 — release_readiness | Deployment safety, rollback, monitoring, and go/no-go gate |
+| `shape-post-launch-review.prompt.md` | 10 — post_launch_review | Outcomes review, lessons learned, and template improvements |
+
+---
+
+## 6. Index Rules
 
 - Add new critical files here when they are created.
 - Mark files as `active`, `deprecated`, `replaced`, or `derived`.
@@ -77,4 +95,4 @@ These files live outside the `PROGRAMBUILD/` folder but are part of the build sy
 
 ---
 
-Last updated: 2026-04-11
+Last updated: 2026-04-12

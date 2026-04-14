@@ -361,10 +361,7 @@ def main(argv: list[str] | None = None) -> int:
         if args.json:
             print(json.dumps(asdict(result), indent=2))
         else:
-            print(
-                f"Marked research track '{result.track}' reviewed on {result.review_date}; "
-                f"updated {result.kb_path}"
-            )
+            print(f"Marked research track '{result.track}' reviewed on {result.review_date}; updated {result.kb_path}")
         return 0
 
     if args.status:
@@ -382,6 +379,11 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(asdict(template), indent=2))
     else:
         print(f"Wrote research delta template to {template.output_path}")
+
+    if args.fail_on_due:
+        report = build_status(args.date)
+        if has_due_tracks(report):
+            return 1
     return 0
 
 

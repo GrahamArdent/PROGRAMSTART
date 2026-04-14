@@ -1221,3 +1221,95 @@ def test_validate_main_kb_freshness_passes(capsys, monkeypatch) -> None:
     out = capsys.readouterr().out
     assert result == 0
     assert "Validation passed" in out
+
+
+# ---------------------------------------------------------------------------
+# Phase K tests
+# ---------------------------------------------------------------------------
+
+
+class TestStrictModeValidate:
+    def test_strict_exits_1_on_warnings(self, capsys, monkeypatch) -> None:
+        monkeypatch.setattr("sys.argv", ["programstart_validate.py", "--check", "test-coverage", "--strict"])
+        monkeypatch.setattr(validate, "validate_test_coverage", lambda _reg: ["fake warning"])
+        result = validate.main()
+        out = capsys.readouterr().out
+        assert result == 1
+        assert "strict mode" in out
+
+    def test_strict_exits_0_when_no_warnings(self, capsys, monkeypatch) -> None:
+        monkeypatch.setattr("sys.argv", ["programstart_validate.py", "--check", "test-coverage", "--strict"])
+        monkeypatch.setattr(validate, "validate_test_coverage", lambda _reg: [])
+        result = validate.main()
+        assert result == 0
+
+
+class TestCoverageSourceCompleteness:
+    def test_detects_unregistered_module(self, tmp_path, monkeypatch) -> None:
+        scripts_dir = tmp_path / "scripts"
+        scripts_dir.mkdir()
+        (scripts_dir / "programstart_new.py").write_text("# new", encoding="utf-8")
+        pyproject = tmp_path / "pyproject.toml"
+        pyproject.write_text('[tool.coverage.run]\nsource = ["scripts.programstart_old"]', encoding="utf-8")
+        monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+        warnings = validate.validate_coverage_source_completeness({})
+        assert any("programstart_new.py" in w for w in warnings)
+
+    def test_passes_when_all_registered(self, tmp_path, monkeypatch) -> None:
+        scripts_dir = tmp_path / "scripts"
+        scripts_dir.mkdir()
+        (scripts_dir / "programstart_foo.py").write_text("# foo", encoding="utf-8")
+        pyproject = tmp_path / "pyproject.toml"
+        pyproject.write_text('[tool.coverage.run]\nsource = ["scripts.programstart_foo"]', encoding="utf-8")
+        monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+        warnings = validate.validate_coverage_source_completeness({})
+        assert warnings == []
+
+    def test_excludes_smoke_scripts(self, tmp_path, monkeypatch) -> None:
+        scripts_dir = tmp_path / "scripts"
+        scripts_dir.mkdir()
+        (scripts_dir / "programstart_something_smoke.py").write_text("# smoke", encoding="utf-8")
+        (scripts_dir / "__init__.py").write_text("", encoding="utf-8")
+        pyproject = tmp_path / "pyproject.toml"
+        pyproject.write_text('[tool.coverage.run]\nsource = []', encoding="utf-8")
+        monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+        warnings = validate.validate_coverage_source_completeness({})
+        assert warnings == []
+
+
+class TestPostLaunchReview:
+    def test_missing_file_fails(self, tmp_path, monkeypatch) -> None:
+        monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+        problems = validate.validate_post_launch_review({})
+        assert any("does not exist" in p for p in problems)
+
+    def test_stub_file_fails(self, tmp_path, monkeypatch) -> None:
+        plr = tmp_path / "PROGRAMBUILD" / "POST_LAUNCH_REVIEW.md"
+        plr.parent.mkdir(parents=True)
+        plr.write_text("# Post Launch Review\n---\n", encoding="utf-8")
+        monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+        problems = validate.validate_post_launch_review({})
+        assert any("stub" in p for p in problems)
+
+    def test_real_content_passes(self, tmp_path, monkeypatch) -> None:
+        plr = tmp_path / "PROGRAMBUILD" / "POST_LAUNCH_REVIEW.md"
+        plr.parent.mkdir(parents=True)
+        plr.write_text(
+            "# Post Launch Review\n\nFinding 1: all tests green.\nOutcome: stable.\nVerdict: ship it.\nExtra: yes.\n",
+            encoding="utf-8",
+        )
+        monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+        problems = validate.validate_post_launch_review({})
+        assert problems == []
+
+
+class TestBroadenedTestCoverage:
+    def test_check_commit_msg_flagged_when_no_test(self, tmp_path, monkeypatch) -> None:
+        scripts_dir = tmp_path / "scripts"
+        scripts_dir.mkdir()
+        (scripts_dir / "check_commit_msg.py").write_text("# commit msg", encoding="utf-8")
+        tests_dir = tmp_path / "tests"
+        tests_dir.mkdir()
+        monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+        warnings = validate.validate_test_coverage({})
+        assert any("check_commit_msg.py" in w for w in warnings)

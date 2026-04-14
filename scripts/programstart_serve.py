@@ -52,6 +52,7 @@ try:
         workflow_steps,
         workspace_path,
     )
+    from .programstart_health_probe import probe_target as _probe_target
     from .programstart_markdown_parsers import (
         clean_md,
         extract_bullets,
@@ -62,9 +63,19 @@ try:
         extract_subagents,
         system_is_attached,
     )
-    from .programstart_health_probe import probe_target as _probe_target
 except ImportError:  # pragma: no cover - standalone script execution fallback
     from programstart_command_registry import dashboard_allowed_commands  # type: ignore
+    from programstart_health_probe import probe_target as _probe_target  # type: ignore
+    from programstart_markdown_parsers import (  # type: ignore
+        clean_md,
+        extract_bullets,
+        extract_bullets_after_marker,
+        extract_file_checklist_sections,
+        extract_slice_sections,
+        extract_startup_sections,
+        extract_subagents,
+        system_is_attached,
+    )
 
     from programstart_common import (  # type: ignore
         extract_numbered_items,
@@ -79,17 +90,6 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
         workflow_steps,
         workspace_path,
     )
-    from programstart_markdown_parsers import (  # type: ignore
-        clean_md,
-        extract_bullets,
-        extract_bullets_after_marker,
-        extract_file_checklist_sections,
-        extract_slice_sections,
-        extract_startup_sections,
-        extract_subagents,
-        system_is_attached,
-    )
-    from programstart_health_probe import probe_target as _probe_target  # type: ignore
 
 # ---------------------------------------------------------------------------
 # Allowed commands — strict whitelist, no shell interpolation possible
@@ -179,7 +179,6 @@ def run_bootstrap(
 def get_state_json() -> dict[str, Any]:
     """Return both workflow states as JSON-serialisable dicts plus guidance metadata."""
     try:
-
         registry = load_registry()
 
         guidance = registry.get("workflow_guidance", {})
@@ -490,8 +489,7 @@ def save_workflow_signoff(system: str, decision: str, signoff_date: str, notes: 
     history.append(signoff_record)
     if len(history) > MAX_SIGNOFF_HISTORY:
         print(
-            f"Warning: signoff_history for {system} {active_step} exceeded "
-            f"{MAX_SIGNOFF_HISTORY} entries; oldest trimmed",
+            f"Warning: signoff_history for {system} {active_step} exceeded {MAX_SIGNOFF_HISTORY} entries; oldest trimmed",
             file=sys.stderr,
         )
         entry["signoff_history"] = history[-MAX_SIGNOFF_HISTORY:]
@@ -551,8 +549,7 @@ def advance_workflow_with_signoff(
     history.append(advance_record)
     if len(history) > MAX_SIGNOFF_HISTORY:
         print(
-            f"Warning: signoff_history for {system} {active_step} exceeded "
-            f"{MAX_SIGNOFF_HISTORY} entries; oldest trimmed",
+            f"Warning: signoff_history for {system} {active_step} exceeded {MAX_SIGNOFF_HISTORY} entries; oldest trimmed",
             file=sys.stderr,
         )
         current_entry["signoff_history"] = history[-MAX_SIGNOFF_HISTORY:]

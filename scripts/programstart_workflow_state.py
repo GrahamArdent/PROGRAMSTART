@@ -144,6 +144,7 @@ def preflight_problems(
             "implementation_loop": "implementation-entry",
             "release_readiness": "release-ready",
             "audit_and_drift_control": "audit-complete",
+            "post_launch_review": "post-launch-review",
         }
         check_names = stage_checks.get(active_step)
         if check_names:

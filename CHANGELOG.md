@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Stage-gate validation checks for PROGRAMBUILD Stages 0-4: `intake-complete`, `feasibility-criteria`, `requirements-complete`, `architecture-contracts`.
+- Per-stage dispatch in `preflight_problems()` — advancing a PROGRAMBUILD stage now runs the corresponding content validation automatically.
+- `run_stage_gate_check()` dispatcher in `programstart_validate.py` for stage-gate content checks.
+- Five collaborative shaping prompts for Stages 0-4: `shape-idea`, `shape-feasibility`, `shape-research`, `shape-requirements`, `shape-architecture`.
+- 36 new tests across 4 test files for stage-gate validators.
+- 3 integration tests for the `preflight_problems → stage-gate dispatch → validator` chain: dispatch fires for programbuild (field-level assertions), skips for userjourney, and advance blocks with real validator output.
+
+### Fixed
+
+- `preflight_problems()` was returning `None` due to dead code trapped inside `_check_challenge_gate_log()` — restored full body with real checks.
+- Monkeypatch lambda arity in advance tests updated for new `active_step` parameter.
+
+### Changed
+
 - `.editorconfig` for consistent IDE settings.
 - `.gitattributes` for cross-platform line-ending normalization.
 - `SECURITY.md` vulnerability disclosure policy.

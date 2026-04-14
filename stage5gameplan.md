@@ -100,12 +100,14 @@ Get-Content .github/prompts/shape-research.prompt.md | Select-String "^## "
 **Validator logic** (in `scripts/programstart_validate.py`):
 
 ```python
-def validate_research_complete(root: Path) -> list[str]:
+def validate_research_complete(_registry: dict) -> list[str]:
     """Check RESEARCH_SUMMARY.md exists and has at least one ## section heading."""
-    problems = []
-    research_path = root / "PROGRAMBUILD" / "RESEARCH_SUMMARY.md"
+    problems: list[str] = []
+    research_path = workspace_path("PROGRAMBUILD/RESEARCH_SUMMARY.md")
     if not research_path.exists():
-        problems.append("RESEARCH_SUMMARY.md: file does not exist")
+        problems.append(
+            "RESEARCH_SUMMARY.md: file does not exist (See: shape-research.prompt.md)"
+        )
         return problems
     content = research_path.read_text(encoding="utf-8")
     if not re.search(r"^## ", content, re.MULTILINE):
@@ -115,6 +117,8 @@ def validate_research_complete(root: Path) -> list[str]:
         )
     return problems
 ```
+
+**Note**: The signature uses `_registry: dict` (not `root: Path`) to match the validator dispatch contract. Use `workspace_path()` instead of a root parameter. Confirmed by actual implementation at `validate.py:224`.
 
 **Required edits (3 files)**:
 

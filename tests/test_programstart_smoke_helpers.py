@@ -90,7 +90,6 @@ def test_start_dashboard_server_returns_popen(tmp_path: Path) -> None:
 
 def test_request_json_parses_response() -> None:
     """request_json should parse a JSON response body."""
-    import io
     from http.client import HTTPResponse
 
     mock_response = MagicMock(spec=HTTPResponse)

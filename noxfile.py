@@ -245,7 +245,7 @@ def package(session: nox.Session) -> None:
 @nox.session
 def ci(session: nox.Session) -> None:
     """Run the full local gate used to mirror the major CI checks."""
-    for name in ("lint", "typecheck", "tests", "validate", "smoke", "docs", "package", "security"):
+    for name in ("lint", "typecheck", "tests", "validate", "smoke", "docs", "package", "security", "format_check", "requirements"):
         session.notify(name)
 
 
@@ -274,6 +274,14 @@ def security(session: nox.Session) -> None:
     install_dev(session)
     session.run("bandit", "-r", "scripts/", "-ll", "--skip", "B101,B310", "-x", "tests/")
     session.run("pip-audit", "--desc", success_codes=[0, 1])
+
+
+@nox.session(reuse_venv=True)
+def format_check(session: nox.Session) -> None:
+    """Check formatting without modifying files."""
+    install_dev(session)
+    session.run("ruff", "check", ".")
+    session.run("ruff", "format", "--check", ".")
 
 
 @nox.session(reuse_venv=True)

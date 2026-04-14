@@ -43,6 +43,7 @@ When a task is about planning, execution order, document authority, drift, or â€
 - The key words MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY in authority docs (instruction files, PROGRAMBUILD_CANONICAL.md, DELIVERY_GAMEPLAN.md) are interpreted as described in [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119).
 - Commit messages MUST follow Conventional Commits format: `<type>[optional scope]: <description>` â€” valid types are `feat`, `fix`, `docs`, `chore`, `ci`, `refactor`, `test`. Include `BREAKING CHANGE:` footer for schema changes, stage renames, or required-file renames.
 - Significant architectural or policy decisions MUST be recorded as MADR decision records in `docs/decisions/` using `PROGRAMBUILD/PROGRAMBUILD_ADR_TEMPLATE.md` as the template.
+- All `.prompt.md` files in `.github/prompts/` MUST conform to `.github/prompts/PROMPT_STANDARD.md`. Internal build prompts (`implement-gameplan-phase*`) are exempt.
 
 ## Source-of-Truth Protocol (JIT)
 

@@ -547,6 +547,25 @@ def validate_audit_complete(_registry: dict) -> list[str]:
     return problems
 
 
+def validate_post_launch_review(_registry: dict) -> list[str]:
+    """Check POST_LAUNCH_REVIEW.md exists and has meaningful content."""
+    problems: list[str] = []
+    plr_path = workspace_path("PROGRAMBUILD/POST_LAUNCH_REVIEW.md")
+    if not plr_path.exists():
+        problems.append("POST_LAUNCH_REVIEW.md does not exist (required for Stage 10)")
+        return problems
+    text = plr_path.read_text(encoding="utf-8")
+    # Require at least one non-blank, non-heading, non-metadata line of real content
+    content_lines = [
+        ln
+        for ln in text.splitlines()
+        if ln.strip() and not ln.strip().startswith("#") and not ln.strip().startswith("---")
+    ]
+    if len(content_lines) < 3:
+        problems.append("POST_LAUNCH_REVIEW.md appears to be a stub — add review content before Stage 10 advance")
+    return problems
+
+
 def validate_registry(registry: dict) -> list[str]:
     problems: list[str] = []
     if "systems" not in registry or "sync_rules" not in registry:
@@ -1088,19 +1107,46 @@ def validate_adr_coverage(registry: dict) -> list[str]:
 
 
 def validate_test_coverage(registry: dict) -> list[str]:
-    """Warn about scripts/programstart_*.py files that have no matching tests/test_programstart_*.py."""
+    """Warn about production scripts that have no matching test file."""
     warnings: list[str] = []
     scripts_dir = workspace_path("scripts")
     tests_dir = workspace_path("tests")
     if not scripts_dir.exists():
         return warnings
-    for script in sorted(scripts_dir.glob("programstart_*.py")):
-        if script.name.endswith("_smoke.py"):
+    EXCLUDED_SUFFIXES = ("_smoke.py", "_smoke_readonly.py")
+    EXCLUDED_NAMES = {"__init__.py", "programstart_smoke_helpers.py", "programstart_dashboard_golden.py"}
+    for script in sorted(scripts_dir.glob("*.py")):
+        if script.name in EXCLUDED_NAMES or any(script.name.endswith(s) for s in EXCLUDED_SUFFIXES):
             continue
         test_file = tests_dir / f"test_{script.name}"
         if not test_file.exists():
             warnings.append(f"no test file for script: scripts/{script.name} (expected tests/test_{script.name})")
     return warnings
+
+
+def validate_coverage_source_completeness(_registry: dict) -> list[str]:
+    """Warn about production scripts not registered in [tool.coverage.run].source."""
+    import tomllib
+
+    problems: list[str] = []
+    scripts_dir = workspace_path("scripts")
+    if not scripts_dir.exists():
+        return problems
+    pyproject = workspace_path("pyproject.toml")
+    if not pyproject.exists():
+        return problems
+    config = tomllib.loads(pyproject.read_text(encoding="utf-8"))
+    source_list = config.get("tool", {}).get("coverage", {}).get("run", {}).get("source", [])
+    source_modules = {s.replace("scripts.", "") for s in source_list}
+    EXCLUDED_SUFFIXES = ("_smoke.py", "_smoke_readonly.py")
+    EXCLUDED_NAMES = {"__init__.py", "programstart_smoke_helpers.py", "programstart_dashboard_golden.py"}
+    for script in sorted(scripts_dir.glob("*.py")):
+        if script.name in EXCLUDED_NAMES or any(script.name.endswith(s) for s in EXCLUDED_SUFFIXES):
+            continue
+        module_name = script.stem
+        if module_name not in source_modules:
+            problems.append(f"scripts/{script.name} is not in [tool.coverage.run].source in pyproject.toml")
+    return problems
 
 
 def validate_kb_freshness(_registry: dict) -> list[str]:
@@ -1209,6 +1255,8 @@ def main() -> int:
             "implementation-entry",
             "release-ready",
             "audit-complete",
+            "post-launch-review",
+            "coverage-source",
         ],
         default="all",
     )
@@ -1216,6 +1264,11 @@ def main() -> int:
         "--system",
         choices=["programbuild", "userjourney"],
         help="Only validate this system.",
+    )
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="Treat warnings as errors (exit 1 if any warnings).",
     )
     args = parser.parse_args()
 
@@ -1240,6 +1293,7 @@ def main() -> int:
         warnings.extend(metadata_warnings(registry, sf))
         warnings.extend(reference_warnings)
         warnings.extend(validate_test_coverage(registry))
+        warnings.extend(validate_coverage_source_completeness(registry))
         warnings.extend(validate_adr_coverage(registry))
         warnings.extend(validate_kb_freshness(registry))
     elif args.check == "required-files":
@@ -1294,6 +1348,10 @@ def main() -> int:
         problems.extend(validate_release_ready(registry))
     elif args.check == "audit-complete":
         problems.extend(validate_audit_complete(registry))
+    elif args.check == "post-launch-review":
+        problems.extend(validate_post_launch_review(registry))
+    elif args.check == "coverage-source":
+        warnings.extend(validate_coverage_source_completeness(registry))
     else:
         problems.extend(validate_engineering_ready(registry))
 
@@ -1301,6 +1359,12 @@ def main() -> int:
         print("Validation failed:")
         for problem in problems:
             print(f"- {problem}")
+        return 1
+
+    if args.strict and warnings:
+        print("Validation failed (strict mode) — warnings treated as errors:")
+        for warning in warnings:
+            print(f"- {warning}")
         return 1
 
     print(f"Validation passed for check: {args.check}")

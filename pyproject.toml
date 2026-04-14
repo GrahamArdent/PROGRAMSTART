@@ -73,6 +73,7 @@ programstart-recommend = "scripts.programstart_recommend:main"
 programstart-impact = "scripts.programstart_impact:main"
 programstart-prompt-eval = "scripts.programstart_prompt_eval:main"
 programstart-doctor = "scripts.programstart_doctor:main"
+programstart-prompt-build = "scripts.programstart_prompt_build:main"
 
 [tool.setuptools]
 packages = ["scripts"]
@@ -158,6 +159,7 @@ source = [
   "scripts.programstart_prompt_eval",
   "scripts.programstart_health_probe",
   "scripts.programstart_doctor",
+  "scripts.programstart_prompt_build",
   "scripts.lint_prompts",
   "scripts.programstart_research_delta",
   "scripts.check_commit_msg",

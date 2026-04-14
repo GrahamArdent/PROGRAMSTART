@@ -76,6 +76,16 @@ Intended use:
 
 - programmatic health checks and monitoring integration
 
+### `GET /static/<filename>`
+
+Serves static assets (CSS, JavaScript) from the `dashboard/` directory.
+
+Path traversal is blocked — only the filename component is used, and the resolved path must be within `dashboard/`.
+
+Allowed file types: `.css`, `.js`, `.html`, `.svg`, `.png`, `.ico`.
+
+Responses include `Cache-Control: public, max-age=300`.
+
 ## POST Routes
 
 ### `POST /api/run`

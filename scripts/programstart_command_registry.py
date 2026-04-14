@@ -28,6 +28,7 @@ CLI_COMMANDS: tuple[str, ...] = (
     "serve",
     "health",
     "doctor",
+    "prompt-build",
 )
 
 

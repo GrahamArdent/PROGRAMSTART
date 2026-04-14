@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PROGRAMSTART Dashboard</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body data-root="__ROOT__">
+<header>
+  <h1>PROGRAMSTART</h1>
+  <span class="sub">Local Workflow Dashboard</span>
+  <span class="spacer"></span>
+  <span id="lastUpdated" class="sub"></span>
+  <button class="btn" onclick="loadAll()">Refresh</button>
+  <button class="btn primary" onclick="openBootstrapModal()">+ New Project</button>
+</header>
+
+<main>
+  <!-- Status bar -->
+  <div class="status-bar">
+    <div class="status-item"><span id="dot-pb" class="dot yellow"></span> PROGRAMBUILD: <strong id="sb-pb">...</strong></div>
+    <div class="status-item"><span id="dot-uj" class="dot yellow"></span> USERJOURNEY: <strong id="sb-uj">...</strong></div>
+    <div class="status-item" id="sb-blockers"></div>
+    <div style="flex:1"></div>
+    <div class="status-item" id="sb-updated"></div>
+  </div>
+
+  <div class="section" id="focus-section">
+    <h2>What To Do Now</h2>
+    <div class="section-intro">Start here. This view highlights the next meaningful step for each workflow and keeps the heavier operational surfaces further down the page.</div>
+    <div class="focus-grid">
+      <div id="focus-pb" class="focus-card"><span class="meta">Loading PROGRAMBUILD focus...</span></div>
+      <div id="focus-uj" class="focus-card"><span class="meta">Loading USERJOURNEY focus...</span></div>
+    </div>
+  </div>
+
+  <!-- System cards -->
+  <div class="row">
+    <div class="card" id="card-pb">
+      <h2>PROGRAMBUILD <span id="pb-variant" class="badge variant"></span></h2>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span id="pb-active" class="badge active">...</span>
+        <span id="pb-progress-label" class="meta"></span>
+      </div>
+      <div id="pb-summary" class="card-summary">Loading current stage summary...</div>
+      <div class="progress-bar"><div id="pb-bar" class="progress-fill green" style="width:0%"></div></div>
+      <div id="pb-steps" class="steps"></div>
+      <div class="actions">
+        <button class="btn ghost" onclick="openGuide('programbuild')">Continue</button>
+        <button class="btn primary" onclick="openAdvanceModal('programbuild', 'advance')">Advance</button>
+      </div>
+      <details class="disclosure">
+        <summary>More PROGRAMBUILD actions</summary>
+        <div class="actions secondary-actions">
+          <button class="btn ghost" onclick="runCmd('guide.programbuild')">Refresh Guide</button>
+          <button class="btn ghost" onclick="runCmd('progress')">Progress</button>
+          <button class="btn ghost" onclick="runCmd('drift')">Drift Check</button>
+          <button class="btn ghost" onclick="openAdvanceModal('programbuild', 'signoff')">Save Signoff</button>
+          <button class="btn warning" onclick="runCmd('advance.programbuild.dry')">Dry-run Advance</button>
+        </div>
+      </details>
+    </div>
+
+    <div class="card" id="card-uj">
+      <h2>USERJOURNEY <span id="uj-blockers" class="badge blocker" style="display:none"></span></h2>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span id="uj-active" class="badge active">...</span>
+        <span id="uj-progress-label" class="meta"></span>
+      </div>
+      <div id="uj-summary" class="card-summary">Loading current phase summary...</div>
+      <div class="progress-bar"><div id="uj-bar" class="progress-fill green" style="width:0%"></div></div>
+      <div id="uj-steps" class="steps"></div>
+      <div class="actions">
+        <button class="btn ghost" id="uj-continue-btn" onclick="openGuide('userjourney')">Continue</button>
+        <button class="btn primary" id="uj-advance-btn" onclick="openAdvanceModal('userjourney', 'advance')">Advance</button>
+      </div>
+      <details class="disclosure" id="uj-more-actions">
+        <summary>More USERJOURNEY actions</summary>
+        <div class="actions secondary-actions">
+          <button class="btn ghost" id="uj-refresh-guide-btn" onclick="runCmd('guide.userjourney')">Refresh Guide</button>
+          <button class="btn ghost" id="uj-status-btn" onclick="runCmd('status')">Status</button>
+          <button class="btn ghost" id="uj-drift-btn" onclick="runCmd('drift')">Drift Check</button>
+          <button class="btn ghost" id="uj-signoff-btn" onclick="openAdvanceModal('userjourney', 'signoff')">Save Signoff</button>
+          <button class="btn warning" id="uj-dry-run-btn" onclick="runCmd('advance.userjourney.dry')">Dry-run Advance</button>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- Guide panels -->
+  <div class="section" id="guide-section">
+    <h2>Recommended Next Steps <button class="btn ghost" style="margin-left:auto" onclick="runCmd('guide.kickoff')">Kickoff Guide</button></h2>
+    <div class="section-intro">Use this section to understand the current step, why it matters, and which files or checks need attention next.</div>
+    <div class="guide-grid">
+      <div class="guide-block">
+        <h3 id="guide-pb-title">PROGRAMBUILD</h3>
+        <div id="guide-pb-desc" class="guide-desc" style="display:none"></div>
+        <div id="guide-pb-content"><span class="meta">Loading guide...</span></div>
+      </div>
+      <div class="guide-block">
+        <h3 id="guide-uj-title">USERJOURNEY</h3>
+        <div id="guide-uj-desc" class="guide-desc" style="display:none"></div>
+        <div id="guide-uj-content"><span class="meta">Loading guide...</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="workspace-tabs">
+    <h2>Workspace Areas</h2>
+    <div class="section-intro">Switch between planning references, project setup, delivery tracking, and diagnostics without scrolling through everything at once.</div>
+    <div class="tab-strip">
+      <button class="tab-btn active" id="tab-btn-references" onclick="activateTab('references')">References</button>
+      <button class="tab-btn" id="tab-btn-setup" onclick="activateTab('setup')">New Project Setup</button>
+      <button class="tab-btn" id="tab-btn-execution" onclick="activateTab('execution')">Delivery Plan</button>
+      <button class="tab-btn" id="tab-btn-diagnostics" onclick="activateTab('diagnostics')">Validation And Drift</button>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="tab-panel-references">
+    <div class="row">
+      <div class="section" id="control-section">
+        <h2>Source-Of-Truth Documents</h2>
+        <div class="section-intro">Canonical documents, indexes, and file authorities for the current workflow.</div>
+        <div id="control-meta" class="meta">Loading control docs...</div>
+        <div id="control-docs-list" class="catalog-list"><span class="meta">Loading...</span></div>
+      </div>
+
+      <div class="section" id="subagent-section">
+        <h2>Recommended Assistants <span id="subagent-variant-badge" class="badge variant" style="display:none"></span></h2>
+        <div class="section-intro">Suggested assistant roles and prompts for the current stage and planning variant.</div>
+        <div id="subagent-summary" class="meta">Loading subagent catalog...</div>
+        <div id="subagent-report-req" class="pill-row"></div>
+        <div id="subagent-cards" class="subagent-list"><span class="meta">Loading...</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-panel hidden" id="tab-panel-setup">
+    <div class="section" id="kickoff-section">
+      <h2>New Project Setup</h2>
+      <div class="section-intro">Create a new planning workspace, inspect the startup documents, and reopen recent projects from here.</div>
+      <div id="kickoff-summary" class="meta">Loading kickoff packet...</div>
+      <div class="row">
+        <div class="guide-block">
+          <h3>Start With These Files</h3>
+          <div id="kickoff-files" class="handoff-list"><span class="meta">Loading...</span></div>
+        </div>
+        <div class="guide-block">
+          <h3>Startup Checklist</h3>
+          <div id="kickoff-checklist" class="handoff-list"><span class="meta">Loading...</span></div>
+        </div>
+      </div>
+      <div id="kickoff-last-project" class="handoff-card" style="margin-top:10px"></div>
+      <div class="guide-block" style="margin-top:12px">
+        <h3>Recent Projects</h3>
+        <div id="recent-projects" class="recent-projects"><span class="meta">No recent projects yet.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-panel hidden" id="tab-panel-execution">
+    <div class="section" id="uj-execution-section">
+      <h2>Delivery Plan</h2>
+      <div class="section-intro">Track phases, slices, file review targets, and delivery risks for USERJOURNEY work.</div>
+      <div id="uj-exec-summary" class="meta">Loading execution tracker...</div>
+      <div class="mini-form">
+        <div>
+          <label>Phase</label>
+          <select id="uj-phase-select"></select>
+        </div>
+        <div>
+          <label>Status</label>
+          <select id="uj-phase-status">
+            <option>Planned</option>
+            <option>In Progress</option>
+            <option>Blocked</option>
+            <option>Completed</option>
+          </select>
+        </div>
+        <div>
+          <label>Blockers</label>
+          <input id="uj-phase-blockers" placeholder="unresolved open questions">
+        </div>
+        <div>
+          <button class="btn primary" onclick="updateUserJourneyPhase()">Save Phase</button>
+        </div>
+      </div>
+      <div class="mini-form">
+        <div>
+          <label>Current Slice</label>
+          <select id="uj-slice-select"></select>
+        </div>
+        <div>
+          <label>Status</label>
+          <select id="uj-slice-status">
+            <option>Pending</option>
+            <option>Selected</option>
+            <option>Ready</option>
+            <option>Blocked</option>
+            <option>Completed</option>
+          </select>
+        </div>
+        <div>
+          <label>Notes</label>
+          <input id="uj-slice-note" placeholder="why this slice is current, ready, or blocked">
+        </div>
+        <div>
+          <button class="btn ghost" onclick="updateUserJourneySlice()">Save Slice</button>
+        </div>
+      </div>
+      <div class="exec-grid">
+        <div class="guide-block">
+          <h3>Phase Overview</h3>
+          <div id="uj-phase-overview" class="table-ish"><span class="meta">Loading...</span></div>
+        </div>
+        <div class="guide-block">
+          <h3>Current Slice</h3>
+          <div id="uj-slice-focus" class="catalog-list"><span class="meta">Loading...</span></div>
+        </div>
+      </div>
+      <div class="exec-grid" style="margin-top:12px">
+        <div class="guide-block">
+          <h3>Files To Review</h3>
+          <div id="uj-file-review" class="catalog-list"><span class="meta">Loading...</span></div>
+        </div>
+        <div class="guide-block">
+          <h3>Delivery Risks</h3>
+          <div id="uj-risks" class="catalog-list"><span class="meta">Loading...</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-panel hidden" id="tab-panel-diagnostics">
+    <div class="stack">
+      <div class="section" id="drift-section">
+        <h2>Workflow Health</h2>
+        <div class="section-intro">Inspect drift, sync-rule violations, and changed files when something looks out of alignment.</div>
+        <div id="drift-summary" class="meta">Loading drift summary...</div>
+        <div class="exec-grid">
+          <div class="guide-block">
+            <h3>Violations And Notes</h3>
+            <div id="drift-violations" class="catalog-list"><span class="meta">Loading...</span></div>
+          </div>
+          <div class="guide-block">
+            <h3>Changed Files</h3>
+            <div id="drift-files" class="catalog-list"><span class="meta">Loading...</span></div>
+          </div>
+        </div>
+        <div class="guide-block" style="margin-top:12px">
+          <h3>Sync Rules</h3>
+          <div id="drift-rules" class="catalog-list"><span class="meta">Loading...</span></div>
+        </div>
+      </div>
+
+      <div class="section" id="console-section">
+        <h2>Validation Console</h2>
+        <div class="section-intro">Run validations, smoke checks, and quick status commands when you need operational detail.</div>
+        <div class="terminal-bar">
+          <div class="terminal-status">
+            <span class="label" id="cmd-label">Ready</span>
+            <span class="detail" id="cmd-detail">Use the console for validation, smoke checks, and workflow commands.</span>
+          </div>
+          <div id="cmd-spinner" class="spinner"></div>
+          <button class="btn ghost" onclick="clearOutput()">Clear</button>
+          <button class="btn success" onclick="preflightCheck()">Pre-flight Check</button>
+        </div>
+        <div class="terminal-bar" style="border-top:none;padding-top:4px;margin-top:-6px;gap:4px;flex-wrap:wrap">
+          <span class="meta" style="margin-right:4px">Checks:</span>
+          <button class="btn ghost" onclick="runCmd('validate')">Validate</button>
+          <button class="btn ghost" onclick="runCmd('validate.workflow-state')">State Check</button>
+          <button class="btn ghost" onclick="runCmd('drift')">Drift</button>
+          <span class="meta" style="margin:0 6px">Smoke:</span>
+          <button class="btn ghost" onclick="runCmd('smoke.dashboard')">Dashboard</button>
+          <button class="btn ghost" onclick="runCmd('smoke.browser')">Browser</button>
+          <span class="meta" style="margin:0 6px">Workflow:</span>
+          <button class="btn ghost" onclick="runCmd('status')">Status</button>
+          <button class="btn ghost" onclick="runCmd('log')">Log</button>
+          <button class="btn ghost" onclick="runCmd('progress')">Progress</button>
+        </div>
+        <div id="output" class="terminal hidden"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+  <div id="app-toast" class="app-toast hidden" role="status" aria-live="polite"></div>
+
+<div id="doc-preview" class="doc-preview hidden">
+  <div class="doc-preview-header">
+    <div id="doc-preview-title" class="doc-preview-title">Document preview</div>
+    <button class="btn ghost" id="doc-preview-open">Open</button>
+    <button class="btn ghost" onclick="closeDocPreview()">Close</button>
+  </div>
+  <div id="doc-preview-meta" class="meta" style="padding:8px 14px 0 14px"></div>
+  <div id="doc-preview-body" class="doc-preview-body">Loading...</div>
+</div>
+
+<!-- Advance modal -->
+<div id="advance-modal" class="modal-overlay hidden">
+  <div class="modal">
+    <h3 id="modal-title">Advance Stage</h3>
+    <p class="meta" id="modal-desc">This will mark the active step as completed and move the next step to in_progress.</p>
+    <div id="modal-preflight" style="margin:8px 0;font-size:11px;color:var(--dim)"></div>
+    <label>Decision</label>
+    <select id="modal-decision">
+      <option value="approved">approved</option>
+      <option value="hold">hold</option>
+      <option value="blocked">blocked</option>
+    </select>
+    <label>Date</label>
+    <input id="modal-date" type="date" placeholder="YYYY-MM-DD">
+    <label>Notes (optional)</label>
+    <textarea id="modal-notes" placeholder="Why is this stage being completed?"></textarea>
+    <div id="modal-history-section" style="margin-top:8px">
+      <label>Signoff History</label>
+      <div id="modal-history" style="font-size:11px;max-height:110px;overflow-y:auto;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:6px 8px;color:var(--dim)"><span class="meta">No previous signoffs recorded.</span></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn ghost" onclick="closeAdvanceModal()">Cancel</button>
+      <button class="btn warning" id="modal-dry-btn" onclick="dryRunFromModal()">Dry-run</button>
+      <button class="btn primary" id="modal-confirm-btn" onclick="confirmAdvanceFromModal()">Advance</button>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap / New Project modal -->
+<div id="bootstrap-modal" class="modal-overlay hidden">
+  <div class="modal" style="width:500px;max-width:95vw">
+    <h3>Create Planning Workspace</h3>
+    <p class="meta" style="margin-bottom:10px">This screen creates a new standalone planning repo from the PROGRAMSTART template. It does not define the product idea yet.</p>
+    <div class="helper-box">
+      <h4>What This Screen Does</h4>
+      <p>It creates a fresh planning workspace, stamps in the repo name and planning rigor, copies the core PROGRAMBUILD files, and initializes a new git repository outside the template repo.</p>
+    </div>
+    <div class="helper-box">
+      <h4>What Happens Next</h4>
+      <div class="helper-list">
+        <div class="helper-step">1. Preview the workspace to confirm the path and files look correct.</div>
+        <div class="helper-step">2. Create the workspace as a new standalone repo.</div>
+        <div class="helper-step">3. Open that new folder in VS Code.</div>
+        <div class="helper-step">4. Define what you are building in the kickoff packet, canonical docs, and variant playbook.</div>
+        <div class="helper-step">5. Run the first planning step from the new repo.</div>
+      </div>
+    </div>
+    <label>New repo name</label>
+    <input id="bs-name" placeholder="MyNewApp" autocomplete="off" oninput="bsNameChanged(this)">
+    <div id="bs-name-err" class="meta" style="color:var(--red);min-height:14px;font-size:11px"></div>
+    <label>Where to create it</label>
+    <input id="bs-dest" placeholder="C:\Projects\MyNewApp" autocomplete="off" oninput="bsDestChanged(this)">
+    <div id="bs-dest-err" class="meta" style="color:var(--red);min-height:14px;font-size:11px"></div>
+    <label style="display:block;margin-top:10px">Planning rigor</label>
+    <div style="display:flex;flex-direction:column;gap:3px;margin-top:5px">
+      <label class="variant-opt"><input type="radio" name="bsVariant" value="lite"> <strong>lite</strong> <span class="meta">lean planning for fast idea validation</span></label>
+      <label class="variant-opt"><input type="radio" name="bsVariant" value="product" checked> <strong>product</strong> <span class="meta">standard product planning workflow</span></label>
+      <label class="variant-opt"><input type="radio" name="bsVariant" value="enterprise"> <strong>enterprise</strong> <span class="meta">adds heavier audit and compliance structure</span></label>
+    </div>
+    <label class="variant-opt" style="margin-top:10px">
+      USERJOURNEY is added separately later, and only when the product needs onboarding, consent, activation, or first-run routing.
+    </label>
+    <div class="meta" style="margin-top:8px">Preview first. The create button stays disabled until the preview passes.</div>
+    <div id="bs-preview-wrap" style="display:none;margin-top:10px">
+      <div class="guide-label">Workspace preview</div>
+      <div id="bs-preview-out" class="terminal" style="max-height:180px;margin-top:4px;font-size:10px;line-height:1.4"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn ghost" onclick="closeBootstrapModal()">Cancel</button>
+      <button class="btn warning" onclick="previewBootstrap()">Preview Workspace</button>
+      <button class="btn primary" id="bs-create-btn" onclick="createProject()" disabled>Create Workspace</button>
+    </div>
+  </div>
+</div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

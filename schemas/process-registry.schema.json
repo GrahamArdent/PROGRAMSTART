@@ -30,12 +30,20 @@
         "properties": {
           "root": { "type": "string" },
           "optional": { "type": "boolean" },
+          "packaging": { "type": "string" },
+          "bootstrap_supported": { "type": "boolean" },
+          "attachment_role": { "type": "string" },
+          "engineering_blocker_file": { "type": "string" },
+          "activation_event": { "type": "string" },
           "control_files": { "type": "array", "items": { "type": "string" } },
           "output_files": { "type": "array", "items": { "type": "string" } },
           "core_files": { "type": "array", "items": { "type": "string" } },
-          "metadata_required": { "type": "array", "items": { "type": "string" } }
+          "metadata_required": { "type": "array", "items": { "type": "string" } },
+          "variants": { "type": "array", "items": { "type": "string" } },
+          "stage_order": { "type": "array", "items": { "type": "object" } },
+          "step_order": { "type": "array", "items": { "type": "string" } }
         },
-        "additionalProperties": true
+        "additionalProperties": false
       }
     },
     "sync_rules": {
@@ -51,7 +59,7 @@
           "require_authority_when_dependents_change": { "type": "boolean" },
           "description": { "type": "string" }
         },
-        "additionalProperties": true
+        "additionalProperties": false
       }
     },
     "metadata_rules": {
@@ -61,7 +69,7 @@
         "required_prefixes": { "type": "array", "items": { "type": "string" } },
         "owner_placeholder": { "type": "string" }
       },
-      "additionalProperties": true
+      "additionalProperties": false
     },
     "integrity": {
       "type": "object",

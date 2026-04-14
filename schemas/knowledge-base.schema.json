@@ -1,0 +1,1010 @@
+{
+  "$defs": {
+    "CliToolEntry": {
+      "description": "A developer CLI that can reduce setup friction in generated repos.",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "aliases": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Aliases",
+          "type": "array"
+        },
+        "provider": {
+          "default": "",
+          "title": "Provider",
+          "type": "string"
+        },
+        "category": {
+          "default": "",
+          "title": "Category",
+          "type": "string"
+        },
+        "trigger_shapes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Trigger Shapes",
+          "type": "array"
+        },
+        "trigger_needs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Trigger Needs",
+          "type": "array"
+        },
+        "trigger_stacks": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Trigger Stacks",
+          "type": "array"
+        },
+        "trigger_services": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Trigger Services",
+          "type": "array"
+        },
+        "trigger_apis": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Trigger Apis",
+          "type": "array"
+        },
+        "install_methods": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Install Methods",
+          "type": "array"
+        },
+        "recommended_commands": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Recommended Commands",
+          "type": "array"
+        },
+        "required_config": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Config",
+          "type": "array"
+        },
+        "notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CliToolEntry",
+      "type": "object"
+    },
+    "ComparisonFinding": {
+      "description": "A single comparison finding for two versions or options.",
+      "properties": {
+        "area": {
+          "title": "Area",
+          "type": "string"
+        },
+        "summary": {
+          "default": "",
+          "title": "Summary",
+          "type": "string"
+        },
+        "option_a": {
+          "default": "",
+          "title": "Option A",
+          "type": "string"
+        },
+        "option_b": {
+          "default": "",
+          "title": "Option B",
+          "type": "string"
+        },
+        "recommendation": {
+          "default": "",
+          "title": "Recommendation",
+          "type": "string"
+        },
+        "migration_risk": {
+          "default": "",
+          "title": "Migration Risk",
+          "type": "string"
+        }
+      },
+      "required": [
+        "area"
+      ],
+      "title": "ComparisonFinding",
+      "type": "object"
+    },
+    "CoverageDomain": {
+      "description": "A broad product or platform area the KB should intentionally cover.",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "status": {
+          "default": "",
+          "title": "Status",
+          "type": "string"
+        },
+        "priority": {
+          "default": "",
+          "title": "Priority",
+          "type": "string"
+        },
+        "summary": {
+          "default": "",
+          "title": "Summary",
+          "type": "string"
+        },
+        "key_capabilities": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Key Capabilities",
+          "type": "array"
+        },
+        "representative_tools": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Representative Tools",
+          "type": "array"
+        },
+        "current_gaps": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Current Gaps",
+          "type": "array"
+        },
+        "linked_tracks": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Linked Tracks",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CoverageDomain",
+      "type": "object"
+    },
+    "DecisionRule": {
+      "description": "A recommendation rule derived from the KB.",
+      "properties": {
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "when": {
+          "default": "",
+          "title": "When",
+          "type": "string"
+        },
+        "prefer": {
+          "default": "",
+          "title": "Prefer",
+          "type": "string"
+        },
+        "because": {
+          "default": "",
+          "title": "Because",
+          "type": "string"
+        },
+        "avoid": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Avoid",
+          "type": "array"
+        },
+        "related_items": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Related Items",
+          "type": "array"
+        },
+        "match_product_shapes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Match Product Shapes",
+          "type": "array"
+        },
+        "match_needs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Match Needs",
+          "type": "array"
+        },
+        "match_domains": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Match Domains",
+          "type": "array"
+        },
+        "prefer_items": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Prefer Items",
+          "type": "array"
+        },
+        "avoid_items": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Avoid Items",
+          "type": "array"
+        },
+        "target_layers": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Target Layers",
+          "type": "array"
+        },
+        "confidence": {
+          "default": "medium",
+          "title": "Confidence",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "DecisionRule",
+      "type": "object"
+    },
+    "EmbeddingGuidance": {
+      "description": "Guidance for embedding configuration.",
+      "properties": {
+        "default_model": {
+          "default": "",
+          "title": "Default Model",
+          "type": "string"
+        },
+        "best_practices": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Best Practices",
+          "type": "array"
+        }
+      },
+      "title": "EmbeddingGuidance",
+      "type": "object"
+    },
+    "IntegrationPattern": {
+      "description": "A recommended integration pattern combining multiple stacks.",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "components": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Components",
+          "type": "array"
+        },
+        "fit_for": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Fit For",
+          "type": "array"
+        },
+        "notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "IntegrationPattern",
+      "type": "object"
+    },
+    "KnowledgeRelation": {
+      "description": "An explicit relationship between KB entries or concepts.",
+      "properties": {
+        "subject": {
+          "title": "Subject",
+          "type": "string"
+        },
+        "relation": {
+          "title": "Relation",
+          "type": "string"
+        },
+        "object": {
+          "title": "Object",
+          "type": "string"
+        },
+        "rationale": {
+          "default": "",
+          "title": "Rationale",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "confidence": {
+          "default": "medium",
+          "title": "Confidence",
+          "type": "string"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Tags",
+          "type": "array"
+        }
+      },
+      "required": [
+        "subject",
+        "relation",
+        "object"
+      ],
+      "title": "KnowledgeRelation",
+      "type": "object"
+    },
+    "PromptEngineeringGuidance": {
+      "description": "Prompt engineering guidance from the knowledge base.",
+      "properties": {
+        "principles": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Principles",
+          "type": "array"
+        },
+        "patterns": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Patterns",
+          "type": "array"
+        },
+        "anti_patterns": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Anti Patterns",
+          "type": "array"
+        },
+        "output_contracts": {
+          "default": "",
+          "title": "Output Contracts",
+          "type": "string"
+        },
+        "verification_loops": {
+          "default": "",
+          "title": "Verification Loops",
+          "type": "string"
+        },
+        "completeness_contracts": {
+          "default": "",
+          "title": "Completeness Contracts",
+          "type": "string"
+        },
+        "tool_persistence": {
+          "default": "",
+          "title": "Tool Persistence",
+          "type": "string"
+        },
+        "research_mode": {
+          "default": "",
+          "title": "Research Mode",
+          "type": "string"
+        },
+        "reasoning_effort": {
+          "default": "",
+          "title": "Reasoning Effort",
+          "type": "string"
+        },
+        "citation_rules": {
+          "default": "",
+          "title": "Citation Rules",
+          "type": "string"
+        },
+        "empty_result_recovery": {
+          "default": "",
+          "title": "Empty Result Recovery",
+          "type": "string"
+        }
+      },
+      "title": "PromptEngineeringGuidance",
+      "type": "object"
+    },
+    "ProvisioningServiceEntry": {
+      "description": "A project-scoped service that may need provisioning in generated repos.",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "aliases": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Aliases",
+          "type": "array"
+        },
+        "provider": {
+          "default": "",
+          "title": "Provider",
+          "type": "string"
+        },
+        "category": {
+          "default": "",
+          "title": "Category",
+          "type": "string"
+        },
+        "trigger_shapes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Trigger Shapes",
+          "type": "array"
+        },
+        "trigger_needs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Trigger Needs",
+          "type": "array"
+        },
+        "trigger_stacks": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Trigger Stacks",
+          "type": "array"
+        },
+        "automation_supported": {
+          "default": false,
+          "title": "Automation Supported",
+          "type": "boolean"
+        },
+        "required_config": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Config",
+          "type": "array"
+        },
+        "notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ProvisioningServiceEntry",
+      "type": "object"
+    },
+    "ResearchLedger": {
+      "description": "Operating guidance for recurring KB maintenance.",
+      "properties": {
+        "operating_model": {
+          "default": "",
+          "title": "Operating Model",
+          "type": "string"
+        },
+        "weekly_review_day": {
+          "default": "",
+          "title": "Weekly Review Day",
+          "type": "string"
+        },
+        "update_policy": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Update Policy",
+          "type": "array"
+        },
+        "tracks": {
+          "items": {
+            "$ref": "#/$defs/ResearchTrack"
+          },
+          "title": "Tracks",
+          "type": "array"
+        }
+      },
+      "title": "ResearchLedger",
+      "type": "object"
+    },
+    "ResearchTrack": {
+      "description": "A recurring research lane used to keep the KB current.",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "cadence": {
+          "default": "",
+          "title": "Cadence",
+          "type": "string"
+        },
+        "owner": {
+          "default": "",
+          "title": "Owner",
+          "type": "string"
+        },
+        "freshness_days": {
+          "default": 7,
+          "title": "Freshness Days",
+          "type": "integer"
+        },
+        "last_review_date": {
+          "default": "",
+          "title": "Last Review Date",
+          "type": "string"
+        },
+        "scope": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Scope",
+          "type": "array"
+        },
+        "trigger_signals": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Trigger Signals",
+          "type": "array"
+        },
+        "required_outputs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Outputs",
+          "type": "array"
+        },
+        "linked_domains": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Linked Domains",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ResearchTrack",
+      "type": "object"
+    },
+    "RetrievalGuidance": {
+      "description": "Retrieval strategy guidance from the knowledge base.",
+      "properties": {
+        "principles": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Principles",
+          "type": "array"
+        },
+        "recommended_layers": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Recommended Layers",
+          "type": "array"
+        },
+        "avoid": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Avoid",
+          "type": "array"
+        },
+        "embedding_guidance": {
+          "$ref": "#/$defs/EmbeddingGuidance"
+        },
+        "vector_index_guidance": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Vector Index Guidance",
+          "type": "object"
+        },
+        "search_type_guidance": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Search Type Guidance",
+          "type": "object"
+        }
+      },
+      "title": "RetrievalGuidance",
+      "type": "object"
+    },
+    "StackEntry": {
+      "description": "A single technology stack entry in the knowledge base.",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "category": {
+          "default": "",
+          "title": "Category",
+          "type": "string"
+        },
+        "aliases": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Aliases",
+          "type": "array"
+        },
+        "layer": {
+          "default": "",
+          "title": "Layer",
+          "type": "string"
+        },
+        "primary_languages": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Primary Languages",
+          "type": "array"
+        },
+        "delivery_models": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Delivery Models",
+          "type": "array"
+        },
+        "strengths": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Strengths",
+          "type": "array"
+        },
+        "tradeoffs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Tradeoffs",
+          "type": "array"
+        },
+        "best_for": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Best For",
+          "type": "array"
+        },
+        "avoid_when": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Avoid When",
+          "type": "array"
+        },
+        "pairs_with": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Pairs With",
+          "type": "array"
+        },
+        "capabilities": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Capabilities",
+          "type": "array"
+        },
+        "risks": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Risks",
+          "type": "array"
+        },
+        "best_practices": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Best Practices",
+          "type": "array"
+        },
+        "sources": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Sources",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "StackEntry",
+      "type": "object"
+    },
+    "ThirdPartyAPIEntry": {
+      "description": "A reusable third-party API integration profile for generated repos.",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "aliases": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Aliases",
+          "type": "array"
+        },
+        "provider": {
+          "default": "",
+          "title": "Provider",
+          "type": "string"
+        },
+        "category": {
+          "default": "",
+          "title": "Category",
+          "type": "string"
+        },
+        "trigger_shapes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Trigger Shapes",
+          "type": "array"
+        },
+        "trigger_needs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Trigger Needs",
+          "type": "array"
+        },
+        "trigger_stacks": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Trigger Stacks",
+          "type": "array"
+        },
+        "server_env_vars": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Server Env Vars",
+          "type": "array"
+        },
+        "public_env_vars": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Public Env Vars",
+          "type": "array"
+        },
+        "base_url": {
+          "default": "",
+          "title": "Base Url",
+          "type": "string"
+        },
+        "docs_url": {
+          "default": "",
+          "title": "Docs Url",
+          "type": "string"
+        },
+        "has_official_cli": {
+          "default": false,
+          "title": "Has Official Cli",
+          "type": "boolean"
+        },
+        "notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ThirdPartyAPIEntry",
+      "type": "object"
+    },
+    "VersionComparison": {
+      "description": "A structured comparison between versions or closely related options.",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "scope": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Scope",
+          "type": "array"
+        },
+        "compared_versions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Compared Versions",
+          "type": "array"
+        },
+        "status": {
+          "default": "",
+          "title": "Status",
+          "type": "string"
+        },
+        "summary": {
+          "default": "",
+          "title": "Summary",
+          "type": "string"
+        },
+        "related_items": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Related Items",
+          "type": "array"
+        },
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/ComparisonFinding"
+          },
+          "title": "Findings",
+          "type": "array"
+        },
+        "decision": {
+          "default": "",
+          "title": "Decision",
+          "type": "string"
+        },
+        "sources": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Sources",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "VersionComparison",
+      "type": "object"
+    }
+  },
+  "description": "The full knowledge base with stacks, patterns, and guidance.",
+  "properties": {
+    "version": {
+      "default": "",
+      "title": "Version",
+      "type": "string"
+    },
+    "method": {
+      "default": "",
+      "title": "Method",
+      "type": "string"
+    },
+    "stacks": {
+      "items": {
+        "$ref": "#/$defs/StackEntry"
+      },
+      "title": "Stacks",
+      "type": "array"
+    },
+    "provisioning_services": {
+      "items": {
+        "$ref": "#/$defs/ProvisioningServiceEntry"
+      },
+      "title": "Provisioning Services",
+      "type": "array"
+    },
+    "cli_tools": {
+      "items": {
+        "$ref": "#/$defs/CliToolEntry"
+      },
+      "title": "Cli Tools",
+      "type": "array"
+    },
+    "third_party_apis": {
+      "items": {
+        "$ref": "#/$defs/ThirdPartyAPIEntry"
+      },
+      "title": "Third Party Apis",
+      "type": "array"
+    },
+    "coverage_domains": {
+      "items": {
+        "$ref": "#/$defs/CoverageDomain"
+      },
+      "title": "Coverage Domains",
+      "type": "array"
+    },
+    "integration_patterns": {
+      "items": {
+        "$ref": "#/$defs/IntegrationPattern"
+      },
+      "title": "Integration Patterns",
+      "type": "array"
+    },
+    "decision_rules": {
+      "items": {
+        "$ref": "#/$defs/DecisionRule"
+      },
+      "title": "Decision Rules",
+      "type": "array"
+    },
+    "relationships": {
+      "items": {
+        "$ref": "#/$defs/KnowledgeRelation"
+      },
+      "title": "Relationships",
+      "type": "array"
+    },
+    "comparisons": {
+      "items": {
+        "$ref": "#/$defs/VersionComparison"
+      },
+      "title": "Comparisons",
+      "type": "array"
+    },
+    "retrieval_guidance": {
+      "$ref": "#/$defs/RetrievalGuidance"
+    },
+    "prompt_engineering_guidance": {
+      "$ref": "#/$defs/PromptEngineeringGuidance"
+    },
+    "research_ledger": {
+      "$ref": "#/$defs/ResearchLedger"
+    }
+  },
+  "title": "KnowledgeBase",
+  "type": "object"
+}

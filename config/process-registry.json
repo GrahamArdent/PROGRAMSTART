@@ -80,6 +80,8 @@
       "schemas/process-registry.schema.json",
       "schemas/programbuild-state.schema.json",
       "schemas/userjourney-state.schema.json",
+      "schemas/knowledge-base.schema.json",
+      "schemas/prompt-eval-scenarios.schema.json",
       "tests/conftest.py",
       "tests/test_hypothesis_retrieval.py",
       "tests/test_programstart_checklist_progress.py",

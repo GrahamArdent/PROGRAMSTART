@@ -711,6 +711,47 @@ def test_load_recommendation_inputs_explicit_shape() -> None:
     assert "rag" in needs
 
 
+# ---------------------------------------------------------------------------
+# Phase B: coverage push — previously uncovered branches in recommend.py
+# ---------------------------------------------------------------------------
+
+
+def test_matching_decision_rules_filters_domain_mismatch() -> None:
+    """Line 143: rule with match_domains that doesn't match product domains → filtered out."""
+    rules = [
+        {
+            "title": "healthcare niche rule",
+            "match_domains": ["healthcare"],
+            "prefer_items": [],
+            "avoid_items": [],
+        }
+    ]
+    result = recommend.matching_decision_rules(
+        product_shape="cli tool",
+        needs=set(),
+        matched_domains=["devops"],  # no "healthcare" → domain filter fires
+        knowledge_base={"decision_rules": rules},
+    )
+    assert result == []
+
+
+def test_build_actionability_summary_skips_unknown_service_name() -> None:
+    """Line 180: service name not found in provisioning_services entries → skipped."""
+    result = recommend.build_actionability_summary(
+        stack_evidence=[],
+        service_names=["NONEXISTENT_SERVICE_PHASE_B"],
+        api_names=[],
+        cli_names=[],
+        knowledge_base={
+            "provisioning_services": [
+                {"name": "other_service", "automation_supported": False}
+            ]
+        },
+    )
+    names_in_result = [item.get("name") for item in result]
+    assert "NONEXISTENT_SERVICE_PHASE_B" not in names_in_result
+
+
 # ── stack_exists ───────────────────────────────────────────────────────────────
 
 

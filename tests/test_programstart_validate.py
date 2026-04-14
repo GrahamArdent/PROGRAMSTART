@@ -1190,6 +1190,99 @@ def test_kb_freshness_warns_when_stale(tmp_path, monkeypatch) -> None:
     assert "stale" in warnings[0]
 
 
+# ---------------------------------------------------------------------------
+# Phase B: coverage push — previously uncovered branches in validate.py
+# ---------------------------------------------------------------------------
+
+
+def test_check_content_quality_returns_empty_on_read_error(
+    tmp_path: Path, monkeypatch
+) -> None:
+    """Lines 83-84: OSError when reading file → returns empty list."""
+    f = tmp_path / "unreadable.md"
+    f.write_text("content", encoding="utf-8")
+
+    def _raise(self, **kwargs):  # noqa: ANN001
+        raise OSError("simulated disk error")
+
+    monkeypatch.setattr(Path, "read_text", _raise)
+    result = validate.check_content_quality(f)
+    assert result == []
+
+
+def test_run_stage_gate_check_unknown_name_returns_empty() -> None:
+    """Line 410: unknown check_name in run_stage_gate_check → empty list."""
+    result = validate.run_stage_gate_check({}, "nonexistent-check-XYZ-phase-b")
+    assert result == []
+
+
+def test_validate_implementation_entry_criteria_covers_all_subchecks(
+    monkeypatch,
+) -> None:
+    """Lines 530-535: validate_implementation_entry_criteria calls all four sub-checks."""
+    monkeypatch.setattr(validate, "validate_architecture_contracts", lambda _r: [])
+    monkeypatch.setattr(validate, "validate_test_strategy_complete", lambda _r: [])
+    monkeypatch.setattr(validate, "validate_risk_spikes", lambda _r: [])
+    monkeypatch.setattr(validate, "validate_risk_spike_resolution", lambda _r: [])
+    result = validate.validate_implementation_entry_criteria({})
+    assert result == []
+
+
+def test_validate_feasibility_criteria_template_recommendation_flagged(
+    tmp_path: Path, monkeypatch
+) -> None:
+    """Lines 235-236: Recommendation section with 'go / limited spike / no-go' template text."""
+    feas = tmp_path / "PROGRAMBUILD" / "FEASIBILITY.md"
+    feas.parent.mkdir(parents=True, exist_ok=True)
+    feas.write_text(
+        "## Kill Criteria\n"
+        "- If performance < 100ms, then stop\n"
+        "- If user retention < 10%, then kill\n"
+        "- If infra cost > $50k, then abort\n\n"
+        "## Recommendation\n"
+        "go / limited spike / no-go\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+    problems = validate.validate_feasibility_criteria({})
+    assert any("still contains the template option list" in p for p in problems)
+
+
+def test_validate_feasibility_criteria_missing_recommendation_section(
+    tmp_path: Path, monkeypatch
+) -> None:
+    """Line 273: FEASIBILITY.md without ## Recommendation section → appropriate problem."""
+    feas = tmp_path / "PROGRAMBUILD" / "FEASIBILITY.md"
+    feas.parent.mkdir(parents=True, exist_ok=True)
+    feas.write_text(
+        "## Kill Criteria\n"
+        "- If performance < 100ms, then stop\n"
+        "- If user retention < 10%, then kill\n"
+        "- If infra cost > $50k, then abort\n\n"
+        "## Other Section\n"
+        "No recommendation here.\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+    problems = validate.validate_feasibility_criteria({})
+    assert any("no '## Recommendation' section found" in p for p in problems)
+
+
+def test_validate_registry_policy_doc_missing_must_contain() -> None:
+    """Lines 622/625: policy doc with path but no must_contain → problem reported."""
+    problems = validate.validate_registry(
+        {
+            "systems": {},
+            "sync_rules": [],
+            "repo_boundary_policy": {
+                "enabled": True,
+                "docs": [{"path": "CONTRIBUTING.md"}],
+            },
+        }
+    )
+    assert any("must declare at least one required phrase" in p for p in problems)
+
+
 def test_kb_freshness_warns_when_fields_missing(tmp_path, monkeypatch) -> None:
     kb = {"research_ledger": {"tracks": [{"name": "Incomplete track"}]}}
     kb_path = tmp_path / "config" / "knowledge-base.json"

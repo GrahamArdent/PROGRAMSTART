@@ -646,7 +646,7 @@ def test_uj_prompts_verification_gate_check_values_registered(spec: PromptSpec) 
 
 def test_promptaudit_matrix_score_reflects_full_coverage() -> None:
     """promptaudit.md score line declares 117/117 (or equivalent full coverage)."""
-    audit_path = ROOT / "promptaudit.md"
+    audit_path = ROOT / "devlog" / "notes" / "promptaudit.md"
     text = audit_path.read_text(encoding="utf-8")
     assert "117/117" in text, (
         "promptaudit.md score line no longer states 117/117 — update after matrix changes"

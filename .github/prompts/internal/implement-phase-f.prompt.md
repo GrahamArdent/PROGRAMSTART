@@ -1,6 +1,7 @@
 ---
 description: "Implement Phase F of stage2gameplan.md — dispatch chain integration tests. Commit 7."
-mode: "agent"
+name: "Implement Phase F"
+agent: "agent"
 ---
 
 # Implement Phase F: Dispatch Chain Integration Tests

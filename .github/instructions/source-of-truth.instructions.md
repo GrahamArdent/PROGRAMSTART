@@ -58,6 +58,11 @@ Both MUST pass before moving on.
 - You MUST NOT update a dependent file before its authority file.
 - You MUST NOT skip `programstart drift` before editing because "it's probably fine."
 - You MUST NOT add behaviour to downstream docs that the authority docs do not define.
+
+## Scope
+
+This protocol applies to all product prompts in `.github/prompts/` and all planning documents.
+Internal build prompts in `.github/prompts/internal/` and development logs in `devlog/` are exempt — they are historical PROGRAMSTART development artifacts, not part of the product authority model.
 - You MUST NOT carry over assumptions about active stage, active phase, or key decisions between sessions.
 
 ## Quick reference: authority files by concern

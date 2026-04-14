@@ -2,10 +2,10 @@
 
 Reference document for all `.prompt.md` files in `.github/prompts/`.
 Every shaping prompt and operator-facing prompt MUST include the mandatory sections below in the order listed.
-Internal build prompts (`implement-gameplan-phase*`, `implement-stage2-gameplan`, `implement-phase-f`, `implement-protocol-alignment`, `implement-stage4-gameplan`, `implement-stage5-gameplan`) follow their own Binding Rules format and are exempt from this standard. Utility prompts (`audit-process-drift.prompt.md`) are also exempt — they are stage-agnostic diagnostics, not stage-advancing prompts.
+Internal build prompts (all files in `.github/prompts/internal/`) follow their own Binding Rules format and are exempt from this standard. Utility prompts (`audit-process-drift.prompt.md`) are also exempt — they are stage-agnostic diagnostics, not stage-advancing prompts.
 
-Last updated: 2026-04-12
-Authority: Derived from `source-of-truth.instructions.md`, `promptaudit.md` Part 12, `PROGRAMBUILD/PROGRAMBUILD.md`.
+Last updated: 2026-04-14
+Authority: Derived from `source-of-truth.instructions.md`, `devlog/notes/promptaudit.md` Part 12, `PROGRAMBUILD/PROGRAMBUILD.md`.
 
 ---
 

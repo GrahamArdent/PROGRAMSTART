@@ -722,3 +722,43 @@ def test_stack_exists_true() -> None:
 def test_stack_exists_false() -> None:
     kb = {"stacks": [{"name": "FastAPI"}]}
     assert recommend.stack_exists(kb, "Django") is False
+
+
+# ── Phase B: UI capability alias tests ────────────────────────────────────────
+
+
+def test_expand_capability_terms_dashboard_alias() -> None:
+    expanded = recommend.expand_capability_terms({"admin dashboard"})
+    assert "dashboard" in expanded
+
+
+def test_expand_capability_terms_web_ui_alias() -> None:
+    expanded = recommend.expand_capability_terms({"web portal"})
+    assert "web interface" in expanded
+
+
+def test_expand_capability_terms_monitoring_ui_alias() -> None:
+    expanded = recommend.expand_capability_terms({"status page"})
+    assert "monitoring ui" in expanded
+
+
+def test_need_dashboard_maps_to_frontend_domain() -> None:
+    kb = {
+        "coverage_domains": [
+            {"name": "Web and frontend product delivery"},
+        ],
+    }
+    domains = recommend.infer_domain_names("api service", {"dashboard"}, False, kb)
+    assert "Web and frontend product delivery" in domains
+
+
+def test_api_shape_with_dashboard_need_includes_frontend() -> None:
+    """API service shape + --need dashboard should surface frontend domain."""
+    kb = {
+        "coverage_domains": [
+            {"name": "Web and frontend product delivery"},
+            {"name": "API, workflow, and backend platforms"},
+        ],
+    }
+    domains = recommend.infer_domain_names("api service", {"dashboard"}, False, kb)
+    assert "Web and frontend product delivery" in domains

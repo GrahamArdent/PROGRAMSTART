@@ -112,6 +112,18 @@ EXPECTED_SIGNAL:
 TIME_TO_RESULT:
 ```
 
+### 8. Will End Users Or Operators Need A Visual Interface
+
+> Will end users or operators interact with this system through a visual interface (web dashboard, admin panel, configuration UI)? If yes, describe the audience and their primary tasks.
+
+Failure pattern this catches: **invisible UI assumption.** Backend-first projects often discover late that operators or end users need a dashboard, admin panel, or status page — adding unplanned frontend work.
+
+```text
+NEEDS_UI:                 [yes | no | undecided]
+UI_AUDIENCE:
+UI_PRIMARY_TASKS:
+```
+
 ---
 
 ## Challenge Review
@@ -127,6 +139,7 @@ After completing the interview, review the answers against these red flags:
 | Cannot name 3 exclusions | Your scope is undefined. Define it before proceeding. |
 | Kill criteria are vague or emotional | "If it feels wrong" is not a kill criterion. Make them observable. |
 | Cheapest validation is "build it and see" | You have skipped the cheapest learning. Find a smaller experiment. |
+| UI need is "undecided" but product shape implies users interact directly | Clarify before architecture. Late UI discovery causes rework. |
 
 ---
 

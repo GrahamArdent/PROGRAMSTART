@@ -44,6 +44,7 @@ SECONDARY_USER:
 CORE_PROBLEM:
 SUCCESS_METRIC:
 PRODUCT_SHAPE:            [web app | mobile app | CLI tool | desktop app | API service | data pipeline | library | other]
+ADDITIONAL_SURFACES:      [admin dashboard | monitoring UI | public web UI | documentation site | none]
 KNOWN_CONSTRAINTS:
 OUT_OF_SCOPE:
 COMPLIANCE_OR_SECURITY_NEEDS:
@@ -51,7 +52,7 @@ TEAM_SIZE:
 DELIVERY_TARGET:
 ```
 
-Use `PRODUCT_SHAPE` to choose which later-stage guidance applies. Technology choices belong in `ARCHITECTURE.md`, not here.
+Use `PRODUCT_SHAPE` to choose which later-stage guidance applies. When `ADDITIONAL_SURFACES` is non-empty and not `none`, include frontend and UI concerns in architecture, testing, and release planning. Technology choices belong in `ARCHITECTURE.md`, not here.
 
 ---
 

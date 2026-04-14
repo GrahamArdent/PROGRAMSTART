@@ -87,6 +87,9 @@ CAPABILITY_ALIASES: dict[str, set[str]] = {
     "javascript": {"javascript", "typescript", "frontend"},
     "mobile": {"mobile", "ios", "android", "push notifications", "push-notifications"},
     "desktop": {"desktop", "local first", "local-first", "offline"},
+    "dashboard": {"dashboard", "admin dashboard", "admin panel", "management ui"},
+    "web interface": {"web interface", "web ui", "web portal", "portal"},
+    "monitoring ui": {"monitoring ui", "monitoring dashboard", "status page", "console"},
 }
 
 
@@ -330,6 +333,9 @@ def infer_domain_names(product_shape: str, needs: set[str], regulated: bool, kno
             "python": "Developer experience, quality, and supply chain",
             "javascript": "Web and frontend product delivery",
             "mobile": "Mobile and cross-platform apps",
+            "dashboard": "Web and frontend product delivery",
+            "web interface": "Web and frontend product delivery",
+            "monitoring ui": "Web and frontend product delivery",
         }
         target_domain = _need_to_domain.get(canonical)
         if target_domain:

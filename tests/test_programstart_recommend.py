@@ -256,3 +256,469 @@ def test_main_json_mode_emits_json(capsys) -> None:
     captured = capsys.readouterr()
     data = json_mod.loads(captured.out)
     assert data["product_shape"] == "api service"
+
+
+# ── classify_actionability ─────────────────────────────────────────────────────
+
+
+def test_classify_actionability_service_automated() -> None:
+    assert recommend.classify_actionability(category="service", entry={"automation_supported": True}) == "automation-supported"
+
+
+def test_classify_actionability_service_manual() -> None:
+    assert recommend.classify_actionability(category="service", entry={}) == "manual-setup"
+
+
+def test_classify_actionability_api() -> None:
+    assert recommend.classify_actionability(category="api", entry={}) == "manual-setup"
+
+
+def test_classify_actionability_cli() -> None:
+    assert recommend.classify_actionability(category="cli", entry={}) == "manual-setup"
+
+
+def test_classify_actionability_other() -> None:
+    assert recommend.classify_actionability(category="unknown", entry={}) == "advice-only"
+
+
+# ── shape_profile ──────────────────────────────────────────────────────────────
+
+
+def test_shape_profile_cli_tool() -> None:
+    archetype, baselines, intents, domains = recommend.shape_profile("cli tool")
+    assert "CLI" in archetype
+    assert "uv" in baselines
+
+
+def test_shape_profile_api_service() -> None:
+    archetype, baselines, intents, domains = recommend.shape_profile("api service")
+    assert "API" in archetype
+    assert "FastAPI" in baselines
+
+
+def test_shape_profile_web_app() -> None:
+    archetype, baselines, intents, domains = recommend.shape_profile("web app")
+    assert "Interactive" in archetype
+    assert "Next.js" in baselines
+
+
+def test_shape_profile_mobile_app() -> None:
+    archetype, baselines, intents, domains = recommend.shape_profile("mobile app")
+    assert "Mobile" in archetype
+    assert "React Native" in baselines
+
+
+def test_shape_profile_data_pipeline() -> None:
+    archetype, baselines, intents, domains = recommend.shape_profile("data pipeline")
+    assert "Data" in archetype
+    assert "DuckDB" in baselines
+
+
+def test_shape_profile_unknown_fallback() -> None:
+    archetype, baselines, intents, domains = recommend.shape_profile("unknown shape")
+    assert "Balanced" in archetype
+
+
+# ── stack_entry_text / stack_risk_text ─────────────────────────────────────────
+
+
+def test_stack_entry_text_concatenates() -> None:
+    entry = {"name": "FastAPI", "layer": "backend", "aliases": ["fastapi"], "strengths": ["fast", "typed"]}
+    text = recommend.stack_entry_text(entry)
+    assert "fastapi" in text
+    assert "backend" in text
+    assert "typed" in text
+
+
+def test_stack_risk_text_extracts_risk_fields() -> None:
+    entry = {"tradeoffs": ["complexity"], "avoid_when": ["small teams"], "risks": ["vendor lock-in"]}
+    text = recommend.stack_risk_text(entry)
+    assert "complexity" in text.lower() or "vendor" in text.lower()
+
+
+# ── merge_unique_names ─────────────────────────────────────────────────────────
+
+
+def test_merge_unique_names_deduplicates() -> None:
+    result = recommend.merge_unique_names(["FastAPI", "fastapi", "PostgreSQL", "FASTAPI"])
+    assert len(result) == 2
+    assert "FastAPI" in result
+
+
+# ── matching_decision_rules ────────────────────────────────────────────────────
+
+
+def test_matching_decision_rules_by_shape() -> None:
+    kb = {
+        "decision_rules": [
+            {"title": "Use JWT", "match_product_shapes": ["web app"], "match_needs": [], "match_domains": [],
+             "layer": "auth", "preferred_items": ["JWT"]},
+        ],
+    }
+    rules = recommend.matching_decision_rules(
+        product_shape="web app", needs=set(), matched_domains=[], knowledge_base=kb,
+    )
+    assert len(rules) == 1
+    assert rules[0]["title"] == "Use JWT"
+
+
+def test_matching_decision_rules_no_match() -> None:
+    kb = {
+        "decision_rules": [
+            {"title": "Use JWT", "match_product_shapes": ["mobile app"], "match_needs": [], "match_domains": [],
+             "layer": "auth", "preferred_items": ["JWT"]},
+        ],
+    }
+    rules = recommend.matching_decision_rules(
+        product_shape="cli tool", needs=set(), matched_domains=[], knowledge_base=kb,
+    )
+    assert len(rules) == 0
+
+
+# ── matching_integration_patterns ──────────────────────────────────────────────
+
+
+def test_matching_integration_patterns_by_need() -> None:
+    kb = {
+        "integration_patterns": [
+            {"name": "OAuth flow", "fit_for": ["authentication"], "components": ["Supabase", "Next.js"]},
+        ],
+    }
+    result = recommend.matching_integration_patterns(product_shape="web app", needs={"authentication"}, knowledge_base=kb)
+    assert "supabase" in result or "next.js" in result
+
+
+def test_matching_integration_patterns_no_match() -> None:
+    kb = {
+        "integration_patterns": [
+            {"name": "OAuth flow", "fit_for": ["mobile auth"], "components": ["Firebase"]},
+        ],
+    }
+    result = recommend.matching_integration_patterns(product_shape="cli tool", needs=set(), knowledge_base=kb)
+    assert len(result) == 0
+
+
+# ── build_actionability_summary ────────────────────────────────────────────────
+
+
+def test_build_actionability_summary_basic() -> None:
+    kb = {
+        "provisioning_services": [{"name": "Vercel", "automation_supported": True}],
+        "third_party_apis": [{"name": "Stripe"}],
+        "cli_tools": [{"name": "uv"}],
+    }
+    summary = recommend.build_actionability_summary(
+        stack_evidence=[{"name": "Next.js"}],
+        service_names=["Vercel"],
+        api_names=["Stripe"],
+        cli_names=["uv"],
+        knowledge_base=kb,
+    )
+    categories = {item["category"] for item in summary}
+    assert "stack" in categories
+    assert "service" in categories
+
+
+# ── normalize_prompt_guidance ──────────────────────────────────────────────────
+
+
+def test_normalize_prompt_guidance_extracts_fields() -> None:
+    guidance = {
+        "principles": ["Be explicit", "Be explicit"],
+        "patterns": [{"name": "P1", "description": "d1"}],
+        "anti_patterns": [{"name": "A1", "description": "bad"}],
+    }
+    principles, patterns, anti_patterns = recommend.normalize_prompt_guidance(guidance)
+    assert "Be explicit" in principles
+    assert len(principles) == 1  # deduplication
+    assert len(patterns) >= 1
+
+
+def test_normalize_prompt_guidance_empty_kb() -> None:
+    guidance: dict = {}
+    principles, patterns, anti_patterns = recommend.normalize_prompt_guidance(guidance)
+    assert principles == []
+    assert patterns == []
+    # Hardcoded defaults are returned when anti_patterns is empty
+    assert len(anti_patterns) == 3
+
+
+# ── actionability_follow_up_commands ───────────────────────────────────────────
+
+
+def test_actionability_follow_up_commands() -> None:
+    summary = [
+        {"name": "Vercel", "category": "service", "actionability": "automation-supported"},
+        {"name": "Stripe", "category": "api", "actionability": "manual-setup"},
+    ]
+    cmds = recommend.actionability_follow_up_commands(summary)
+    assert isinstance(cmds, list)
+
+
+# ── comparison_bonus ───────────────────────────────────────────────────────────
+
+
+def test_comparison_bonus_returns_tuple() -> None:
+    comparisons = [
+        {"name": "X vs Y", "items": [{"name": "X", "verdict": "preferred"}], "context": "speed"},
+    ]
+    result = recommend.comparison_bonus(
+        item_name="X",
+        selected_stacks={"Y"},
+        needs=set(),
+        comparisons=comparisons,
+    )
+    assert isinstance(result, tuple)
+    assert isinstance(result[0], int)
+
+
+# ── infer_domain_names ─────────────────────────────────────────────────────────
+
+
+def test_infer_domain_names_basic() -> None:
+    kb = {
+        "coverage_domains": [
+            {"name": "Developer experience, quality, and supply chain"},
+            {"name": "Web and frontend product delivery"},
+        ],
+    }
+    domains = recommend.infer_domain_names("web app", set(), False, kb)
+    assert isinstance(domains, list)
+    assert len(domains) >= 1
+
+
+# ── print_recommendation ──────────────────────────────────────────────────────
+
+
+def test_print_recommendation_text(capsys) -> None:
+    rec = ProjectRecommendation(
+        product_shape="web app",
+        variant="product",
+        attach_userjourney=True,
+        archetype="Interactive product workflow",
+        stack_evidence=[{"name": "Next.js", "score": 1.0}],
+        service_names=["Vercel"],
+        api_names=["Stripe"],
+        cli_tool_names=["uv"],
+    )
+    recommend.print_recommendation(rec)
+    out = capsys.readouterr().out
+    assert "web app" in out
+
+
+# ── parse_kickoff_inputs ──────────────────────────────────────────────────────
+
+
+def test_parse_kickoff_inputs(tmp_path) -> None:
+    kickoff = tmp_path / "PROGRAMBUILD" / "PROGRAMBUILD_KICKOFF_PACKET.md"
+    kickoff.parent.mkdir()
+    kickoff.write_text(
+        "```text\nPROJECT_NAME: TestApp\nPRODUCT_SHAPE: web app\nSUCCESS_METRIC: 100 users\n```",
+        encoding="utf-8",
+    )
+    result = recommend.parse_kickoff_inputs(kickoff)
+    assert result.get("PROJECT_NAME") == "TestApp"
+    assert result.get("PRODUCT_SHAPE") == "web app"
+
+
+# ── preferred_rule_items_for_layer ─────────────────────────────────────────────
+
+
+def test_preferred_rule_items_for_layer() -> None:
+    rules = [
+        {"target_layers": ["stacks"], "prefer_items": ["FastAPI", "Django"]},
+        {"target_layers": ["cli_tools"], "prefer_items": ["uv"]},
+    ]
+    kb = {
+        "stacks": [{"name": "FastAPI"}, {"name": "Django"}],
+        "cli_tools": [{"name": "uv"}],
+    }
+    result = recommend.preferred_rule_items_for_layer(rules=rules, knowledge_base=kb, layer="stacks")
+    assert "FastAPI" in result
+    assert "uv" not in result
+
+
+# ── select_triggered_entries ───────────────────────────────────────────────────
+
+
+def test_select_triggered_entries_by_shape() -> None:
+    entries = [
+        {"name": "Vercel", "trigger_shapes": ["web app"], "trigger_needs": [], "notes": ["Deploy to edge"]},
+        {"name": "Railway", "trigger_shapes": ["api service"], "trigger_needs": []},
+    ]
+    names, notes, evidence, alts = recommend.select_triggered_entries(
+        entries=entries,
+        product_shape="web app",
+        needs=set(),
+        stack_names=[],
+    )
+    assert "Vercel" in names
+    assert "Railway" not in names
+
+
+def test_select_triggered_entries_by_need() -> None:
+    entries = [
+        {"name": "Stripe", "trigger_shapes": [], "trigger_needs": ["payments"]},
+    ]
+    names, notes, evidence, alts = recommend.select_triggered_entries(
+        entries=entries,
+        product_shape="web app",
+        needs={"payments"},
+        stack_names=[],
+        category="third_party_apis",
+        min_score=1,
+    )
+    assert "Stripe" in names
+
+
+def test_select_triggered_entries_filters_low_score() -> None:
+    entries = [
+        {"name": "Obscure", "trigger_shapes": [], "trigger_needs": []},
+    ]
+    names, notes, evidence, alts = recommend.select_triggered_entries(
+        entries=entries,
+        product_shape="web app",
+        needs=set(),
+        stack_names=[],
+        min_score=4,
+    )
+    assert "Obscure" not in names
+
+
+def test_select_triggered_entries_with_decision_rules() -> None:
+    entries = [
+        {"name": "FastAPI", "trigger_shapes": ["api service"], "trigger_needs": []},
+    ]
+    rules = [{"title": "Use FastAPI", "match_product_shapes": ["api service"], "match_needs": [], "match_domains": [],
+              "target_layers": [], "prefer_items": ["FastAPI"], "avoid_items": []}]
+    names, notes, evidence, alts = recommend.select_triggered_entries(
+        entries=entries,
+        product_shape="api service",
+        needs=set(),
+        stack_names=[],
+        decision_rules=rules,
+    )
+    assert "FastAPI" in names
+
+
+def test_select_triggered_entries_api_requires_trigger() -> None:
+    """Third-party APIs with no matching triggers should be excluded."""
+    entries = [
+        {"name": "RandomAPI", "trigger_shapes": [], "trigger_needs": []},
+    ]
+    names, notes, evidence, alts = recommend.select_triggered_entries(
+        entries=entries,
+        product_shape="web app",
+        needs=set(),
+        stack_names=[],
+        category="third_party_apis",
+    )
+    assert "RandomAPI" not in names
+
+
+# ── build_stack_candidates ─────────────────────────────────────────────────────
+
+
+def test_build_stack_candidates_basic() -> None:
+    kb = _minimal_kb()
+    kb["stacks"] = [
+        {"name": "Next.js", "trigger_shapes": ["web app"], "strengths": ["fast"], "layer": "frontend"},
+        {"name": "FastAPI", "trigger_shapes": ["api service"], "strengths": ["typed"], "layer": "backend"},
+    ]
+    kb["coverage_domains"] = [
+        {"name": "Web and frontend product delivery", "status": "strong", "representative_tools": ["Next.js"]},
+    ]
+    kb.setdefault("comparisons", [])
+    kb.setdefault("relationships", [])
+    kb.setdefault("integration_patterns", [])
+    kb.setdefault("decision_rules", [])
+
+    result = recommend.build_stack_candidates("web app", set(), False, kb)
+    assert isinstance(result, tuple)
+    assert len(result) == 8
+    archetype = result[0]
+    assert isinstance(archetype, str)
+
+
+# ── print_recommendation (full branches) ──────────────────────────────────────
+
+
+def test_print_recommendation_full_branches(capsys) -> None:
+    rec = ProjectRecommendation(
+        product_shape="api service",
+        variant="product",
+        attach_userjourney=True,
+        archetype="API-first service",
+        stack_names=["FastAPI"],
+        service_names=["Vercel"],
+        cli_tool_names=["uv"],
+        api_names=["Stripe"],
+        rationale=["Chosen for speed"],
+        coverage_warnings=[{"domain": "Auth", "status": "partial", "gaps": "No SSO yet"}],
+        stack_evidence=[{"name": "FastAPI", "score": 10, "reasons": ["fast", "typed"]}],
+        service_evidence=[{"name": "Vercel", "score": 8, "reasons": ["edge deploy"]}],
+        api_evidence=[{"name": "Stripe", "score": 7, "reasons": ["payments"]}],
+        cli_evidence=[{"name": "uv", "score": 6, "reasons": ["fast installs"]}],
+        rule_evidence=[{"title": "Use FastAPI", "because": "typed", "confidence": "high"}],
+        actionability_summary=[{"name": "Vercel", "category": "service", "actionability": "automation-supported", "reason": "API available"}],
+        alternatives=[{"item": "Django", "category": "stack", "rationale": "monolithic"}],
+        service_notes=["Needs API key"],
+        cli_notes=["Install via pipx"],
+        api_notes=["Rate limited"],
+        kickoff_files=["KICKOFF.md"],
+        next_commands=["programstart guide"],
+    )
+    recommend.print_recommendation(rec)
+    out = capsys.readouterr().out
+    assert "api service" in out
+    assert "FastAPI" in out
+    assert "Vercel" in out
+    assert "Stripe" in out
+    assert "coverage warnings" in out
+    assert "stack evidence" in out
+    assert "rule evidence" in out
+    assert "actionability summary" in out
+    assert "alternatives" in out
+    assert "service notes" in out
+    assert "cli notes" in out
+    assert "api notes" in out
+
+
+# ── re_evaluate_project ───────────────────────────────────────────────────────
+
+
+def test_re_evaluate_project(tmp_path) -> None:
+    kickoff_dir = tmp_path / "PROGRAMBUILD"
+    kickoff_dir.mkdir()
+    (kickoff_dir / "PROGRAMBUILD_KICKOFF_PACKET.md").write_text(
+        "```text\nPROJECT_NAME: TestApp\nPRODUCT_SHAPE: web app\n```",
+        encoding="utf-8",
+    )
+    result = recommend.re_evaluate_project(str(tmp_path))
+    assert result["product_shape"] == "web app"
+    assert "current_recommendation" in result
+    assert "deltas" in result
+
+
+# ── load_recommendation_inputs ─────────────────────────────────────────────────
+
+
+def test_load_recommendation_inputs_explicit_shape() -> None:
+    ns = type("NS", (), {"product_shape": "cli tool", "need": ["rag"]})()
+    with patch.object(recommend, "parse_kickoff_inputs", return_value={}):
+        shape, needs = recommend.load_recommendation_inputs(ns)
+    assert shape == "cli tool"
+    assert "rag" in needs
+
+
+# ── stack_exists ───────────────────────────────────────────────────────────────
+
+
+def test_stack_exists_true() -> None:
+    kb = {"stacks": [{"name": "FastAPI"}, {"name": "Next.js"}]}
+    assert recommend.stack_exists(kb, "FastAPI") is True
+
+
+def test_stack_exists_false() -> None:
+    kb = {"stacks": [{"name": "FastAPI"}]}
+    assert recommend.stack_exists(kb, "Django") is False

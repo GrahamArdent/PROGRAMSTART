@@ -73,7 +73,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
-        python-version: ['3.12']
+        python-version: ['3.12', '3.13']
 
     steps:
       - name: Checkout
@@ -106,6 +106,9 @@ jobs:
       - name: Sync development environment
         run: uv sync --extra dev
 
+      - name: Check lockfile integrity
+        run: uv lock --check
+
       - name: Install Playwright browser
         if: runner.os == 'Linux'
         run: uv run python -m playwright install --with-deps chromium
@@ -133,13 +136,7 @@ jobs:
         run: uv run bandit -r scripts/ -ll --skip "B101,B310" -x tests/
 
       - name: Dependency audit (pip-audit)
-        shell: pwsh
-        run: |
-          uv run pip-audit --desc
-          if ($LASTEXITCODE -ne 0) {
-            Write-Host "pip-audit reported advisory findings; continuing without failing CI."
-            exit 0
-          }
+        run: uv run pip-audit --desc
 
       - name: Smoke unified CLI matrix
         run: uv run python scripts/programstart_cli_smoke.py --workspace .
@@ -264,6 +261,23 @@ jobs:
 
       - name: Check source-of-truth drift
         run: uv run programstart drift --changed-file-list changed_files.txt
+
+      - name: Enforce CHANGELOG update
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          # Exempt chore: and ci: commits from CHANGELOG enforcement
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          if [[ "$PR_TITLE" =~ ^(chore|ci)(\(|:) ]]; then
+            echo "Skipping CHANGELOG check for chore/ci PR"
+            exit 0
+          fi
+          if grep -qE '^(scripts/|config/)' changed_files.txt 2>/dev/null; then
+            if ! grep -q 'CHANGELOG.md' changed_files.txt 2>/dev/null; then
+              echo "::error::scripts/ or config/ changed but CHANGELOG.md was not updated"
+              exit 1
+            fi
+          fi
 
   compatibility-smoke:
     runs-on: ubuntu-latest

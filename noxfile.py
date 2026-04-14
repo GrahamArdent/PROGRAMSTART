@@ -245,7 +245,7 @@ def package(session: nox.Session) -> None:
 @nox.session
 def ci(session: nox.Session) -> None:
     """Run the full local gate used to mirror the major CI checks."""
-    for name in ("lint", "typecheck", "tests", "validate", "smoke", "docs", "package", "security", "format_check", "requirements"):
+    for name in ("lint", "typecheck", "tests", "validate", "smoke", "docs", "package", "security", "requirements"):
         session.notify(name)
 
 

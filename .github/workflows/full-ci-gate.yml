@@ -59,6 +59,9 @@ jobs:
       - name: Run full nox CI gate
         run: uv run nox -s ci
 
+      - name: Scheduled dependency audit (pip-audit)
+        run: uv run pip-audit --desc
+
       - name: Upload template golden failures
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7

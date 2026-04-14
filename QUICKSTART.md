@@ -22,13 +22,21 @@ PROGRAMBUILD tracks 11 stages from _inputs_ to _audit_. When attached, USERJOURN
 
 ## Day 1: Orient Yourself
 
-```powershell
-# Run from the workspace root
+```bash
+# Run from the workspace root (cross-platform)
 cd "c:\ PYTHON APPS\PROGRAMSTART"
-.\scripts\pb.ps1 next
+uv run programstart next
 ```
 
-`pb next` prints your active stage, active phase, any blockers, and the exact files and prompts to work with right now. **This is always the right starting command.**
+`programstart next` prints your active stage, active phase, any blockers, and the exact files and prompts to work with right now. **This is always the right starting command.**
+
+### Windows shortcut
+
+`scripts/pb.ps1` is a PowerShell convenience wrapper. It's equivalent to `uv run programstart <command>`. Use the `uv run` form for cross-platform compatibility.
+
+```powershell
+.\scripts\pb.ps1 next
+```
 
 Recommended local setup for the hardened toolchain:
 

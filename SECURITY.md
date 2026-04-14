@@ -10,7 +10,7 @@
 
 **Do not open public GitHub issues for security vulnerabilities.**
 
-To report a vulnerability, please email the maintainers directly with:
+To report a vulnerability, use [GitHub Security Advisories](https://github.com/your-org/PROGRAMSTART/security/advisories/new) or email the maintainers directly with:
 
 - A description of the vulnerability
 - Steps to reproduce it

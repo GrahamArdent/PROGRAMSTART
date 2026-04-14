@@ -64,6 +64,18 @@ Intended use:
 
 - previewing planning documents from the dashboard without leaving the operator surface
 
+### `GET /api/health`
+
+Returns a structured health probe report for the workspace.
+
+Success behavior:
+
+- `200` with a JSON payload containing system health data (overall health classification, per-system control file counts, and missing file lists)
+
+Intended use:
+
+- programmatic health checks and monitoring integration
+
 ## POST Routes
 
 ### `POST /api/run`

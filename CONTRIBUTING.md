@@ -26,7 +26,7 @@ python -m playwright install chromium
 - **Python**: PEP 8, enforced by Ruff (line length 130).
 - **Type hints**: All new functions should include type annotations.
 - **Commits**: Use conventional commits (`feat:`, `fix:`, `docs:`, `chore:`).
-- **Tests**: Aim for 80%+ coverage on new code.
+- **Tests**: Maintain 90%+ test coverage (enforced by CI with `fail_under = 90`).
 
 ## What to Contribute
 

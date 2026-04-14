@@ -6,21 +6,21 @@
       "type": "shell",
       "command": "uv",
       "args": ["run", "programstart", "init", "--dest", ".tmp_init_preview", "--project-name", "SampleProject", "--product-shape", "CLI tool", "--dry-run"],
-      "presentation": { "reveal": "always", "panel": "shared", "clear": true }
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "group": "build" }
     },
     {
       "label": "PROGRAMSTART: Recommend Current Project",
       "type": "shell",
       "command": "uv",
       "args": ["run", "programstart", "recommend"],
-      "presentation": { "reveal": "always", "panel": "shared", "clear": true }
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "group": "build" }
     },
     {
       "label": "PROGRAMSTART: What To Do Next",
       "type": "shell",
       "command": "uv",
       "args": ["run", "programstart", "next"],
-      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "focus": true },
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "focus": true, "group": "build" },
       "group": { "kind": "build", "isDefault": true }
     },
     {
@@ -28,14 +28,14 @@
       "type": "shell",
       "command": "uv",
       "args": ["run", "programstart", "state", "show"],
-      "presentation": { "reveal": "always", "panel": "shared", "clear": true }
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "group": "workflow" }
     },
     {
       "label": "PROGRAMSTART: Validate All",
       "type": "shell",
       "command": "uv",
       "args": ["run", "programstart", "validate"],
-      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "group": "validate" },
       "group": "test",
       "problemMatcher": []
     },
@@ -44,7 +44,7 @@
       "type": "shell",
       "command": "uv",
       "args": ["run", "programstart", "validate", "--check", "workflow-state"],
-      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "group": "validate" },
       "group": "test",
       "problemMatcher": []
     },
@@ -53,7 +53,7 @@
       "type": "shell",
       "command": "uv",
       "args": ["run", "programstart", "validate", "--check", "authority-sync"],
-      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "group": "validate" },
       "group": "test",
       "problemMatcher": []
     },
@@ -62,7 +62,7 @@
       "type": "shell",
       "command": "uv",
       "args": ["run", "programstart", "validate", "--check", "planning-references"],
-      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "group": "validate" },
       "group": "test",
       "problemMatcher": []
     },
@@ -71,7 +71,7 @@
       "type": "shell",
       "command": "uv",
       "args": ["run", "programstart", "validate", "--check", "bootstrap-assets"],
-      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "group": "validate" },
       "group": "test",
       "problemMatcher": []
     },
@@ -80,56 +80,56 @@
       "type": "shell",
       "command": "uv",
       "args": ["run", "programstart", "guide", "--system", "programbuild"],
-      "presentation": { "reveal": "always", "panel": "shared", "clear": true }
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "group": "workflow" }
     },
     {
       "label": "PROGRAMSTART: Guide Active USERJOURNEY",
       "type": "shell",
       "command": "uv",
       "args": ["run", "programstart", "guide", "--system", "userjourney"],
-      "presentation": { "reveal": "always", "panel": "shared", "clear": true }
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "group": "workflow" }
     },
     {
       "label": "PROGRAMSTART: Advance PROGRAMBUILD (dry-run)",
       "type": "shell",
       "command": "uv",
       "args": ["run", "programstart", "advance", "--system", "programbuild", "--dry-run"],
-      "presentation": { "reveal": "always", "panel": "shared", "clear": true }
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "group": "workflow" }
     },
     {
       "label": "PROGRAMSTART: Advance PROGRAMBUILD",
       "type": "shell",
       "command": "uv",
       "args": ["run", "programstart", "advance", "--system", "programbuild"],
-      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "focus": true }
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "focus": true, "group": "workflow" }
     },
     {
       "label": "PROGRAMSTART: Advance USERJOURNEY (dry-run)",
       "type": "shell",
       "command": "uv",
       "args": ["run", "programstart", "advance", "--system", "userjourney", "--dry-run"],
-      "presentation": { "reveal": "always", "panel": "shared", "clear": true }
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "group": "workflow" }
     },
     {
       "label": "PROGRAMSTART: Advance USERJOURNEY",
       "type": "shell",
       "command": "uv",
       "args": ["run", "programstart", "advance", "--system", "userjourney"],
-      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "focus": true }
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "focus": true, "group": "workflow" }
     },
     {
       "label": "PROGRAMSTART: Refresh Dashboard",
       "type": "shell",
       "command": "uv",
       "args": ["run", "programstart", "dashboard"],
-      "presentation": { "reveal": "silent", "panel": "shared", "clear": true }
+      "presentation": { "reveal": "silent", "panel": "shared", "clear": true, "group": "build" }
     },
     {
       "label": "PROGRAMSTART: Clean Workspace",
       "type": "shell",
       "command": "uv",
       "args": ["run", "programstart", "clean"],
-      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "group": "build" },
       "problemMatcher": []
     },
     {
@@ -137,7 +137,7 @@
       "type": "shell",
       "command": "uv",
       "args": ["run", "pre-commit", "run", "--all-files"],
-      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "group": "test" },
       "group": "test",
       "problemMatcher": []
     },
@@ -146,7 +146,7 @@
       "type": "shell",
       "command": "uv",
       "args": ["run", "pyright"],
-      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "group": "test" },
       "group": "test",
       "problemMatcher": []
     },
@@ -155,7 +155,7 @@
       "type": "shell",
       "command": "uv",
       "args": ["run", "pytest", "--cov-report=term-missing"],
-      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "group": "test" },
       "group": "test",
       "problemMatcher": []
     },
@@ -164,7 +164,7 @@
       "type": "shell",
       "command": "uv",
       "args": ["run", "python", "scripts/programstart_dashboard_browser_smoke.py", "--expect-userjourney", "attached"],
-      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "group": "test" },
       "group": "test",
       "problemMatcher": []
     },
@@ -173,7 +173,7 @@
       "type": "shell",
       "command": "uv",
       "args": ["run", "mkdocs", "build", "--strict"],
-      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "group": "test" },
       "group": "test",
       "problemMatcher": []
     },
@@ -182,7 +182,7 @@
       "type": "shell",
       "command": "uv",
       "args": ["run", "nox", "-s", "ci"],
-      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "focus": true },
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "focus": true, "group": "test" },
       "group": "test",
       "problemMatcher": []
     },
@@ -191,7 +191,7 @@
       "type": "shell",
       "command": "uv",
       "args": ["run", "programstart", "log"],
-      "presentation": { "reveal": "always", "panel": "shared", "clear": true }
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "group": "workflow" }
     },
     {
       "label": "PROGRAMSTART: Launch Web Dashboard",
@@ -199,7 +199,7 @@
       "command": "uv",
       "args": ["run", "programstart", "serve"],
       "isBackground": true,
-      "presentation": { "reveal": "always", "panel": "dedicated", "clear": true, "focus": true },
+      "presentation": { "reveal": "always", "panel": "dedicated", "clear": true, "focus": true, "group": "build" },
       "problemMatcher": []
     },
     {
@@ -207,7 +207,7 @@
       "type": "shell",
       "command": "uv",
       "args": ["run", "programstart", "drift"],
-      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "group": "validate" },
       "group": "test",
       "problemMatcher": []
     },
@@ -216,7 +216,7 @@
       "type": "shell",
       "command": "uv",
       "args": ["run", "programstart", "guide", "--system", "programbuild"],
-      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "group": "workflow" },
       "dependsOn": ["PROGRAMSTART: Drift Check"],
       "dependsOrder": "sequence"
     },
@@ -225,7 +225,7 @@
       "type": "shell",
       "command": "uv",
       "args": ["run", "nox", "-s", "gate_safe"],
-      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "focus": true },
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "focus": true, "group": "test" },
       "group": "test",
       "problemMatcher": []
     },
@@ -234,7 +234,7 @@
       "type": "shell",
       "command": "uv",
       "args": ["run", "nox", "-s", "quick"],
-      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "group": "test" },
       "group": "test",
       "problemMatcher": []
     },

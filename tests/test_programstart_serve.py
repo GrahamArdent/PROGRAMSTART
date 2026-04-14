@@ -300,3 +300,28 @@ def test_signoff_history_capped_at_max(monkeypatch, tmp_path) -> None:
     assert history[-1]["notes"] == "cap test"
     # Oldest entries should have been trimmed
     assert history[0]["notes"] != "entry 1"
+
+
+# ── API endpoint/docs sync ────────────────────────────────────────────────────
+
+
+def test_api_routes_documented_in_dashboard_api_md() -> None:
+    """Every /api/* route in programstart_serve.py must have a matching section in docs/dashboard-api.md."""
+    import re
+
+    serve_path = ROOT / "scripts" / "programstart_serve.py"
+    docs_path = ROOT / "docs" / "dashboard-api.md"
+
+    serve_src = serve_path.read_text(encoding="utf-8")
+    route_pattern = re.compile(r'parsed\.path\s*(?:==|in)\s*["\(]([^")\n]+)')
+    raw_routes: set[str] = set()
+    for m in route_pattern.finditer(serve_src):
+        value = m.group(1)
+        for segment in value.replace('"', "").replace("'", "").split(","):
+            segment = segment.strip()
+            if segment.startswith("/api/"):
+                raw_routes.add(segment)
+
+    docs_text = docs_path.read_text(encoding="utf-8")
+    missing = [route for route in sorted(raw_routes) if route not in docs_text]
+    assert not missing, f"API routes not documented in dashboard-api.md: {missing}"

@@ -3,6 +3,7 @@ description: "Summarize the next USERJOURNEY slice to execute. Use when deciding
 name: "USERJOURNEY Next Slice"
 argument-hint: "Optional focus area or blocker"
 agent: "agent"
+version: "1.0"
 ---
 Determine the next USERJOURNEY implementation slice.
 

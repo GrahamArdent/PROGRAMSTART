@@ -3,6 +3,7 @@ description: "Interactive idea decomposition using the 7-question IDEA_INTAKE pr
 name: "Shape Idea"
 argument-hint: "Paste or describe the raw idea to decompose"
 agent: "agent"
+version: "1.0"
 ---
 
 # Shape Idea — Interactive Idea Decomposition

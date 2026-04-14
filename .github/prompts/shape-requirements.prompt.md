@@ -3,6 +3,7 @@ description: "Structured requirements capture with traceability to user flows. U
 name: "Shape Requirements"
 argument-hint: "Name the project or describe the feature area to define requirements for"
 agent: "agent"
+version: "1.0"
 ---
 
 # Shape Requirements — Structured Requirements And User Flows

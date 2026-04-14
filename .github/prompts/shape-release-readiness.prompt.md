@@ -3,6 +3,7 @@ description: "Release readiness protocol. Use at Stage 8 to validate deployment 
 name: "Shape Release Readiness"
 argument-hint: "Name the project or describe the release scope"
 agent: "agent"
+version: "1.0"
 ---
 
 # Shape Release Readiness — Deployment Safety, Rollback, And Go/No-Go Gate

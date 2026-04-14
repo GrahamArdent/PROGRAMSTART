@@ -1266,6 +1266,33 @@ def validate_workflow_state(registry: dict, system_filter: str | None = None) ->
     return problems
 
 
+ALLOWED_ROOT_MD = {
+    "README.md",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "QUICKSTART.md",
+    "n8n.md",
+}
+
+ALLOWED_ROOT_NON_MD = {
+    "CODEOWNERS",
+}
+
+
+def validate_file_hygiene(_registry: dict) -> list[str]:
+    """Check that no unexpected .md files sit at the repo root."""
+    problems: list[str] = []
+    root = workspace_path(".")
+    for md in sorted(root.glob("*.md")):
+        if md.name not in ALLOWED_ROOT_MD:
+            problems.append(
+                f"Unexpected .md file at repo root: {md.name} — "
+                f"should it be in devlog/ or outputs/?"
+            )
+    return problems
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Validate PROGRAMSTART structure and process metadata.")
     parser.add_argument(
@@ -1299,6 +1326,7 @@ def main() -> int:
             "audit-complete",
             "post-launch-review",
             "coverage-source",
+            "file-hygiene",
         ],
         default="all",
     )
@@ -1338,6 +1366,7 @@ def main() -> int:
         warnings.extend(validate_coverage_source_completeness(registry))
         warnings.extend(validate_adr_coverage(registry))
         warnings.extend(validate_kb_freshness(registry))
+        warnings.extend(validate_file_hygiene(registry))
     elif args.check == "required-files":
         problems.extend(validate_registry(registry))
         problems.extend(validate_required_files(registry, sf))
@@ -1394,6 +1423,8 @@ def main() -> int:
         problems.extend(validate_post_launch_review(registry))
     elif args.check == "coverage-source":
         warnings.extend(validate_coverage_source_completeness(registry))
+    elif args.check == "file-hygiene":
+        warnings.extend(validate_file_hygiene(registry))
     else:
         problems.extend(validate_engineering_ready(registry))
 

@@ -3,6 +3,7 @@ description: "Structured architecture capture with contract definitions and tech
 name: "Shape Architecture"
 argument-hint: "Name the project or describe the system boundary to design"
 agent: "agent"
+version: "1.0"
 ---
 
 # Shape Architecture — Contracts, Boundaries, And Technology Decisions

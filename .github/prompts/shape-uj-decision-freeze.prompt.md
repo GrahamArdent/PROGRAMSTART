@@ -3,6 +3,7 @@ description: "Freeze product decisions, lock route/state model, synchronize DECI
 name: "UJ Decision Freeze"
 argument-hint: "Phase to freeze: decisions, route model, or both"
 agent: "agent"
+version: "1.0"
 ---
 
 # UJ Decision Freeze — Route and State Lock Protocol

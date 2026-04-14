@@ -14,6 +14,7 @@ try:
         programstart_checklist_progress,
         programstart_clean,
         programstart_create,
+        programstart_doctor,
         programstart_drift_check,
         programstart_context,
         programstart_dashboard,
@@ -41,6 +42,7 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
     import programstart_clean
     import programstart_create
     import programstart_command_registry
+    import programstart_doctor
     import programstart_drift_check
     import programstart_context
     import programstart_dashboard
@@ -158,6 +160,8 @@ def dispatch(command: str, arguments: list[str], parser: argparse.ArgumentParser
         return run_passthrough(programstart_serve.main, "programstart serve", arguments)
     if command == "health":
         return run_passthrough(programstart_health_probe.main, "programstart health", arguments)
+    if command == "doctor":
+        return run_passthrough(programstart_doctor.main, "programstart doctor", arguments)
     if command == "help":
         parser.print_help()
         return 0

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import os
 from datetime import date, datetime
 
@@ -210,6 +211,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Summarize current PROGRAMSTART workflow status.")
     parser.add_argument("--system", choices=["all", "programbuild", "userjourney"], default="all")
     parser.add_argument("--skip-staleness-check", action="store_true", help="Suppress staleness warnings.")
+    parser.add_argument("--json", action="store_true", help="Emit JSON instead of text.")
     args = parser.parse_args()
 
     skip_staleness = args.skip_staleness_check or os.environ.get("PROGRAMSTART_SKIP_STALENESS", "") == "1"
@@ -231,7 +233,10 @@ def main() -> int:
     if args.system == "all":
         output.extend(cross_system_health_warning(registry))
 
-    print("\n".join(output))
+    if args.json:
+        print(json.dumps({"lines": output}, indent=2))
+    else:
+        print("\n".join(output))
     return 0
 
 

@@ -72,6 +72,7 @@ programstart-attach = "scripts.programstart_attach:main"
 programstart-recommend = "scripts.programstart_recommend:main"
 programstart-impact = "scripts.programstart_impact:main"
 programstart-prompt-eval = "scripts.programstart_prompt_eval:main"
+programstart-doctor = "scripts.programstart_doctor:main"
 
 [tool.setuptools]
 packages = ["scripts"]
@@ -156,6 +157,8 @@ source = [
   "scripts.programstart_markdown_parsers",
   "scripts.programstart_prompt_eval",
   "scripts.programstart_health_probe",
+  "scripts.programstart_doctor",
+  "scripts.lint_prompts",
   "scripts.programstart_research_delta",
   "scripts.check_commit_msg",
   "scripts.programstart_repo_clean_check",

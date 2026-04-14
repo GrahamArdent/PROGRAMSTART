@@ -3,6 +3,7 @@ description: "Start a new planning package using PROGRAMBUILD and an optional US
 name: "Start PROGRAMSTART Project"
 argument-hint: "Destination folder, project name, variant, product shape, and whether onboarding planning is needed"
 agent: "agent"
+version: "1.0"
 ---
 Create a new planning package using this repository's workflow assets.
 

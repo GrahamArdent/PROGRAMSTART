@@ -2,6 +2,7 @@
 description: "Pre-coding alignment check against product authority docs. Use before implementing any feature, endpoint, or auth change."
 name: "Product JIT Check"
 agent: "agent"
+version: "1.0"
 ---
 
 # Product-JIT Alignment Check

@@ -21,10 +21,15 @@ description: "One-sentence purpose of the prompt."
 name: "Human-Readable Name"
 argument-hint: "What the operator should provide when invoking"
 agent: "agent"
+version: "1.0"
 ---
 ```
 
 Source: VS Code convention. Required for prompt discovery.
+
+Optional fields:
+- `version:` — Semantic version string for the prompt (recommended).
+- `deprecated: true` — Marks the prompt as superseded; tooling may warn or skip it.
 
 ### 2. Data Grounding Rule
 

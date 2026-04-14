@@ -27,6 +27,7 @@ CLI_COMMANDS: tuple[str, ...] = (
     "dashboard",
     "serve",
     "health",
+    "doctor",
 )
 
 

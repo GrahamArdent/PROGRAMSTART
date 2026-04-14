@@ -3,6 +3,7 @@ description: "Audit planning-document drift. Use when checking whether canonical
 name: "Audit Process Drift"
 argument-hint: "Optional changed files or area to audit"
 agent: "agent"
+version: "1.0"
 ---
 Audit process drift using the repository workflow rules.
 

@@ -3,6 +3,7 @@ description: "Stage 9 audit and drift control — guide to producing AUDIT_REPOR
 name: "Shape Audit"
 argument-hint: "Name the project being audited"
 agent: "agent"
+version: "1.0"
 ---
 
 # Shape Audit — Stage 9 Audit And Drift Control

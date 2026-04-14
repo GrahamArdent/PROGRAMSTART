@@ -3,6 +3,7 @@ description: "Validate that the current stage's outputs are consistent with all 
 name: "Cross-Stage Validation"
 argument-hint: "Current stage number or name, and the previous outputs to validate against"
 agent: "agent"
+version: "1.0"
 ---
 Run the cross-stage validation checks from `PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md` for the current stage transition.
 

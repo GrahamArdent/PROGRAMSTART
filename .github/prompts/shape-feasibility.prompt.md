@@ -3,6 +3,7 @@ description: "Structured feasibility review: kill criteria, risk assessment, go/
 name: "Shape Feasibility"
 argument-hint: "Name the project or paste the problem statement to evaluate"
 agent: "agent"
+version: "1.0"
 ---
 
 # Shape Feasibility — Kill Criteria And Go/No-Go Decision

@@ -3,6 +3,7 @@ description: "Draft legal documents (ToS, Privacy Policy, consent flows) and ext
 name: "UJ Legal Drafts"
 argument-hint: "Which legal area to address: all, terms-of-service, privacy-policy, consent-flows, or external-review-packet"
 agent: "agent"
+version: "1.0"
 ---
 
 # UJ Legal Drafts — Legal Document Drafting Protocol

@@ -3,6 +3,7 @@ description: "Design screens, user flows, and UX copy. Enforces SCREEN_INVENTORY
 name: "UJ UX Surfaces"
 argument-hint: "Which UX concern: all, screen-inventory, user-flows, ux-copy, or acceptance-criteria"
 agent: "agent"
+version: "1.0"
 ---
 
 # UJ UX Surfaces — Screen Design and Copy Protocol

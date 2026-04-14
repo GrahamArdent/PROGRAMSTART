@@ -3,6 +3,7 @@ description: "Run the Challenge Gate and Cross-Stage Validation when transitioni
 name: "PROGRAMSTART Stage Transition"
 argument-hint: "From stage N to stage N+1 — e.g., 'Stage 2 to Stage 3' or 'Research to Requirements'"
 agent: "agent"
+version: "1.0"
 ---
 Execute the full stage transition protocol from `PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md` and `PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md`.
 

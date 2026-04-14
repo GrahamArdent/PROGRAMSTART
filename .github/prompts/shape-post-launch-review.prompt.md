@@ -3,6 +3,7 @@ description: "Post-launch review protocol. Use at Stage 10 to close the loop on 
 name: "Shape Post-launch Review"
 argument-hint: "Name the project or describe the launch period to review"
 agent: "agent"
+version: "1.0"
 ---
 
 # Shape Post-launch Review — Outcomes, Lessons, And Template Improvements

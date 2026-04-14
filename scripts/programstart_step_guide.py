@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 from typing import Any, cast
 
 try:
@@ -45,6 +46,7 @@ def main() -> int:
     )
     parser.add_argument("--stage", help="PROGRAMBUILD stage name from the registry.")
     parser.add_argument("--phase", help="USERJOURNEY phase key, for example phase_0.")
+    parser.add_argument("--json", action="store_true", help="Emit JSON instead of text.")
     args = parser.parse_args()
 
     registry = load_registry()
@@ -52,11 +54,14 @@ def main() -> int:
 
     if args.kickoff:
         section = cast(dict[str, Any], guidance.get("kickoff", {}))
-        print("PROGRAMSTART Kickoff")
-        print(section.get("description", ""))
-        print_section("Files", cast(list[str], section.get("files", [])))
-        print_section("Scripts", cast(list[str], section.get("scripts", [])))
-        print_section("Prompts", cast(list[str], section.get("prompts", [])))
+        if args.json:
+            print(json.dumps({"type": "kickoff", "description": section.get("description", ""), "files": section.get("files", []), "scripts": section.get("scripts", []), "prompts": section.get("prompts", [])}, indent=2))
+        else:
+            print("PROGRAMSTART Kickoff")
+            print(section.get("description", ""))
+            print_section("Files", cast(list[str], section.get("files", [])))
+            print_section("Scripts", cast(list[str], section.get("scripts", [])))
+            print_section("Prompts", cast(list[str], section.get("prompts", [])))
         return 0
 
     if args.system == "programbuild":
@@ -69,15 +74,18 @@ def main() -> int:
         if not section:
             parser.error(f"No guidance found for PROGRAMBUILD stage '{stage}'")
         section = cast(dict[str, Any], section)
-        print(f"PROGRAMBUILD Stage: {stage}")
-        print_section("Files", cast(list[str], section.get("files", [])))
-        print_section("Scripts", cast(list[str], section.get("scripts", [])))
         stage_prompts = list(cast(list[str], section.get("prompts", [])))
         cross_cutting = cast(list[str], guidance.get("cross_cutting_prompts", []))
         for p in cross_cutting:
             if p not in stage_prompts:
                 stage_prompts.append(p)
-        print_section("Prompts", stage_prompts)
+        if args.json:
+            print(json.dumps({"type": "programbuild", "stage": stage, "files": section.get("files", []), "scripts": section.get("scripts", []), "prompts": stage_prompts}, indent=2))
+        else:
+            print(f"PROGRAMBUILD Stage: {stage}")
+            print_section("Files", cast(list[str], section.get("files", [])))
+            print_section("Scripts", cast(list[str], section.get("scripts", [])))
+            print_section("Prompts", stage_prompts)
         return 0
 
     if args.system == "userjourney":
@@ -85,8 +93,11 @@ def main() -> int:
             registry,
             "userjourney",
         ):
-            print("USERJOURNEY is not attached in this repository.")
-            print("Attach it separately only if this project needs onboarding, consent, or activation planning.")
+            if args.json:
+                print(json.dumps({"type": "userjourney", "attached": False}, indent=2))
+            else:
+                print("USERJOURNEY is not attached in this repository.")
+                print("Attach it separately only if this project needs onboarding, consent, or activation planning.")
             return 0
         phase = args.phase or workflow_active_step(
             registry,
@@ -97,10 +108,13 @@ def main() -> int:
         if not section:
             parser.error(f"No guidance found for USERJOURNEY phase '{phase}'")
         section = cast(dict[str, Any], section)
-        print(f"USERJOURNEY Phase: {phase}")
-        print_section("Files", cast(list[str], section.get("files", [])))
-        print_section("Scripts", cast(list[str], section.get("scripts", [])))
-        print_section("Prompts", cast(list[str], section.get("prompts", [])))
+        if args.json:
+            print(json.dumps({"type": "userjourney", "phase": phase, "attached": True, "files": section.get("files", []), "scripts": section.get("scripts", []), "prompts": section.get("prompts", [])}, indent=2))
+        else:
+            print(f"USERJOURNEY Phase: {phase}")
+            print_section("Files", cast(list[str], section.get("files", [])))
+            print_section("Scripts", cast(list[str], section.get("scripts", [])))
+            print_section("Prompts", cast(list[str], section.get("prompts", [])))
         return 0
 
     parser.error("Provide --kickoff or select a --system; stage and phase can be omitted when state files are current")

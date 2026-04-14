@@ -3,6 +3,7 @@ description: "Propagate a canonical authority document change to all dependent f
 name: "Propagate Canonical Change"
 argument-hint: "The authority file that changed, e.g. PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md or USERJOURNEY/LEGAL_AND_CONSENT.md"
 agent: "agent"
+version: "1.0"
 ---
 Propagate a change from an authority document to all files that depend on it.
 

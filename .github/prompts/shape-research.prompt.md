@@ -3,6 +3,7 @@ description: "Structured research protocol linking unknowns to evidence. Use at 
 name: "Shape Research"
 argument-hint: "Name the project or list the unknowns to investigate"
 agent: "agent"
+version: "1.0"
 ---
 
 # Shape Research — Structured Investigation Protocol

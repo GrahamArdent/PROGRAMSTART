@@ -3,6 +3,7 @@ description: "Show the correct files, scripts, and prompts for a specific PROGRA
 name: "PROGRAMSTART Stage Guide"
 argument-hint: "Use kickoff, a PROGRAMBUILD stage name, or a USERJOURNEY phase key if USERJOURNEY is attached"
 agent: "agent"
+version: "1.0"
 ---
 Determine the correct assets to use for a specific PROGRAMSTART step.
 

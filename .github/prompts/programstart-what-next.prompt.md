@@ -3,6 +3,7 @@ description: "Summarize what to do next in PROGRAMSTART. Use when asking for cur
 name: "PROGRAMSTART What Next"
 argument-hint: "Optional system: programbuild, userjourney, or all"
 agent: "agent"
+version: "1.0"
 ---
 Summarize the next recommended action using the repository's durable workflow assets.
 

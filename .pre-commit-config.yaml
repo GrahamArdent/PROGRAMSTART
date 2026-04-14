@@ -87,6 +87,13 @@ repos:
         pass_filenames: true
         files: ^(PROGRAMBUILD/|USERJOURNEY/|config/process-registry\.json)
 
+      - id: prompt-lint
+        name: prompt lint
+        entry: uv run python scripts/lint_prompts.py
+        language: system
+        pass_filenames: true
+        files: \.prompt\.md$
+
       - id: conventional-commits
         name: commit message (Conventional Commits)
         language: system

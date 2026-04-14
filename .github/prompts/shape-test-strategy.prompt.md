@@ -3,6 +3,7 @@ description: "Test strategy protocol. Use at Stage 6 to design the testing model
 name: "Shape Test Strategy"
 argument-hint: "Name the project or describe the testing scope"
 agent: "agent"
+version: "1.0"
 ---
 
 # Shape Test Strategy — Decide The Testing Model Before Writing Features

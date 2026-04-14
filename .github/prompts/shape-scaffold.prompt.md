@@ -3,6 +3,7 @@ description: "Scaffold and guardrails protocol. Use at Stage 5 to create the pro
 name: "Shape Scaffold"
 argument-hint: "Name the project or confirm the PRODUCT_SHAPE to scaffold"
 agent: "agent"
+version: "1.0"
 ---
 
 # Shape Scaffold — Project Skeleton, CI, And Guardrails

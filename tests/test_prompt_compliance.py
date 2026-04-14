@@ -76,6 +76,7 @@ VALID_CHECKS: frozenset[str] = frozenset(
         "audit-complete",
         "post-launch-review",
         "coverage-source",
+        "file-hygiene",
     }
 )
 

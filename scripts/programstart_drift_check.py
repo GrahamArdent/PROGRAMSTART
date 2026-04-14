@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 from pathlib import Path
 from typing import Any, cast
 
@@ -102,15 +103,24 @@ def main() -> int:
     parser.add_argument("--changed-file-list", help="Path to a newline-delimited changed files list.")
     parser.add_argument("--system", choices=["programbuild", "userjourney"], help="Only check rules for this system.")
     parser.add_argument("--strict", action="store_true", help="Treat notes as violations (exit 1 if any notes).")
+    parser.add_argument("--json", action="store_true", help="Emit JSON instead of text.")
     args = parser.parse_args()
 
     changed_files = load_changed_files(args)
     if not changed_files:
-        print("No changed files detected. Nothing to check.")
+        if args.json:
+            print(json.dumps({"status": "skip", "violations": [], "notes": []}, indent=2))
+        else:
+            print("No changed files detected. Nothing to check.")
         return 0
 
     registry = load_registry()
     violations, notes = evaluate_drift(registry, changed_files, args.system)
+
+    if args.json:
+        status = "fail" if violations else ("fail" if args.strict and notes else "pass")
+        print(json.dumps({"status": status, "violations": violations, "notes": notes}, indent=2))
+        return 1 if status == "fail" else 0
 
     if violations:
         print("Drift check failed:")

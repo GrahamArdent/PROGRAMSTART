@@ -3,6 +3,7 @@ description: "Execute the enhancement gameplan phase by phase. Use to implement 
 name: "Execute Enhancement Gameplan"
 argument-hint: "Specify a phase letter (A–N) or 'next' to resume from the last completed phase"
 agent: "agent"
+version: "1.0"
 ---
 
 # Execute Enhancement Gameplan — Phase-by-Phase Implementation

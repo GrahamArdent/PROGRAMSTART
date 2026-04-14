@@ -293,6 +293,18 @@ def shape_profile(product_shape: str) -> tuple[str, list[str], set[str], list[st
     )
 
 
+KNOWN_SHAPES: tuple[str, ...] = ("cli tool", "api service", "web app", "mobile app", "data pipeline")
+
+
+def list_shapes() -> list[dict[str, str]]:
+    """Return all known product shapes with their archetype descriptions."""
+    result: list[dict[str, str]] = []
+    for shape in KNOWN_SHAPES:
+        archetype, _stacks, _caps, _domains = shape_profile(shape)
+        result.append({"shape": shape, "archetype": archetype})
+    return result
+
+
 def ui_tier(product_shape: str, needs: set[str]) -> str:
     """Classify UI tier: none | docs-only | minimal-admin | full-product-ui."""
     if product_shape in ("web app", "mobile app"):
@@ -1372,12 +1384,27 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--json", action="store_true", help="Emit JSON instead of text.")
     parser.add_argument(
+        "--list-shapes",
+        action="store_true",
+        help="Print all known product shapes with archetype descriptions and exit.",
+    )
+    parser.add_argument(
         "--re-evaluate",
         metavar="PROJECT_DIR",
         help="Re-evaluate an existing project against the current knowledge base.",
     )
     parser.set_defaults(attach_userjourney=None)
     args = parser.parse_args(argv)
+
+    if args.list_shapes:
+        shapes = list_shapes()
+        if args.json:
+            print(json.dumps(shapes, indent=2))
+        else:
+            print("Known product shapes:")
+            for entry in shapes:
+                print(f"  {entry['shape']:20s} {entry['archetype']}")
+        return 0
 
     if args.re_evaluate:
         result = re_evaluate_project(args.re_evaluate)

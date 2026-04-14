@@ -149,3 +149,92 @@ def test_main_uses_provided_index_path(tmp_path) -> None:
         impact.main(["target", "--index", str(index_path)])
 
     assert str(index_path) in loaded[0]
+
+
+# ── load_index ─────────────────────────────────────────────────────────────────
+
+
+def test_load_index_compatible_cached(tmp_path) -> None:
+    index = _minimal_index()
+    index_path = tmp_path / "index.json"
+    index_path.write_text(json.dumps(index), encoding="utf-8")
+    with patch.object(impact, "cached_index_is_compatible", return_value=True):
+        result = impact.load_index(str(index_path))
+    assert result == index
+
+
+def test_load_index_incompatible_rebuilds(tmp_path) -> None:
+    index = _minimal_index()
+    index_path = tmp_path / "index.json"
+    index_path.write_text(json.dumps(index), encoding="utf-8")
+    rebuilt = _minimal_index()
+    rebuilt["version"] = 99
+    with (
+        patch.object(impact, "cached_index_is_compatible", return_value=False),
+        patch.object(impact, "build_context_index", return_value=rebuilt),
+    ):
+        result = impact.load_index(str(index_path))
+    assert result["version"] == 99
+
+
+def test_load_index_missing_file_rebuilds(tmp_path) -> None:
+    rebuilt = _minimal_index()
+    rebuilt["version"] = 42
+    with patch.object(impact, "build_context_index", return_value=rebuilt):
+        result = impact.load_index(str(tmp_path / "nonexistent.json"))
+    assert result["version"] == 42
+
+
+def test_load_index_relative_path(tmp_path) -> None:
+    rebuilt = _minimal_index()
+    with (
+        patch.object(impact, "workspace_path", return_value=tmp_path / "rel.json"),
+        patch.object(impact, "build_context_index", return_value=rebuilt),
+    ):
+        result = impact.load_index("rel.json")
+    assert result == rebuilt
+
+
+def test_load_index_none_uses_default() -> None:
+    rebuilt = _minimal_index()
+    with (
+        patch.object(impact, "default_index_path", return_value=Path("/fake/index.json")),
+        patch.object(impact, "build_context_index", return_value=rebuilt),
+    ):
+        result = impact.load_index(None)
+    assert result == rebuilt
+
+
+# ── print_impact_summary detail sections ───────────────────────────────────────
+
+
+def test_print_impact_summary_lists_relations(capsys) -> None:
+    result = _empty_result()
+    result["relations"] = [{"type": "sync", "from": "A.md", "to": "B.md"}]
+    impact.print_impact_summary("sync", result)
+    captured = capsys.readouterr()
+    assert "A.md" in captured.out and "B.md" in captured.out
+
+
+def test_print_impact_summary_lists_decision_rules(capsys) -> None:
+    result = _empty_result()
+    result["decision_rules"] = [{"title": "Use JWT for auth"}]
+    impact.print_impact_summary("auth", result)
+    captured = capsys.readouterr()
+    assert "Use JWT for auth" in captured.out
+
+
+def test_print_impact_summary_lists_relationships(capsys) -> None:
+    result = _empty_result()
+    result["relationships"] = [{"subject": "User", "relation": "has", "object": "Session"}]
+    impact.print_impact_summary("user", result)
+    captured = capsys.readouterr()
+    assert "User" in captured.out and "Session" in captured.out
+
+
+def test_print_impact_summary_lists_comparisons(capsys) -> None:
+    result = _empty_result()
+    result["comparisons"] = [{"name": "Supabase vs Firebase"}]
+    impact.print_impact_summary("stack", result)
+    captured = capsys.readouterr()
+    assert "Supabase vs Firebase" in captured.out

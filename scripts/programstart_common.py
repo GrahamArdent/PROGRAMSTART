@@ -181,7 +181,26 @@ def load_workflow_state(registry: dict[str, Any], system: str) -> dict[str, Any]
     return load_json(path)
 
 
+def validate_state_against_schema(state: dict[str, Any], system: str) -> None:
+    """Validate state dict against the appropriate JSON schema before writing."""
+    schema_map = {
+        "programbuild": "schemas/programbuild-state.schema.json",
+        "userjourney": "schemas/userjourney-state.schema.json",
+    }
+    schema_rel = schema_map.get(system, "")
+    if not schema_rel:
+        return
+    schema_path = workspace_path(schema_rel)
+    if not schema_path.exists():
+        return  # Schema not found — skip validation (bootstrap scenario)
+    import jsonschema
+
+    schema = json.loads(schema_path.read_text(encoding="utf-8"))
+    jsonschema.validate(instance=state, schema=schema)
+
+
 def save_workflow_state(registry: dict[str, Any], system: str, state: dict[str, Any]) -> None:
+    validate_state_against_schema(state, system)
     write_json(workflow_state_path(registry, system), state)
 
 

@@ -133,6 +133,7 @@
       "tests/test_programstart_validate_stage_gates.py",
       "tests/test_programstart_workflow_state.py",
       "tests/test_check_commit_msg.py",
+      "tests/test_schema_conformance.py",
       ".github/copilot-instructions.md",
       ".github/agents/architecture-security.agent.md",
       ".github/agents/discovery-scoping.agent.md",

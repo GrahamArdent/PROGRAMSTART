@@ -21,6 +21,7 @@ try:
         load_workflow_state,
         save_workflow_state,
         status_color,
+        validate_state_against_schema,
         warn_direct_script_invocation,
         workflow_active_step,
         workflow_entry_key,
@@ -44,6 +45,7 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
         load_workflow_state,
         save_workflow_state,
         status_color,
+        validate_state_against_schema,
         warn_direct_script_invocation,
         workflow_active_step,
         workflow_entry_key,
@@ -204,7 +206,9 @@ def snapshot_state(registry: dict[str, Any], label: str = "") -> Path:
     for system_name in registry.get("systems", {}):
         state_path = workflow_state_path(registry, system_name)
         if state_path.exists():
-            payload["systems"][system_name] = load_json(state_path)
+            system_state = load_json(state_path)
+            validate_state_against_schema(system_state, system_name)
+            payload["systems"][system_name] = system_state
     snap_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
     return snap_path
 

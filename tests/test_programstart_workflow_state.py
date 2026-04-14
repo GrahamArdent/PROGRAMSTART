@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts.programstart_common import create_default_workflow_state, load_registry
+from scripts.programstart_common import create_default_workflow_state, load_registry, validate_state_against_schema
 from scripts.programstart_workflow_state import (
     _check_challenge_gate_log,
     diff_states,
@@ -952,3 +952,44 @@ def test_preflight_problems_userjourney_phase0_gate(tmp_path: Path, monkeypatch)
     registry = load_registry()
     problems = preflight_problems(registry, "userjourney", active_step="phase_0")
     assert isinstance(problems, list)
+
+
+def test_validate_state_against_schema_valid(tmp_path: Path, monkeypatch) -> None:
+    """Valid state passes schema validation without error."""
+    schema = {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "required": ["system", "active_stage"],
+        "properties": {
+            "system": {"const": "programbuild"},
+            "active_stage": {"type": "string"},
+        },
+    }
+    schema_dir = tmp_path / "schemas"
+    schema_dir.mkdir()
+    (schema_dir / "programbuild-state.schema.json").write_text(json.dumps(schema), encoding="utf-8")
+    monkeypatch.setattr("scripts.programstart_common.workspace_path", lambda rel: tmp_path / rel)
+    state = {"system": "programbuild", "active_stage": "feasibility"}
+    validate_state_against_schema(state, "programbuild")  # should not raise
+
+
+def test_validate_state_against_schema_invalid(tmp_path: Path, monkeypatch) -> None:
+    """Invalid state raises jsonschema.ValidationError."""
+    import jsonschema as _jsonschema
+
+    schema = {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "required": ["system", "active_stage"],
+        "properties": {
+            "system": {"const": "programbuild"},
+            "active_stage": {"type": "string"},
+        },
+    }
+    schema_dir = tmp_path / "schemas"
+    schema_dir.mkdir()
+    (schema_dir / "programbuild-state.schema.json").write_text(json.dumps(schema), encoding="utf-8")
+    monkeypatch.setattr("scripts.programstart_common.workspace_path", lambda rel: tmp_path / rel)
+    state = {"system": "programbuild"}  # missing required active_stage
+    with pytest.raises(_jsonschema.ValidationError):
+        validate_state_against_schema(state, "programbuild")

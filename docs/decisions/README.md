@@ -15,6 +15,8 @@ MADRs are used for significant decisions that affect core contracts, workflow ru
 | [0005](0005-cap-signoff-history-at-100-entries.md) | Cap signoff history at 100 entries | accepted | 2026-04-11 |
 | [0006](0006-accept-sys-argv-mutation-pattern.md) | Accept sys.argv mutation pattern | accepted | 2026-04-12 |
 | [0007](0007-clarify-canonical-rule-1-temporal-semantics.md) | Clarify CANONICAL rule 1 temporal semantics | accepted | 2026-04-12 |
+| [0008](0008-cross-cutting-prompts-registry.md) | Cross-cutting prompts registered at workflow_guidance level | accepted | 2026-04-12 |
+| [0009](0009-canonical-section-alignment.md) | Canonical section alignment in shaping prompts | accepted | 2026-04-13 |
 
 ## Rules
 

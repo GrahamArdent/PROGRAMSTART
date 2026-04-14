@@ -115,7 +115,7 @@ def test_update_implementation_tracker_slice_updates_notes_and_status(tmp_path: 
     assert "| Slice 3 | Ready | Soon | Ship ¦ this week |" in updated
 
 
-def test_save_workflow_signoff_persists_signoff_history(monkeypatch) -> None:
+def test_save_workflow_signoff_persists_signoff_history(monkeypatch, tmp_path) -> None:
     saved: dict[str, Any] = {}
     state = {
         "active_stage": "inputs_and_mode_selection",
@@ -134,6 +134,7 @@ def test_save_workflow_signoff_persists_signoff_history(monkeypatch) -> None:
     )
     monkeypatch.setattr(programstart_serve, "workflow_entry_key", lambda _system: "stages")
     monkeypatch.setattr(programstart_serve, "save_workflow_state", lambda _registry, _system, value: saved.update(value))
+    monkeypatch.setattr(programstart_serve, "workflow_state_path", lambda _r, _s: tmp_path / "state.json")
 
     result = save_workflow_signoff("programbuild", "approved", "2026-04-01", "Ship | it\nnow")
 
@@ -145,7 +146,7 @@ def test_save_workflow_signoff_persists_signoff_history(monkeypatch) -> None:
     assert saved["stages"]["inputs_and_mode_selection"]["signoff_history"][0]["notes"] == "Ship ¦ it now"
 
 
-def test_advance_workflow_with_signoff_completes_current_and_promotes_next(monkeypatch) -> None:
+def test_advance_workflow_with_signoff_completes_current_and_promotes_next(monkeypatch, tmp_path) -> None:
     saved: dict[str, Any] = {}
     state = {
         "active_stage": "inputs_and_mode_selection",
@@ -170,6 +171,7 @@ def test_advance_workflow_with_signoff_completes_current_and_promotes_next(monke
         lambda _registry, _system: ["inputs_and_mode_selection", "feasibility"],
     )
     monkeypatch.setattr(programstart_serve, "save_workflow_state", lambda _registry, _system, value: saved.update(value))
+    monkeypatch.setattr(programstart_serve, "workflow_state_path", lambda _r, _s: tmp_path / "state.json")
 
     result = advance_workflow_with_signoff("programbuild", "approved", "2026-04-02", "Ready | now", False)
 
@@ -180,7 +182,7 @@ def test_advance_workflow_with_signoff_completes_current_and_promotes_next(monke
     assert saved["stages"]["inputs_and_mode_selection"]["signoff_history"][0]["notes"] == "Ready ¦ now"
 
 
-def test_signoff_history_capped_at_max(monkeypatch) -> None:
+def test_signoff_history_capped_at_max(monkeypatch, tmp_path) -> None:
     """signoff_history must not exceed MAX_SIGNOFF_HISTORY entries (T3)."""
     saved: dict[str, Any] = {}
     existing_history = [
@@ -208,6 +210,7 @@ def test_signoff_history_capped_at_max(monkeypatch) -> None:
     )
     monkeypatch.setattr(programstart_serve, "workflow_entry_key", lambda _system: "stages")
     monkeypatch.setattr(programstart_serve, "save_workflow_state", lambda _registry, _system, value: saved.update(value))
+    monkeypatch.setattr(programstart_serve, "workflow_state_path", lambda _r, _s: tmp_path / "state.json")
 
     result = save_workflow_signoff("programbuild", "approved", "2026-06-01", "cap test")
 

@@ -11,8 +11,8 @@ if str(ROOT) not in sys.path:
 
 from conftest import requires_userjourney
 
-from scripts.programstart_common import load_registry
-from scripts.programstart_step_guide import main, print_section, system_is_attached
+from scripts.programstart_common import load_registry, system_is_attached
+from scripts.programstart_step_guide import main, print_section
 
 
 def test_system_is_attached_programbuild() -> None:

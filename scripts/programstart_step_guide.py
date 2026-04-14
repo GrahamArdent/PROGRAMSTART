@@ -7,6 +7,7 @@ try:
     from .programstart_common import (
         load_registry,
         load_workflow_state,
+        system_is_attached,
         warn_direct_script_invocation,
         workflow_active_step,
         workspace_path,
@@ -15,6 +16,7 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
     from programstart_common import (
         load_registry,
         load_workflow_state,
+        system_is_attached,
         warn_direct_script_invocation,
         workflow_active_step,
         workspace_path,
@@ -27,11 +29,6 @@ def print_section(title: str, items: list[str]) -> None:
     print(f"{title}:")
     for item in items:
         print(f"- {item}")
-
-
-def system_is_attached(registry: dict, system_name: str) -> bool:
-    system = registry["systems"][system_name]
-    return workspace_path(system["root"]).exists()
 
 
 def main() -> int:

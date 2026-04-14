@@ -11,6 +11,8 @@ from fnmatch import fnmatch
 from pathlib import Path
 from typing import Any
 
+from filelock import FileLock
+
 # ---------------------------------------------------------------------------
 # Terminal colour helpers — respects NO_COLOR env var and non-TTY pipes
 # ---------------------------------------------------------------------------
@@ -201,7 +203,23 @@ def validate_state_against_schema(state: dict[str, Any], system: str) -> None:
 
 def save_workflow_state(registry: dict[str, Any], system: str, state: dict[str, Any]) -> None:
     validate_state_against_schema(state, system)
-    write_json(workflow_state_path(registry, system), state)
+    state_path = workflow_state_path(registry, system)
+    lock = FileLock(str(state_path) + ".lock", timeout=10)
+    with lock:
+        write_json(state_path, state)
+
+
+def system_is_optional_and_absent(registry: dict[str, Any], system_name: str) -> bool:
+    """Return True if the system is marked optional and its root directory is missing."""
+    system_cfg = registry["systems"][system_name]
+    return bool(system_cfg.get("optional")) and not workspace_path(system_cfg["root"]).exists()
+
+
+def system_is_attached(registry: dict[str, Any], system_name: str) -> bool:
+    """Return True if the system's root directory exists on disk."""
+    system_cfg = registry["systems"][system_name]
+    root = system_cfg.get("root", "")
+    return bool(root) and workspace_path(root).exists()
 
 
 def workflow_steps(registry: dict[str, Any], system: str) -> list[str]:

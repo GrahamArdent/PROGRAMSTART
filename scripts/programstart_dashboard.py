@@ -16,6 +16,7 @@ try:
         metadata_prefixes,
         metadata_value,
         parse_markdown_table,
+        system_is_attached,
         warn_direct_script_invocation,
         workflow_active_step,
         workspace_path,
@@ -31,15 +32,11 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
         metadata_prefixes,
         metadata_value,
         parse_markdown_table,
+        system_is_attached,
         warn_direct_script_invocation,
         workflow_active_step,
         workspace_path,
     )
-
-
-def system_is_attached(registry: dict[str, Any], system_name: str) -> bool:
-    system = cast(dict[str, Any], registry["systems"][system_name])
-    return workspace_path(cast(str, system["root"])).exists()
 
 
 def section_programbuild(registry: dict[str, Any]) -> list[str]:

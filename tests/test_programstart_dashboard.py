@@ -7,8 +7,8 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts.programstart_common import load_registry
-from scripts.programstart_dashboard import main, section_programbuild, system_is_attached
+from scripts.programstart_common import load_registry, system_is_attached
+from scripts.programstart_dashboard import main, section_programbuild
 
 
 def test_system_is_attached_programbuild() -> None:

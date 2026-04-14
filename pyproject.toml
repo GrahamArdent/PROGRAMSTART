@@ -9,6 +9,7 @@ description = "Workflow tooling, validation, and dashboard automation for PROGRA
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+  "filelock>=3.0",
   "pydantic>=2.0",
 ]
 keywords = ["planning", "workflow", "automation", "PROGRAMBUILD", "stage-gate"]

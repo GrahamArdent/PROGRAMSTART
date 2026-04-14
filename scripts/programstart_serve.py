@@ -27,6 +27,7 @@ import sys
 import threading
 import webbrowser
 from datetime import date
+from filelock import FileLock
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 from typing import Any, cast
@@ -46,9 +47,11 @@ try:
         load_workflow_state,
         parse_markdown_table,
         save_workflow_state,
+        system_is_attached,
         workflow_active_step,
         workflow_entry_key,
         workflow_state_config,
+        workflow_state_path,
         workflow_steps,
         workspace_path,
     )
@@ -61,7 +64,6 @@ try:
         extract_slice_sections,
         extract_startup_sections,
         extract_subagents,
-        system_is_attached,
     )
 except ImportError:  # pragma: no cover - standalone script execution fallback
     from programstart_command_registry import dashboard_allowed_commands  # type: ignore
@@ -74,7 +76,6 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
         extract_slice_sections,
         extract_startup_sections,
         extract_subagents,
-        system_is_attached,
     )
 
     from programstart_common import (  # type: ignore
@@ -84,9 +85,11 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
         load_workflow_state,
         parse_markdown_table,
         save_workflow_state,
+        system_is_attached,
         workflow_active_step,
         workflow_entry_key,
         workflow_state_config,
+        workflow_state_path,
         workflow_steps,
         workspace_path,
     )
@@ -185,7 +188,7 @@ def get_state_json() -> dict[str, Any]:
         result: dict[str, Any] = {}
         for system in ("programbuild", "userjourney"):
             system_cfg = registry.get("systems", {}).get(system, {})
-            attached = system_is_attached(system, registry)
+            attached = system_is_attached(registry, system)
             if system_cfg.get("optional") and not attached:
                 result[system] = {
                     "active": "not attached",
@@ -243,7 +246,7 @@ def get_state_json() -> dict[str, Any]:
         lite_text = workspace_path("PROGRAMBUILD/PROGRAMBUILD_LITE.md").read_text(encoding="utf-8")
         product_text = workspace_path("PROGRAMBUILD/PROGRAMBUILD_PRODUCT.md").read_text(encoding="utf-8")
         enterprise_text = workspace_path("PROGRAMBUILD/PROGRAMBUILD_ENTERPRISE.md").read_text(encoding="utf-8")
-        userjourney_attached = system_is_attached("userjourney", registry)
+        userjourney_attached = system_is_attached(registry, "userjourney")
         execution_slices_text = (
             workspace_path("USERJOURNEY/EXECUTION_SLICES.md").read_text(encoding="utf-8") if userjourney_attached else ""
         )
@@ -473,27 +476,30 @@ def save_workflow_signoff(system: str, decision: str, signoff_date: str, notes: 
         return {"output": "Error: unknown system.", "exit_code": 1}
 
     registry = load_registry()
-    state = load_workflow_state(registry, system)
-    active_step = workflow_active_step(registry, system, state)
-    entry_key = workflow_entry_key(system)
-    entries = cast(dict[str, Any], state[entry_key])
-    entry = cast(dict[str, Any], entries[active_step])
-    signoff_record = {
-        "decision": decision.strip(),
-        "date": signoff_date.strip(),
-        "notes": sanitize_markdown_table_cell(notes.strip()),
-        "saved_at": date.today().isoformat(),
-    }
-    entry["signoff"] = signoff_record
-    history = entry.setdefault("signoff_history", [])
-    history.append(signoff_record)
-    if len(history) > MAX_SIGNOFF_HISTORY:
-        print(
-            f"Warning: signoff_history for {system} {active_step} exceeded {MAX_SIGNOFF_HISTORY} entries; oldest trimmed",
-            file=sys.stderr,
-        )
-        entry["signoff_history"] = history[-MAX_SIGNOFF_HISTORY:]
-    save_workflow_state(registry, system, state)
+    state_path = workflow_state_path(registry, system)
+    lock = FileLock(str(state_path) + ".lock", timeout=10)
+    with lock:
+        state = load_workflow_state(registry, system)
+        active_step = workflow_active_step(registry, system, state)
+        entry_key = workflow_entry_key(system)
+        entries = cast(dict[str, Any], state[entry_key])
+        entry = cast(dict[str, Any], entries[active_step])
+        signoff_record = {
+            "decision": decision.strip(),
+            "date": signoff_date.strip(),
+            "notes": sanitize_markdown_table_cell(notes.strip()),
+            "saved_at": date.today().isoformat(),
+        }
+        entry["signoff"] = signoff_record
+        history = entry.setdefault("signoff_history", [])
+        history.append(signoff_record)
+        if len(history) > MAX_SIGNOFF_HISTORY:
+            print(
+                f"Warning: signoff_history for {system} {active_step} exceeded {MAX_SIGNOFF_HISTORY} entries; oldest trimmed",
+                file=sys.stderr,
+            )
+            entry["signoff_history"] = history[-MAX_SIGNOFF_HISTORY:]
+        save_workflow_state(registry, system, state)
     return {"output": f"Saved signoff metadata for {system} {active_step}", "exit_code": 0}
 
 
@@ -509,6 +515,8 @@ def advance_workflow_with_signoff(
         return {"output": "Error: unknown system.", "exit_code": 1}
 
     registry = load_registry()
+
+    # Dry-run path does not modify state — no lock needed.
     state = load_workflow_state(registry, system)
     active_step = workflow_active_step(registry, system, state)
     steps = workflow_steps(registry, system)
@@ -537,33 +545,43 @@ def advance_workflow_with_signoff(
             )
         return {"output": output, "exit_code": 0}
 
-    advance_record = {
-        "decision": decision_value,
-        "date": date_value,
-        "notes": notes_value,
-        "saved_at": date.today().isoformat(),
-    }
-    current_entry["status"] = "completed"
-    current_entry["signoff"] = advance_record
-    history = current_entry.setdefault("signoff_history", [])
-    history.append(advance_record)
-    if len(history) > MAX_SIGNOFF_HISTORY:
-        print(
-            f"Warning: signoff_history for {system} {active_step} exceeded {MAX_SIGNOFF_HISTORY} entries; oldest trimmed",
-            file=sys.stderr,
-        )
-        current_entry["signoff_history"] = history[-MAX_SIGNOFF_HISTORY:]
-    if current_index + 1 < len(steps):
-        next_step = steps[current_index + 1]
-        next_entry = cast(dict[str, Any], entries[next_step])
-        if str(next_entry.get("status", "planned")) == "planned":
-            next_entry["status"] = "in_progress"
-        state["active_stage" if system == "programbuild" else "active_phase"] = next_step
-        output = f"Advanced {system} from {active_step} to {next_step}"
-    else:
-        output = f"Completed final {system} step {active_step}"
+    # Mutating path — acquire lock for the full read-modify-write cycle.
+    state_path = workflow_state_path(registry, system)
+    lock = FileLock(str(state_path) + ".lock", timeout=10)
+    with lock:
+        # Re-read state under lock to avoid lost-update races.
+        state = load_workflow_state(registry, system)
+        active_step = workflow_active_step(registry, system, state)
+        entries = cast(dict[str, Any], state[entry_key])
+        current_entry = cast(dict[str, Any], entries[active_step])
 
-    save_workflow_state(registry, system, state)
+        advance_record = {
+            "decision": decision_value,
+            "date": date_value,
+            "notes": notes_value,
+            "saved_at": date.today().isoformat(),
+        }
+        current_entry["status"] = "completed"
+        current_entry["signoff"] = advance_record
+        history = current_entry.setdefault("signoff_history", [])
+        history.append(advance_record)
+        if len(history) > MAX_SIGNOFF_HISTORY:
+            print(
+                f"Warning: signoff_history for {system} {active_step} exceeded {MAX_SIGNOFF_HISTORY} entries; oldest trimmed",
+                file=sys.stderr,
+            )
+            current_entry["signoff_history"] = history[-MAX_SIGNOFF_HISTORY:]
+        if current_index + 1 < len(steps):
+            next_step = steps[current_index + 1]
+            next_entry = cast(dict[str, Any], entries[next_step])
+            if str(next_entry.get("status", "planned")) == "planned":
+                next_entry["status"] = "in_progress"
+            state["active_stage" if system == "programbuild" else "active_phase"] = next_step
+            output = f"Advanced {system} from {active_step} to {next_step}"
+        else:
+            output = f"Completed final {system} step {active_step}"
+
+        save_workflow_state(registry, system, state)
     return {"output": output, "exit_code": 0}
 
 

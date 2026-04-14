@@ -216,16 +216,3 @@ def extract_file_checklist_sections(text: str) -> list[dict[str, Any]]:
     if current is not None:
         sections.append(current)
     return sections
-
-
-def system_is_attached(system_name: str, registry: dict[str, Any]) -> bool:
-    """Check whether a workflow system's root directory exists on disk."""
-    # Import here to avoid circular imports at module level
-    try:
-        from .programstart_common import workspace_path
-    except ImportError:  # pragma: no cover - standalone script execution fallback
-        from programstart_common import workspace_path  # type: ignore
-
-    system_cfg = registry.get("systems", {}).get(system_name, {})
-    root = system_cfg.get("root", "")
-    return bool(root) and workspace_path(root).exists()

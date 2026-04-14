@@ -14,11 +14,11 @@ try:
         load_registry,
         load_workflow_state,
         status_color,
+        system_is_optional_and_absent,
         warn_direct_script_invocation,
         workflow_active_step,
         workflow_entry_key,
         workflow_steps,
-        workspace_path,
     )
 except ImportError:  # pragma: no cover - standalone script execution fallback
     from programstart_common import (
@@ -29,17 +29,12 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
         load_registry,
         load_workflow_state,
         status_color,
+        system_is_optional_and_absent,
         warn_direct_script_invocation,
         workflow_active_step,
         workflow_entry_key,
         workflow_steps,
-        workspace_path,
     )
-
-
-def system_is_optional_and_absent(registry: dict[str, Any], system: str) -> bool:
-    system_cfg = cast(dict[str, Any], registry["systems"][system])
-    return bool(system_cfg.get("optional")) and not workspace_path(cast(str, system_cfg["root"])).exists()
 
 
 def print_log(system: str, registry: dict[str, Any]) -> None:

@@ -21,6 +21,7 @@ try:
         load_workflow_state,
         save_workflow_state,
         status_color,
+        system_is_optional_and_absent,
         validate_state_against_schema,
         warn_direct_script_invocation,
         workflow_active_step,
@@ -45,6 +46,7 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
         load_workflow_state,
         save_workflow_state,
         status_color,
+        system_is_optional_and_absent,
         validate_state_against_schema,
         warn_direct_script_invocation,
         workflow_active_step,
@@ -53,11 +55,6 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
         workflow_steps,
         workspace_path,
     )
-
-
-def system_is_optional_and_absent(registry: dict[str, Any], system: str) -> bool:
-    system_cfg = cast(dict[str, Any], registry["systems"][system])
-    return bool(system_cfg.get("optional")) and not workspace_path(cast(str, system_cfg["root"])).exists()
 
 
 def print_state(system: str, state: dict[str, Any], active_step: str) -> None:

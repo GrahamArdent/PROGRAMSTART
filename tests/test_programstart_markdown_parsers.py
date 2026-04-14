@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import pytest
+
+from scripts.programstart_common import system_is_attached
 from scripts.programstart_markdown_parsers import (
     clean_md,
     extract_bullets,
@@ -10,7 +13,6 @@ from scripts.programstart_markdown_parsers import (
     extract_slice_sections,
     extract_startup_sections,
     extract_subagents,
-    system_is_attached,
 )
 
 
@@ -158,8 +160,9 @@ class TestExtractFileChecklistSections:
 class TestSystemIsAttached:
     def test_returns_false_for_missing_system(self) -> None:
         registry: dict[str, object] = {"systems": {}}
-        assert system_is_attached("nonexistent", registry) is False
+        with pytest.raises(KeyError):
+            system_is_attached(registry, "nonexistent")
 
     def test_returns_false_for_empty_root(self) -> None:
         registry = {"systems": {"test": {"root": ""}}}
-        assert system_is_attached("test", registry) is False
+        assert system_is_attached(registry, "test") is False

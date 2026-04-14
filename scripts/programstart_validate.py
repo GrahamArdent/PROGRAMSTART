@@ -17,6 +17,7 @@ try:
         metadata_prefixes,
         metadata_value,
         parse_markdown_table,
+        system_is_optional_and_absent,
         warn_direct_script_invocation,
         workflow_active_step,
         workflow_entry_key,
@@ -33,6 +34,7 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
         metadata_prefixes,
         metadata_value,
         parse_markdown_table,
+        system_is_optional_and_absent,
         warn_direct_script_invocation,
         workflow_active_step,
         workflow_entry_key,
@@ -40,11 +42,6 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
         workflow_steps,
         workspace_path,
     )
-
-
-def system_is_optional_and_absent(registry: dict, system_name: str) -> bool:
-    system = registry["systems"][system_name]
-    return bool(system.get("optional")) and not workspace_path(system["root"]).exists()
 
 
 def _check_decision_log_entries(stage_name: str) -> list[str]:

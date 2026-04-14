@@ -9,6 +9,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from scripts import programstart_bootstrap as bootstrap
+from scripts import programstart_common as common
 from scripts import programstart_validate as validate
 from scripts.programstart_common import load_json, write_json
 
@@ -368,6 +369,7 @@ def test_validate_authority_sync_skips_optional_absent_userjourney(tmp_path: Pat
         registry["systems"]["programbuild"]["output_files"],
     )
     monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(common, "workspace_path", lambda relative: tmp_path / relative)
 
     problems = validate.validate_authority_sync(registry)
 
@@ -651,6 +653,7 @@ def test_validate_metadata_reports_missing_prefixes(tmp_path: Path, monkeypatch)
 def test_validate_required_files_skips_optional_absent(tmp_path: Path, monkeypatch) -> None:
     registry = build_registry()
     monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(common, "workspace_path", lambda relative: tmp_path / relative)
     problems = validate.validate_required_files(registry, "userjourney")
     assert problems == []
 
@@ -814,6 +817,7 @@ def test_metadata_warnings_ignores_assigned_owner(tmp_path: Path, monkeypatch) -
 def test_validate_engineering_ready_optional_absent(tmp_path: Path, monkeypatch) -> None:
     registry = build_registry()
     monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(common, "workspace_path", lambda relative: tmp_path / relative)
     monkeypatch.setattr(validate, "validate_required_files", lambda _registry: ["missing base"])
     problems = validate.validate_engineering_ready(registry)
     assert problems == ["missing base"]
@@ -912,6 +916,7 @@ def test_validate_workflow_state_skips_optional_absent(tmp_path: Path, monkeypat
         }
     }
     monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(common, "workspace_path", lambda relative: tmp_path / relative)
     assert validate.validate_workflow_state(registry, "userjourney") == []
 
 

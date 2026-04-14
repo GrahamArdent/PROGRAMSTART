@@ -9,8 +9,8 @@ if str(ROOT) not in sys.path:
 
 from conftest import requires_userjourney
 
-from scripts.programstart_common import load_registry
-from scripts.programstart_drift_check import load_changed_files, main, system_is_optional_and_absent
+from scripts.programstart_common import load_registry, system_is_optional_and_absent
+from scripts.programstart_drift_check import load_changed_files, main
 
 
 def test_system_is_optional_and_absent_programbuild() -> None:

@@ -7,8 +7,8 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts.programstart_common import load_registry
-from scripts.programstart_log import main, print_log, system_is_optional_and_absent
+from scripts.programstart_common import load_registry, system_is_optional_and_absent
+from scripts.programstart_log import main, print_log
 
 
 def test_log_all_systems(capsys, monkeypatch) -> None:

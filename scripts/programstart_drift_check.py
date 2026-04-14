@@ -9,6 +9,7 @@ try:
         git_changed_files,
         load_registry,
         load_workflow_state,
+        system_is_optional_and_absent,
         warn_direct_script_invocation,
         workflow_active_step,
         workflow_state_config,
@@ -20,17 +21,13 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
         git_changed_files,
         load_registry,
         load_workflow_state,
+        system_is_optional_and_absent,
         warn_direct_script_invocation,
         workflow_active_step,
         workflow_state_config,
         workflow_steps,
         workspace_path,
     )
-
-
-def system_is_optional_and_absent(registry: dict, system: str) -> bool:
-    system_cfg = registry["systems"][system]
-    return bool(system_cfg.get("optional")) and not workspace_path(system_cfg["root"]).exists()
 
 
 def load_changed_files(args: argparse.Namespace) -> list[str]:

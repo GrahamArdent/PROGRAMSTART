@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts.programstart_common import create_default_workflow_state, load_registry, validate_state_against_schema
+from scripts.programstart_common import create_default_workflow_state, load_registry, system_is_optional_and_absent, validate_state_against_schema
 from scripts.programstart_workflow_state import (
     _check_challenge_gate_log,
     diff_states,
@@ -20,7 +20,6 @@ from scripts.programstart_workflow_state import (
     preflight_problems,
     print_state,
     snapshot_state,
-    system_is_optional_and_absent,
 )
 
 
@@ -33,7 +32,7 @@ def test_preflight_problems_returns_list() -> None:
 
 def test_system_is_optional_and_absent(monkeypatch) -> None:
     registry = load_registry()
-    monkeypatch.setattr("scripts.programstart_workflow_state.workspace_path", lambda _relative: ROOT / "_missing_optional")
+    monkeypatch.setattr("scripts.programstart_common.workspace_path", lambda _relative: ROOT / "_missing_optional")
     assert system_is_optional_and_absent(registry, "userjourney")
 
 
@@ -993,3 +992,58 @@ def test_validate_state_against_schema_invalid(tmp_path: Path, monkeypatch) -> N
     state = {"system": "programbuild"}  # missing required active_stage
     with pytest.raises(_jsonschema.ValidationError):
         validate_state_against_schema(state, "programbuild")
+
+
+def test_concurrent_save_workflow_state_no_lost_writes(tmp_path: Path, monkeypatch) -> None:
+    """Two threads writing state concurrently must not corrupt the file."""
+    import threading
+
+    from scripts.programstart_common import save_workflow_state
+
+    # Minimal registry pointing to a temp state file
+    state_file = tmp_path / "programbuild-state.json"
+    registry: dict[str, Any] = {
+        "systems": {
+            "programbuild": {"root": "PROGRAMBUILD", "stages": ["discovery"]},
+        },
+        "workflow_state": {
+            "programbuild": {
+                "state_file": "programbuild-state.json",
+                "active_key": "active_stage",
+                "initial_step": "discovery",
+                "entry_key": "stages",
+            }
+        },
+    }
+
+    # Bypass schema validation (no schema files in tmp_path)
+    monkeypatch.setattr("scripts.programstart_common.workspace_path", lambda rel: tmp_path / rel)
+
+    barrier = threading.Barrier(2, timeout=5)
+    errors: list[Exception] = []
+
+    def writer(stage_value: str) -> None:
+        try:
+            barrier.wait()
+            state: dict[str, Any] = {
+                "system": "programbuild",
+                "active_stage": stage_value,
+                "variant": "product",
+                "stages": {"discovery": {"status": "in_progress", "signoff": {"decision": "", "date": "", "notes": ""}}},
+            }
+            save_workflow_state(registry, "programbuild", state)
+        except Exception as exc:
+            errors.append(exc)
+
+    t1 = threading.Thread(target=writer, args=("discovery",))
+    t2 = threading.Thread(target=writer, args=("discovery",))
+    t1.start()
+    t2.start()
+    t1.join(timeout=15)
+    t2.join(timeout=15)
+
+    assert not errors, f"Thread errors: {errors}"
+    # File must be valid JSON after concurrent writes
+    data = json.loads(state_file.read_text(encoding="utf-8"))
+    assert data["system"] == "programbuild"
+    assert data["active_stage"] == "discovery"

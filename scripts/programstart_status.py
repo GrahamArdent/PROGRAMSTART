@@ -10,6 +10,7 @@ try:
         load_registry,
         load_workflow_state,
         parse_markdown_table,
+        system_is_attached,
         warn_direct_script_invocation,
         workflow_active_step,
         workflow_entry_key,
@@ -21,17 +22,12 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
         load_registry,
         load_workflow_state,
         parse_markdown_table,
+        system_is_attached,
         warn_direct_script_invocation,
         workflow_active_step,
         workflow_entry_key,
         workspace_path,
     )
-
-
-def system_is_attached(registry: dict, system_name: str) -> bool:
-    system = registry["systems"][system_name]
-    root = workspace_path(system["root"])
-    return root.exists()
 
 
 def summarize_programbuild(registry: dict) -> list[str]:

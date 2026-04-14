@@ -1,6 +1,6 @@
 # Enhancement Gameplan — Prioritized Implementation Plan
 
-Purpose: Prioritized implementation plan for all findings from `devlog/reports/enhanceopportunity.md` Parts 1–3 (88 defect findings + 25 strategic recommendations; 3 findings resolved on review, 1 new finding added). Phases are ordered by severity, dependency, and value impact. Each phase is scoped for a single execution session.
+Purpose: Prioritized implementation plan for all findings from `devlog/reports/enhanceopportunity.md` Parts 1–3 (89 findings: 80 Part 1 + 9 Part 3; 3 resolved on review, 2 new findings added; 25 strategic recommendations). Phases are ordered by severity, dependency, and value impact. Each phase is scoped for a single execution session.
 Status: **NOT STARTED**
 Authority: Non-canonical working plan derived from `devlog/reports/enhanceopportunity.md` (Parts 1–3), current test baseline (1068 tests, 0 failures, 93% coverage), and `config/process-registry.json`.
 Last updated: 2026-04-14
@@ -22,12 +22,14 @@ Baseline recorded 2026-04-14:
 
 | Source | Findings | Strategic Items |
 |---|---|---|
-| Part 1: Defect Audit (§1–§18) | 79 (3 HIGH, 21 MEDIUM, 51 LOW, 1 INFO) + 3 RESOLVED | — |
+| Part 1: Defect Audit (§1–§18) | 80 total (3 HIGH, 24 MEDIUM, 52 LOW, 1 INFO) — 3 RESOLVED, 77 active | — |
 | Part 2: Strategic Analysis (§19–§25) | 10 components scored, 10 considerations | 12 recommendations (3 tiers) |
-| Part 3: UI/UX Gap Analysis (§26–§30) | 9 gaps (3 HIGH, 3 MEDIUM, 3 LOW), 8 considerations | 13 recommendations (3 tiers) |
+| Part 3: UI/UX Gap Analysis (§26–§30) | 9 gaps (3 HIGH, 4 MEDIUM, 2 LOW), 8 considerations | 13 recommendations (3 tiers) |
 
-> **Review note (2026-04-14):** Part 1 counts updated: +1 HIGH (H-5 race condition added),
-> A-3/DEP-1/G-4 marked RESOLVED. Original count was 78 findings; now 79 active + 3 resolved.
+> **Review note (2026-04-14):** Part 1 counts corrected: 80 total findings
+> (3H + 24M + 52L + 1I), of which 3 are resolved (A-3, DEP-1, G-4) leaving
+> 77 active (3H + 22M + 51L + 1I). H-5 (HIGH) and SD-5 (MEDIUM) added during
+> review. Part 3 GAP-7 severity corrected from LOW to MEDIUM per body text.
 
 ---
 
@@ -42,7 +44,6 @@ Baseline recorded 2026-04-14:
 | **GAP-1** | Idea Intake has no UI/UX question | HIGH | §28 | B |
 | **GAP-2** | Kickoff Packet has no UI needs field | HIGH | §28 | B |
 | **GAP-3** | `CAPABILITY_ALIASES` missing UI-specific terms | HIGH | §28 | B |
-| **GAP-4** | `_need_to_domain` only maps `"javascript"` to frontend domain | HIGH | §28 | B |
 | **H-1** | Bare `except Exception` clauses suppress real errors (15 instances) | MEDIUM | §1 | C |
 | **H-5** | Race condition in workflow state writes — no file locking | HIGH | §1 (review) | A |
 | **SC-1** | `process-registry.schema.json` has `additionalProperties: true` on 8 critical objects | MEDIUM | §10 | D |
@@ -52,7 +53,7 @@ Baseline recorded 2026-04-14:
 | ID | Gap | Severity | Source | Phase |
 |---|---|---|---|---|
 | **R-1** | No sync test between commit type list (instruction file) and `check_commit_msg.py` | MEDIUM | §6 | E |
-| **R-2** | Prompt standard compliance not enforced in pre-commit | MEDIUM | §6 | E |
+| **R-2** | Prompt standard compliance not enforced in pre-commit | MEDIUM | §6 | K |
 | **KB-1** | Context index `INDEX_VERSION` hardcoded to stale date | MEDIUM | §15 | E |
 | **A-1** | No CI job for Python 3.13+ on Windows | MEDIUM | §4 | F |
 | **A-2** | No automatic CHANGELOG update enforcement | MEDIUM | §4 | F |
@@ -75,6 +76,7 @@ Baseline recorded 2026-04-14:
 
 | ID | Gap | Severity | Source | Phase |
 |---|---|---|---|---|
+| **GAP-4** | `shape_profile()` treats shapes as mutually exclusive — no composite shape | MEDIUM | §28 | I |
 | **GAP-5** | No `suggested_companion_surfaces` field on recommendation | MEDIUM | §28 | I |
 | **GAP-6** | Coverage warnings don't fire for absent domains | MEDIUM | §28 | I |
 | **GAP-7** | Prompt-eval scenarios don't test cross-shape UI | MEDIUM | §28 | I |
@@ -103,7 +105,7 @@ Baseline recorded 2026-04-14:
 | **A-4** | `nox -s ci` runs format_check redundantly | LOW | §4 | F |
 | **A-5** | No scheduled dependency audit workflow | LOW | §4 | F |
 | **A-6** | Coverage not uploaded as a PR check | LOW | §4 | F |
-| **F-1** | `programstart create` lacks `--list-shapes` | LOW→MEDIUM | §5 | K |
+| **F-1** | `programstart create` lacks `--list-shapes` | MEDIUM | §5 | K |
 | **F-2** | No `programstart doctor` command | MEDIUM | §5 | K |
 | **F-3** | No `programstart diff` command | LOW | §5 | N |
 | **F-4** | No `programstart state rollback` | LOW | §5 | N |
@@ -145,9 +147,14 @@ Baseline recorded 2026-04-14:
 | **SD-3** | `devlog/` exempted from rules, no retention policy | LOW | §18 | N |
 | **SD-4** | `BACKUPS/` has one snapshot, no automation | LOW | §18 | N |
 | **SD-5** | No file-placement automation — root hygiene is convention-only | MEDIUM | §18 (review) | K |
-| **R-6** | `copilot-instructions.md` rules not runtime-enforceable | INFO | §6 | — |
+| **R-6** | `copilot-instructions.md` rules not runtime-enforceable | INFO | §6 | N |
 
 ### Strategic Items (from Parts 2 + 3)
+
+> **Disambiguation note:** IDs S-1 through S-12 below are strategic
+> recommendations from §25. They are distinct from defect findings S-1 through
+> S-4 in the P3 table above (§8, Sync & Drift). Phase references in detailed
+> sections always specify context (e.g., "Strategic S-2" vs. defect "S-2").
 
 | ID | Recommendation | Source | Phase |
 |---|---|---|---|
@@ -168,6 +175,19 @@ Baseline recorded 2026-04-14:
 | **UI-12** | UI Surface Assessment in shape-requirements prompt | §30 | I |
 | **UI-13** | Companion-UI boundary in shape-architecture prompt | §30 | I |
 
+> **Tracking notes:**
+> - §30 Tier 1 recommendations (UI-1–4) are not tracked as separate rows; they
+>   map 1:1 to GAP-1–3 + Phase B step B-2 (§30 UI-4). See Phase B note.
+> - §30 Tier 2 (UI-5–9) appear in both the P2 gap registry and as strategic
+>   recommendations. The 89-finding total counts original audit findings only
+>   (80 Part 1 + 9 Part 3 GAPs). UI-5–9 are mapped into the gap registry as
+>   implementation targets derived from §30, adding 5 extra rows (94 registry
+>   entries total). They are also counted once in the 25-strategic-recommendation
+>   total (as §30 Tier 2).
+> - Phases C, E, F, G, H, and M describe changes in prose with pre-flight
+>   and edit instructions but do not include inline code examples. Code will be
+>   written during implementation using the pre-flight reads as context.
+
 ---
 
 ## 3. Phase Sequence
@@ -176,17 +196,17 @@ Baseline recorded 2026-04-14:
 |---|---|---|---|---|
 | Pre-work | — | Record baseline | 0 edits | Snapshot test + coverage + validate + drift |
 | A | D-1, D-2, H-5 | DRY consolidation + state write safety | 6–10 file edits + test consolidation | 2 functions in `programstart_common.py`, 8 script imports updated, file locking on state writes |
-| B | GAP-1–4, UI-1–4 | UI blind spot quick fixes | 4 file edits | Recommendation engine can surface UI needs |
+| B | GAP-1–3, §30 Tier 1 UI-1–4 | UI blind spot quick fixes | 4 file edits | Recommendation engine can surface UI needs |
 | C | H-1, H-4 | Exception handling + subprocess timeouts | 4–6 file edits | Specific exceptions, timeouts on subprocess calls |
 | D | SC-1, SC-2, SC-3, SC-4 | Schema hardening | 3–4 schema edits + 1 new schema | `additionalProperties: false` on 8 critical objects, KB schema generated |
 | E | R-1, R-3, R-4, R-5, KB-1 | Rule enforcement + stale version fixes | 4–6 file edits (tests + hooks) | Commit types synced, coverage source enforced, ADR index enforced |
 | F | A-1, A-2, A-4–6, DEP-2–3 | CI & dependency improvements | 3–4 workflow edits + 1 config edit | Windows 3.13 in CI, lockfile check (A-3/DEP-1 already resolved) |
 | G | T-1–4 | Test coverage push — critical modules | 4–5 test file edits | serve.py ≥88%, retrieval ≥88%, research_delta ≥85% (G-4 already resolved) |
 | H | G-1, G-2, W-1 | Post-advance verification + content quality gates | 3–4 script edits | Post-advance sanity check, content placeholder detection, cross-system warning |
-| I | GAP-5–9, UI-5–13 | Recommendation engine structural — companion surfaces | 5–8 file edits | `suggested_companion_surfaces` field, cross-shape advisory, hybrid eval scenarios |
+| I | GAP-4–9, P-2, UI-5–13 | Recommendation engine structural — companion surfaces | 5–8 file edits | Composite shapes, `suggested_companion_surfaces` field, cross-shape advisory, hybrid eval scenarios |
 | J | DOC-1–6, DX-2–4 | Documentation + DX polish | 8–10 file edits | CHANGELOG updated, CONTRIBUTING accurate, MkDocs nav complete, tasks grouped |
-| K | F-1, F-2, F-6, P-1, S-2, S-4, R-2 | CLI features + prompt versioning | 5–8 file edits | `--list-shapes`, `doctor`, `--json`, prompt `version:` field, pre-commit prompt lint |
-| L | UI-1, UI-2, S-1, S-3 | Dashboard extraction + prompt builder Mode A | Major refactor | Static dashboard files, CSP headers, prompt builder `~300 LoC` |
+| K | F-1, F-2, F-6, P-1, R-2, SD-5, Strategic S-2, Strategic S-4 | CLI features + prompt versioning + file hygiene | 5–8 file edits | `--list-shapes`, `doctor`, `--json`, prompt `version:` field, pre-commit prompt lint, file-hygiene check |
+| L | UI-1, UI-2, Strategic S-1, Strategic S-3 | Dashboard extraction + prompt builder Mode A | Major refactor | Static dashboard files, CSP headers, prompt builder `~300 LoC` |
 | M | D-3, DX-1 | Import boilerplate + script organization | Structural refactor | Reduced boilerplate, consider subpackage split |
 | N | All remaining LOW/INFO + Tier 3 strategic | Polish + future track | Multiple sessions | Defense-in-depth, rollback, structured logging, mutation testing, etc. |
 | Docs | — | Post-implementation verification + docs sync | Config + doc edits | Clean validate + drift, CHANGELOG entry |
@@ -292,9 +312,12 @@ uv run pytest --tb=no -q --no-header 2>&1 | Select-Object -Last 3
 
 ---
 
-### Phase B: UI Blind Spot Quick Fixes (GAP-1–4, UI-1–4)
+### Phase B: UI Blind Spot Quick Fixes (GAP-1–3, §30 Tier 1 UI-1–4)
 
 **Goal**: The recommendation engine can surface UI/frontend needs for non-web shapes. Users can express dashboard/admin-UI requirements through `--need`. Idea Intake and Kickoff Packet ask about UI needs.
+
+> **Note:** "UI-1–4" here refers to §30 Tier 1 quick-win recommendations, not
+> the Part 1 §14 defect finding UI-1 (Dashboard inline HTML), which is in Phase L.
 
 #### B-1: Add UI-specific capability aliases (GAP-3, UI-3)
 
@@ -308,7 +331,7 @@ uv run pytest --tb=no -q --no-header 2>&1 | Select-Object -Last 3
 ```
 Map all three to the `"javascript"` canonical alias group (since they all imply frontend needs).
 
-#### B-2: Add `_need_to_domain` entry for dashboard terms (GAP-4, UI-4)
+#### B-2: Add `_need_to_domain` entry for dashboard terms (§30 UI-4)
 
 **Pre-flight**: Read `scripts/programstart_recommend.py` `_need_to_domain` dict (around line 307).
 
@@ -395,7 +418,7 @@ Expected: all tests pass. Exception paths now log diagnostically.
 - `sync_rules` items
 - `system` definitions (programbuild, userjourney)
 - `metadata_rules` objects
-- `stage_order` / `phase_order` items
+- `stage_order` (PROGRAMBUILD) / `step_order` (USERJOURNEY) items
 
 Leave `additionalProperties: true` on `workflow_guidance` and top-level (for extensibility during development).
 
@@ -409,7 +432,7 @@ Ensure the live `process-registry.json` still passes the tightened schema. If it
 
 #### D-2: Add stage/phase name validation to state schemas (SC-2)
 
-**Edit**: In `schemas/programbuild-state.schema.json` and `schemas/userjourney-state.schema.json`, add `enum` constraints for valid stage/phase names. Derive the enum values from `process-registry.json` `stage_order` / `phase_order`.
+**Edit**: In `schemas/programbuild-state.schema.json` and `schemas/userjourney-state.schema.json`, add `enum` constraints for valid stage/phase names. Derive the enum values from `process-registry.json` `stage_order` (PROGRAMBUILD) / `step_order` (USERJOURNEY).
 
 Alternatively, add a _programmatic_ test in `tests/test_schema_conformance.py` that loads the state schema, loads the registry, and asserts the state file keys are a subset of registry stage/phase names.
 
@@ -477,7 +500,7 @@ uv run pytest --tb=no -q --no-header 2>&1 | Select-Object -Last 3
 
 ---
 
-### Phase F: CI & Dependency Improvements (A-1–6, DEP-1–3)
+### Phase F: CI & Dependency Improvements (A-1, A-2, A-4–6, DEP-2–3; A-3/DEP-1 resolved)
 
 **Goal**: Expand CI matrix, add missing Dependabot ecosystems, add lockfile integrity check.
 
@@ -529,7 +552,7 @@ uv run nox -s ci 2>&1 | Select-Object -Last 20
 
 ---
 
-### Phase G: Test Coverage Push — Critical Modules (T-1–4, G-4)
+### Phase G: Test Coverage Push — Critical Modules (T-1–4; G-4 resolved)
 
 **Goal**: Raise coverage on the three lowest-covered production modules. Add READONLY_MODE tests.
 
@@ -611,15 +634,15 @@ uv run pytest tests/test_programstart_validate.py tests/test_programstart_workfl
 
 ---
 
-### Phase I: Recommendation Engine Structural — Companion Surfaces (GAP-5–9, UI-5–13)
+### Phase I: Recommendation Engine Structural — Companion Surfaces (GAP-4–9, P-2, UI-5–13)
 
 **Goal**: The recommendation engine understands that non-web shapes can have companion UI surfaces. Eval scenarios cover hybrid shapes. Starter scaffold includes companion-UI option.
 
-#### I-1: Add `suggested_companion_surfaces` to `ProjectRecommendation` (GAP-5, UI-5)
+#### I-1: Add `suggested_companion_surfaces` and composite shape support (GAP-4, GAP-5, UI-5)
 
-**Pre-flight**: Read `scripts/programstart_recommend.py` `ProjectRecommendation` dataclass.
+**Pre-flight**: Read `scripts/programstart_recommend.py` `ProjectRecommendation` dataclass and `shape_profile()` function.
 
-**Edit**: Add field:
+**Edit**: Add field to `ProjectRecommendation` and extend `shape_profile()` to accept an optional `companion_surfaces` parameter (addressing GAP-4's mutually-exclusive shapes):
 ```python
 suggested_companion_surfaces: list[str] = field(default_factory=list)
 ```
@@ -662,7 +685,7 @@ def ui_tier(product_shape: str, needs: set[str]) -> str:
     return "none"
 ```
 
-#### I-4: Add hybrid prompt-eval scenarios (GAP-7, UI-8)
+#### I-4: Add hybrid prompt-eval scenarios (GAP-7, P-2, UI-8)
 
 **Edit**: `config/prompt-eval-scenarios.json` — add 3 scenarios:
 1. `api_service_with_admin_dashboard` — shape: "api service", needs: ["rag", "agents", "dashboard"]
@@ -777,7 +800,7 @@ uv run pytest --tb=no -q --no-header 2>&1 | Select-Object -Last 3
 
 ---
 
-### Phase K: CLI Features + Prompt Versioning + File Hygiene (F-1, F-2, F-6, P-1, S-2, S-4, R-2, SD-5)
+### Phase K: CLI Features + Prompt Versioning + File Hygiene (F-1, F-2, F-6, P-1, R-2, SD-5, Strategic S-2, Strategic S-4)
 
 **Goal**: Add `--list-shapes`, `doctor` command, `--json` output, prompt version field, pre-commit prompt lint, file-placement validation.
 
@@ -801,11 +824,11 @@ Register in CLI argument parser and add a test.
 
 Register in `pyproject.toml` as `doctor` subcommand. Add to coverage source. Add tests.
 
-#### K-3: Add `--json` output to core commands (F-6, S-4)
+#### K-3: Add `--json` output to core commands (F-6, Strategic S-4)
 
 **Edit**: Add `--json` flag to `programstart status`, `programstart guide`, and `programstart drift`. When set, output structured JSON instead of formatted text.
 
-#### K-4: Add `version:` field to prompt frontmatter (P-1, S-2)
+#### K-4: Add `version:` field to prompt frontmatter (P-1, Strategic S-2)
 
 **Edit**:
 1. Update `.github/prompts/PROMPT_STANDARD.md` to include `version:` as optional field in the YAML frontmatter spec.
@@ -870,13 +893,13 @@ uv run pytest tests/test_prompt_compliance.py -q --tb=no
 
 ---
 
-### Phase L: Dashboard Extraction + Prompt Builder Mode A (UI-1, UI-2, S-1, S-3)
+### Phase L: Dashboard Extraction + Prompt Builder Mode A (UI-1, UI-2, Strategic S-1, Strategic S-3)
 
 **Goal**: Extract inline HTML/CSS/JS from `programstart_serve.py` to static files. Add CSP headers. Build prompt builder Mode A.
 
 **Note**: This is the largest phase and may span multiple sessions. Split into sub-phases if needed.
 
-#### L-1: Extract dashboard static files (UI-1, S-3)
+#### L-1: Extract dashboard static files (UI-1, Strategic S-3)
 
 **Pre-flight**: Read `scripts/programstart_serve.py` to identify all inline HTML/CSS/JS blocks.
 
@@ -896,7 +919,7 @@ self.send_header("Content-Security-Policy", "default-src 'self'; script-src 'sel
 ```
 (`'unsafe-inline'` for styles only; scripts should be external files after extraction.)
 
-#### L-3: Build prompt builder Mode A (S-1)
+#### L-3: Build prompt builder Mode A (Strategic S-1)
 
 **Edit**: Create `scripts/programstart_prompt_build.py` (~300-400 LoC):
 
@@ -985,9 +1008,13 @@ This phase collects all remaining LOW, INFO, and Tier 3 strategic items. They ca
 - **F-5**: Unify `programstart clean` targets with `nox -s clean`
 
 #### Sync Model
+- **S-1**: Detect same-commit multi-file content drift (currently only cross-commit)
 - **S-2**: Document staged-files behavior + add `--staged-only` flag to drift
 - **S-3**: Add sync rule for `pyproject.toml` ↔ `requirements.txt`
 - **S-4**: Narrow `knowledge_base_docs_alignment` sync rule to non-metadata changes
+
+#### Rule Enforcement
+- **R-6**: `copilot-instructions.md` rules are not runtime-enforceable (INFO — document as accepted risk, not actionable)
 
 #### Prompt System
 - **P-3**: Add kill-criteria/challenge-gate sections to USERJOURNEY prompts
@@ -1021,6 +1048,7 @@ This phase collects all remaining LOW, INFO, and Tier 3 strategic items. They ca
 
 #### Strategic Tier 3 (evaluate when Tier 1-2 done)
 - **S-5**: Prompt builder Mode B (arbitrary repos)
+- **S-6**: Registry Pydantic models for typed access (see also SD-2)
 - **S-7**: Prompt update channel (`programstart sync --from-template`)
 - **S-8**: "Prompt-only" bootstrap mode
 - **S-9**: VS Code webview extension (replace HTTP dashboard)

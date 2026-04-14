@@ -198,7 +198,7 @@ harder to find where a specific behavior is tested.
 
 ## 4. Automation & CI Opportunities
 
-### A-1. No CI job for Python 3.14 on Windows (MEDIUM)
+### A-1. No CI job for Python 3.13/3.14 on Windows (MEDIUM)
 
 `process-guardrails.yml` runs on `[ubuntu-latest, windows-latest]` but only `python-version: ['3.12']`.
 `full-ci-gate.yml` has a `compatibility-smoke` job for `['3.13', '3.14']` but only on `ubuntu-latest`.
@@ -523,7 +523,7 @@ for stage/phase entries. A state file could contain a misspelled stage name
 (`inputs_and_mode_selecion`) and pass schema validation.
 
 **Recommendation:** Add an `enum` of valid stage/phase names, or add a programmatic
-validator that checks state keys against `stage_order` / `phase_order` in the registry.
+validator that checks state keys against `stage_order` / `step_order` in the registry.
 
 ### SC-3. No schema for `knowledge-base.json` (LOW)
 
@@ -850,6 +850,7 @@ only govern cross-reference validation, not file placement.
 
 > **Review note (2026-04-14):** Table updated from original audit. Changes:
 > - H-5 (race condition) added as HIGH — new finding from critical review
+> - SD-5 (file-placement automation) added as MEDIUM — new finding from critical review
 > - A-3 marked RESOLVED (dependabot github-actions already exists)
 > - G-4 marked RESOLVED (READONLY_MODE test already exists)
 > - DEP-1 marked RESOLVED as DUPLICATE of A-3
@@ -857,7 +858,7 @@ only govern cross-reference validation, not file placement.
 > - D-3 description corrected (15–28 lines, not uniform ~15)
 > - R-1 title corrected (sync test missing, not types mismatched)
 >
-> Net change: +1 HIGH (H-5), −2 MEDIUM (A-3, DEP-1 resolved), −1 LOW (G-4 resolved)
+> Net change: +1 HIGH (H-5), +1 MEDIUM (SD-5), −2 MEDIUM (A-3, DEP-1 resolved), −1 LOW (G-4 resolved)
 
 ---
 ---
@@ -1022,7 +1023,7 @@ operator from ignoring agent findings.
 | Agent behavior constraints | `.github/agents/*.agent.md` | VS Code / Copilot agent mode |
 | Workflow state | `PROGRAMBUILD_STATE.json` / `USERJOURNEY_STATE.json` | CLI, dashboard, advance, validate |
 | Metadata format | `process-registry.json` `metadata_rules` | validate, parsers |
-| Command surface | `process-registry.json` `dashboard_allowed_commands` | dashboard server |
+| Command surface | `programstart_command_registry.py` allowlist | dashboard server |
 | Bootstrap file list | `process-registry.json` `bootstrap_assets` | bootstrap, validate |
 | CI quality gates | `.github/workflows/` + `noxfile.py` | GitHub Actions, local nox |
 
@@ -1193,7 +1194,7 @@ Steps:
 For **other repos** (not PROGRAMSTART), the builder would need:
 
 1. **The target repo has a `process-registry.json`** (or equivalent config) with:
-   - `stage_order` or `phase_order` defining workflow steps
+   - `stage_order` or `step_order` defining workflow steps
    - `sync_rules` defining file dependencies
    - `workflow_guidance` mapping stages to files
 
@@ -1779,13 +1780,13 @@ No such cross-shape UI rules exist today.
 
 | Section | Findings | Strategic Items |
 |---|---|---|
-| Part 1: Defect Audit (§1-§18) | 78 findings (2H, 23M, 52L, 1I) | — |
+| Part 1: Defect Audit (§1-§18) | 80 findings (3H, 24M, 52L, 1I) — 3 resolved, 77 active | — |
 | Part 2: Standardization Analysis (§19-§20) | 8 layers documented | — |
 | Part 2: UI Necessity (§21) | 1 assessment | 3 options evaluated |
 | Part 2: Prompt Builder (§22) | 1 feasibility study | 2 modes defined |
 | Part 2: Cross-Repo Portability (§23) | 10 components scored | 4 enablers identified |
 | Part 2: Additional Factors (§24) | 10 considerations | — |
 | Part 2: Strategic Recommendations (§25) | — | 12 items in 3 tiers |
-| Part 3: UI/UX Recommendation Gaps (§26-§28) | 9 gaps (3H, 3M, 3L) | — |
+| Part 3: UI/UX Recommendation Gaps (§26-§28) | 9 gaps (3H, 4M, 2L) | — |
 | Part 3: Additional Factors (§29) | 8 considerations | — |
 | Part 3: Fix Recommendations (§30) | — | 13 items in 3 tiers |

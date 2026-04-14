@@ -11,8 +11,24 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts.programstart_common import load_registry
-from scripts.programstart_workflow_state import _check_challenge_gate_log, main, print_state, system_is_optional_and_absent
+from scripts.programstart_common import create_default_workflow_state, load_registry
+from scripts.programstart_workflow_state import (
+    _check_challenge_gate_log,
+    diff_states,
+    list_snapshots,
+    main,
+    preflight_problems,
+    print_state,
+    snapshot_state,
+    system_is_optional_and_absent,
+)
+
+
+def test_preflight_problems_returns_list() -> None:
+    """Verify preflight_problems returns a list, not None (regression test for B0)."""
+    registry = load_registry()
+    result = preflight_problems(registry, "programbuild")
+    assert isinstance(result, list)
 
 
 def test_system_is_optional_and_absent(monkeypatch) -> None:
@@ -142,7 +158,7 @@ def test_main_advance_writes_next_step(capsys, monkeypatch) -> None:
         "scripts.programstart_workflow_state.workflow_steps",
         lambda _registry, _system: ["inputs_and_mode_selection", "feasibility"],
     )
-    monkeypatch.setattr("scripts.programstart_workflow_state.preflight_problems", lambda _registry, _system: [])
+    monkeypatch.setattr("scripts.programstart_workflow_state.preflight_problems", lambda _r, _s, _a=None: [])
     monkeypatch.setattr("scripts.programstart_workflow_state._check_challenge_gate_log", lambda _step: None)
     monkeypatch.setattr(
         "scripts.programstart_workflow_state.save_workflow_state", lambda _registry, _system, value: saved.update(value)
@@ -173,7 +189,7 @@ def test_main_advance_keeps_existing_next_step_status(capsys, monkeypatch) -> No
         "scripts.programstart_workflow_state.workflow_steps",
         lambda _registry, _system: ["inputs_and_mode_selection", "feasibility"],
     )
-    monkeypatch.setattr("scripts.programstart_workflow_state.preflight_problems", lambda _registry, _system: [])
+    monkeypatch.setattr("scripts.programstart_workflow_state.preflight_problems", lambda _r, _s, _a=None: [])
     monkeypatch.setattr("scripts.programstart_workflow_state._check_challenge_gate_log", lambda _step: None)
     monkeypatch.setattr(
         "scripts.programstart_workflow_state.save_workflow_state", lambda _registry, _system, value: saved.update(value)
@@ -431,3 +447,508 @@ def test_cross_stage_advisory_suppressed_by_flag(capsys, monkeypatch) -> None:
     out = capsys.readouterr().out
     assert result == 0
     assert "Cross-Stage Validation" not in out
+
+
+# ---------------------------------------------------------------------------
+# Phase F — Dispatch Chain Integration Tests
+# ---------------------------------------------------------------------------
+
+
+def test_preflight_problems_dispatches_stage_gate(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Prove preflight_problems() routes through the dispatch map to a real validator.
+
+    Calls the real preflight_problems() with active_step="inputs_and_mode_selection"
+    and blank template files. Asserts that intake-complete validation errors appear
+    in the returned problem list — proving the full chain:
+    preflight_problems → stage_checks dict → run_stage_gate_check → validate_intake_complete.
+
+    Monkeypatch strategy:
+    - workspace_path patched in validate + workflow_state modules → doc reads hit tmp_path
+    - validate_authority_sync patched to [] → prevents FileNotFoundError on
+      PROGRAMBUILD_CANONICAL.md/FILE_INDEX.md (not part of dispatch chain under test)
+    - load_registry, preflight_problems, run_stage_gate_check, validate_intake_complete
+      are ALL unpatched — the full dispatch chain executes for real.
+    """
+    pb = tmp_path / "PROGRAMBUILD"
+    pb.mkdir()
+    # Write blank-template kickoff and intake files so the validator finds them
+    # but reports empty-field errors.
+    (pb / "PROGRAMBUILD_KICKOFF_PACKET.md").write_text(
+        "# Kickoff Packet\n\n```text\nPROJECT_NAME:\nONE_LINE_DESCRIPTION:\n"
+        "PRIMARY_USER:\nCORE_PROBLEM:\nSUCCESS_METRIC:\n"
+        "PRODUCT_SHAPE: [web app | mobile app | CLI tool]\n```\n",
+        encoding="utf-8",
+    )
+    (pb / "PROGRAMBUILD_IDEA_INTAKE.md").write_text(
+        "# Idea Intake\n\nPROBLEM_RAW:\nWHO_HAS_THIS_PROBLEM:\n"
+        "CURRENT_SOLUTION:\nSUCCESS_OUTCOME:\nCHEAPEST_VALIDATION:\n"
+        "NOT_BUILDING_1:\nNOT_BUILDING_2:\nNOT_BUILDING_3:\n"
+        "KILL_SIGNAL_1:\nKILL_SIGNAL_2:\nKILL_SIGNAL_3:\n",
+        encoding="utf-8",
+    )
+    # Redirect doc lookups to tmp_path.
+    monkeypatch.setattr(
+        "scripts.programstart_validate.workspace_path",
+        lambda rel: tmp_path / rel,
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workspace_path",
+        lambda rel: tmp_path / rel,
+    )
+    # Prevent validate_authority_sync crash — it calls .read_text() on
+    # PROGRAMBUILD_CANONICAL.md via monkeypatched workspace_path, which
+    # doesn't exist in tmp_path.  Authority sync is not part of the
+    # dispatch chain under test.
+    monkeypatch.setattr(
+        "scripts.programstart_validate.validate_authority_sync",
+        lambda _registry: [],
+    )
+
+    registry = load_registry()
+    problems = preflight_problems(registry, "programbuild", active_step="inputs_and_mode_selection")
+
+    # Must be a list (B0 regression)
+    assert isinstance(problems, list)
+    # Assert on field-level text that can ONLY come from validate_intake_complete
+    # (not from validate_required_files "Missing required file" errors).
+    intake_field_errors = [p for p in problems if "PROJECT_NAME is empty" in p or "PROBLEM_RAW is empty" in p]
+    assert len(intake_field_errors) >= 1, f"Expected intake-complete field errors from dispatch chain, got: {problems}"
+
+
+def test_preflight_problems_skips_gate_for_userjourney(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Stage-gate checks must NOT fire when system is userjourney.
+
+    The dispatch map is programbuild-only. Passing system="userjourney" with
+    any active_step must not produce stage-gate validation errors.
+
+    Note: active_step="inputs_and_mode_selection" is a programbuild step name,
+    but any truthy string suffices — the guard is ``if system == "programbuild"
+    and active_step:``, so the step name is irrelevant for userjourney.
+
+    Upstream validators: All skip because userjourney is optional (registry)
+    and USERJOURNEY/ doesn't exist in tmp_path, so system_is_optional_and_absent
+    returns True (via monkeypatched scripts.programstart_validate.workspace_path).
+    """
+    monkeypatch.setattr(
+        "scripts.programstart_validate.workspace_path",
+        lambda rel: tmp_path / rel,
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workspace_path",
+        lambda rel: tmp_path / rel,
+    )
+
+    registry = load_registry()
+    problems = preflight_problems(registry, "userjourney", active_step="inputs_and_mode_selection")
+
+    assert isinstance(problems, list)
+    # No intake field errors — those are programbuild-only stage-gate checks.
+    gate_errors = [
+        p for p in problems if "PROJECT_NAME" in p or "PROBLEM_RAW" in p or "KICKOFF_PACKET" in p or "IDEA_INTAKE" in p
+    ]
+    assert gate_errors == [], f"Stage-gate errors leaked into userjourney preflight: {gate_errors}"
+
+
+def test_advance_blocked_by_real_stage_gate(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """Full CLI-level e2e: advance with incomplete Stage 0 docs → blocked.
+
+    Does NOT monkeypatch preflight_problems, run_stage_gate_check, or
+    validate_intake_complete.  The full dispatch chain executes for real.
+
+    Monkeypatch strategy:
+    - workspace_path in validate + workflow_state → doc reads hit tmp_path
+    - validate_authority_sync → [] (prevents FileNotFoundError, not under test)
+    - load_workflow_state → returns create_default_workflow_state() output
+      (load_workflow_state uses programstart_common.workspace_path which is NOT
+      monkeypatched — it would read the real state file, not tmp_path)
+    - workflow_active_step, workflow_steps → controlled values matching state
+    - save_workflow_state → no-op safety net (advance should fail before save)
+    - _check_challenge_gate_log → None (not reached, but safety net)
+    """
+    pb = tmp_path / "PROGRAMBUILD"
+    pb.mkdir()
+
+    # Write blank-template docs
+    (pb / "PROGRAMBUILD_KICKOFF_PACKET.md").write_text(
+        "# Kickoff Packet\n\n```text\nPROJECT_NAME:\nONE_LINE_DESCRIPTION:\n"
+        "PRIMARY_USER:\nCORE_PROBLEM:\nSUCCESS_METRIC:\n"
+        "PRODUCT_SHAPE: [web app | mobile app | CLI tool]\n```\n",
+        encoding="utf-8",
+    )
+    (pb / "PROGRAMBUILD_IDEA_INTAKE.md").write_text(
+        "# Idea Intake\n\nPROBLEM_RAW:\nWHO_HAS_THIS_PROBLEM:\n"
+        "CURRENT_SOLUTION:\nSUCCESS_OUTCOME:\nCHEAPEST_VALIDATION:\n"
+        "NOT_BUILDING_1:\nNOT_BUILDING_2:\nNOT_BUILDING_3:\n"
+        "KILL_SIGNAL_1:\nKILL_SIGNAL_2:\nKILL_SIGNAL_3:\n",
+        encoding="utf-8",
+    )
+
+    # Use create_default_workflow_state for correct structure (all 11 stages,
+    # signoff sub-dicts, variant, active_stage key — derived from registry).
+    registry = load_registry()
+    state = create_default_workflow_state(registry, "programbuild")
+    # state already has: active_stage="inputs_and_mode_selection",
+    # stages.inputs_and_mode_selection.status="in_progress"
+
+    monkeypatch.setattr(
+        "scripts.programstart_validate.workspace_path",
+        lambda rel: tmp_path / rel,
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workspace_path",
+        lambda rel: tmp_path / rel,
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_validate.validate_authority_sync",
+        lambda _registry: [],
+    )
+    # State management — load_workflow_state uses programstart_common.workspace_path
+    # (not monkeypatched), so it reads the REAL state file.  Monkeypatch to
+    # return our controlled state instead.
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.load_workflow_state",
+        lambda _registry, _system: state,
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workflow_active_step",
+        lambda _registry, _system, _state=None: "inputs_and_mode_selection",
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workflow_steps",
+        lambda _registry, _system: list(registry["workflow_state"]["programbuild"]["step_order"]),
+    )
+    # Safety nets — not expected to be reached (preflight should fail),
+    # but existing advance tests include these as defensive practice.
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.save_workflow_state",
+        lambda _registry, _system, _value: None,
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state._check_challenge_gate_log",
+        lambda _step: None,
+    )
+    monkeypatch.setattr(
+        "sys.argv",
+        ["programstart_workflow_state.py", "advance", "--system", "programbuild"],
+    )
+
+    # preflight_problems returns problems → advance returns 1 (not SystemExit).
+    # parser.error() raises SystemExit, but preflight failure does ``return 1``.
+    result = main()
+    assert result == 1
+
+    captured = capsys.readouterr()
+    assert "Advance preflight failed" in captured.out
+    # Verify real validator field errors appear (not generic "preflight failed").
+    # These strings can ONLY come from validate_intake_complete via the
+    # dispatch chain — proving preflight_problems → run_stage_gate_check →
+    # validate_intake_complete fired for real.
+    assert "PROJECT_NAME is empty" in captured.out or "PROBLEM_RAW is empty" in captured.out, (
+        f"Expected intake-complete field errors in advance output, got:\n{captured.out}"
+    )
+
+
+# ---------------------------------------------------------------------------
+# snapshot_state, diff_states, list_snapshots unit tests
+# ---------------------------------------------------------------------------
+
+
+def test_snapshot_state_creates_file(tmp_path: Path, monkeypatch) -> None:
+    registry = load_registry()
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.generated_outputs_root",
+        lambda _reg: tmp_path,
+    )
+    snap_path = snapshot_state(registry, label="test")
+    assert snap_path.exists()
+    data = json.loads(snap_path.read_text(encoding="utf-8"))
+    assert data["label"] == "test"
+    assert "systems" in data
+
+
+def test_diff_states_detects_changes() -> None:
+    old = {
+        "systems": {
+            "programbuild": {
+                "active_stage": "feasibility",
+                "stages": {
+                    "inputs_and_mode_selection": {"status": "completed", "signoff": {"decision": "approved"}},
+                    "feasibility": {"status": "in_progress", "signoff": {"decision": ""}},
+                },
+            },
+        },
+    }
+    new = {
+        "systems": {
+            "programbuild": {
+                "active_stage": "research",
+                "stages": {
+                    "inputs_and_mode_selection": {"status": "completed", "signoff": {"decision": "approved"}},
+                    "feasibility": {"status": "completed", "signoff": {"decision": "approved"}},
+                    "research": {"status": "in_progress", "signoff": {"decision": ""}},
+                },
+            },
+        },
+    }
+    diffs = diff_states(old, new)
+    assert any("feasibility" in d and "completed" in d for d in diffs)
+    assert any("active step" in d for d in diffs)
+
+
+def test_diff_states_no_changes() -> None:
+    state = {"systems": {"programbuild": {"active_stage": "x", "stages": {"x": {"status": "in_progress", "signoff": {}}}}}}
+    diffs = diff_states(state, state)
+    assert diffs == []
+
+
+def test_list_snapshots_empty(tmp_path: Path, monkeypatch) -> None:
+    registry = load_registry()
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.generated_outputs_root",
+        lambda _reg: tmp_path,
+    )
+    assert list_snapshots(registry) == []
+
+
+def test_list_snapshots_returns_sorted(tmp_path: Path, monkeypatch) -> None:
+    registry = load_registry()
+    snap_dir = tmp_path / "state-snapshots"
+    snap_dir.mkdir()
+    (snap_dir / "state_20260101T000000Z.json").write_text("{}", encoding="utf-8")
+    (snap_dir / "state_20260102T000000Z.json").write_text("{}", encoding="utf-8")
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.generated_outputs_root",
+        lambda _reg: tmp_path,
+    )
+    snaps = list_snapshots(registry)
+    assert len(snaps) == 2
+    assert snaps[0].name < snaps[1].name
+
+
+# ---------------------------------------------------------------------------
+# CLI subcommand tests: snapshot, snapshots, diff
+# ---------------------------------------------------------------------------
+
+
+def test_main_snapshot_creates_file(tmp_path: Path, capsys, monkeypatch) -> None:
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.generated_outputs_root",
+        lambda _reg: tmp_path,
+    )
+    monkeypatch.setattr("sys.argv", ["ws", "snapshot", "--label", "mysnap"])
+    result = main()
+    out = capsys.readouterr().out
+    assert result == 0
+    assert "Snapshot saved" in out
+
+
+def test_main_snapshots_empty(tmp_path: Path, capsys, monkeypatch) -> None:
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.generated_outputs_root",
+        lambda _reg: tmp_path,
+    )
+    monkeypatch.setattr("sys.argv", ["ws", "snapshots"])
+    result = main()
+    out = capsys.readouterr().out
+    assert result == 0
+    assert "No snapshots found" in out
+
+
+def test_main_snapshots_lists_files(tmp_path: Path, capsys, monkeypatch) -> None:
+    snap_dir = tmp_path / "state-snapshots"
+    snap_dir.mkdir()
+    (snap_dir / "state_20260101T000000Z.json").write_text("{}", encoding="utf-8")
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.generated_outputs_root",
+        lambda _reg: tmp_path,
+    )
+    monkeypatch.setattr("sys.argv", ["ws", "snapshots"])
+    result = main()
+    out = capsys.readouterr().out
+    assert result == 0
+    assert "state_20260101T000000Z.json" in out
+
+
+def test_main_diff_no_snapshots(tmp_path: Path, capsys, monkeypatch) -> None:
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.generated_outputs_root",
+        lambda _reg: tmp_path,
+    )
+    monkeypatch.setattr("sys.argv", ["ws", "diff"])
+    result = main()
+    out = capsys.readouterr().out
+    assert result == 1
+    assert "No snapshots to compare" in out
+
+
+def test_main_diff_with_explicit_paths(tmp_path: Path, capsys, monkeypatch) -> None:
+    old_snap = tmp_path / "old.json"
+    new_snap = tmp_path / "new.json"
+    old_snap.write_text(json.dumps({"systems": {"programbuild": {"active_stage": "a", "stages": {"a": {"status": "in_progress", "signoff": {}}}}}}), encoding="utf-8")
+    new_snap.write_text(json.dumps({"systems": {"programbuild": {"active_stage": "b", "stages": {"a": {"status": "completed", "signoff": {"decision": "approved"}}, "b": {"status": "in_progress", "signoff": {}}}}}}), encoding="utf-8")
+    monkeypatch.setattr("sys.argv", ["ws", "diff", "--old", str(old_snap), "--new", str(new_snap)])
+    result = main()
+    out = capsys.readouterr().out
+    assert result == 0
+    assert "active step" in out
+
+
+def test_main_diff_no_changes(tmp_path: Path, capsys, monkeypatch) -> None:
+    snap = tmp_path / "snap.json"
+    snap.write_text(json.dumps({"systems": {"programbuild": {"active_stage": "a", "stages": {"a": {"status": "in_progress", "signoff": {}}}}}}), encoding="utf-8")
+    monkeypatch.setattr("sys.argv", ["ws", "diff", "--old", str(snap), "--new", str(snap)])
+    result = main()
+    out = capsys.readouterr().out
+    assert result == 0
+    assert "No changes detected" in out
+
+
+# ---------------------------------------------------------------------------
+# Edge cases: _check_challenge_gate_log OSError, _git_head_hash, advance final step
+# ---------------------------------------------------------------------------
+
+
+def test_check_challenge_gate_log_oserror(monkeypatch, tmp_path) -> None:
+    gate = tmp_path / "PROGRAMBUILD" / "PROGRAMBUILD_CHALLENGE_GATE.md"
+    gate.parent.mkdir(parents=True)
+    gate.write_text("content", encoding="utf-8")
+    # Make the file unreadable by replacing read_text on the returned path
+    original_workspace_path_result = gate.parent.parent / "PROGRAMBUILD" / "PROGRAMBUILD_CHALLENGE_GATE.md"
+
+    class UnreadablePath:
+        """A path-like that exists but raises OSError on read_text."""
+        def exists(self):
+            return True
+        def read_text(self, encoding="utf-8"):
+            raise OSError("disk error")
+
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workspace_path",
+        lambda p: UnreadablePath() if "CHALLENGE_GATE" in p else tmp_path / p,
+    )
+    assert _check_challenge_gate_log("inputs_and_mode_selection") is None
+
+
+def test_advance_final_step(capsys, monkeypatch) -> None:
+    saved: dict[str, Any] = {}
+    state = {
+        "active_stage": "post_launch_review",
+        "stages": {
+            "post_launch_review": {"status": "in_progress", "signoff": {"decision": "", "date": "", "notes": ""}},
+        },
+    }
+    monkeypatch.setattr("scripts.programstart_workflow_state.load_workflow_state", lambda _r, _s: state)
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workflow_active_step",
+        lambda _r, _s, _state=None: "post_launch_review",
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workflow_steps",
+        lambda _r, _s: ["post_launch_review"],
+    )
+    monkeypatch.setattr("scripts.programstart_workflow_state.preflight_problems", lambda _r, _s, _a=None: [])
+    monkeypatch.setattr("scripts.programstart_workflow_state._check_challenge_gate_log", lambda _step: None)
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.save_workflow_state", lambda _r, _s, value: saved.update(value)
+    )
+    monkeypatch.setattr("sys.argv", ["ws", "advance", "--system", "programbuild"])
+    result = main()
+    out = capsys.readouterr().out
+    assert result == 0
+    assert "Completed final" in out
+
+
+def test_advance_dry_run_final_step(capsys, monkeypatch) -> None:
+    state = {
+        "active_stage": "post_launch_review",
+        "stages": {
+            "post_launch_review": {"status": "in_progress", "signoff": {"decision": "", "date": "", "notes": ""}},
+        },
+    }
+    monkeypatch.setattr("scripts.programstart_workflow_state.load_workflow_state", lambda _r, _s: state)
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workflow_active_step",
+        lambda _r, _s, _state=None: "post_launch_review",
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workflow_steps",
+        lambda _r, _s: ["post_launch_review"],
+    )
+    monkeypatch.setattr("sys.argv", ["ws", "advance", "--system", "programbuild", "--dry-run"])
+    result = main()
+    out = capsys.readouterr().out
+    assert result == 0
+    assert "final" in out.lower()
+
+
+def test_set_with_signoff_fields(capsys, monkeypatch) -> None:
+    saved: dict[str, Any] = {}
+    state = {
+        "active_stage": "feasibility",
+        "stages": {
+            "feasibility": {"status": "in_progress", "signoff": {"decision": "", "date": "", "notes": ""}},
+        },
+    }
+    monkeypatch.setattr("scripts.programstart_workflow_state.load_workflow_state", lambda _r, _s: state)
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workflow_steps",
+        lambda _r, _s: ["feasibility"],
+    )
+    monkeypatch.setattr("scripts.programstart_workflow_state.workflow_entry_key", lambda _s: "stages")
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.save_workflow_state", lambda _r, _s, value: saved.update(value)
+    )
+    monkeypatch.setattr(
+        "sys.argv",
+        ["ws", "set", "--system", "programbuild", "--step", "feasibility",
+         "--status", "completed", "--decision", "approved", "--date", "2026-04-15", "--notes", "done"],
+    )
+    result = main()
+    assert result == 0
+    signoff = saved["stages"]["feasibility"]["signoff"]
+    assert signoff["decision"] == "approved"
+    assert signoff["date"] == "2026-04-15"
+    assert signoff["notes"] == "done"
+
+
+def test_set_in_progress_updates_active_stage(capsys, monkeypatch) -> None:
+    saved: dict[str, Any] = {}
+    state = {
+        "active_stage": "inputs_and_mode_selection",
+        "stages": {
+            "inputs_and_mode_selection": {"status": "completed", "signoff": {}},
+            "feasibility": {"status": "planned", "signoff": {}},
+        },
+    }
+    monkeypatch.setattr("scripts.programstart_workflow_state.load_workflow_state", lambda _r, _s: state)
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workflow_steps",
+        lambda _r, _s: ["inputs_and_mode_selection", "feasibility"],
+    )
+    monkeypatch.setattr("scripts.programstart_workflow_state.workflow_entry_key", lambda _s: "stages")
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.save_workflow_state", lambda _r, _s, value: saved.update(value)
+    )
+    monkeypatch.setattr(
+        "sys.argv",
+        ["ws", "set", "--system", "programbuild", "--step", "feasibility", "--status", "in_progress"],
+    )
+    result = main()
+    assert result == 0
+    assert saved["active_stage"] == "feasibility"
+
+
+def test_preflight_problems_userjourney_phase0_gate(tmp_path: Path, monkeypatch) -> None:
+    """Verify userjourney phase_0 dispatches engineering-ready gate check."""
+    uj = tmp_path / "USERJOURNEY"
+    uj.mkdir()
+    # Create stub files that validate_engineering_ready reads
+    (uj / "OPEN_QUESTIONS.md").write_text("# Open Questions\n\nNone remaining.\n", encoding="utf-8")
+    monkeypatch.setattr("scripts.programstart_validate.workspace_path", lambda rel: tmp_path / rel)
+    monkeypatch.setattr("scripts.programstart_workflow_state.workspace_path", lambda rel: tmp_path / rel)
+    monkeypatch.setattr("scripts.programstart_validate.validate_authority_sync", lambda _r: [])
+    registry = load_registry()
+    problems = preflight_problems(registry, "userjourney", active_step="phase_0")
+    assert isinstance(problems, list)

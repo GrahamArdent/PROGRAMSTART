@@ -113,3 +113,153 @@ def test_evaluate_scenario_fails_when_prompt_guidance_is_missing(monkeypatch) ->
     assert "prompt guidance missing patterns" in result["failures"]
     assert "generated prompt missing section marker: Prompt principles:" in result["failures"]
     assert "generated prompt contains forbidden term: FORBIDDEN_TOKEN" in result["failures"]
+
+
+# ---------------------------------------------------------------------------
+# Phase J — push prompt_eval toward 95%
+# ---------------------------------------------------------------------------
+
+
+def test_evaluate_assessment_tools_all_pass(monkeypatch) -> None:
+    """evaluate_assessment_tools should pass when probe and workspace assets exist."""
+    from scripts.programstart_common import load_registry
+
+    registry = load_registry()
+    results = programstart_prompt_eval.evaluate_assessment_tools(registry)
+    assert len(results) == 4
+    assert all(r["passed"] is True for r in results), [r for r in results if not r["passed"]]
+
+
+def test_evaluate_assessment_tools_probe_failure(monkeypatch) -> None:
+    """When health probe returns an empty report, assessment should detect issues."""
+    from scripts.programstart_health_probe import HealthProbeReport
+
+    monkeypatch.setattr(
+        programstart_prompt_eval,
+        "probe_target",
+        lambda _root: HealthProbeReport(),
+    )
+    from scripts.programstart_common import load_registry
+
+    registry = load_registry()
+    results = programstart_prompt_eval.evaluate_assessment_tools(registry)
+    probe_result = next(r for r in results if r["name"] == "assessment_health_probe")
+    assert probe_result["passed"] is False
+    assert any("probe_time" in f for f in probe_result["failures"])
+
+
+def test_main_text_output(capsys) -> None:
+    """main without --json should emit text summary."""
+    result = main(["--scenario", "cli_tool_baseline"])
+    out = capsys.readouterr().out
+    assert result == 0
+    assert "Prompt Evaluation" in out
+    assert "cli_tool_baseline" in out
+
+
+def test_main_include_assessment_json(capsys) -> None:
+    """main with --include-assessment adds assessment results."""
+    result = main(["--include-assessment", "--json"])
+    out = capsys.readouterr().out
+    payload = json.loads(out)
+    names = [r["name"] for r in payload["results"]]
+    assert "assessment_health_probe" in names
+    assert result == 0
+
+
+def test_main_returns_1_on_failure(monkeypatch, capsys) -> None:
+    """main should return 1 when any scenario fails."""
+    failing = PromptEvalScenario(
+        name="will_fail",
+        product_shape="CLI tool",
+        needs=[],
+        regulated=False,
+        attach_userjourney=False,
+        expected_variant="enterprise",  # wrong on purpose
+        expected_attach_userjourney=False,
+        expected_stacks=[],
+        required_prompt_terms=[],
+        required_prompt_sections=[],
+        required_plan_sections=[],
+        expected_starter_root="starter/cli_tool",
+    )
+    monkeypatch.setattr(programstart_prompt_eval, "load_scenarios", lambda: [failing])
+    result = main(["--json"])
+    assert result == 1
+
+
+def test_evaluate_scenario_checks_services_apis_clis_domains(monkeypatch) -> None:
+    """evaluate_scenario should detect missing services, apis, clis, and domains."""
+    scenario = PromptEvalScenario(
+        name="multi_check",
+        product_shape="Web app",
+        needs=[],
+        regulated=False,
+        attach_userjourney=False,
+        expected_variant="lite",
+        expected_attach_userjourney=False,
+        expected_stacks=[],
+        required_prompt_terms=[],
+        required_prompt_sections=[],
+        required_plan_sections=[],
+        expected_starter_root="starter/web_app",
+        expected_services=["MISSING_SVC"],
+        expected_apis=["MISSING_API"],
+        expected_clis=["MISSING_CLI"],
+        expected_domains=["MISSING_DOMAIN"],
+        expected_confidence="extreme",
+        required_warning_domains=["MISSING_WARN"],
+        expected_starter_files=["MISSING_FILE"],
+        required_starter_terms=["MISSING_TERM"],
+    )
+    rec = ProjectRecommendation(
+        product_shape="web app",
+        variant="lite",
+        attach_userjourney=False,
+        archetype="web",
+        generated_prompt="ok",
+        prompt_principles=["p"],
+        prompt_patterns=["p"],
+    )
+    monkeypatch.setattr(programstart_prompt_eval, "build_recommendation", lambda **_kw: rec)
+    monkeypatch.setattr(
+        programstart_prompt_eval,
+        "build_starter_scaffold_plan",
+        lambda _n, _r: SimpleNamespace(root_dir="starter/web_app", files={}),
+    )
+    monkeypatch.setattr(programstart_prompt_eval, "render_factory_plan", lambda **_kw: "")
+
+    result = evaluate_scenario(scenario)
+    assert result["passed"] is False
+    assert any("missing expected service: MISSING_SVC" in f for f in result["failures"])
+    assert any("missing expected api: MISSING_API" in f for f in result["failures"])
+    assert any("missing expected cli: MISSING_CLI" in f for f in result["failures"])
+    assert any("missing expected domain: MISSING_DOMAIN" in f for f in result["failures"])
+    assert any("expected confidence extreme" in f for f in result["failures"])
+    assert any("missing expected warning domain: MISSING_WARN" in f for f in result["failures"])
+    assert any("missing expected starter file: MISSING_FILE" in f for f in result["failures"])
+    assert any("starter scaffold missing term: MISSING_TERM" in f for f in result["failures"])
+
+
+def test_main_text_with_failures(monkeypatch, capsys) -> None:
+    """Text output should list individual failures."""
+    failing = PromptEvalScenario(
+        name="text_fail",
+        product_shape="CLI tool",
+        needs=[],
+        regulated=False,
+        attach_userjourney=False,
+        expected_variant="enterprise",  # will differ
+        expected_attach_userjourney=False,
+        expected_stacks=[],
+        required_prompt_terms=[],
+        required_prompt_sections=[],
+        required_plan_sections=[],
+        expected_starter_root="starter/cli_tool",
+    )
+    monkeypatch.setattr(programstart_prompt_eval, "load_scenarios", lambda: [failing])
+    result = main([])
+    out = capsys.readouterr().out
+    assert result == 1
+    assert "FAIL" in out
+    assert "text_fail" in out

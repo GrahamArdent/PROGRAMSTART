@@ -739,6 +739,62 @@ def test_main_search_text(tmp_path) -> None:
     assert rc == 0
 
 
+# ---------------------------------------------------------------------------
+# Phase C: coverage push — previously uncovered branches in retrieval.py
+# ---------------------------------------------------------------------------
+
+
+def test_hybrid_searcher_vector_method_no_store_raises_valueerror() -> None:
+    """Lines ~552-554: vector method with no embedding_store raises ValueError."""
+    import pytest
+
+    from scripts.programstart_retrieval import HybridSearcher, LexicalSearcher
+
+    lexical = LexicalSearcher([])
+    searcher = HybridSearcher(lexical, embedding_store=None)
+    with pytest.raises(ValueError, match="Vector search requires"):
+        searcher.search("query", method="vector")
+
+
+def test_hybrid_searcher_hybrid_method_with_mock_store_runs_rrf() -> None:
+    """Lines 556-563: hybrid method with an embedding_store performs reciprocal rank fusion."""
+    from scripts.programstart_retrieval import HybridSearcher, LexicalSearcher, SearchResult
+
+    class _MockStore:
+        def query(self, query_text: str, top_k: int = 10) -> list[SearchResult]:
+            return [SearchResult("kb_relation", "doc1", "text content", 0.9, {})]
+
+    lexical = LexicalSearcher([])
+    searcher = HybridSearcher(lexical, embedding_store=_MockStore())  # type: ignore[arg-type]
+    results = searcher.search("test query", top_k=5, method="hybrid", alpha=0.5)
+    assert isinstance(results, list)
+
+
+def test_retrieval_main_validate_subcommand_success(monkeypatch) -> None:
+    """Lines 909-919: validate subcommand with a minimal valid index prints success."""
+    monkeypatch.setattr(programstart_retrieval, "_load_or_build_index", lambda _path: {})
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf):
+        rc = programstart_retrieval.main(["validate"])
+    assert rc == 0
+    assert "validated successfully" in buf.getvalue()
+
+
+def test_retrieval_main_validate_subcommand(tmp_path) -> None:
+    """Lines 909+ / 920+: validate subcommand runs without crashing on built index."""
+    from scripts import programstart_context
+
+    index = programstart_context.build_context_index()
+    idx_path = tmp_path / "index.json"
+    idx_path.write_text(json.dumps(index), encoding="utf-8")
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf):
+        rc = programstart_retrieval.main(["validate", "--index", str(idx_path)])
+    assert rc in {0, 1}
+    output = buf.getvalue()
+    assert "validated" in output.lower() or "validation" in output.lower()
+
+
 def test_main_validate(tmp_path) -> None:
     from scripts import programstart_context
     index = programstart_context.build_context_index()

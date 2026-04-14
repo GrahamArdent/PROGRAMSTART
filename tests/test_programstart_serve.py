@@ -328,6 +328,122 @@ def test_api_routes_documented_in_dashboard_api_md() -> None:
     assert not missing, f"API routes not documented in dashboard-api.md: {missing}"
 
 
+# ---------------------------------------------------------------------------
+# Phase C: coverage push — previously uncovered branches in serve.py
+# ---------------------------------------------------------------------------
+
+
+def test_get_state_json_returns_error_dict_on_load_failure(monkeypatch) -> None:
+    """Lines 347-349: exception inside get_state_json try block → {'error': ...}."""
+    monkeypatch.setattr(programstart_serve, "load_registry", lambda: (_ for _ in ()).throw(RuntimeError("boom")))
+    result = programstart_serve.get_state_json()
+    assert "error" in result
+    assert "boom" in result["error"]
+
+
+def test_get_state_json_userjourney_optional_not_attached_sets_placeholder(monkeypatch) -> None:
+    """Lines 195-207: optional+not-attached system gets a placeholder dict with active='not attached'."""
+    original_attached = programstart_serve.system_is_attached
+
+    def mock_is_attached(registry: dict, system: str) -> bool:
+        if system == "userjourney":
+            return False
+        return original_attached(registry, system)
+
+    monkeypatch.setattr(programstart_serve, "system_is_attached", mock_is_attached)
+    result = programstart_serve.get_state_json()
+    uj = result.get("userjourney", {})
+    assert uj.get("active") == "not attached"
+    assert uj.get("attached") is False
+
+
+def test_load_dashboard_html_returns_fallback_when_index_html_missing(
+    monkeypatch, tmp_path: Path
+) -> None:
+    """Line 660: dashboard/index.html missing → fallback placeholder HTML returned."""
+    monkeypatch.setattr(programstart_serve, "DASHBOARD_DIR", tmp_path / "no_dashboard_here")
+    html = programstart_serve._load_dashboard_html()
+    assert "Dashboard files not found" in html
+
+
+def test_advance_workflow_with_signoff_dry_run_final_step_shows_completion(
+    monkeypatch, tmp_path: Path
+) -> None:
+    """Lines 572-576: dry_run=True with no next step → '[dry-run] Would mark final ...' message."""
+    state = {
+        "active_stage": "release",
+        "stages": {
+            "release": {"status": "in_progress", "signoff": {}, "signoff_history": []},
+        },
+    }
+    registry = {"systems": {"programbuild": {}}}
+    monkeypatch.setattr(programstart_serve, "load_registry", lambda: registry)
+    monkeypatch.setattr(programstart_serve, "load_workflow_state", lambda _r, _s: state)
+    monkeypatch.setattr(programstart_serve, "workflow_active_step", lambda _r, _s, _st=None: "release")
+    monkeypatch.setattr(programstart_serve, "workflow_entry_key", lambda _s: "stages")
+    monkeypatch.setattr(programstart_serve, "workflow_steps", lambda _r, _s: ["release"])  # only step
+    monkeypatch.setattr(programstart_serve, "workflow_state_path", lambda _r, _s: tmp_path / "state.json")
+
+    result = advance_workflow_with_signoff("programbuild", "approved", "2026-05-01", "", True)
+
+    assert result["exit_code"] == 0
+    assert "[dry-run]" in result["output"]
+    assert "final" in result["output"]
+
+
+def test_run_bootstrap_dry_run_false_does_not_add_dry_run_arg(monkeypatch, tmp_path: Path) -> None:
+    """Line 173->175: dry_run=False branch omits --dry-run from subprocess command."""
+    import subprocess
+
+    captured_cmd: list[list[str]] = []
+
+    class _FakeResult:
+        stdout = "Bootstrap done"
+        stderr = ""
+        returncode = 0
+
+    def _fake_run(cmd: list[str], **kwargs: object) -> _FakeResult:
+        captured_cmd.append(list(cmd))
+        return _FakeResult()
+
+    monkeypatch.setattr(subprocess, "run", _fake_run)
+    from scripts.programstart_serve import run_bootstrap
+
+    result = run_bootstrap("C:\\Projects\\TestApp", "MyValidApp", "product", False)
+    assert "--dry-run" not in captured_cmd[0]
+    assert result["exit_code"] == 0
+
+
+def test_update_implementation_tracker_phase_phase_not_found_returns_error(
+    tmp_path: Path, monkeypatch
+) -> None:
+    """Lines 408->421, 422: for loop exhausted without matching phase → error returned."""
+    tracker = tmp_path / "USERJOURNEY" / "IMPLEMENTATION_TRACKER.md"
+    tracker.parent.mkdir(parents=True)
+    tracker.write_text(
+        "# Tracker\n"
+        "Last updated: 2026-03-27\n\n"
+        "| Phase | Status | Exit Gate | Target Route | Current blockers | Notes |\n"
+        "| --- | --- | --- | --- | --- | --- |\n"
+        "| 5 | Planned | G | /r | none | x |\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(programstart_serve, "ROOT", tmp_path)
+    result = update_implementation_tracker_phase("3", "Completed", "")  # phase 3 absent
+    assert result["exit_code"] == 1
+    assert "not found" in result["output"]
+
+
+def test_update_implementation_tracker_slice_no_userjourney_dir_returns_error(
+    tmp_path: Path, monkeypatch
+) -> None:
+    """Line 436: USERJOURNEY directory absent → early-return error."""
+    monkeypatch.setattr(programstart_serve, "ROOT", tmp_path)  # no USERJOURNEY subdir
+    result = update_implementation_tracker_slice("Slice 1", "Ready", "")
+    assert result["exit_code"] == 1
+    assert "not attached" in result["output"]
+
+
 # ── run_command extra paths ───────────────────────────────────────────────────
 
 

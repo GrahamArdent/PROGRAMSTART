@@ -8,6 +8,7 @@ Thank you for your interest in contributing! This guide explains how to get star
 git clone <repo-url> && cd PROGRAMSTART
 uv sync --extra dev
 pre-commit install
+uv run python scripts/install_hooks.py
 python -m playwright install chromium
 ```
 

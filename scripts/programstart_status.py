@@ -5,6 +5,8 @@ import json
 import os
 from datetime import date, datetime
 
+_DEFAULT_STALE_DAYS = 14
+
 try:
     from .programstart_common import (
         extract_numbered_items,
@@ -33,6 +35,32 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
     )
 
 
+def _stale_label(registry: dict, system: str, *, today: date | None = None) -> str:
+    """Return ' [STALE — N days]' if the last signoff is older than PROGRAMSTART_STALE_DAYS (default 14)."""
+    threshold = int(os.environ.get("PROGRAMSTART_STALE_DAYS", _DEFAULT_STALE_DAYS))
+    state = load_workflow_state(registry, system)
+    entry_key = workflow_entry_key(system)
+    entries = state.get(entry_key, {})
+    latest: date | None = None
+    for _step, entry in entries.items():
+        raw = (entry.get("signoff") or {}).get("date", "")
+        if not raw:
+            continue
+        try:
+            d = datetime.strptime(raw, "%Y-%m-%d").date()
+        except ValueError:
+            continue
+        if latest is None or d > latest:
+            latest = d
+    if latest is None:
+        return ""
+    ref = today or date.today()
+    gap = (ref - latest).days
+    if gap > threshold:
+        return f" [STALE — {gap} days]"
+    return ""
+
+
 def summarize_programbuild(registry: dict) -> list[str]:
     system = registry["systems"]["programbuild"]
     state = load_workflow_state(registry, "programbuild")
@@ -44,7 +72,7 @@ def summarize_programbuild(registry: dict) -> list[str]:
     output_total = len(system["output_files"])
 
     lines = ["PROGRAMBUILD"]
-    lines.append(f"- active stage: {active_stage}")
+    lines.append(f"- active stage: {active_stage}{_stale_label(registry, 'programbuild')}")
     lines.append(f"- variant: {variant}")
     lines.append(f"- control files present: {control_total - len(missing_control)}/{control_total}")
     lines.append(f"- output files present: {output_total - len(missing_outputs)}/{output_total}")
@@ -83,7 +111,7 @@ def summarize_userjourney(registry: dict) -> list[str]:
     tracker_path = workspace_path("USERJOURNEY/IMPLEMENTATION_TRACKER.md")
     core_total = len(system["core_files"])
 
-    lines.append(f"- active phase: {active_phase}")
+    lines.append(f"- active phase: {active_phase}{_stale_label(registry, 'userjourney')}")
     lines.append(f"- core files present: {core_total - len(missing_files)}/{core_total}")
 
     if missing_files:

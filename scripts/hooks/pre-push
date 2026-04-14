@@ -1,0 +1,21 @@
+#!/bin/sh
+# PROGRAMSTART pre-push hook — blocks direct push to 'main'.
+#
+# Install via:  uv run python scripts/install_hooks.py
+# Bypass via:   PROGRAMSTART_ALLOW_MAIN_PUSH=1 git push
+
+if [ "${PROGRAMSTART_ALLOW_MAIN_PUSH:-}" = "1" ]; then
+    exit 0
+fi
+
+while read -r local_ref _local_oid remote_ref _remote_oid; do
+    case "$remote_ref" in
+        refs/heads/main)
+            echo "pre-push: direct push to 'main' is blocked." >&2
+            echo "  To push anyway: PROGRAMSTART_ALLOW_MAIN_PUSH=1 git push" >&2
+            exit 1
+            ;;
+    esac
+done
+
+exit 0

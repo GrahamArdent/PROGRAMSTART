@@ -8,7 +8,13 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from scripts.programstart_common import load_registry, system_is_attached
-from scripts.programstart_status import cross_system_health_warning, main, staleness_warnings, summarize_programbuild
+from scripts.programstart_status import (
+    _stale_label,
+    cross_system_health_warning,
+    main,
+    staleness_warnings,
+    summarize_programbuild,
+)
 
 
 def test_system_is_attached_false(monkeypatch) -> None:
@@ -235,3 +241,76 @@ def test_cross_system_no_warning_when_uj_not_attached(monkeypatch) -> None:
     monkeypatch.setattr("scripts.programstart_status.system_is_attached", lambda _r, _s: False)
     warnings = cross_system_health_warning(registry)
     assert warnings == []
+
+
+# ---------------------------------------------------------------------------
+# F-1: Stage stale label tests
+# ---------------------------------------------------------------------------
+
+def test_stale_label_no_signoffs_returns_empty(monkeypatch) -> None:
+    """_stale_label returns '' when there are no signoff dates in the state."""
+    from datetime import date
+    from scripts.programstart_common import load_registry
+
+    registry = load_registry()
+    monkeypatch.setattr(
+        "scripts.programstart_status.load_workflow_state",
+        lambda _reg, _sys: {"stages": {}},
+    )
+    result = _stale_label(registry, "programbuild")
+    assert result == ""
+
+
+def test_stale_label_recent_signoff_returns_empty(monkeypatch) -> None:
+    """_stale_label returns '' when last signoff is within the threshold."""
+    from datetime import date, timedelta
+    from scripts.programstart_common import load_registry
+
+    registry = load_registry()
+    recent = (date.today() - timedelta(days=5)).isoformat()
+    monkeypatch.setattr(
+        "scripts.programstart_status.load_workflow_state",
+        lambda _reg, _sys: {"stages": {"kickoff": {"signoff": {"date": recent}}}},
+    )
+    monkeypatch.setenv("PROGRAMSTART_STALE_DAYS", "14")
+    result = _stale_label(registry, "programbuild")
+    assert result == ""
+
+
+def test_stale_label_old_signoff_returns_label(monkeypatch) -> None:
+    """_stale_label returns '[STALE — N days]' when last signoff exceeds threshold."""
+    from datetime import date, timedelta
+    from scripts.programstart_common import load_registry
+
+    registry = load_registry()
+    old = (date.today() - timedelta(days=20)).isoformat()
+    monkeypatch.setattr(
+        "scripts.programstart_status.load_workflow_state",
+        lambda _reg, _sys: {"stages": {"kickoff": {"signoff": {"date": old}}}},
+    )
+    monkeypatch.setenv("PROGRAMSTART_STALE_DAYS", "14")
+    result = _stale_label(registry, "programbuild")
+    assert "STALE" in result
+    assert "20 days" in result
+
+
+def test_stale_label_custom_threshold_via_env(monkeypatch) -> None:
+    """PROGRAMSTART_STALE_DAYS env var controls the stale threshold."""
+    from datetime import date, timedelta
+    from scripts.programstart_common import load_registry
+
+    registry = load_registry()
+    old = (date.today() - timedelta(days=10)).isoformat()
+    monkeypatch.setattr(
+        "scripts.programstart_status.load_workflow_state",
+        lambda _reg, _sys: {"stages": {"kickoff": {"signoff": {"date": old}}}},
+    )
+    # With threshold=7, 10 days ago IS stale
+    monkeypatch.setenv("PROGRAMSTART_STALE_DAYS", "7")
+    result = _stale_label(registry, "programbuild")
+    assert "STALE" in result
+
+    # With threshold=30, 10 days ago is NOT stale
+    monkeypatch.setenv("PROGRAMSTART_STALE_DAYS", "30")
+    result2 = _stale_label(registry, "programbuild")
+    assert result2 == ""

@@ -75,6 +75,7 @@
       "scripts/programstart_doctor.py",
       "scripts/programstart_prompt_build.py",
       "scripts/lint_prompts.py",
+        "scripts/install_hooks.py",
       "scripts/programstart_repo_clean_check.py",
       "scripts/programstart_status.py",
       "scripts/programstart_step_guide.py",
@@ -139,6 +140,7 @@
       "tests/test_programstart_validate_stage_gates.py",
       "tests/test_programstart_workflow_state.py",
       "tests/test_check_commit_msg.py",
+        "tests/test_install_hooks.py",
       "tests/test_schema_conformance.py",
       "tests/test_lint_prompts.py",
       "tests/test_programstart_doctor.py",
@@ -651,6 +653,7 @@
         ".git",
         ".venv",
         ".pytest_cache",
+          "scripts/install_hooks.py",
         ".ruff_cache",
         ".mypy_cache",
         ".nox",
@@ -664,6 +667,7 @@
         "PROGRAMSTART_2026-03-27.zip"
       ],
       "exclude_globs": [
+          "tests/test_install_hooks.py",
         "MANIFEST_*.txt",
         "VERIFICATION_REPORT_*.md",
         "*.pyc"

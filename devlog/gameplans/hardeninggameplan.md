@@ -475,7 +475,7 @@ Tests should not be broken by this change (no behavioral change, only replacing 
 
 ---
 
-### Phase F: Feature Gaps & Guards (W-2, W-3, G-3)
+### ✅ Phase F: Feature Gaps & Guards (W-2, W-3, G-3) — COMPLETE (F-2 deferred to Phase J)
 
 **Goal**: Implement 3 small features that improve workflow observability and protection.
 

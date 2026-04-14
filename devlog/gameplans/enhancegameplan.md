@@ -1,8 +1,8 @@
 # Enhancement Gameplan — Prioritized Implementation Plan
 
-Purpose: Prioritized implementation plan for all findings from `enhanceopportunity.md` Parts 1–3 (87 defect findings + 25 strategic recommendations). Phases are ordered by severity, dependency, and value impact. Each phase is scoped for a single execution session.
+Purpose: Prioritized implementation plan for all findings from `devlog/reports/enhanceopportunity.md` Parts 1–3 (88 defect findings + 25 strategic recommendations; 3 findings resolved on review, 1 new finding added). Phases are ordered by severity, dependency, and value impact. Each phase is scoped for a single execution session.
 Status: **NOT STARTED**
-Authority: Non-canonical working plan derived from `enhanceopportunity.md` (Parts 1–3), current test baseline (1068 tests, 0 failures, 93% coverage), and `config/process-registry.json`.
+Authority: Non-canonical working plan derived from `devlog/reports/enhanceopportunity.md` (Parts 1–3), current test baseline (1068 tests, 0 failures, 93% coverage), and `config/process-registry.json`.
 Last updated: 2026-04-14
 
 ---
@@ -22,9 +22,12 @@ Baseline recorded 2026-04-14:
 
 | Source | Findings | Strategic Items |
 |---|---|---|
-| Part 1: Defect Audit (§1–§18) | 78 (2 HIGH, 23 MEDIUM, 52 LOW, 1 INFO) | — |
+| Part 1: Defect Audit (§1–§18) | 79 (3 HIGH, 21 MEDIUM, 51 LOW, 1 INFO) + 3 RESOLVED | — |
 | Part 2: Strategic Analysis (§19–§25) | 10 components scored, 10 considerations | 12 recommendations (3 tiers) |
 | Part 3: UI/UX Gap Analysis (§26–§30) | 9 gaps (3 HIGH, 3 MEDIUM, 3 LOW), 8 considerations | 13 recommendations (3 tiers) |
+
+> **Review note (2026-04-14):** Part 1 counts updated: +1 HIGH (H-5 race condition added),
+> A-3/DEP-1/G-4 marked RESOLVED. Original count was 78 findings; now 79 active + 3 resolved.
 
 ---
 
@@ -41,19 +44,20 @@ Baseline recorded 2026-04-14:
 | **GAP-3** | `CAPABILITY_ALIASES` missing UI-specific terms | HIGH | §28 | B |
 | **GAP-4** | `_need_to_domain` only maps `"javascript"` to frontend domain | HIGH | §28 | B |
 | **H-1** | Bare `except Exception` clauses suppress real errors (15 instances) | MEDIUM | §1 | C |
-| **SC-1** | `process-registry.schema.json` has `additionalProperties: true` everywhere | MEDIUM | §10 | D |
+| **H-5** | Race condition in workflow state writes — no file locking | HIGH | §1 (review) | A |
+| **SC-1** | `process-registry.schema.json` has `additionalProperties: true` on 8 critical objects | MEDIUM | §10 | D |
 
 ### P1 — Core Improvements (high value, reduce risk)
 
 | ID | Gap | Severity | Source | Phase |
 |---|---|---|---|---|
-| **R-1** | Commit type list not synced between instruction file and `check_commit_msg.py` | MEDIUM | §6 | E |
+| **R-1** | No sync test between commit type list (instruction file) and `check_commit_msg.py` | MEDIUM | §6 | E |
 | **R-2** | Prompt standard compliance not enforced in pre-commit | MEDIUM | §6 | E |
 | **KB-1** | Context index `INDEX_VERSION` hardcoded to stale date | MEDIUM | §15 | E |
 | **A-1** | No CI job for Python 3.13+ on Windows | MEDIUM | §4 | F |
 | **A-2** | No automatic CHANGELOG update enforcement | MEDIUM | §4 | F |
-| **A-3** | No `dependabot.yml` github-actions ecosystem | MEDIUM | §4 | F |
-| **DEP-1** | `dependabot.yml` missing `github-actions` ecosystem | MEDIUM | §13 | F |
+| **A-3** | ~~No `dependabot.yml` github-actions ecosystem~~ | ~~MEDIUM~~ | §4 | ~~F~~ | ✅ RESOLVED — already exists |
+| **DEP-1** | ~~`dependabot.yml` missing `github-actions` ecosystem~~ | ~~MEDIUM~~ | §13 | ~~F~~ | ✅ RESOLVED — DUPLICATE of A-3 |
 | **T-1** | `programstart_serve.py` at 83% — lowest coverage | MEDIUM | §3 | G |
 | **T-2** | `programstart_retrieval.py` at 85% — RAG pipeline undertested | MEDIUM | §3 | G |
 | **T-3** | `programstart_research_delta.py` at 80% | MEDIUM | §3 | G |
@@ -122,7 +126,7 @@ Baseline recorded 2026-04-14:
 | **SC-4** | No schema for `prompt-eval-scenarios.json` | LOW | §10 | D |
 | **G-2** | No guard against advancing PB while UJ is blocked | LOW | §11 | H |
 | **G-3** | No git hook for branch protection | LOW | §11 | N |
-| **G-4** | `READONLY_MODE` not tested | LOW | §11 | G |
+| **G-4** | ~~`READONLY_MODE` not tested~~ | ~~LOW~~ | §11 | ~~G~~ | ✅ RESOLVED — `TestReadonlyModeGuard` exists |
 | **W-2** | No stage expiry/staleness tracking | LOW | §12 | N |
 | **W-3** | USERJOURNEY phases have no entry criteria | LOW | §12 | N |
 | **W-4** | `workflow_guidance` doesn't reference expected outputs | LOW | §12 | N |
@@ -140,6 +144,7 @@ Baseline recorded 2026-04-14:
 | **SD-2** | No explicit versioning contract registry ↔ scripts | LOW | §18 | N |
 | **SD-3** | `devlog/` exempted from rules, no retention policy | LOW | §18 | N |
 | **SD-4** | `BACKUPS/` has one snapshot, no automation | LOW | §18 | N |
+| **SD-5** | No file-placement automation — root hygiene is convention-only | MEDIUM | §18 (review) | K |
 | **R-6** | `copilot-instructions.md` rules not runtime-enforceable | INFO | §6 | — |
 
 ### Strategic Items (from Parts 2 + 3)
@@ -170,13 +175,13 @@ Baseline recorded 2026-04-14:
 | Phase | Gap(s) | Type | Est. edits | Target |
 |---|---|---|---|---|
 | Pre-work | — | Record baseline | 0 edits | Snapshot test + coverage + validate + drift |
-| A | D-1, D-2 | DRY consolidation — extract shared functions | 6–10 file edits + test consolidation | 2 functions in `programstart_common.py`, 8 script imports updated |
+| A | D-1, D-2, H-5 | DRY consolidation + state write safety | 6–10 file edits + test consolidation | 2 functions in `programstart_common.py`, 8 script imports updated, file locking on state writes |
 | B | GAP-1–4, UI-1–4 | UI blind spot quick fixes | 4 file edits | Recommendation engine can surface UI needs |
 | C | H-1, H-4 | Exception handling + subprocess timeouts | 4–6 file edits | Specific exceptions, timeouts on subprocess calls |
-| D | SC-1, SC-2, SC-3, SC-4 | Schema hardening | 3–4 schema edits + 1 new schema | `additionalProperties: false` on critical objects, KB schema generated |
+| D | SC-1, SC-2, SC-3, SC-4 | Schema hardening | 3–4 schema edits + 1 new schema | `additionalProperties: false` on 8 critical objects, KB schema generated |
 | E | R-1, R-3, R-4, R-5, KB-1 | Rule enforcement + stale version fixes | 4–6 file edits (tests + hooks) | Commit types synced, coverage source enforced, ADR index enforced |
-| F | A-1–6, DEP-1–3 | CI & dependency improvements | 3–4 workflow edits + 1 config edit | Windows 3.13 in CI, dependabot github-actions, lockfile check |
-| G | T-1–4, G-4 | Test coverage push — critical modules | 4–5 test file edits | serve.py ≥88%, retrieval ≥88%, research_delta ≥85%, READONLY tests |
+| F | A-1, A-2, A-4–6, DEP-2–3 | CI & dependency improvements | 3–4 workflow edits + 1 config edit | Windows 3.13 in CI, lockfile check (A-3/DEP-1 already resolved) |
+| G | T-1–4 | Test coverage push — critical modules | 4–5 test file edits | serve.py ≥88%, retrieval ≥88%, research_delta ≥85% (G-4 already resolved) |
 | H | G-1, G-2, W-1 | Post-advance verification + content quality gates | 3–4 script edits | Post-advance sanity check, content placeholder detection, cross-system warning |
 | I | GAP-5–9, UI-5–13 | Recommendation engine structural — companion surfaces | 5–8 file edits | `suggested_companion_surfaces` field, cross-shape advisory, hybrid eval scenarios |
 | J | DOC-1–6, DX-2–4 | Documentation + DX polish | 8–10 file edits | CHANGELOG updated, CONTRIBUTING accurate, MkDocs nav complete, tasks grouped |
@@ -205,9 +210,9 @@ Capture: test count (expect 1068 passed), per-module coverage %, validate output
 
 ---
 
-### Phase A: DRY Consolidation — Shared Utility Functions (D-1, D-2)
+### Phase A: DRY Consolidation + State Write Safety (D-1, D-2, H-5)
 
-**Goal**: Eliminate the two HIGH-severity duplicate functions. One definition each in `programstart_common.py`, all 8 consuming scripts import from common.
+**Goal**: Eliminate the two HIGH-severity duplicate functions. One definition each in `programstart_common.py`, all 8 consuming scripts import from common. Add file locking to prevent race conditions in state writes.
 
 #### A-1: Consolidate `system_is_optional_and_absent()` (D-1)
 
@@ -254,6 +259,36 @@ uv run pytest --tb=no -q --no-header 2>&1 | Select-Object -Last 3
 ```
 
 Expected: all 1068 tests still pass, zero regressions from parameter reordering.
+
+#### A-3: Add file locking to workflow state writes (H-5)
+
+**Root cause**: `write_json()` in `programstart_common.py` (lines 95-101) uses atomic temp-file-and-replace but has no file locking. Two concurrent callers (CLI + dashboard) could both read the same state, modify in memory, and the second write silently overwrites the first.
+
+**Pre-flight**: Read `scripts/programstart_common.py` `write_json()` and `scripts/programstart_workflow_state.py` `save_workflow_state()`.
+
+**Edits**:
+1. Add a cross-platform file lock around the read-modify-write cycle in `save_workflow_state()`. Use Python's `filelock` library (already cross-platform) or implement with `fcntl`/`msvcrt`.
+2. Add the same lock guard to `advance_workflow_with_signoff()` in `programstart_serve.py`.
+3. Add a test that simulates concurrent writes (e.g. two threads calling `save_workflow_state()` simultaneously) and verifies no state is lost.
+
+**Example** (using `filelock`):
+```python
+from filelock import FileLock
+
+def save_workflow_state(registry, system_name, state_data, repo_root=None):
+    state_path = _state_file_path(registry, system_name, repo_root)
+    lock = FileLock(str(state_path) + ".lock", timeout=10)
+    with lock:
+        existing = load_workflow_state(registry, system_name, repo_root)
+        # ... merge state_data into existing ...
+        write_json(state_path, merged)
+```
+
+**Verification**:
+```powershell
+uv run pytest tests/test_programstart_workflow_state.py -v --tb=short -k "lock or concurrent"
+uv run pytest --tb=no -q --no-header 2>&1 | Select-Object -Last 3
+```
 
 ---
 
@@ -452,17 +487,12 @@ uv run pytest --tb=no -q --no-header 2>&1 | Select-Object -Last 3
 
 **Edit**: Add `'3.13'` to the `python-version` array alongside `'3.12'`.
 
-#### F-2: Add `github-actions` ecosystem to Dependabot (A-3, DEP-1)
+#### F-2: ~~Add `github-actions` ecosystem to Dependabot~~ — RESOLVED (A-3, DEP-1)
 
-**Pre-flight**: Read `.github/dependabot.yml`.
-
-**Edit**: Add:
-```yaml
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-```
+> **Review note (2026-04-14):** `.github/dependabot.yml` already contains the
+> `github-actions` ecosystem entry (lines 43-60). A-3 and DEP-1 are duplicates
+> of the same finding, and both are already resolved. No action needed.
+> Skip this step.
 
 #### F-3: Add `uv lock --check` to CI (DEP-3)
 
@@ -509,9 +539,12 @@ uv run nox -s ci 2>&1 | Select-Object -Last 20
 
 **Edits**: Add tests to `tests/test_programstart_serve.py` for:
 - Signoff POST flow (valid + malformed JSON)
-- `READONLY_MODE` enforcement on mutation endpoints (G-4)
 - Bootstrap error paths
 - Timeout handling (after Phase C adds timeouts)
+
+> **Note (2026-04-14):** G-4 (`READONLY_MODE` test) is already resolved —
+> `TestReadonlyModeGuard` exists in `tests/test_serve_endpoints.py` (lines ~406-435).
+> No additional READONLY_MODE tests needed here.
 
 #### G-2: `programstart_retrieval.py` 85% → 88%+ (T-2)
 
@@ -744,9 +777,9 @@ uv run pytest --tb=no -q --no-header 2>&1 | Select-Object -Last 3
 
 ---
 
-### Phase K: CLI Features + Prompt Versioning (F-1, F-2, F-6, P-1, S-2, S-4, R-2)
+### Phase K: CLI Features + Prompt Versioning + File Hygiene (F-1, F-2, F-6, P-1, S-2, S-4, R-2, SD-5)
 
-**Goal**: Add `--list-shapes`, `doctor` command, `--json` output, prompt version field, pre-commit prompt lint.
+**Goal**: Add `--list-shapes`, `doctor` command, `--json` output, prompt version field, pre-commit prompt lint, file-placement validation.
 
 #### K-1: Add `--list-shapes` to recommend (F-1)
 
@@ -789,6 +822,42 @@ Register in `pyproject.toml` as `doctor` subcommand. Add to coverage source. Add
 4. Exits non-zero if any check fails
 
 This catches non-compliant prompts before they reach the test suite.
+
+#### K-6: Add `validate --check file-hygiene` (SD-5)
+
+**Root cause**: No automation prevents files from being committed to the wrong directory. `enhanceopportunity.md` was created at the repo root instead of `devlog/reports/` and no validation caught it.
+
+**Edit**: Add a `file-hygiene` check to `scripts/programstart_validate.py`:
+1. Define an allowlist of expected root-level `.md` files: `README.md`, `CHANGELOG.md`, `CONTRIBUTING.md`, `SECURITY.md`, `QUICKSTART.md`, `CODEOWNERS`, `n8n.md`.
+2. Scan repo root for `.md` files not on the allowlist → emit warning.
+3. Register as a new check in the dispatch dict alongside existing checks.
+4. Wire into `--check all` so it runs automatically.
+5. Add tests.
+
+```python
+ALLOWED_ROOT_MD = {
+    "README.md", "CHANGELOG.md", "CONTRIBUTING.md",
+    "SECURITY.md", "QUICKSTART.md", "CODEOWNERS",
+}
+
+def validate_file_hygiene(registry: dict) -> list[str]:
+    """Check that no unexpected .md files are at the repo root."""
+    problems = []
+    root = workspace_path(".")
+    for md in root.glob("*.md"):
+        if md.name not in ALLOWED_ROOT_MD:
+            problems.append(
+                f"Unexpected .md file at repo root: {md.name} — "
+                f"should it be in devlog/ or outputs/?"
+            )
+    return problems
+```
+
+**Verification**:
+```powershell
+uv run programstart validate --check file-hygiene
+uv run programstart validate --check all --strict
+```
 
 **Verification**:
 ```powershell
@@ -988,7 +1057,7 @@ Closes enhancegameplan Phases A–N as executed.
 ### Dependency Graph
 
 ```
-Pre-work → A (DRY consolidation — touches common.py which other phases import)
+Pre-work → A (DRY consolidation + state write safety — touches common.py which other phases import)
          → B (UI blind spot — touches recommend.py, independent of A)
          → C (exceptions — independent of A and B)
 

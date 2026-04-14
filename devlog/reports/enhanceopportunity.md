@@ -73,6 +73,26 @@ command could block the server indefinitely.
 `run_bootstrap()`. Consider a basic per-IP rate limiter for POST endpoints (even on localhost,
 a misbehaving browser tab or automation script could DoS the server).
 
+### H-5. Race condition in workflow state writes — no file locking (HIGH)
+
+`write_json()` in `programstart_common.py` (lines 95-101) uses atomic temp-file-and-replace
+for individual writes, but there is no file locking between the read and write phases of a
+state update. Two concurrent callers (e.g. CLI `programstart advance` + dashboard
+`/api/workflow-advance`) could both read the same state, modify in memory, and the second
+write would silently overwrite the first — causing state corruption.
+
+**Affected code paths:**
+- `programstart_workflow_state.py` `save_workflow_state()` — reads, modifies, writes
+- `programstart_serve.py` `advance_workflow_with_signoff()` — same read-modify-write
+
+**Recommendation:** Add `fcntl.flock()` (Unix) / `msvcrt.locking()` (Windows) file locking
+around the read-modify-write cycle in `save_workflow_state()`, or use a cross-platform
+lock file (e.g. `filelock` library). This is especially important because the dashboard
+server and CLI share the same state files.
+
+> **Review note (2026-04-14):** Discovered during critical review. Not in the original
+> audit. Severity raised to HIGH because state corruption is silent and unrecoverable.
+
 ---
 
 ## 2. Duplicate Code & DRY Violations
@@ -106,8 +126,11 @@ especially fragile — callers must remember which module has which argument ord
 
 ### D-3. Repeated `try/except ImportError` boilerplate in every script (MEDIUM)
 
-Every script has a ~15-line `try/except ImportError` block to handle both package and standalone
-import paths. This is ~600 lines of identical boilerplate across 30+ scripts.
+Every script has a 15–28-line `try/except ImportError` block to handle both package and standalone
+import paths. This is an estimated ~600 lines of boilerplate across 30+ scripts.
+
+> **Review note (2026-04-14):** Block sizes range 15–28 lines (not uniform ~15).
+> Total estimate of ~600 lines is approximate but plausible.
 
 **Recommendation:** This exists to support `python scripts/programstart_X.py` direct execution,
 which is explicitly deprecated (every script warns about it). Consider whether this fallback
@@ -192,12 +215,14 @@ also updates the changelog.
 **Recommendation:** Add a `danger`-style check or a simple script that fails CI if `scripts/`
 or `config/` changed but `CHANGELOG.md` did not. Exempt `chore:` and `ci:` commits.
 
-### A-3. No dependabot configuration for GitHub Actions (MEDIUM)
+### A-3. ~~No dependabot configuration for GitHub Actions~~ — RESOLVED (MEDIUM)
 
-`dependabot.yml` covers `pip` dependencies but not `github-actions`. The workflow files pin
-actions by SHA (good), but Dependabot won't open PRs when new SHA versions are available.
+~~`dependabot.yml` covers `pip` dependencies but not `github-actions`.~~
 
-**Recommendation:** Add a `github-actions` ecosystem entry to `dependabot.yml`.
+> **Review note (2026-04-14):** RESOLVED. `.github/dependabot.yml` already contains
+> a `github-actions` ecosystem entry (lines 43-60) with weekly schedule, labels,
+> commit-message prefix, and grouped ci-actions patterns. No action needed.
+> See also DEP-1, which is a duplicate of this finding.
 
 ### A-4. `nox -s ci` includes `format_check` but the guardrails CI does not (LOW)
 
@@ -279,11 +304,15 @@ Other commands (`prompt-eval`, `research`) support `--json` already.
 
 ## 6. Rule Enforcement Gaps
 
-### R-1. `conventional-commits.instructions.md` defines valid types, but `check_commit_msg.py` is the only enforcer (MEDIUM)
+### R-1. No sync test between `conventional-commits.instructions.md` and `check_commit_msg.py` (MEDIUM)
 
-The instruction file lists types `feat|fix|docs|chore|ci|refactor|test`. If a new type is
-added to the instructions but not to the script's regex, commits would pass the instructions
-but fail the hook (or vice versa). There's no test that the two stay in sync.
+The instruction file lists types `feat|fix|docs|chore|ci|refactor|test`. The script's
+`VALID_TYPES` set currently matches exactly, but there is no automated test enforcing this.
+If a new type is added to the instructions but not to the script's regex (or vice versa),
+the drift would go undetected until a commit fails or a bad commit slips through.
+
+> **Review note (2026-04-14):** Verified that types are currently in sync. This is a
+> drift-prevention finding, not a current defect.
 
 **Recommendation:** Add a test that extracts the valid types from the instruction file's
 markdown table and asserts they match `check_commit_msg.py`'s `VALID_TYPES` set.
@@ -473,11 +502,15 @@ optional in the standard.
 
 ## 10. Schema & Validation Hardening
 
-### SC-1. `process-registry.schema.json` has `additionalProperties: true` everywhere (MEDIUM)
+### SC-1. `process-registry.schema.json` has `additionalProperties: true` on 8 critical objects (MEDIUM)
 
-The registry schema allows any extra fields on every object. This means typos in field names
-go undetected — e.g., `require_autority_when_dependents_change` would silently be ignored
-instead of failing validation.
+The registry schema allows extra fields on 8 objects (sync_rules items, system definitions,
+metadata_rules, etc.). This means typos in field names go undetected — e.g.,
+`require_autority_when_dependents_change` would silently be ignored instead of failing
+validation.
+
+> **Review note (2026-04-14):** Scope corrected — only 8 specific object definitions
+> have `additionalProperties: true`, not every object in the schema.
 
 **Recommendation:** Set `additionalProperties: false` on critical objects (sync_rules items,
 system definitions, metadata_rules). Use a known "extensions" object for intentional
@@ -538,13 +571,14 @@ developer could commit directly to `main` and push without going through the ful
 `CONTRIBUTING.md` or `SECURITY.md`. Consider a local push hook that warns about direct
 main pushes.
 
-### G-4. `READONLY_MODE` in the dashboard isn't tested (LOW)
+### G-4. ~~`READONLY_MODE` in the dashboard isn't tested~~ — RESOLVED (LOW)
 
-`programstart_serve.py` checks `PROGRAMSTART_READONLY` env var but there are no tests
-verifying that mutation endpoints actually return 403/405 in read-only mode.
+~~`programstart_serve.py` checks `PROGRAMSTART_READONLY` env var but there are no tests
+verifying that mutation endpoints actually return 403/405 in read-only mode.~~
 
-**Recommendation:** Add tests that set `PROGRAMSTART_READONLY=1` and verify POST endpoints
-are blocked.
+> **Review note (2026-04-14):** RESOLVED. `TestReadonlyModeGuard` already exists
+> in `tests/test_serve_endpoints.py` (lines ~406-435). It sets `READONLY_MODE = True`
+> and verifies POST endpoints return 405. No action needed.
 
 ---
 
@@ -587,18 +621,13 @@ referencing `stage_order[].main_output`.
 
 ## 13. Dependency & Supply Chain
 
-### DEP-1. `dependabot.yml` missing `github-actions` ecosystem (MEDIUM)
+### DEP-1. ~~`dependabot.yml` missing `github-actions` ecosystem~~ — DUPLICATE OF A-3, RESOLVED (MEDIUM)
 
-Workflow files pin actions by SHA (excellent practice), but Dependabot won't
-automatically open PRs for new action versions.
+~~Workflow files pin actions by SHA (excellent practice), but Dependabot won't
+automatically open PRs for new action versions.~~
 
-**Recommendation:** Add:
-```yaml
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-```
+> **Review note (2026-04-14):** DUPLICATE of A-3. Both resolved — `.github/dependabot.yml`
+> already has the `github-actions` ecosystem entry. No action needed.
 
 ### DEP-2. `pip-audit` succeeds with exit code 1 in CI (LOW)
 
@@ -771,39 +800,64 @@ mechanism and no documented schedule for when backups should be taken.
 **Recommendation:** Either automate pre-advance backups or document that backups are the
 user's responsibility.
 
+### SD-5. No automation enforces file placement — root directory hygiene is convention-only (MEDIUM)
+
+The repository has a clear organizational scheme (`devlog/gameplans/` for gameplans,
+`devlog/reports/` for audit reports, `devlog/notes/` for working notes, `outputs/` for
+generated artifacts), but nothing enforces it. Any new `.md` file can be committed to the
+repo root with no validation warning.
+
+The apr14report F-3 finding cleaned up 14 misplaced files. This file (`enhanceopportunity.md`)
+was itself created at the repo root instead of `devlog/reports/` — caught only by manual
+review, not automation.
+
+`config/process-registry.json` defines `workspace_prefixes` and `exclude_prefixes` but these
+only govern cross-reference validation, not file placement.
+
+> **Review note (2026-04-14):** Discovered when this file was found at the repo root
+> instead of `devlog/reports/`. Moved during review. Root cause: no enforcement exists.
+
+**Recommendation:** Add a `validate --check file-hygiene` check that:
+1. Defines an allowlist of expected root-level files (README.md, CHANGELOG.md, pyproject.toml, etc.)
+2. Flags any `.md` file at the repo root not on the allowlist
+3. Warns when `devlog/` or `outputs/` subdirectories contain files that don't match expected patterns
+
 ---
 
 ## Summary Statistics
 
-| Category | Critical | High | Medium | Low | Info |
-|---|---|---|---|---|---|
-| Code Hardening | 0 | 0 | 1 | 3 | 0 |
-| DRY Violations | 0 | 2 | 1 | 0 | 0 |
-| Test & Coverage | 0 | 0 | 3 | 4 | 0 |
-| Automation & CI | 0 | 0 | 3 | 3 | 0 |
-| CLI & Features | 0 | 0 | 2 | 4 | 0 |
-| Rule Enforcement | 0 | 0 | 2 | 3 | 1 |
-| Documentation | 0 | 0 | 1 | 5 | 0 |
-| Sync & Drift | 0 | 0 | 1 | 3 | 0 |
-| Prompt System | 0 | 0 | 1 | 4 | 0 |
-| Schema & Validation | 0 | 0 | 1 | 3 | 0 |
-| Guardrails | 0 | 0 | 1 | 3 | 0 |
-| Workflow Model | 0 | 0 | 1 | 3 | 0 |
-| Dependencies | 0 | 0 | 1 | 2 | 0 |
-| Dashboard & UI | 0 | 0 | 1 | 2 | 0 |
-| Knowledge Base | 0 | 0 | 1 | 2 | 0 |
-| Bootstrap & Factory | 0 | 0 | 0 | 2 | 0 |
-| Developer Experience | 0 | 0 | 1 | 3 | 0 |
-| Structural Debt | 0 | 0 | 1 | 3 | 0 |
-| **Total** | **0** | **2** | **23** | **52** | **1** |
+| Category | Critical | High | Medium | Low | Info | Resolved |
+|---|---|---|---|---|---|---|
+| Code Hardening | 0 | 1 | 1 | 3 | 0 | 0 |
+| DRY Violations | 0 | 2 | 1 | 0 | 0 | 0 |
+| Test & Coverage | 0 | 0 | 3 | 4 | 0 | 0 |
+| Automation & CI | 0 | 0 | 2 | 3 | 0 | 1 |
+| CLI & Features | 0 | 0 | 2 | 4 | 0 | 0 |
+| Rule Enforcement | 0 | 0 | 2 | 3 | 1 | 0 |
+| Documentation | 0 | 0 | 1 | 5 | 0 | 0 |
+| Sync & Drift | 0 | 0 | 1 | 3 | 0 | 0 |
+| Prompt System | 0 | 0 | 1 | 4 | 0 | 0 |
+| Schema & Validation | 0 | 0 | 1 | 3 | 0 | 0 |
+| Guardrails | 0 | 0 | 1 | 2 | 0 | 1 |
+| Workflow Model | 0 | 0 | 1 | 3 | 0 | 0 |
+| Dependencies | 0 | 0 | 0 | 2 | 0 | 1 |
+| Dashboard & UI | 0 | 0 | 1 | 2 | 0 | 0 |
+| Knowledge Base | 0 | 0 | 1 | 2 | 0 | 0 |
+| Bootstrap & Factory | 0 | 0 | 0 | 2 | 0 | 0 |
+| Developer Experience | 0 | 0 | 1 | 3 | 0 | 0 |
+| Structural Debt | 0 | 0 | 2 | 3 | 0 | 0 |
+| **Total** | **0** | **3** | **22** | **51** | **1** | **3** |
 
-**Overall assessment:** No critical issues. The system is remarkably well-structured for a solo-
-operated project — particularly the authority model, drift detection, and test coverage. The
-two HIGH items (D-1 and D-2) are pure DRY violations that are easy to fix and would reduce
-maintenance friction immediately. The MEDIUM items cluster around three themes: (1) test coverage
-for the most complex modules, (2) CI and automation completeness, and (3) schema strictness.
-The LOW items are polish and defense-in-depth — none are urgent but each represents a small
-improvement in robustness or developer experience.
+> **Review note (2026-04-14):** Table updated from original audit. Changes:
+> - H-5 (race condition) added as HIGH — new finding from critical review
+> - A-3 marked RESOLVED (dependabot github-actions already exists)
+> - G-4 marked RESOLVED (READONLY_MODE test already exists)
+> - DEP-1 marked RESOLVED as DUPLICATE of A-3
+> - SC-1 description corrected (8 objects, not "everywhere")
+> - D-3 description corrected (15–28 lines, not uniform ~15)
+> - R-1 title corrected (sync test missing, not types mismatched)
+>
+> Net change: +1 HIGH (H-5), −2 MEDIUM (A-3, DEP-1 resolved), −1 LOW (G-4 resolved)
 
 ---
 ---

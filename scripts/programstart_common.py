@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import os
 import re
 import subprocess
@@ -13,6 +14,8 @@ from pathlib import Path
 from typing import Any
 
 from filelock import FileLock
+
+logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
 # Standalone execution compatibility
@@ -164,11 +167,10 @@ def warn_direct_script_invocation(preferred_command: str) -> None:
     if Path(sys.argv[0]).suffix != ".py":
         return
 
-    print(
-        "WARNING: Direct script invocation is deprecated and will be removed in a future release.",
-        file=sys.stderr,
+    logger.warning(
+        "Direct script invocation is deprecated and will be removed in a future release. Use %s instead.",
+        preferred_command,
     )
-    print(f"Use {preferred_command} instead.", file=sys.stderr)
 
 
 def metadata_prefixes(registry: dict[str, Any]) -> list[str]:

@@ -37,6 +37,7 @@ from urllib.parse import parse_qs, urlparse
 ROOT = Path(__file__).resolve().parents[1]
 PYTHON = sys.executable
 SCRIPTS = Path(__file__).resolve().parent
+logger = logging.getLogger(__name__)
 READONLY_MODE = os.environ.get("PROGRAMSTART_READONLY", "").strip().lower() in ("1", "true", "yes")
 
 try:
@@ -497,9 +498,9 @@ def save_workflow_signoff(system: str, decision: str, signoff_date: str, notes: 
         history = entry.setdefault("signoff_history", [])
         history.append(signoff_record)
         if len(history) > MAX_SIGNOFF_HISTORY:
-            print(
-                f"Warning: signoff_history for {system} {active_step} exceeded {MAX_SIGNOFF_HISTORY} entries; oldest trimmed",
-                file=sys.stderr,
+            logger.warning(
+                "signoff_history for %s %s exceeded %d entries; oldest trimmed",
+                system, active_step, MAX_SIGNOFF_HISTORY,
             )
             entry["signoff_history"] = history[-MAX_SIGNOFF_HISTORY:]
         save_workflow_state(registry, system, state)
@@ -569,9 +570,9 @@ def advance_workflow_with_signoff(
         history = current_entry.setdefault("signoff_history", [])
         history.append(advance_record)
         if len(history) > MAX_SIGNOFF_HISTORY:
-            print(
-                f"Warning: signoff_history for {system} {active_step} exceeded {MAX_SIGNOFF_HISTORY} entries; oldest trimmed",
-                file=sys.stderr,
+            logger.warning(
+                "signoff_history for %s %s exceeded %d entries; oldest trimmed",
+                system, active_step, MAX_SIGNOFF_HISTORY,
             )
             current_entry["signoff_history"] = history[-MAX_SIGNOFF_HISTORY:]
         if current_index + 1 < len(steps):

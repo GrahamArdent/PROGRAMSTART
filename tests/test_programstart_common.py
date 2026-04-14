@@ -338,22 +338,25 @@ def test_detect_workspace_root_falls_back_to_package_root(tmp_path: Path, monkey
     assert detect_workspace_root(tmp_path) == ROOT
 
 
-def test_warn_direct_script_invocation_emits_warning(monkeypatch, capsys) -> None:
+def test_warn_direct_script_invocation_emits_warning(monkeypatch, caplog) -> None:
+    import logging
     monkeypatch.setattr(sys, "argv", ["scripts/programstart_validate.py", "--check", "all"])
 
-    warn_direct_script_invocation("'uv run programstart validate' or 'pb validate'")
+    with caplog.at_level(logging.WARNING, logger="scripts.programstart_common"):
+        warn_direct_script_invocation("'uv run programstart validate' or 'pb validate'")
 
-    err = capsys.readouterr().err
-    assert "deprecated" in err
-    assert "uv run programstart validate" in err
+    assert any("deprecated" in r.message for r in caplog.records)
+    assert any("uv run programstart validate" in r.message for r in caplog.records)
 
 
-def test_warn_direct_script_invocation_skips_console_script(monkeypatch, capsys) -> None:
+def test_warn_direct_script_invocation_skips_console_script(monkeypatch, caplog) -> None:
+    import logging
     monkeypatch.setattr(sys, "argv", ["programstart", "status"])
 
-    warn_direct_script_invocation("'uv run programstart status' or 'pb status'")
+    with caplog.at_level(logging.WARNING, logger="scripts.programstart_common"):
+        warn_direct_script_invocation("'uv run programstart status' or 'pb status'")
 
-    assert capsys.readouterr().err == ""
+    assert not any("deprecated" in r.message for r in caplog.records)
 
 
 # ---------------------------------------------------------------------------

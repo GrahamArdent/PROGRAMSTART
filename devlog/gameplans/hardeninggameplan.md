@@ -446,7 +446,7 @@ Expected: All checks pass. validate PASS, drift PASS.
 
 ---
 
-### Phase E: Structured Logging Pass (H-2)
+### ✅ Phase E: Structured Logging Pass (H-2) — COMPLETE
 
 **Goal**: Replace bare `print()` calls in non-CLI paths of all production scripts with `logging.getLogger(__name__)`. CLI entry points (`main()` functions and their direct output helpers) may retain `print()`. This improves observability and allows log level filtering.
 

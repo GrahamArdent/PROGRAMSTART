@@ -120,3 +120,23 @@ def test_main_invalid_message(monkeypatch, tmp_path) -> None:
     msg_file.write_text("bad commit\n", encoding="utf-8")
     monkeypatch.setattr("sys.argv", ["check_commit_msg.py", str(msg_file)])
     assert main() == 1
+
+
+# ── sync: instruction file <-> VALID_TYPES ─────────────────────────────────
+
+
+def test_commit_types_synced_with_instruction_file() -> None:
+    """VALID_TYPES in check_commit_msg.py must match the types table in the
+    conventional-commits instruction file (R-1)."""
+    import re as _re
+
+    from scripts.check_commit_msg import VALID_TYPES
+
+    instruction = (
+        ROOT / ".github" / "instructions" / "conventional-commits.instructions.md"
+    )
+    text = instruction.read_text(encoding="utf-8")
+    # Extract types from "| `type` |" markdown rows
+    types_from_doc = set(_re.findall(r"^\|\s*`(\w+)`\s*\|", text, _re.MULTILINE))
+    assert types_from_doc, "Could not parse types from instruction file"
+    assert set(VALID_TYPES) == types_from_doc

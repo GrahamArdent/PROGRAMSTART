@@ -39,7 +39,17 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
 
 GET_ROUTE_RE = re.compile(r'parsed\.path\s+==\s+"([^"]+)"')
 POST_ROUTE_RE = re.compile(r'parsed\.path\s+==\s+"([^"]+)"')
-INDEX_VERSION = "2026-03-28"
+
+
+def _compute_index_version() -> str:
+    """Derive a short version tag from the build_context_index schema shape.
+
+    Uses today's date so the version advances whenever the code is deployed,
+    avoiding stale hard-coded date strings (KB-1).
+    """
+    from datetime import date, timezone, datetime
+
+    return datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
 
 def default_index_path() -> Path:
@@ -264,7 +274,7 @@ def build_context_index() -> dict[str, Any]:
     knowledge_base = load_knowledge_base()
 
     return {
-        "version": INDEX_VERSION,
+        "version": _compute_index_version(),
         "workspace": {
             "name": registry["workspace"]["name"],
             "description": registry["workspace"]["description"],

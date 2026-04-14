@@ -339,3 +339,106 @@ def test_sanitize_markdown_table_cell_replaces_table_breakers() -> None:
     result = sanitize_markdown_table_cell("line one | line two\nline three")
 
     assert result == "line one ¦ line two line three"
+
+
+# ---------------------------------------------------------------------------
+# 6. Coverage source completeness (R-3)
+# ---------------------------------------------------------------------------
+
+# Scripts that are smoke tests or helpers — not production modules
+_COVERAGE_EXCLUSIONS = {
+    "programstart_cli_smoke.py",
+    "programstart_dashboard_browser_smoke.py",
+    "programstart_dashboard_golden.py",
+    "programstart_dashboard_smoke.py",
+    "programstart_dashboard_smoke_readonly.py",
+    "programstart_dist_smoke.py",
+    "programstart_factory_smoke.py",
+    "programstart_smoke_helpers.py",
+}
+
+
+def test_coverage_source_includes_all_production_scripts() -> None:
+    """Every programstart_*.py production script must be listed in
+    [tool.coverage.run] source (R-3)."""
+    import tomllib
+
+    pyproject = ROOT / "pyproject.toml"
+    cfg = tomllib.loads(pyproject.read_text(encoding="utf-8"))
+    source_modules = set(cfg["tool"]["coverage"]["run"]["source"])
+
+    scripts_dir = ROOT / "scripts"
+    production_scripts = {
+        f.name
+        for f in scripts_dir.glob("programstart_*.py")
+        if f.name not in _COVERAGE_EXCLUSIONS
+    }
+
+    missing = []
+    for script_name in sorted(production_scripts):
+        module = "scripts." + script_name.removesuffix(".py")
+        if module not in source_modules:
+            missing.append(module)
+
+    assert not missing, f"Scripts missing from coverage source: {missing}"
+
+
+# ---------------------------------------------------------------------------
+# 7. ADR index completeness (R-4)
+# ---------------------------------------------------------------------------
+
+
+def test_adr_index_lists_all_decision_files() -> None:
+    """Every 0*.md file in docs/decisions/ must have a row in the README index (R-4)."""
+    import re as _re
+
+    decisions_dir = ROOT / "docs" / "decisions"
+    adr_files = sorted(f.name for f in decisions_dir.glob("0*.md"))
+    assert adr_files, "No ADR files found"
+
+    readme = (decisions_dir / "README.md").read_text(encoding="utf-8")
+    # Extract filenames from markdown link cells like [0001](0001-foo.md)
+    indexed_files = set(_re.findall(r"\((\d{4}-[^)]+\.md)\)", readme))
+
+    missing = [f for f in adr_files if f not in indexed_files]
+    assert not missing, f"ADR files missing from index: {missing}"
+
+
+# ---------------------------------------------------------------------------
+# 8. Registry version freshness (R-5)
+# ---------------------------------------------------------------------------
+
+
+def test_registry_version_not_older_than_last_modification() -> None:
+    """process-registry.json 'version' date should not be older than its
+    last git modification date (R-5)."""
+    import json
+    import subprocess
+    from datetime import date
+
+    registry_path = ROOT / "config" / "process-registry.json"
+    registry = json.loads(registry_path.read_text(encoding="utf-8"))
+    version_date = date.fromisoformat(registry["version"])
+
+    try:
+        result = subprocess.run(
+            ["git", "log", "-1", "--format=%ai", "--", "config/process-registry.json"],
+            capture_output=True,
+            text=True,
+            cwd=ROOT,
+            timeout=10,
+        )
+        if result.returncode != 0 or not result.stdout.strip():
+            import pytest
+
+            pytest.skip("Could not determine git modification date")
+        # Format: "2026-04-11 12:34:56 -0500" — take date portion
+        git_date = date.fromisoformat(result.stdout.strip()[:10])
+    except FileNotFoundError:
+        import pytest
+
+        pytest.skip("git not available")
+
+    assert version_date >= git_date, (
+        f"Registry version {version_date} is older than last git modification {git_date}"
+    )

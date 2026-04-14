@@ -100,7 +100,9 @@ Adapt the protocol steps below to fit the confirmed shape.
    - Every flow in `USER_FLOWS.md` MUST reference at least one requirement ID
    - Flag any orphaned requirements or flows for review
 
-7. **Fill out-of-scope and assumptions.** Update the `## Out Of Scope` section with explicit exclusions. Update the `## Assumptions` table with any remaining assumptions and their risk-if-wrong.
+7. **UI Surface Assessment.** Does this product need any visual interface beyond what the primary shape provides? Reference the Kickoff Packet's `ADDITIONAL_SURFACES` field. If the answer is yes, add a requirement (e.g., `FR-NNN: Admin Dashboard`) and note it uses a companion UI scaffold.
+
+8. **Fill out-of-scope and assumptions.** Update the `## Out Of Scope` section with explicit exclusions. Update the `## Assumptions` table with any remaining assumptions and their risk-if-wrong.
 
 8. **Write outputs.**
    - `PROGRAMBUILD/REQUIREMENTS.md` — filled requirements table, user stories, out-of-scope, assumptions

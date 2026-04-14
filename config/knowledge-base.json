@@ -10174,6 +10174,111 @@
         "stacks"
       ],
       "confidence": "high"
+    },
+    {
+      "title": "Recommend status dashboard with Vite + React for API services needing monitoring",
+      "when": "The product shape is api_service AND the needs include monitoring, dashboard, or analytics.",
+      "prefer": "A companion status dashboard built with Vite + React, deployed separately from the API service.",
+      "because": "API services without a visual monitoring surface force operators into raw log tailing; a lightweight dashboard closes this gap without coupling frontend to the API codebase.",
+      "avoid": [
+        "Embedding dashboard routes directly in the API service.",
+        "Deferring all observability to third-party SaaS without any first-party operator surface."
+      ],
+      "related_items": [
+        "Vite",
+        "React",
+        "FastAPI",
+        "OpenTelemetry"
+      ],
+      "match_product_shapes": [
+        "api service"
+      ],
+      "match_needs": [
+        "monitoring",
+        "dashboard",
+        "analytics"
+      ],
+      "match_domains": [
+        "Web and frontend product delivery",
+        "Cloud, infrastructure, and platform operations"
+      ],
+      "prefer_items": [
+        "Vite",
+        "React"
+      ],
+      "target_layers": [
+        "stacks"
+      ],
+      "confidence": "medium"
+    },
+    {
+      "title": "Recommend web wrapper with Next.js for CLI tools targeting non-technical users",
+      "when": "The product shape is cli_tool AND the target user is non-technical or the needs include web interface.",
+      "prefer": "A companion web wrapper built with Next.js that exposes CLI capabilities through a browser-friendly interface.",
+      "because": "Non-technical users rarely adopt CLI tools directly; a lightweight web wrapper lowers the adoption barrier without rewriting the core tool.",
+      "avoid": [
+        "Rewriting CLI internals as a web app instead of wrapping the existing CLI.",
+        "Assuming all CLI users are comfortable with terminal workflows."
+      ],
+      "related_items": [
+        "Next.js",
+        "Pydantic",
+        "FastAPI"
+      ],
+      "match_product_shapes": [
+        "cli tool"
+      ],
+      "match_needs": [
+        "web interface",
+        "dashboard"
+      ],
+      "match_domains": [
+        "Web and frontend product delivery",
+        "Developer experience, quality, and supply chain"
+      ],
+      "prefer_items": [
+        "Next.js"
+      ],
+      "target_layers": [
+        "stacks"
+      ],
+      "confidence": "medium"
+    },
+    {
+      "title": "Recommend analytics dashboard for data pipelines needing visual output",
+      "when": "The product shape is data_pipeline AND the needs include analytics, reporting, or monitoring UI.",
+      "prefer": "A companion analytics dashboard built with Vite + React or a lightweight charting library, reading from the pipeline's output store.",
+      "because": "Data pipelines without visual output surfaces leave stakeholders dependent on ad hoc queries; a purpose-built dashboard closes the feedback loop.",
+      "avoid": [
+        "Mixing dashboard rendering logic into the pipeline execution code.",
+        "Deferring all analytics visualization to generic BI tools when a focused dashboard would be faster."
+      ],
+      "related_items": [
+        "Vite",
+        "React",
+        "DuckDB",
+        "Polars"
+      ],
+      "match_product_shapes": [
+        "data pipeline"
+      ],
+      "match_needs": [
+        "analytics",
+        "reporting",
+        "monitoring ui"
+      ],
+      "match_domains": [
+        "Web and frontend product delivery",
+        "Data engineering and analytics"
+      ],
+      "prefer_items": [
+        "Vite",
+        "React"
+      ],
+      "target_layers": [
+        "stacks"
+      ],
+      "confidence": "medium"
     }
   ],
   "relationships": [

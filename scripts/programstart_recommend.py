@@ -39,6 +39,7 @@ class ProjectRecommendation:
     prompt_anti_patterns: list[str] = field(default_factory=list)
     matched_domains: list[str] = field(default_factory=list)
     coverage_warnings: list[dict[str, str]] = field(default_factory=list)
+    suggested_companion_surfaces: list[str] = field(default_factory=list)
     stack_evidence: list[dict[str, object]] = field(default_factory=list)
     service_evidence: list[dict[str, object]] = field(default_factory=list)
     api_evidence: list[dict[str, object]] = field(default_factory=list)
@@ -290,6 +291,17 @@ def shape_profile(product_shape: str) -> tuple[str, list[str], set[str], list[st
         {"validation", "testing", "automation"},
         ["Developer experience, quality, and supply chain"],
     )
+
+
+def ui_tier(product_shape: str, needs: set[str]) -> str:
+    """Classify UI tier: none | docs-only | minimal-admin | full-product-ui."""
+    if product_shape in ("web app", "mobile app"):
+        return "full-product-ui"
+    if needs & {"dashboard", "admin ui", "monitoring ui", "web interface"}:
+        return "minimal-admin"
+    if product_shape == "library":
+        return "docs-only"
+    return "none"
 
 
 def infer_domain_names(product_shape: str, needs: set[str], regulated: bool, knowledge_base: dict[str, Any]) -> list[str]:
@@ -1113,6 +1125,34 @@ def build_recommendation(
         api_names=api_names,
     )
 
+    # Cross-shape companion surface advisory (I-2 / GAP-6, UI-6).
+    companion_surfaces: list[str] = []
+    ui_adjacent_needs = {"monitoring", "dashboard", "admin", "config", "analytics", "reporting"}
+    if product_shape not in ("web app", "mobile app") and normalized_needs & ui_adjacent_needs:
+        companion_surfaces.append("admin dashboard")
+        coverage_warnings.append({
+            "domain": "Companion UI",
+            "status": "advisory",
+            "summary": (
+                "Your API/CLI needs suggest a companion management UI. "
+                "Consider adding --need dashboard or running a separate web app build."
+            ),
+            "gaps": "",
+        })
+    if (
+        "Web and frontend product delivery" not in matched_domains
+        and product_shape in ("api service", "data pipeline")
+    ):
+        coverage_warnings.append({
+            "domain": "Frontend coverage",
+            "status": "advisory",
+            "summary": (
+                "No frontend domain matched. Many production API services need "
+                "an admin dashboard. Add --need dashboard if applicable."
+            ),
+            "gaps": "",
+        })
+
     return ProjectRecommendation(
         product_shape=product_shape,
         variant=variant,
@@ -1133,6 +1173,7 @@ def build_recommendation(
         prompt_anti_patterns=prompt_anti_patterns,
         matched_domains=matched_domains,
         coverage_warnings=coverage_warnings,
+        suggested_companion_surfaces=companion_surfaces,
         stack_evidence=stack_evidence,
         service_evidence=service_evidence,
         api_evidence=api_evidence,

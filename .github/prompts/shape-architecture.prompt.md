@@ -87,6 +87,7 @@ Adapt the protocol steps below to fit the confirmed shape.
    - Draw a text or Mermaid diagram showing the major components and their relationships.
    - For CLI tools: show entry point, script modules, data stores, optional external services.
    - For web apps: show frontend, backend, database, external APIs, auth provider.
+   - If the Kickoff Packet's `ADDITIONAL_SURFACES` field is non-empty, include the companion UI as a separate bounded context in the topology diagram.
 
 5. **Fill the Technology Decision Table.** For each tier:
    - Name the choice and at least one considered alternative.

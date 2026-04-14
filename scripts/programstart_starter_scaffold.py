@@ -929,6 +929,86 @@ def build_general_plan(project_name: str, recommendation: ProjectRecommendation)
     )
 
 
+def build_admin_dashboard_plan(project_name: str) -> dict[str, str]:
+    """Generate a minimal Vite + React admin dashboard scaffold."""
+    root_dir = "starter/admin_dashboard"
+    slug = slugify_project_name(project_name)
+    return {
+        f"{root_dir}/package.json": (
+            "{\n"
+            f'  "name": "{slug}-admin",\n'
+            '  "private": true,\n'
+            '  "type": "module",\n'
+            '  "scripts": {\n'
+            '    "dev": "vite",\n'
+            '    "build": "vite build",\n'
+            '    "test": "npx playwright test"\n'
+            "  },\n"
+            '  "dependencies": {\n'
+            '    "react": "^19",\n'
+            '    "react-dom": "^19",\n'
+            '    "react-router-dom": "^7"\n'
+            "  },\n"
+            '  "devDependencies": {\n'
+            '    "@vitejs/plugin-react": "^4",\n'
+            '    "vite": "^6",\n'
+            '    "typescript": "^6",\n'
+            '    "@playwright/test": "^1"\n'
+            "  }\n"
+            "}\n"
+        ),
+        f"{root_dir}/vite.config.ts": (
+            "import react from '@vitejs/plugin-react';\n"
+            "import { defineConfig } from 'vite';\n\n"
+            "export default defineConfig({ plugins: [react()] });\n"
+        ),
+        f"{root_dir}/src/main.tsx": (
+            "import { StrictMode } from 'react';\n"
+            "import { createRoot } from 'react-dom/client';\n"
+            "import { BrowserRouter, Route, Routes } from 'react-router-dom';\n"
+            "import { DashboardLayout } from './DashboardLayout';\n\n"
+            "createRoot(document.getElementById('root')!).render(\n"
+            "  <StrictMode>\n"
+            "    <BrowserRouter>\n"
+            "      <Routes>\n"
+            "        <Route path='/' element={<DashboardLayout />} />\n"
+            "      </Routes>\n"
+            "    </BrowserRouter>\n"
+            "  </StrictMode>,\n"
+            ");\n"
+        ),
+        f"{root_dir}/src/DashboardLayout.tsx": (
+            "export function DashboardLayout() {\n"
+            "  return (\n"
+            "    <main style={{ padding: '2rem', fontFamily: 'system-ui' }}>\n"
+            f"      <h1>{project_name} Admin</h1>\n"
+            "      <p>Auth-protected dashboard shell. Connect to the backend API client.</p>\n"
+            "    </main>\n"
+            "  );\n"
+            "}\n"
+        ),
+        f"{root_dir}/src/api.ts": (
+            f"const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000';\n\n"
+            "export async function fetchStatus(): Promise<Record<string, unknown>> {\n"
+            "  const res = await fetch(`${BASE_URL}/status`);\n"
+            "  return res.json() as Promise<Record<string, unknown>>;\n"
+            "}\n"
+        ),
+        f"{root_dir}/tests/dashboard.spec.ts": (
+            "import { expect, test } from '@playwright/test';\n\n"
+            "test('dashboard loads', async ({ page }) => {\n"
+            "  await page.goto('/');\n"
+            f"  await expect(page.getByText('{project_name} Admin')).toBeVisible();\n"
+            "}};\n"
+        ),
+        f"{root_dir}/README.md": (
+            f"# {project_name} Admin Dashboard\n\n"
+            "Minimal Vite + React SPA scaffold for the companion admin UI.\n"
+            "Run `npm install && npm run dev` to start the dev server.\n"
+        ),
+    }
+
+
 def build_starter_scaffold_plan(project_name: str, recommendation: ProjectRecommendation) -> StarterScaffoldPlan:
     product_shape = recommendation.product_shape
     if product_shape == "cli tool":
@@ -954,6 +1034,8 @@ def build_starter_scaffold_plan(project_name: str, recommendation: ProjectRecomm
         files.update(build_web_optional_files(recommendation))
     if plan.root_dir == "starter/mobile_app":
         files.update(build_mobile_optional_files(recommendation))
+    if any("dashboard" in s for s in recommendation.suggested_companion_surfaces):
+        files.update(build_admin_dashboard_plan(project_name))
     env_example = service_env_example(project_name, recommendation, plan.root_dir)
     if env_example is not None:
         path, content = env_example

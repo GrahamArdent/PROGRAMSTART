@@ -762,3 +762,84 @@ def test_api_shape_with_dashboard_need_includes_frontend() -> None:
     }
     domains = recommend.infer_domain_names("api service", {"dashboard"}, False, kb)
     assert "Web and frontend product delivery" in domains
+
+
+# ── ui_tier ────────────────────────────────────────────────────────────────────
+
+
+def test_ui_tier_web_app_returns_full_product_ui() -> None:
+    assert recommend.ui_tier("web app", set()) == "full-product-ui"
+
+
+def test_ui_tier_mobile_app_returns_full_product_ui() -> None:
+    assert recommend.ui_tier("mobile app", set()) == "full-product-ui"
+
+
+def test_ui_tier_api_with_dashboard_need_returns_minimal_admin() -> None:
+    assert recommend.ui_tier("api service", {"dashboard"}) == "minimal-admin"
+
+
+def test_ui_tier_cli_with_monitoring_ui_need_returns_minimal_admin() -> None:
+    assert recommend.ui_tier("cli tool", {"monitoring ui"}) == "minimal-admin"
+
+
+def test_ui_tier_library_returns_docs_only() -> None:
+    assert recommend.ui_tier("library", set()) == "docs-only"
+
+
+def test_ui_tier_api_no_ui_needs_returns_none() -> None:
+    assert recommend.ui_tier("api service", set()) == "none"
+
+
+def test_ui_tier_data_pipeline_with_admin_ui_returns_minimal_admin() -> None:
+    assert recommend.ui_tier("data pipeline", {"admin ui"}) == "minimal-admin"
+
+
+# ── companion surface advisory (build_recommendation) ──────────────────────────
+
+
+def test_build_recommendation_api_with_dashboard_need_adds_companion_surface() -> None:
+    with (
+        patch.object(recommend, "load_registry", return_value=_minimal_registry()),
+        patch.object(recommend, "load_knowledge_base", return_value=_minimal_kb()),
+    ):
+        result = recommend.build_recommendation(
+            product_shape="api service",
+            needs={"dashboard"},
+            regulated=False,
+            attach_userjourney=False,
+        )
+    assert "admin dashboard" in result.suggested_companion_surfaces
+    companion_warnings = [w for w in result.coverage_warnings if w.get("domain") == "Companion UI"]
+    assert len(companion_warnings) == 1
+    assert companion_warnings[0]["status"] == "advisory"
+
+
+def test_build_recommendation_web_app_no_companion_surface() -> None:
+    with (
+        patch.object(recommend, "load_registry", return_value=_minimal_registry()),
+        patch.object(recommend, "load_knowledge_base", return_value=_minimal_kb()),
+    ):
+        result = recommend.build_recommendation(
+            product_shape="web app",
+            needs={"dashboard"},
+            regulated=False,
+            attach_userjourney=None,
+        )
+    assert result.suggested_companion_surfaces == []
+
+
+def test_build_recommendation_api_no_frontend_domain_adds_advisory() -> None:
+    with (
+        patch.object(recommend, "load_registry", return_value=_minimal_registry()),
+        patch.object(recommend, "load_knowledge_base", return_value=_minimal_kb()),
+    ):
+        result = recommend.build_recommendation(
+            product_shape="api service",
+            needs=set(),
+            regulated=False,
+            attach_userjourney=False,
+        )
+    frontend_warnings = [w for w in result.coverage_warnings if w.get("domain") == "Frontend coverage"]
+    assert len(frontend_warnings) == 1
+    assert frontend_warnings[0]["status"] == "advisory"

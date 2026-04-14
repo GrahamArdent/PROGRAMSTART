@@ -495,6 +495,18 @@ def render_factory_plan(
     service_notes = "\n".join(f"- {item}" for item in payload.get("service_notes", [])) or "- none"
     cli_lines = "\n".join(f"- {item}" for item in payload.get("cli_tool_names", [])) or "- none"
     api_lines = "\n".join(f"- {item}" for item in payload.get("api_names", [])) or "- none"
+    companion_surfaces = payload.get("suggested_companion_surfaces", [])
+    companion_section = ""
+    if companion_surfaces:
+        surface_list = ", ".join(companion_surfaces)
+        companion_section = (
+            "## Companion UI Recommendation\n\n"
+            f"This {payload['product_shape']} recommendation includes a suggested management UI.\n\n"
+            f"- Recommended: {surface_list}\n"
+            "- Stack: Vite + React (see starter scaffold)\n"
+            "- Architecture: Separate frontend repo recommended for API services. "
+            "Monorepo recommended for CLI tools with web configuration UI.\n\n"
+        )
     return (
         f"# Factory Plan - {project_name}\n\n"
         f"Destination: {destination}\n\n"
@@ -556,6 +568,7 @@ def render_factory_plan(
         "```text\n"
         f"{payload['generated_prompt']}\n"
         "```\n\n"
+        f"{companion_section}"
         "## Starter Scaffold\n\n"
         f"- Label: {starter_plan.label}\n"
         f"- Root: {starter_plan.root_dir}\n"

@@ -323,6 +323,94 @@
       "required_starter_terms": [
         "from pydantic import BaseModel, Field"
       ]
+    },
+    {
+      "name": "api_service_with_admin_dashboard",
+      "product_shape": "api service",
+      "needs": ["rag", "agents", "dashboard"],
+      "regulated": false,
+      "attach_userjourney": false,
+      "expected_variant": "product",
+      "expected_attach_userjourney": false,
+      "expected_stacks": ["FastAPI", "PostgreSQL", "Pydantic"],
+      "expected_domains": ["AI, retrieval, and agent systems", "Web and frontend product delivery"],
+      "expected_confidence": "high",
+      "required_prompt_terms": [
+        "Product shape: api service",
+        "Variant: product",
+        "USERJOURNEY attached: no"
+      ],
+      "required_plan_sections": [
+        "## Selected Shape",
+        "## KB Decision Evidence",
+        "## Dynamic Prompt Guidance",
+        "## Kickoff Prompt"
+      ],
+      "expected_starter_root": "starter/api_service",
+      "expected_starter_files": [
+        "starter/api_service/pyproject.toml"
+      ],
+      "required_starter_terms": [
+        "fastapi"
+      ]
+    },
+    {
+      "name": "cli_tool_with_web_ui",
+      "product_shape": "CLI tool",
+      "needs": ["web interface"],
+      "regulated": false,
+      "attach_userjourney": false,
+      "expected_variant": "lite",
+      "expected_attach_userjourney": false,
+      "expected_stacks": ["Pydantic", "pytest", "uv"],
+      "expected_domains": ["Web and frontend product delivery", "Developer experience, quality, and supply chain"],
+      "expected_confidence": "high",
+      "required_prompt_terms": [
+        "Product shape: cli tool",
+        "Variant: lite",
+        "USERJOURNEY attached: no"
+      ],
+      "required_plan_sections": [
+        "## Selected Shape",
+        "## Dynamic Prompt Guidance",
+        "## Kickoff Prompt"
+      ],
+      "expected_starter_root": "starter/cli_tool",
+      "expected_starter_files": [
+        "starter/cli_tool/pyproject.toml"
+      ],
+      "required_starter_terms": [
+        "from pydantic import BaseModel, Field"
+      ]
+    },
+    {
+      "name": "data_pipeline_with_monitoring",
+      "product_shape": "data pipeline",
+      "needs": ["monitoring ui"],
+      "regulated": false,
+      "attach_userjourney": false,
+      "expected_variant": "product",
+      "expected_attach_userjourney": false,
+      "expected_stacks": ["FastAPI", "DuckDB", "Polars", "Pydantic"],
+      "expected_domains": ["Web and frontend product delivery", "Data engineering and analytics"],
+      "expected_confidence": "high",
+      "required_prompt_terms": [
+        "Product shape: data pipeline",
+        "Variant: product",
+        "USERJOURNEY attached: no"
+      ],
+      "required_plan_sections": [
+        "## Selected Shape",
+        "## Dynamic Prompt Guidance",
+        "## Kickoff Prompt"
+      ],
+      "expected_starter_root": "starter/data_pipeline",
+      "expected_starter_files": [
+        "starter/data_pipeline/pyproject.toml"
+      ],
+      "required_starter_terms": [
+        "polars"
+      ]
     }
   ]
 }

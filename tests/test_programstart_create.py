@@ -13,6 +13,7 @@ if str(ROOT) not in sys.path:
 
 from scripts import programstart_create as create
 from scripts.programstart_recommend import ProjectRecommendation
+from scripts.programstart_starter_scaffold import StarterScaffoldPlan
 
 # ── helpers ────────────────────────────────────────────────────────────────────
 
@@ -303,3 +304,50 @@ def test_main_passes_product_shape_to_build_recommendation(tmp_path: Path) -> No
         )
     assert len(captured_kwargs) == 1
     assert captured_kwargs[0]["product_shape"] == "api service"
+
+
+# ── render_factory_plan companion section ──────────────────────────────────────
+
+
+def _stub_starter_plan() -> StarterScaffoldPlan:
+    return StarterScaffoldPlan(
+        label="test scaffold",
+        root_dir="starter/api_service",
+        run_hint="uv run main.py",
+        files={"starter/api_service/main.py": "# stub"},
+    )
+
+
+def test_render_factory_plan_includes_companion_section_when_surfaces_present() -> None:
+    rec = _make_recommendation(
+        product_shape="api service",
+    )
+    rec.suggested_companion_surfaces = ["admin dashboard"]
+    result = create.render_factory_plan(
+        project_name="test",
+        recommendation=rec,
+        destination=Path("/tmp/test"),
+        attachment_source="",
+        starter_plan=_stub_starter_plan(),
+        github_repo="test",
+        github_visibility="private",
+        services=[],
+    )
+    assert "## Companion UI Recommendation" in result
+    assert "admin dashboard" in result
+    assert "Vite + React" in result
+
+
+def test_render_factory_plan_excludes_companion_section_when_no_surfaces() -> None:
+    rec = _make_recommendation(product_shape="api service")
+    result = create.render_factory_plan(
+        project_name="test",
+        recommendation=rec,
+        destination=Path("/tmp/test"),
+        attachment_source="",
+        starter_plan=_stub_starter_plan(),
+        github_repo="test",
+        github_visibility="private",
+        services=[],
+    )
+    assert "## Companion UI Recommendation" not in result

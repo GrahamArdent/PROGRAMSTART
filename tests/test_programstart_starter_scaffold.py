@@ -18,6 +18,7 @@ def _make_recommendation(
     stack_names: list[str] | None = None,
     service_names: list[str] | None = None,
     api_names: list[str] | None = None,
+    suggested_companion_surfaces: list[str] | None = None,
 ) -> ProjectRecommendation:
     return ProjectRecommendation(
         product_shape=product_shape,
@@ -27,6 +28,7 @@ def _make_recommendation(
         stack_names=stack_names or [],
         service_names=service_names or [],
         api_names=api_names or [],
+        suggested_companion_surfaces=suggested_companion_surfaces or [],
     )
 
 
@@ -207,3 +209,49 @@ def test_write_starter_scaffold_writes_correct_content(tmp_path: Path) -> None:
     scaffold.write_starter_scaffold(tmp_path, plan)
     readme = (tmp_path / "starter" / "README.md").read_text(encoding="utf-8")
     assert "content-check" in readme
+
+
+# ── build_admin_dashboard_plan ─────────────────────────────────────────────────
+
+
+def test_build_admin_dashboard_plan_returns_expected_files() -> None:
+    files = scaffold.build_admin_dashboard_plan("My API")
+    expected_paths = [
+        "starter/admin_dashboard/package.json",
+        "starter/admin_dashboard/vite.config.ts",
+        "starter/admin_dashboard/src/main.tsx",
+        "starter/admin_dashboard/src/DashboardLayout.tsx",
+        "starter/admin_dashboard/src/api.ts",
+        "starter/admin_dashboard/tests/dashboard.spec.ts",
+        "starter/admin_dashboard/README.md",
+    ]
+    for path in expected_paths:
+        assert path in files, f"Missing file: {path}"
+
+
+def test_build_admin_dashboard_plan_uses_slugified_name_in_package_json() -> None:
+    files = scaffold.build_admin_dashboard_plan("My API")
+    package_json = files["starter/admin_dashboard/package.json"]
+    assert '"my_api-admin"' in package_json
+
+
+def test_build_admin_dashboard_plan_includes_react_dependency() -> None:
+    files = scaffold.build_admin_dashboard_plan("test")
+    package_json = files["starter/admin_dashboard/package.json"]
+    assert '"react"' in package_json
+    assert '"react-dom"' in package_json
+
+
+def test_build_starter_scaffold_plan_includes_dashboard_when_companion_surface() -> None:
+    rec = _make_recommendation(
+        "api service",
+        suggested_companion_surfaces=["admin dashboard"],
+    )
+    plan = scaffold.build_starter_scaffold_plan("dash-test", rec)
+    assert "starter/admin_dashboard/package.json" in plan.files
+
+
+def test_build_starter_scaffold_plan_excludes_dashboard_when_no_companion() -> None:
+    rec = _make_recommendation("api service")
+    plan = scaffold.build_starter_scaffold_plan("no-dash", rec)
+    assert "starter/admin_dashboard/package.json" not in plan.files

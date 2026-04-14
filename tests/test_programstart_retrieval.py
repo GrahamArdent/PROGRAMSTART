@@ -547,3 +547,312 @@ def test_corpus_chunk_count_matches_index_scope() -> None:
     # Guidance: 2 principles + 2 layers + 1 avoid + 1 default_model + 2 best_practices + 1 hnsw + 1 bm25 + 1 hybrid = 11
     expected_min = 2 + 2 + 2 + 1 + 2 + 4  # = 13 minimum
     assert len(chunks) >= expected_min
+
+
+# ---------------------------------------------------------------------------
+# HybridSearcher — vector / hybrid paths
+# ---------------------------------------------------------------------------
+
+
+def _make_search_result(**kw) -> programstart_retrieval.SearchResult:
+    defaults = {"source_type": "doc", "source_id": "test", "text": "t", "score": 0.5, "metadata": {}}
+    defaults.update(kw)
+    return programstart_retrieval.SearchResult(**defaults)
+
+
+def test_hybrid_searcher_vector_raises_without_store() -> None:
+    lexical = programstart_retrieval.LexicalSearcher([])
+    hs = programstart_retrieval.HybridSearcher(lexical, embedding_store=None)
+    import pytest as _pt
+    with _pt.raises(ValueError, match="embedding store"):
+        hs.search("q", method="vector")
+
+
+def test_hybrid_searcher_falls_back_lexical_when_no_store() -> None:
+    index = _minimal_index()
+    chunks = programstart_retrieval.build_corpus(index)
+    lexical = programstart_retrieval.LexicalSearcher(chunks)
+    hs = programstart_retrieval.HybridSearcher(lexical, embedding_store=None)
+    results = hs.search("consent", method="hybrid")
+    assert isinstance(results, list)
+
+
+def test_reciprocal_rank_fusion_merges_lists() -> None:
+    lex = [_make_search_result(source_id="a"), _make_search_result(source_id="b")]
+    vec = [_make_search_result(source_id="b"), _make_search_result(source_id="c")]
+    merged = programstart_retrieval.HybridSearcher._reciprocal_rank_fusion(lex, vec, alpha=0.5, top_k=5)
+    ids = [r.source_id for r in merged]
+    assert "b" in ids  # b appears in both lists — should rank high
+    assert len(ids) == 3  # a, b, c
+
+
+# ---------------------------------------------------------------------------
+# RAGAssistant — format_context, validate_cited_sources
+# ---------------------------------------------------------------------------
+
+
+def test_rag_assistant_format_context() -> None:
+    lexical = programstart_retrieval.LexicalSearcher([])
+    hs = programstart_retrieval.HybridSearcher(lexical)
+    rag = programstart_retrieval.RAGAssistant(hs)
+    results = [
+        _make_search_result(source_type="doc", source_id="A.md", text="Hello"),
+        _make_search_result(source_type="concern", source_id="auth", text="Auth info"),
+    ]
+    ctx = rag._format_context(results)
+    assert "A.md" in ctx
+    assert "auth" in ctx
+    assert "[1]" in ctx
+    assert "[2]" in ctx
+
+
+def test_validate_cited_sources_filters_invalid() -> None:
+    lexical = programstart_retrieval.LexicalSearcher([])
+    hs = programstart_retrieval.HybridSearcher(lexical)
+    rag = programstart_retrieval.RAGAssistant(hs)
+    results = [_make_search_result(source_type="doc", source_id="A.md")]
+    response = programstart_retrieval.RAGQueryResponse(
+        answer="test",
+        reasoning="reason",
+        confidence="high",
+        cited_sources=["doc: A.md", "doc: NONEXISTENT.md"],
+    )
+    validated = rag._validate_cited_sources(response, results)
+    assert len(validated.cited_sources) == 1
+    assert validated.confidence == "low"
+
+
+def test_validate_cited_sources_passes_all_valid() -> None:
+    lexical = programstart_retrieval.LexicalSearcher([])
+    hs = programstart_retrieval.HybridSearcher(lexical)
+    rag = programstart_retrieval.RAGAssistant(hs)
+    results = [_make_search_result(source_type="doc", source_id="A.md")]
+    response = programstart_retrieval.RAGQueryResponse(
+        answer="test", reasoning="r", confidence="high", cited_sources=["doc: A.md"],
+    )
+    validated = rag._validate_cited_sources(response, results)
+    assert len(validated.cited_sources) == 1
+    assert validated.confidence == "high"
+
+
+# ---------------------------------------------------------------------------
+# Print helpers
+# ---------------------------------------------------------------------------
+
+
+def test_print_search_results_empty(capsys) -> None:
+    programstart_retrieval._print_search_results([])
+    out = capsys.readouterr().out
+    assert "No results found" in out
+
+
+def test_print_search_results_with_results(capsys) -> None:
+    results = [_make_search_result(source_type="doc", source_id="X.md", text="Short text")]
+    programstart_retrieval._print_search_results(results)
+    out = capsys.readouterr().out
+    assert "X.md" in out
+    assert "score" in out
+
+
+def test_print_rag_response(capsys) -> None:
+    resp = programstart_retrieval.RAGResponse(
+        answer="The answer is 42.",
+        sources=[_make_search_result(source_id="src1")],
+        model="test-model",
+        retrieval_method="lexical",
+    )
+    programstart_retrieval._print_rag_response(resp)
+    out = capsys.readouterr().out
+    assert "42" in out
+    assert "test-model" in out
+
+
+def test_print_structured_response(capsys) -> None:
+    resp = programstart_retrieval.RAGQueryResponse(
+        answer="Structured answer.",
+        reasoning="Because of X.",
+        confidence="high",
+        cited_sources=["doc: A.md"],
+    )
+    programstart_retrieval._print_structured_response(resp)
+    out = capsys.readouterr().out
+    assert "Structured answer" in out
+    assert "Confidence: high" in out
+    assert "Because of X" in out
+    assert "A.md" in out
+
+
+def test_print_structured_response_no_reasoning(capsys) -> None:
+    resp = programstart_retrieval.RAGQueryResponse(
+        answer="Short.", reasoning="", confidence="low", cited_sources=[],
+    )
+    programstart_retrieval._print_structured_response(resp)
+    out = capsys.readouterr().out
+    assert "Short." in out
+
+
+# ---------------------------------------------------------------------------
+# _load_or_build_index
+# ---------------------------------------------------------------------------
+
+
+def test_load_or_build_index_existing(tmp_path) -> None:
+    idx = {"version": 1, "documents": []}
+    p = tmp_path / "index.json"
+    p.write_text(json.dumps(idx), encoding="utf-8")
+    result = programstart_retrieval._load_or_build_index(str(p))
+    assert result["version"] == 1
+
+
+def test_load_or_build_index_missing_rebuilds() -> None:
+    result = programstart_retrieval._load_or_build_index(None)
+    assert "documents" in result
+
+
+# ---------------------------------------------------------------------------
+# main() CLI paths
+# ---------------------------------------------------------------------------
+
+
+def test_main_search_json(tmp_path) -> None:
+    from scripts import programstart_context
+    index = programstart_context.build_context_index()
+    idx_path = tmp_path / "index.json"
+    idx_path.write_text(json.dumps(index), encoding="utf-8")
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf):
+        rc = programstart_retrieval.main(["search", "consent", "--index", str(idx_path), "--json"])
+    assert rc == 0
+    parsed = json.loads(buf.getvalue())
+    assert isinstance(parsed, list)
+
+
+def test_main_search_text(tmp_path) -> None:
+    from scripts import programstart_context
+    index = programstart_context.build_context_index()
+    idx_path = tmp_path / "index.json"
+    idx_path.write_text(json.dumps(index), encoding="utf-8")
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf):
+        rc = programstart_retrieval.main(["search", "consent", "--index", str(idx_path)])
+    assert rc == 0
+
+
+def test_main_validate(tmp_path) -> None:
+    from scripts import programstart_context
+    index = programstart_context.build_context_index()
+    idx_path = tmp_path / "index.json"
+    idx_path.write_text(json.dumps(index), encoding="utf-8")
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf):
+        rc = programstart_retrieval.main(["validate", "--index", str(idx_path)])
+    assert rc == 0
+    assert "validated successfully" in buf.getvalue()
+
+
+def test_load_validated_index() -> None:
+    validated = programstart_retrieval.load_validated_index()
+    assert validated.version
+    assert len(validated.documents) > 0
+
+
+def test_main_validate_failure(tmp_path) -> None:
+    idx_path = tmp_path / "bad.json"
+    idx_path.write_text('{"documents": [{"bad_field": 1}]}', encoding="utf-8")
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf):
+        rc = programstart_retrieval.main(["validate", "--index", str(idx_path)])
+    assert rc == 1
+    assert "Validation failed" in buf.getvalue()
+
+
+def test_build_retrieval_stack_ask_without_chromadb() -> None:
+    """build_retrieval_stack with method='ask' falls back gracefully without chromadb."""
+    index = _minimal_index()
+    # Even if chromadb is not available (ImportError caught inside), this should
+    # return a searcher and rag assistant using lexical-only fallback.
+    searcher, rag = programstart_retrieval.build_retrieval_stack(index, method="ask")
+    assert rag is not None
+    assert searcher is not None
+
+
+# ---------------------------------------------------------------------------
+# RAGAssistant with mocked LLM
+# ---------------------------------------------------------------------------
+
+
+def test_rag_assistant_ask_with_mock(monkeypatch) -> None:
+    index = _minimal_index()
+    chunks = programstart_retrieval.build_corpus(index)
+    lexical = programstart_retrieval.LexicalSearcher(chunks)
+    hs = programstart_retrieval.HybridSearcher(lexical)
+    rag = programstart_retrieval.RAGAssistant(hs)
+
+    monkeypatch.setattr(rag, "_generate", lambda sys_msg, user_msg: "Mocked answer")
+    response = rag.ask("What is consent?")
+    assert response.answer == "Mocked answer"
+    assert response.model == rag.model
+
+
+def test_rag_assistant_ask_structured_with_mock(monkeypatch) -> None:
+    index = _minimal_index()
+    chunks = programstart_retrieval.build_corpus(index)
+    lexical = programstart_retrieval.LexicalSearcher(chunks)
+    hs = programstart_retrieval.HybridSearcher(lexical)
+    rag = programstart_retrieval.RAGAssistant(hs)
+
+    structured = programstart_retrieval.RAGQueryResponse(
+        answer="Structured answer", reasoning="r", confidence="high", cited_sources=[],
+    )
+    monkeypatch.setattr(rag, "_generate_structured", lambda sys_msg, user_msg: structured)
+    response = rag.ask_structured("What is consent?")
+    assert response.answer == "Structured answer"
+
+
+def test_rag_assistant_ask_structured_fallback(monkeypatch) -> None:
+    index = _minimal_index()
+    chunks = programstart_retrieval.build_corpus(index)
+    lexical = programstart_retrieval.LexicalSearcher(chunks)
+    hs = programstart_retrieval.HybridSearcher(lexical)
+    rag = programstart_retrieval.RAGAssistant(hs)
+
+    def fail_structured(sys_msg, user_msg):
+        raise RuntimeError("instructor not available")
+
+    monkeypatch.setattr(rag, "_generate_structured", fail_structured)
+    monkeypatch.setattr(rag, "_generate_litellm", lambda sys_msg, user_msg: "Fallback answer")
+    response = rag.ask_structured("Q?")
+    assert response.answer == "Fallback answer"
+    assert response.confidence == "low"
+
+
+def test_rag_assistant_generate_fallback(monkeypatch) -> None:
+    index = _minimal_index()
+    chunks = programstart_retrieval.build_corpus(index)
+    lexical = programstart_retrieval.LexicalSearcher(chunks)
+    hs = programstart_retrieval.HybridSearcher(lexical)
+    rag = programstart_retrieval.RAGAssistant(hs)
+
+    def fail(sys_msg, user_msg):
+        raise RuntimeError("no instructor")
+
+    monkeypatch.setattr(rag, "_generate_structured", fail)
+    monkeypatch.setattr(rag, "_generate_litellm", lambda sys_msg, user_msg: "plain fallback")
+    result = rag._generate("sys", "user")
+    assert result == "plain fallback"
+
+
+def test_rag_assistant_generate_structured_success(monkeypatch) -> None:
+    index = _minimal_index()
+    chunks = programstart_retrieval.build_corpus(index)
+    lexical = programstart_retrieval.LexicalSearcher(chunks)
+    hs = programstart_retrieval.HybridSearcher(lexical)
+    rag = programstart_retrieval.RAGAssistant(hs)
+
+    expected = programstart_retrieval.RAGQueryResponse(
+        answer="A", reasoning="R", confidence="high", cited_sources=[],
+    )
+    monkeypatch.setattr(rag, "_generate_structured", lambda s, u: expected)
+    result = rag._generate("sys", "user")
+    assert isinstance(result, programstart_retrieval.RAGQueryResponse)
+    assert result.answer == "A"

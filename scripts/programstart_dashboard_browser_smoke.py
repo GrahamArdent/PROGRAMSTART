@@ -144,7 +144,7 @@ def main() -> int:
                     timeout=8000,
                 )
                 state_loaded = True
-            except Exception:
+            except TimeoutError:
                 state_loaded = False
             checks.append(
                 (
@@ -217,7 +217,7 @@ def main() -> int:
                         timeout=3000,
                     )
                     modal_opened = True
-                except Exception:
+                except TimeoutError:
                     modal_opened = False
                 checks.append(
                     (
@@ -265,7 +265,7 @@ def main() -> int:
                         timeout=3000,
                     )
                     modal_closed = True
-                except Exception:
+                except TimeoutError:
                     modal_closed = False
                 checks.append(
                     (

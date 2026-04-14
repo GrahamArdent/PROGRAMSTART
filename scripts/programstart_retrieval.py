@@ -671,6 +671,7 @@ class RAGAssistant:
                 "Structured generation failed (%s: %s), falling back to plain LiteLLM",
                 type(exc).__name__,
                 exc,
+                exc_info=True,
             )
             fallback = self._generate_litellm(system_message, question)
             return RAGQueryResponse(
@@ -689,6 +690,7 @@ class RAGAssistant:
                 "Structured generation failed (%s: %s), falling back to plain LiteLLM",
                 type(exc).__name__,
                 exc,
+                exc_info=True,
             )
             return self._generate_litellm(system_message, user_message)
 
@@ -928,7 +930,7 @@ def main(argv: list[str] | None = None) -> int:
             print(f"  Routes:     {len(validated.routes)}")
             print(f"  Relations:  {len(validated.relations)}")
             return 0
-        except Exception as e:
+        except (FileNotFoundError, json.JSONDecodeError, ValueError, KeyError) as e:
             print(f"Validation failed: {e}")
             return 1
 

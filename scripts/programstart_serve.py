@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import logging
 import os
 import re
 import subprocess
@@ -125,14 +126,12 @@ def run_command(command_key: str, extra_args: list[str] | None = None) -> dict[s
                 return {"output": f"Error: extra arg '{arg}' not permitted", "exit_code": 1}
         cmd.extend(extra_args)
     env = {**os.environ, "NO_COLOR": "1"}
-    result = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True, check=False, env=env)
+    try:
+        result = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True, check=False, env=env, timeout=60)
+    except subprocess.TimeoutExpired:
+        return {"output": "Error: command timed out after 60 seconds", "exit_code": 1}
     output = result.stdout + (f"\nSTDERR:\n{result.stderr}" if result.stderr.strip() else "")
     return {"output": strip_ansi(output.strip()), "exit_code": result.returncode}
-
-
-# ---------------------------------------------------------------------------
-# Bootstrap — validated separately; accepts user-supplied path and name
-# ---------------------------------------------------------------------------
 _SAFE_PATH_RE = re.compile(
     r"^[A-Za-z]:[/\\][A-Za-z0-9 /\\._-]{1,259}$"  # Windows
     r"|^/[A-Za-z0-9 /._-]{1,259}$"  # Unix
@@ -174,7 +173,10 @@ def run_bootstrap(
     if dry_run:
         cmd.append("--dry-run")
     env = {**os.environ, "NO_COLOR": "1"}
-    result = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True, check=False, env=env)
+    try:
+        result = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True, check=False, env=env, timeout=60)
+    except subprocess.TimeoutExpired:
+        return {"output": "Error: bootstrap timed out after 60 seconds", "exit_code": 1}
     output = result.stdout + (f"\nSTDERR:\n{result.stderr}" if result.stderr.strip() else "")
     return {"output": strip_ansi(output.strip()), "exit_code": result.returncode}
 
@@ -235,7 +237,7 @@ def get_state_json() -> dict[str, Any]:
                         "Remaining Operational And Legal Decisions",
                     )
                     sys_data["open_questions"] = len(oq)
-                except Exception:
+                except (FileNotFoundError, KeyError, ValueError):
                     sys_data["open_questions"] = 0
             result[system] = sys_data
 
@@ -343,6 +345,7 @@ def get_state_json() -> dict[str, Any]:
         }
         return result
     except Exception as exc:
+        logging.getLogger(__name__).exception("Unexpected error in get_state_json")
         return {"error": str(exc)}
 
 

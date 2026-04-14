@@ -474,3 +474,74 @@ The PROGRAMSTART system is designed around authority models, sync rules, and val
 - **CI mirrors local behavior.** When `validate --check all` exits 0 locally, it exits 0 in CI. There's no opportunity for CI to be stricter than the local developer experience — because no `--strict` flag exists.
 
 The good news: every one of these gaps is small (5–40 lines of code each) and fits naturally into the existing validate/drift architecture. The `--strict` flag alone would have caught issues #4 and #5 the moment they were introduced.
+
+---
+
+## Post Stage 7 Addendum
+
+**Execution date**: 2026-04-14
+**Gameplan**: `stage7gameplan.md` — Phases A through L + Docs
+
+### Final Metrics
+
+| Metric | Before | After |
+|---|---|---|
+| Test count | 883 (3 failures) | 1072 (0 failures) |
+| Aggregate coverage (TOTAL) | 88% | 92.59% |
+| `fail_under` floor | 80% | 90% |
+| Modules tracked by coverage | 22 | 30 |
+| Validate warnings | 2 (DEC-005, DEC-006) | 0 |
+| Drift notes | 2 (FILE_INDEX, FEASIBILITY) | 0 |
+| `--strict` mode | N/A | Passes (validate + drift) |
+| Schema conformance tests | 0 | 8 (6 conformance + 2 runtime validation) |
+
+### Per-Module Coverage (Post Stage 7)
+
+| Module | Coverage |
+|---|---|
+| check_commit_msg.py | 97% |
+| programstart_attach.py | 95% |
+| programstart_bootstrap.py | 91% |
+| programstart_checklist_progress.py | 100% |
+| programstart_clean.py | 89% |
+| programstart_cli.py | 97% |
+| programstart_command_registry.py | 100% |
+| programstart_common.py | 95% |
+| programstart_context.py | 89% |
+| programstart_create.py | 90% |
+| programstart_dashboard.py | 99% |
+| programstart_drift_check.py | 100% |
+| programstart_health_probe.py | 96% |
+| programstart_impact.py | 100% |
+| programstart_init.py | 93% |
+| programstart_log.py | 100% |
+| programstart_markdown_parsers.py | 99% |
+| programstart_models.py | 100% |
+| programstart_prompt_eval.py | 91% |
+| programstart_recommend.py | 92% |
+| programstart_refresh_integrity.py | 91% |
+| programstart_repo_clean_check.py | 95% |
+| programstart_research_delta.py | 80% |
+| programstart_retrieval.py | 85% |
+| programstart_serve.py | 83% |
+| programstart_starter_scaffold.py | 97% |
+| programstart_status.py | 97% |
+| programstart_step_guide.py | 99% |
+| programstart_validate.py | 94% |
+| programstart_workflow_state.py | 95% |
+
+### Gaps Closed
+
+All actionable gaps from the original report have been addressed:
+
+- **S-1**: `--strict` flag added to both `validate` and `drift`; enforced in CI and pre-commit
+- **S-2**: `validate_coverage_source_completeness()` check added; all modules registered
+- **S-3**: Test discovery broadened from `programstart_*.py` to `*.py` with explicit exclusions
+- **S-5**: `fail_under` raised from 80% to 90% (locking in the coverage gains)
+- **T-19**: Schema conformance tested in pytest (6 tests)
+- **T-20**: Runtime schema validation on state writes (2 tests)
+- **T-21**: Coverage floor raised to match achieved level
+
+### Status
+
+All success criteria from `stage7gameplan.md` Section 5 are met. `validate --check all --strict` and `drift --strict` both pass.

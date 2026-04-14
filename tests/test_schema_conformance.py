@@ -62,6 +62,84 @@ def test_programbuild_state_keys_subset_of_registry_stages() -> None:
     assert state.get("active_stage") in valid_stages
 
 
+# ---------------------------------------------------------------------------
+# D-3: Schema version contract
+# ---------------------------------------------------------------------------
+
+
+def test_registry_has_version_key() -> None:
+    """D-3: config/process-registry.json must have a top-level 'version' key."""
+    registry = json.loads((ROOT / "config" / "process-registry.json").read_text(encoding="utf-8"))
+    assert "version" in registry, "process-registry.json is missing the 'version' key"
+    assert isinstance(registry["version"], str) and registry["version"]
+
+
+def test_load_registry_warns_when_version_missing(monkeypatch, tmp_path: Path) -> None:
+    """D-3: load_registry() emits a warning when the registry lacks 'version'."""
+    import sys
+    import warnings
+
+    ROOT_TESTS = Path(__file__).resolve().parents[1]
+    if str(ROOT_TESTS) not in sys.path:
+        sys.path.insert(0, str(ROOT_TESTS))
+
+    from scripts import programstart_common
+
+    registry_without_version = {"systems": {}, "sync_rules": []}
+    reg_path = tmp_path / "config" / "process-registry.json"
+    reg_path.parent.mkdir(parents=True)
+    reg_path.write_text(json.dumps(registry_without_version), encoding="utf-8")
+
+    monkeypatch.setattr(programstart_common, "workspace_path", lambda rel: tmp_path / rel)
+
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        programstart_common.load_registry()
+
+    assert any("version" in str(w.message).lower() for w in caught)
+
+
+# ---------------------------------------------------------------------------
+# D-5: pyproject.toml → requirements.txt sync enforcement
+# ---------------------------------------------------------------------------
+
+
+def test_pyproject_direct_deps_present_in_requirements_txt() -> None:
+    """D-5: every direct dependency in pyproject.toml appears in requirements.txt."""
+    import re
+
+    pyproject_text = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    requirements_text = (ROOT / "requirements.txt").read_text(encoding="utf-8")
+
+    # Extract package names from [project.dependencies]
+    dep_section = re.search(r"\[project\]\s.*?dependencies\s*=\s*\[(.*?)\]", pyproject_text, re.DOTALL)
+    assert dep_section, "Could not parse [project] dependencies from pyproject.toml"
+
+    req_lower = requirements_text.lower()
+    missing = []
+    for dep_line in dep_section.group(1).splitlines():
+        dep_line = dep_line.strip().strip('",')
+        if not dep_line or dep_line.startswith("#"):
+            continue
+        # Extract bare package name (before any version specifier)
+        pkg_name = re.split(r"[>=<!;]", dep_line)[0].strip().lower().replace("-", "_")
+        # Accept either hyphenated or underscored package name in requirements.txt
+        pkg_hyphen = pkg_name.replace("_", "-")
+        if pkg_name not in req_lower and pkg_hyphen not in req_lower:
+            missing.append(dep_line)
+
+    assert not missing, f"pyproject.toml deps missing from requirements.txt: {missing}"
+
+
+def test_registry_pyproject_requirements_sync_rule_exists() -> None:
+    """D-5: process-registry.json must document pyproject.toml as authority over requirements.txt."""
+    registry = json.loads((ROOT / "config" / "process-registry.json").read_text(encoding="utf-8"))
+    sync_names = {rule["name"] for rule in registry.get("sync_rules", [])}
+    assert "pyproject_requirements_sync" in sync_names, (
+        "sync_rules must include 'pyproject_requirements_sync' documenting pyproject.toml authority"
+    )
+
+
 def test_userjourney_state_keys_subset_of_registry_phases() -> None:
     """Phase keys in the state file must be a subset of registry step_order names."""
     state_path = ROOT / "USERJOURNEY" / "USERJOURNEY_STATE.json"

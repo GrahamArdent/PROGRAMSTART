@@ -412,7 +412,7 @@ class LexicalSearcher:
         df = len(self._inverted.get(term, set()))
         return math.log((self._n_docs - df + 0.5) / (df + 0.5) + 1.0)
 
-    def search(self, query: str, top_k: int = 10) -> list[SearchResult]:
+    def search(self, query: str, top_k: int = 10, min_score: float = 0.0) -> list[SearchResult]:
         """Score all chunks against the query and return top-k results."""
         query_tokens = tokenize(query)
         if not query_tokens:
@@ -430,9 +430,9 @@ class LexicalSearcher:
                 denominator = tf + self.k1 * (1 - self.b + self.b * (dl / self._avg_dl))
                 scores[doc_idx] += idf * (numerator / denominator)
 
-        # Rank and collect top-k
+        # Rank and collect top-k; apply min_score threshold
         ranked = sorted(
-            ((score, idx) for idx, score in enumerate(scores) if score > 0),
+            ((score, idx) for idx, score in enumerate(scores) if score > min_score),
             key=lambda x: x[0],
             reverse=True,
         )

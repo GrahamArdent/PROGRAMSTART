@@ -183,6 +183,7 @@
       ".github/prompts/shape-uj-ux-surfaces.prompt.md",
       ".github/prompts/product-jit-check.prompt.md",
       ".github/prompts/execute-enhancement-gameplan.prompt.md",
+      ".github/prompts/execute-hardening-gameplan.prompt.md",
       ".github/prompts/PROMPT_STANDARD.md",
       ".github/instructions/conventional-commits.instructions.md",
       ".gitlint",
@@ -612,6 +613,18 @@
       ],
       "require_authority_when_dependents_change": true,
       "description": "Test strategy must stay aligned with requirements. When requirements change, review TEST_STRATEGY.md for coverage gaps. When TEST_STRATEGY.md changes, confirm the change is driven by a requirements update."
+    },
+    {
+      "name": "pyproject_requirements_sync",
+      "system": "cross",
+      "authority_files": [
+        "pyproject.toml"
+      ],
+      "dependent_files": [
+        "requirements.txt"
+      ],
+      "require_authority_when_dependents_change": false,
+      "description": "requirements.txt is auto-generated from pyproject.toml via 'uv export --extra dev'. pyproject.toml is the authority for dependency declarations. When pyproject.toml changes, regenerate requirements.txt with: uv export --format requirements-txt --extra dev --no-hashes -o requirements.txt"
     }
   ],
   "metadata_rules": {

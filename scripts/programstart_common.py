@@ -109,7 +109,13 @@ ROOT = detect_workspace_root()
 
 
 def load_registry() -> dict[str, Any]:
-    return json.loads(workspace_path("config/process-registry.json").read_text(encoding="utf-8"))
+    data = json.loads(workspace_path("config/process-registry.json").read_text(encoding="utf-8"))
+    if "version" not in data:
+        warnings.warn(
+            "config/process-registry.json is missing 'version' key — registry integrity may be degraded",
+            stacklevel=2,
+        )
+    return data
 
 
 def load_json(path: Path) -> dict[str, Any]:

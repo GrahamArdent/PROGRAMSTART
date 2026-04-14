@@ -770,6 +770,52 @@ def test_hybrid_searcher_hybrid_method_with_mock_store_runs_rrf() -> None:
     assert isinstance(results, list)
 
 
+# ---------------------------------------------------------------------------
+# D-1: BM25 min_score threshold tests
+# ---------------------------------------------------------------------------
+
+
+def test_lexical_searcher_min_score_zero_default_returns_all_matching() -> None:
+    """D-1 (a): min_score=0.0 default returns all results with score > 0."""
+    from scripts.programstart_retrieval import Chunk, LexicalSearcher
+
+    chunks = [
+        Chunk("doc", "alpha", "apple banana cherry", {}),
+        Chunk("doc", "beta", "completely unrelated words xyz", {}),
+    ]
+    searcher = LexicalSearcher(chunks)
+    results = searcher.search("apple")
+    assert any(r.source_id == "alpha" for r in results)
+
+
+def test_lexical_searcher_min_score_filters_low_scoring_result() -> None:
+    """D-1 (b): high min_score filters out low-relevance results."""
+    from scripts.programstart_retrieval import Chunk, LexicalSearcher
+
+    chunks = [
+        Chunk("doc", "high", "apple apple apple apple apple apple", {}),
+        Chunk("doc", "low", "apple zebra monkey parrot giraffe elephant", {}),
+    ]
+    searcher = LexicalSearcher(chunks)
+    results_all = searcher.search("apple", min_score=0.0)
+    assert len(results_all) == 2  # both have apple
+
+    very_high_threshold = results_all[-1].score + 0.001
+    results_filtered = searcher.search("apple", min_score=very_high_threshold)
+    assert not any(r.source_id == "low" for r in results_filtered)
+
+
+def test_lexical_searcher_min_score_default_does_not_break_existing_callers() -> None:
+    """D-1 (c): default min_score=0.0 is backward-compatible with existing callers."""
+    from scripts.programstart_retrieval import Chunk, LexicalSearcher
+
+    chunks = [Chunk("doc", "a", "hello world", {})]
+    searcher = LexicalSearcher(chunks)
+    # Calling without min_score (old caller signature) must still work
+    results = searcher.search("hello")
+    assert len(results) == 1
+
+
 def test_retrieval_main_validate_subcommand_success(monkeypatch) -> None:
     """Lines 909-919: validate subcommand with a minimal valid index prints success."""
     monkeypatch.setattr(programstart_retrieval, "_load_or_build_index", lambda _path: {})

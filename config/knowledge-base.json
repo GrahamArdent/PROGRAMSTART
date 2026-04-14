@@ -1,5 +1,5 @@
 {
-  "version": "2026-04-12",
+  "version": "2026-04-14",
   "method": "Primary-source synthesis from official framework, platform, and tooling documentation. The KB is intentionally decision-oriented: it stores stack guidance, developer setup surfaces, reusable API profiles, explicit coverage domains, and weekly research freshness metadata so scope and staleness can be audited instead of guessed.",
   "stacks": [
     {

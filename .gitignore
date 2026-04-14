@@ -13,6 +13,7 @@ STATUS_DASHBOARD_TEST.md
 *.egg-info/
 __pycache__/
 build/
+dist/
 htmlcov/
 site/
 *.pyc

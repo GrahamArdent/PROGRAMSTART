@@ -19,12 +19,10 @@ from scripts.programstart_common import (
     clr_red,
     clr_yellow,
     collect_registry_integrity_files,
-    collect_repo_files,
     create_default_workflow_state,
     detect_workspace_root,
     display_workspace_path,
     extract_numbered_items,
-    first_incomplete_programbuild_stage,
     generated_outputs_root,
     git_changed_files,
     has_required_metadata,
@@ -100,11 +98,6 @@ def test_create_default_workflow_state_userjourney_has_no_variant() -> None:
     assert state["system"] == "userjourney"
     assert state["active_phase"] == "phase_0"
     assert "variant" not in state
-
-
-def test_collect_repo_files_includes_readme() -> None:
-    files = collect_repo_files()
-    assert any(Path(path).name == "README.md" for path in files)
 
 
 def test_git_changed_files_returns_list() -> None:
@@ -236,40 +229,6 @@ def test_git_changed_files_handles_oserror_and_deduplicates(monkeypatch) -> None
     assert git_changed_files() == ["README.md", "PROGRAMBUILD/FEASIBILITY.md"]
 
 
-def test_first_incomplete_programbuild_stage(monkeypatch) -> None:
-    registry = load_registry()
-    output_files = set(registry["systems"]["programbuild"]["output_files"])
-    expected_stage = next(
-        stage for stage in registry["systems"]["programbuild"]["stage_order"] if stage["main_output"] in output_files
-    )
-    monkeypatch.setattr(
-        "scripts.programstart_common.workspace_path",
-        lambda relative_path: ROOT / "_missing_sentinel" / relative_path,
-    )
-    stage = first_incomplete_programbuild_stage(registry)
-    assert stage is not None
-    assert stage["main_output"] == expected_stage["main_output"]
-
-
-def test_collect_repo_files_filters_exclusions(tmp_path: Path, monkeypatch) -> None:
-    (tmp_path / ".git").mkdir()
-    (tmp_path / ".git" / "ignored.txt").write_text("ignored", encoding="utf-8")
-    (tmp_path / "build").mkdir()
-    (tmp_path / "build" / "ignored.txt").write_text("ignored", encoding="utf-8")
-    (tmp_path / "dist").mkdir()
-    (tmp_path / "dist" / "ignored.whl").write_text("ignored", encoding="utf-8")
-    (tmp_path / ".tmp_dist_smoke").mkdir()
-    (tmp_path / ".tmp_dist_smoke" / "ignored.txt").write_text("ignored", encoding="utf-8")
-    (tmp_path / "outputs").mkdir()
-    (tmp_path / "outputs" / "STATUS_DASHBOARD.md").write_text("ignored", encoding="utf-8")
-    (tmp_path / "README.md").write_text("ok", encoding="utf-8")
-    (tmp_path / "PROGRAMSTART_2026-03-27.zip").write_text("zip", encoding="utf-8")
-    (tmp_path / "MANIFEST_2099-01-01.txt").write_text("manifest", encoding="utf-8")
-    monkeypatch.setattr("scripts.programstart_common.ROOT", tmp_path)
-    files = collect_repo_files()
-    assert [path.name for path in files] == ["README.md"]
-
-
 def test_collect_registry_integrity_files_uses_registry_scope(tmp_path: Path, monkeypatch) -> None:
     monkeypatch.setattr("scripts.programstart_common.ROOT", tmp_path)
     (tmp_path / "README.md").write_text("root", encoding="utf-8")
@@ -334,20 +293,6 @@ def test_collect_registry_integrity_files_uses_registry_scope(tmp_path: Path, mo
         "USERJOURNEY/USERJOURNEY_INTEGRITY_REFERENCE.json",
         "docs/index.md",
     }
-
-
-def test_first_incomplete_programbuild_stage_returns_none_when_outputs_exist(monkeypatch) -> None:
-    registry = load_registry()
-    stage = next(
-        stage
-        for stage in registry["systems"]["programbuild"]["stage_order"]
-        if stage["main_output"] in registry["systems"]["programbuild"]["output_files"]
-    )
-    monkeypatch.setattr(
-        "scripts.programstart_common.workspace_path",
-        lambda relative_path: ROOT / stage["main_output"] if relative_path == stage["main_output"] else ROOT / relative_path,
-    )
-    assert first_incomplete_programbuild_stage(registry) is None
 
 
 def test_to_posix_returns_relative_workspace_path() -> None:

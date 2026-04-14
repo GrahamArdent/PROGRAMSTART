@@ -336,27 +336,6 @@ def git_changed_files() -> list[str]:
     return changed
 
 
-def collect_repo_files() -> list[Path]:
-    excluded_prefixes = {".git", ".tmp_dist_smoke", "build", "dist", "outputs"}
-    excluded_names = {"PROGRAMSTART_2026-03-27.zip"}
-    excluded_patterns = ("MANIFEST_", "VERIFICATION_REPORT_")
-    files: list[Path] = []
-
-    for path in ROOT.rglob("*"):
-        if not path.is_file():
-            continue
-        relative = to_posix(path)
-        if any(relative == prefix or relative.startswith(prefix + "/") for prefix in excluded_prefixes):
-            continue
-        if path.name in excluded_names:
-            continue
-        if path.name.startswith(excluded_patterns):
-            continue
-        files.append(path)
-
-    return sorted(files)
-
-
 def collect_registry_integrity_files(registry: dict[str, Any]) -> list[Path]:
     integrity = dict(registry.get("integrity", {}))
     manifest_collection = dict(integrity.get("manifest_collection", {}))
@@ -424,13 +403,3 @@ def collect_registry_integrity_files(registry: dict[str, Any]) -> list[Path]:
 
     return sorted(files.values())
 
-
-def first_incomplete_programbuild_stage(registry: dict[str, Any]) -> dict[str, Any] | None:
-    output_files = set(registry["systems"]["programbuild"]["output_files"])
-    for stage in registry["systems"]["programbuild"]["stage_order"]:
-        output = stage["main_output"]
-        if output not in output_files:
-            continue
-        if not workspace_path(output).exists():
-            return stage
-    return None

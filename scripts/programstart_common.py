@@ -14,6 +14,27 @@ from typing import Any
 from filelock import FileLock
 
 # ---------------------------------------------------------------------------
+# Standalone execution compatibility
+# ---------------------------------------------------------------------------
+
+
+def _ensure_scripts_importable() -> None:
+    """Ensure the scripts directory is on sys.path for standalone execution.
+
+    Scripts that need bare imports (e.g. ``from programstart_validate import X``)
+    during standalone execution (``python scripts/X.py``) should call this helper
+    in their ``except ImportError`` fallback block *before* the bare imports.
+
+    Python already prepends the script's directory to ``sys.path`` when running
+    a script directly, so this is typically a no-op when invoked from
+    ``scripts/``.  It is safe to call from package context too.
+    """
+    scripts_dir = str(Path(__file__).parent)
+    if scripts_dir not in sys.path:
+        sys.path.insert(0, scripts_dir)
+
+
+# ---------------------------------------------------------------------------
 # Terminal colour helpers — respects NO_COLOR env var and non-TTY pipes
 # ---------------------------------------------------------------------------
 

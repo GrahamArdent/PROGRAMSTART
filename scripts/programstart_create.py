@@ -21,11 +21,11 @@ try:
     from .programstart_context import load_knowledge_base
     from .programstart_starter_scaffold import StarterScaffoldPlan, build_starter_scaffold_plan, write_starter_scaffold
 except ImportError:  # pragma: no cover - standalone script execution fallback
-    from programstart_init import main as init_main  # type: ignore
-    from programstart_recommend import ProjectRecommendation, build_generated_prompt, build_recommendation  # type: ignore
-    from programstart_common import generated_outputs_root, load_registry, warn_direct_script_invocation, workspace_path  # type: ignore
-    from programstart_context import load_knowledge_base  # type: ignore
-    from programstart_starter_scaffold import StarterScaffoldPlan, build_starter_scaffold_plan, write_starter_scaffold  # type: ignore
+    from programstart_init import main as init_main
+    from programstart_recommend import ProjectRecommendation, build_generated_prompt, build_recommendation
+    from programstart_common import generated_outputs_root, load_registry, warn_direct_script_invocation, workspace_path
+    from programstart_context import load_knowledge_base
+    from programstart_starter_scaffold import StarterScaffoldPlan, build_starter_scaffold_plan, write_starter_scaffold
 
 
 def normalize_shape(value: str) -> str:

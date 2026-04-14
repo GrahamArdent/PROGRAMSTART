@@ -7,7 +7,7 @@ from pathlib import Path
 try:
     from .programstart_recommend import ProjectRecommendation
 except ImportError:  # pragma: no cover - standalone script execution fallback
-    from programstart_recommend import ProjectRecommendation  # type: ignore
+    from programstart_recommend import ProjectRecommendation
 
 
 @dataclass(slots=True)

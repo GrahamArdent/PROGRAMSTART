@@ -67,9 +67,9 @@ try:
         extract_subagents,
     )
 except ImportError:  # pragma: no cover - standalone script execution fallback
-    from programstart_command_registry import dashboard_allowed_commands  # type: ignore
-    from programstart_health_probe import probe_target as _probe_target  # type: ignore
-    from programstart_markdown_parsers import (  # type: ignore
+    from programstart_command_registry import dashboard_allowed_commands
+    from programstart_health_probe import probe_target as _probe_target
+    from programstart_markdown_parsers import (
         clean_md,
         extract_bullets,
         extract_bullets_after_marker,
@@ -79,7 +79,7 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
         extract_subagents,
     )
 
-    from programstart_common import (  # type: ignore
+    from programstart_common import (
         extract_numbered_items,
         git_changed_files,
         load_registry,

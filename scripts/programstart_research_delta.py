@@ -12,8 +12,8 @@ try:
     from .programstart_common import generated_outputs_root, load_json, warn_direct_script_invocation, workspace_path, write_json
     from .programstart_models import KnowledgeBase, ResearchTrack
 except ImportError:  # pragma: no cover - standalone script execution fallback
-    from programstart_common import generated_outputs_root, load_json, warn_direct_script_invocation, workspace_path, write_json  # type: ignore
-    from programstart_models import KnowledgeBase, ResearchTrack  # type: ignore
+    from programstart_common import generated_outputs_root, load_json, warn_direct_script_invocation, workspace_path, write_json
+    from programstart_models import KnowledgeBase, ResearchTrack
 
 
 @dataclass(slots=True)

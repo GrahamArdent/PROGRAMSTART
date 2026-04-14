@@ -11,8 +11,8 @@ try:
     from .programstart_common import warn_direct_script_invocation, workspace_path
     from .programstart_context import build_context_index, cached_index_is_compatible, default_index_path, query_context_index
 except ImportError:  # pragma: no cover - standalone script execution fallback
-    from programstart_common import workspace_path, warn_direct_script_invocation  # type: ignore
-    from programstart_context import (  # type: ignore
+    from programstart_common import workspace_path, warn_direct_script_invocation
+    from programstart_context import (
         build_context_index,
         cached_index_is_compatible,
         default_index_path,

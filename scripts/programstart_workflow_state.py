@@ -32,8 +32,8 @@ try:
         workspace_path,
     )
 except ImportError:  # pragma: no cover - standalone script execution fallback
-    import programstart_drift_check  # type: ignore
-    import programstart_validate  # type: ignore
+    import programstart_drift_check
+    import programstart_validate
 
     from programstart_common import (
         clr_bold,

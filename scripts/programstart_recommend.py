@@ -14,8 +14,8 @@ try:
     from .programstart_common import load_registry, warn_direct_script_invocation, workspace_path
     from .programstart_context import load_knowledge_base
 except ImportError:  # pragma: no cover - standalone script execution fallback
-    from programstart_common import load_registry, warn_direct_script_invocation, workspace_path  # type: ignore
-    from programstart_context import load_knowledge_base  # type: ignore
+    from programstart_common import load_registry, warn_direct_script_invocation, workspace_path
+    from programstart_context import load_knowledge_base
 
 
 @dataclass(slots=True)

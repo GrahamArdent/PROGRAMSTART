@@ -12,13 +12,13 @@ try:
     from .programstart_bootstrap import bootstrap_repository, refresh_secrets_baseline, stamp_owner_and_dates
     from .programstart_common import warn_direct_script_invocation
 except ImportError:  # pragma: no cover - standalone script execution fallback
-    from programstart_attach import attach_userjourney, resolve_attachment_source  # type: ignore
-    from programstart_bootstrap import (  # type: ignore
+    from programstart_attach import attach_userjourney, resolve_attachment_source
+    from programstart_bootstrap import (
         bootstrap_repository,
         refresh_secrets_baseline,
         stamp_owner_and_dates,
     )
-    from programstart_common import warn_direct_script_invocation  # type: ignore
+    from programstart_common import warn_direct_script_invocation
 
 
 def replace_starter_inputs_block(path: Path, values: dict[str, str]) -> None:

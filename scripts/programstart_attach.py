@@ -13,7 +13,7 @@ try:
         write_json,
     )
 except ImportError:  # pragma: no cover - standalone script execution fallback
-    from programstart_common import (  # type: ignore
+    from programstart_common import (
         create_default_workflow_state,
         load_registry,
         warn_direct_script_invocation,

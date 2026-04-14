@@ -22,7 +22,7 @@ Control files:
 - `PROGRAMBUILD_SUBAGENTS.md` is the subagent catalog with reusable prompts
 - `PROGRAMBUILD_CHECKLIST.md` is the execution checklist version of this system
 - `PROGRAMBUILD_IDEA_INTAKE.md` is the pre-feasibility challenge interview — run this before filling the inputs block
-- `PROGRAMBUILD_CHALLENGE_GATE.md` is the stage-transition checklist — run this at every stage boundary
+- `PROGRAMBUILD_CHALLENGE_GATE.md` is the 8-part stage-transition checklist (A–H) with architecture alignment — run this at every stage boundary
 - `PROGRAMBUILD_GAMEPLAN.md` is the chained execution sequence with cross-stage validation — use this to run stages in the correct order
 
 ---

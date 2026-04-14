@@ -9,7 +9,7 @@ Authority:
 - `PROGRAMBUILD_CANONICAL.md` defines source-of-truth rules
 - `PROGRAMBUILD_FILE_INDEX.md` is the lookup table for critical files
 - `PROGRAMBUILD_IDEA_INTAKE.md` runs before Stage 0 — challenge the idea before filling the inputs block
-- `PROGRAMBUILD_CHALLENGE_GATE.md` runs at every stage transition — Parts A, C, and F are required minimum for Lite
+- `PROGRAMBUILD_CHALLENGE_GATE.md` runs at every stage transition — Parts A, C, F, and H are required minimum for Lite
 - `PROGRAMBUILD_GAMEPLAN.md` defines the execution order with cross-stage validation
 
 ---
@@ -112,4 +112,4 @@ Produce:
 
 ---
 
-Last updated: 2026-03-31
+Last updated: 2026-04-14

@@ -8,7 +8,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from scripts.programstart_common import load_registry, system_is_attached
-from scripts.programstart_status import main, staleness_warnings, summarize_programbuild
+from scripts.programstart_status import cross_system_health_warning, main, staleness_warnings, summarize_programbuild
 
 
 def test_system_is_attached_false(monkeypatch) -> None:
@@ -150,3 +150,88 @@ def test_staleness_skip_env_var(capsys, monkeypatch) -> None:
     out = capsys.readouterr().out
     assert result == 0
     assert "days ago" not in out
+
+
+# ---------- Cross-system health warning (H-3 / G-2) ----------
+
+
+def _make_pb_state(active: str) -> dict:
+    return {"active_stage": active, "stages": {active: {"status": "in_progress"}}}
+
+
+def _make_uj_state(active: str) -> dict:
+    return {"active_phase": active, "phases": {active: {"status": "in_progress"}}}
+
+
+def test_cross_system_no_warning_when_close(monkeypatch) -> None:
+    registry = load_registry()
+    pb_steps = ["inputs_and_mode_selection", "feasibility", "research"]
+    uj_steps = ["phase_0", "phase_1", "phase_2"]
+    monkeypatch.setattr("scripts.programstart_status.system_is_attached", lambda _r, _s: True)
+    monkeypatch.setattr(
+        "scripts.programstart_status.load_workflow_state",
+        lambda _r, s: _make_pb_state("feasibility") if s == "programbuild" else _make_uj_state("phase_1"),
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_status.workflow_active_step",
+        lambda _r, s, _st=None: "feasibility" if s == "programbuild" else "phase_1",
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_status.workflow_steps",
+        lambda _r, s: pb_steps if s == "programbuild" else uj_steps,
+    )
+    warnings = cross_system_health_warning(registry)
+    assert warnings == []
+
+
+def test_cross_system_warning_when_pb_ahead(monkeypatch) -> None:
+    registry = load_registry()
+    pb_steps = ["s0", "s1", "s2", "s3"]
+    uj_steps = ["p0", "p1", "p2"]
+    monkeypatch.setattr("scripts.programstart_status.system_is_attached", lambda _r, _s: True)
+    monkeypatch.setattr(
+        "scripts.programstart_status.load_workflow_state",
+        lambda _r, s: _make_pb_state("s3") if s == "programbuild" else _make_uj_state("p0"),
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_status.workflow_active_step",
+        lambda _r, s, _st=None: "s3" if s == "programbuild" else "p0",
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_status.workflow_steps",
+        lambda _r, s: pb_steps if s == "programbuild" else uj_steps,
+    )
+    warnings = cross_system_health_warning(registry)
+    assert len(warnings) == 1
+    assert "PROGRAMBUILD" in warnings[0]
+    assert "consider advancing USERJOURNEY" in warnings[0]
+
+
+def test_cross_system_warning_when_uj_ahead(monkeypatch) -> None:
+    registry = load_registry()
+    pb_steps = ["s0", "s1", "s2"]
+    uj_steps = ["p0", "p1", "p2", "p3"]
+    monkeypatch.setattr("scripts.programstart_status.system_is_attached", lambda _r, _s: True)
+    monkeypatch.setattr(
+        "scripts.programstart_status.load_workflow_state",
+        lambda _r, s: _make_pb_state("s0") if s == "programbuild" else _make_uj_state("p3"),
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_status.workflow_active_step",
+        lambda _r, s, _st=None: "s0" if s == "programbuild" else "p3",
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_status.workflow_steps",
+        lambda _r, s: pb_steps if s == "programbuild" else uj_steps,
+    )
+    warnings = cross_system_health_warning(registry)
+    assert len(warnings) == 1
+    assert "USERJOURNEY" in warnings[0]
+    assert "consider advancing PROGRAMBUILD" in warnings[0]
+
+
+def test_cross_system_no_warning_when_uj_not_attached(monkeypatch) -> None:
+    registry = load_registry()
+    monkeypatch.setattr("scripts.programstart_status.system_is_attached", lambda _r, _s: False)
+    warnings = cross_system_health_warning(registry)
+    assert warnings == []

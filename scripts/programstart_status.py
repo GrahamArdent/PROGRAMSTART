@@ -14,6 +14,7 @@ try:
         warn_direct_script_invocation,
         workflow_active_step,
         workflow_entry_key,
+        workflow_steps,
         workspace_path,
     )
 except ImportError:  # pragma: no cover - standalone script execution fallback
@@ -26,6 +27,7 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
         warn_direct_script_invocation,
         workflow_active_step,
         workflow_entry_key,
+        workflow_steps,
         workspace_path,
     )
 
@@ -174,6 +176,36 @@ def staleness_warnings(
     return lines
 
 
+def cross_system_health_warning(registry: dict) -> list[str]:
+    """Warn when PROGRAMBUILD and USERJOURNEY are ≥2 steps apart (G-2)."""
+    if not system_is_attached(registry, "userjourney"):
+        return []
+    pb_state = load_workflow_state(registry, "programbuild")
+    uj_state = load_workflow_state(registry, "userjourney")
+    pb_active = workflow_active_step(registry, "programbuild", pb_state)
+    uj_active = workflow_active_step(registry, "userjourney", uj_state)
+    if pb_active is None or uj_active is None:
+        return []
+    pb_steps = workflow_steps(registry, "programbuild")
+    uj_steps = workflow_steps(registry, "userjourney")
+    pb_idx = pb_steps.index(pb_active) if pb_active in pb_steps else 0
+    uj_idx = uj_steps.index(uj_active) if uj_active in uj_steps else 0
+    diff = abs(pb_idx - uj_idx)
+    if diff < 2:
+        return []
+    if pb_idx > uj_idx:
+        return [
+            f"\033[33m⚠  PROGRAMBUILD is at stage {pb_idx + 1} ({pb_active}) but "
+            f"USERJOURNEY is at phase {uj_idx + 1} ({uj_active}) — "
+            f"consider advancing USERJOURNEY before proceeding.\033[0m"
+        ]
+    return [
+        f"\033[33m⚠  USERJOURNEY is at phase {uj_idx + 1} ({uj_active}) but "
+        f"PROGRAMBUILD is at stage {pb_idx + 1} ({pb_active}) — "
+        f"consider advancing PROGRAMBUILD before proceeding.\033[0m"
+    ]
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Summarize current PROGRAMSTART workflow status.")
     parser.add_argument("--system", choices=["all", "programbuild", "userjourney"], default="all")
@@ -194,6 +226,10 @@ def main() -> int:
         output.extend(summarize_userjourney(registry))
         if not skip_staleness and system_is_attached(registry, "userjourney"):
             output.extend(staleness_warnings(registry, "userjourney"))
+
+    # Cross-system health warning (H-3 / G-2).
+    if args.system == "all":
+        output.extend(cross_system_health_warning(registry))
 
     print("\n".join(output))
     return 0

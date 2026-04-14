@@ -1318,3 +1318,95 @@ class TestBroadenedTestCoverage:
         monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
         warnings = validate.validate_test_coverage({})
         assert any("check_commit_msg.py" in w for w in warnings)
+
+
+# ---------------------------------------------------------------------------
+# Content quality detection (H-2 / W-1)
+# ---------------------------------------------------------------------------
+
+
+class TestCheckContentQuality:
+    def test_detects_tbd(self, tmp_path) -> None:
+        f = tmp_path / "DOC.md"
+        f.write_text("# Title\nSome content TBD here\n", encoding="utf-8")
+        warnings = validate.check_content_quality(f)
+        assert len(warnings) == 1
+        assert "TBD" in warnings[0]
+        assert "DOC.md:2" in warnings[0]
+
+    def test_detects_todo(self, tmp_path) -> None:
+        f = tmp_path / "DOC.md"
+        f.write_text("line 1\nTODO: fix later\nline 3\n", encoding="utf-8")
+        warnings = validate.check_content_quality(f)
+        assert len(warnings) == 1
+        assert "TODO" in warnings[0]
+
+    def test_detects_fill_in(self, tmp_path) -> None:
+        f = tmp_path / "DOC.md"
+        f.write_text("[FILL IN] your name\n", encoding="utf-8")
+        warnings = validate.check_content_quality(f)
+        assert len(warnings) == 1
+        assert "[FILL IN]" in warnings[0]
+
+    def test_detects_placeholder(self, tmp_path) -> None:
+        f = tmp_path / "DOC.md"
+        f.write_text("This is a PLACEHOLDER value\n", encoding="utf-8")
+        warnings = validate.check_content_quality(f)
+        assert len(warnings) == 1
+        assert "PLACEHOLDER" in warnings[0]
+
+    def test_detects_lorem_ipsum(self, tmp_path) -> None:
+        f = tmp_path / "DOC.md"
+        f.write_text("Lorem ipsum dolor sit amet\n", encoding="utf-8")
+        warnings = validate.check_content_quality(f)
+        assert len(warnings) == 1
+        assert "Lorem ipsum" in warnings[0]
+
+    def test_clean_file_returns_empty(self, tmp_path) -> None:
+        f = tmp_path / "DOC.md"
+        f.write_text("# Architecture\nReal content here.\n", encoding="utf-8")
+        warnings = validate.check_content_quality(f)
+        assert warnings == []
+
+    def test_missing_file_returns_empty(self, tmp_path) -> None:
+        warnings = validate.check_content_quality(tmp_path / "MISSING.md")
+        assert warnings == []
+
+    def test_multiple_placeholders(self, tmp_path) -> None:
+        f = tmp_path / "DOC.md"
+        f.write_text("TBD\nReal line\nTODO: later\n", encoding="utf-8")
+        warnings = validate.check_content_quality(f)
+        assert len(warnings) == 2
+
+
+class TestStageContentQualityWarnings:
+    def test_known_step_with_placeholders(self, tmp_path, monkeypatch) -> None:
+        feas = tmp_path / "PROGRAMBUILD" / "FEASIBILITY.md"
+        feas.parent.mkdir(parents=True)
+        feas.write_text("# Feasibility\nTBD\n", encoding="utf-8")
+        monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+        warnings = validate.stage_content_quality_warnings("feasibility")
+        assert len(warnings) == 1
+        assert "TBD" in warnings[0]
+
+    def test_known_step_clean(self, tmp_path, monkeypatch) -> None:
+        feas = tmp_path / "PROGRAMBUILD" / "FEASIBILITY.md"
+        feas.parent.mkdir(parents=True)
+        feas.write_text("# Feasibility\nReal analysis.\n", encoding="utf-8")
+        monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+        warnings = validate.stage_content_quality_warnings("feasibility")
+        assert warnings == []
+
+    def test_unknown_step_returns_empty(self) -> None:
+        warnings = validate.stage_content_quality_warnings("inputs_and_mode_selection")
+        assert warnings == []
+
+    def test_multi_file_step(self, tmp_path, monkeypatch) -> None:
+        pb = tmp_path / "PROGRAMBUILD"
+        pb.mkdir(parents=True)
+        (pb / "REQUIREMENTS.md").write_text("TODO: write reqs\n", encoding="utf-8")
+        (pb / "USER_FLOWS.md").write_text("Clean content.\n", encoding="utf-8")
+        monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+        warnings = validate.stage_content_quality_warnings("requirements_and_ux")
+        assert len(warnings) == 1
+        assert "REQUIREMENTS.md" in warnings[0]

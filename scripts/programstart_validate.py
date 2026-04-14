@@ -64,6 +64,51 @@ def _check_decision_log_entries(stage_name: str) -> list[str]:
     return []
 
 
+# ---------------------------------------------------------------------------
+# Content quality helper (W-1)
+# ---------------------------------------------------------------------------
+
+_PLACEHOLDER_PATTERNS = re.compile(
+    r"\bTBD\b|\bTODO\b|\[FILL IN\]|\bPLACEHOLDER\b|Lorem ipsum",
+    re.IGNORECASE,
+)
+
+
+def check_content_quality(filepath: Path) -> list[str]:
+    """Detect placeholder content in *filepath*. Returns warnings (non-blocking)."""
+    if not filepath.exists():
+        return []
+    try:
+        text = filepath.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        return []
+    warnings: list[str] = []
+    for lineno, line in enumerate(text.splitlines(), 1):
+        match = _PLACEHOLDER_PATTERNS.search(line)
+        if match:
+            warnings.append(f"{filepath.name}:{lineno}: placeholder '{match.group()}' detected")
+    return warnings
+
+
+def stage_content_quality_warnings(step: str) -> list[str]:
+    """Return non-blocking placeholder warnings for *step*'s key documents."""
+    _step_files: dict[str, list[str]] = {
+        "feasibility": ["PROGRAMBUILD/FEASIBILITY.md"],
+        "research": ["PROGRAMBUILD/RESEARCH_SUMMARY.md"],
+        "requirements_and_ux": ["PROGRAMBUILD/REQUIREMENTS.md", "PROGRAMBUILD/USER_FLOWS.md"],
+        "architecture_and_risk_spikes": ["PROGRAMBUILD/ARCHITECTURE.md", "PROGRAMBUILD/RISK_SPIKES.md"],
+        "test_strategy": ["PROGRAMBUILD/TEST_STRATEGY.md"],
+        "release_readiness": ["PROGRAMBUILD/RELEASE_READINESS.md"],
+        "audit_and_drift_control": ["PROGRAMBUILD/AUDIT_REPORT.md"],
+        "post_launch_review": ["PROGRAMBUILD/POST_LAUNCH_REVIEW.md"],
+    }
+    files = _step_files.get(step, [])
+    warnings: list[str] = []
+    for rel in files:
+        warnings.extend(check_content_quality(workspace_path(rel)))
+    return warnings
+
+
 def run_stage_gate_check(registry: dict, check_name: str) -> list[str]:
     """Dispatch a stage-gate content check by name.
 

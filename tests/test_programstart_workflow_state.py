@@ -1047,3 +1047,75 @@ def test_concurrent_save_workflow_state_no_lost_writes(tmp_path: Path, monkeypat
     data = json.loads(state_file.read_text(encoding="utf-8"))
     assert data["system"] == "programbuild"
     assert data["active_stage"] == "discovery"
+
+
+# ---------------------------------------------------------------------------
+# Post-advance sanity check (H-1 / G-1)
+# ---------------------------------------------------------------------------
+
+
+def test_post_advance_sanity_check_no_warning(capsys, monkeypatch) -> None:
+    """When reloaded state matches expected, no warning is emitted."""
+    state = {
+        "active_stage": "inputs_and_mode_selection",
+        "stages": {
+            "inputs_and_mode_selection": {"status": "in_progress", "signoff": {"decision": "", "date": "", "notes": ""}},
+            "feasibility": {"status": "planned", "signoff": {"decision": "", "date": "", "notes": ""}},
+        },
+    }
+    call_count = {"n": 0}
+
+    def fake_load(_registry: Any, _system: str) -> dict:
+        call_count["n"] += 1
+        return state
+
+    def fake_active(_registry: Any, _system: str, _state: Any = None) -> str:
+        # After advance, state dict has been mutated; return the new active step
+        if call_count["n"] > 1:
+            return "feasibility"
+        return "inputs_and_mode_selection"
+
+    monkeypatch.setattr("scripts.programstart_workflow_state.load_workflow_state", fake_load)
+    monkeypatch.setattr("scripts.programstart_workflow_state.workflow_active_step", fake_active)
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workflow_steps",
+        lambda _r, _s: ["inputs_and_mode_selection", "feasibility"],
+    )
+    monkeypatch.setattr("scripts.programstart_workflow_state.preflight_problems", lambda _r, _s, _a=None: [])
+    monkeypatch.setattr("scripts.programstart_workflow_state._check_challenge_gate_log", lambda _step: None)
+    monkeypatch.setattr("scripts.programstart_workflow_state.save_workflow_state", lambda _r, _s, _v: None)
+    monkeypatch.setattr("sys.argv", ["prog", "advance", "--system", "programbuild"])
+    result = main()
+    captured = capsys.readouterr()
+    assert result == 0
+    assert "Post-advance warning" not in captured.err
+
+
+def test_post_advance_sanity_check_warns_on_mismatch(capsys, monkeypatch) -> None:
+    """When reloaded state doesn't match expected, a warning is emitted to stderr."""
+    state = {
+        "active_stage": "inputs_and_mode_selection",
+        "stages": {
+            "inputs_and_mode_selection": {"status": "in_progress", "signoff": {"decision": "", "date": "", "notes": ""}},
+            "feasibility": {"status": "planned", "signoff": {"decision": "", "date": "", "notes": ""}},
+        },
+    }
+    monkeypatch.setattr("scripts.programstart_workflow_state.load_workflow_state", lambda _r, _s: state)
+    # Always return old step — simulates a save failure
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workflow_active_step",
+        lambda _r, _s, _st=None: "inputs_and_mode_selection",
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workflow_steps",
+        lambda _r, _s: ["inputs_and_mode_selection", "feasibility"],
+    )
+    monkeypatch.setattr("scripts.programstart_workflow_state.preflight_problems", lambda _r, _s, _a=None: [])
+    monkeypatch.setattr("scripts.programstart_workflow_state._check_challenge_gate_log", lambda _step: None)
+    monkeypatch.setattr("scripts.programstart_workflow_state.save_workflow_state", lambda _r, _s, _v: None)
+    monkeypatch.setattr("sys.argv", ["prog", "advance", "--system", "programbuild"])
+    result = main()
+    captured = capsys.readouterr()
+    assert result == 0
+    assert "Post-advance warning" in captured.err
+    assert "feasibility" in captured.err

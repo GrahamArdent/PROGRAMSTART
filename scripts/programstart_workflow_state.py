@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import subprocess
+import sys
 from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any, cast
@@ -431,6 +432,12 @@ def main() -> int:
             gate_warning = _check_challenge_gate_log(active_step)
             if gate_warning:
                 print(clr_yellow(f"⚠  {gate_warning}"))
+        # Content quality advisory (H-2 / W-1, non-blocking).
+        quality_warnings = programstart_validate.stage_content_quality_warnings(active_step)
+        if quality_warnings:
+            print(clr_yellow("⚠  Content quality warnings (non-blocking):"))
+            for qw in quality_warnings:
+                print(clr_yellow(f"   {qw}"))
         # Cross-stage validation advisory (programbuild, stages 3+).
         if system == "programbuild" and not getattr(args, "skip_cross_stage_check", False) and current_index >= 3:
             print(
@@ -465,6 +472,19 @@ def main() -> int:
         else:
             print(f"Completed final {system} step {active_step}")
         save_workflow_state(registry, system, state)
+
+        # H-1: Post-advance sanity check — reload and verify (G-1).
+        reloaded = load_workflow_state(registry, system)
+        actual_active = workflow_active_step(registry, system, reloaded)
+        expected_active = next_step if current_index + 1 < len(steps) else active_step
+        if actual_active != expected_active:
+            print(
+                clr_yellow(
+                    f"⚠  Post-advance warning: expected active step '{expected_active}' "
+                    f"but state file shows '{actual_active}'"
+                ),
+                file=sys.stderr,
+            )
         return 0
 
     system = args.system

@@ -150,6 +150,12 @@ source = [
   "scripts.programstart_checklist_progress",
   "scripts.programstart_refresh_integrity",
   "scripts.programstart_dashboard",
+  "scripts.programstart_serve",
+  "scripts.programstart_starter_scaffold",
+  "scripts.programstart_markdown_parsers",
+  "scripts.programstart_prompt_eval",
+  "scripts.programstart_health_probe",
+  "scripts.programstart_research_delta",
 ]
 
 [tool.coverage.report]

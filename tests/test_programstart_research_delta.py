@@ -97,7 +97,7 @@ def test_main_status_json_emits_report(capsys) -> None:
 
 
 def test_main_status_fail_on_due_returns_one(capsys) -> None:
-    result = programstart_research_delta.main(["--status", "--date", "2026-04-10", "--fail-on-due", "--json"])
+    result = programstart_research_delta.main(["--status", "--date", "2026-04-25", "--fail-on-due", "--json"])
     payload = json.loads(capsys.readouterr().out)
 
     assert result == 1

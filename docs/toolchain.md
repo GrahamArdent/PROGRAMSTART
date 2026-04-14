@@ -28,6 +28,8 @@ Preferred workflow commands now route through the unified CLI:
 - `uv run programstart state show`
 - `uv run programstart guide --system programbuild`
 - `uv run programstart advance --system programbuild --dry-run`
+- `uv run programstart doctor`
+- `uv run programstart prompt-build --stage <name>`
 
 Distribution verification is automated too:
 

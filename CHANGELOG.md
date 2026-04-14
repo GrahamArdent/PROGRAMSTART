@@ -7,7 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.2.0] - 2026-03-28
+### Features
+
+- `programstart prompt-build` command: generates a stage-specific `.prompt.md` file from the process registry (`--stage`, `--output`, `--eject`, `--list-stages`, `--json` flags).
+- `programstart doctor` command: environment health checks for PATH, Python version, uv, and key dependencies.
+- `lint-prompts` validation check: enforces PROMPT_STANDARD.md compliance rows against all `.prompt.md` files.
+- `file-hygiene` validate check: catches stale or untracked planning artefacts.
+- Prompt `version` field in frontmatter validated by compliance tests.
+
+### Fixes
+
+- Dashboard static assets extracted to `dashboard/` (`index.html`, `style.css`, `app.js`); `programstart_serve.py` reduced from ~2450 to ~796 lines.
+- Content-Security-Policy header on all HTML responses in the web dashboard.
+- `GET /static/<filename>` route in the dashboard server with path-traversal protection.
+- `_ensure_scripts_importable()` helper added to `programstart_common.py` to consolidate `sys.path` bootstrap logic across standalone scripts.
+- Removed 29 redundant `# type: ignore` annotations from standalone import-fallback blocks across all scripts.
+
+
 
 ### Features
 

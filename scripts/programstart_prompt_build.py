@@ -210,6 +210,7 @@ def _render_body(stage_name: str, stage: dict[str, Any], guidance: dict[str, Any
     # Workflow Routing
     lines.append("\n## Next Steps\n")
     lines.append("After completing this prompt, run the `programstart-stage-transition` prompt to validate and advance to the next stage.\n")
+    lines.append("\nFor cross-stage consistency, also run `programstart-cross-stage-validation.prompt.md` to verify upstream stages have not drifted relative to this stage's inputs.\n")
 
     return "".join(lines)
 

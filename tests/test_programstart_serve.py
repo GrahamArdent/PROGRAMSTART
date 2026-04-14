@@ -182,6 +182,86 @@ def test_advance_workflow_with_signoff_completes_current_and_promotes_next(monke
     assert saved["stages"]["inputs_and_mode_selection"]["signoff_history"][0]["notes"] == "Ready ¦ now"
 
 
+def test_run_command_rejects_too_many_extra_args() -> None:
+    result = run_command("status", ["--json"] * 10)
+    assert result["exit_code"] == 1
+    assert "too many extra args" in result["output"]
+
+
+def test_run_command_rejects_extra_arg_exceeding_length() -> None:
+    result = run_command("status", ["x" * 2001])
+    assert result["exit_code"] == 1
+    assert "char limit" in result["output"]
+
+
+def test_run_bootstrap_invalid_dest() -> None:
+    from scripts.programstart_serve import run_bootstrap
+
+    result = run_bootstrap("../../../etc/passwd", "TestApp", "product", False)
+    assert result["exit_code"] == 1
+    assert "invalid" in result["output"].lower()
+
+
+def test_run_bootstrap_invalid_project_name() -> None:
+    from scripts.programstart_serve import run_bootstrap
+
+    result = run_bootstrap("C:\\Projects\\Test", "123-bad-name!", "product", False)
+    assert result["exit_code"] == 1
+    assert "project name" in result["output"].lower()
+
+
+def test_run_bootstrap_invalid_variant() -> None:
+    from scripts.programstart_serve import run_bootstrap
+
+    result = run_bootstrap("C:\\Projects\\Test", "ValidName", "unknown", False)
+    assert result["exit_code"] == 1
+    assert "variant" in result["output"].lower()
+
+
+def test_advance_non_in_progress_step_returns_error(monkeypatch, tmp_path) -> None:
+    state = {
+        "active_stage": "inputs_and_mode_selection",
+        "stages": {
+            "inputs_and_mode_selection": {"status": "planned", "signoff": {}, "signoff_history": []},
+        },
+    }
+    registry = {"systems": {"programbuild": {}}}
+
+    monkeypatch.setattr(programstart_serve, "load_registry", lambda: registry)
+    monkeypatch.setattr(programstart_serve, "load_workflow_state", lambda _r, _s: state)
+    monkeypatch.setattr(programstart_serve, "workflow_active_step", lambda _r, _s, _st=None: "inputs_and_mode_selection")
+    monkeypatch.setattr(programstart_serve, "workflow_entry_key", lambda _s: "stages")
+    monkeypatch.setattr(programstart_serve, "workflow_steps", lambda _r, _s: ["inputs_and_mode_selection"])
+    monkeypatch.setattr(programstart_serve, "workflow_state_path", lambda _r, _s: tmp_path / "state.json")
+
+    result = advance_workflow_with_signoff("programbuild", "approved", "2026-04-02", "", False)
+    assert result["exit_code"] == 1
+    assert "not in_progress" in result["output"]
+
+
+def test_advance_dry_run_returns_preview(monkeypatch, tmp_path) -> None:
+    state = {
+        "active_stage": "inputs_and_mode_selection",
+        "stages": {
+            "inputs_and_mode_selection": {"status": "in_progress", "signoff": {}, "signoff_history": []},
+            "feasibility": {"status": "planned", "signoff": {}, "signoff_history": []},
+        },
+    }
+    registry = {"systems": {"programbuild": {}}}
+
+    monkeypatch.setattr(programstart_serve, "load_registry", lambda: registry)
+    monkeypatch.setattr(programstart_serve, "load_workflow_state", lambda _r, _s: state)
+    monkeypatch.setattr(programstart_serve, "workflow_active_step", lambda _r, _s, _st=None: "inputs_and_mode_selection")
+    monkeypatch.setattr(programstart_serve, "workflow_entry_key", lambda _s: "stages")
+    monkeypatch.setattr(programstart_serve, "workflow_steps", lambda _r, _s: ["inputs_and_mode_selection", "feasibility"])
+    monkeypatch.setattr(programstart_serve, "workflow_state_path", lambda _r, _s: tmp_path / "state.json")
+
+    result = advance_workflow_with_signoff("programbuild", "approved", "2026-04-02", "", True)
+    assert result["exit_code"] == 0
+    assert "[dry-run]" in result["output"]
+    assert "feasibility" in result["output"]
+
+
 def test_signoff_history_capped_at_max(monkeypatch, tmp_path) -> None:
     """signoff_history must not exceed MAX_SIGNOFF_HISTORY entries (T3)."""
     saved: dict[str, Any] = {}

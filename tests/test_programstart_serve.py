@@ -13,6 +13,7 @@ from scripts import programstart_serve
 from scripts.programstart_serve import (
     ALLOWED_COMMANDS,
     advance_workflow_with_signoff,
+    get_doc_preview,
     run_command,
     save_workflow_signoff,
     strip_ansi,
@@ -325,3 +326,96 @@ def test_api_routes_documented_in_dashboard_api_md() -> None:
     docs_text = docs_path.read_text(encoding="utf-8")
     missing = [route for route in sorted(raw_routes) if route not in docs_text]
     assert not missing, f"API routes not documented in dashboard-api.md: {missing}"
+
+
+# ── run_command extra paths ───────────────────────────────────────────────────
+
+
+def test_run_command_with_valid_extra_arg() -> None:
+    """Passing an allowed extra arg should reach cmd.extend rather than early return."""
+    result = run_command("log", ["approved"])
+    # Validation passed — no rejection messages
+    assert "not permitted" not in result["output"]
+    assert "char limit" not in result["output"]
+    assert "too many extra args" not in result["output"]
+
+
+def test_run_command_timeout(monkeypatch) -> None:
+    """subprocess.TimeoutExpired should be caught and reported."""
+    import subprocess
+
+    def _raise_timeout(*args: object, **kwargs: object) -> None:
+        raise subprocess.TimeoutExpired("cmd", 60)
+
+    monkeypatch.setattr("scripts.programstart_serve.subprocess.run", _raise_timeout)
+    result = run_command("status")
+    assert result["exit_code"] == 1
+    assert "timed out" in result["output"]
+
+
+# ── get_doc_preview edge cases ────────────────────────────────────────────────
+
+
+def test_get_doc_preview_empty_path() -> None:
+    result = get_doc_preview("")
+    assert result == {"error": "missing path"}
+
+
+def test_get_doc_preview_file_type_not_previewable(tmp_path: Path, monkeypatch) -> None:
+    pb = tmp_path / "PROGRAMBUILD"
+    pb.mkdir()
+    (pb / "data.bin").write_bytes(b"binary")
+    monkeypatch.setattr(programstart_serve, "ROOT", tmp_path)
+    result = get_doc_preview("PROGRAMBUILD/data.bin")
+    assert result == {"error": "file type not previewable"}
+
+
+def test_get_doc_preview_file_too_large(tmp_path: Path, monkeypatch) -> None:
+    pb = tmp_path / "PROGRAMBUILD"
+    pb.mkdir()
+    (pb / "huge.md").write_bytes(b"x" * 70_000)
+    monkeypatch.setattr(programstart_serve, "ROOT", tmp_path)
+    result = get_doc_preview("PROGRAMBUILD/huge.md")
+    assert "too large" in result.get("error", "")
+
+
+# ── update_implementation_tracker_phase malformed row ────────────────────────
+
+
+def test_update_tracker_phase_malformed_row(tmp_path: Path, monkeypatch) -> None:
+    """A phase row with ≠ 6 cells should return an error."""
+    uj = tmp_path / "USERJOURNEY"
+    uj.mkdir()
+    (uj / "IMPLEMENTATION_TRACKER.md").write_text(
+        "| Phase | Status |\n| --- | --- |\n| 2 | Planned |\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(programstart_serve, "ROOT", tmp_path)
+    result = update_implementation_tracker_phase("2", "Blocked", "")
+    assert result["exit_code"] == 1
+
+
+def test_update_tracker_phase_no_userjourney(tmp_path: Path, monkeypatch) -> None:
+    """Missing USERJOURNEY dir should return 'not attached' error (covers line 392)."""
+    monkeypatch.setattr(programstart_serve, "ROOT", tmp_path)
+    result = update_implementation_tracker_phase("2", "Blocked", "")
+    assert result["exit_code"] == 1
+    assert "not attached" in result["output"]
+
+
+def test_run_bootstrap_timeout(monkeypatch) -> None:
+    """subprocess.TimeoutExpired in run_bootstrap should return a timed-out error."""
+    import subprocess
+
+    def _raise_timeout(*args: object, **kwargs: object) -> None:
+        raise subprocess.TimeoutExpired("cmd", 60)
+
+    monkeypatch.setattr("scripts.programstart_serve.subprocess.run", _raise_timeout)
+    result = programstart_serve.run_bootstrap(
+        dest=r"C:\Temp\testdest",
+        project_name="TestProject",
+        variant="lite",
+        dry_run=True,
+    )
+    assert result["exit_code"] == 1
+    assert "timed out" in result["output"]

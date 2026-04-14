@@ -226,3 +226,39 @@ def test_main_dry_run_delegates_to_bootstrap_repository(tmp_path: Path) -> None:
     assert kwargs.get("dry_run") is True
     assert kwargs.get("project_name") == "alpha"
     assert kwargs.get("variant") == "lite"
+
+
+# ── migrated from test_audit_fixes.py ──────────────────────────────────────────
+
+
+def test_stamp_bootstrapped_registry_raises_on_malformed_json(tmp_path: Path) -> None:
+    config_dir = tmp_path / "config"
+    config_dir.mkdir()
+    registry_path = config_dir / "process-registry.json"
+    registry_path.write_text("NOT VALID JSON {{{", encoding="utf-8")
+
+    try:
+        bootstrap.stamp_bootstrapped_registry(tmp_path, project_name="test", dry_run=False)
+        assert False, "Should have raised ValueError"
+    except ValueError as exc:
+        assert "Cannot parse bootstrapped registry" in str(exc)
+        assert "process-registry.json" in str(exc)
+
+
+def test_sanitize_secrets_baseline_raises_on_malformed_json(tmp_path: Path) -> None:
+    baseline_path = tmp_path / ".secrets.baseline"
+    baseline_path.write_text("{broken json!!!", encoding="utf-8")
+
+    try:
+        bootstrap.sanitize_bootstrapped_secrets_baseline(tmp_path, dry_run=False)
+        assert False, "Should have raised ValueError"
+    except ValueError as exc:
+        assert "Cannot parse secrets baseline" in str(exc)
+        assert ".secrets.baseline" in str(exc)
+
+
+def test_stamp_bootstrapped_registry_dry_run_skips_parsing(tmp_path: Path, capsys) -> None:
+    """Dry run should print the stamp line without reading the file at all."""
+    bootstrap.stamp_bootstrapped_registry(tmp_path, project_name="test", dry_run=True)
+    out = capsys.readouterr().out
+    assert "STAMP" in out

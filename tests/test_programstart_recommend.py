@@ -843,3 +843,119 @@ def test_build_recommendation_api_no_frontend_domain_adds_advisory() -> None:
     frontend_warnings = [w for w in result.coverage_warnings if w.get("domain") == "Frontend coverage"]
     assert len(frontend_warnings) == 1
     assert frontend_warnings[0]["status"] == "advisory"
+
+
+# ── migrated from test_audit_fixes.py ──────────────────────────────────────────
+
+
+def test_data_pipeline_ml_training_selects_ml_stacks() -> None:
+    rec = recommend.build_recommendation(
+        product_shape="data pipeline",
+        needs={"ml", "training"},
+        regulated=False,
+        attach_userjourney=False,
+    )
+    stacks_lower = {s.lower() for s in rec.stack_names}
+    assert "weights & biases" in stacks_lower
+    assert "hugging face transformers" in stacks_lower
+    assert "polars" in stacks_lower
+    assert rec.variant == "product"
+    assert rec.confidence == "high"
+
+
+def test_cli_tool_ml_agents_fires_all_three_rules() -> None:
+    rec = recommend.build_recommendation(
+        product_shape="cli tool",
+        needs={"ml", "agents"},
+        regulated=False,
+        attach_userjourney=False,
+    )
+    rule_titles = {item["title"] for item in rec.rule_evidence}
+    assert "Prefer explicit LLM routing and typed response validation for AI product workflows" in rule_titles
+    assert "Prefer durable orchestration for agent and multi-step automation systems" in rule_titles
+    assert "Prefer explicit experiment tracking and typed data pipelines for ML training workloads" in rule_titles
+    assert rec.variant == "product"
+
+
+def test_cli_tool_baseline_still_lite() -> None:
+    rec = recommend.build_recommendation(
+        product_shape="cli tool",
+        needs=set(),
+        regulated=False,
+        attach_userjourney=False,
+    )
+    assert rec.variant == "lite"
+
+
+def test_matching_integration_patterns_real_kb_rag_needs() -> None:
+    kb = {
+        "integration_patterns": [
+            {
+                "name": "RAG pipeline with evaluation",
+                "fit_for": ["knowledge-base Q&A", "document search", "context-augmented generation"],
+                "components": ["Pydantic", "pytest"],
+            },
+            {
+                "name": "Unrelated pattern",
+                "fit_for": ["admin-heavy apps"],
+                "components": ["Django"],
+            },
+        ]
+    }
+    result = recommend.matching_integration_patterns(
+        product_shape="api service",
+        needs={"search"},
+        knowledge_base=kb,
+    )
+    assert "pydantic" in result
+    assert "django" not in result
+
+
+def test_integration_patterns_boost_stacks_in_real_kb() -> None:
+    rec = recommend.build_recommendation(
+        product_shape="api service",
+        needs={"agents", "rag"},
+        regulated=False,
+        attach_userjourney=False,
+    )
+    pattern_mentioned = any(
+        any("integration pattern" in str(r).lower() for r in item.get("reasons", []))
+        for item in rec.stack_evidence
+    )
+    assert pattern_mentioned, "Expected at least one stack to mention integration pattern matching"
+
+
+def test_integration_patterns_do_not_inflate_unrelated_shapes() -> None:
+    rec = recommend.build_recommendation(
+        product_shape="cli tool",
+        needs=set(),
+        regulated=False,
+        attach_userjourney=False,
+    )
+    pattern_mentioned = any(
+        any("integration pattern" in str(r).lower() for r in item.get("reasons", []))
+        for item in rec.stack_evidence
+    )
+    assert not pattern_mentioned, "Plain CLI tool should not get integration pattern boosts"
+
+
+def test_prompt_guidance_normalization_uses_keyed_kb_fields() -> None:
+    guidance = {
+        "output_contracts": "Define exact sections.",
+        "verification_loops": "Check correctness and grounding.",
+        "completeness_contracts": "Track deliverables.",
+        "tool_persistence": "Retry with alternate strategy on empty results.",
+        "citation_rules": "Only cite retrieved sources.",
+    }
+
+    principles, patterns, anti_patterns = recommend.normalize_prompt_guidance(guidance)
+
+    assert "Define exact sections." in principles
+    assert "Check correctness and grounding." in principles
+    assert "Retry with alternate strategy on empty results." in patterns
+    assert "Only cite retrieved sources." in patterns
+    assert anti_patterns == [
+        "Do not invent unsupported files, rules, or citations.",
+        "Do not skip verification or assume tool output is complete.",
+        "Do not add features, stages, or documents outside the registry authority model.",
+    ]

@@ -5,6 +5,7 @@ from __future__ import annotations
 import contextlib
 import io
 import json
+import logging
 import sys
 from pathlib import Path
 
@@ -856,3 +857,79 @@ def test_rag_assistant_generate_structured_success(monkeypatch) -> None:
     result = rag._generate("sys", "user")
     assert isinstance(result, programstart_retrieval.RAGQueryResponse)
     assert result.answer == "A"
+
+
+# ── migrated from test_audit_fixes.py ──────────────────────────────────────────
+
+
+def test_generate_fallback_logs_warning(caplog) -> None:
+    """When structured generation fails, a warning is logged before falling back."""
+    engine = programstart_retrieval.RAGAssistant.__new__(programstart_retrieval.RAGAssistant)
+    engine.model = "test-model"
+
+    def fake_structured(system: str, user: str) -> str:
+        raise RuntimeError("structured gen failed")
+
+    def fake_litellm(system: str, user: str) -> str:
+        return "fallback response"
+
+    engine._generate_structured = fake_structured  # type: ignore[assignment]
+    engine._generate_litellm = fake_litellm  # type: ignore[assignment]
+
+    with caplog.at_level(logging.WARNING, logger="scripts.programstart_retrieval"):
+        result = engine._generate("sys", "usr")
+
+    assert result == "fallback response"
+    assert any("Structured generation failed" in record.message for record in caplog.records)
+    assert any("RuntimeError" in record.message for record in caplog.records)
+
+
+def test_ask_structured_falls_back_to_low_confidence_plain_response(caplog) -> None:
+    class DummySearcher:
+        def search(self, *_args, **_kwargs):
+            return []
+
+    engine = programstart_retrieval.RAGAssistant(DummySearcher(), model="test-model")
+
+    def fake_structured(system: str, user: str) -> str:
+        raise RuntimeError("structured gen failed")
+
+    def fake_litellm(system: str, user: str) -> str:
+        return "fallback response"
+
+    engine._generate_structured = fake_structured  # type: ignore[assignment]
+    engine._generate_litellm = fake_litellm  # type: ignore[assignment]
+
+    with caplog.at_level(logging.WARNING, logger="scripts.programstart_retrieval"):
+        result = engine.ask_structured("question")
+
+    assert result.answer == "fallback response"
+    assert result.confidence == "low"
+    assert result.cited_sources == []
+    assert any("Structured generation failed" in record.message for record in caplog.records)
+
+
+def test_validate_cited_sources_strips_invalid_entries() -> None:
+    from scripts.programstart_models import RAGQueryResponse
+
+    engine = programstart_retrieval.RAGAssistant.__new__(programstart_retrieval.RAGAssistant)
+    response = RAGQueryResponse(
+        answer="answer",
+        reasoning="reasoning",
+        confidence="high",
+        cited_sources=["document: PROGRAMBUILD/README.md", "fake: not-real"],
+    )
+    results = [
+        programstart_retrieval.SearchResult(
+            source_type="document",
+            source_id="PROGRAMBUILD/README.md",
+            text="context",
+            score=1.0,
+        )
+    ]
+
+    validated = engine._validate_cited_sources(response, results)
+
+    assert validated.cited_sources == ["document: PROGRAMBUILD/README.md"]
+    assert validated.confidence == "low"
+    assert "discarded" in validated.reasoning

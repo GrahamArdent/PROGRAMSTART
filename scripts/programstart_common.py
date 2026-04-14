@@ -6,6 +6,7 @@ import re
 import subprocess
 import sys
 import tempfile
+import time
 import warnings
 from fnmatch import fnmatch
 from pathlib import Path
@@ -121,7 +122,14 @@ def write_json(path: Path, content: dict[str, Any]) -> None:
     with tempfile.NamedTemporaryFile("w", encoding="utf-8", delete=False, dir=path.parent) as handle:
         handle.write(payload)
         temp_path = Path(handle.name)
-    temp_path.replace(path)
+    for attempt in range(3):
+        try:
+            temp_path.replace(path)
+            return
+        except PermissionError:
+            if attempt == 2:
+                raise
+            time.sleep(0.05)
 
 
 def workspace_path(relative_path: str) -> Path:

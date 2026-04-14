@@ -195,3 +195,47 @@ def test_context_build_writes_output_file(tmp_path: Path) -> None:
     assert exit_code == 0
     payload = json.loads(output_path.read_text(encoding="utf-8"))
     assert payload["workspace"]["name"] == "PROGRAMSTART"
+
+
+def test_markdown_title_returns_empty_when_no_heading() -> None:
+    assert programstart_context.markdown_title("no heading here") == ""
+
+
+def test_document_record_returns_none_for_nonexistent_path() -> None:
+    result = programstart_context.document_record("PROGRAMBUILD/nonexistent_file_xyz.md")
+    assert result is None
+
+
+def test_main_query_subcommand_builds_index_when_missing(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setattr("scripts.programstart_context.default_index_path", lambda: tmp_path / "no.json")
+    exit_code = programstart_context.main(["query", "--concern", "overall process and stage order"])
+    assert exit_code == 0
+
+
+def test_main_query_no_filters_returns_summary(tmp_path: Path, monkeypatch, capsys) -> None:
+    monkeypatch.setattr("scripts.programstart_context.default_index_path", lambda: tmp_path / "no.json")
+    exit_code = programstart_context.main(["query"])
+    assert exit_code == 0
+    out = capsys.readouterr().out
+    data = json.loads(out)
+    assert "document_count" in data
+
+
+def test_main_query_uses_existing_compatible_index(tmp_path: Path, monkeypatch) -> None:
+    import json as _json
+    index = programstart_context.build_context_index()
+    index_path = tmp_path / "existing.json"
+    index_path.write_text(_json.dumps(index), encoding="utf-8")
+    monkeypatch.setattr("scripts.programstart_context.default_index_path", lambda: index_path)
+    exit_code = programstart_context.main(["query", "--concern", "overall process and stage order"])
+    assert exit_code == 0
+
+
+def test_main_query_rebuilds_incompatible_cached_index(tmp_path: Path, monkeypatch) -> None:
+    import json as _json
+    bad_index = {"workspace": {}, "knowledge_base": {"stacks": []}}
+    index_path = tmp_path / "index.json"
+    index_path.write_text(_json.dumps(bad_index), encoding="utf-8")
+    monkeypatch.setattr("scripts.programstart_context.default_index_path", lambda: index_path)
+    exit_code = programstart_context.main(["query", "--concern", "overall process"])
+    assert exit_code == 0

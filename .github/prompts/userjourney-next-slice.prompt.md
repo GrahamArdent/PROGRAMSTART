@@ -7,7 +7,13 @@ version: "1.0"
 ---
 Determine the next USERJOURNEY implementation slice.
 
-Tasks:
+## Kill Criteria
+
+Before recommending a slice, check `USERJOURNEY/OPEN_QUESTIONS.md`.
+
+If any open question is an **engineering blocker** for the candidate slice (e.g., auth provider undecided, route model not frozen, consent behavior still open), **DO NOT recommend that slice for implementation**. Instead, report the blockers and propose the minimum blocking decisions the team must resolve first.
+
+## Tasks
 
 1. Read `USERJOURNEY/DELIVERY_GAMEPLAN.md`, `USERJOURNEY/EXECUTION_SLICES.md`, `USERJOURNEY/IMPLEMENTATION_TRACKER.md`, and `USERJOURNEY/OPEN_QUESTIONS.md`.
 2. Use `scripts/programstart_status.py --system userjourney` if available.

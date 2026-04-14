@@ -263,3 +263,20 @@ def test_main_text_with_failures(monkeypatch, capsys) -> None:
     assert result == 1
     assert "FAIL" in out
     assert "text_fail" in out
+
+
+# ── migrated from test_audit_fixes.py ──────────────────────────────────────────
+
+
+def test_data_pipeline_ml_training_scenario_passes() -> None:
+    scenario = next(item for item in load_scenarios() if item.name == "data_pipeline_ml_training")
+    result = evaluate_scenario(scenario)
+    assert result["passed"] is True
+    assert result["starter_root"] == "starter/data_pipeline"
+
+
+def test_cli_tool_ml_agents_scenario_passes() -> None:
+    scenario = next(item for item in load_scenarios() if item.name == "cli_tool_ml_agents")
+    result = evaluate_scenario(scenario)
+    assert result["passed"] is True
+    assert result["starter_root"] == "starter/cli_tool"

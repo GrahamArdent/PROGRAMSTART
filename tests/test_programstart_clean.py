@@ -7,7 +7,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts.programstart_clean import collect_cleanup_targets, main
+from scripts.programstart_clean import collect_cleanup_targets, main, remove_path
 
 
 def test_collect_cleanup_targets_includes_default_artifacts(tmp_path: Path, monkeypatch) -> None:
@@ -63,3 +63,37 @@ def test_main_removes_targets(monkeypatch, tmp_path, capsys) -> None:
     assert result == 0
     assert not cache_dir.exists()
     assert "Removed" in capsys.readouterr().out
+
+
+def test_collect_dist_not_existing(tmp_path: Path, monkeypatch) -> None:
+    """include_dist=True when dist/ absent → dist not added to targets."""
+    monkeypatch.setattr("scripts.programstart_clean.ROOT", tmp_path)
+    monkeypatch.setattr("scripts.programstart_clean.generated_outputs_root", lambda: tmp_path / "outputs")
+    targets = collect_cleanup_targets(include_dist=True, include_outputs=False)
+    assert all(t.name != "dist" for t in targets)
+
+
+def test_collect_outputs_not_existing(tmp_path: Path, monkeypatch) -> None:
+    """include_outputs=True when outputs/ absent → outputs not added to targets."""
+    monkeypatch.setattr("scripts.programstart_clean.ROOT", tmp_path)
+    monkeypatch.setattr("scripts.programstart_clean.generated_outputs_root", lambda: tmp_path / "outputs")
+    targets = collect_cleanup_targets(include_dist=False, include_outputs=True)
+    assert all(t.name != "outputs" for t in targets)
+
+
+def test_remove_path_unlinks_file(tmp_path: Path) -> None:
+    """remove_path on a file calls unlink rather than rmtree."""
+    f = tmp_path / "test.txt"
+    f.write_text("hello", encoding="utf-8")
+    remove_path(f)
+    assert not f.exists()
+
+
+def test_main_no_targets_prints_message(tmp_path: Path, monkeypatch, capsys) -> None:
+    """When no artifacts exist, main prints a message and returns 0."""
+    monkeypatch.setattr("scripts.programstart_clean.ROOT", tmp_path)
+    monkeypatch.setattr("scripts.programstart_clean.generated_outputs_root", lambda: tmp_path / "outputs")
+    monkeypatch.setattr("sys.argv", ["programstart_clean.py"])
+    result = main()
+    assert result == 0
+    assert "No disposable artifacts found" in capsys.readouterr().out

@@ -280,3 +280,75 @@ def test_cli_tool_ml_agents_scenario_passes() -> None:
     result = evaluate_scenario(scenario)
     assert result["passed"] is True
     assert result["starter_root"] == "starter/cli_tool"
+
+
+# ---------------------------------------------------------------------------
+# Phase A: coverage push — prompt_eval.py uncovered branches
+# ---------------------------------------------------------------------------
+
+
+def test_evaluate_assessment_tools_detects_empty_system_name(monkeypatch) -> None:
+    """Lines 200, 202: probe loop should append failures for empty system name and zero control files."""
+    from scripts.programstart_common import load_registry
+    from scripts.programstart_health_probe import HealthProbeReport, SystemHealthReport
+
+    bad_report = HealthProbeReport(
+        probe_time="2026-01-01T00:00:00",
+        registry_version="1.0",
+        overall_health="healthy",
+        systems=[
+            SystemHealthReport(system="", total_control_files=1),
+            SystemHealthReport(system="programbuild", total_control_files=0),
+        ],
+    )
+    monkeypatch.setattr(programstart_prompt_eval, "probe_target", lambda _root: bad_report)
+    registry = load_registry()
+    results = programstart_prompt_eval.evaluate_assessment_tools(registry)
+    probe_result = next(r for r in results if r["name"] == "assessment_health_probe")
+    assert probe_result["passed"] is False
+    failure_text = " ".join(probe_result["failures"])
+    assert "system name is empty" in failure_text
+    assert "0 total control files" in failure_text
+
+
+def test_evaluate_scenario_fails_on_variant_and_attach_mismatch(monkeypatch) -> None:
+    """Lines 77–86: variant and attach_userjourney mismatches both produce failure entries."""
+    from types import SimpleNamespace
+
+    rec = ProjectRecommendation(
+        product_shape="cli tool",
+        variant="enterprise",
+        attach_userjourney=True,
+        archetype="cli",
+        generated_prompt="ok",
+        prompt_principles=["p"],
+        prompt_patterns=["p"],
+    )
+    monkeypatch.setattr(programstart_prompt_eval, "build_recommendation", lambda **_kw: rec)
+    monkeypatch.setattr(
+        programstart_prompt_eval,
+        "build_starter_scaffold_plan",
+        lambda _n, _r: SimpleNamespace(root_dir="starter/cli_tool", files={}),
+    )
+    monkeypatch.setattr(programstart_prompt_eval, "render_factory_plan", lambda **_kw: "")
+
+    scenario = PromptEvalScenario(
+        name="mismatch_test",
+        product_shape="cli tool",
+        needs=[],
+        regulated=False,
+        attach_userjourney=False,
+        expected_variant="lite",
+        expected_attach_userjourney=False,
+        expected_stacks=[],
+        required_prompt_terms=[],
+        required_prompt_sections=[],
+        required_plan_sections=[],
+        expected_starter_root="starter/cli_tool",
+        require_prompt_guidance=False,
+    )
+    result = evaluate_scenario(scenario)
+    assert result["passed"] is False
+    failure_text = " ".join(result["failures"])
+    assert "expected variant lite" in failure_text
+    assert "expected attach_userjourney=False" in failure_text

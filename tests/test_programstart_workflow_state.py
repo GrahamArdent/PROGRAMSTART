@@ -1119,3 +1119,64 @@ def test_post_advance_sanity_check_warns_on_mismatch(capsys, monkeypatch) -> Non
     assert result == 0
     assert "Post-advance warning" in captured.err
     assert "feasibility" in captured.err
+
+
+# ---------------------------------------------------------------------------
+# Phase A: coverage push — workflow_state.py uncovered branches
+# ---------------------------------------------------------------------------
+
+
+def test_diff_command_uses_latest_snapshot_as_old(tmp_path: Path, capsys, monkeypatch) -> None:
+    """diff without --old should fall back to the latest snapshot file."""
+    snap_dir = tmp_path / "state-snapshots"
+    snap_dir.mkdir()
+    # Single snapshot — becomes snaps[-1] (the "old" baseline)
+    old_snap = snap_dir / "state_20260101T000000Z.json"
+    old_snap.write_text(
+        json.dumps({"systems": {"programbuild": {"active_stage": "a", "stages": {"a": {"status": "in_progress", "signoff": {}}}}}}),
+        encoding="utf-8",
+    )
+    # New state file — different from the snapshot
+    new_state_file = tmp_path / "new_state.json"
+    new_state_file.write_text(
+        json.dumps({"systems": {"programbuild": {"active_stage": "b", "stages": {"a": {"status": "completed", "signoff": {"decision": "approved"}}, "b": {"status": "in_progress", "signoff": {}}}}}}),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.generated_outputs_root",
+        lambda _reg: tmp_path,
+    )
+    # No --old provided: code will use snaps[-1] = old_snap as baseline
+    monkeypatch.setattr("sys.argv", ["ws", "diff", "--new", str(new_state_file)])
+    result = main()
+    out = capsys.readouterr().out
+    assert result == 0
+    assert "active step" in out
+
+
+def test_diff_command_loads_current_state_when_no_new_arg(tmp_path: Path, capsys, monkeypatch) -> None:
+    """diff without --new should build new_data from the current workflow state files."""
+    snap_dir = tmp_path / "state-snapshots"
+    snap_dir.mkdir()
+    old_snap = snap_dir / "state_20260101T000000Z.json"
+    old_snap.write_text(
+        json.dumps({"systems": {"programbuild": {"active_stage": "a", "stages": {"a": {"status": "in_progress", "signoff": {}}}}}}),
+        encoding="utf-8",
+    )
+    state_file = tmp_path / "pb_state.json"
+    state_file.write_text(
+        json.dumps({"active_stage": "b", "stages": {"b": {"status": "in_progress", "signoff": {}}}}),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.generated_outputs_root",
+        lambda _reg: tmp_path,
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workflow_state_path",
+        lambda _reg, _sys: state_file,
+    )
+    monkeypatch.setattr("sys.argv", ["ws", "diff", "--old", str(old_snap)])
+    result = main()
+    out = capsys.readouterr().out
+    assert result == 0

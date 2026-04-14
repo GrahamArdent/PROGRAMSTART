@@ -6,11 +6,14 @@ import sys
 from pathlib import Path
 from types import SimpleNamespace
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from scripts.programstart_common import (
+    _ensure_scripts_importable,
     _use_color,
     clr_bold,
     clr_cyan,
@@ -34,6 +37,7 @@ from scripts.programstart_common import (
     save_workflow_state,
     status_color,
     to_posix,
+    validate_state_against_schema,
     warn_direct_script_invocation,
     workflow_active_step,
     workflow_entry_key,
@@ -350,3 +354,57 @@ def test_warn_direct_script_invocation_skips_console_script(monkeypatch, capsys)
     warn_direct_script_invocation("'uv run programstart status' or 'pb status'")
 
     assert capsys.readouterr().err == ""
+
+
+# ---------------------------------------------------------------------------
+# Phase A: coverage push — common.py uncovered branches
+# ---------------------------------------------------------------------------
+
+
+def test_ensure_scripts_importable_adds_path_when_missing(monkeypatch: pytest.MonkeyPatch) -> None:
+    """_ensure_scripts_importable should insert scripts dir when it is not on sys.path."""
+    scripts_dir = str(ROOT / "scripts")
+    original_path = sys.path.copy()
+    try:
+        monkeypatch.setattr(sys, "path", [p for p in sys.path if p != scripts_dir])
+        assert scripts_dir not in sys.path
+        _ensure_scripts_importable()
+        assert scripts_dir in sys.path
+    finally:
+        sys.path[:] = original_path
+
+
+def test_write_json_retries_on_transient_permission_error(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """write_json should retry after a single PermissionError and succeed."""
+    import time
+
+    call_count = {"n": 0}
+    original_replace = Path.replace
+
+    def flaky_replace(self: Path, target: Path) -> None:  # type: ignore[return]
+        call_count["n"] += 1
+        if call_count["n"] == 1:
+            raise PermissionError("file locked")
+        original_replace(self, target)
+
+    monkeypatch.setattr(Path, "replace", flaky_replace)
+    monkeypatch.setattr(time, "sleep", lambda _: None)
+    dest = tmp_path / "out.json"
+    write_json(dest, {"key": "value"})
+    assert json.loads(dest.read_text()) == {"key": "value"}
+    assert call_count["n"] == 2
+
+
+def test_write_json_raises_after_all_retries_exhausted(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """write_json should re-raise PermissionError after three failed attempts."""
+    import time
+
+    monkeypatch.setattr(Path, "replace", lambda self, target: (_ for _ in ()).throw(PermissionError("locked")))
+    monkeypatch.setattr(time, "sleep", lambda _: None)
+    with pytest.raises(PermissionError):
+        write_json(tmp_path / "out.json", {"key": "value"})
+
+
+def test_validate_state_against_schema_unknown_system_is_noop() -> None:
+    """Unknown system name should return early without raising."""
+    validate_state_against_schema({"active_stage": "x", "stages": {}}, "unknown_system")

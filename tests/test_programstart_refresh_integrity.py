@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts.programstart_refresh_integrity import baseline_for, load_attachment_manifest, main, sha256
+from scripts.programstart_refresh_integrity import baseline_for, load_attachment_manifest, main, optional_baseline_for, sha256
 
 
 def test_sha256_produces_64_char_hex(tmp_path: Path) -> None:
@@ -163,3 +163,65 @@ def test_main_reports_backup_match(capsys, monkeypatch) -> None:
     finally:
         fake_file.unlink(missing_ok=True)
         shutil.rmtree(output_dir, ignore_errors=True)
+
+
+# ---------------------------------------------------------------------------
+# Phase A: coverage push — refresh_integrity.py uncovered branches
+# ---------------------------------------------------------------------------
+
+
+def test_baseline_for_raises_keyerror_for_unknown_name() -> None:
+    """baseline_for should raise KeyError when the baseline name is absent."""
+    import pytest
+
+    registry = {"integrity": {"baselines": [{"name": "snapshot", "root": "BACKUPS/example"}]}}
+    with pytest.raises(KeyError, match="unknown_baseline"):
+        baseline_for(registry, "unknown_baseline")
+
+
+def test_optional_baseline_for_returns_none_for_unknown_name() -> None:
+    """optional_baseline_for should return None instead of raising KeyError."""
+    registry = {"integrity": {"baselines": [{"name": "snapshot", "root": "BACKUPS/example"}]}}
+    result = optional_baseline_for(registry, "does_not_exist")
+    assert result is None
+
+
+def test_load_attachment_manifest_returns_none_when_file_missing(tmp_path: Path, monkeypatch) -> None:
+    """load_attachment_manifest should return None when the manifest file does not exist."""
+    registry = {
+        "integrity": {
+            "baselines": [
+                {
+                    "name": "userjourney_attachment_reference",
+                    "manifest": "USERJOURNEY/USERJOURNEY_INTEGRITY_REFERENCE.json",
+                }
+            ]
+        }
+    }
+    monkeypatch.setattr("scripts.programstart_refresh_integrity.workspace_path", lambda relative: tmp_path / relative)
+    result = load_attachment_manifest(registry, "userjourney_attachment_reference")
+    assert result is None
+
+
+def test_main_with_relative_output_dir(capsys, monkeypatch, tmp_path: Path) -> None:
+    """main should convert a relative --output-dir to an absolute path."""
+    fake_file = ROOT / "_test_sentinel_rel.md"
+    fake_file.write_text("# Test sentinel", encoding="utf-8")
+    try:
+        monkeypatch.setattr(
+            "sys.argv",
+            ["programstart_refresh_integrity.py", "--date", "2099-02-01", "--output-dir", "relative_out"],
+        )
+        monkeypatch.setattr(
+            "scripts.programstart_refresh_integrity.collect_registry_integrity_files",
+            lambda _registry: [fake_file],
+        )
+        abs_out = ROOT / "relative_out"
+        result = main()
+        assert result == 0
+        assert (abs_out / "MANIFEST_2099-02-01.txt").exists()
+    finally:
+        fake_file.unlink(missing_ok=True)
+        import shutil
+
+        shutil.rmtree(ROOT / "relative_out", ignore_errors=True)

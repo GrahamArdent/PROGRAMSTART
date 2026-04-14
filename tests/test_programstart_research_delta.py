@@ -281,3 +281,29 @@ def test_fail_on_due_in_template_path(capsys) -> None:
         ["--fail-on-due", "--date", "2099-01-01"]
     )
     assert result == 1
+
+
+# ---------------------------------------------------------------------------
+# Phase A: coverage push — research_delta.py uncovered branches
+# ---------------------------------------------------------------------------
+
+
+def test_parse_iso_date_returns_none_for_empty_string() -> None:
+    """parse_iso_date('') should return None without raising."""
+    assert programstart_research_delta.parse_iso_date("") is None
+
+
+def test_parse_iso_date_returns_none_for_whitespace() -> None:
+    """parse_iso_date with only whitespace should return None."""
+    assert programstart_research_delta.parse_iso_date("   ") is None
+
+
+def test_parse_iso_date_returns_none_for_invalid_format() -> None:
+    """parse_iso_date with a non-ISO value should return None."""
+    assert programstart_research_delta.parse_iso_date("not-a-date") is None
+
+
+def test_slugify_collapses_consecutive_dashes() -> None:
+    """slugify should replace repeated dashes from consecutive non-alnum chars with a single dash."""
+    result = programstart_research_delta.slugify("hello  world")
+    assert result == "hello-world"

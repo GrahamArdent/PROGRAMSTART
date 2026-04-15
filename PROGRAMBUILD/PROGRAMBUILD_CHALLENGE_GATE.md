@@ -164,7 +164,11 @@ Check whether the implemented code and design still match the product authority 
 
 ## Recording The Result
 
-After completing all parts, record one line in this log:
+After completing all parts, record the outcome in a machine-verifiable form before you advance.
+
+- Preferred: run `programstart advance --system programbuild --gate-result <clear|warning|blocked> --gate-notes "..."`
+- Compatible fallback: add one line to the Challenge Gate Log table below, then run `programstart advance --system programbuild`
+- If the gate result is `blocked` or `Proceed? = No`, the transition is blocked. Do not advance.
 
 ### Challenge Gate Log
 
@@ -176,13 +180,15 @@ Status codes:
 - ✅ All clear
 - ⚠️ Issues found but manageable — recorded in DECISION_LOG.md
 - ❌ Blocking issue — do not proceed
-If the gate result is **Proceed: Yes**, run:
+`programstart advance` now treats missing gate evidence and blocking gate results as hard failures unless you explicitly pass `--skip-gate-check`. That bypass is for exceptional recovery only and MUST be accompanied by a `DECISION_LOG.md` entry explaining why the machine gate was bypassed.
+
+If the gate result is **Proceed: Yes** or **Proceed: Conditional** with manageable findings recorded, run:
 
 ```bash
-programstart advance --system programbuild
+programstart advance --system programbuild --gate-result clear
 ```
 
-This moves the workflow state to the next stage so `programstart status`, `programstart log`, and `programstart drift` all reflect the current position. Without this step, the drift check compares changed files against a stale active stage.
+This moves the workflow state to the next stage and stores structured gate evidence in `PROGRAMBUILD_STATE.json` so `programstart status`, `programstart log`, and `programstart drift` all reflect the same transition record. Without this step, the drift check compares changed files against a stale active stage.
 ---
 
 ## Variant Adjustments

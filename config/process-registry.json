@@ -6,6 +6,14 @@
     "repo_role": "template_repo",
     "root_readme": "README.md",
     "generated_outputs_root": "outputs",
+    "generated_repo_prompt_policy": {
+      "allowed_prompt_classes": [
+        "workflow"
+      ],
+      "support_files": [
+        ".github/prompts/PROMPT_STANDARD.md"
+      ]
+    },
     "bootstrap_assets": [
       ".secrets.baseline",
       ".editorconfig",
@@ -38,16 +46,23 @@
       "docs/toolchain.md",
       "docs/verification.md",
       "docs/workflow-model.md",
+      "dashboard/index.html",
+      "dashboard/app.js",
+      "dashboard/style.css",
       "scripts/pb.ps1",
       "scripts/__init__.py",
       "scripts/programstart_attach.py",
+      "scripts/programstart_backup.py",
       "scripts/programstart_cli.py",
       "scripts/programstart_bootstrap.py",
       "scripts/programstart_clean.py",
+      "scripts/programstart_closeout.py",
       "scripts/programstart_checklist_progress.py",
       "scripts/programstart_common.py",
       "scripts/programstart_command_registry.py",
       "scripts/programstart_create.py",
+      "scripts/programstart_create_core.py",
+      "scripts/programstart_create_output.py",
       "scripts/programstart_context.py",
       "scripts/programstart_cli_smoke.py",
       "scripts/programstart_dashboard.py",
@@ -91,6 +106,7 @@
       "tests/test_programstart_checklist_progress.py",
       "tests/test_programstart_cli.py",
       "tests/test_programstart_clean.py",
+      "tests/test_programstart_closeout.py",
       "tests/test_programstart_command_registry.py",
       "tests/test_programstart_common.py",
       "tests/test_programstart_context.py",
@@ -98,6 +114,10 @@
       "tests/test_programstart_dashboard_golden.py",
       "tests/test_programstart_dashboard_smoke_readonly.py",
       "tests/test_programstart_drift_check.py",
+      "tests/test_instruction_enforcement.py",
+      "tests/test_performance_benchmarks.py",
+      "tests/test_platform_hygiene.py",
+      "tests/test_programstart_backup.py",
       "tests/golden/dashboard/absent-shell.png",
       "tests/golden/dashboard/attached-shell.png",
       "tests/golden/dashboard/attached-signoff-modal.png",
@@ -122,6 +142,9 @@
       "tests/test_programstart_attach.py",
       "tests/test_programstart_bootstrap.py",
       "tests/test_programstart_create.py",
+      "tests/test_programstart_create_core.py",
+      "tests/test_programstart_create_output.py",
+      "tests/test_programstart_factory_smoke.py",
       "tests/test_programstart_impact.py",
       "tests/test_programstart_init.py",
       "tests/test_programstart_recommend.py",
@@ -187,6 +210,8 @@
       ".github/prompts/execute-enhancement-gameplan.prompt.md",
       ".github/prompts/execute-hardening-gameplan.prompt.md",
       ".github/prompts/execute-gate-gameplan.prompt.md",
+      ".github/prompts/execute-prompt-architecture-remediation-gameplan.prompt.md",
+      ".github/prompts/OPERATOR_PROMPT_STANDARD.md",
       ".github/prompts/PROMPT_STANDARD.md",
       ".github/instructions/conventional-commits.instructions.md",
       ".gitlint",
@@ -202,6 +227,9 @@
       "docs/decisions/0008-cross-cutting-prompts-registry.md",
       "docs/decisions/0009-canonical-section-alignment.md",
       "docs/decisions/0010-unified-cli-kb-diff-rollback.md",
+      "docs/decisions/0011-separate-workflow-and-operator-prompt-architecture.md",
+      "docs/decisions/0012-require-hardening-adr-triage-and-audit-loop.md",
+      "docs/decisions/0013-require-governance-close-out-for-durable-operator-checkpoints.md",
       ".vscode/tasks.json"
     ],
     "userjourney_bootstrap_assets": [
@@ -392,6 +420,7 @@
         "PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md"
       ],
       "require_authority_when_dependents_change": true,
+      "require_dependents_when_authority_changes": true,
       "description": "Changes to Program Build control behavior should update the canonical and file index docs in the same change."
     },
     {
@@ -406,6 +435,7 @@
         "PROGRAMBUILD/RISK_SPIKES.md"
       ],
       "require_authority_when_dependents_change": true,
+      "require_dependents_when_authority_changes": true,
       "description": "Test strategy, release readiness, and risk spikes depend on architecture contracts. Update ARCHITECTURE.md first when contracts change."
     },
     {
@@ -420,6 +450,7 @@
         "PROGRAMBUILD/TEST_STRATEGY.md"
       ],
       "require_authority_when_dependents_change": true,
+      "require_dependents_when_authority_changes": true,
       "description": "User flows, architecture, and test strategy must stay aligned with requirements scope. Update REQUIREMENTS.md first when scope changes."
     },
     {
@@ -429,13 +460,13 @@
         "PROGRAMBUILD/FEASIBILITY.md"
       ],
       "dependent_files": [
-        "PROGRAMBUILD/DECISION_LOG.md",
         "PROGRAMBUILD/RESEARCH_SUMMARY.md",
         "PROGRAMBUILD/REQUIREMENTS.md",
         "PROGRAMBUILD/RISK_SPIKES.md"
       ],
       "require_authority_when_dependents_change": true,
-      "description": "Feasibility outcomes, kill criteria, and early risk framing should be updated before downstream decision records, research, scope, and spike plans drift."
+      "require_dependents_when_authority_changes": true,
+      "description": "Feasibility outcomes, kill criteria, and early risk framing should be updated before downstream research, scope, and spike plans drift."
     },
     {
       "name": "programbuild_variant_alignment",
@@ -449,6 +480,7 @@
         "PROGRAMBUILD/PROGRAMBUILD_ENTERPRISE.md"
       ],
       "require_authority_when_dependents_change": true,
+      "require_dependents_when_authority_changes": true,
       "description": "Variant playbooks should stay compatible with the master playbook stage order and naming rules. Review PROGRAMBUILD.md when variants change."
     },
     {
@@ -547,7 +579,10 @@
         "docs/decisions/0007-clarify-canonical-rule-1-temporal-semantics.md",
         "docs/decisions/0008-cross-cutting-prompts-registry.md",
         "docs/decisions/0009-canonical-section-alignment.md",
-        "docs/decisions/0010-unified-cli-kb-diff-rollback.md"
+        "docs/decisions/0010-unified-cli-kb-diff-rollback.md",
+        "docs/decisions/0011-separate-workflow-and-operator-prompt-architecture.md",
+        "docs/decisions/0012-require-hardening-adr-triage-and-audit-loop.md",
+        "docs/decisions/0013-require-governance-close-out-for-durable-operator-checkpoints.md"
       ],
       "require_authority_when_dependents_change": false,
       "description": "ADR format is defined in PROGRAMBUILD_ADR_TEMPLATE.md. New decision records in docs/decisions/ must follow that template. If the template format changes, review existing records for alignment."
@@ -592,6 +627,7 @@
         "QUICKSTART.md"
       ],
       "require_authority_when_dependents_change": true,
+      "require_dependents_when_authority_changes": true,
       "description": "Nox sessions, editor tasks, and the JIT source-of-truth protocol instruction file must stay aligned. When any of the three authority files change, review the others for alignment before updating copilot-instructions.md or QUICKSTART.md."
     },
     {
@@ -604,7 +640,8 @@
         "PROGRAMBUILD/DECISION_LOG.md"
       ],
       "require_authority_when_dependents_change": false,
-      "description": "When ARCHITECTURE.md contracts change, DECISION_LOG.md should be reviewed for a corresponding entry. Decisions can be added independently, but architecture changes without a logged decision may indicate undocumented drift."
+      "require_dependents_when_authority_changes": true,
+      "description": "When ARCHITECTURE.md contracts change, DECISION_LOG.md must carry the corresponding decision update in the same change. Decisions can still be added independently."
     },
     {
       "name": "requirements_test_alignment",
@@ -616,6 +653,7 @@
         "PROGRAMBUILD/TEST_STRATEGY.md"
       ],
       "require_authority_when_dependents_change": true,
+      "require_dependents_when_authority_changes": true,
       "description": "Test strategy must stay aligned with requirements. When requirements change, review TEST_STRATEGY.md for coverage gaps. When TEST_STRATEGY.md changes, confirm the change is driven by a requirements update."
     },
     {
@@ -628,6 +666,7 @@
         "requirements.txt"
       ],
       "require_authority_when_dependents_change": false,
+      "require_dependents_when_authority_changes": true,
       "description": "requirements.txt is auto-generated from pyproject.toml via 'uv export --extra dev'. pyproject.toml is the authority for dependency declarations. When pyproject.toml changes, regenerate requirements.txt with: uv export --format requirements-txt --extra dev --no-hashes -o requirements.txt"
     }
   ],
@@ -734,7 +773,7 @@
         ".github/prompts/programstart-cross-stage-validation.prompt.md"
       ]
     },
-    "cross_cutting_prompts": [
+    "cross_cutting_workflow_prompts": [
       ".github/prompts/propagate-canonical-change.prompt.md",
       ".github/prompts/programstart-cross-stage-validation.prompt.md"
     ],
@@ -937,7 +976,6 @@
         ],
         "prompts": [
           ".github/prompts/shape-audit.prompt.md",
-          ".github/prompts/audit-process-drift.prompt.md",
           ".github/prompts/programstart-stage-guide.prompt.md",
           ".github/prompts/programstart-stage-transition.prompt.md"
         ]
@@ -971,6 +1009,23 @@
         "release_readiness": ["Release Readiness Reviewer"],
         "audit_and_drift_control": ["Contract Auditor", "Security Reviewer"],
         "post_launch_review": ["Release Readiness Reviewer"]
+      }
+    },
+    "operator": {
+      "diagnostics": {
+        "description": "Prompt surfaces for operator diagnostics that inspect repo policy or source-of-truth consistency without advancing workflow state.",
+        "prompts": [
+          ".github/prompts/audit-process-drift.prompt.md"
+        ]
+      },
+      "maintenance_and_remediation": {
+        "description": "Prompt surfaces for multi-phase PROGRAMSTART maintenance, repair, hardening, and remediation work.",
+        "prompts": [
+          ".github/prompts/execute-enhancement-gameplan.prompt.md",
+          ".github/prompts/execute-hardening-gameplan.prompt.md",
+          ".github/prompts/execute-gate-gameplan.prompt.md",
+          ".github/prompts/execute-prompt-architecture-remediation-gameplan.prompt.md"
+        ]
       }
     },
     "userjourney": {
@@ -1138,6 +1193,265 @@
         ]
       }
     }
+  },
+  "prompt_registry": {
+    "workflow_prompt_files": [
+      ".github/prompts/start-programstart-project.prompt.md",
+      ".github/prompts/shape-idea.prompt.md",
+      ".github/prompts/shape-feasibility.prompt.md",
+      ".github/prompts/shape-research.prompt.md",
+      ".github/prompts/shape-requirements.prompt.md",
+      ".github/prompts/shape-architecture.prompt.md",
+      ".github/prompts/shape-scaffold.prompt.md",
+      ".github/prompts/shape-test-strategy.prompt.md",
+      ".github/prompts/shape-release-readiness.prompt.md",
+      ".github/prompts/shape-audit.prompt.md",
+      ".github/prompts/shape-post-launch-review.prompt.md",
+      ".github/prompts/shape-uj-decision-freeze.prompt.md",
+      ".github/prompts/shape-uj-legal-drafts.prompt.md",
+      ".github/prompts/shape-uj-ux-surfaces.prompt.md",
+      ".github/prompts/programstart-stage-guide.prompt.md",
+      ".github/prompts/programstart-stage-transition.prompt.md",
+      ".github/prompts/programstart-cross-stage-validation.prompt.md",
+      ".github/prompts/programstart-what-next.prompt.md",
+      ".github/prompts/userjourney-next-slice.prompt.md",
+      ".github/prompts/product-jit-check.prompt.md",
+      ".github/prompts/propagate-canonical-change.prompt.md"
+    ],
+    "operator_prompt_files": [
+      ".github/prompts/audit-process-drift.prompt.md",
+      ".github/prompts/execute-enhancement-gameplan.prompt.md",
+      ".github/prompts/execute-hardening-gameplan.prompt.md",
+      ".github/prompts/execute-gate-gameplan.prompt.md",
+      ".github/prompts/execute-prompt-architecture-remediation-gameplan.prompt.md"
+    ],
+    "internal_prompt_files": [
+      ".github/prompts/internal/implement-stage2-gameplan.prompt.md",
+      ".github/prompts/internal/implement-stage4-gameplan.prompt.md",
+      ".github/prompts/internal/implement-stage5-gameplan.prompt.md",
+      ".github/prompts/internal/implement-stage6-gameplan.prompt.md",
+      ".github/prompts/internal/implement-stage7-gameplan.prompt.md",
+      ".github/prompts/internal/implement-protocol-alignment.prompt.md",
+      ".github/prompts/internal/implement-phase-f.prompt.md",
+      ".github/prompts/internal/implement-gameplan-phase1.prompt.md",
+      ".github/prompts/internal/implement-gameplan-phase2.prompt.md",
+      ".github/prompts/internal/implement-gameplan-phase3.prompt.md",
+      ".github/prompts/internal/implement-gameplan-phase4.prompt.md",
+      ".github/prompts/internal/implement-gameplan-phase7.prompt.md",
+      ".github/prompts/internal/implement-gameplan-phase8.prompt.md",
+      ".github/prompts/internal/implement-gameplan-phase9.prompt.md",
+      ".github/prompts/internal/implement-gameplan-phase10.prompt.md"
+    ]
+  },
+  "prompt_authority": {
+    ".github/prompts/execute-enhancement-gameplan.prompt.md": {
+      "authority_files": [
+        "devlog/gameplans/enhancegameplan.md",
+        "devlog/reports/enhanceopportunity.md",
+        "config/process-registry.json",
+        "PROGRAMBUILD/ARCHITECTURE.md"
+      ]
+    },
+    ".github/prompts/execute-hardening-gameplan.prompt.md": {
+      "authority_files": [
+        "devlog/gameplans/hardeninggameplan.md",
+        "config/process-registry.json",
+        "PROGRAMBUILD/ARCHITECTURE.md"
+      ]
+    },
+    ".github/prompts/execute-gate-gameplan.prompt.md": {
+      "authority_files": [
+        "devlog/gameplans/gategameplan.md",
+        ".pre-commit-config.yaml",
+        "pyproject.toml",
+        "scripts/lint_prompts.py",
+        "tests/test_lint_prompts.py",
+        "tests/test_prompt_compliance.py"
+      ]
+    },
+    ".github/prompts/execute-prompt-architecture-remediation-gameplan.prompt.md": {
+      "authority_files": [
+        "docs/decisions/0011-separate-workflow-and-operator-prompt-architecture.md",
+        "PROGRAMBUILD/DECISION_LOG.md",
+        "devlog/gameplans/prompt-architecture-remediation-gameplan.md",
+        "config/process-registry.json"
+      ]
+    },
+    ".github/prompts/shape-architecture.prompt.md": {
+      "authority_files": [
+        "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+        "PROGRAMBUILD/PROGRAMBUILD.md",
+        "PROGRAMBUILD/REQUIREMENTS.md",
+        "PROGRAMBUILD/USER_FLOWS.md",
+        "PROGRAMBUILD/RISK_SPIKES.md",
+        "PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md"
+      ]
+    },
+    ".github/prompts/shape-audit.prompt.md": {
+      "authority_files": [
+        "PROGRAMBUILD/PROGRAMBUILD.md",
+        "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+        "PROGRAMBUILD/FEASIBILITY.md",
+        "PROGRAMBUILD/ARCHITECTURE.md",
+        "PROGRAMBUILD/DECISION_LOG.md",
+        "PROGRAMBUILD/RISK_SPIKES.md",
+        "PROGRAMBUILD/RELEASE_READINESS.md",
+        "PROGRAMBUILD/AUDIT_REPORT.md"
+      ]
+    },
+    ".github/prompts/shape-feasibility.prompt.md": {
+      "authority_files": [
+        "PROGRAMBUILD/PROGRAMBUILD.md",
+        "PROGRAMBUILD/PROGRAMBUILD_IDEA_INTAKE.md",
+        "PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md",
+        "PROGRAMBUILD/FEASIBILITY.md"
+      ]
+    },
+    ".github/prompts/shape-idea.prompt.md": {
+      "authority_files": [
+        "PROGRAMBUILD/PROGRAMBUILD.md",
+        "PROGRAMBUILD/PROGRAMBUILD_IDEA_INTAKE.md",
+        "PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md"
+      ]
+    },
+    ".github/prompts/shape-post-launch-review.prompt.md": {
+      "authority_files": [
+        "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+        "PROGRAMBUILD/PROGRAMBUILD.md",
+        "PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md",
+        "PROGRAMBUILD/RELEASE_READINESS.md",
+        "PROGRAMBUILD/AUDIT_REPORT.md"
+      ]
+    },
+    ".github/prompts/shape-release-readiness.prompt.md": {
+      "authority_files": [
+        "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+        "PROGRAMBUILD/PROGRAMBUILD.md",
+        "PROGRAMBUILD/ARCHITECTURE.md",
+        "PROGRAMBUILD/TEST_STRATEGY.md",
+        "PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md"
+      ]
+    },
+    ".github/prompts/shape-requirements.prompt.md": {
+      "authority_files": [
+        "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+        "PROGRAMBUILD/PROGRAMBUILD.md",
+        "PROGRAMBUILD/FEASIBILITY.md",
+        "PROGRAMBUILD/RESEARCH_SUMMARY.md",
+        "PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md"
+      ]
+    },
+    ".github/prompts/shape-research.prompt.md": {
+      "authority_files": [
+        "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+        "PROGRAMBUILD/PROGRAMBUILD.md",
+        "PROGRAMBUILD/FEASIBILITY.md",
+        "PROGRAMBUILD/RISK_SPIKES.md",
+        "PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md"
+      ]
+    },
+    ".github/prompts/shape-scaffold.prompt.md": {
+      "authority_files": [
+        "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+        "PROGRAMBUILD/PROGRAMBUILD.md",
+        "PROGRAMBUILD/ARCHITECTURE.md",
+        "PROGRAMBUILD/USER_FLOWS.md",
+        "PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md"
+      ]
+    },
+    ".github/prompts/shape-test-strategy.prompt.md": {
+      "authority_files": [
+        "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+        "PROGRAMBUILD/PROGRAMBUILD.md",
+        "PROGRAMBUILD/REQUIREMENTS.md",
+        "PROGRAMBUILD/USER_FLOWS.md",
+        "PROGRAMBUILD/ARCHITECTURE.md"
+      ]
+    },
+    ".github/prompts/shape-uj-decision-freeze.prompt.md": {
+      "authority_files": [
+        "USERJOURNEY/DELIVERY_GAMEPLAN.md",
+        "USERJOURNEY/DECISION_LOG.md",
+        "USERJOURNEY/ROUTE_AND_STATE_FREEZE.md",
+        "USERJOURNEY/STATES_AND_RULES.md",
+        "USERJOURNEY/OPEN_QUESTIONS.md"
+      ]
+    },
+    ".github/prompts/shape-uj-legal-drafts.prompt.md": {
+      "authority_files": [
+        "USERJOURNEY/DELIVERY_GAMEPLAN.md",
+        "USERJOURNEY/LEGAL_AND_CONSENT.md",
+        "USERJOURNEY/OPEN_QUESTIONS.md",
+        "USERJOURNEY/LEGAL_REVIEW_NOTES.md",
+        "USERJOURNEY/DECISION_LOG.md"
+      ]
+    },
+    ".github/prompts/shape-uj-ux-surfaces.prompt.md": {
+      "authority_files": [
+        "USERJOURNEY/DELIVERY_GAMEPLAN.md",
+        "USERJOURNEY/SCREEN_INVENTORY.md",
+        "USERJOURNEY/USER_FLOWS.md",
+        "USERJOURNEY/UX_COPY_DRAFT.md",
+        "USERJOURNEY/ROUTE_AND_STATE_FREEZE.md",
+        "USERJOURNEY/DECISION_LOG.md"
+      ]
+    }
+  },
+  "prompt_generation": {
+    "artifact_root": "outputs/generated-prompts",
+    "managed_stage_prompts": [
+      {
+        "stage": "inputs_and_mode_selection",
+        "path": "outputs/generated-prompts/inputs_and_mode_selection.prompt.md"
+      },
+      {
+        "stage": "feasibility",
+        "path": "outputs/generated-prompts/feasibility.prompt.md"
+      },
+      {
+        "stage": "research",
+        "path": "outputs/generated-prompts/research.prompt.md"
+      },
+      {
+        "stage": "requirements_and_ux",
+        "path": "outputs/generated-prompts/requirements_and_ux.prompt.md"
+      },
+      {
+        "stage": "architecture_and_risk_spikes",
+        "path": "outputs/generated-prompts/architecture_and_risk_spikes.prompt.md"
+      },
+      {
+        "stage": "scaffold_and_guardrails",
+        "path": "outputs/generated-prompts/scaffold_and_guardrails.prompt.md"
+      },
+      {
+        "stage": "test_strategy",
+        "path": "outputs/generated-prompts/test_strategy.prompt.md"
+      },
+      {
+        "stage": "implementation_loop",
+        "path": "outputs/generated-prompts/implementation_loop.prompt.md"
+      },
+      {
+        "stage": "release_readiness",
+        "path": "outputs/generated-prompts/release_readiness.prompt.md"
+      },
+      {
+        "stage": "audit_and_drift_control",
+        "path": "outputs/generated-prompts/audit_and_drift_control.prompt.md"
+      },
+      {
+        "stage": "post_launch_review",
+        "path": "outputs/generated-prompts/post_launch_review.prompt.md"
+      }
+    ]
+  },
+  "adr_policy": {
+    "legacy_pre_register_adrs": [
+      "0001",
+      "0002",
+      "0003"
+    ]
   },
   "workflow_state": {
     "programbuild": {

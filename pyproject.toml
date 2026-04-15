@@ -132,13 +132,17 @@ testpaths = ["tests"]
 branch = true
 source = [
   "scripts.programstart_cli",
+  "scripts.programstart_backup",
   "scripts.programstart_context",
   "scripts.programstart_clean",
+  "scripts.programstart_closeout",
   "scripts.programstart_command_registry",
   "scripts.programstart_common",
   "scripts.programstart_validate",
   "scripts.programstart_bootstrap",
   "scripts.programstart_create",
+  "scripts.programstart_create_core",
+  "scripts.programstart_create_output",
   "scripts.programstart_status",
   "scripts.programstart_workflow_state",
   "scripts.programstart_drift_check",

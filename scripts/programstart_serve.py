@@ -44,11 +44,13 @@ READONLY_MODE = os.environ.get("PROGRAMSTART_READONLY", "").strip().lower() in (
 try:
     from .programstart_command_registry import dashboard_allowed_commands
     from .programstart_common import (
+        challenge_gate_record_from_log,
         extract_numbered_items,
         git_changed_files,
         load_registry,
         load_workflow_state,
         parse_markdown_table,
+        pyproject_dependency_sync_required,
         save_workflow_state,
         system_is_attached,
         workflow_active_step,
@@ -82,11 +84,13 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
     )
 
     from programstart_common import (
+        challenge_gate_record_from_log,
         extract_numbered_items,
         git_changed_files,
         load_registry,
         load_workflow_state,
         parse_markdown_table,
+        pyproject_dependency_sync_required,
         save_workflow_state,
         system_is_attached,
         workflow_active_step,
@@ -518,6 +522,9 @@ def advance_workflow_with_signoff(
     signoff_date: str,
     notes: str,
     dry_run: bool,
+    gate_result: str = "",
+    gate_date: str = "",
+    gate_notes: str = "",
 ) -> dict[str, Any]:
     """Advance a workflow while recording explicit signoff metadata."""
     if system not in {"programbuild", "userjourney"}:
@@ -539,9 +546,40 @@ def advance_workflow_with_signoff(
     date_value = signoff_date.strip() or date.today().isoformat()
     notes_value = sanitize_markdown_table_cell(notes.strip())
     current_index = steps.index(active_step)
+    next_step = steps[current_index + 1] if current_index + 1 < len(steps) else None
+    gate_date_value = gate_date.strip() or date.today().isoformat()
+    gate_notes_value = sanitize_markdown_table_cell(gate_notes.strip())
+    gate_record: dict[str, Any] | None = None
+    if system == "programbuild":
+        if gate_result:
+            proceed_map = {"clear": "yes", "warning": "conditional", "blocked": "no"}
+            gate_record = {
+                "source": "dashboard_api",
+                "from_stage": active_step,
+                "to_stage": next_step or "",
+                "date": gate_date_value,
+                "proceed": proceed_map.get(gate_result, ""),
+                "result": gate_result,
+                "notes": gate_notes_value,
+                "checks": {},
+            }
+        else:
+            gate_record = challenge_gate_record_from_log(active_step)
+        if gate_record is None:
+            return {
+                "output": (
+                    f"Error: no Challenge Gate evidence found for stage '{active_step}'. "
+                    "Record the gate in PROGRAMBUILD_CHALLENGE_GATE.md or provide gate_result in the API payload."
+                ),
+                "exit_code": 1,
+            }
+        if gate_record.get("result") == "blocked":
+            return {
+                "output": f"Error: Challenge Gate for stage '{active_step}' is blocking. Resolve it before advancing.",
+                "exit_code": 1,
+            }
     if dry_run:
-        if current_index + 1 < len(steps):
-            next_step = steps[current_index + 1]
+        if next_step:
             output = (
                 f"[dry-run] Would mark {system} '{active_step}' completed "
                 f"(decision={decision_value!r}, date={date_value!r})\n"
@@ -582,8 +620,9 @@ def advance_workflow_with_signoff(
                 MAX_SIGNOFF_HISTORY,
             )
             current_entry["signoff_history"] = history[-MAX_SIGNOFF_HISTORY:]
-        if current_index + 1 < len(steps):
-            next_step = steps[current_index + 1]
+        if gate_record:
+            current_entry["challenge_gate"] = gate_record
+        if next_step:
             next_entry = cast(dict[str, Any], entries[next_step])
             if str(next_entry.get("status", "planned")) == "planned":
                 next_entry["status"] = "in_progress"
@@ -613,6 +652,8 @@ def build_drift_summary() -> dict[str, Any]:
         if touched_dependents and not touched_authority and rule.get("require_authority_when_dependents_change", False):
             violations.append(f"{rule['name']}: dependent files changed without authority files: {', '.join(touched_dependents)}")
         elif touched_authority and not touched_dependents:
+            if rule.get("name") == "pyproject_requirements_sync" and not pyproject_dependency_sync_required():
+                continue
             notes.append(f"{rule['name']}: authority files changed without dependent files: {', '.join(touched_authority)}")
         sync_rows.append(
             {
@@ -813,6 +854,9 @@ class DashboardHandler(BaseHTTPRequestHandler):
                 signoff_date=str(body.get("date", "")),
                 notes=str(body.get("notes", "")),
                 dry_run=bool(body.get("dry_run", False)),
+                gate_result=str(body.get("gate_result", "")),
+                gate_date=str(body.get("gate_date", "")),
+                gate_notes=str(body.get("gate_notes", "")),
             )
             self._send_json(result, 200 if result.get("exit_code") == 0 else 400)
             return

@@ -19,6 +19,8 @@ This template follows the [MADR (Markdown Architectural Decision Records) 4.0](h
 
 - File: `docs/decisions/NNNN-short-hyphenated-title.md` (zero-padded to 4 digits)
 - ADRs are append-only. When a decision changes, create a new ADR and update the old one's status to `superseded by ADR-NNNN`.
+- Every ADR MUST link back to the related `DEC-xxx` row in `PROGRAMBUILD/DECISION_LOG.md`.
+- When an ADR is superseded, update the ADR file status, `docs/decisions/README.md`, and any stale `PROGRAMBUILD/DECISION_LOG.md` row that still points at the superseded ADR in the same change.
 
 ## When to write an ADR
 
@@ -90,7 +92,9 @@ How will you verify this decision is implemented correctly?
 
 ## Links
 
+- <!-- DEC-xxx -->
 - [Related ADR](NNNN-related-title.md)
+- [Decision log](../../PROGRAMBUILD/DECISION_LOG.md)
 - [External reference](https://example.com)
 ```
 

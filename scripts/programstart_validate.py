@@ -70,7 +70,6 @@ def _check_decision_log_entries(stage_name: str) -> list[str]:
 
 _PLACEHOLDER_PATTERNS = re.compile(
     r"\bTBD\b|\bTODO\b|\[FILL IN\]|\bPLACEHOLDER\b|Lorem ipsum",
-    re.IGNORECASE,
 )
 
 
@@ -88,6 +87,70 @@ def check_content_quality(filepath: Path) -> list[str]:
         if match:
             warnings.append(f"{filepath.name}:{lineno}: placeholder '{match.group()}' detected")
     return warnings
+
+
+def _relative_workspace_path(path: Path) -> str:
+    try:
+        return path.relative_to(workspace_path(".")).as_posix()
+    except ValueError:
+        return path.as_posix()
+
+
+def placeholder_content_targets(registry: dict) -> dict[str, tuple[str, str]]:
+    """Return repo placeholder-scan targets mapped to (severity, role)."""
+    targets: dict[str, tuple[str, str]] = {}
+
+    def register(paths: list[str] | set[str], severity: str, role: str) -> None:
+        for relative_path in sorted({path.replace("\\", "/") for path in paths}):
+            if not relative_path.endswith(".md"):
+                continue
+            targets.setdefault(relative_path, (severity, role))
+
+    systems = cast(dict[str, Any], registry.get("systems", {}))
+    programbuild = cast(dict[str, Any], systems.get("programbuild", {}))
+    register(cast(list[str], programbuild.get("output_files", [])), "problem", "programbuild-output")
+
+    userjourney = cast(dict[str, Any], systems.get("userjourney", {}))
+    userjourney_root = str(userjourney.get("root", "USERJOURNEY")).strip() or "USERJOURNEY"
+    userjourney_absent = bool(userjourney.get("optional")) and not workspace_path(userjourney_root).exists()
+    if userjourney and not userjourney_absent:
+        workflow_state = cast(dict[str, Any], registry.get("workflow_state", {}))
+        userjourney_state = cast(dict[str, Any], workflow_state.get("userjourney", {}))
+        userjourney_step_files = cast(dict[str, list[str]], userjourney_state.get("step_files", {}))
+        userjourney_outputs: set[str] = set()
+        for step_files in userjourney_step_files.values():
+            userjourney_outputs.update(step_files)
+        register(userjourney_outputs, "problem", "userjourney-output")
+
+    decisions_dir = workspace_path("docs/decisions")
+    if decisions_dir.exists():
+        adr_files = {_relative_workspace_path(path) for path in decisions_dir.glob("*.md") if path.name != "README.md"}
+        register(adr_files, "problem", "adr")
+
+    repo_docs = {"README.md", "QUICKSTART.md", "CONTRIBUTING.md", "SECURITY.md"}
+    docs_dir = workspace_path("docs")
+    if docs_dir.exists():
+        repo_docs.update(_relative_workspace_path(path) for path in docs_dir.glob("*.md") if path.parent == docs_dir)
+    register(repo_docs.difference(targets), "warning", "repo-doc")
+
+    return targets
+
+
+def validate_placeholder_content(registry: dict) -> tuple[list[str], list[str]]:
+    """Scan repo planning/documentation surfaces for unresolved placeholder content."""
+    problems: list[str] = []
+    warnings: list[str] = []
+
+    for relative_path, (severity, role) in placeholder_content_targets(registry).items():
+        findings = check_content_quality(workspace_path(relative_path))
+        for finding in findings:
+            message = f"{role}: {relative_path}: {finding}"
+            if severity == "problem":
+                problems.append(message)
+            else:
+                warnings.append(message)
+
+    return problems, warnings
 
 
 def stage_content_quality_warnings(step: str) -> list[str]:
@@ -920,6 +983,7 @@ def expected_bootstrap_assets() -> set[str]:
     }
     patterns = [
         "config/*.json",
+        "dashboard/*",
         "docs/*.md",
         "docs/decisions/*.md",
         "scripts/*.py",
@@ -975,6 +1039,177 @@ def validate_repo_boundary_policy(registry: dict) -> list[str]:
     return problems
 
 
+def validate_prompt_registry_completeness(registry: dict) -> list[str]:
+    problems: list[str] = []
+    prompt_registry = cast(dict[str, Any], registry.get("prompt_registry", {}))
+    class_keys = ("workflow_prompt_files", "operator_prompt_files", "internal_prompt_files")
+    seen_classes: dict[str, list[str]] = {}
+    registered_paths: set[str] = set()
+
+    for class_key in class_keys:
+        for raw_path in cast(list[str], prompt_registry.get(class_key, [])):
+            relative_path = raw_path.replace("\\", "/")
+            seen_classes.setdefault(relative_path, []).append(class_key)
+
+            if not relative_path.startswith(".github/prompts/"):
+                problems.append(f"prompt_registry contains non-prompt path in {class_key}: {relative_path}")
+                continue
+            if not relative_path.endswith(".prompt.md"):
+                problems.append(f"prompt_registry contains non-.prompt.md entry in {class_key}: {relative_path}")
+            if class_key == "internal_prompt_files" and not relative_path.startswith(".github/prompts/internal/"):
+                problems.append(f"prompt_registry internal prompt is outside .github/prompts/internal/: {relative_path}")
+            if class_key != "internal_prompt_files" and relative_path.startswith(".github/prompts/internal/"):
+                problems.append(f"prompt_registry public prompt class contains internal prompt: {relative_path}")
+            if not workspace_path(relative_path).exists():
+                problems.append(f"prompt_registry references missing prompt file: {relative_path}")
+
+            registered_paths.add(relative_path)
+
+    for relative_path, class_names in sorted(seen_classes.items()):
+        if len(class_names) > 1:
+            problems.append(
+                f"prompt_registry duplicates prompt file across classes: {relative_path} ({', '.join(sorted(class_names))})"
+            )
+
+    prompts_root = workspace_path(".github/prompts")
+    on_disk_prompt_files: set[str] = set()
+    if prompts_root.exists():
+        on_disk_prompt_files.update(f".github/prompts/{path.name}" for path in prompts_root.glob("*.prompt.md"))
+        internal_root = prompts_root / "internal"
+        if internal_root.exists():
+            on_disk_prompt_files.update(
+                f".github/prompts/internal/{path.relative_to(internal_root).as_posix()}"
+                for path in internal_root.rglob("*.prompt.md")
+            )
+
+    missing_from_registry = sorted(on_disk_prompt_files - registered_paths)
+    for relative_path in missing_from_registry:
+        problems.append(f"prompt_registry missing on-disk prompt file: {relative_path}")
+
+    return problems
+
+
+def _markdown_section(text: str, heading: str) -> str:
+    match = re.search(rf"^## {re.escape(heading)}\s*\n(.*?)(?=^## |\Z)", text, re.MULTILINE | re.DOTALL)
+    return match.group(1) if match else ""
+
+
+def validate_prompt_authority_metadata(registry: dict) -> list[str]:
+    problems: list[str] = []
+    prompt_registry = cast(dict[str, Any], registry.get("prompt_registry", {}))
+    public_prompts = set(cast(list[str], prompt_registry.get("workflow_prompt_files", []))) | set(
+        cast(list[str], prompt_registry.get("operator_prompt_files", []))
+    )
+    prompt_authority = cast(dict[str, Any], registry.get("prompt_authority", {}))
+
+    for prompt_path, payload in sorted(prompt_authority.items()):
+        if prompt_path not in public_prompts:
+            problems.append(f"prompt_authority references prompt outside public prompt_registry: {prompt_path}")
+            continue
+
+        path = workspace_path(prompt_path)
+        if not path.exists():
+            problems.append(f"prompt_authority references missing prompt file: {prompt_path}")
+            continue
+
+        authority_files = cast(list[str], cast(dict[str, Any], payload).get("authority_files", []))
+        if not authority_files:
+            problems.append(f"prompt_authority entry has no authority_files: {prompt_path}")
+            continue
+        if len(authority_files) != len(set(authority_files)):
+            problems.append(f"prompt_authority entry contains duplicate authority_files: {prompt_path}")
+
+        text = path.read_text(encoding="utf-8")
+        section = _markdown_section(text, "Authority Loading")
+        if not section:
+            problems.append(f"prompt_authority entry points at prompt without '## Authority Loading' section: {prompt_path}")
+            continue
+
+        for authority_path in authority_files:
+            if not workspace_path(authority_path).exists():
+                problems.append(f"prompt_authority references missing authority file for {prompt_path}: {authority_path}")
+            if authority_path not in section:
+                problems.append(
+                    f"prompt_authority expects '{authority_path}' in Authority "
+                    f"Loading for {prompt_path}, but prompt text is missing it"
+                )
+
+    for prompt_path in sorted(public_prompts):
+        path = workspace_path(prompt_path)
+        if not path.exists():
+            continue
+        text = path.read_text(encoding="utf-8")
+        section = _markdown_section(text, "Authority Loading")
+        if section and prompt_path not in prompt_authority:
+            problems.append(f"prompt_authority missing metadata for prompt with '## Authority Loading': {prompt_path}")
+
+    return problems
+
+
+def validate_prompt_generation_boundary(registry: dict) -> list[str]:
+    """Validate which prompt families are generated artifacts versus manual prompt surfaces."""
+    problems: list[str] = []
+    prompt_generation = cast(dict[str, Any], registry.get("prompt_generation", {}))
+    if not prompt_generation:
+        return problems
+
+    artifact_root = str(prompt_generation.get("artifact_root", "")).strip().replace("\\", "/")
+    managed_stage_prompts = cast(list[dict[str, Any]], prompt_generation.get("managed_stage_prompts", []))
+    prompt_registry = cast(dict[str, Any], registry.get("prompt_registry", {}))
+    public_prompt_files = set(cast(list[str], prompt_registry.get("workflow_prompt_files", []))) | set(
+        cast(list[str], prompt_registry.get("operator_prompt_files", []))
+    )
+    internal_prompt_files = set(cast(list[str], prompt_registry.get("internal_prompt_files", [])))
+    registered_prompt_files = public_prompt_files | internal_prompt_files
+
+    for prompt_path in sorted(public_prompt_files):
+        path = workspace_path(prompt_path)
+        if not path.exists():
+            continue
+        text = path.read_text(encoding="utf-8")
+        if text.startswith("# AUTO-GENERATED by programstart prompt-build"):
+            problems.append(f"public prompt must be manually maintained, not prompt-build generated: {prompt_path}")
+
+    try:
+        from .programstart_prompt_build import build_prompt
+    except ImportError:  # pragma: no cover - standalone script execution fallback
+        from programstart_prompt_build import build_prompt
+
+    seen_paths: set[str] = set()
+    seen_stages: set[str] = set()
+    for entry in managed_stage_prompts:
+        stage = str(entry.get("stage", "")).strip()
+        prompt_path = str(entry.get("path", "")).strip().replace("\\", "/")
+        if not stage or not prompt_path:
+            problems.append("prompt_generation managed_stage_prompts entries must include non-empty stage and path")
+            continue
+        if stage in seen_stages:
+            problems.append(f"prompt_generation duplicates managed stage entry: {stage}")
+        seen_stages.add(stage)
+        if prompt_path in seen_paths:
+            problems.append(f"prompt_generation duplicates managed prompt path: {prompt_path}")
+        seen_paths.add(prompt_path)
+        if artifact_root and not prompt_path.startswith(f"{artifact_root}/"):
+            problems.append(f"prompt_generation managed prompt path is outside artifact_root: {prompt_path}")
+        if prompt_path in registered_prompt_files:
+            problems.append(f"prompt_generation managed prompt path must not appear in prompt_registry: {prompt_path}")
+
+        path = workspace_path(prompt_path)
+        if not path.exists():
+            problems.append(f"prompt_generation managed prompt is missing on disk: {prompt_path}")
+            continue
+        expected = build_prompt(stage, registry=registry)
+        actual = path.read_text(encoding="utf-8")
+        if actual != expected:
+            problems.append(
+                f"prompt_generation managed prompt is out of date for stage "
+                f"'{stage}': {prompt_path}; run 'uv run programstart "
+                "prompt-build --sync-managed'"
+            )
+
+    return problems
+
+
 def validate_rule_enforcement(registry: dict) -> list[str]:
     """Verify that structural rules from the authority model are enforced.
 
@@ -986,6 +1221,7 @@ def validate_rule_enforcement(registry: dict) -> list[str]:
     5. All CLI commands in registry are covered by the dispatch.
     """
     problems: list[str] = []
+    repo_role = cast(dict[str, Any], registry.get("workspace", {})).get("repo_role", "template_repo")
 
     # 1. Sync rule files exist (skip rules for optional absent systems)
     for rule in registry.get("sync_rules", []):
@@ -1020,7 +1256,6 @@ def validate_rule_enforcement(registry: dict) -> list[str]:
         "scripts/programstart_status.py",
         "scripts/programstart_workflow_state.py",
         "scripts/check_commit_msg.py",
-        ".github/prompts/audit-process-drift.prompt.md",
         ".github/prompts/programstart-cross-stage-validation.prompt.md",
         ".github/prompts/programstart-stage-transition.prompt.md",
         ".github/prompts/programstart-what-next.prompt.md",
@@ -1032,9 +1267,14 @@ def validate_rule_enforcement(registry: dict) -> list[str]:
         ".github/agents/quality-release.agent.md",
         "docs/decisions/README.md",
     ]
+    if repo_role == "template_repo":
+        required_infra.append(".github/prompts/audit-process-drift.prompt.md")
     for path in required_infra:
         if not workspace_path(path).exists():
             problems.append(f"missing required assessment infrastructure: {path}")
+
+    problems.extend(validate_prompt_registry_completeness(registry))
+    problems.extend(validate_prompt_authority_metadata(registry))
 
     # 4. Instruction files exist and reference valid patterns
     instruction_files = [
@@ -1137,7 +1377,7 @@ def validate_adr_coverage(registry: dict) -> list[str]:
     for row in rows:
         dec_id = row.get("ID", "").strip()
         status = row.get("Status", "").strip().upper()
-        if status not in ("ACTIVE", "ACCEPTED"):
+        if status not in ("ACTIVE", "ACCEPTED", "REVERSED"):
             continue
         if not dec_id:
             continue
@@ -1147,6 +1387,255 @@ def validate_adr_coverage(registry: dict) -> list[str]:
             decision_text = row.get("Decision", "").strip()
             warnings.append(f"{dec_id} ({decision_text[:60]}) is {status} but has no corresponding ADR in docs/decisions/")
     return warnings
+
+
+def _parse_markdown_frontmatter(text: str) -> dict[str, str]:
+    if not text.startswith("---\n"):
+        return {}
+    parts = text.split("---\n", 2)
+    if len(parts) < 3:
+        return {}
+    frontmatter: dict[str, str] = {}
+    for line in parts[1].splitlines():
+        if ":" not in line:
+            continue
+        key, value = line.split(":", 1)
+        frontmatter[key.strip()] = value.strip()
+    return frontmatter
+
+
+def _adr_title(text: str) -> str:
+    match = re.search(r"^#\s+\d{4}\.\s+(.+)$", text, re.MULTILINE)
+    return match.group(1).strip() if match else ""
+
+
+def _normalize_adr_title(title: str) -> str:
+    return re.sub(r"\s+", " ", title).strip().casefold()
+
+
+def _adr_decision_link(text: str) -> str:
+    match = re.search(r"<!--\s*(DEC-\d{3})\s*-->", text)
+    return match.group(1) if match else ""
+
+
+def _adr_readme_entries(readme_text: str) -> dict[str, dict[str, str]]:
+    entries: dict[str, dict[str, str]] = {}
+    for row in parse_markdown_table(readme_text, "Index"):
+        raw_id = row.get("ID", "").strip()
+        link_match = re.match(r"\[(\d{4})\]\(([^)]+)\)", raw_id)
+        if not link_match:
+            continue
+        adr_id, target = link_match.groups()
+        entries[adr_id] = {
+            "target": target.strip(),
+            "title": row.get("Title", "").strip(),
+            "status": row.get("Status", "").strip(),
+            "date": row.get("Date", "").strip(),
+        }
+    return entries
+
+
+def _legacy_pre_register_adr_ids(registry: dict) -> set[str]:
+    policy = cast(dict[str, Any], registry.get("adr_policy", {}))
+    return {
+        str(item).strip()
+        for item in cast(list[str], policy.get("legacy_pre_register_adrs", []))
+        if re.fullmatch(r"\d{4}", str(item).strip())
+    }
+
+
+def validate_adr_coherence(registry: dict) -> list[str]:
+    """Validate ADR frontmatter, README index, and DECISION_LOG linkage coherence."""
+    problems: list[str] = []
+    decisions_dir = workspace_path("docs/decisions")
+    readme_path = decisions_dir / "README.md"
+    decision_log_path = workspace_path("PROGRAMBUILD/DECISION_LOG.md")
+    legacy_pre_register_ids = _legacy_pre_register_adr_ids(registry)
+    repo_role = cast(dict[str, Any], registry.get("workspace", {})).get("repo_role", "template_repo")
+
+    if not decisions_dir.exists() or not readme_path.exists() or not decision_log_path.exists():
+        return problems
+
+    readme_entries = _adr_readme_entries(readme_path.read_text(encoding="utf-8"))
+    decision_rows = parse_markdown_table(decision_log_path.read_text(encoding="utf-8"), "Decision Register")
+    decision_row_by_id = {row.get("ID", "").strip(): row for row in decision_rows if row.get("ID", "").strip()}
+    adr_status_by_name: dict[str, str] = {}
+    decision_row_by_adr_name: dict[str, dict[str, str]] = {}
+
+    for row in decision_rows:
+        related_file = row.get("Related file", "").strip()
+        match = re.search(r"docs/decisions/(\d{4}-[^\s|,]+\.md)", related_file)
+        if match:
+            decision_row_by_adr_name[match.group(1)] = row
+
+    for legacy_id in sorted(legacy_pre_register_ids):
+        if not any(path.name.startswith(f"{legacy_id}-") for path in decisions_dir.glob("*.md")):
+            problems.append(f"adr_policy legacy_pre_register_adrs references missing ADR file: {legacy_id}")
+
+    for adr_path in sorted(decisions_dir.glob("*.md")):
+        if adr_path.name == "README.md":
+            continue
+
+        adr_text = adr_path.read_text(encoding="utf-8")
+        frontmatter = _parse_markdown_frontmatter(adr_text)
+        adr_id_match = re.match(r"^(\d{4})-", adr_path.name)
+        adr_id = adr_id_match.group(1) if adr_id_match else ""
+        title = _adr_title(adr_text)
+        dec_id = _adr_decision_link(adr_text)
+        status = frontmatter.get("status", "")
+        date = frontmatter.get("date", "")
+        is_legacy_pre_register = adr_id in legacy_pre_register_ids
+        adr_status_by_name[adr_path.name] = status
+
+        if not frontmatter:
+            problems.append(f"ADR missing YAML frontmatter: {adr_path.name}")
+        if not title:
+            problems.append(f"ADR missing MADR title heading: {adr_path.name}")
+        if is_legacy_pre_register and dec_id:
+            problems.append(f"legacy pre-register ADR should not declare a DECISION_LOG linkage comment: {adr_path.name}")
+        if not is_legacy_pre_register and not dec_id:
+            problems.append(f"ADR missing decision-log linkage comment <!-- DEC-xxx -->: {adr_path.name}")
+        elif (
+            not is_legacy_pre_register
+            and dec_id not in decision_row_by_id
+            and not (repo_role == "project_repo" and adr_path.name not in decision_row_by_adr_name)
+        ):
+            if dec_id:
+                problems.append(f"ADR references unknown DECISION_LOG entry {dec_id}: {adr_path.name}")
+        if is_legacy_pre_register and adr_path.name in decision_row_by_adr_name:
+            problems.append(
+                "legacy pre-register ADR is referenced by "
+                f"PROGRAMBUILD/DECISION_LOG.md and must not remain legacy-classified: {adr_path.name}"
+            )
+
+        readme_entry = readme_entries.get(adr_id)
+        if not readme_entry:
+            problems.append(f"ADR missing from docs/decisions/README.md index: {adr_path.name}")
+        else:
+            if readme_entry["target"] != adr_path.name:
+                problems.append(
+                    f"ADR README target mismatch for {adr_id}: expected {adr_path.name} but found {readme_entry['target']}"
+                )
+            if title and _normalize_adr_title(readme_entry["title"]) != _normalize_adr_title(title):
+                problems.append(
+                    f"ADR README title mismatch for {adr_path.name}: expected '{title}' but found '{readme_entry['title']}'"
+                )
+            if status and readme_entry["status"] != status:
+                problems.append(
+                    f"ADR README status mismatch for {adr_path.name}: expected '{status}' but found '{readme_entry['status']}'"
+                )
+            if date and readme_entry["date"] != date:
+                problems.append(
+                    f"ADR README date mismatch for {adr_path.name}: expected '{date}' but found '{readme_entry['date']}'"
+                )
+
+        superseded_match = re.fullmatch(r"superseded by ADR-(\d{4})", status)
+        if superseded_match:
+            superseding_name_prefix = superseded_match.group(1)
+            has_target = any(path.name.startswith(f"{superseding_name_prefix}-") for path in decisions_dir.glob("*.md"))
+            if not has_target:
+                problems.append(
+                    f"ADR {adr_path.name} is superseded by ADR-{superseding_name_prefix} but that ADR file does not exist"
+                )
+
+    for readme_entry in readme_entries.values():
+        target_path = decisions_dir / readme_entry["target"]
+        if not target_path.exists():
+            problems.append(f"ADR README index points to missing file: {readme_entry['target']}")
+
+    for row in decision_rows:
+        dec_id = row.get("ID", "").strip()
+        status = row.get("Status", "").strip().upper()
+        if status not in {"ACTIVE", "REVERSED"}:
+            continue
+        related_file = row.get("Related file", "").strip()
+        match = re.search(r"docs/decisions/(\d{4}-[^\s|,]+\.md)", related_file)
+        if not match:
+            continue
+        adr_name = match.group(1)
+        adr_id = adr_name[:4]
+        if adr_id in legacy_pre_register_ids:
+            problems.append(
+                f"{dec_id} references legacy pre-register ADR {adr_name}; "
+                "remove the legacy classification or point at a post-register ADR"
+            )
+        adr_status = adr_status_by_name.get(adr_name, "")
+        if adr_status.startswith("superseded by ADR-"):
+            problems.append(
+                f"{dec_id} references superseded ADR {adr_name} in PROGRAMBUILD/DECISION_LOG.md; update it to the current ADR"
+            )
+
+    return problems
+
+
+def validate_decision_log_reversal_invariants(_registry: dict) -> list[str]:
+    problems: list[str] = []
+    decision_log_path = workspace_path("PROGRAMBUILD/DECISION_LOG.md")
+    if not decision_log_path.exists():
+        return problems
+
+    rows = parse_markdown_table(decision_log_path.read_text(encoding="utf-8"), "Decision Register")
+    if not rows:
+        return problems
+
+    rows_by_id = {row.get("ID", "").strip(): row for row in rows if row.get("ID", "").strip()}
+    reversed_by_target: dict[str, list[str]] = {}
+    superseded_by_target: dict[str, list[str]] = {}
+
+    for row in rows:
+        dec_id = row.get("ID", "").strip()
+        status = row.get("Status", "").strip().upper()
+        replaces = row.get("Replaces", "").strip()
+        if status == "REVERSED":
+            if not replaces or replaces == "—":
+                problems.append(f"{dec_id} is REVERSED but Replaces is empty")
+                continue
+            if replaces == dec_id:
+                problems.append(f"{dec_id} cannot reverse itself")
+                continue
+            target = rows_by_id.get(replaces)
+            if target is None:
+                problems.append(f"{dec_id} reverses missing decision {replaces}")
+                continue
+            reversed_by_target.setdefault(replaces, []).append(dec_id)
+            target_status = target.get("Status", "").strip().upper()
+            target_replaces = target.get("Replaces", "").strip()
+            if target_status != "SUPERSEDED":
+                problems.append(
+                    f"{dec_id} reverses {replaces}, but {replaces} is {target_status or 'missing a status'} instead of SUPERSEDED"
+                )
+            if target_replaces != dec_id:
+                problems.append(f"{dec_id} reverses {replaces}, but {replaces} must point back via Replaces={dec_id}")
+        elif status == "SUPERSEDED":
+            if not replaces or replaces == "—":
+                problems.append(f"{dec_id} is SUPERSEDED but Replaces is empty")
+                continue
+            if replaces == dec_id:
+                problems.append(f"{dec_id} cannot supersede itself")
+                continue
+            target = rows_by_id.get(replaces)
+            if target is None:
+                problems.append(f"{dec_id} is SUPERSEDED by missing decision {replaces}")
+                continue
+            superseded_by_target.setdefault(replaces, []).append(dec_id)
+            target_status = target.get("Status", "").strip().upper()
+            target_replaces = target.get("Replaces", "").strip()
+            if target_status != "REVERSED":
+                problems.append(
+                    f"{dec_id} is SUPERSEDED by {replaces}, but {replaces} is "
+                    f"{target_status or 'missing a status'} instead of REVERSED"
+                )
+            if target_replaces != dec_id:
+                problems.append(f"{dec_id} is SUPERSEDED by {replaces}, but {replaces} must point back via Replaces={dec_id}")
+
+    for target, dec_ids in reversed_by_target.items():
+        if len(dec_ids) > 1:
+            problems.append(f"Decision {target} is reversed more than once: {', '.join(sorted(dec_ids))}")
+    for target, dec_ids in superseded_by_target.items():
+        if len(dec_ids) > 1:
+            problems.append(f"Decision {target} supersedes more than one original row: {', '.join(sorted(dec_ids))}")
+
+    return problems
 
 
 def validate_test_coverage(registry: dict) -> list[str]:
@@ -1309,6 +1798,11 @@ def main() -> int:
             "test-coverage",
             "template-test-coverage",
             "adr-coverage",
+            "adr-coherence",
+            "decision-log-coherence",
+            "prompt-authority",
+            "prompt-generation",
+            "placeholder-content",
             "kb-freshness",
             "intake-complete",
             "feasibility-criteria",
@@ -1363,6 +1857,13 @@ def main() -> int:
         warnings.extend(validate_test_coverage(registry))
         warnings.extend(validate_coverage_source_completeness(registry))
         warnings.extend(validate_adr_coverage(registry))
+        problems.extend(validate_adr_coherence(registry))
+        problems.extend(validate_decision_log_reversal_invariants(registry))
+        problems.extend(validate_prompt_authority_metadata(registry))
+        problems.extend(validate_prompt_generation_boundary(registry))
+        placeholder_problems, placeholder_warnings = validate_placeholder_content(registry)
+        problems.extend(placeholder_problems)
+        warnings.extend(placeholder_warnings)
         warnings.extend(validate_kb_freshness(registry))
         warnings.extend(validate_file_hygiene(registry))
     elif args.check == "required-files":
@@ -1389,6 +1890,18 @@ def main() -> int:
         warnings.extend(validate_test_coverage(registry))
     elif args.check == "adr-coverage":
         warnings.extend(validate_adr_coverage(registry))
+    elif args.check == "adr-coherence":
+        problems.extend(validate_adr_coherence(registry))
+    elif args.check == "decision-log-coherence":
+        problems.extend(validate_decision_log_reversal_invariants(registry))
+    elif args.check == "prompt-authority":
+        problems.extend(validate_prompt_authority_metadata(registry))
+    elif args.check == "prompt-generation":
+        problems.extend(validate_prompt_generation_boundary(registry))
+    elif args.check == "placeholder-content":
+        placeholder_problems, placeholder_warnings = validate_placeholder_content(registry)
+        problems.extend(placeholder_problems)
+        warnings.extend(placeholder_warnings)
     elif args.check == "kb-freshness":
         warnings.extend(validate_kb_freshness(registry))
     elif args.check == "intake-complete":

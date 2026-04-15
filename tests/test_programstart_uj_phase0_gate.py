@@ -27,7 +27,6 @@ def test_uj_phase0_advance_blocked_on_unresolved_questions(tmp_path: Path, monke
     )
 
     monkeypatch.setattr("scripts.programstart_validate.workspace_path", lambda rel: tmp_path / rel)
-    monkeypatch.setattr("scripts.programstart_workflow_state.workspace_path", lambda rel: tmp_path / rel)
     # Skip unrelated file checks that would fail in tmp_path
     monkeypatch.setattr("scripts.programstart_validate.validate_required_files", lambda _r, *_a: [])
     monkeypatch.setattr("scripts.programstart_validate.validate_metadata", lambda _r, *_a: [])
@@ -52,7 +51,6 @@ def test_uj_phase0_advance_passes_on_resolved_questions(tmp_path: Path, monkeypa
     )
 
     monkeypatch.setattr("scripts.programstart_validate.workspace_path", lambda rel: tmp_path / rel)
-    monkeypatch.setattr("scripts.programstart_workflow_state.workspace_path", lambda rel: tmp_path / rel)
     monkeypatch.setattr("scripts.programstart_validate.validate_required_files", lambda _r, *_a: [])
     monkeypatch.setattr("scripts.programstart_validate.validate_metadata", lambda _r, *_a: [])
     monkeypatch.setattr("scripts.programstart_validate.validate_workflow_state", lambda _r, *_a: [])
@@ -76,7 +74,6 @@ def test_uj_non_phase0_advance_not_checked(tmp_path: Path, monkeypatch: pytest.M
     )
 
     monkeypatch.setattr("scripts.programstart_validate.workspace_path", lambda rel: tmp_path / rel)
-    monkeypatch.setattr("scripts.programstart_workflow_state.workspace_path", lambda rel: tmp_path / rel)
     monkeypatch.setattr("scripts.programstart_validate.validate_required_files", lambda _r, *_a: [])
     monkeypatch.setattr("scripts.programstart_validate.validate_metadata", lambda _r, *_a: [])
     monkeypatch.setattr("scripts.programstart_validate.validate_workflow_state", lambda _r, *_a: [])

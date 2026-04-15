@@ -37,9 +37,28 @@
       "properties": {
         "status": { "enum": ["planned", "in_progress", "completed", "blocked"] },
         "signoff": { "$ref": "#/$defs/signoff" },
+        "challenge_gate": { "$ref": "#/$defs/challengeGate" },
         "signoff_history": {
           "type": "array",
           "items": { "$ref": "#/$defs/signoff" }
+        }
+      },
+      "additionalProperties": true
+    },
+    "challengeGate": {
+      "type": "object",
+      "required": ["source", "from_stage", "date", "proceed", "result", "notes", "checks"],
+      "properties": {
+        "source": { "type": "string" },
+        "from_stage": { "type": "string" },
+        "to_stage": { "type": "string" },
+        "date": { "type": "string" },
+        "proceed": { "enum": ["yes", "conditional", "no", ""] },
+        "result": { "enum": ["clear", "warning", "blocked"] },
+        "notes": { "type": "string" },
+        "checks": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
         }
       },
       "additionalProperties": true

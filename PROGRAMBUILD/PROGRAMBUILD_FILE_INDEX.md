@@ -13,7 +13,7 @@ If a file is missing from this index, it is not a recognized control file in thi
 |---|---|---|---|---|
 | `PROGRAMBUILD_CANONICAL.md` | control | active | authority map and naming rules | document authority |
 | `PROGRAMBUILD_FILE_INDEX.md` | control | active | inventory of critical files | file inventory |
-| `PROGRAMBUILD_ADR_TEMPLATE.md` | template | active | MADR 4.0 format, status lifecycle, and decision drivers | ADR structure and MADR format |
+| `PROGRAMBUILD_ADR_TEMPLATE.md` | template | active | MADR 4.0 format, status lifecycle, decision-log linkage, and supersession hygiene | ADR structure, decision-log linkage, and supersession hygiene |
 | `PROGRAMBUILD_CHANGELOG.md` | control | active | system-level change history | PROGRAMBUILD change history |
 | `PROGRAMBUILD.md` | playbook | active | balanced default process | stage order and base workflow |
 | `PROGRAMBUILD_LITE.md` | variant | active | lean workflow | lite execution model |
@@ -23,7 +23,7 @@ If a file is missing from this index, it is not a recognized control file in thi
 | `PROGRAMBUILD_SUBAGENTS.md` | catalog | active | subagent roles and prompts | subagent guidance |
 | `PROGRAMBUILD_CHECKLIST.md` | checklist | active | execution checklist format | execution tracking |
 | `PROGRAMBUILD_IDEA_INTAKE.md` | protocol | active | 8-question idea decomposition and pre-feasibility challenge | idea intake |
-| `PROGRAMBUILD_CHALLENGE_GATE.md` | protocol | active | 8-part stage transition validation (A–H) with architecture alignment | stage transition gates |
+| `PROGRAMBUILD_CHALLENGE_GATE.md` | protocol | active | 8-part stage transition validation (A–H) with architecture alignment and machine gate evidence | stage transition gates |
 | `PROGRAMBUILD_GAMEPLAN.md` | playbook | active | chained execution sequence with cross-stage validation | execution sequencing |
 
 ---

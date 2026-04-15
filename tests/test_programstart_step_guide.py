@@ -41,6 +41,15 @@ def test_kickoff_guide(capsys, monkeypatch) -> None:
     assert "Kickoff" in out
 
 
+def test_operator_guide(capsys, monkeypatch) -> None:
+    monkeypatch.setattr("sys.argv", ["programstart_step_guide.py", "--operator"])
+    result = main()
+    assert result == 0
+    out = capsys.readouterr().out
+    assert "Operator Prompts" in out
+    assert "execute-hardening-gameplan.prompt.md" in out
+
+
 def test_programbuild_guide(capsys, monkeypatch) -> None:
     monkeypatch.setattr("sys.argv", ["programstart_step_guide.py", "--system", "programbuild"])
     result = main()
@@ -62,6 +71,18 @@ def test_programbuild_guide_with_stage(capsys, monkeypatch) -> None:
     assert result == 0
     out = capsys.readouterr().out
     assert "feasibility" in out.lower()
+
+
+def test_audit_stage_guide_excludes_operator_prompt(capsys, monkeypatch) -> None:
+    monkeypatch.setattr(
+        "sys.argv",
+        ["programstart_step_guide.py", "--system", "programbuild", "--stage", "audit_and_drift_control"],
+    )
+    result = main()
+    assert result == 0
+    out = capsys.readouterr().out
+    assert "shape-audit.prompt.md" in out
+    assert "audit-process-drift.prompt.md" not in out
 
 
 def test_no_system_errors(monkeypatch) -> None:

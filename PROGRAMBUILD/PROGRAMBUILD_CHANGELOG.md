@@ -6,6 +6,19 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 
 ---
 
+## 2026-04-15 (Phase K — Governance Close-out Command)
+
+- added `programstart closeout` — durable-checkpoint close-out command that runs ADR coverage/coherence, authority-sync, and drift evaluation together and writes machine-readable evidence to `outputs/governance/`
+- added CLI dispatch and command-registry coverage for `closeout`
+- added tests for close-out evidence writing, ADR triage input validation, and CLI passthrough wiring
+- registered new files in `config/process-registry.json` bootstrap assets
+- made PROGRAMBUILD Challenge Gate enforcement blocking in `programstart advance` unless structured gate evidence or a compatible gate-log row exists
+- added opt-in reverse drift enforcement for selected sync rules so authority-only changes can hard-fail instead of landing as notes
+- added decision-log reversal coherence validation for `REVERSED`/`SUPERSEDED` pairs and orphaned `Replaces` targets
+- moved nox/workflow bootstrap and factory smoke destinations to external temp directories so CI respects the standalone-generated-repo boundary rule
+
+---
+
 ## 2026-04-12 (Post-Gameplan — Remaining Deferred Items)
 
 - fixed KB weekly refresh workflow so reviews can be explicitly recorded with `programstart research --mark-reviewed`

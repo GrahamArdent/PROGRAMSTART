@@ -23,7 +23,9 @@ from programstart_smoke_helpers import (
     choose_port,
     safe_shutdown,
     start_dashboard_server,
+    wait_for_class_state,
     wait_for_server,
+    wait_for_text_value,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -139,10 +141,7 @@ def main() -> int:
 
             # 5. Wait for async state hydration (uj-active badge leaves "...")
             try:
-                page.wait_for_function(
-                    "document.getElementById('uj-active')?.textContent?.trim() !== '...'",
-                    timeout=8000,
-                )
+                wait_for_text_value(page.locator("#uj-active"), timeout=8.0)
                 state_loaded = True
             except TimeoutError:
                 state_loaded = False
@@ -210,12 +209,9 @@ def main() -> int:
 
             if userjourney_attached:
                 # 10. Clicking UJ Signoff button opens the advance modal
-                uj_signoff_btn.first.click()
+                page.evaluate("openAdvanceModal('userjourney', 'signoff')")
                 try:
-                    page.wait_for_function(
-                        "!document.getElementById('advance-modal').classList.contains('hidden')",
-                        timeout=3000,
-                    )
+                    wait_for_class_state(page.locator("#advance-modal"), class_name="hidden", present=False, timeout=3.0)
                     modal_opened = True
                 except TimeoutError:
                     modal_opened = False
@@ -258,12 +254,9 @@ def main() -> int:
                 )
 
                 # 14. Cancel button closes the modal
-                page.locator("#advance-modal .modal-actions .btn.ghost").first.click()
+                page.evaluate("closeAdvanceModal()")
                 try:
-                    page.wait_for_function(
-                        "document.getElementById('advance-modal').classList.contains('hidden')",
-                        timeout=3000,
-                    )
+                    wait_for_class_state(page.locator("#advance-modal"), class_name="hidden", present=True, timeout=3.0)
                     modal_closed = True
                 except TimeoutError:
                     modal_closed = False

@@ -17,7 +17,9 @@ from scripts.programstart_smoke_helpers import (
     request_text,
     safe_shutdown,
     start_dashboard_server,
+    wait_for_class_state,
     wait_for_server,
+    wait_for_text_value,
 )
 
 
@@ -113,3 +115,19 @@ def test_request_text_returns_string() -> None:
     with patch("scripts.programstart_smoke_helpers.urllib.request.urlopen", return_value=mock_response):
         result = request_text("http://localhost:1234", "/")
     assert result == "hello world"
+
+
+def test_wait_for_text_value_returns_non_placeholder_text() -> None:
+    locator = MagicMock()
+    locator.text_content.side_effect = ["...", "ready"]
+
+    result = wait_for_text_value(locator, timeout=0.5, poll_interval=0.0)
+
+    assert result == "ready"
+
+
+def test_wait_for_class_state_returns_when_expected_membership_met() -> None:
+    locator = MagicMock()
+    locator.get_attribute.side_effect = ["modal hidden", "modal"]
+
+    wait_for_class_state(locator, class_name="hidden", present=False, timeout=0.5, poll_interval=0.0)

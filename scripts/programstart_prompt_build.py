@@ -280,6 +280,35 @@ def list_stages(registry: dict[str, Any] | None = None) -> list[dict[str, Any]]:
     return [{"id": s["id"], "name": s["name"], "output": s.get("main_output", "")} for s in stages]
 
 
+def managed_stage_prompts(registry: dict[str, Any] | None = None) -> list[dict[str, str]]:
+    """Return the configured builder-managed prompt artifact targets."""
+    if registry is None:
+        registry = load_registry()
+    prompt_generation = registry.get("prompt_generation", {})
+    managed = prompt_generation.get("managed_stage_prompts", [])
+    return [
+        {
+            "stage": str(entry.get("stage", "")).strip(),
+            "path": str(entry.get("path", "")).strip(),
+        }
+        for entry in managed
+        if str(entry.get("stage", "")).strip() and str(entry.get("path", "")).strip()
+    ]
+
+
+def sync_managed_prompts(registry: dict[str, Any] | None = None) -> list[Path]:
+    """Regenerate all configured builder-managed prompt artifacts."""
+    if registry is None:
+        registry = load_registry()
+    written: list[Path] = []
+    for item in managed_stage_prompts(registry):
+        output_path = ROOT / item["path"]
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_text(build_prompt(item["stage"], registry=registry), encoding="utf-8")
+        written.append(output_path)
+    return written
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Generate a stage-specific .prompt.md file from the process registry.",
@@ -288,6 +317,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--output", "-o", help="Output file path. Default: stdout.")
     parser.add_argument("--eject", metavar="PATH", help="Convert an auto-generated prompt to manually maintained.")
     parser.add_argument("--list-stages", action="store_true", help="List all buildable stages.")
+    parser.add_argument("--sync-managed", action="store_true", help="Regenerate all registry-managed prompt artifacts.")
     parser.add_argument("--json", action="store_true", help="Output in JSON format (with --list-stages).")
     args = parser.parse_args(argv)
 
@@ -303,8 +333,17 @@ def main(argv: list[str] | None = None) -> int:
                 print(f"  {s['id']:>2}  {s['name']:<35} → {s['output']}")
         return 0
 
+    if args.sync_managed:
+        written = sync_managed_prompts()
+        if args.json:
+            print(json.dumps([path.relative_to(ROOT).as_posix() for path in written], indent=2))
+        else:
+            for path in written:
+                print(f"Wrote {path.relative_to(ROOT).as_posix()}")
+        return 0
+
     if not args.stage:
-        parser.error("--stage is required (or use --list-stages / --eject)")
+        parser.error("--stage is required (or use --list-stages / --sync-managed / --eject)")
 
     content = build_prompt(args.stage)
 

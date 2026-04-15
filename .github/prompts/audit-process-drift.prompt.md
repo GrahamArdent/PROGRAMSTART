@@ -7,7 +7,7 @@ version: "1.0"
 ---
 Audit process drift using the repository workflow rules.
 
-> **UTILITY PROMPT**: This prompt does not advance a stage and is exempt from stage-gate Authority Loading, DECISION_LOG mandate, and Verification Gate requirements. See `PROMPT_STANDARD.md` exempt list.
+> **UTILITY OPERATOR PROMPT**: This prompt does not advance a stage and is governed by `OPERATOR_PROMPT_STANDARD.md` utility-prompt rules rather than the workflow prompt standard.
 
 ## Data Grounding Rule
 

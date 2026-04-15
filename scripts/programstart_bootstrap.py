@@ -97,6 +97,99 @@ def copy_output_stub(source: Path, destination: Path, dry_run: bool) -> None:
         handle.write("\n")
 
 
+def generated_repo_prompt_assets(registry: dict) -> set[str]:
+    return generated_repo_prompt_assets_for_mode(registry, include_userjourney=False)
+
+
+def generated_repo_prompt_assets_for_mode(registry: dict, *, include_userjourney: bool) -> set[str]:
+    workspace = registry.get("workspace", {})
+    policy = workspace.get("generated_repo_prompt_policy", {})
+    allowed_classes = set(policy.get("allowed_prompt_classes", ["workflow"]))
+    support_files = set(policy.get("support_files", []))
+    prompt_registry = registry.get("prompt_registry", {})
+    excluded_userjourney_prompts = set() if include_userjourney else generated_repo_userjourney_prompts(registry)
+
+    allowed_prompts: set[str] = set()
+    if "workflow" in allowed_classes:
+        allowed_prompts.update(prompt_registry.get("workflow_prompt_files", []))
+    if "operator" in allowed_classes:
+        allowed_prompts.update(prompt_registry.get("operator_prompt_files", []))
+    if "internal" in allowed_classes:
+        allowed_prompts.update(prompt_registry.get("internal_prompt_files", []))
+    allowed_prompts.difference_update(excluded_userjourney_prompts)
+    return allowed_prompts | support_files
+
+
+def generated_repo_userjourney_prompts(registry: dict) -> set[str]:
+    guidance = registry.get("workflow_guidance", {})
+    userjourney_prompts: set[str] = set()
+    for section in guidance.get("userjourney", {}).values():
+        userjourney_prompts.update(section.get("prompts", []))
+
+    shared_workflow_prompts: set[str] = set(guidance.get("kickoff", {}).get("prompts", []))
+    shared_workflow_prompts.update(guidance.get("cross_cutting_workflow_prompts", []))
+    for section in guidance.get("programbuild", {}).values():
+        shared_workflow_prompts.update(section.get("prompts", []))
+
+    return userjourney_prompts - shared_workflow_prompts
+
+
+def generated_repo_bootstrap_assets(registry: dict) -> list[str]:
+    return generated_repo_bootstrap_assets_for_mode(registry, include_userjourney=False)
+
+
+def generated_repo_bootstrap_assets_for_mode(registry: dict, *, include_userjourney: bool) -> list[str]:
+    assets = registry.get("workspace", {}).get("bootstrap_assets", [])
+    allowed_prompt_assets = generated_repo_prompt_assets_for_mode(registry, include_userjourney=include_userjourney)
+    filtered: list[str] = []
+    for asset in assets:
+        if asset.startswith(".github/prompts/") and asset not in allowed_prompt_assets:
+            continue
+        filtered.append(asset)
+    return filtered
+
+
+def generated_repo_prompt_registry(registry: dict) -> dict:
+    return generated_repo_prompt_registry_for_mode(registry, include_userjourney=False)
+
+
+def generated_repo_prompt_registry_for_mode(registry: dict, *, include_userjourney: bool) -> dict:
+    workspace = registry.get("workspace", {})
+    policy = workspace.get("generated_repo_prompt_policy", {})
+    allowed_classes = set(policy.get("allowed_prompt_classes", ["workflow"]))
+    prompt_registry = dict(registry.get("prompt_registry", {}))
+    excluded_userjourney_prompts = set() if include_userjourney else generated_repo_userjourney_prompts(registry)
+
+    class_files = {
+        "workflow": [
+            prompt
+            for prompt in list(prompt_registry.get("workflow_prompt_files", []))
+            if prompt not in excluded_userjourney_prompts
+        ],
+        "operator": list(prompt_registry.get("operator_prompt_files", [])),
+        "internal": list(prompt_registry.get("internal_prompt_files", [])),
+    }
+    return {
+        "workflow_prompt_files": class_files["workflow"] if "workflow" in allowed_classes else [],
+        "operator_prompt_files": class_files["operator"] if "operator" in allowed_classes else [],
+        "internal_prompt_files": class_files["internal"] if "internal" in allowed_classes else [],
+    }
+
+
+def generated_repo_prompt_authority(registry: dict) -> dict:
+    return generated_repo_prompt_authority_for_mode(registry, include_userjourney=False)
+
+
+def generated_repo_prompt_authority_for_mode(registry: dict, *, include_userjourney: bool) -> dict:
+    allowed_prompts = set(generated_repo_prompt_assets_for_mode(registry, include_userjourney=include_userjourney))
+    prompt_authority = dict(registry.get("prompt_authority", {}))
+    return {
+        prompt_path: payload
+        for prompt_path, payload in prompt_authority.items()
+        if prompt_path in allowed_prompts
+    }
+
+
 def bootstrap_programbuild(destination_root: Path, registry: dict, variant: str, dry_run: bool) -> None:
     state_file = registry["workflow_state"]["programbuild"]["state_file"]
     for relative_path in registry["systems"]["programbuild"]["control_files"]:
@@ -120,7 +213,7 @@ def bootstrap_programbuild(destination_root: Path, registry: dict, variant: str,
 
 
 def bootstrap_shared_assets(destination_root: Path, registry: dict, dry_run: bool) -> None:
-    for relative_path in registry.get("workspace", {}).get("bootstrap_assets", []):
+    for relative_path in generated_repo_bootstrap_assets_for_mode(registry, include_userjourney=False):
         source = workspace_path(relative_path)
         destination = destination_root / relative_path
         copy_file(source, destination, dry_run)
@@ -152,13 +245,23 @@ def stamp_bootstrapped_registry(destination_root: Path, *, project_name: str, dr
     workspace["source_template_repo"] = "PROGRAMSTART"
     workspace["repo_boundary"] = "standalone_project_repo"
     workspace["provisioning_scope"] = "project_repo_only"
+    workspace["bootstrap_assets"] = generated_repo_bootstrap_assets_for_mode(registry, include_userjourney=False)
     validation = dict(registry.get("validation", {}))
     validation["enforce_engineering_ready_in_all"] = True
     integrity = dict(registry.get("integrity", {}))
     integrity["baselines"] = []
+    prompt_registry = generated_repo_prompt_registry_for_mode(registry, include_userjourney=False)
+    prompt_authority = generated_repo_prompt_authority_for_mode(registry, include_userjourney=False)
+    workflow_guidance = dict(registry.get("workflow_guidance", {}))
+    if not prompt_registry["operator_prompt_files"]:
+        workflow_guidance["operator"] = {}
     registry["workspace"] = workspace
     registry["validation"] = validation
     registry["integrity"] = integrity
+    registry["prompt_registry"] = prompt_registry
+    registry["prompt_authority"] = prompt_authority
+    registry.pop("prompt_generation", None)
+    registry["workflow_guidance"] = workflow_guidance
     write_json(registry_path, registry)
 
 

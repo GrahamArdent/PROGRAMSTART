@@ -7,6 +7,7 @@ import shutil
 import signal
 import socket
 import subprocess
+import tempfile
 import time
 import urllib.error
 import urllib.request
@@ -104,6 +105,25 @@ def run_command(command: list[str], cwd: Path, *, timeout: int = 0) -> str:
     return output
 
 
+def ensure_git_baseline(repo_root: Path) -> None:
+    run_command(["git", "init", "-b", "main"], repo_root)
+    run_command(["git", "add", "."], repo_root)
+    run_command(
+        [
+            "git",
+            "-c",
+            "user.name=PROGRAMSTART Smoke",
+            "-c",
+            "user.email=programstart-smoke@example.invalid",
+            "commit",
+            "--no-verify",
+            "-m",
+            "chore: factory smoke baseline",
+        ],
+        repo_root,
+    )
+
+
 def free_port() -> int:
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         sock.bind(("127.0.0.1", 0))
@@ -189,6 +209,7 @@ def create_repo(
 
 def validate_created_repo(repo_root: Path, scenario: FactoryScenario) -> None:
     run_command(["uv", "sync", "--extra", "dev"], repo_root)
+    ensure_git_baseline(repo_root)
     checks = ["bootstrap-assets", "authority-sync", "planning-references", "workflow-state"]
     if not scenario.requires_userjourney:
         checks.insert(0, "all")
@@ -328,7 +349,11 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Smoke the one-shot factory path across multiple shapes and starter runtimes.")
     parser.add_argument("--workspace", default=".", help="Workspace root containing PROGRAMSTART.")
     parser.add_argument("--program", default="programstart", help="Programstart executable to invoke.")
-    parser.add_argument("--dest-root", default=".tmp_factory_smoke", help="Directory where generated repos are created.")
+    parser.add_argument(
+        "--dest-root",
+        default=".tmp_factory_smoke",
+        help="Directory where generated repos are created. Relative paths resolve under the system temp directory.",
+    )
     parser.add_argument(
         "--require-web-runtime",
         action="store_true",
@@ -337,7 +362,11 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     workspace = Path(args.workspace).resolve()
-    dest_root = (workspace / args.dest_root).resolve()
+    raw_dest_root = Path(args.dest_root)
+    if raw_dest_root.is_absolute():
+        dest_root = raw_dest_root.resolve()
+    else:
+        dest_root = (Path(tempfile.gettempdir()) / raw_dest_root).resolve()
     dest_root.mkdir(parents=True, exist_ok=True)
     run_root = dest_root / f"run_{int(time.time())}"
     run_root.mkdir(parents=True, exist_ok=False)

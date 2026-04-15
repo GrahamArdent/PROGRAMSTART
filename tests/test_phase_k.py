@@ -173,11 +173,18 @@ class TestPromptLint:
         problems = lint_prompt(bad)
         assert any("agent" in p for p in problems)
 
-    def test_lint_exempt_filename(self, tmp_path: Path) -> None:
-        # Exempt prompts skip section checks
+    def test_lint_utility_operator_prompt(self, tmp_path: Path) -> None:
+        # Utility operator prompts keep the short-form operator path.
         exempt = tmp_path / "audit-process-drift.prompt.md"
-        exempt.write_text('---\ndescription: "test"\nname: "test"\nagent: "agent"\n---\n# content\n', encoding="utf-8")
-        problems = lint_prompt(exempt)
+        exempt.write_text(
+            '---\ndescription: "test"\nname: "test"\nagent: "agent"\n---\n'
+            "> **UTILITY OPERATOR PROMPT**: Diagnostic only.\n\n"
+            "## Data Grounding Rule\n\nGround on repo data.\n\n"
+            "## Protocol Declaration\n\nDiagnostic operator prompt.\n\n"
+            "## Pre-flight\n\nRun drift.\n",
+            encoding="utf-8",
+        )
+        problems = lint_prompt(exempt, explicit_class="operator")
         assert problems == []
 
     def test_lint_main_returns_zero_for_valid(self) -> None:

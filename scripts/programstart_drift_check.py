@@ -10,6 +10,7 @@ try:
         git_changed_files,
         load_registry,
         load_workflow_state,
+        pyproject_dependency_sync_required,
         system_is_optional_and_absent,
         warn_direct_script_invocation,
         workflow_active_step,
@@ -21,6 +22,7 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
         git_changed_files,
         load_registry,
         load_workflow_state,
+        pyproject_dependency_sync_required,
         system_is_optional_and_absent,
         warn_direct_script_invocation,
         workflow_active_step,
@@ -54,7 +56,14 @@ def evaluate_drift(registry: dict[str, Any], changed_files: list[str], system: s
         if touched_dependents and not touched_authority and rule.get("require_authority_when_dependents_change", False):
             violations.append(f"{rule['name']}: dependent files changed without authority files: {', '.join(touched_dependents)}")
         elif touched_authority and not touched_dependents:
-            notes.append(f"{rule['name']}: authority files changed without dependent files: {', '.join(touched_authority)}")
+            if rule.get("name") == "pyproject_requirements_sync" and not pyproject_dependency_sync_required():
+                continue
+            if rule.get("require_dependents_when_authority_changes", False):
+                violations.append(
+                    f"{rule['name']}: authority files changed without dependent files: {', '.join(touched_authority)}"
+                )
+            else:
+                notes.append(f"{rule['name']}: authority files changed without dependent files: {', '.join(touched_authority)}")
 
     systems = [system] if system else ["programbuild", "userjourney"]
     is_template_repo = registry.get("workspace", {}).get("repo_role") == "template_repo"

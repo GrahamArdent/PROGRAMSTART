@@ -50,6 +50,8 @@ uv run --extra dev pyright
 
 Use `uv run --extra dev pyright` for local type checks. The pyright gate depends on dev-only tooling packages such as `nox`, `playwright`, and `pillow`, so `uv run pyright` is not the truthful command surface.
 
+`nox -s smoke_readonly` now runs the dashboard browser and golden smoke on both Windows and Linux. Windows smoke uses a higher golden diff budget to absorb Chromium rasterization differences while still checking the normalized shell and signoff modal surfaces.
+
 If you want the tool outside a dev checkout, build and install the wheel:
 
 ```powershell

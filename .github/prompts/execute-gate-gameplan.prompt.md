@@ -37,7 +37,7 @@ Before any edits, run:
 uv run programstart validate --check all --strict
 uv run programstart drift --strict
 uv run pytest --tb=no -q --no-header
-uv run pyright
+uv run --extra dev pyright
 uv run pre-commit run programstart-drift --all-files
 uv run pre-commit run prompt-lint --all-files
 uv run pre-commit run pyright --all-files
@@ -213,6 +213,27 @@ Examples:
 
 Do not add a DECISION_LOG entry for transient debugging observations.
 
+## ADR & Governance Close-out
+
+Gate repair can redefine durable repo policy and therefore does NOT bypass ADR discipline.
+
+After any phase or sub-phase that changes durable gate policy, authority relationships, trust boundaries,
+or other long-lived repo behavior, you MUST run this close-out loop before marking the checkpoint complete:
+
+```powershell
+uv run programstart validate --check adr-coverage
+uv run programstart validate --check authority-sync
+uv run programstart drift
+```
+
+Then compare the change against the ADR threshold in `PROGRAMBUILD/PROGRAMBUILD.md` and
+`PROGRAMBUILD/PROGRAMBUILD_ADR_TEMPLATE.md`:
+
+- If the change meets the ADR threshold, create or update the ADR in `docs/decisions/`, update
+	`docs/decisions/README.md`, and record the linkage in `PROGRAMBUILD/DECISION_LOG.md`.
+- If the change does not meet the ADR threshold, still record the decision in `PROGRAMBUILD/DECISION_LOG.md`
+	and note in the checkpoint evidence that ADR triage was performed and no ADR was required.
+
 ## Resumption Protocol
 
 When resuming after interruption:
@@ -231,7 +252,7 @@ After completing all gate-repair phases, run:
 uv run programstart validate --check all --strict
 uv run programstart drift --strict
 uv run pytest --tb=no -q --no-header
-uv run pyright
+uv run --extra dev pyright
 uv run pre-commit run --all-files
 ```
 
@@ -244,3 +265,11 @@ Do not declare the repo healthy if any command still requires a verbal caveat su
 - "ignore the dirty-tree noise",
 - "ignore prompt lint for those prompts",
 - "direct drift is the real one".
+
+## Completion Rule
+
+After each completed gate-repair phase:
+
+1. Update the evidence state for the repaired gate and the current checkpoint.
+2. Keep policy, test, and prompt/config changes in the same change set when they define durable gate behavior.
+3. If more phases remain, stop on a clean gate-repair checkpoint and identify the next gate problem class without invoking workflow-stage routing.

@@ -26,12 +26,59 @@ pytestmark = requires_userjourney
 def test_attach_userjourney_copies_from_source(tmp_path: Path) -> None:
     destination = tmp_path / "repo"
     destination.mkdir()
+    (destination / "config").mkdir()
+    project_registry = json.loads((ROOT / "config" / "process-registry.json").read_text(encoding="utf-8"))
+    project_registry["workspace"] = dict(project_registry.get("workspace", {}))
+    project_registry["workspace"]["repo_role"] = "project_repo"
+    project_registry["workspace"]["bootstrap_assets"] = [
+        asset
+        for asset in project_registry["workspace"].get("bootstrap_assets", [])
+        if asset
+        not in {
+            ".github/prompts/userjourney-next-slice.prompt.md",
+            ".github/prompts/shape-uj-decision-freeze.prompt.md",
+            ".github/prompts/shape-uj-legal-drafts.prompt.md",
+            ".github/prompts/shape-uj-ux-surfaces.prompt.md",
+        }
+    ]
+    project_registry["prompt_registry"] = dict(project_registry.get("prompt_registry", {}))
+    project_registry["prompt_registry"]["workflow_prompt_files"] = [
+        prompt
+        for prompt in project_registry["prompt_registry"].get("workflow_prompt_files", [])
+        if prompt
+        not in {
+            ".github/prompts/userjourney-next-slice.prompt.md",
+            ".github/prompts/shape-uj-decision-freeze.prompt.md",
+            ".github/prompts/shape-uj-legal-drafts.prompt.md",
+            ".github/prompts/shape-uj-ux-surfaces.prompt.md",
+        }
+    ]
+    project_registry["prompt_authority"] = {
+        key: value
+        for key, value in project_registry.get("prompt_authority", {}).items()
+        if key
+        not in {
+            ".github/prompts/userjourney-next-slice.prompt.md",
+            ".github/prompts/shape-uj-decision-freeze.prompt.md",
+            ".github/prompts/shape-uj-legal-drafts.prompt.md",
+            ".github/prompts/shape-uj-ux-surfaces.prompt.md",
+        }
+    }
+    (destination / "config" / "process-registry.json").write_text(
+        json.dumps(project_registry, indent=2) + "\n",
+        encoding="utf-8",
+    )
     source = ROOT / "USERJOURNEY"
 
     programstart_attach.attach_userjourney(destination, source)
 
     assert (destination / "USERJOURNEY" / "README.md").exists()
     assert (destination / "USERJOURNEY" / "USERJOURNEY_STATE.json").exists()
+    assert (destination / ".github" / "prompts" / "userjourney-next-slice.prompt.md").exists()
+    result = json.loads((destination / "config" / "process-registry.json").read_text(encoding="utf-8"))
+    assert ".github/prompts/userjourney-next-slice.prompt.md" in result["prompt_registry"]["workflow_prompt_files"]
+    assert ".github/prompts/shape-uj-ux-surfaces.prompt.md" in result["prompt_authority"]
+    assert ".github/prompts/userjourney-next-slice.prompt.md" in result["workspace"]["bootstrap_assets"]
 
 
 def test_init_can_attach_userjourney(tmp_path: Path) -> None:
@@ -223,8 +270,15 @@ def test_create_can_provision_supabase_and_vercel(monkeypatch, tmp_path: Path, c
     supabase = next(item for item in payload["services"] if item["name"] == "Supabase")
     vercel = next(item for item in payload["services"] if item["name"] == "Vercel")
     assert supabase["status"] == "provisioning_started"
+    assert supabase["automation_level"] == "partial"
+    assert supabase["completion_status"] == "action_required"
     assert supabase["project"]["ref"] == "abc123xyz"
     assert vercel["status"] == "created"
+    assert vercel["automation_level"] == "full"
+    assert vercel["completion_status"] == "complete"
+    assert payload["completion"]["status"] == "action_required"
+    assert payload["completion"]["completed_services"] == ["Vercel"]
+    assert payload["completion"]["pending_services"] == ["Supabase"]
     assert vercel["project"]["id"] == "prj_123"
     assert "SUPABASE_PROJECT_REF=abc123xyz" in env_example
     assert "SUPABASE_URL=https://abc123xyz.supabase.co" in env_example

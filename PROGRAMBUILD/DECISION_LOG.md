@@ -2,7 +2,7 @@
 
 Purpose: Running record of material project decisions, reversals, and rationale.
 Owner: Solo operator
-Last updated: 2026-04-14
+Last updated: 2026-04-15
 Depends on: FEASIBILITY.md, RESEARCH_SUMMARY.md, ARCHITECTURE.md
 Authority: Canonical for project decision history
 
@@ -32,6 +32,9 @@ Authority: Canonical for project decision history
 | DEC-005 | 2026-04-12 | inputs_and_mode_selection | Cross-cutting prompts registered via `cross_cutting_prompts` array at workflow_guidance level, merged by step_guide at display time — avoids polluting every stage's prompts array | ACTIVE | — | Solo operator | config/process-registry.json, scripts/programstart_step_guide.py |
 | DEC-006 | 2026-04-13 | inputs_and_mode_selection | Both `PROGRAMBUILD_CANONICAL.md §N` and `PROGRAMBUILD.md §N` required in shaping prompt Authority Loading — CANONICAL provides stage boundaries and required output list; PROGRAMBUILD.md provides procedural protocol for how to do the work | ACTIVE | — | Solo operator | .github/prompts/shape-*.prompt.md |
 | DEC-007 | 2026-04-14 | inputs_and_mode_selection | Expose retrieval and state snapshot operations through unified CLI aliases (`programstart kb`, `programstart diff`) and require explicit `--confirm` for `programstart state rollback` restores | ACTIVE | — | Solo operator | scripts/programstart_cli.py, scripts/programstart_workflow_state.py, PROGRAMBUILD/ARCHITECTURE.md |
+| DEC-008 | 2026-04-15 | inputs_and_mode_selection | Separate prompt architecture into `workflow`, `operator`, and `internal` classes; restrict workflow routing to `workflow` prompts; and require class-aware standards, registry placement, and validation | ACTIVE | — | Solo operator | docs/decisions/0011-separate-workflow-and-operator-prompt-architecture.md |
+| DEC-009 | 2026-04-15 | inputs_and_mode_selection | Structural hardening sessions MUST run ADR triage and a targeted audit loop before checkpoint close-out; Phase J items MUST do this every session | SUPERSEDED | DEC-010 | Solo operator | docs/decisions/0012-require-hardening-adr-triage-and-audit-loop.md |
+| DEC-010 | 2026-04-15 | inputs_and_mode_selection | Long-form operator execution prompts that can land durable structural or policy changes MUST require a governance close-out loop and truthful direct-command verification; ADR-0013 supersedes the hardening-only framing of ADR-0012 | REVERSED | DEC-009 | Solo operator | docs/decisions/0013-require-governance-close-out-for-durable-operator-checkpoints.md |
 
 ## Decision Details
 
@@ -91,5 +94,29 @@ Authority: Canonical for project decision history
 - Why: The unified CLI is the documented operator entry point. Aliases reduce command-surface fragmentation while reusing existing retrieval and state-snapshot logic. Mandatory confirmation on rollback keeps destructive state restoration explicit.
 - Alternatives considered: (1) Keep retrieval and diff only in script-specific CLIs — leaves the unified CLI incomplete. (2) Add interactive rollback selection — increases complexity and is less automation-friendly. (3) Restore without a safety flag — too risky for workflow state.
 - Consequences: Operators can query the knowledge base and compare snapshots entirely through `programstart`. Rollback now creates a pre-rollback snapshot before restoring saved state and refuses to run without explicit confirmation.
+
+### DEC-008
+
+- Context: PROGRAMSTART currently mixes product workflow prompts, PROGRAMSTART maintenance prompts, and internal build prompts under one broad prompt model. That causes workflow-routing semantics, prompt standards, registry placement, and compliance validation to bleed into prompts that are not part of stage or phase progression.
+- Decision: Define three prompt classes: `workflow`, `operator`, and `internal`. Restrict workflow routing to `workflow` prompts only. Separate prompt discoverability from workflow routing in the registry. Keep `devlog/` gameplans non-canonical. Require class-aware standards and validation.
+- Why: Future generated programs will build from this repository. Ambiguous prompt architecture here would propagate maintenance semantics and routing confusion downstream.
+- Alternatives considered: (1) Keep one universal prompt model and add exceptions. (2) Move maintenance prompts without changing standards or registry semantics. Both leave the root ambiguity in place.
+- Consequences: A follow-up remediation gameplan must start from this architecture decision and then update standards, registry semantics, compliance checks, prompt classification, and inheritance rules. ADR 0011 supersedes the broad interpretation of DEC-005/ADR-0008 by narrowing cross-cutting registration to workflow prompts only.
+
+### DEC-009
+
+- Context: Hardening work now includes strategic refactors and workflow-policy changes, but the durable audit machinery in PROGRAMBUILD is still anchored at Stage 9 and the hardening prompt did not explicitly force ADR triage at each checkpoint. That created room for structural sessions to finish green while leaving the ADR decision implicit.
+- Decision: Require a hardening close-out loop for structural or policy-affecting work. Before closing a hardening checkpoint, run `programstart validate --check adr-coverage`, `programstart validate --check authority-sync`, and `programstart drift`, then compare the change against the ADR threshold. Phase J items must do this on every session.
+- Why: Green tests and drift checks are necessary but insufficient for governance-heavy refactors. The explicit loop keeps architecture history, authority alignment, and strategic-session checkpoints tied together.
+- Alternatives considered: (1) Rely on final Stage 9 audit only — too late for template hardening sessions. (2) Rely on memory or reviewer discretion to decide ADR need — not mechanically dependable enough.
+- Consequences: Hardening sessions now end with an explicit “ADR required / not required” decision. Strategic refactors cannot quietly bypass architecture-history hygiene, and authority-sync drift is checked before the session is considered complete.
+
+### DEC-010
+
+- Context: The hardening-specific close-out loop exposed a broader pattern: long-form operator prompts can change durable repo policy or structure, but the operator standard itself did not require a governance close-out loop or truthful direct-command verification. That left the same ambiguity available in enhancement, gate-repair, and remediation sessions.
+- Decision: Require long-form operator execution prompts that can land durable structural or policy changes to define a governance close-out loop and use the truthful direct command surface without truncated diagnosis. ADR-0013 supersedes ADR-0012 by generalizing the rule beyond hardening.
+- Why: The gap is architectural, not hardening-specific. Fixing it at the operator-prompt layer prevents repeated prompt-by-prompt rediscovery and keeps durable repo changes auditable.
+- Alternatives considered: (1) Keep the hardening-only rule — leaves the same weakness elsewhere. (2) Rely on reviewers to infer when governance close-out is needed — not deterministic enough.
+- Consequences: Operator prompts now have a shared governance pattern for durable checkpoints. Hardening remains a concrete application, but enhancement, gate repair, and prompt-architecture remediation now follow the same close-out model.
 
 ---

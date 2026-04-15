@@ -139,6 +139,7 @@ def test_main_advance_dry_run(capsys, monkeypatch) -> None:
         "scripts.programstart_workflow_state.workflow_steps",
         lambda _registry, _system: ["inputs_and_mode_selection", "feasibility"],
     )
+    monkeypatch.setattr("scripts.programstart_workflow_state._check_challenge_gate_log", lambda _step: None)
     monkeypatch.setattr("sys.argv", ["programstart_workflow_state.py", "advance", "--system", "programbuild", "--dry-run"])
     result = main()
     out = capsys.readouterr().out
@@ -289,62 +290,51 @@ def test_main_set_rejects_unknown_step(monkeypatch) -> None:
 
 
 def test_check_challenge_gate_log_missing_file(monkeypatch, tmp_path) -> None:
-    """When the gate file does not exist, return None (no warning)."""
-    monkeypatch.setattr(
-        "scripts.programstart_workflow_state.workspace_path",
-        lambda p: tmp_path / p,
-    )
-    assert _check_challenge_gate_log("inputs_and_mode_selection") is None
+    """Missing evidence is now a blocker."""
+    monkeypatch.setattr("scripts.programstart_workflow_state.challenge_gate_record_from_log", lambda _step: None)
+
+    result = _check_challenge_gate_log("inputs_and_mode_selection")
+
+    assert result is not None
+    assert "No Challenge Gate evidence" in result
 
 
 def test_check_challenge_gate_log_matching_entry(monkeypatch, tmp_path) -> None:
     """When a matching From Stage row exists, return None."""
-    gate = tmp_path / "PROGRAMBUILD" / "PROGRAMBUILD_CHALLENGE_GATE.md"
-    gate.parent.mkdir(parents=True)
-    gate.write_text(
-        "### Challenge Gate Log\n\n"
-        "| From Stage | To Stage | Date | Proceed? | Notes |\n"
-        "|---|---|---|---|---|\n"
-        "| inputs_and_mode_selection | feasibility | 2026-04-11 | Yes | clean |\n",
-        encoding="utf-8",
-    )
     monkeypatch.setattr(
-        "scripts.programstart_workflow_state.workspace_path",
-        lambda p: tmp_path / p,
+        "scripts.programstart_workflow_state.challenge_gate_record_from_log",
+        lambda _step: {
+            "source": "challenge_gate_log",
+            "from_stage": "inputs_and_mode_selection",
+            "to_stage": "feasibility",
+            "date": "2026-04-11",
+            "proceed": "yes",
+            "result": "clear",
+            "notes": "clean",
+            "checks": {},
+        },
     )
     assert _check_challenge_gate_log("inputs_and_mode_selection") is None
 
 
 def test_check_challenge_gate_log_no_matching_entry(monkeypatch, tmp_path) -> None:
-    """When no matching row exists, return a warning string."""
-    gate = tmp_path / "PROGRAMBUILD" / "PROGRAMBUILD_CHALLENGE_GATE.md"
-    gate.parent.mkdir(parents=True)
-    gate.write_text(
-        "### Challenge Gate Log\n\n| From Stage | To Stage | Date | Proceed? | Notes |\n|---|---|---|---|---|\n",
-        encoding="utf-8",
-    )
-    monkeypatch.setattr(
-        "scripts.programstart_workflow_state.workspace_path",
-        lambda p: tmp_path / p,
-    )
+    """When no matching row exists, return a blocking string."""
+    monkeypatch.setattr("scripts.programstart_workflow_state.challenge_gate_record_from_log", lambda _step: None)
     result = _check_challenge_gate_log("inputs_and_mode_selection")
     assert result is not None
-    assert "No Challenge Gate log entry" in result
+    assert "No Challenge Gate evidence" in result
     assert "--skip-gate-check" in result
 
 
 def test_advance_dry_run_shows_gate_warning(capsys, monkeypatch, tmp_path) -> None:
-    """During dry-run the gate warning appears but advance still proceeds."""
+    """During dry-run the missing gate now blocks advance."""
     gate = tmp_path / "PROGRAMBUILD" / "PROGRAMBUILD_CHALLENGE_GATE.md"
     gate.parent.mkdir(parents=True)
     gate.write_text(
         "### Challenge Gate Log\n\n| From Stage | To Stage | Date | Proceed? |\n|---|---|---|---|\n",
         encoding="utf-8",
     )
-    monkeypatch.setattr(
-        "scripts.programstart_workflow_state.workspace_path",
-        lambda p: tmp_path / p,
-    )
+    monkeypatch.setattr("scripts.programstart_workflow_state.challenge_gate_record_from_log", lambda _step: None)
     state = {
         "active_stage": "inputs_and_mode_selection",
         "stages": {
@@ -364,9 +354,84 @@ def test_advance_dry_run_shows_gate_warning(capsys, monkeypatch, tmp_path) -> No
     monkeypatch.setattr("sys.argv", ["ws", "advance", "--system", "programbuild", "--dry-run"])
     result = main()
     out = capsys.readouterr().out
+    assert result == 1
+    assert "Advance blocked" in out
+    assert "No Challenge Gate evidence" in out
+
+
+def test_advance_dry_run_accepts_structured_gate_result(capsys, monkeypatch) -> None:
+    active = "inputs_and_mode_selection"
+    state = _make_advance_state(active, "feasibility")
+    monkeypatch.setattr("scripts.programstart_workflow_state.load_workflow_state", lambda _r, _s: state)
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workflow_active_step",
+        lambda _r, _s, _state=None: active,
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workflow_steps",
+        lambda _r, _s: ["inputs_and_mode_selection", "feasibility"],
+    )
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "ws",
+            "advance",
+            "--system",
+            "programbuild",
+            "--dry-run",
+            "--gate-result",
+            "warning",
+            "--gate-notes",
+            "tracked",
+        ],
+    )
+    result = main()
+    out = capsys.readouterr().out
     assert result == 0
-    assert "No Challenge Gate log entry" in out
-    assert "Would advance" in out
+    assert "Would record Challenge Gate result='warning'" in out
+
+
+def test_main_advance_persists_structured_gate_record(capsys, monkeypatch) -> None:
+    saved: dict[str, Any] = {}
+    state = {
+        "active_stage": "inputs_and_mode_selection",
+        "stages": {
+            "inputs_and_mode_selection": {"status": "in_progress", "signoff": {"decision": "", "date": "", "notes": ""}},
+            "feasibility": {"status": "planned", "signoff": {"decision": "", "date": "", "notes": ""}},
+        },
+    }
+    monkeypatch.setattr("scripts.programstart_workflow_state.load_workflow_state", lambda _registry, _system: state)
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workflow_active_step",
+        lambda _registry, _system, _state=None: "inputs_and_mode_selection",
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workflow_steps",
+        lambda _registry, _system: ["inputs_and_mode_selection", "feasibility"],
+    )
+    monkeypatch.setattr("scripts.programstart_workflow_state.preflight_problems", lambda _r, _s, _a=None: [])
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.save_workflow_state", lambda _registry, _system, value: saved.update(value)
+    )
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "programstart_workflow_state.py",
+            "advance",
+            "--system",
+            "programbuild",
+            "--gate-result",
+            "clear",
+            "--gate-notes",
+            "reviewed",
+        ],
+    )
+    result = main()
+    out = capsys.readouterr().out
+    assert result == 0
+    assert "Advanced programbuild" in out
+    assert saved["stages"]["inputs_and_mode_selection"]["challenge_gate"]["result"] == "clear"
+    assert saved["stages"]["inputs_and_mode_selection"]["challenge_gate"]["notes"] == "reviewed"
 
 
 # --- Cross-stage validation advisory tests ---
@@ -405,6 +470,7 @@ def test_cross_stage_advisory_not_shown_at_early_stages(capsys, monkeypatch) -> 
         "scripts.programstart_workflow_state.workflow_steps",
         lambda _r, _s: _ALL_STEPS,
     )
+    monkeypatch.setattr("scripts.programstart_workflow_state._check_challenge_gate_log", lambda _step: None)
     monkeypatch.setattr("sys.argv", ["ws", "advance", "--system", "programbuild", "--dry-run"])
     result = main()
     out = capsys.readouterr().out
@@ -425,6 +491,7 @@ def test_cross_stage_advisory_shown_at_stage_3(capsys, monkeypatch) -> None:
         "scripts.programstart_workflow_state.workflow_steps",
         lambda _r, _s: _ALL_STEPS,
     )
+    monkeypatch.setattr("scripts.programstart_workflow_state._check_challenge_gate_log", lambda _step: None)
     monkeypatch.setattr("sys.argv", ["ws", "advance", "--system", "programbuild", "--dry-run"])
     result = main()
     out = capsys.readouterr().out
@@ -445,6 +512,7 @@ def test_cross_stage_advisory_suppressed_by_flag(capsys, monkeypatch) -> None:
         "scripts.programstart_workflow_state.workflow_steps",
         lambda _r, _s: _ALL_STEPS,
     )
+    monkeypatch.setattr("scripts.programstart_workflow_state._check_challenge_gate_log", lambda _step: None)
     monkeypatch.setattr(
         "sys.argv",
         ["ws", "advance", "--system", "programbuild", "--dry-run", "--skip-cross-stage-check"],
@@ -497,10 +565,6 @@ def test_preflight_problems_dispatches_stage_gate(tmp_path: Path, monkeypatch: p
         "scripts.programstart_validate.workspace_path",
         lambda rel: tmp_path / rel,
     )
-    monkeypatch.setattr(
-        "scripts.programstart_workflow_state.workspace_path",
-        lambda rel: tmp_path / rel,
-    )
     # Prevent validate_authority_sync crash — it calls .read_text() on
     # PROGRAMBUILD_CANONICAL.md via monkeypatched workspace_path, which
     # doesn't exist in tmp_path.  Authority sync is not part of the
@@ -539,10 +603,6 @@ def test_preflight_problems_skips_gate_for_userjourney(tmp_path: Path, monkeypat
         "scripts.programstart_validate.workspace_path",
         lambda rel: tmp_path / rel,
     )
-    monkeypatch.setattr(
-        "scripts.programstart_workflow_state.workspace_path",
-        lambda rel: tmp_path / rel,
-    )
 
     registry = load_registry()
     problems = preflight_problems(registry, "userjourney", active_step="inputs_and_mode_selection")
@@ -564,7 +624,7 @@ def test_advance_blocked_by_real_stage_gate(
     validate_intake_complete.  The full dispatch chain executes for real.
 
     Monkeypatch strategy:
-    - workspace_path in validate + workflow_state → doc reads hit tmp_path
+    - workspace_path in validate → doc reads hit tmp_path
     - validate_authority_sync → [] (prevents FileNotFoundError, not under test)
     - load_workflow_state → returns create_default_workflow_state() output
       (load_workflow_state uses programstart_common.workspace_path which is NOT
@@ -600,10 +660,6 @@ def test_advance_blocked_by_real_stage_gate(
 
     monkeypatch.setattr(
         "scripts.programstart_validate.workspace_path",
-        lambda rel: tmp_path / rel,
-    )
-    monkeypatch.setattr(
-        "scripts.programstart_workflow_state.workspace_path",
         lambda rel: tmp_path / rel,
     )
     monkeypatch.setattr(
@@ -856,11 +912,10 @@ def test_check_challenge_gate_log_oserror(monkeypatch, tmp_path) -> None:
         def read_text(self, encoding="utf-8"):
             raise OSError("disk error")
 
-    monkeypatch.setattr(
-        "scripts.programstart_workflow_state.workspace_path",
-        lambda p: UnreadablePath() if "CHALLENGE_GATE" in p else tmp_path / p,
-    )
-    assert _check_challenge_gate_log("inputs_and_mode_selection") is None
+    monkeypatch.setattr("scripts.programstart_workflow_state.challenge_gate_record_from_log", lambda _step: None)
+    result = _check_challenge_gate_log("inputs_and_mode_selection")
+    assert result is not None
+    assert "No Challenge Gate evidence" in result
 
 
 def test_advance_final_step(capsys, monkeypatch) -> None:
@@ -906,6 +961,7 @@ def test_advance_dry_run_final_step(capsys, monkeypatch) -> None:
         "scripts.programstart_workflow_state.workflow_steps",
         lambda _r, _s: ["post_launch_review"],
     )
+    monkeypatch.setattr("scripts.programstart_workflow_state._check_challenge_gate_log", lambda _step: None)
     monkeypatch.setattr("sys.argv", ["ws", "advance", "--system", "programbuild", "--dry-run"])
     result = main()
     out = capsys.readouterr().out
@@ -987,7 +1043,6 @@ def test_preflight_problems_userjourney_phase0_gate(tmp_path: Path, monkeypatch)
     # Create stub files that validate_engineering_ready reads
     (uj / "OPEN_QUESTIONS.md").write_text("# Open Questions\n\nNone remaining.\n", encoding="utf-8")
     monkeypatch.setattr("scripts.programstart_validate.workspace_path", lambda rel: tmp_path / rel)
-    monkeypatch.setattr("scripts.programstart_workflow_state.workspace_path", lambda rel: tmp_path / rel)
     monkeypatch.setattr("scripts.programstart_validate.validate_authority_sync", lambda _r: [])
     registry = load_registry()
     problems = preflight_problems(registry, "userjourney", active_step="phase_0")

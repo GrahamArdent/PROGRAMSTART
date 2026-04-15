@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 from unittest.mock import patch
@@ -146,6 +147,77 @@ def test_attach_raises_filenotfounderror_for_missing_required_source_files(tmp_p
     dest_root.mkdir()
     with pytest.raises(FileNotFoundError, match="required files"):
         attach.attach_userjourney(dest_root, source)
+
+
+def test_attach_restores_userjourney_prompt_delta_from_shared_policy(tmp_path: Path) -> None:
+    source = make_valid_source(tmp_path)
+    template_root = tmp_path / "template"
+    template_prompts = template_root / ".github" / "prompts"
+    template_prompts.mkdir(parents=True)
+    (template_prompts / "workflow.prompt.md").write_text("workflow\n", encoding="utf-8")
+    (template_prompts / "shape-uj-ux-surfaces.prompt.md").write_text("userjourney\n", encoding="utf-8")
+    (template_prompts / "PROMPT_STANDARD.md").write_text("standard\n", encoding="utf-8")
+
+    registry = {
+        "workspace": {
+            "generated_repo_prompt_policy": {
+                "allowed_prompt_classes": ["workflow"],
+                "support_files": [".github/prompts/PROMPT_STANDARD.md"],
+            },
+            "userjourney_bootstrap_assets": [],
+        },
+        "prompt_registry": {
+            "workflow_prompt_files": [
+                ".github/prompts/workflow.prompt.md",
+                ".github/prompts/shape-uj-ux-surfaces.prompt.md",
+            ],
+            "operator_prompt_files": [],
+            "internal_prompt_files": [],
+        },
+        "prompt_authority": {
+            ".github/prompts/shape-uj-ux-surfaces.prompt.md": {"authority_files": ["USERJOURNEY/USER_FLOWS.md"]}
+        },
+        "workflow_guidance": {
+            "kickoff": {"prompts": [".github/prompts/workflow.prompt.md"]},
+            "cross_cutting_workflow_prompts": [],
+            "programbuild": {},
+            "userjourney": {"phase_2": {"prompts": [".github/prompts/shape-uj-ux-surfaces.prompt.md"]}},
+        },
+    }
+
+    dest_root = tmp_path / "dest"
+    (dest_root / "config").mkdir(parents=True)
+    (dest_root / "config" / "process-registry.json").write_text(
+        json.dumps(
+            {
+                "workspace": {"bootstrap_assets": [".github/prompts/workflow.prompt.md", ".github/prompts/PROMPT_STANDARD.md"]},
+                "prompt_registry": {
+                    "workflow_prompt_files": [".github/prompts/workflow.prompt.md"],
+                    "operator_prompt_files": [],
+                    "internal_prompt_files": [],
+                },
+                "prompt_authority": {},
+            },
+            indent=2,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    with (
+        patch.object(attach, "load_registry", return_value=registry),
+        patch.object(attach, "workspace_path", side_effect=lambda relative: template_root / relative),
+        patch.object(attach, "create_default_workflow_state", return_value={"phase": "phase_0"}),
+    ):
+        attach.attach_userjourney(dest_root, source)
+
+    assert (dest_root / ".github" / "prompts" / "shape-uj-ux-surfaces.prompt.md").exists()
+    assert not (dest_root / ".github" / "prompts" / "workflow.prompt.md").exists()
+    project_registry = json.loads((dest_root / "config" / "process-registry.json").read_text(encoding="utf-8"))
+    assert ".github/prompts/shape-uj-ux-surfaces.prompt.md" in project_registry["prompt_registry"]["workflow_prompt_files"]
+    assert project_registry["prompt_authority"] == {
+        ".github/prompts/shape-uj-ux-surfaces.prompt.md": {"authority_files": ["USERJOURNEY/USER_FLOWS.md"]}
+    }
 
 
 # ── main ───────────────────────────────────────────────────────────────────────

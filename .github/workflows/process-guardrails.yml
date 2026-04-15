@@ -188,46 +188,54 @@ jobs:
         run: uv run python scripts/programstart_dashboard_browser_smoke.py --expect-userjourney attached
 
       - name: Smoke dashboard goldens in template repo
-        if: runner.os == 'Linux'
-        run: uv run python scripts/programstart_dashboard_golden.py --expect-userjourney attached
+        run: >-
+          uv run python scripts/programstart_dashboard_golden.py --expect-userjourney attached
+          --max-diff-pixels ${{ runner.os == 'Windows' && '4000' || '20' }}
 
       - name: Smoke bootstrap
-        run: uv run programstart bootstrap --dest .tmp_ci_bootstrap --project-name CI-SMOKE --variant product
+        run: uv run programstart bootstrap --dest "${{ runner.temp }}/tmp_ci_bootstrap" --project-name CI-SMOKE --variant product
 
       - name: Smoke one-shot factory create across shapes
-        run: uv run python scripts/programstart_factory_smoke.py --workspace . --dest-root .tmp_ci_factory_smoke --require-web-runtime
+        run: >-
+          uv run python scripts/programstart_factory_smoke.py --workspace .
+          --dest-root "${{ runner.temp }}/tmp_ci_factory_smoke" --require-web-runtime
 
       - name: Validate bootstrapped repo
-        working-directory: .tmp_ci_bootstrap
+        working-directory: ${{ runner.temp }}/tmp_ci_bootstrap
         run: uv sync --extra dev
 
       - name: Pre-commit in bootstrapped repo
-        working-directory: .tmp_ci_bootstrap
+        working-directory: ${{ runner.temp }}/tmp_ci_bootstrap
+        env:
+          SKIP: programstart-drift
         run: |
           git init
           git add .
           uv run pre-commit run --all-files
 
       - name: Validate bootstrapped repo state
-        working-directory: .tmp_ci_bootstrap
-        run: uv run programstart validate --check all
+        working-directory: ${{ runner.temp }}/tmp_ci_bootstrap
+        run: |
+          uv run programstart validate --check all
+          uv run programstart drift
 
       - name: Smoke unified CLI in bootstrapped repo
-        working-directory: .tmp_ci_bootstrap
+        working-directory: ${{ runner.temp }}/tmp_ci_bootstrap
         run: uv run python scripts/programstart_cli_smoke.py --workspace .
 
       - name: Smoke dashboard API in bootstrapped repo
-        working-directory: .tmp_ci_bootstrap
+        working-directory: ${{ runner.temp }}/tmp_ci_bootstrap
         run: uv run python scripts/programstart_dashboard_smoke.py
 
       - name: Smoke dashboard browser in bootstrapped repo
-        working-directory: .tmp_ci_bootstrap
+        working-directory: ${{ runner.temp }}/tmp_ci_bootstrap
         run: uv run python scripts/programstart_dashboard_browser_smoke.py --expect-userjourney absent
 
       - name: Smoke dashboard goldens in bootstrapped repo
-        if: runner.os == 'Linux'
-        working-directory: .tmp_ci_bootstrap
-        run: uv run python scripts/programstart_dashboard_golden.py --expect-userjourney absent
+        working-directory: ${{ runner.temp }}/tmp_ci_bootstrap
+        run: >-
+          uv run python scripts/programstart_dashboard_golden.py --expect-userjourney absent
+          --max-diff-pixels ${{ runner.os == 'Windows' && '4000' || '20' }}
 
       - name: Upload template golden failures
         if: always()
@@ -242,7 +250,7 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7
         with:
           name: golden-failures-bootstrap-${{ runner.os }}
-          path: .tmp_ci_bootstrap/outputs/golden-failures/**
+          path: ${{ runner.temp }}/tmp_ci_bootstrap/outputs/golden-failures/**
           if-no-files-found: ignore
 
       - name: Collect changed files
@@ -316,19 +324,19 @@ jobs:
         shell: bash
         run: |
           uv run programstart create \
-            --dest .tmp_compat_create_cli \
+            --dest "${{ runner.temp }}/tmp_compat_create_cli" \
             --project-name COMPAT-CLI \
             --product-shape "CLI tool" \
             --dry-run
           uv run programstart create \
-            --dest .tmp_compat_create_api \
+            --dest "${{ runner.temp }}/tmp_compat_create_api" \
             --project-name COMPAT-API \
             --product-shape "API service" \
             --need rag \
             --need agents \
             --dry-run
           uv run programstart create \
-            --dest .tmp_compat_create_web \
+            --dest "${{ runner.temp }}/tmp_compat_create_web" \
             --project-name COMPAT-WEB \
             --product-shape "web app" \
             --attachment-source USERJOURNEY \

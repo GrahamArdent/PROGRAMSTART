@@ -8,6 +8,8 @@ informed: []
 
 # 0005. Cap Signoff History at 100 Entries
 
+<!-- DEC-002 -->
+
 ## Context and Problem Statement
 
 `save_workflow_signoff()` and `advance_workflow_with_signoff()` in `scripts/programstart_serve.py` append to the `signoff_history` array in STATE.json without any size limit. Over long-running multi-year projects, this array grows unboundedly, bloating the state file and slowing JSON parsing.

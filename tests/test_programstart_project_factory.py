@@ -465,7 +465,12 @@ def test_create_can_provision_neon_and_hydrate_env(monkeypatch, tmp_path: Path, 
     branch_id = str(neon["env"]["NEON_BRANCH_ID"])
     host = str(neon["env"]["NEON_HOST"])
     assert neon["status"] == "provisioning_started"
+    assert neon["automation_level"] == "partial"
+    assert neon["completion_status"] == "action_required"
     assert project_id == "spring-example-302709"
+    assert payload["completion"]["status"] == "action_required"
+    assert "Neon" in payload["completion"]["pending_services"]
+    assert payload["completion"]["unresolved_env_keys"] == ["DATABASE_URL", "DIRECT_DATABASE_URL"]
     assert neon["env"]["DATABASE_URL"].endswith("sslmode=require")
     assert f"NEON_PROJECT_ID={project_id}" in env_example
     assert f"NEON_BRANCH_ID={branch_id}" in env_example
@@ -555,6 +560,7 @@ def test_advance_skip_preflight_allows_progress(capsys, monkeypatch) -> None:
         "scripts.programstart_workflow_state.save_workflow_state",
         lambda _registry, _system, value: saved.update(value),
     )
+    monkeypatch.setattr("scripts.programstart_workflow_state._check_challenge_gate_log", lambda _step: None)
     monkeypatch.setattr("sys.argv", ["programstart_workflow_state.py", "advance", "--system", "programbuild", "--skip-preflight"])
 
     result = programstart_workflow_state.main()

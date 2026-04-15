@@ -59,6 +59,44 @@ def wait_for_server(
     raise RuntimeError(f"Dashboard server did not become ready within {timeout:.1f}s")
 
 
+def wait_for_text_value(
+    locator,
+    *,
+    placeholder: str = "...",
+    timeout: float = 8.0,
+    poll_interval: float = 0.1,
+) -> str:
+    """Poll a Playwright locator until it exposes a non-placeholder text value."""
+    deadline = time.time() + timeout
+    last_text = ""
+    while time.time() < deadline:
+        text = locator.text_content()
+        last_text = (text or "").strip()
+        if last_text and last_text != placeholder:
+            return last_text
+        time.sleep(poll_interval)
+    raise TimeoutError(f"Locator text did not change from {placeholder!r} within {timeout:.1f}s")
+
+
+def wait_for_class_state(
+    locator,
+    *,
+    class_name: str,
+    present: bool,
+    timeout: float = 3.0,
+    poll_interval: float = 0.05,
+) -> None:
+    """Poll a Playwright locator until *class_name* is present or absent."""
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        classes = (locator.get_attribute("class") or "").split()
+        if (class_name in classes) is present:
+            return
+        time.sleep(poll_interval)
+    expectation = "present" if present else "absent"
+    raise TimeoutError(f"Class {class_name!r} did not become {expectation} within {timeout:.1f}s")
+
+
 def safe_shutdown(process: subprocess.Popen[str], timeout: float = 5.0) -> None:
     """Terminate *process* gracefully, escalating to kill if it does not stop."""
     process.terminate()

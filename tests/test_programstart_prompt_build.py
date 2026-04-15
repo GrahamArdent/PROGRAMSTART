@@ -27,7 +27,9 @@ from scripts.programstart_prompt_build import (
     AUTO_HEADER,
     _render_body,
     build_prompt,
+    managed_stage_prompts,
     main,
+    sync_managed_prompts,
 )
 
 # ---------------------------------------------------------------------------
@@ -145,6 +147,40 @@ class TestMainOutputPaths:
         assert out.exists()
         content = out.read_text(encoding="utf-8")
         assert AUTO_HEADER in content
+
+    def test_sync_managed_writes_registry_configured_artifacts(self, tmp_path: Path, monkeypatch) -> None:
+        registry = {
+            "prompt_generation": {
+                "artifact_root": "outputs/generated-prompts",
+                "managed_stage_prompts": [
+                    {"stage": "feasibility", "path": str((tmp_path / "generated" / "feasibility.prompt.md").as_posix())}
+                ],
+            },
+            "systems": load_registry().get("systems", {}),
+            "workflow_guidance": load_registry().get("workflow_guidance", {}),
+            "sync_rules": load_registry().get("sync_rules", []),
+        }
+        monkeypatch.setattr("scripts.programstart_prompt_build.ROOT", tmp_path)
+
+        written = sync_managed_prompts(registry=registry)
+
+        assert len(written) == 1
+        assert written[0].exists()
+        assert AUTO_HEADER in written[0].read_text(encoding="utf-8")
+
+    def test_managed_stage_prompts_returns_registry_entries(self) -> None:
+        registry = {
+            "prompt_generation": {
+                "artifact_root": "outputs/generated-prompts",
+                "managed_stage_prompts": [
+                    {"stage": "feasibility", "path": "outputs/generated-prompts/feasibility.prompt.md"}
+                ],
+            }
+        }
+
+        result = managed_stage_prompts(registry=registry)
+
+        assert result == [{"stage": "feasibility", "path": "outputs/generated-prompts/feasibility.prompt.md"}]
 
 
 # ---------------------------------------------------------------------------

@@ -213,6 +213,18 @@ def test_unified_cli_create_dispatch(monkeypatch) -> None:
     assert captured == [["programstart create", "--dest", "tmp", "--project-name", "x", "--product-shape", "CLI tool"]]
 
 
+def test_unified_cli_backup_dispatch(monkeypatch) -> None:
+    captured: list[list[str]] = []
+
+    def fake_backup_main() -> int:
+        captured.append(sys.argv[:])
+        return 0
+
+    monkeypatch.setattr(programstart_cli.programstart_backup, "main", fake_backup_main)
+    assert programstart_cli.main(["backup", "create", "--label", "phase-i"]) == 0
+    assert captured == [["programstart backup", "create", "--label", "phase-i"]]
+
+
 def test_unified_cli_prompt_eval_dispatch(monkeypatch) -> None:
     captured: list[list[str]] = []
 
@@ -223,6 +235,18 @@ def test_unified_cli_prompt_eval_dispatch(monkeypatch) -> None:
     monkeypatch.setattr(programstart_cli.programstart_prompt_eval, "main", fake_prompt_eval_main)
     assert programstart_cli.main(["prompt-eval", "--json"]) == 0
     assert captured == [["programstart prompt-eval", "--json"]]
+
+
+def test_unified_cli_closeout_dispatch(monkeypatch) -> None:
+    captured: list[list[str]] = []
+
+    def fake_closeout_main() -> int:
+        captured.append(sys.argv[:])
+        return 0
+
+    monkeypatch.setattr(programstart_cli.programstart_closeout, "main", fake_closeout_main)
+    assert programstart_cli.main(["closeout", "--label", "phase-k1", "--adr-result", "not-required"]) == 0
+    assert captured == [["programstart closeout", "--label", "phase-k1", "--adr-result", "not-required"]]
 
 
 def test_unified_cli_help_command(capsys) -> None:
@@ -349,6 +373,13 @@ def test_unified_cli_next_rejects_extra_args() -> None:
             "programstart clean",
             ["--dry-run"],
             ["programstart clean", "--dry-run"],
+        ),
+        (
+            "closeout",
+            "programstart_closeout",
+            "programstart closeout",
+            ["--label", "phase-k1", "--adr-result", "not-required"],
+            ["programstart closeout", "--label", "phase-k1", "--adr-result", "not-required"],
         ),
         ("refresh", "programstart_refresh_integrity", "programstart refresh", [], ["programstart refresh"]),
         (

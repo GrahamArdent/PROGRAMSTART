@@ -1041,6 +1041,143 @@ def test_validate_rule_enforcement_adr_bad_naming(tmp_path: Path, monkeypatch) -
     assert any("does not follow NNNN-title.md naming" in p for p in problems)
 
 
+def test_validate_rule_enforcement_project_repo_does_not_require_template_operator_prompt(monkeypatch) -> None:
+    real_workspace_path = validate.workspace_path
+
+    def fake_workspace_path(relative: str) -> Path:
+        if relative == ".github/prompts/audit-process-drift.prompt.md":
+            return Path("C:/definitely-missing/audit-process-drift.prompt.md")
+        return real_workspace_path(relative)
+
+    monkeypatch.setattr(validate, "workspace_path", fake_workspace_path)
+    monkeypatch.setattr(validate, "validate_prompt_registry_completeness", lambda _registry: [])
+    registry = common.load_registry()
+    workspace = dict(registry.get("workspace", {}))
+    workspace["repo_role"] = "project_repo"
+    registry["workspace"] = workspace
+
+    problems = validate.validate_rule_enforcement(registry)
+
+    assert not any("audit-process-drift.prompt.md" in p for p in problems)
+
+
+def test_validate_prompt_registry_completeness_flags_unregistered_prompt_file(tmp_path: Path, monkeypatch) -> None:
+    prompts_dir = tmp_path / ".github" / "prompts"
+    prompts_dir.mkdir(parents=True)
+    (prompts_dir / "orphan.prompt.md").write_text("---\nname: orphan\ndescription: orphan\nagent: agent\n---\n", encoding="utf-8")
+    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+
+    problems = validate.validate_prompt_registry_completeness(
+        {
+            "prompt_registry": {
+                "workflow_prompt_files": [],
+                "operator_prompt_files": [],
+                "internal_prompt_files": [],
+            }
+        }
+    )
+
+    assert any("prompt_registry missing on-disk prompt file: .github/prompts/orphan.prompt.md" in p for p in problems)
+
+
+def test_validate_prompt_registry_completeness_flags_missing_registered_prompt_file(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+
+    problems = validate.validate_prompt_registry_completeness(
+        {
+            "prompt_registry": {
+                "workflow_prompt_files": [".github/prompts/missing.prompt.md"],
+                "operator_prompt_files": [],
+                "internal_prompt_files": [],
+            }
+        }
+    )
+
+    assert any("prompt_registry references missing prompt file: .github/prompts/missing.prompt.md" in p for p in problems)
+
+
+def test_validate_prompt_authority_metadata_flags_missing_metadata_for_prompt_with_section(tmp_path: Path, monkeypatch) -> None:
+    prompts_dir = tmp_path / ".github" / "prompts"
+    prompts_dir.mkdir(parents=True)
+    (prompts_dir / "shape.prompt.md").write_text(
+        "## Authority Loading\n\n- `PROGRAMBUILD/PROGRAMBUILD.md`\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "PROGRAMBUILD").mkdir(parents=True)
+    (tmp_path / "PROGRAMBUILD" / "PROGRAMBUILD.md").write_text("# stub\n", encoding="utf-8")
+    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+
+    problems = validate.validate_prompt_authority_metadata(
+        {
+            "prompt_registry": {
+                "workflow_prompt_files": [".github/prompts/shape.prompt.md"],
+                "operator_prompt_files": [],
+                "internal_prompt_files": [],
+            },
+            "prompt_authority": {},
+        }
+    )
+
+    assert any("prompt_authority missing metadata for prompt with '## Authority Loading'" in p for p in problems)
+
+
+def test_validate_prompt_authority_metadata_flags_prompt_text_mismatch(tmp_path: Path, monkeypatch) -> None:
+    prompts_dir = tmp_path / ".github" / "prompts"
+    prompts_dir.mkdir(parents=True)
+    (prompts_dir / "shape.prompt.md").write_text(
+        "## Authority Loading\n\n- `PROGRAMBUILD/PROGRAMBUILD.md`\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "PROGRAMBUILD").mkdir(parents=True)
+    (tmp_path / "PROGRAMBUILD" / "PROGRAMBUILD.md").write_text("# stub\n", encoding="utf-8")
+    (tmp_path / "PROGRAMBUILD" / "REQUIREMENTS.md").write_text("# stub\n", encoding="utf-8")
+    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+
+    problems = validate.validate_prompt_authority_metadata(
+        {
+            "prompt_registry": {
+                "workflow_prompt_files": [".github/prompts/shape.prompt.md"],
+                "operator_prompt_files": [],
+                "internal_prompt_files": [],
+            },
+            "prompt_authority": {
+                ".github/prompts/shape.prompt.md": {
+                    "authority_files": ["PROGRAMBUILD/PROGRAMBUILD.md", "PROGRAMBUILD/REQUIREMENTS.md"]
+                }
+            },
+        }
+    )
+
+    assert any("PROGRAMBUILD/REQUIREMENTS.md" in p and "prompt text is missing it" in p for p in problems)
+
+
+def test_validate_main_prompt_authority_passes(capsys, monkeypatch) -> None:
+    monkeypatch.setattr("sys.argv", ["programstart_validate.py", "--check", "prompt-authority"])
+    result = validate.main()
+    out = capsys.readouterr().out
+    assert result == 0
+    assert "Validation passed" in out
+
+
+def test_validate_rule_enforcement_includes_prompt_registry_completeness(monkeypatch, tmp_path: Path) -> None:
+    prompts_dir = tmp_path / ".github" / "prompts"
+    prompts_dir.mkdir(parents=True)
+    (prompts_dir / "orphan.prompt.md").write_text("---\nname: orphan\ndescription: orphan\nagent: agent\n---\n", encoding="utf-8")
+    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+
+    registry = build_registry() | {
+        "workspace": {"bootstrap_assets": []},
+        "prompt_registry": {
+            "workflow_prompt_files": [],
+            "operator_prompt_files": [],
+            "internal_prompt_files": [],
+        },
+    }
+    problems = validate.validate_rule_enforcement(registry)
+
+    assert any("prompt_registry missing on-disk prompt file: .github/prompts/orphan.prompt.md" in p for p in problems)
+
+
 def test_validate_test_coverage_warns_on_missing_test_file(tmp_path: Path, monkeypatch) -> None:
     scripts_dir = tmp_path / "scripts"
     scripts_dir.mkdir()
@@ -1093,6 +1230,57 @@ _DECISION_LOG_TEMPLATE = """\
 """
 
 
+def write_adr(
+    decisions_dir: Path,
+    filename: str,
+    *,
+    status: str,
+    date: str,
+    title: str,
+    decision_id: str | None = "DEC-001",
+) -> None:
+    decision_link = [f"<!-- {decision_id} -->", ""] if decision_id else []
+    (decisions_dir / filename).write_text(
+        "\n".join(
+            [
+                "---",
+                f"status: {status}",
+                f"date: {date}",
+                "deciders: [Solo operator]",
+                "consulted: []",
+                "informed: []",
+                "---",
+                "",
+                f"# {filename[:4]}. {title}",
+                "",
+                *decision_link,
+                "## Context and Problem Statement",
+                "",
+                "Context.",
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+
+def write_adr_readme(decisions_dir: Path, rows: list[str]) -> None:
+    (decisions_dir / "README.md").write_text(
+        "\n".join(
+            [
+                "# Decision Records",
+                "",
+                "## Index",
+                "",
+                "| ID | Title | Status | Date |",
+                "|---|---|---|---|",
+                *rows,
+                "",
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+
 def test_adr_coverage_no_warning_when_adr_references_decision(tmp_path, monkeypatch) -> None:
     log = _DECISION_LOG_TEMPLATE.format(rows="| DEC-001 | 2026-01-01 | inputs | Adopt foo | ACTIVE | — | Solo | foo.py |")
     (tmp_path / "PROGRAMBUILD").mkdir()
@@ -1120,6 +1308,23 @@ def test_adr_coverage_warning_when_no_matching_adr(tmp_path, monkeypatch) -> Non
     assert len(warnings) == 1
     assert "DEC-002" in warnings[0]
     assert "ACTIVE" in warnings[0]
+
+
+def test_adr_coverage_warns_for_reversed_decision_without_matching_adr(tmp_path, monkeypatch) -> None:
+    log = _DECISION_LOG_TEMPLATE.format(
+        rows="| DEC-004 | 2026-01-01 | inputs | Replace foo | REVERSED | DEC-001 | Solo | bar.py |"
+    )
+    (tmp_path / "PROGRAMBUILD").mkdir()
+    (tmp_path / "PROGRAMBUILD" / "DECISION_LOG.md").write_text(log, encoding="utf-8")
+    decisions = tmp_path / "docs" / "decisions"
+    decisions.mkdir(parents=True)
+    (decisions / "README.md").write_text("# ADRs", encoding="utf-8")
+    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+
+    warnings = validate.validate_adr_coverage({})
+    assert len(warnings) == 1
+    assert "DEC-004" in warnings[0]
+    assert "REVERSED" in warnings[0]
 
 
 def test_adr_coverage_ignores_superseded_decisions(tmp_path, monkeypatch) -> None:
@@ -1151,6 +1356,249 @@ def test_adr_coverage_no_warning_when_decision_log_missing(tmp_path, monkeypatch
 
 def test_validate_main_adr_coverage_passes(capsys, monkeypatch) -> None:
     monkeypatch.setattr("sys.argv", ["programstart_validate.py", "--check", "adr-coverage"])
+    result = validate.main()
+    out = capsys.readouterr().out
+    assert result == 0
+    assert "Validation passed" in out
+
+
+def test_validate_adr_coherence_passes_for_consistent_records(tmp_path, monkeypatch) -> None:
+    log = _DECISION_LOG_TEMPLATE.format(
+        rows="| DEC-001 | 2026-04-15 | inputs | Adopt foo | ACTIVE | — | Solo | docs/decisions/0001-adopt-foo.md |"
+    )
+    (tmp_path / "PROGRAMBUILD").mkdir()
+    (tmp_path / "PROGRAMBUILD" / "DECISION_LOG.md").write_text(log, encoding="utf-8")
+    decisions = tmp_path / "docs" / "decisions"
+    decisions.mkdir(parents=True)
+    write_adr(decisions, "0001-adopt-foo.md", status="accepted", date="2026-04-15", title="Adopt foo")
+    write_adr_readme(decisions, ["| [0001](0001-adopt-foo.md) | Adopt foo | accepted | 2026-04-15 |"])
+    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+
+    assert validate.validate_adr_coherence({}) == []
+
+
+def test_validate_adr_coherence_flags_readme_status_mismatch(tmp_path, monkeypatch) -> None:
+    log = _DECISION_LOG_TEMPLATE.format(
+        rows="| DEC-001 | 2026-04-15 | inputs | Adopt foo | ACTIVE | — | Solo | docs/decisions/0001-adopt-foo.md |"
+    )
+    (tmp_path / "PROGRAMBUILD").mkdir()
+    (tmp_path / "PROGRAMBUILD" / "DECISION_LOG.md").write_text(log, encoding="utf-8")
+    decisions = tmp_path / "docs" / "decisions"
+    decisions.mkdir(parents=True)
+    write_adr(decisions, "0001-adopt-foo.md", status="accepted", date="2026-04-15", title="Adopt foo")
+    write_adr_readme(decisions, ["| [0001](0001-adopt-foo.md) | Adopt foo | superseded by ADR-0002 | 2026-04-15 |"])
+    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+
+    problems = validate.validate_adr_coherence({})
+    assert any("README status mismatch" in problem for problem in problems)
+
+
+def test_validate_adr_coherence_flags_missing_superseding_adr(tmp_path, monkeypatch) -> None:
+    log = _DECISION_LOG_TEMPLATE.format(
+        rows="| DEC-001 | 2026-04-15 | inputs | Adopt foo | SUPERSEDED | DEC-002 | Solo | docs/decisions/0001-adopt-foo.md |"
+    )
+    (tmp_path / "PROGRAMBUILD").mkdir()
+    (tmp_path / "PROGRAMBUILD" / "DECISION_LOG.md").write_text(log, encoding="utf-8")
+    decisions = tmp_path / "docs" / "decisions"
+    decisions.mkdir(parents=True)
+    write_adr(
+        decisions,
+        "0001-adopt-foo.md",
+        status="superseded by ADR-0002",
+        date="2026-04-15",
+        title="Adopt foo",
+    )
+    write_adr_readme(decisions, ["| [0001](0001-adopt-foo.md) | Adopt foo | superseded by ADR-0002 | 2026-04-15 |"])
+    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+
+    problems = validate.validate_adr_coherence({})
+    assert any("ADR-0002" in problem and "does not exist" in problem for problem in problems)
+
+
+def test_validate_adr_coherence_flags_missing_decision_link(tmp_path, monkeypatch) -> None:
+    log = _DECISION_LOG_TEMPLATE.format(
+        rows="| DEC-001 | 2026-04-15 | inputs | Adopt foo | ACTIVE | — | Solo | docs/decisions/0001-adopt-foo.md |"
+    )
+    (tmp_path / "PROGRAMBUILD").mkdir()
+    (tmp_path / "PROGRAMBUILD" / "DECISION_LOG.md").write_text(log, encoding="utf-8")
+    decisions = tmp_path / "docs" / "decisions"
+    decisions.mkdir(parents=True)
+    (decisions / "0001-adopt-foo.md").write_text(
+        "\n".join(
+            [
+                "---",
+                "status: accepted",
+                "date: 2026-04-15",
+                "deciders: [Solo operator]",
+                "consulted: []",
+                "informed: []",
+                "---",
+                "",
+                "# 0001. Adopt foo",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    write_adr_readme(decisions, ["| [0001](0001-adopt-foo.md) | Adopt foo | accepted | 2026-04-15 |"])
+    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+
+    problems = validate.validate_adr_coherence({})
+    assert any("missing decision-log linkage comment" in problem for problem in problems)
+
+
+def test_validate_adr_coherence_allows_listed_legacy_pre_register_adr_without_decision_link(tmp_path, monkeypatch) -> None:
+    log = _DECISION_LOG_TEMPLATE.format(rows="")
+    (tmp_path / "PROGRAMBUILD").mkdir()
+    (tmp_path / "PROGRAMBUILD" / "DECISION_LOG.md").write_text(log, encoding="utf-8")
+    decisions = tmp_path / "docs" / "decisions"
+    decisions.mkdir(parents=True)
+    write_adr(decisions, "0001-adopt-foo.md", status="accepted", date="2026-04-15", title="Adopt foo", decision_id=None)
+    write_adr_readme(decisions, ["| [0001](0001-adopt-foo.md) | Adopt foo | accepted | 2026-04-15 |"])
+    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+
+    assert validate.validate_adr_coherence({"adr_policy": {"legacy_pre_register_adrs": ["0001"]}}) == []
+
+
+def test_validate_adr_coherence_flags_unlisted_legacy_style_adr_without_decision_link(tmp_path, monkeypatch) -> None:
+    log = _DECISION_LOG_TEMPLATE.format(rows="")
+    (tmp_path / "PROGRAMBUILD").mkdir()
+    (tmp_path / "PROGRAMBUILD" / "DECISION_LOG.md").write_text(log, encoding="utf-8")
+    decisions = tmp_path / "docs" / "decisions"
+    decisions.mkdir(parents=True)
+    write_adr(decisions, "0001-adopt-foo.md", status="accepted", date="2026-04-15", title="Adopt foo", decision_id=None)
+    write_adr_readme(decisions, ["| [0001](0001-adopt-foo.md) | Adopt foo | accepted | 2026-04-15 |"])
+    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+
+    problems = validate.validate_adr_coherence({})
+    assert any("missing decision-log linkage comment" in problem for problem in problems)
+
+
+def test_validate_adr_coherence_allows_inherited_template_adr_links_in_project_repo(tmp_path, monkeypatch) -> None:
+    log = _DECISION_LOG_TEMPLATE.format(rows="")
+    (tmp_path / "PROGRAMBUILD").mkdir()
+    (tmp_path / "PROGRAMBUILD" / "DECISION_LOG.md").write_text(log, encoding="utf-8")
+    decisions = tmp_path / "docs" / "decisions"
+    decisions.mkdir(parents=True)
+    write_adr(decisions, "0004-adopt-foo.md", status="accepted", date="2026-04-15", title="Adopt foo", decision_id="DEC-001")
+    write_adr_readme(decisions, ["| [0004](0004-adopt-foo.md) | Adopt foo | accepted | 2026-04-15 |"])
+    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+
+    assert validate.validate_adr_coherence({"workspace": {"repo_role": "project_repo"}}) == []
+
+
+def test_validate_adr_coherence_flags_missing_legacy_pre_register_adr_from_policy(tmp_path, monkeypatch) -> None:
+    log = _DECISION_LOG_TEMPLATE.format(rows="")
+    (tmp_path / "PROGRAMBUILD").mkdir()
+    (tmp_path / "PROGRAMBUILD" / "DECISION_LOG.md").write_text(log, encoding="utf-8")
+    decisions = tmp_path / "docs" / "decisions"
+    decisions.mkdir(parents=True)
+    write_adr_readme(decisions, [])
+    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+
+    problems = validate.validate_adr_coherence({"adr_policy": {"legacy_pre_register_adrs": ["0001"]}})
+    assert any("legacy_pre_register_adrs references missing ADR file: 0001" in problem for problem in problems)
+
+
+def test_validate_adr_coherence_flags_decision_log_reference_to_legacy_pre_register_adr(tmp_path, monkeypatch) -> None:
+    log = _DECISION_LOG_TEMPLATE.format(
+        rows="| DEC-001 | 2026-04-15 | inputs | Adopt foo | ACTIVE | — | Solo | docs/decisions/0001-adopt-foo.md |"
+    )
+    (tmp_path / "PROGRAMBUILD").mkdir()
+    (tmp_path / "PROGRAMBUILD" / "DECISION_LOG.md").write_text(log, encoding="utf-8")
+    decisions = tmp_path / "docs" / "decisions"
+    decisions.mkdir(parents=True)
+    write_adr(decisions, "0001-adopt-foo.md", status="accepted", date="2026-04-15", title="Adopt foo")
+    write_adr_readme(decisions, ["| [0001](0001-adopt-foo.md) | Adopt foo | accepted | 2026-04-15 |"])
+    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+
+    problems = validate.validate_adr_coherence({"adr_policy": {"legacy_pre_register_adrs": ["0001"]}})
+    assert any("references legacy pre-register ADR 0001-adopt-foo.md" in problem for problem in problems)
+
+
+def test_validate_adr_coherence_flags_active_decision_pointing_to_superseded_adr(tmp_path, monkeypatch) -> None:
+    log = _DECISION_LOG_TEMPLATE.format(
+        rows="| DEC-001 | 2026-04-15 | inputs | Adopt foo | ACTIVE | — | Solo | docs/decisions/0001-adopt-foo.md |"
+    )
+    (tmp_path / "PROGRAMBUILD").mkdir()
+    (tmp_path / "PROGRAMBUILD" / "DECISION_LOG.md").write_text(log, encoding="utf-8")
+    decisions = tmp_path / "docs" / "decisions"
+    decisions.mkdir(parents=True)
+    write_adr(
+        decisions,
+        "0001-adopt-foo.md",
+        status="superseded by ADR-0002",
+        date="2026-04-15",
+        title="Adopt foo",
+    )
+    write_adr(decisions, "0002-adopt-bar.md", status="accepted", date="2026-04-15", title="Adopt bar", decision_id="DEC-002")
+    write_adr_readme(
+        decisions,
+        [
+            "| [0001](0001-adopt-foo.md) | Adopt foo | superseded by ADR-0002 | 2026-04-15 |",
+            "| [0002](0002-adopt-bar.md) | Adopt bar | accepted | 2026-04-15 |",
+        ],
+    )
+    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+
+    problems = validate.validate_adr_coherence({})
+    assert any("references superseded ADR 0001-adopt-foo.md" in problem for problem in problems)
+
+
+def test_validate_main_adr_coherence_passes(capsys, monkeypatch) -> None:
+    monkeypatch.setattr("sys.argv", ["programstart_validate.py", "--check", "adr-coherence"])
+    result = validate.main()
+    out = capsys.readouterr().out
+    assert result == 0
+    assert "Validation passed" in out
+
+
+def test_validate_decision_log_reversal_invariants_passes_for_reciprocal_pair(tmp_path, monkeypatch) -> None:
+    log = _DECISION_LOG_TEMPLATE.format(
+        rows="\n".join(
+            [
+                "| DEC-001 | 2026-04-15 | inputs | Adopt foo | SUPERSEDED | DEC-002 | Solo | docs/decisions/0001-adopt-foo.md |",
+                "| DEC-002 | 2026-04-15 | inputs | Adopt bar | REVERSED | DEC-001 | Solo | docs/decisions/0002-adopt-bar.md |",
+            ]
+        )
+    )
+    (tmp_path / "PROGRAMBUILD").mkdir()
+    (tmp_path / "PROGRAMBUILD" / "DECISION_LOG.md").write_text(log, encoding="utf-8")
+    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+
+    assert validate.validate_decision_log_reversal_invariants({}) == []
+
+
+def test_validate_decision_log_reversal_invariants_flags_missing_reversed_target(tmp_path, monkeypatch) -> None:
+    log = _DECISION_LOG_TEMPLATE.format(
+        rows="| DEC-001 | 2026-04-15 | inputs | Adopt foo | SUPERSEDED | DEC-099 | Solo | docs/decisions/0001-adopt-foo.md |"
+    )
+    (tmp_path / "PROGRAMBUILD").mkdir()
+    (tmp_path / "PROGRAMBUILD" / "DECISION_LOG.md").write_text(log, encoding="utf-8")
+    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+
+    problems = validate.validate_decision_log_reversal_invariants({})
+    assert any("missing decision DEC-099" in problem for problem in problems)
+
+
+def test_validate_decision_log_reversal_invariants_flags_non_reciprocal_pair(tmp_path, monkeypatch) -> None:
+    log = _DECISION_LOG_TEMPLATE.format(
+        rows="\n".join(
+            [
+                "| DEC-001 | 2026-04-15 | inputs | Adopt foo | SUPERSEDED | DEC-002 | Solo | docs/decisions/0001-adopt-foo.md |",
+                "| DEC-002 | 2026-04-15 | inputs | Adopt bar | REVERSED | DEC-003 | Solo | docs/decisions/0002-adopt-bar.md |",
+            ]
+        )
+    )
+    (tmp_path / "PROGRAMBUILD").mkdir()
+    (tmp_path / "PROGRAMBUILD" / "DECISION_LOG.md").write_text(log, encoding="utf-8")
+    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+
+    problems = validate.validate_decision_log_reversal_invariants({})
+    assert any("must point back via Replaces=DEC-001" in problem for problem in problems)
+
+
+def test_validate_main_decision_log_coherence_passes(capsys, monkeypatch) -> None:
+    monkeypatch.setattr("sys.argv", ["programstart_validate.py", "--check", "decision-log-coherence"])
     result = validate.main()
     out = capsys.readouterr().out
     assert result == 0
@@ -1497,3 +1945,143 @@ class TestStageContentQualityWarnings:
         warnings = validate.stage_content_quality_warnings("requirements_and_ux")
         assert len(warnings) == 1
         assert "REQUIREMENTS.md" in warnings[0]
+
+
+class TestRepoWidePlaceholderContent:
+    def test_placeholder_content_targets_assign_role_based_severity(self, tmp_path, monkeypatch) -> None:
+        docs_decisions = tmp_path / "docs" / "decisions"
+        docs_decisions.mkdir(parents=True)
+        (docs_decisions / "0001-test.md").write_text("# ADR\n", encoding="utf-8")
+        (tmp_path / "README.md").write_text("# Readme\n", encoding="utf-8")
+        monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+
+        registry = {
+            "systems": {
+                "programbuild": {"output_files": ["PROGRAMBUILD/FEASIBILITY.md"]},
+                "userjourney": {"optional": True, "root": "_missing"},
+            },
+            "workflow_state": {
+                "userjourney": {"step_files": {}},
+            },
+        }
+
+        targets = validate.placeholder_content_targets(registry)
+
+        assert targets["PROGRAMBUILD/FEASIBILITY.md"] == ("problem", "programbuild-output")
+        assert targets["docs/decisions/0001-test.md"] == ("problem", "adr")
+        assert targets["README.md"] == ("warning", "repo-doc")
+
+    def test_validate_placeholder_content_flags_programbuild_outputs_as_problems(self, tmp_path, monkeypatch) -> None:
+        pb = tmp_path / "PROGRAMBUILD"
+        pb.mkdir(parents=True)
+        (pb / "FEASIBILITY.md").write_text("TBD\n", encoding="utf-8")
+        monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+
+        problems, warnings = validate.validate_placeholder_content(
+            {
+                "systems": {
+                    "programbuild": {"output_files": ["PROGRAMBUILD/FEASIBILITY.md"]},
+                    "userjourney": {"optional": True, "root": "_missing"},
+                },
+                "workflow_state": {"userjourney": {"step_files": {}}},
+            }
+        )
+
+        assert warnings == []
+        assert len(problems) == 1
+        assert "programbuild-output" in problems[0]
+        assert "TBD" in problems[0]
+
+    def test_validate_placeholder_content_flags_repo_docs_as_warnings(self, tmp_path, monkeypatch) -> None:
+        (tmp_path / "README.md").write_text("TODO: finish summary\n", encoding="utf-8")
+        monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+
+        problems, warnings = validate.validate_placeholder_content(
+            {
+                "systems": {
+                    "programbuild": {"output_files": []},
+                    "userjourney": {"optional": True, "root": "_missing"},
+                },
+                "workflow_state": {"userjourney": {"step_files": {}}},
+            }
+        )
+
+        assert problems == []
+        assert len(warnings) == 1
+        assert "repo-doc" in warnings[0]
+        assert "README.md" in warnings[0]
+
+    def test_validate_placeholder_content_skips_optional_userjourney_when_absent(self, tmp_path, monkeypatch) -> None:
+        monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+
+        targets = validate.placeholder_content_targets(
+            {
+                "systems": {
+                    "programbuild": {"output_files": []},
+                    "userjourney": {"optional": True, "root": "USERJOURNEY"},
+                },
+                "workflow_state": {
+                    "userjourney": {
+                        "step_files": {"phase_0": ["USERJOURNEY/OPEN_QUESTIONS.md"]}
+                    }
+                },
+            }
+        )
+
+        assert "USERJOURNEY/OPEN_QUESTIONS.md" not in targets
+
+
+def test_validate_main_placeholder_content_passes(capsys, monkeypatch) -> None:
+    monkeypatch.setattr("sys.argv", ["programstart_validate.py", "--check", "placeholder-content"])
+    result = validate.main()
+    out = capsys.readouterr().out
+    assert result == 0
+    assert "Validation passed" in out
+
+
+def test_validate_prompt_generation_boundary_flags_public_auto_generated_prompt(tmp_path: Path, monkeypatch) -> None:
+    prompt = tmp_path / ".github" / "prompts" / "bad.prompt.md"
+    prompt.parent.mkdir(parents=True)
+    prompt.write_text("# AUTO-GENERATED by programstart prompt-build — do not hand-edit\n", encoding="utf-8")
+    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+
+    problems = validate.validate_prompt_generation_boundary(
+        {
+            "prompt_generation": {"artifact_root": "outputs/generated-prompts", "managed_stage_prompts": []},
+            "prompt_registry": {
+                "workflow_prompt_files": [".github/prompts/bad.prompt.md"],
+                "operator_prompt_files": [],
+                "internal_prompt_files": [],
+            },
+        }
+    )
+
+    assert any("public prompt must be manually maintained" in problem for problem in problems)
+
+
+def test_validate_prompt_generation_boundary_flags_outdated_managed_prompt(tmp_path: Path, monkeypatch) -> None:
+    generated = tmp_path / "outputs" / "generated-prompts" / "feasibility.prompt.md"
+    generated.parent.mkdir(parents=True)
+    generated.write_text("stale\n", encoding="utf-8")
+    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+
+    problems = validate.validate_prompt_generation_boundary(
+        common.load_registry() | {
+            "prompt_generation": {
+                "artifact_root": "outputs/generated-prompts",
+                "managed_stage_prompts": [
+                    {"stage": "feasibility", "path": "outputs/generated-prompts/feasibility.prompt.md"}
+                ],
+            }
+        }
+    )
+
+    assert any("run 'uv run programstart prompt-build --sync-managed'" in problem for problem in problems)
+
+
+def test_validate_main_prompt_generation_passes(capsys, monkeypatch) -> None:
+    monkeypatch.setattr("sys.argv", ["programstart_validate.py", "--check", "prompt-generation"])
+    result = validate.main()
+    out = capsys.readouterr().out
+    assert result == 0
+    assert "Validation passed" in out

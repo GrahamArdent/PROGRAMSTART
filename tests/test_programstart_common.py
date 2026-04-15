@@ -15,6 +15,7 @@ if str(ROOT) not in sys.path:
 from scripts.programstart_common import (
     _ensure_scripts_importable,
     _use_color,
+    challenge_gate_record_from_log,
     clr_bold,
     clr_cyan,
     clr_dim,
@@ -212,6 +213,41 @@ def test_parse_markdown_table_skips_malformed_rows() -> None:
 
 def test_parse_markdown_table_returns_empty_when_section_has_no_table() -> None:
     assert parse_markdown_table("## Example\ntext only\n", "Example") == []
+
+
+def test_challenge_gate_record_from_log_parses_matching_row(tmp_path: Path, monkeypatch) -> None:
+    gate = tmp_path / "PROGRAMBUILD" / "PROGRAMBUILD_CHALLENGE_GATE.md"
+    gate.parent.mkdir(parents=True)
+    gate.write_text(
+        "### Challenge Gate Log\n\n"
+        "| From Stage | To Stage | Date | Kill Criteria OK | Proceed? | Notes |\n"
+        "|---|---|---|---|---|---|\n"
+        "| inputs_and_mode_selection | feasibility | 2026-04-15 | ⚠️ | Conditional | recorded |\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr("scripts.programstart_common.workspace_path", lambda rel: tmp_path / rel)
+
+    record = challenge_gate_record_from_log("inputs_and_mode_selection")
+
+    assert record is not None
+    assert record["result"] == "warning"
+    assert record["proceed"] == "conditional"
+    assert record["checks"] == {"Kill Criteria OK": "⚠️"}
+
+
+def test_challenge_gate_record_from_log_returns_none_when_missing_row(tmp_path: Path, monkeypatch) -> None:
+    gate = tmp_path / "PROGRAMBUILD" / "PROGRAMBUILD_CHALLENGE_GATE.md"
+    gate.parent.mkdir(parents=True)
+    gate.write_text(
+        "### Challenge Gate Log\n\n"
+        "| From Stage | To Stage | Date | Proceed? | Notes |\n"
+        "|---|---|---|---|---|\n"
+        "| research | requirements_and_ux | 2026-04-15 | Yes | clean |\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr("scripts.programstart_common.workspace_path", lambda rel: tmp_path / rel)
+
+    assert challenge_gate_record_from_log("inputs_and_mode_selection") is None
 
 
 def test_git_changed_files_handles_oserror_and_deduplicates(monkeypatch) -> None:

@@ -39,3 +39,7 @@ def config_dir() -> Path:
 def scripts_dir() -> Path:
     """Return the scripts directory path."""
     return SCRIPTS
+
+
+def pytest_configure(config: pytest.Config) -> None:
+    config.addinivalue_line("markers", "slow: performance benchmark tests")

@@ -1,17 +1,29 @@
-# PROGRAMSTART Prompt Standard
+# PROGRAMSTART Workflow Prompt Standard
 
-Reference document for all `.prompt.md` files in `.github/prompts/`.
-Every shaping prompt and operator-facing prompt MUST include the mandatory sections below in the order listed.
-Internal build prompts (all files in `.github/prompts/internal/`) follow their own Binding Rules format and are exempt from this standard. Utility prompts (`audit-process-drift.prompt.md`) are also exempt — they are stage-agnostic diagnostics, not stage-advancing prompts.
+Reference document for `workflow` `.prompt.md` files in `.github/prompts/`.
+This standard applies to prompts that shape or advance PROGRAMBUILD or USERJOURNEY workflow state, provide workflow guidance, or enforce workflow-facing source-of-truth behavior.
 
-Last updated: 2026-04-14
-Authority: Derived from `source-of-truth.instructions.md`, `devlog/notes/promptaudit.md` Part 12, `PROGRAMBUILD/PROGRAMBUILD.md`.
+`operator` prompts are governed by `.github/prompts/OPERATOR_PROMPT_STANDARD.md`.
+Internal build prompts (all files in `.github/prompts/internal/`) follow their own Binding Rules format and are exempt from both public prompt standards.
+Utility/operator prompts such as `audit-process-drift.prompt.md` are not governed by this workflow standard.
+
+Use this file for:
+
+- PROGRAMBUILD shaping prompts
+- USERJOURNEY shaping prompts
+- workflow guidance prompts
+- workflow transition and validation prompts
+
+Do not use this file as the governing standard for repo-maintenance execution prompts.
+
+Last updated: 2026-04-15
+Authority: Derived from `source-of-truth.instructions.md`, `devlog/notes/promptaudit.md` Part 12, `PROGRAMBUILD/PROGRAMBUILD.md`, and `docs/decisions/0011-separate-workflow-and-operator-prompt-architecture.md`.
 
 ---
 
 ## Mandatory Sections
 
-Every shaping or operator-facing prompt MUST include these sections in this order.
+Every workflow prompt MUST include these sections in this order.
 
 ### 1. YAML Frontmatter
 
@@ -220,7 +232,7 @@ All four MUST pass before any implementation work begins.
 
 ## Audit Checklist
 
-Use this checklist to verify any prompt against the standard:
+Use this checklist to verify any workflow prompt against the standard:
 
 - [ ] YAML frontmatter present with description, name, argument-hint, agent
 - [ ] Data Grounding Rule section present (exact text)
@@ -232,7 +244,7 @@ Use this checklist to verify any prompt against the standard:
 - [ ] Output ordering follows sync_rules authority-before-dependent
 - [ ] DECISION_LOG mandate is unconditional ("MUST", not "if applicable")
 - [ ] Verification gate includes both `validate` and `drift`
-- [ ] Workflow routing points to `programstart-stage-transition`
+- [ ] Workflow routing points to `programstart-stage-transition` when the prompt advances to another workflow step
 - [ ] PRODUCT_SHAPE conditioning present (if Stage 3+)
 - [ ] Kill criteria re-check present (if Stage 2+)
 - [ ] Entry criteria verification present (if Stage 7)

@@ -42,6 +42,11 @@ python -m playwright install chromium
 - Adding runtime dependencies unless strictly necessary.
 - Modifying `PROGRAMBUILD_CANONICAL.md` or `PROGRAMBUILD_FILE_INDEX.md` without reading them first.
 
+## Devlog Retention
+
+Entries in `devlog/` older than 12 months SHOULD be archived to `devlog/archive/YYYY/`.
+They MAY be deleted after archival.
+
 ## Running Checks Individually
 
 | Check          | Command                                       |

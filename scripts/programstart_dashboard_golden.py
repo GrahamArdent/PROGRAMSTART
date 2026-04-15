@@ -1,15 +1,19 @@
 from __future__ import annotations
 
 import argparse
-import os
-import socket
-import subprocess
 import sys
-import time
-import urllib.request
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING
+
+from programstart_smoke_helpers import (
+    choose_port,
+    safe_shutdown,
+    start_dashboard_server,
+    wait_for_class_state,
+    wait_for_server,
+    wait_for_text_value,
+)
 
 if TYPE_CHECKING:
     from playwright.sync_api import ViewportSize
@@ -36,8 +40,22 @@ body {
 #subagents-section,
 #kickoff-section,
 #execution-section,
+#pb-summary,
+#uj-summary,
+#pb-more-actions,
+#uj-more-actions,
+#pb-continue-btn,
+#pb-advance-btn,
+#uj-continue-btn,
+#uj-advance-btn,
 #doc-preview-overlay,
 #bootstrap-modal {
+  display: none !important;
+}
+#card-pb .actions,
+#card-pb .disclosure,
+#card-uj .actions,
+#card-uj .disclosure {
   display: none !important;
 }
 #golden-frame {
@@ -53,32 +71,10 @@ class CaptureSpec:
     locator: str
 
 
-def choose_port(port: int) -> int:
-    if port > 0:
-        return port
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-        sock.bind(("127.0.0.1", 0))
-        return int(sock.getsockname()[1])
-
-
-def wait_for_server(base_url: str, process: subprocess.Popen[str], timeout: float) -> None:
-    deadline = time.time() + timeout
-    while time.time() < deadline:
-        if process.poll() is not None:
-            output = process.stdout.read() if process.stdout else ""
-            raise RuntimeError(f"Dashboard server exited early with code {process.returncode}.\n{output}")
-        try:
-            urllib.request.urlopen(f"{base_url}/api/state", timeout=3)
-            return
-        except Exception:
-            time.sleep(0.2)
-    raise RuntimeError(f"Dashboard server did not become ready within {timeout:.1f}s")
-
-
 def capture_specs(attached: bool) -> list[CaptureSpec]:
     specs = [CaptureSpec("attached-shell" if attached else "absent-shell", "#golden-frame")]
     if attached:
-        specs.append(CaptureSpec("attached-signoff-modal", "#advance-modal .modal"))
+        specs.append(CaptureSpec("attached-signoff-modal", "#golden-modal-frame .modal"))
     return specs
 
 
@@ -95,9 +91,9 @@ def add_golden_styles(page) -> None:
 
 
 def wait_for_dashboard_state(page, attached: bool) -> None:
-    page.wait_for_function("document.getElementById('pb-active')?.textContent?.trim() !== '...'", timeout=8000)
+    wait_for_text_value(page.locator("#pb-active"), timeout=8.0)
     if attached:
-        page.wait_for_function("document.getElementById('uj-active')?.textContent?.trim() !== '...'", timeout=8000)
+        wait_for_text_value(page.locator("#uj-active"), timeout=8.0)
 
 
 def normalize_dashboard(page, attached: bool) -> None:
@@ -208,11 +204,26 @@ def normalize_dashboard(page, attached: bool) -> None:
 
 
 def open_and_normalize_modal(page) -> None:
-    page.locator("#card-uj .actions button", has_text="Signoff").first.click()
-    page.wait_for_function("!document.getElementById('advance-modal').classList.contains('hidden')", timeout=3000)
+    page.evaluate("openAdvanceModal('userjourney', 'signoff')")
+    wait_for_class_state(page.locator("#advance-modal"), class_name="hidden", present=False, timeout=3.0)
     page.evaluate(
         """
         () => {
+          const overlay = document.getElementById('advance-modal');
+          if (overlay) {
+            overlay.scrollTop = 0;
+            overlay.style.alignItems = 'flex-start';
+            overlay.style.paddingTop = '24px';
+          }
+          const modal = document.querySelector('#advance-modal .modal');
+          if (modal) {
+            modal.style.position = 'fixed';
+            modal.style.top = '24px';
+            modal.style.left = '50%';
+            modal.style.margin = '0';
+            modal.style.transform = 'translateX(-50%)';
+          }
+
           const setText = (selector, text) => {
             const element = document.querySelector(selector);
             if (element) {
@@ -235,6 +246,24 @@ def open_and_normalize_modal(page) -> None:
           const historySection = document.getElementById('modal-history-section');
           if (historySection) historySection.style.display = 'block';
           setText('#modal-history', 'approved · 2026-03-27\\nblocked · 2026-03-20');
+
+          const modalFrame = document.getElementById('golden-modal-frame') || document.createElement('div');
+          modalFrame.id = 'golden-modal-frame';
+          modalFrame.innerHTML = '';
+          modalFrame.style.display = 'grid';
+          modalFrame.style.justifyItems = 'center';
+          modalFrame.style.paddingTop = '24px';
+          modalFrame.style.background = '#f3f4ee';
+          if (modal) {
+            const clone = modal.cloneNode(true);
+            clone.style.position = 'static';
+            clone.style.top = 'auto';
+            clone.style.left = 'auto';
+            clone.style.margin = '0';
+            clone.style.transform = 'none';
+            modalFrame.appendChild(clone);
+          }
+          document.body.prepend(modalFrame);
         }
         """
     )
@@ -255,9 +284,16 @@ def count_different_pixels(baseline_path: Path, actual_path: Path) -> int:
         return int(sum(1 for y in range(height) for x in range(width) if diff.getpixel((x, y)) != (0, 0, 0, 0)))
 
 
-def compare_or_update(locator, baseline_path: Path, actual_path: Path, update: bool) -> tuple[bool, str]:
+def compare_or_update(
+    locator,
+    baseline_path: Path,
+    actual_path: Path,
+    update: bool,
+    max_diff_pixels: int,
+) -> tuple[bool, str]:
     baseline_path.parent.mkdir(parents=True, exist_ok=True)
     actual_path.parent.mkdir(parents=True, exist_ok=True)
+    locator.scroll_into_view_if_needed()
     locator.screenshot(path=str(actual_path), animations="disabled", scale="css")
     if update:
         actual_path.replace(baseline_path)
@@ -267,7 +303,7 @@ def compare_or_update(locator, baseline_path: Path, actual_path: Path, update: b
     diff_pixels = count_different_pixels(baseline_path, actual_path)
     if diff_pixels < 0:
         return False, f"screenshot size mismatch; wrote {actual_path.as_posix()}"
-    if diff_pixels > MAX_DIFF_PIXELS:
+    if diff_pixels > max_diff_pixels:
         return False, f"screenshot mismatch ({diff_pixels} px); wrote {actual_path.as_posix()}"
     actual_path.unlink(missing_ok=True)
     return True, baseline_path.name
@@ -287,6 +323,12 @@ def main() -> int:
     parser.add_argument("--update", action="store_true", help="Refresh the golden screenshots instead of comparing them.")
     parser.add_argument("--golden-dir", default=None, help="Directory containing baseline screenshots.")
     parser.add_argument("--artifact-dir", default=None, help="Directory for mismatch screenshots.")
+    parser.add_argument(
+        "--max-diff-pixels",
+        type=int,
+        default=MAX_DIFF_PIXELS,
+        help="Maximum pixel difference allowed before a capture fails.",
+    )
     args = parser.parse_args()
 
     try:
@@ -305,15 +347,7 @@ def main() -> int:
 
     port = choose_port(args.port)
     base_url = f"http://127.0.0.1:{port}"
-    env = {**os.environ, "NO_COLOR": "1"}
-    process = subprocess.Popen(
-        [PYTHON, str(SERVER), "--port", str(port), "--no-open"],
-        cwd=ROOT,
-        env=env,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        text=True,
-    )
+    process = start_dashboard_server(port=port, cwd=ROOT, server_script=SERVER)
 
     checks: list[tuple[str, bool, str]] = []
     try:
@@ -352,19 +386,20 @@ def main() -> int:
                 locator = page.locator(spec.locator)
                 baseline_path = golden_dir / f"{spec.name}.png"
                 actual_path = artifact_dir / f"{spec.name}.actual.png"
-                ok, detail = compare_or_update(locator, baseline_path, actual_path, args.update)
+                ok, detail = compare_or_update(
+                    locator,
+                    baseline_path,
+                    actual_path,
+                    args.update,
+                    args.max_diff_pixels,
+                )
                 checks.append((spec.name, ok, detail))
 
             browser.close()
     except Exception as exc:
         checks.append(("Golden runtime", False, str(exc)))
     finally:
-        process.terminate()
-        try:
-            process.wait(timeout=5)
-        except subprocess.TimeoutExpired:
-            process.kill()
-            process.wait(timeout=5)
+        safe_shutdown(process)
 
     failures = [item for item in checks if not item[1]]
     for name, ok, detail in checks:

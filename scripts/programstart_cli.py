@@ -10,9 +10,11 @@ from contextlib import contextmanager
 try:
     from . import (
         programstart_attach,
+        programstart_backup,
         programstart_bootstrap,
         programstart_checklist_progress,
         programstart_clean,
+        programstart_closeout,
         programstart_create,
         programstart_doctor,
         programstart_drift_check,
@@ -38,9 +40,11 @@ try:
     from .programstart_command_registry import CLI_COMMANDS
 except ImportError:  # pragma: no cover - standalone script execution fallback
     import programstart_attach
+    import programstart_backup
     import programstart_bootstrap
     import programstart_checklist_progress
     import programstart_clean
+    import programstart_closeout
     import programstart_create
     import programstart_command_registry
     import programstart_doctor
@@ -128,6 +132,8 @@ def dispatch(command: str, arguments: list[str], parser: argparse.ArgumentParser
         return run_passthrough(programstart_create.main, "programstart create", arguments)
     if command == "attach":
         return run_passthrough(programstart_attach.main, "programstart attach", arguments)
+    if command == "backup":
+        return run_passthrough(programstart_backup.main, "programstart backup", arguments)
     if command == "recommend":
         return run_passthrough(programstart_recommend.main, "programstart recommend", arguments)
     if command == "impact":
@@ -170,6 +176,8 @@ def dispatch(command: str, arguments: list[str], parser: argparse.ArgumentParser
         return run_passthrough(programstart_bootstrap.main, "programstart bootstrap", arguments)
     if command == "clean":
         return run_passthrough(programstart_clean.main, "programstart clean", arguments)
+    if command == "closeout":
+        return run_passthrough(programstart_closeout.main, "programstart closeout", arguments)
     if command == "refresh":
         return run_passthrough(programstart_refresh_integrity.main, "programstart refresh", arguments)
     if command == "dashboard":

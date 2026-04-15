@@ -28,6 +28,7 @@ UJ bonus tests:
 
 from __future__ import annotations
 
+import json
 import re
 import sys
 from dataclasses import dataclass
@@ -37,11 +38,15 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 PROMPTS_DIR = ROOT / ".github" / "prompts"
+REGISTRY_PATH = ROOT / "config" / "process-registry.json"
 
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from scripts.programstart_step_guide import main as guide_main
+
+REGISTRY = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+OPERATOR_PROMPTS = tuple(PROMPTS_DIR.parent.parent / path for path in REGISTRY["prompt_registry"]["operator_prompt_files"])
 
 # ---------------------------------------------------------------------------
 # Registered --check values (sourced from programstart_validate.py argparse)
@@ -62,6 +67,11 @@ VALID_CHECKS: frozenset[str] = frozenset(
         "test-coverage",
         "template-test-coverage",
         "adr-coverage",
+        "adr-coherence",
+        "decision-log-coherence",
+        "prompt-authority",
+        "prompt-generation",
+        "placeholder-content",
         "kb-freshness",
         "intake-complete",
         "feasibility-criteria",
@@ -193,6 +203,28 @@ UJ_PROMPTS: tuple[PromptSpec, ...] = (
         has_product_shape=False,
     ),
 )
+
+
+@pytest.mark.parametrize("prompt_path", OPERATOR_PROMPTS, ids=lambda p: p.name)
+def test_operator_prompts_do_not_route_to_stage_transition(prompt_path: Path) -> None:
+    """Operator prompts must not carry workflow-routing semantics."""
+    text = prompt_path.read_text(encoding="utf-8")
+    assert "## Next Steps" not in text, f"{prompt_path.name}: operator prompt must not include workflow routing section"
+    assert "stage-transition" not in text, f"{prompt_path.name}: operator prompt must not route to stage transition"
+
+
+def test_prompt_authority_registry_covers_public_prompts_with_authority_loading() -> None:
+    prompt_authority = REGISTRY.get("prompt_authority", {})
+    public_prompt_files = [
+        *REGISTRY["prompt_registry"]["workflow_prompt_files"],
+        *REGISTRY["prompt_registry"]["operator_prompt_files"],
+    ]
+
+    for prompt_path in public_prompt_files:
+        text = (ROOT / prompt_path).read_text(encoding="utf-8")
+        if "## Authority Loading" in text:
+            assert prompt_path in prompt_authority, f"{prompt_path}: missing prompt_authority metadata"
+
 
 # ---------------------------------------------------------------------------
 # Helper — read prompt file

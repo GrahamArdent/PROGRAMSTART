@@ -10,7 +10,7 @@ if str(ROOT) not in sys.path:
 from conftest import requires_userjourney
 
 from scripts.programstart_common import load_registry, system_is_optional_and_absent
-from scripts.programstart_drift_check import load_changed_files, main
+from scripts.programstart_drift_check import evaluate_drift, load_changed_files, main
 
 
 def test_system_is_optional_and_absent_programbuild() -> None:
@@ -41,13 +41,54 @@ def test_drift_check_passes_with_no_violations(capsys, monkeypatch) -> None:
 
 
 def test_drift_check_with_authority_only_shows_note(capsys, monkeypatch) -> None:
-    registry = load_registry()
-    authority_files = registry["sync_rules"][0]["authority_files"]
-    monkeypatch.setattr("sys.argv", ["programstart_drift_check.py", authority_files[0]])
+    monkeypatch.setattr(
+        "scripts.programstart_drift_check.load_registry",
+        lambda: {
+            "sync_rules": [
+                {
+                    "name": "note_rule",
+                    "system": "programbuild",
+                    "authority_files": ["PROGRAMBUILD/PROGRAMBUILD.md"],
+                    "dependent_files": ["PROGRAMBUILD/PROGRAMBUILD_LITE.md"],
+                    "require_authority_when_dependents_change": True,
+                }
+            ],
+            "systems": {"programbuild": {}, "userjourney": {"optional": True, "root": "_missing"}},
+            "workspace": {"repo_role": "template_repo"},
+        },
+    )
+    monkeypatch.setattr("sys.argv", ["programstart_drift_check.py", "PROGRAMBUILD/PROGRAMBUILD.md"])
     result = main()
     captured = capsys.readouterr().out
     assert result == 0
     assert "Drift check passed" in captured
+
+
+def test_drift_check_detects_reverse_sync_rule_violation(capsys, monkeypatch) -> None:
+    monkeypatch.setattr(
+        "scripts.programstart_drift_check.load_registry",
+        lambda: {
+            "sync_rules": [
+                {
+                    "name": "reverse_rule",
+                    "system": "programbuild",
+                    "authority_files": ["PROGRAMBUILD/REQUIREMENTS.md"],
+                    "dependent_files": ["PROGRAMBUILD/TEST_STRATEGY.md"],
+                    "require_authority_when_dependents_change": True,
+                    "require_dependents_when_authority_changes": True,
+                }
+            ],
+            "systems": {"programbuild": {}, "userjourney": {"optional": True, "root": "_missing"}},
+            "workspace": {"repo_role": "template_repo"},
+        },
+    )
+    monkeypatch.setattr("sys.argv", ["programstart_drift_check.py", "PROGRAMBUILD/REQUIREMENTS.md"])
+
+    result = main()
+    captured = capsys.readouterr().out
+
+    assert result == 1
+    assert "authority files changed without dependent files" in captured
 
 
 def test_drift_check_allows_programbuild_changelog_without_authority(capsys, monkeypatch) -> None:
@@ -101,19 +142,97 @@ def test_drift_check_detects_sync_rule_violation(capsys, monkeypatch) -> None:
 
 
 def test_drift_check_passes_with_both_authority_and_dependent(capsys, monkeypatch) -> None:
-    registry = load_registry()
-    rule = next(
-        (r for r in registry["sync_rules"] if r.get("require_authority_when_dependents_change")),
-        None,
+    monkeypatch.setattr(
+        "scripts.programstart_drift_check.load_registry",
+        lambda: {
+            "sync_rules": [
+                {
+                    "name": "paired_rule",
+                    "system": "programbuild",
+                    "authority_files": ["PROGRAMBUILD/REQUIREMENTS.md"],
+                    "dependent_files": ["PROGRAMBUILD/TEST_STRATEGY.md"],
+                    "require_authority_when_dependents_change": True,
+                    "require_dependents_when_authority_changes": True,
+                }
+            ],
+            "systems": {"programbuild": {}, "userjourney": {"optional": True, "root": "_missing"}},
+            "workspace": {"repo_role": "template_repo"},
+        },
     )
-    if rule is None:
-        return
-    files = [rule["authority_files"][0], rule["dependent_files"][0]]
+    files = ["PROGRAMBUILD/REQUIREMENTS.md", "PROGRAMBUILD/TEST_STRATEGY.md"]
     monkeypatch.setattr("sys.argv", ["programstart_drift_check.py", *files])
     result = main()
     captured = capsys.readouterr().out
     assert result == 0
     assert "Drift check passed" in captured
+
+
+def test_evaluate_drift_ignores_pyproject_metadata_only_change(monkeypatch) -> None:
+    registry = {
+        "sync_rules": [
+            {
+                "name": "pyproject_requirements_sync",
+                "system": "cross",
+                "authority_files": ["pyproject.toml"],
+                "dependent_files": ["requirements.txt"],
+                "require_authority_when_dependents_change": False,
+            }
+        ],
+        "systems": {"programbuild": {}, "userjourney": {"optional": True, "root": "_missing"}},
+        "workspace": {"repo_role": "template_repo"},
+    }
+    monkeypatch.setattr("scripts.programstart_drift_check.pyproject_dependency_sync_required", lambda: False)
+
+    violations, notes = evaluate_drift(registry, ["pyproject.toml"])
+
+    assert violations == []
+    assert notes == []
+
+
+def test_evaluate_drift_notes_pyproject_dependency_change_without_requirements(monkeypatch) -> None:
+    registry = {
+        "sync_rules": [
+            {
+                "name": "pyproject_requirements_sync",
+                "system": "cross",
+                "authority_files": ["pyproject.toml"],
+                "dependent_files": ["requirements.txt"],
+                "require_authority_when_dependents_change": False,
+                "require_dependents_when_authority_changes": False,
+            }
+        ],
+        "systems": {"programbuild": {}, "userjourney": {"optional": True, "root": "_missing"}},
+        "workspace": {"repo_role": "template_repo"},
+    }
+    monkeypatch.setattr("scripts.programstart_drift_check.pyproject_dependency_sync_required", lambda: True)
+
+    violations, notes = evaluate_drift(registry, ["pyproject.toml"])
+
+    assert violations == []
+    assert notes == ["pyproject_requirements_sync: authority files changed without dependent files: pyproject.toml"]
+
+
+def test_evaluate_drift_blocks_pyproject_dependency_change_when_reverse_sync_enabled(monkeypatch) -> None:
+    registry = {
+        "sync_rules": [
+            {
+                "name": "pyproject_requirements_sync",
+                "system": "cross",
+                "authority_files": ["pyproject.toml"],
+                "dependent_files": ["requirements.txt"],
+                "require_authority_when_dependents_change": False,
+                "require_dependents_when_authority_changes": True,
+            }
+        ],
+        "systems": {"programbuild": {}, "userjourney": {"optional": True, "root": "_missing"}},
+        "workspace": {"repo_role": "template_repo"},
+    }
+    monkeypatch.setattr("scripts.programstart_drift_check.pyproject_dependency_sync_required", lambda: True)
+
+    violations, notes = evaluate_drift(registry, ["pyproject.toml"])
+
+    assert violations == ["pyproject_requirements_sync: authority files changed without dependent files: pyproject.toml"]
+    assert notes == []
 
 
 def test_drift_check_detects_future_step_violation(capsys, monkeypatch) -> None:

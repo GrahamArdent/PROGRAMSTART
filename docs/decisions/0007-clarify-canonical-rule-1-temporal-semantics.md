@@ -8,6 +8,8 @@ informed: []
 
 # 0007. Clarify CANONICAL Rule 1 Temporal Semantics
 
+<!-- DEC-004 -->
+
 ## Context and Problem Statement
 
 `PROGRAMBUILD_CANONICAL.md` rule 1 stated: "Validated code and validated tests MUST outrank any planning document." Meanwhile, `copilot-instructions.md` states: "Do not ship code that contradicts an authority doc." These two statements create apparent tension without temporal qualification — rule 1 could be read as license to skip doc updates entirely.

@@ -27,6 +27,11 @@ Authority hierarchy for this work:
 4. **`devlog/gameplans/hardeninggameplan.md`** — the execution plan. Non-canonical working document.
 5. **Coverage output** (`uv run pytest --cov --cov-report=term`) — outranks the gameplan's line-number estimates. Always re-read the coverage report before implementing Phase A–C.
 
+Gate truth model after the gate-repair work:
+
+- The truthful direct typecheck command is `uv run --extra dev pyright`.
+- Do not diagnose failing gates from truncated output. If a command fails, rerun it without `Select-Object -Last` or other output filters and read the full failure.
+
 ## Pre-flight
 
 Before any edits, run:
@@ -34,7 +39,8 @@ Before any edits, run:
 ```powershell
 uv run programstart validate --check all
 uv run programstart drift
-uv run pytest --cov --cov-report=term --tb=no -q 2>&1 | Select-Object -Last 5
+uv run --extra dev pyright
+uv run pytest --cov --cov-report=term --tb=no -q
 ```
 
 All three MUST pass. Record the baseline numbers (test count, coverage total, per-module coverage, validate status, drift status).
@@ -51,12 +57,27 @@ Read these files before starting any phase:
 
 Do NOT skip the per-phase Pre-flight reads. Line numbers in the gameplan are estimates — the actual code may have shifted.
 
+## Scope Guard
+
+This execution prompt permits only:
+
+- hardening work explicitly assigned to the active hardening phase,
+- minimal authority-doc updates required by that hardening work,
+- coverage, structural, gate, and test-quality changes described by the hardening gameplan.
+
+This execution prompt forbids:
+
+- unrelated feature delivery,
+- workflow-stage routing changes,
+- broad cleanup that is not tied to a hardening finding,
+- weakening validation, drift, typecheck, or coverage expectations to force a green result.
+
 ## Schema & Registry Compliance
 
 Every phase that modifies `config/process-registry.json` or files governed by `schemas/`:
 
 1. Read `schemas/process-registry.schema.json` before editing the registry.
-2. After editing, run `uv run pre-commit run check-json --all-files` to validate JSON.
+2. After editing, run `uv run pre-commit run check-process-registry-schema --all-files` to validate the registry schema.
 3. Use `stage_order` for PROGRAMBUILD references, `step_order` for USERJOURNEY references.
 4. The command whitelist lives in `scripts/programstart_command_registry.py`. Every new `programstart <command>` MUST be registered there.
 
@@ -97,19 +118,20 @@ Read every file and line range listed in the phase's "Pre-flight" subsections. C
 Run the phase-specific verification commands from the gameplan. Then run:
 
 ```powershell
-uv run pytest --tb=short -q --no-header 2>&1 | Select-Object -Last 5
+uv run pytest --tb=short -q --no-header
 ```
 
 All tests MUST pass. If new tests were added, confirm they appear in the count.
 
-### Step 6: Validate & drift
+### Step 6: Validate, Drift & Typecheck
 
 ```powershell
 uv run programstart validate --check all
 uv run programstart drift
+uv run --extra dev pyright
 ```
 
-Both MUST pass before committing.
+All three MUST pass before committing.
 
 ### Step 7: Commit
 
@@ -151,18 +173,42 @@ You MUST update `PROGRAMBUILD/DECISION_LOG.md` with any architectural or behavio
 - Changes to sync rules or authority relationships
 - New dependencies added
 
+## ADR & Audit Loop
+
+Hardening work does NOT bypass ADR discipline.
+
+After any phase or sub-phase that changes structure, workflow policy, authority relationships, trust boundaries,
+or other long-lived behavior, you MUST run a hardening close-out loop before marking the checkpoint complete:
+
+```powershell
+uv run programstart validate --check adr-coverage
+uv run programstart validate --check authority-sync
+uv run programstart drift
+```
+
+Then compare the change against the ADR threshold in `PROGRAMBUILD/PROGRAMBUILD.md` and
+`PROGRAMBUILD/PROGRAMBUILD_ADR_TEMPLATE.md`:
+
+- If the change meets the ADR threshold, create or update the ADR in `docs/decisions/`, update
+	`docs/decisions/README.md`, and record the linkage in `PROGRAMBUILD/DECISION_LOG.md`.
+- If the change does not meet the ADR threshold, still record the decision in `PROGRAMBUILD/DECISION_LOG.md`
+	and note in the phase checkpoint that ADR triage was performed and no ADR was required.
+
+For Phase J, this loop applies to every individual `J-*` item because each one is a dedicated strategic session.
+
 ## Cross-Phase Rules
 
 1. **No regression**: test count must never decrease between phases. Coverage must stay ≥ 90% at every commit.
 2. **One phase per commit** (or a small group of tightly coupled sub-steps within a phase).
 3. **Phase J is large-scope**: do not start a Phase J item within a coverage or small-hardening session. Start J only when Phases A–I are complete and you have a dedicated session.
 4. **Verify post-phase**: always run the Phase-level verification block before committing.
+5. **No truncated diagnosis**: if pytest, validate, drift, pyright, or pre-commit fails, rerun the failing command without output filters before deciding on a fix.
 
 ## Resumption Protocol
 
 When resuming after an interruption:
 
-1. Run `uv run pytest --tb=no -q --no-header 2>&1 | Select-Object -Last 3` to confirm current state.
+1. Run `uv run programstart validate --check all`, `uv run programstart drift`, `uv run --extra dev pyright`, and `uv run pytest --tb=no -q --no-header` to confirm current state.
 2. Run `git log --oneline -5` to identify the last committed phase.
 3. Open `devlog/gameplans/hardeninggameplan.md` and find the first phase without a ✅ status marker.
 4. Re-read that phase's section from scratch — do not rely on memory of what you were about to do.
@@ -175,8 +221,17 @@ After completing all phases (or after each major group A–C, D–F, G–I), run
 ```powershell
 uv run programstart validate --check all --strict
 uv run programstart drift --strict
-uv run pytest --cov --cov-report=term-missing --tb=no -q 2>&1 | Select-String "^TOTAL|FAIL|PASS"
+uv run --extra dev pyright
+uv run pytest --cov --cov-report=term-missing --tb=no -q
 uv run pre-commit run --all-files
 ```
 
-All four MUST pass.
+All five MUST pass.
+
+## Completion Rule
+
+After each completed phase:
+
+1. Update `devlog/gameplans/hardeninggameplan.md` with the phase status and checkpoint information.
+2. Keep the work checkpointable: authority-doc and test updates required by the phase must land in the same change set.
+3. If additional hardening phases remain, stop on a clean checkpoint and identify the next phase explicitly rather than routing through workflow-stage prompts.

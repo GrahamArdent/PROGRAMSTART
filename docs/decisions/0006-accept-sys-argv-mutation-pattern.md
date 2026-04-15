@@ -8,6 +8,8 @@ informed: []
 
 # 0006. Accept sys.argv Mutation Pattern
 
+<!-- DEC-003 -->
+
 ## Context and Problem Statement
 
 `run_passthrough()` in `scripts/programstart_cli.py` uses `temporary_argv()` to mutate `sys.argv` before calling subcommand `main()` functions. This context manager pattern is not thread-safe. The question is whether to refactor all script `main()` functions to accept an optional `argv` parameter, or to accept the current pattern.

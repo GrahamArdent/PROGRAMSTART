@@ -57,6 +57,7 @@
           "authority_files": { "type": "array", "items": { "type": "string" } },
           "dependent_files": { "type": "array", "items": { "type": "string" } },
           "require_authority_when_dependents_change": { "type": "boolean" },
+          "require_dependents_when_authority_changes": { "type": "boolean" },
           "description": { "type": "string" }
         },
         "additionalProperties": false
@@ -105,6 +106,53 @@
         }
       },
       "additionalProperties": true
+    },
+    "prompt_authority": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["authority_files"],
+        "properties": {
+          "authority_files": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "prompt_generation": {
+      "type": "object",
+      "required": ["artifact_root", "managed_stage_prompts"],
+      "properties": {
+        "artifact_root": { "type": "string" },
+        "managed_stage_prompts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["stage", "path"],
+            "properties": {
+              "stage": { "type": "string" },
+              "path": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "adr_policy": {
+      "type": "object",
+      "properties": {
+        "legacy_pre_register_adrs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^\\d{4}$"
+          }
+        }
+      },
+      "additionalProperties": false
     },
     "planning_reference_rules": { "type": "object" },
     "workflow_guidance": { "type": "object" },

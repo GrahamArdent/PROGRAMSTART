@@ -1,9 +1,9 @@
 # Hardening Gameplan — Post-Enhancement Coverage, Observability, and Defence
 
 Purpose: Prioritized hardening plan for all items deferred from Phase N of `enhancegameplan.md` plus new coverage gaps identified from the post-enhancement-gameplan baseline. Phases are ordered by severity, dependency, and value impact. Each phase is scoped for a single execution session.
-Status: **NOT STARTED**
+Status: **IN PROGRESS**
 Authority: Non-canonical working plan derived from `devlog/gameplans/enhancegameplan.md` Phase N deferred items, post-Phase-N coverage run (1288 tests, 93.19%, 2026-04-14), and `config/process-registry.json`.
-Last updated: 2026-04-14
+Last updated: 2026-04-15
 
 ---
 
@@ -16,6 +16,13 @@ Baseline recorded 2026-04-14 (post enhancegameplan Phase N — commit `df7f5e8`)
 - `programstart validate --check all` PASSES
 - `programstart drift` PASSES
 - All 14 Phases A–N from `enhancegameplan.md` COMPLETE
+
+### Resumption Note (post gate repair)
+
+- Gate integrity has been restored. Resume hardening from the next incomplete phase only from a clean tree.
+- Use `uv run --extra dev pyright` as the truthful direct typecheck command.
+- If a gate fails during hardening, diagnose from the full failing output rather than truncated `Select-Object -Last` output.
+- Phase G is already implemented in commit `50d5db6`; resume from Phase H unless new Phase G regressions appear.
 
 ### Coverage Snapshot (post-Phase-N)
 
@@ -115,6 +122,7 @@ Baseline recorded 2026-04-14 (post enhancegameplan Phase N — commit `df7f5e8`)
 | H | R-6, T-6, UI-3 | Test quality | 3-4 test files | Quality gates |
 | I | SD-3, SD-4 | Process hygiene | 2-3 files | Automation |
 | J | B-2, SD-1, T-5, S-5, S-6, S-7 | Strategic (large) | Multiple | Future-facing |
+| K | AUTO-01..AUTO-10 | Automation & human-error reduction | Multiple | Fewer manual loops |
 
 ---
 
@@ -550,7 +558,10 @@ Expected: All checks pass. New features tested.
 
 ---
 
-### Phase G: Feature Gaps — Medium (KB-3, F-3, F-4)
+### ✅ Phase G: Feature Gaps — Medium (KB-3, F-3, F-4) — COMPLETE
+
+**Status**: COMPLETE — commit `50d5db6`
+**Result**: Added unified `programstart kb`, `programstart diff`, and `programstart state rollback` commands with command-registry coverage, workflow-state rollback safety tests, and authority/ADR updates.
 
 **Goal**: Implement 3 medium-complexity new commands: `programstart kb`, `programstart diff`, and `programstart state rollback`.
 
@@ -570,7 +581,7 @@ Expected: All checks pass. New features tested.
 ```powershell
 uv run programstart kb search "architecture"
 uv run pytest tests/ -k "kb" --tb=short
-uv run pytest --tb=no -q --no-header 2>&1 | Select-Object -Last 3
+uv run pytest --tb=no -q --no-header
 ```
 
 ---
@@ -590,7 +601,7 @@ uv run pytest --tb=no -q --no-header 2>&1 | Select-Object -Last 3
 ```powershell
 uv run programstart diff
 uv run pytest tests/ -k "diff" --tb=short
-uv run pytest --tb=no -q --no-header 2>&1 | Select-Object -Last 3
+uv run pytest --tb=no -q --no-header
 ```
 
 ---
@@ -611,7 +622,7 @@ uv run pytest --tb=no -q --no-header 2>&1 | Select-Object -Last 3
 ```powershell
 uv run programstart state rollback --help
 uv run pytest tests/ -k "rollback" --tb=short
-uv run pytest --tb=no -q --no-header 2>&1 | Select-Object -Last 3
+uv run pytest --tb=no -q --no-header
 ```
 
 ---
@@ -621,13 +632,17 @@ uv run pytest --tb=no -q --no-header 2>&1 | Select-Object -Last 3
 uv run pre-commit run --all-files
 uv run programstart validate --check all
 uv run programstart drift
-uv run pytest --tb=no -q --no-header 2>&1 | Select-Object -Last 3
+uv run --extra dev pyright
+uv run pytest --tb=no -q --no-header
 ```
 Expected: All 3 new commands registered, tested, and working. All checks pass.
 
 ---
 
-### Phase H: Test Quality (R-6, T-6, UI-3)
+### ✅ Phase H: Test Quality (R-6, T-6, UI-3) — COMPLETE
+
+**Status**: COMPLETE
+**Result**: Added instruction-enforcement tests, added slow-tagged performance benchmarks, made dashboard browser/golden smoke CSP-safe, normalized and refreshed shell/modal goldens, enabled Windows golden smoke with an explicit diff budget, and restored bootstrapped dashboard asset parity.
 
 **Goal**: Improve test quality with rule-enforcement tests, performance benchmarks, and platform-portable golden screenshot tests.
 
@@ -645,7 +660,7 @@ Expected: All 3 new commands registered, tested, and working. All checks pass.
 **Verification**:
 ```powershell
 uv run pytest tests/test_instruction_enforcement.py -v --tb=short
-uv run pytest --tb=no -q --no-header 2>&1 | Select-Object -Last 3
+uv run pytest --tb=no -q --no-header
 ```
 
 ---
@@ -664,7 +679,7 @@ uv run pytest --tb=no -q --no-header 2>&1 | Select-Object -Last 3
 **Verification**:
 ```powershell
 uv run pytest tests/test_performance_benchmarks.py -v --tb=short -m slow
-uv run pytest --tb=no -q --no-header 2>&1 | Select-Object -Last 3
+uv run pytest --tb=no -q --no-header
 ```
 
 ---
@@ -682,7 +697,7 @@ uv run pytest --tb=no -q --no-header 2>&1 | Select-Object -Last 3
 **Verification**:
 ```powershell
 uv run pytest tests/ -k "golden" -v --tb=short
-uv run pytest --tb=no -q --no-header 2>&1 | Select-Object -Last 3
+uv run pytest --tb=no -q --no-header
 ```
 
 ---
@@ -692,12 +707,16 @@ uv run pytest --tb=no -q --no-header 2>&1 | Select-Object -Last 3
 uv run pre-commit run --all-files
 uv run programstart validate --check all
 uv run programstart drift
-uv run pytest --tb=no -q --no-header 2>&1 | Select-Object -Last 3
+uv run --extra dev pyright
+uv run pytest --tb=no -q --no-header
 ```
 
 ---
 
-### Phase I: Process & Platform Hygiene (SD-3, SD-4)
+### ✅ Phase I: Process & Platform Hygiene (SD-3, SD-4) — COMPLETE
+
+**Status**: COMPLETE
+**Result**: Added a documented `devlog/` retention policy plus archive placeholder coverage, introduced `programstart backup create --label <label>` with manifest output and CLI wiring, and tightened strict drift so metadata-only `pyproject.toml` edits no longer force a false `requirements.txt` sync violation.
 
 **Goal**: Add a retention policy for `devlog/` and automate `BACKUPS/` snapshots.
 
@@ -713,7 +732,7 @@ uv run pytest --tb=no -q --no-header 2>&1 | Select-Object -Last 3
 **Verification**:
 ```powershell
 uv run pytest tests/test_platform_hygiene.py -v --tb=short
-uv run pytest --tb=no -q --no-header 2>&1 | Select-Object -Last 3
+uv run pytest --tb=no -q --no-header
 ```
 
 ---
@@ -734,7 +753,7 @@ uv run pytest --tb=no -q --no-header 2>&1 | Select-Object -Last 3
 ```powershell
 uv run programstart backup create --label test-phase-I
 uv run pytest tests/ -k "backup" --tb=short
-uv run pytest --tb=no -q --no-header 2>&1 | Select-Object -Last 3
+uv run pytest --tb=no -q --no-header
 ```
 
 ---
@@ -744,7 +763,8 @@ uv run pytest --tb=no -q --no-header 2>&1 | Select-Object -Last 3
 uv run pre-commit run --all-files
 uv run programstart validate --check all
 uv run programstart drift
-uv run pytest --tb=no -q --no-header 2>&1 | Select-Object -Last 3
+uv run --extra dev pyright
+uv run pytest --tb=no -q --no-header
 ```
 
 ---
@@ -753,7 +773,23 @@ uv run pytest --tb=no -q --no-header 2>&1 | Select-Object -Last 3
 
 **Goal**: Large-scope improvements deferred from the enhancement gameplan. Execute only when Phase A–I are complete and the team has a dedicated session for each item. Each sub-item in Phase J is effectively its own session.
 
-#### J-1: Split programstart_create.py (B-2)
+**Strategic session close-out loop**: ADRs are still in force during hardening. After every `J-*` item, run:
+
+```powershell
+uv run programstart validate --check adr-coverage
+uv run programstart validate --check authority-sync
+uv run programstart drift
+```
+
+Then perform ADR triage against `PROGRAMBUILD/PROGRAMBUILD.md` and `PROGRAMBUILD/PROGRAMBUILD_ADR_TEMPLATE.md`.
+If the change crosses the ADR threshold, create or update the ADR and `docs/decisions/README.md` in the same
+change set; otherwise record that no ADR was required in the phase checkpoint note.
+
+#### ✅ J-1: Split programstart_create.py (B-2) — COMPLETE
+
+**Status**: COMPLETE
+**Result**: Split the former monolithic create flow into `scripts/programstart_create_core.py` and `scripts/programstart_create_output.py`, kept `scripts/programstart_create.py` as the public CLI facade and monkeypatch-safe compatibility layer, and added direct tests plus registry/coverage registration for the new modules.
+**ADR triage**: No ADR required for J-1 because the split preserved public behavior and did not change contracts, trust boundaries, or workflow policy.
 
 **Pre-flight**: Read `scripts/programstart_create.py` end-to-end (1040+ lines). Identify logical sections: input parsing, factory plan generation, output formatting, file writing, CLI entry. Confirm test coverage after split won't regress.
 
@@ -797,7 +833,79 @@ Design and implement a command that pulls latest `.github/prompts/*.prompt.md` f
 
 ---
 
-**Phase J note**: Each J-* item MUST have its own session and planning pass before starting. Do not start any J item within a coverage or small-hardening session.
+**Phase J note**: Each J-* item MUST have its own session and planning pass before starting. Do not start any J item within a coverage or small-hardening session. Each J-* item MUST also complete the strategic session close-out loop before being marked done.
+
+---
+
+### Phase K: Automation & Human-Error Reduction (AUTO-01..AUTO-10)
+
+**Goal**: Convert the highest-risk human loops identified in the 2026-04-15 automation review into executable controls. This phase is intentionally ordered by control leverage, not by implementation ease.
+
+**Source review**: `devlog/reports/apr15-automation-human-error-review.md`
+
+#### ✅ K-1: Executable governance close-out command (AUTO-02) — COMPLETE
+
+**Status**: COMPLETE
+**Result**: Added `programstart closeout`, a durable-checkpoint close-out command that runs ADR coverage/coherence, authority-sync, and drift evaluation together and writes machine-readable evidence to `outputs/governance/`.
+
+#### ✅ K-2: Structured blocking Challenge Gate (AUTO-01) — COMPLETE
+
+**Status**: COMPLETE
+**Result**: `programstart advance` now blocks when PROGRAMBUILD gate evidence is missing or blocking, accepts structured `--gate-result` input, and persists machine-readable gate evidence in workflow state.
+
+#### ✅ K-3: Bidirectional drift enforcement for selected rules (AUTO-03) — COMPLETE
+
+**Status**: COMPLETE
+**Result**: selected sync rules now opt into reverse enforcement, so authority-only changes fail drift instead of surfacing as notes.
+
+#### ✅ K-4: Decision-log reversal invariant validation (AUTO-04) — COMPLETE
+
+**Status**: COMPLETE
+**Result**: validation now checks `REVERSED`/`SUPERSEDED` reciprocity, missing targets, duplicate reversals, and self-referential reversal mistakes.
+
+#### ✅ K-5: Prompt-registry completeness validation (AUTO-05) — COMPLETE
+
+**Status**: COMPLETE
+**Result**: `programstart validate` now fails when `.prompt.md` files on disk are missing from `prompt_registry`, when `prompt_registry` points at missing prompt files, or when prompt-class placement is inconsistent.
+
+Fail validation when prompt files on disk are missing from `prompt_registry` or registry entries point at missing prompt files.
+
+#### ✅ K-6: Machine-readable prompt authority loading (AUTO-06) — COMPLETE
+
+**Status**: COMPLETE
+**Result**: prompt authority-loading expectations now live in registry-backed `prompt_authority` metadata and `programstart validate` fails when prompts with `## Authority Loading` drift away from that machine-readable source.
+
+Move authority-loading expectations out of prose-only maintenance and into registry-backed or frontmatter-backed machine-readable metadata.
+
+#### ✅ K-7: Repo-wide placeholder-content check (AUTO-07) — COMPLETE
+
+**Status**: COMPLETE
+**Result**: `programstart validate` now has a dedicated `placeholder-content` check and repo-wide placeholder scanning with role-based severity: workflow output artifacts and ADRs fail validation, while general repo docs surface non-blocking warnings.
+
+Expand placeholder scanning beyond a small set of stage files and make severity depend on file role.
+
+#### ✅ K-8: Prompt generation boundary cleanup (AUTO-08) — COMPLETE
+
+**Status**: COMPLETE
+**Result**: prompt generation is now explicitly bounded in the registry: builder-managed stage prompt artifacts live under `outputs/generated-prompts`, public prompt files remain manual, `programstart prompt-build --sync-managed` regenerates the managed family, `programstart validate` enforces that boundary, and bootstrapped project repos no longer inherit PROGRAMSTART-only prompt-generation artifacts.
+
+Decide which prompt families are generated artifacts and enforce regeneration instead of continuing broad manual synchronization.
+
+#### ✅ K-9: Generated repo provisioning automation expansion (AUTO-09) — COMPLETE
+
+**Status**: COMPLETE
+**Result**: Factory provisioning now writes a normalized completion contract into `outputs/factory/provisioning-state.json`, including per-service automation level, completion status, remaining manual secret targets, and next steps, and mirrors that execution status in `outputs/factory/provisioning-plan.md` so generated repos have a machine-readable and human-readable handoff for partial automation.
+
+Reduce manual setup and manual secret wiring in the project factory where provider APIs make full or partial automation feasible.
+
+#### ✅ K-10: Legacy ADR classification cleanup (AUTO-10) — COMPLETE
+
+**Status**: COMPLETE
+**Result**: The legacy pre-register ADR exception is now explicit and machine-readable: `config/process-registry.json` classifies ADRs `0001`-`0003` under `adr_policy.legacy_pre_register_adrs`, `programstart validate` enforces that only those listed ADRs may omit `<!-- DEC-xxx -->` linkage comments, and `docs/decisions/README.md` documents the exception so it is no longer inferred from validator side effects.
+
+Explicitly document or validate the pre-register ADR exception for ADRs 0001–0003 so historical records stop being a recurring ambiguity.
+
+**Phase K note**: Treat this as the near-term automation backlog for PROGRAMSTART itself. Do not record these items in DECISION_LOG or ADRs until implementation begins or a durable workflow-policy decision is actually accepted.
 
 ---
 

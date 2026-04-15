@@ -1,10 +1,17 @@
 from __future__ import annotations
 
 import argparse
+import json
 import shutil
 from pathlib import Path
 
 try:
+    from .programstart_bootstrap import (
+        generated_repo_bootstrap_assets_for_mode,
+        generated_repo_prompt_assets_for_mode,
+        generated_repo_prompt_authority_for_mode,
+        generated_repo_prompt_registry_for_mode,
+    )
     from .programstart_common import (
         create_default_workflow_state,
         load_registry,
@@ -13,6 +20,12 @@ try:
         write_json,
     )
 except ImportError:  # pragma: no cover - standalone script execution fallback
+    from programstart_bootstrap import (
+        generated_repo_bootstrap_assets_for_mode,
+        generated_repo_prompt_assets_for_mode,
+        generated_repo_prompt_authority_for_mode,
+        generated_repo_prompt_registry_for_mode,
+    )
     from programstart_common import (
         create_default_workflow_state,
         load_registry,
@@ -29,6 +42,16 @@ REQUIRED_USERJOURNEY_FILES = {
 }
 
 
+def _copy_text_or_binary(source: Path, destination: Path) -> None:
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        content = source.read_text(encoding="utf-8")
+        with destination.open("w", encoding="utf-8", newline="\n") as handle:
+            handle.write(content)
+    except UnicodeDecodeError:
+        shutil.copy2(source, destination)
+
+
 def _copy_userjourney_bootstrap_assets(destination_root: Path, registry: dict) -> None:
     """Copy USERJOURNEY-specific test files listed in the registry into the project repo."""
     template_root = workspace_path(".")
@@ -36,14 +59,68 @@ def _copy_userjourney_bootstrap_assets(destination_root: Path, registry: dict) -
         source = template_root / relative_path
         if not source.exists():
             continue
-        dest = destination_root / relative_path
-        dest.parent.mkdir(parents=True, exist_ok=True)
-        try:
-            content = source.read_text(encoding="utf-8")
-            with dest.open("w", encoding="utf-8", newline="\n") as handle:
-                handle.write(content)
-        except UnicodeDecodeError:
-            shutil.copy2(source, dest)
+        _copy_text_or_binary(source, destination_root / relative_path)
+
+
+def _attached_userjourney_prompt_assets(registry: dict) -> list[str]:
+    base_assets = generated_repo_prompt_assets_for_mode(registry, include_userjourney=False)
+    attached_assets = generated_repo_prompt_assets_for_mode(registry, include_userjourney=True)
+    return sorted(attached_assets - base_assets)
+
+
+def _copy_userjourney_prompt_assets(destination_root: Path, registry: dict) -> None:
+    template_root = workspace_path(".")
+    for relative_path in _attached_userjourney_prompt_assets(registry):
+        source = template_root / relative_path
+        if not source.exists():
+            continue
+        _copy_text_or_binary(source, destination_root / relative_path)
+
+
+def _sync_attached_userjourney_registry(destination_root: Path, template_registry: dict) -> None:
+    registry_path = destination_root / "config" / "process-registry.json"
+    if not registry_path.exists():
+        return
+
+    project_registry = json.loads(registry_path.read_text(encoding="utf-8"))
+    base_prompt_registry = generated_repo_prompt_registry_for_mode(template_registry, include_userjourney=False)
+    attached_prompt_registry = generated_repo_prompt_registry_for_mode(template_registry, include_userjourney=True)
+    restored_prompt_paths = [
+        path
+        for path in attached_prompt_registry["workflow_prompt_files"]
+        if path not in base_prompt_registry["workflow_prompt_files"]
+    ]
+
+    prompt_registry = dict(project_registry.get("prompt_registry", {}))
+    workflow_prompt_files = list(prompt_registry.get("workflow_prompt_files", []))
+    for prompt_path in restored_prompt_paths:
+        if prompt_path not in workflow_prompt_files:
+            workflow_prompt_files.append(prompt_path)
+    prompt_registry["workflow_prompt_files"] = workflow_prompt_files
+    project_registry["prompt_registry"] = prompt_registry
+
+    prompt_authority = dict(project_registry.get("prompt_authority", {}))
+    base_prompt_authority = generated_repo_prompt_authority_for_mode(template_registry, include_userjourney=False)
+    attached_prompt_authority = generated_repo_prompt_authority_for_mode(template_registry, include_userjourney=True)
+    for prompt_path, payload in attached_prompt_authority.items():
+        if prompt_path in base_prompt_authority:
+            continue
+        prompt_authority[prompt_path] = payload
+    project_registry["prompt_authority"] = prompt_authority
+
+    workspace = dict(project_registry.get("workspace", {}))
+    bootstrap_assets = list(workspace.get("bootstrap_assets", []))
+    base_bootstrap_assets = generated_repo_bootstrap_assets_for_mode(template_registry, include_userjourney=False)
+    attached_bootstrap_assets = generated_repo_bootstrap_assets_for_mode(template_registry, include_userjourney=True)
+    for relative_path in attached_bootstrap_assets:
+        if relative_path in base_bootstrap_assets:
+            continue
+        if relative_path not in bootstrap_assets:
+            bootstrap_assets.append(relative_path)
+    workspace["bootstrap_assets"] = bootstrap_assets
+    project_registry["workspace"] = workspace
+
+    write_json(registry_path, project_registry)
 
 
 def resolve_attachment_source(source: str) -> Path:
@@ -89,8 +166,10 @@ def attach_userjourney(
     if not state_path.exists():
         write_json(state_path, create_default_workflow_state(registry, "userjourney"))
 
-    # Copy USERJOURNEY-specific test and asset files into the project repo
+    # Copy USERJOURNEY-specific prompt, test, and asset files into the project repo.
+    _copy_userjourney_prompt_assets(destination_root, registry)
     _copy_userjourney_bootstrap_assets(destination_root, registry)
+    _sync_attached_userjourney_registry(destination_root, registry)
 
 
 def main(argv: list[str] | None = None) -> int:

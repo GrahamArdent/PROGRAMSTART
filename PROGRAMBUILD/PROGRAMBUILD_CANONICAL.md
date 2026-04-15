@@ -70,7 +70,7 @@ Project execution outputs:
 | enterprise process | `PROGRAMBUILD_ENTERPRISE.md` |
 | document authority and naming rules | `PROGRAMBUILD_CANONICAL.md` |
 | critical file inventory and status | `PROGRAMBUILD_FILE_INDEX.md` |
-| ADR structure and MADR format | `PROGRAMBUILD_ADR_TEMPLATE.md` |
+| ADR structure, decision-log linkage, and supersession hygiene | `PROGRAMBUILD_ADR_TEMPLATE.md` |
 | architecture decision records index | `docs/decisions/README.md` |
 | commit message format and enforcement | `.github/instructions/conventional-commits.instructions.md` |
 | system-level change history | `PROGRAMBUILD_CHANGELOG.md` |
@@ -78,7 +78,7 @@ Project execution outputs:
 | subagent definitions and prompt templates | `PROGRAMBUILD_SUBAGENTS.md` |
 | execution checklist format | `PROGRAMBUILD_CHECKLIST.md` |
 | 8-question idea decomposition and pre-feasibility challenge | `PROGRAMBUILD_IDEA_INTAKE.md` |
-| stage transition validation (8 parts: A–H) | `PROGRAMBUILD_CHALLENGE_GATE.md` |
+| stage transition validation and machine gate enforcement (8 parts: A–H) | `PROGRAMBUILD_CHALLENGE_GATE.md` |
 | execution sequencing and cross-stage validation | `PROGRAMBUILD_GAMEPLAN.md` |
 | project viability decision | `FEASIBILITY.md` |
 | material project decisions and reversals | `DECISION_LOG.md` |

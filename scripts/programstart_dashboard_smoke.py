@@ -57,7 +57,7 @@ def main() -> int:
         )
 
         html = request_text(base_url, "/")
-        html_markers = ["Recent Projects", "Sync And Drift", "uj-slice-status", "modal-date"]
+        html_markers = ["Recent Projects", "Workflow Health", "uj-slice-status", "modal-date"]
         for marker in html_markers:
             checks.append((f"GET / marker {marker}", marker in html, "found" if marker in html else "missing"))
 

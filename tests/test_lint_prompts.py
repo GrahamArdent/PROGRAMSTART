@@ -12,9 +12,14 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from scripts.lint_prompts import (
-    EXEMPT_FILENAMES,
-    REQUIRED_SECTIONS,
+    OPERATOR_BASE_REQUIRED_SECTIONS,
+    OPERATOR_LONGFORM_REQUIRED_SECTIONS,
+    PROMPT_CLASS_BY_PATH,
+    WORKFLOW_REQUIRED_SECTIONS,
     _extract_frontmatter,
+    _has_execution_protocol,
+    _is_utility_operator_prompt,
+    _prompt_class,
     lint_prompt,
     main,
 )
@@ -40,6 +45,70 @@ Run drift check before any edits.
 ## Verification Gate
 
 Run validate before declaring complete.
+"""
+
+_VALID_OPERATOR_PROMPT = """\
+---
+description: "Operator prompt"
+name: "Operator Prompt"
+agent: "agent"
+---
+## Data Grounding Rule
+
+Ground on repo content.
+
+## Protocol Declaration
+
+Operator prompt only.
+
+## Pre-flight
+
+Run the required checks.
+
+## Authority Loading
+
+Read the relevant gameplan and policy files.
+
+## Scope Guard
+
+Stay inside the current repair scope.
+
+## Phase Execution Protocol
+
+Execute the current phase.
+
+## Resumption Protocol
+
+Resume from current repo state.
+
+## Verification Gate
+
+Run direct commands.
+
+## Completion Rule
+
+Stop on a clean checkpoint.
+"""
+
+_VALID_UTILITY_OPERATOR_PROMPT = """\
+---
+description: "Utility operator prompt"
+name: "Utility Prompt"
+agent: "agent"
+---
+> **UTILITY OPERATOR PROMPT**: Diagnostic only.
+
+## Data Grounding Rule
+
+Ground on repo content.
+
+## Protocol Declaration
+
+Diagnostic operator prompt.
+
+## Pre-flight
+
+Run the diagnostic checks.
 """
 
 
@@ -70,6 +139,30 @@ class TestExtractFrontmatter:
         assert fields["description"] == "quoted value"
         assert fields["name"] == "single"
         assert fields["agent"] == "bare"
+
+
+class TestPromptClassHelpers:
+    def test_prompt_registry_contains_disjoint_public_classes(self) -> None:
+        workflow = {path for path, prompt_class in PROMPT_CLASS_BY_PATH.items() if prompt_class == "workflow"}
+        operator = {path for path, prompt_class in PROMPT_CLASS_BY_PATH.items() if prompt_class == "operator"}
+        internal = {path for path, prompt_class in PROMPT_CLASS_BY_PATH.items() if prompt_class == "internal"}
+        assert workflow
+        assert operator
+        assert internal
+        assert workflow.isdisjoint(operator)
+        assert workflow.isdisjoint(internal)
+        assert operator.isdisjoint(internal)
+
+    def test_explicit_class_override_used_for_tmp_file(self, tmp_path: Path) -> None:
+        p = tmp_path / "operator.prompt.md"
+        p.write_text(_VALID_OPERATOR_PROMPT, encoding="utf-8")
+        assert _prompt_class(p, explicit_class="operator") == "operator"
+
+    def test_utility_operator_marker_detected(self) -> None:
+        assert _is_utility_operator_prompt(_VALID_UTILITY_OPERATOR_PROMPT) is True
+
+    def test_execution_protocol_helper_accepts_phase_variant(self) -> None:
+        assert _has_execution_protocol(_VALID_OPERATOR_PROMPT) is True
 
 
 class TestLintPrompt:
@@ -103,7 +196,7 @@ class TestLintPrompt:
         problems = lint_prompt(p)
         assert any("Pre-flight" in prob for prob in problems)
 
-    @pytest.mark.parametrize("section", REQUIRED_SECTIONS)
+    @pytest.mark.parametrize("section", WORKFLOW_REQUIRED_SECTIONS)
     def test_each_required_section_checked(self, tmp_path: Path, section: str) -> None:
         p = tmp_path / "missing-sec.prompt.md"
         # Remove just the section header line
@@ -112,12 +205,10 @@ class TestLintPrompt:
         problems = lint_prompt(p)
         assert any(section in prob for prob in problems), f"Missing section not caught: {section}"
 
-    def test_exempt_prompt_skips_section_check(self, tmp_path: Path) -> None:
-        exempt_name = next(iter(EXEMPT_FILENAMES))
-        p = tmp_path / exempt_name
-        minimal = "---\ndescription: Exempt\nname: Exempt\nagent: agent\n---\n# No required sections here\n"
-        p.write_text(minimal, encoding="utf-8")
-        problems = lint_prompt(p)
+    def test_utility_operator_skips_longform_operator_sections(self, tmp_path: Path) -> None:
+        p = tmp_path / "utility.prompt.md"
+        p.write_text(_VALID_UTILITY_OPERATOR_PROMPT, encoding="utf-8")
+        problems = lint_prompt(p, explicit_class="operator")
         assert problems == []
 
     def test_all_required_fields_present(self, tmp_path: Path) -> None:
@@ -126,6 +217,43 @@ class TestLintPrompt:
         problems = lint_prompt(p)
         field_problems = [prob for prob in problems if "missing required" in prob]
         assert field_problems == []
+
+    @pytest.mark.parametrize("section", OPERATOR_BASE_REQUIRED_SECTIONS)
+    def test_operator_base_sections_checked(self, tmp_path: Path, section: str) -> None:
+        p = tmp_path / "operator.prompt.md"
+        text = _VALID_OPERATOR_PROMPT.replace(section + "\n", "")
+        p.write_text(text, encoding="utf-8")
+        problems = lint_prompt(p, explicit_class="operator")
+        assert any(section in prob for prob in problems), f"Missing operator section not caught: {section}"
+
+    @pytest.mark.parametrize("section", OPERATOR_LONGFORM_REQUIRED_SECTIONS)
+    def test_operator_longform_sections_checked(self, tmp_path: Path, section: str) -> None:
+        p = tmp_path / "operator.prompt.md"
+        text = _VALID_OPERATOR_PROMPT.replace(section + "\n", "")
+        p.write_text(text, encoding="utf-8")
+        problems = lint_prompt(p, explicit_class="operator")
+        assert any(section in prob for prob in problems), f"Missing operator longform section not caught: {section}"
+
+    def test_operator_requires_execution_protocol(self, tmp_path: Path) -> None:
+        p = tmp_path / "operator.prompt.md"
+        text = _VALID_OPERATOR_PROMPT.replace("## Phase Execution Protocol\n\nExecute the current phase.\n", "")
+        p.write_text(text, encoding="utf-8")
+        problems = lint_prompt(p, explicit_class="operator")
+        assert any("execution section" in prob for prob in problems)
+
+    def test_operator_rejects_workflow_routing(self, tmp_path: Path) -> None:
+        p = tmp_path / "operator.prompt.md"
+        text = _VALID_OPERATOR_PROMPT + "\n## Next Steps\n\nRun programstart-stage-transition next.\n"
+        p.write_text(text, encoding="utf-8")
+        problems = lint_prompt(p, explicit_class="operator")
+        assert any("must not include workflow routing" in prob for prob in problems)
+
+    def test_unrecognized_frontmatter_field_reported(self, tmp_path: Path) -> None:
+        p = tmp_path / "badfield.prompt.md"
+        text = _VALID_PROMPT.replace('agent: "agent"', 'agent: "agent"\nowner: test')
+        p.write_text(text, encoding="utf-8")
+        problems = lint_prompt(p)
+        assert any("unrecognized frontmatter field 'owner'" in prob for prob in problems)
 
 
 class TestMain:
@@ -179,11 +307,10 @@ class TestMain:
         assert "missing YAML frontmatter" in captured.out
 
 
-# ── P-5: argument-hint enforcement ────────────────────────────────────────────
+# ── Repo-real public prompt coverage ─────────────────────────────────────────
 
-_PROMPTS_DIR = ROOT / ".github" / "prompts"
 _PUBLIC_PROMPTS = [
-    p for p in _PROMPTS_DIR.glob("*.prompt.md") if p.name not in EXEMPT_FILENAMES and not p.name.startswith("internal")
+    ROOT / relative_path for relative_path, prompt_class in PROMPT_CLASS_BY_PATH.items() if prompt_class != "internal"
 ]
 
 
@@ -196,7 +323,7 @@ def test_all_public_prompts_lint_cleanly() -> None:
 
 @pytest.mark.parametrize("prompt_path", _PUBLIC_PROMPTS, ids=lambda p: p.name)
 def test_prompt_has_nonempty_argument_hint(prompt_path: Path) -> None:
-    """Every public .prompt.md MUST have a non-empty argument-hint in its frontmatter."""
+    """Every public workflow or operator prompt MUST have a non-empty argument-hint in its frontmatter."""
     fm = _extract_frontmatter(prompt_path.read_text(encoding="utf-8"))
     assert fm is not None
     hint = fm.get("argument-hint", "")

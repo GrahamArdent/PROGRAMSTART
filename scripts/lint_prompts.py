@@ -1,11 +1,12 @@
 """Lightweight prompt lint for pre-commit.
 
-Checks that `.prompt.md` files have valid YAML frontmatter with the
-required fields and contain the mandatory sections defined in PROMPT_STANDARD.md.
+Checks that public `.prompt.md` files have valid YAML frontmatter and satisfy
+class-aware structural requirements derived from the prompt registry.
 """
 
 from __future__ import annotations
 
+import json
 import re
 import sys
 from pathlib import Path
@@ -14,18 +15,33 @@ REQUIRED_FIELDS = {"description", "name", "agent"}
 OPTIONAL_FIELDS = {"argument-hint", "version", "deprecated"}
 ALLOWED_FIELDS = REQUIRED_FIELDS | OPTIONAL_FIELDS
 
-REQUIRED_SECTIONS = [
+WORKFLOW_REQUIRED_SECTIONS = [
     "## Data Grounding Rule",
     "## Protocol Declaration",
     "## Pre-flight",
     "## Verification Gate",
 ]
 
-# Prompts exempt from structural section checks (utility / non-stage-advancing).
-EXEMPT_FILENAMES = {
-    "audit-process-drift.prompt.md",
-    "product-jit-check.prompt.md",
-}
+OPERATOR_BASE_REQUIRED_SECTIONS = [
+    "## Data Grounding Rule",
+    "## Protocol Declaration",
+    "## Pre-flight",
+]
+
+OPERATOR_LONGFORM_REQUIRED_SECTIONS = [
+    "## Authority Loading",
+    "## Scope Guard",
+    "## Resumption Protocol",
+    "## Verification Gate",
+    "## Completion Rule",
+]
+
+WORKFLOW_ROUTING_SECTION = "## Next Steps"
+WORKFLOW_ROUTING_TOKEN = "stage-transition"
+
+ROOT = Path(__file__).resolve().parents[1]
+PROMPTS_DIR = ROOT / ".github" / "prompts"
+REGISTRY_PATH = ROOT / "config" / "process-registry.json"
 
 
 def _extract_frontmatter(text: str) -> dict[str, str] | None:
@@ -40,11 +56,57 @@ def _extract_frontmatter(text: str) -> dict[str, str] | None:
     return fields
 
 
-def lint_prompt(path: Path) -> list[str]:
+def _load_prompt_registry() -> dict[str, str]:
+    registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+    prompt_registry = registry.get("prompt_registry", {})
+    mapping: dict[str, str] = {}
+
+    for prompt_path in prompt_registry.get("workflow_prompt_files", []):
+        mapping[prompt_path] = "workflow"
+    for prompt_path in prompt_registry.get("operator_prompt_files", []):
+        mapping[prompt_path] = "operator"
+    for prompt_path in prompt_registry.get("internal_prompt_files", []):
+        mapping[prompt_path] = "internal"
+
+    return mapping
+
+
+PROMPT_CLASS_BY_PATH = _load_prompt_registry()
+
+
+def _normalize_prompt_path(path: Path) -> str:
+    try:
+        return path.resolve().relative_to(ROOT).as_posix()
+    except ValueError:
+        return path.as_posix()
+
+
+def _prompt_class(path: Path, explicit_class: str | None = None) -> str:
+    if explicit_class is not None:
+        return explicit_class
+
+    normalized = _normalize_prompt_path(path)
+    if normalized in PROMPT_CLASS_BY_PATH:
+        return PROMPT_CLASS_BY_PATH[normalized]
+    if "internal" in path.parts:
+        return "internal"
+    return "workflow"
+
+
+def _is_utility_operator_prompt(text: str) -> bool:
+    return "UTILITY OPERATOR PROMPT" in text
+
+
+def _has_execution_protocol(text: str) -> bool:
+    return "## Execution Protocol" in text or "## Phase Execution Protocol" in text
+
+
+def lint_prompt(path: Path, explicit_class: str | None = None) -> list[str]:
     problems: list[str] = []
     text = path.read_text(encoding="utf-8")
     fields = _extract_frontmatter(text)
     name = path.name
+    prompt_class = _prompt_class(path, explicit_class)
 
     if fields is None:
         problems.append(f"{name}: missing YAML frontmatter (must start with ---)")
@@ -54,10 +116,31 @@ def lint_prompt(path: Path) -> list[str]:
         if req not in fields or not fields[req]:
             problems.append(f"{name}: missing required frontmatter field '{req}'")
 
-    if name not in EXEMPT_FILENAMES:
-        for section in REQUIRED_SECTIONS:
+    for field in fields:
+        if field not in ALLOWED_FIELDS:
+            problems.append(f"{name}: unrecognized frontmatter field '{field}'")
+
+    if prompt_class == "workflow":
+        for section in WORKFLOW_REQUIRED_SECTIONS:
             if section not in text:
                 problems.append(f"{name}: missing mandatory section '{section}'")
+
+    if prompt_class == "operator":
+        for section in OPERATOR_BASE_REQUIRED_SECTIONS:
+            if section not in text:
+                problems.append(f"{name}: missing mandatory operator section '{section}'")
+
+        if not _is_utility_operator_prompt(text):
+            for section in OPERATOR_LONGFORM_REQUIRED_SECTIONS:
+                if section not in text:
+                    problems.append(f"{name}: missing mandatory operator section '{section}'")
+            if not _has_execution_protocol(text):
+                problems.append(
+                    f"{name}: missing operator execution section '## Execution Protocol' or '## Phase Execution Protocol'"
+                )
+
+        if WORKFLOW_ROUTING_SECTION in text or WORKFLOW_ROUTING_TOKEN in text:
+            problems.append(f"{name}: operator prompts must not include workflow routing to stage transition")
 
     return problems
 
@@ -69,8 +152,7 @@ def main(argv: list[str] | None = None) -> int:
         path = Path(filepath)
         if not path.name.endswith(".prompt.md"):
             continue
-        # Skip internal build prompts
-        if "internal" in path.parts:
+        if _prompt_class(path) == "internal":
             continue
         all_problems.extend(lint_prompt(path))
 

@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 import shutil
 import stat
+import tempfile
 import time
 from pathlib import Path
 
@@ -57,6 +58,25 @@ def workspace_bin(workspace: Path, executable: str) -> str:
     scripts_dir = "Scripts" if os.name == "nt" else "bin"
     suffix = ".exe" if os.name == "nt" else ""
     return str(workspace / ".venv" / scripts_dir / f"{executable}{suffix}")
+
+
+def external_temp_path(env_var: str, default_name: str) -> Path:
+    configured = os.environ.get(env_var, "").strip()
+    if configured:
+        return Path(configured).expanduser().resolve()
+    return (Path(tempfile.gettempdir()) / default_name).resolve()
+
+
+def dashboard_golden_args(expect_userjourney: str) -> list[str]:
+    args = [
+        "python",
+        "scripts/programstart_dashboard_golden.py",
+        "--expect-userjourney",
+        expect_userjourney,
+    ]
+    if os.name == "nt":
+        args.extend(["--max-diff-pixels", "4000"])
+    return args
 
 
 @nox.session(reuse_venv=True)
@@ -129,15 +149,7 @@ def smoke_readonly(session: nox.Session) -> None:
         "--expect-userjourney",
         "attached",
     )
-    if os.name != "nt":
-        session.run(
-            "python",
-            "scripts/programstart_dashboard_golden.py",
-            "--expect-userjourney",
-            "attached",
-        )
-    else:
-        session.log("Skipping dashboard golden screenshots on Windows; baselines are CI/Linux calibrated.")
+    session.run(*dashboard_golden_args("attached"))
 
 
 @nox.session(reuse_venv=True)
@@ -146,7 +158,7 @@ def smoke_isolated(session: nox.Session) -> None:
     install_dev(session)
     session.run("python", "-m", "playwright", "install", "chromium")
 
-    destination = ROOT / ".tmp_nox_bootstrap"
+    destination = external_temp_path("PROGRAMSTART_NOX_BOOTSTRAP_DIR", "programstart_nox_bootstrap")
     if destination.exists():
         remove_tree(destination)
 
@@ -165,11 +177,47 @@ def smoke_isolated(session: nox.Session) -> None:
     session.run("uv", "sync", "--extra", "dev", external=True, env=external_uv)
     session.run("git", "init", "-b", "main", external=True)
     session.run("git", "add", ".", external=True)
+    session.run(
+        "git",
+        "-c",
+        "user.name=PROGRAMSTART Smoke",
+        "-c",
+        "user.email=programstart-smoke@example.invalid",
+        "commit",
+        "--no-verify",
+        "-m",
+        "chore: bootstrap baseline",
+        external=True,
+    )
     bootstrap_python = workspace_bin(destination, "python")
     bootstrap_pre_commit = workspace_bin(destination, "pre-commit")
     bootstrap_programstart = workspace_bin(destination, "programstart")
-    session.run(bootstrap_pre_commit, "run", "--all-files", external=True)
+    bootstrap_skip_env = {**os.environ, "SKIP": "programstart-drift"}
+    session.run(
+        bootstrap_pre_commit,
+        "run",
+        "--all-files",
+        external=True,
+        env=bootstrap_skip_env,
+        success_codes=[0, 1],
+    )
+    session.run("git", "add", ".", external=True)
+    session.run(
+        "git",
+        "-c",
+        "user.name=PROGRAMSTART Smoke",
+        "-c",
+        "user.email=programstart-smoke@example.invalid",
+        "commit",
+        "--no-verify",
+        "-m",
+        "chore: bootstrap hygiene",
+        external=True,
+        success_codes=[0, 1],
+    )
+    session.run(bootstrap_pre_commit, "run", "--all-files", external=True, env=bootstrap_skip_env)
     session.run(bootstrap_programstart, "validate", "--check", "all", external=True)
+    session.run(bootstrap_programstart, "drift", external=True)
     session.run(
         bootstrap_python,
         "scripts/programstart_cli_smoke.py",
@@ -185,16 +233,10 @@ def smoke_isolated(session: nox.Session) -> None:
         "absent",
         external=True,
     )
-    if os.name != "nt":
-        session.run(
-            bootstrap_python,
-            "scripts/programstart_dashboard_golden.py",
-            "--expect-userjourney",
-            "absent",
-            external=True,
-        )
-    else:
-        session.log("Skipping bootstrapped dashboard golden screenshots on Windows; baselines are CI/Linux calibrated.")
+    bootstrap_golden_args = [bootstrap_python, "scripts/programstart_dashboard_golden.py", "--expect-userjourney", "absent"]
+    if os.name == "nt":
+        bootstrap_golden_args.extend(["--max-diff-pixels", "4000"])
+    session.run(*bootstrap_golden_args, external=True)
     session.chdir(ROOT)
     session.run(
         "python",
@@ -202,7 +244,7 @@ def smoke_isolated(session: nox.Session) -> None:
         "--workspace",
         str(ROOT),
         "--dest-root",
-        ".tmp_nox_factory_smoke",
+        str(external_temp_path("PROGRAMSTART_NOX_FACTORY_DIR", "programstart_nox_factory_smoke")),
     )
     session.chdir(ROOT)
 

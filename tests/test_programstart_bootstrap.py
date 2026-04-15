@@ -18,6 +18,21 @@ from scripts import programstart_bootstrap as bootstrap
 
 def _minimal_registry(tmp_path: Path) -> dict:
     return {
+        "prompt_generation": {
+            "artifact_root": "outputs/generated-prompts",
+            "managed_stage_prompts": [
+                {"stage": "feasibility", "path": "outputs/generated-prompts/feasibility.prompt.md"}
+            ],
+        },
+        "prompt_registry": {
+            "workflow_prompt_files": [".github/prompts/workflow.prompt.md"],
+            "operator_prompt_files": [".github/prompts/operator.prompt.md"],
+            "internal_prompt_files": [".github/prompts/internal/hidden.prompt.md"],
+        },
+        "prompt_authority": {
+            ".github/prompts/workflow.prompt.md": {"authority_files": ["docs/index.md"]},
+            ".github/prompts/operator.prompt.md": {"authority_files": ["docs/index.md"]},
+        },
         "systems": {
             "programbuild": {
                 "control_files": ["PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md"],
@@ -32,8 +47,19 @@ def _minimal_registry(tmp_path: Path) -> dict:
             },
         },
         "workspace": {
-            "bootstrap_assets": [],
+            "generated_repo_prompt_policy": {
+                "allowed_prompt_classes": ["workflow"],
+                "support_files": [".github/prompts/PROMPT_STANDARD.md"],
+            },
+            "bootstrap_assets": [
+                ".github/prompts/workflow.prompt.md",
+                ".github/prompts/operator.prompt.md",
+                ".github/prompts/PROMPT_STANDARD.md",
+                ".github/prompts/OPERATOR_PROMPT_STANDARD.md",
+                "docs/index.md",
+            ],
         },
+        "workflow_guidance": {"operator": {"maintenance_and_remediation": {"prompts": [".github/prompts/operator.prompt.md"]}}},
     }
 
 
@@ -108,13 +134,58 @@ def test_stamp_bootstrapped_registry_writes_correct_fields(tmp_path: Path) -> No
     config = tmp_path / "config"
     config.mkdir()
     registry_path = config / "process-registry.json"
-    registry_path.write_text(json.dumps({"workspace": {}, "validation": {}, "integrity": {}}), encoding="utf-8")
+    registry_path.write_text(json.dumps(_minimal_registry(tmp_path) | {"validation": {}, "integrity": {}}), encoding="utf-8")
     bootstrap.stamp_bootstrapped_registry(tmp_path, project_name="acme", dry_run=False)
     result = json.loads(registry_path.read_text(encoding="utf-8"))
     assert result["workspace"]["repo_role"] == "project_repo"
     assert result["workspace"]["project_name"] == "acme"
     assert result["workspace"]["source_template_repo"] == "PROGRAMSTART"
     assert result["validation"]["enforce_engineering_ready_in_all"] is True
+    assert ".github/prompts/operator.prompt.md" not in result["workspace"]["bootstrap_assets"]
+    assert ".github/prompts/PROMPT_STANDARD.md" in result["workspace"]["bootstrap_assets"]
+    assert result["prompt_registry"]["workflow_prompt_files"] == [".github/prompts/workflow.prompt.md"]
+    assert result["prompt_registry"]["operator_prompt_files"] == []
+    assert result["prompt_registry"]["internal_prompt_files"] == []
+    assert result["prompt_authority"] == {
+        ".github/prompts/workflow.prompt.md": {"authority_files": ["docs/index.md"]}
+    }
+    assert "prompt_generation" not in result
+    assert result["workflow_guidance"]["operator"] == {}
+
+
+def test_generated_repo_bootstrap_assets_exclude_operator_prompt_files(tmp_path: Path) -> None:
+    registry = _minimal_registry(tmp_path)
+    assets = bootstrap.generated_repo_bootstrap_assets(registry)
+    assert ".github/prompts/workflow.prompt.md" in assets
+    assert ".github/prompts/PROMPT_STANDARD.md" in assets
+    assert ".github/prompts/operator.prompt.md" not in assets
+    assert ".github/prompts/OPERATOR_PROMPT_STANDARD.md" not in assets
+
+
+def test_generated_repo_prompt_registry_excludes_userjourney_prompts(tmp_path: Path) -> None:
+    registry = _minimal_registry(tmp_path)
+    registry["prompt_registry"]["workflow_prompt_files"].append(".github/prompts/shape-uj-ux-surfaces.prompt.md")
+    registry["workflow_guidance"]["userjourney"] = {
+        "phase_2": {"prompts": [".github/prompts/shape-uj-ux-surfaces.prompt.md"]}
+    }
+
+    result = bootstrap.generated_repo_prompt_registry(registry)
+
+    assert ".github/prompts/workflow.prompt.md" in result["workflow_prompt_files"]
+    assert ".github/prompts/shape-uj-ux-surfaces.prompt.md" not in result["workflow_prompt_files"]
+
+
+def test_generated_repo_prompt_registry_can_include_userjourney_prompts_when_requested(tmp_path: Path) -> None:
+    registry = _minimal_registry(tmp_path)
+    registry["prompt_registry"]["workflow_prompt_files"].append(".github/prompts/shape-uj-ux-surfaces.prompt.md")
+    registry["workflow_guidance"]["userjourney"] = {
+        "phase_2": {"prompts": [".github/prompts/shape-uj-ux-surfaces.prompt.md"]}
+    }
+
+    result = bootstrap.generated_repo_prompt_registry_for_mode(registry, include_userjourney=True)
+
+    assert ".github/prompts/workflow.prompt.md" in result["workflow_prompt_files"]
+    assert ".github/prompts/shape-uj-ux-surfaces.prompt.md" in result["workflow_prompt_files"]
 
 
 # ── sanitize_bootstrapped_secrets_baseline ────────────────────────────────────

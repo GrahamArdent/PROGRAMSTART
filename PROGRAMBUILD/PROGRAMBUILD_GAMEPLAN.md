@@ -26,7 +26,7 @@ Without this, execution drifts into:
 
 1. Start at the top. Do not skip ahead.
 2. At each step, use the exact inputs listed. Do not substitute from memory.
-3. Run the Challenge Gate at every transition. It is built into the sequence.
+3. Run the Challenge Gate at every transition. It is built into the sequence, and `programstart advance` now blocks if the gate is missing or records a blocking result.
 4. Run the Cross-Stage Validation at the steps where it appears. It catches contradictions that the Challenge Gate cannot.
 5. If a step fails validation, do not proceed. Fix the failure, then re-run.
 
@@ -63,7 +63,7 @@ Steps:
 
 ### Stage 0: Inputs And Mode Selection
 
-**Challenge Gate:** Run `PROGRAMBUILD_CHALLENGE_GATE.md` (Idea Intake → Stage 0).
+**Challenge Gate:** Run `PROGRAMBUILD_CHALLENGE_GATE.md` (Idea Intake → Stage 0), then advance with structured gate evidence.
 **Inputs:** Idea Intake output.
 **Reference file:** `PROGRAMBUILD.md` Section 2 (Inputs).
 
@@ -80,6 +80,7 @@ Steps:
 3. Decide variant: lite, product, or enterprise.
 4. Decide whether USERJOURNEY/ is needed (only if real onboarding/consent/activation exists).
 5. Record all three decisions in DECISION_LOG.md.
+6. Advance with the gate result recorded, for example: `programstart advance --system programbuild --gate-result clear`.
 ```
 
 **Validation before proceeding:**

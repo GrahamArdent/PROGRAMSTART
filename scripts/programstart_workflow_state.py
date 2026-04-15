@@ -11,6 +11,7 @@ from typing import Any, cast
 try:
     from . import programstart_drift_check, programstart_validate
     from .programstart_common import (
+        challenge_gate_record_from_log,
         clr_bold,
         clr_cyan,
         clr_dim,
@@ -29,13 +30,13 @@ try:
         workflow_entry_key,
         workflow_state_path,
         workflow_steps,
-        workspace_path,
     )
 except ImportError:  # pragma: no cover - standalone script execution fallback
     import programstart_drift_check
     import programstart_validate
 
     from programstart_common import (
+        challenge_gate_record_from_log,
         clr_bold,
         clr_cyan,
         clr_dim,
@@ -54,7 +55,6 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
         workflow_entry_key,
         workflow_state_path,
         workflow_steps,
-        workspace_path,
     )
 
 
@@ -74,44 +74,41 @@ def print_state(system: str, state: dict[str, Any], active_step: str) -> None:
         print(f"- {name}: {status_color(str(status))}{suffix}{clr_cyan(marker)}")
 
 
-def _check_challenge_gate_log(active_step: str) -> str | None:
-    """Return a warning message if no Challenge Gate log entry covers *active_step* as 'From Stage'.
+def _challenge_gate_record_from_args(
+    active_step: str,
+    next_step: str | None,
+    gate_result: str,
+    gate_date: str,
+    gate_notes: str,
+) -> dict[str, Any]:
+    proceed_map = {"clear": "yes", "warning": "conditional", "blocked": "no"}
+    return {
+        "source": "advance_cli",
+        "from_stage": active_step,
+        "to_stage": next_step or "",
+        "date": gate_date,
+        "proceed": proceed_map[gate_result],
+        "result": gate_result,
+        "notes": gate_notes,
+        "checks": {},
+    }
 
-    Returns ``None`` when a matching row is found or the gate file does not exist.
-    """
-    gate_path = workspace_path("PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md")
-    if not gate_path.exists():
-        return None
-    try:
-        text = gate_path.read_text(encoding="utf-8")
-    except OSError:
-        return None
-    # Normalise the step name for fuzzy matching (e.g. "inputs_and_mode_selection" or
-    # "Inputs and Mode Selection" should both match the From Stage column).
-    normalised = active_step.replace("_", " ").lower().strip()
-    in_log_table = False
-    for line in text.splitlines():
-        stripped = line.strip()
-        if stripped.startswith("| From Stage"):
-            in_log_table = True
-            continue
-        if in_log_table and stripped.startswith("|---"):
-            continue
-        if in_log_table and stripped.startswith("|"):
-            # Extract first cell (From Stage).
-            cells = [c.strip() for c in stripped.split("|")]
-            # cells[0] is '' (before first |), cells[1] is From Stage.
-            if len(cells) >= 2:
-                from_stage = cells[1].replace("_", " ").lower().strip()
-                if from_stage == normalised:
-                    return None  # Found a matching row.
-        elif in_log_table and not stripped.startswith("|"):
-            in_log_table = False
-    return (
-        f"No Challenge Gate log entry found for stage '{active_step}'. "
-        "Run the Challenge Gate protocol and record the result before advancing. "
-        "Use --skip-gate-check to bypass this warning."
-    )
+
+def _check_challenge_gate_log(active_step: str) -> str | None:
+    """Return a blocking message when Challenge Gate evidence is missing or fails."""
+    record = challenge_gate_record_from_log(active_step)
+    if record is None:
+        return (
+            f"No Challenge Gate evidence found for stage '{active_step}'. "
+            "Run the Challenge Gate protocol and record the result, or pass --gate-result to programstart advance. "
+            "Use --skip-gate-check to bypass this blocker."
+        )
+    if record.get("result") == "blocked":
+        return (
+            f"Challenge Gate for stage '{active_step}' is blocking (proceed={record.get('proceed') or 'unknown'}). "
+            "Resolve the gate findings before advancing, or use --skip-gate-check only with an explicit DECISION_LOG.md entry."
+        )
+    return None
 
 
 def preflight_problems(
@@ -332,6 +329,21 @@ def main() -> int:
         action="store_true",
         help="Skip cross-stage validation advisory before advancing.",
     )
+    advance_parser.add_argument(
+        "--gate-result",
+        choices=["clear", "warning", "blocked"],
+        help="Structured Challenge Gate result to record for this transition.",
+    )
+    advance_parser.add_argument(
+        "--gate-date",
+        default=date.today().isoformat(),
+        help="Challenge Gate completion date (YYYY-MM-DD).",
+    )
+    advance_parser.add_argument(
+        "--gate-notes",
+        default="",
+        help="Optional structured Challenge Gate notes to persist with the transition.",
+    )
 
     snapshot_parser = subparsers.add_parser("snapshot", help="Save a timestamped copy of current workflow state.")
     snapshot_parser.add_argument("--label", default="", help="Optional label for the snapshot.")
@@ -479,6 +491,7 @@ def main() -> int:
         if str(current_entry.get("status", "planned")) != "in_progress":
             parser.error(f"Active {system} step '{active_step}' is not in_progress")
         current_index = steps.index(active_step)
+        next_step = steps[current_index + 1] if current_index + 1 < len(steps) else None
         dry_run: bool = getattr(args, "dry_run", False)
         if not dry_run and not getattr(args, "skip_preflight", False):
             problems = preflight_problems(registry, system, active_step)
@@ -493,11 +506,24 @@ def main() -> int:
                 print("     If you have genuinely completed this stage and the check is a false positive,")
                 print("     use --skip-preflight and document the reason in DECISION_LOG.md.")
                 return 1
-        # Challenge Gate log check (programbuild only, warning not blocking).
+        gate_record: dict[str, Any] | None = None
         if system == "programbuild" and not getattr(args, "skip_gate_check", False):
-            gate_warning = _check_challenge_gate_log(active_step)
-            if gate_warning:
-                print(clr_yellow(f"⚠  {gate_warning}"))
+            gate_result = str(getattr(args, "gate_result", "") or "")
+            gate_notes = str(getattr(args, "gate_notes", "") or "")
+            gate_date = str(getattr(args, "gate_date", "") or date.today().isoformat())
+            if gate_result:
+                gate_record = _challenge_gate_record_from_args(active_step, next_step, gate_result, gate_date, gate_notes)
+                if gate_record["result"] == "blocked":
+                    print("Advance blocked:")
+                    print("- Structured Challenge Gate result is 'blocked'. Resolve the gate findings before advancing.")
+                    return 1
+            else:
+                gate_warning = _check_challenge_gate_log(active_step)
+                if gate_warning:
+                    print("Advance blocked:")
+                    print(f"- {gate_warning}")
+                    return 1
+                gate_record = challenge_gate_record_from_log(active_step)
         # Content quality advisory (H-2 / W-1, non-blocking).
         quality_warnings = programstart_validate.stage_content_quality_warnings(active_step)
         if quality_warnings:
@@ -513,8 +539,12 @@ def main() -> int:
             )
         if dry_run:
             print(f"[dry-run] Would mark {system} '{active_step}' completed (decision={args.decision!r}, date={args.date!r})")
-            if current_index + 1 < len(steps):
-                next_step = steps[current_index + 1]
+            if gate_record:
+                print(
+                    f"[dry-run] Would record Challenge Gate result={gate_record['result']!r} "
+                    f"(source={gate_record['source']!r}, proceed={gate_record['proceed']!r})"
+                )
+            if next_step:
                 print(f"[dry-run] Would advance {system} from '{active_step}' → '{next_step}'")
             else:
                 print(f"[dry-run] '{active_step}' is the final {system} step — would mark workflow complete")
@@ -527,9 +557,10 @@ def main() -> int:
             "notes": args.notes,
             **({"commit_hash": _commit_hash} if _commit_hash else {}),
         }
+        if gate_record:
+            current_entry["challenge_gate"] = gate_record
         current_index = steps.index(active_step)
-        if current_index + 1 < len(steps):
-            next_step = steps[current_index + 1]
+        if next_step:
             next_entry = cast(dict[str, Any], entries[next_step])
             if str(next_entry.get("status", "planned")) == "planned":
                 next_entry["status"] = "in_progress"
@@ -542,7 +573,7 @@ def main() -> int:
         # H-1: Post-advance sanity check — reload and verify (G-1).
         reloaded = load_workflow_state(registry, system)
         actual_active = workflow_active_step(registry, system, reloaded)
-        expected_active = next_step if current_index + 1 < len(steps) else active_step
+        expected_active = next_step if next_step else active_step
         if actual_active != expected_active:
             print(
                 clr_yellow(

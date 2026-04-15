@@ -8,6 +8,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import tomllib
 import warnings
 from fnmatch import fnmatch
 from pathlib import Path
@@ -119,6 +120,42 @@ def load_registry() -> dict[str, Any]:
             stacklevel=2,
         )
     return data
+
+
+def _pyproject_dependency_surface(payload: bytes) -> tuple[tuple[str, ...], tuple[tuple[str, tuple[str, ...]], ...]]:
+    parsed = tomllib.loads(payload.decode("utf-8"))
+    project = parsed.get("project", {})
+    dependencies = tuple(project.get("dependencies", []) or [])
+    optional = project.get("optional-dependencies", {}) or {}
+    optional_dependencies = tuple(sorted((name, tuple(values)) for name, values in optional.items()))
+    return dependencies, optional_dependencies
+
+
+def pyproject_dependency_sync_required() -> bool:
+    pyproject = workspace_path("pyproject.toml")
+    if not pyproject.exists():
+        return True
+
+    try:
+        current_surface = _pyproject_dependency_surface(pyproject.read_bytes())
+    except (OSError, tomllib.TOMLDecodeError, UnicodeDecodeError):
+        return True
+
+    previous = subprocess.run(
+        ["git", "show", "HEAD:pyproject.toml"],
+        cwd=workspace_path("."),
+        capture_output=True,
+        check=False,
+    )
+    if previous.returncode != 0 or not previous.stdout:
+        return True
+
+    try:
+        previous_surface = _pyproject_dependency_surface(previous.stdout)
+    except (tomllib.TOMLDecodeError, UnicodeDecodeError):
+        return True
+
+    return current_surface != previous_surface
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -276,6 +313,88 @@ def workflow_entry_key(system: str) -> str:
 def workflow_step_files(registry: dict[str, Any], system: str, step: str) -> list[str]:
     config = workflow_state_config(registry, system)
     return list(config.get("step_files", {}).get(step, []))
+
+
+def _normalise_stage_name(value: str) -> str:
+    return value.replace("_", " ").strip().casefold()
+
+
+def _normalise_gate_proceed(value: str) -> str:
+    lowered = value.strip().casefold()
+    if lowered == "yes":
+        return "yes"
+    if lowered == "conditional":
+        return "conditional"
+    if lowered == "no":
+        return "no"
+    return ""
+
+
+def challenge_gate_record_from_log(active_step: str) -> dict[str, Any] | None:
+    gate_path = workspace_path("PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md")
+    if not gate_path.exists():
+        return None
+
+    try:
+        lines = gate_path.read_text(encoding="utf-8").splitlines()
+    except OSError:
+        return None
+
+    in_log_section = False
+    table_lines: list[str] = []
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith("#"):
+            heading = stripped.lstrip("#").strip()
+            if heading == "Challenge Gate Log":
+                in_log_section = True
+                table_lines = []
+                continue
+            if in_log_section:
+                break
+        if in_log_section:
+            if stripped.startswith("|"):
+                table_lines.append(stripped)
+            elif table_lines and stripped:
+                break
+
+    if len(table_lines) < 2:
+        return None
+
+    headers = [cell.strip() for cell in table_lines[0].strip("|").split("|")]
+    excluded_headers = {"From Stage", "To Stage", "Date", "Proceed?", "Notes"}
+    wanted_stage = _normalise_stage_name(active_step)
+    for row in table_lines[2:]:
+        values = [cell.strip() for cell in row.strip("|").split("|")]
+        if len(values) != len(headers):
+            continue
+        entry = dict(zip(headers, values, strict=False))
+        from_stage = _normalise_stage_name(entry.get("From Stage", ""))
+        if from_stage != wanted_stage:
+            continue
+
+        checks = {header: value for header, value in entry.items() if header not in excluded_headers and value}
+        proceed = _normalise_gate_proceed(entry.get("Proceed?", ""))
+        blocking_checks = any("❌" in value for value in checks.values())
+        warning_checks = any("⚠" in value for value in checks.values())
+        result = "clear"
+        if proceed == "no" or blocking_checks:
+            result = "blocked"
+        elif proceed == "conditional" or warning_checks:
+            result = "warning"
+
+        return {
+            "source": "challenge_gate_log",
+            "from_stage": entry.get("From Stage", "").strip(),
+            "to_stage": entry.get("To Stage", "").strip(),
+            "date": entry.get("Date", "").strip(),
+            "proceed": proceed,
+            "result": result,
+            "notes": entry.get("Notes", "").strip(),
+            "checks": checks,
+        }
+
+    return None
 
 
 def metadata_value(text: str, prefix: str) -> str | None:

@@ -8,6 +8,8 @@ informed: []
 
 # 0004. Root-Workspace Smoke Must Be Read-Only
 
+<!-- DEC-001 -->
+
 ## Context and Problem Statement
 
 The dashboard smoke script (`scripts/programstart_dashboard_smoke.py`) exercises 4 POST routes: `uj-phase`, `uj-slice`, `workflow-signoff`, and `workflow-advance`. Three of these perform real filesystem writes — `uj-phase` and `uj-slice` write to `USERJOURNEY/IMPLEMENTATION_TRACKER.md`, and `workflow-signoff` appends timestamped entries to STATE.json's `signoff_history` array. Only `workflow-advance` has dry-run protection. Running dashboard smoke against the live workspace therefore mutates tracked files, producing artifacts that accumulate over repeated runs.

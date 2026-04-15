@@ -45,7 +45,10 @@ uv sync --extra dev
 pre-commit install
 python -m playwright install chromium
 uv run programstart validate --check bootstrap-assets
+uv run --extra dev pyright
 ```
+
+Use `uv run --extra dev pyright` for local type checks. The pyright gate depends on dev-only tooling packages such as `nox`, `playwright`, and `pillow`, so `uv run pyright` is not the truthful command surface.
 
 If you want the tool outside a dev checkout, build and install the wheel:
 

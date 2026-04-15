@@ -3,6 +3,7 @@
 Checks that `.prompt.md` files have valid YAML frontmatter with the
 required fields and contain the mandatory sections defined in PROMPT_STANDARD.md.
 """
+
 from __future__ import annotations
 
 import re

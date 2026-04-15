@@ -140,6 +140,13 @@ def test_registry_pyproject_requirements_sync_rule_exists() -> None:
     )
 
 
+def test_commit_enforcement_alignment_excludes_entire_pre_commit_file() -> None:
+    """Conventional Commits authority must not claim unrelated pre-commit hook edits."""
+    registry = json.loads((ROOT / "config" / "process-registry.json").read_text(encoding="utf-8"))
+    rule = next(rule for rule in registry.get("sync_rules", []) if rule["name"] == "commit_enforcement_alignment")
+    assert ".pre-commit-config.yaml" not in rule["dependent_files"]
+
+
 def test_userjourney_state_keys_subset_of_registry_phases() -> None:
     """Phase keys in the state file must be a subset of registry step_order names."""
     state_path = ROOT / "USERJOURNEY" / "USERJOURNEY_STATE.json"

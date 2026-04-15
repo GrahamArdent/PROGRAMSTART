@@ -36,9 +36,8 @@ repos:
     hooks:
       - id: pyright
         name: pyright
-        entry: pyright
-        language: python
-        additional_dependencies: [pyright>=1.1.403]
+        entry: uv run --extra dev pyright
+        language: system
         pass_filenames: false
         files: ^(scripts/|tests/|noxfile\.py|pyproject\.toml)
 
@@ -84,7 +83,7 @@ repos:
         name: programstart drift check
         entry: uv run programstart drift --strict
         language: system
-        pass_filenames: true
+        pass_filenames: false
         files: ^(PROGRAMBUILD/|USERJOURNEY/|config/process-registry\.json)
 
       - id: prompt-lint

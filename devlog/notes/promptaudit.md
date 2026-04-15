@@ -297,16 +297,16 @@ Kill criteria are the system's most important safety mechanism. They're the expl
 ```
 Stage 0: shape-idea creates KILL_SIGNAL_* entries in IDEA_INTAKE.md
          └── ❌ No check that they were created (Stage 0 creates criteria, no re-check needed)
-         
+
 Stage 1: shape-feasibility transfers KILL_SIGNALs to FEASIBILITY.md kill criteria
          └── ✅ validate_feasibility_criteria() checks ≥3 criteria exist, format correct
-         
+
 Stage 2: shape-research — kill criteria re-check ADDED (Phase D)
          └── ✅ Dedicated "Kill Criteria Re-check" section: re-read FEASIBILITY.md before research work
 
 Stage 3: shape-requirements — kill criteria re-check ADDED (Phase D)
          └── ✅ Dedicated "Kill Criteria Re-check" section: checks if research findings trigger a criterion
-         
+
 Stage 4: shape-architecture — kill criteria re-check ADDED (Phase D)
          └── ✅ Dedicated "Kill Criteria Re-check" section
 
@@ -529,51 +529,51 @@ Concise list of open work after Phase A-I implementation. Each item has an ID th
 
 ### Gap-1: Stage 9 has no shaping prompt — **CLOSED 2026-04-13**
 
-**Stage**: audit_and_drift_control  
-**Resolution**: `shape-audit.prompt.md` created in stage4gameplan Phase D. Follows PROMPT_STANDARD with all 10 mandatory `##` headings. Registered in `process-registry.json` bootstrap_assets and audit_and_drift_control.prompts. Stage 9 exempted from PRODUCT_SHAPE Conditioning in PROMPT_STANDARD §O1.  
+**Stage**: audit_and_drift_control
+**Resolution**: `shape-audit.prompt.md` created in stage4gameplan Phase D. Follows PROMPT_STANDARD with all 10 mandatory `##` headings. Registered in `process-registry.json` bootstrap_assets and audit_and_drift_control.prompts. Stage 9 exempted from PRODUCT_SHAPE Conditioning in PROMPT_STANDARD §O1.
 **Corresponds to**: PA-4 (partial), automation.md Finding 9-A.
 
 ---
 
 ### Gap-2: Output Ordering section missing from all prompts — **CLOSED 2026-04-13**
 
-**Scope**: All 9 shaping prompts  
-**Resolution**: `## Output Ordering` section added to all 9 prompts in stage4gameplan Phase A. Each cites the relevant `sync_rules` entry and lists authority-before-dependent write order.  
+**Scope**: All 9 shaping prompts
+**Resolution**: `## Output Ordering` section added to all 9 prompts in stage4gameplan Phase A. Each cites the relevant `sync_rules` entry and lists authority-before-dependent write order.
 **Corresponds to**: PA-1 (JIT Step 3 partial), PA-6 partial.
 
 ---
 
 ### Gap-3: PROGRAMBUILD.md vs PROGRAMBUILD_CANONICAL.md inconsistency — **CLOSED 2026-04-13**
 
-**Scope**: shape-research, shape-requirements, shape-architecture, shape-scaffold, shape-test-strategy, shape-release-readiness, shape-post-launch-review (Stages 2–10)  
-**Resolution**: Both `PROGRAMBUILD_CANONICAL.md §N` AND `PROGRAMBUILD.md §N` now required in Authority Loading of all 7 affected prompts. Decision recorded in DECISION_LOG.md as DEC-006. CANONICAL provides stage boundaries and required output list; PROGRAMBUILD.md provides procedural protocol for how to do the work.  
+**Scope**: shape-research, shape-requirements, shape-architecture, shape-scaffold, shape-test-strategy, shape-release-readiness, shape-post-launch-review (Stages 2–10)
+**Resolution**: Both `PROGRAMBUILD_CANONICAL.md §N` AND `PROGRAMBUILD.md §N` now required in Authority Loading of all 7 affected prompts. Decision recorded in DECISION_LOG.md as DEC-006. CANONICAL provides stage boundaries and required output list; PROGRAMBUILD.md provides procedural protocol for how to do the work.
 **Corresponds to**: PA-2.
 
 ---
 
 ### Gap-4: shape-release-readiness missing PRODUCT_SHAPE Conditioning — **CLOSED 2026-04-13**
 
-**Scope**: `shape-release-readiness.prompt.md`  
+**Scope**: `shape-release-readiness.prompt.md`
 **Resolution**: `## PRODUCT_SHAPE Conditioning` section added in stage4gameplan Phase C. Added after `## Kill Criteria Re-check` and before `## Protocol`. Also added `--check risk-spikes` to shape-architecture Verification Gate in the same phase (Gap-4a).
 
 ---
 
 ### Gap-5: USERJOURNEY has no shape prompts (22 of 26 files unprotected) — **CLOSED 2026-04-13**
 
-**Scope**: All USERJOURNEY authority and dependent files  
-**Resolution**: Three USERJOURNEY shaping prompts created in stage5gameplan Phase C: `shape-uj-decision-freeze.prompt.md` (phases 0 and 3), `shape-uj-legal-drafts.prompt.md` (phase 1), `shape-uj-ux-surfaces.prompt.md` (phase 2). All follow PROMPT_STANDARD with 10 mandatory `##` sections. Registered in process-registry.json workflow_guidance.userjourney phases and bootstrap_assets.  
+**Scope**: All USERJOURNEY authority and dependent files
+**Resolution**: Three USERJOURNEY shaping prompts created in stage5gameplan Phase C: `shape-uj-decision-freeze.prompt.md` (phases 0 and 3), `shape-uj-legal-drafts.prompt.md` (phase 1), `shape-uj-ux-surfaces.prompt.md` (phase 2). All follow PROMPT_STANDARD with 10 mandatory `##` sections. Registered in process-registry.json workflow_guidance.userjourney phases and bootstrap_assets.
 **Corresponds to**: PA-9, PA-10, automation.md UJ-A, UJ-B.
 
 ---
 
 ### Gap-6: audit-process-drift.prompt.md does not follow PROMPT_STANDARD — **CLOSED 2026-04-13**
 
-**Scope**: `.github/prompts/audit-process-drift.prompt.md`  
+**Scope**: `.github/prompts/audit-process-drift.prompt.md`
 **Resolution**: Reclassified as a utility prompt (stage-agnostic diagnostic, not stage-advancing). Added utility exemption notice, abbreviated Protocol Declaration, and Pre-flight section in stage4gameplan Phase E. Added to exempt list in PROMPT_STANDARD.md and promptingguidelines.md.
 
 ---
 
 ### Gap-7: shape-research has an undocumented `## Notes` section — **CLOSED 2026-04-13**
 
-**Scope**: `shape-research.prompt.md`  
+**Scope**: `shape-research.prompt.md`
 **Resolution**: `## Notes` section removed in stage5gameplan Phase A. Notes content merged into `## Verification Gate` as a blockquote paragraph. `--check research-complete` added to the Verification Gate bash block.

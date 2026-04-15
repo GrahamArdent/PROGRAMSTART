@@ -1,4 +1,5 @@
 """Tests for scripts/lint_prompts.py — prompt YAML frontmatter linter."""
+
 from __future__ import annotations
 
 import sys
@@ -12,7 +13,6 @@ if str(ROOT) not in sys.path:
 
 from scripts.lint_prompts import (
     EXEMPT_FILENAMES,
-    REQUIRED_FIELDS,
     REQUIRED_SECTIONS,
     _extract_frontmatter,
     lint_prompt,
@@ -64,7 +64,7 @@ class TestExtractFrontmatter:
         assert "no_colon_here" not in fields
 
     def test_quoted_values_are_stripped(self) -> None:
-        text = '---\ndescription: "quoted value"\nname: \'single\'\nagent: bare\n---\n'
+        text = "---\ndescription: \"quoted value\"\nname: 'single'\nagent: bare\n---\n"
         fields = _extract_frontmatter(text)
         assert fields is not None
         assert fields["description"] == "quoted value"
@@ -183,15 +183,21 @@ class TestMain:
 
 _PROMPTS_DIR = ROOT / ".github" / "prompts"
 _PUBLIC_PROMPTS = [
-    p
-    for p in _PROMPTS_DIR.glob("*.prompt.md")
-    if p.name not in EXEMPT_FILENAMES and not p.name.startswith("internal")
+    p for p in _PROMPTS_DIR.glob("*.prompt.md") if p.name not in EXEMPT_FILENAMES and not p.name.startswith("internal")
 ]
+
+
+def test_all_public_prompts_lint_cleanly() -> None:
+    problems: list[str] = []
+    for prompt_path in _PUBLIC_PROMPTS:
+        problems.extend(lint_prompt(prompt_path))
+    assert problems == []
 
 
 @pytest.mark.parametrize("prompt_path", _PUBLIC_PROMPTS, ids=lambda p: p.name)
 def test_prompt_has_nonempty_argument_hint(prompt_path: Path) -> None:
     """Every public .prompt.md MUST have a non-empty argument-hint in its frontmatter."""
     fm = _extract_frontmatter(prompt_path.read_text(encoding="utf-8"))
+    assert fm is not None
     hint = fm.get("argument-hint", "")
     assert hint, f"{prompt_path.name}: argument-hint is missing or empty"

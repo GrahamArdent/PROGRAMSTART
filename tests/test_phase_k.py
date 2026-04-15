@@ -1,4 +1,5 @@
 """Phase K tests: CLI features, prompt versioning, file hygiene."""
+
 from __future__ import annotations
 
 import json
@@ -12,14 +13,17 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts.programstart_recommend import list_shapes, KNOWN_SHAPES, main as recommend_main
-from scripts.programstart_doctor import run_checks, main as doctor_main
+from scripts.lint_prompts import lint_prompt
+from scripts.lint_prompts import main as lint_main
+from scripts.programstart_doctor import main as doctor_main
+from scripts.programstart_doctor import run_checks
+from scripts.programstart_drift_check import main as drift_main
+from scripts.programstart_recommend import KNOWN_SHAPES, list_shapes
+from scripts.programstart_recommend import main as recommend_main
 from scripts.programstart_status import main as status_main
 from scripts.programstart_step_guide import main as guide_main
-from scripts.programstart_drift_check import main as drift_main
-from scripts.programstart_validate import validate_file_hygiene, main as validate_main
-from scripts.lint_prompts import lint_prompt, main as lint_main
-
+from scripts.programstart_validate import main as validate_main
+from scripts.programstart_validate import validate_file_hygiene
 
 # ---------------------------------------------------------------------------
 # K-1: --list-shapes
@@ -160,7 +164,12 @@ class TestPromptLint:
 
     def test_lint_missing_required_field(self, tmp_path: Path) -> None:
         bad = tmp_path / "bad.prompt.md"
-        bad.write_text('---\ndescription: "test"\nname: "test"\n---\n## Data Grounding Rule\n## Protocol Declaration\n## Pre-flight\n## Verification Gate\n', encoding="utf-8")
+        bad.write_text(
+            '---\ndescription: "test"\nname: "test"\n---\n'
+            "## Data Grounding Rule\n## Protocol Declaration\n"
+            "## Pre-flight\n## Verification Gate\n",
+            encoding="utf-8",
+        )
         problems = lint_prompt(bad)
         assert any("agent" in p for p in problems)
 
@@ -181,6 +190,21 @@ class TestPromptLint:
         bad.write_text("no frontmatter\n", encoding="utf-8")
         rc = lint_main([str(bad)])
         assert rc == 1
+
+
+class TestPreCommitParity:
+    PRE_COMMIT_CONFIG = ROOT / ".pre-commit-config.yaml"
+
+    def test_programstart_drift_hook_uses_repo_wide_semantics(self) -> None:
+        text = self.PRE_COMMIT_CONFIG.read_text(encoding="utf-8")
+        expected_block = (
+            "- id: programstart-drift\n"
+            "        name: programstart drift check\n"
+            "        entry: uv run programstart drift --strict\n"
+            "        language: system\n"
+            "        pass_filenames: false\n"
+        )
+        assert expected_block in text
 
 
 # ---------------------------------------------------------------------------
@@ -209,5 +233,6 @@ class TestFileHygiene:
         (tmp_path / "STRAY_FILE.md").write_text("bad", encoding="utf-8")
         monkeypatch.setattr("scripts.programstart_validate.workspace_path", lambda p: tmp_path / p if p == "." else tmp_path / p)
         from scripts.programstart_validate import validate_file_hygiene
+
         problems = validate_file_hygiene({})
         assert any("STRAY_FILE.md" in p for p in problems)

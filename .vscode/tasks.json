@@ -145,7 +145,7 @@
       "label": "PROGRAMSTART: Pyright",
       "type": "shell",
       "command": "uv",
-      "args": ["run", "pyright"],
+      "args": ["run", "--extra", "dev", "pyright"],
       "presentation": { "reveal": "always", "panel": "shared", "clear": true, "group": "test" },
       "group": "test",
       "problemMatcher": []

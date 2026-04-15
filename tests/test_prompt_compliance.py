@@ -25,6 +25,7 @@ Integration tests (non-parametrized):
 UJ bonus tests:
   3 UJ shaping prompts also checked for cross-stage ref, DECISION_LOG, kill criteria.
 """
+
 from __future__ import annotations
 
 import re
@@ -97,72 +98,99 @@ class PromptSpec:
 
 PB_PROMPTS: tuple[PromptSpec, ...] = (
     PromptSpec(
-        "shape-idea.prompt.md", 0,
+        "shape-idea.prompt.md",
+        0,
         ("all",),
-        has_kill_criteria=False, has_product_shape=False,
+        has_kill_criteria=False,
+        has_product_shape=False,
     ),
     PromptSpec(
-        "shape-feasibility.prompt.md", 1,
+        "shape-feasibility.prompt.md",
+        1,
         ("feasibility-criteria",),
-        has_kill_criteria=False, has_product_shape=False,
+        has_kill_criteria=False,
+        has_product_shape=False,
     ),
     PromptSpec(
-        "shape-research.prompt.md", 2,
+        "shape-research.prompt.md",
+        2,
         ("research-complete", "all"),
-        has_kill_criteria=True, has_product_shape=False,
+        has_kill_criteria=True,
+        has_product_shape=False,
     ),
     PromptSpec(
-        "shape-requirements.prompt.md", 3,
+        "shape-requirements.prompt.md",
+        3,
         ("requirements-complete",),
-        has_kill_criteria=True, has_product_shape=True,
+        has_kill_criteria=True,
+        has_product_shape=True,
     ),
     PromptSpec(
-        "shape-architecture.prompt.md", 4,
+        "shape-architecture.prompt.md",
+        4,
         ("architecture-contracts", "risk-spikes", "risk-spikes-resolved"),
-        has_kill_criteria=True, has_product_shape=True,
+        has_kill_criteria=True,
+        has_product_shape=True,
     ),
     PromptSpec(
-        "shape-scaffold.prompt.md", 5,
+        "shape-scaffold.prompt.md",
+        5,
         ("scaffold-complete",),
-        has_kill_criteria=True, has_product_shape=True,
+        has_kill_criteria=True,
+        has_product_shape=True,
     ),
     PromptSpec(
-        "shape-test-strategy.prompt.md", 6,
+        "shape-test-strategy.prompt.md",
+        6,
         ("test-strategy-complete",),
-        has_kill_criteria=True, has_product_shape=True,
+        has_kill_criteria=True,
+        has_product_shape=True,
     ),
     PromptSpec(
-        "shape-release-readiness.prompt.md", 8,
+        "shape-release-readiness.prompt.md",
+        8,
         ("release-ready",),
-        has_kill_criteria=True, has_product_shape=True,
+        has_kill_criteria=True,
+        has_product_shape=True,
     ),
     PromptSpec(
-        "shape-audit.prompt.md", 9,
+        "shape-audit.prompt.md",
+        9,
         ("audit-complete",),
-        has_kill_criteria=True, has_product_shape=False,  # N/A (exempt)
+        has_kill_criteria=True,
+        has_product_shape=False,  # N/A (exempt)
     ),
     PromptSpec(
-        "shape-post-launch-review.prompt.md", 10,
+        "shape-post-launch-review.prompt.md",
+        10,
         ("audit-complete",),
-        has_kill_criteria=False, has_product_shape=False, has_stage_transition=False,
+        has_kill_criteria=False,
+        has_product_shape=False,
+        has_stage_transition=False,
     ),
 )
 
 UJ_PROMPTS: tuple[PromptSpec, ...] = (
     PromptSpec(
-        "shape-uj-decision-freeze.prompt.md", 0,
+        "shape-uj-decision-freeze.prompt.md",
+        0,
         ("authority-sync", "all"),
-        has_kill_criteria=True, has_product_shape=False,
+        has_kill_criteria=True,
+        has_product_shape=False,
     ),
     PromptSpec(
-        "shape-uj-legal-drafts.prompt.md", 1,
+        "shape-uj-legal-drafts.prompt.md",
+        1,
         ("authority-sync", "all"),
-        has_kill_criteria=True, has_product_shape=False,
+        has_kill_criteria=True,
+        has_product_shape=False,
     ),
     PromptSpec(
-        "shape-uj-ux-surfaces.prompt.md", 2,
+        "shape-uj-ux-surfaces.prompt.md",
+        2,
         ("authority-sync", "all"),
-        has_kill_criteria=True, has_product_shape=False,
+        has_kill_criteria=True,
+        has_product_shape=False,
     ),
 )
 
@@ -205,9 +233,7 @@ def _gate_check_values(text: str) -> list[str]:
 def test_jit_step1_protocol_declaration_and_guide(spec: PromptSpec) -> None:
     """Protocol Declaration section present AND 'programstart guide --system programbuild' invoked."""
     text = _text(spec)
-    assert "## Protocol Declaration" in text, (
-        f"{spec.filename}: missing '## Protocol Declaration' section"
-    )
+    assert "## Protocol Declaration" in text, f"{spec.filename}: missing '## Protocol Declaration' section"
     assert "programstart guide --system programbuild" in text, (
         f"{spec.filename}: Pre-flight does not invoke 'programstart guide --system programbuild' (JIT Step 1)"
     )
@@ -224,9 +250,7 @@ def test_jit_step2_preflight_drift_baseline(spec: PromptSpec) -> None:
     """Pre-flight section contains 'uv run programstart drift' in a bash block."""
     text = _text(spec)
     assert "## Pre-flight" in text, f"{spec.filename}: missing '## Pre-flight' section"
-    assert "uv run programstart drift" in text, (
-        f"{spec.filename}: Pre-flight does not run 'programstart drift' (JIT Step 2)"
-    )
+    assert "uv run programstart drift" in text, f"{spec.filename}: Pre-flight does not run 'programstart drift' (JIT Step 2)"
 
 
 # ---------------------------------------------------------------------------
@@ -239,9 +263,7 @@ def test_jit_step2_preflight_drift_baseline(spec: PromptSpec) -> None:
 def test_jit_step3_output_ordering_section(spec: PromptSpec) -> None:
     """## Output Ordering section present (canonical-before-dependent write order)."""
     text = _text(spec)
-    assert "## Output Ordering" in text, (
-        f"{spec.filename}: missing '## Output Ordering' section (JIT Step 3)"
-    )
+    assert "## Output Ordering" in text, f"{spec.filename}: missing '## Output Ordering' section (JIT Step 3)"
 
 
 # ---------------------------------------------------------------------------
@@ -256,12 +278,8 @@ def test_jit_step4_verification_gate_has_validate_and_drift(spec: PromptSpec) ->
     text = _text(spec)
     gate = _gate_body(text)
     assert gate, f"{spec.filename}: missing '## Verification Gate' section (JIT Step 4)"
-    assert "uv run programstart validate" in gate, (
-        f"{spec.filename}: Verification Gate missing 'programstart validate' command"
-    )
-    assert "uv run programstart drift" in gate, (
-        f"{spec.filename}: Verification Gate missing 'programstart drift' command"
-    )
+    assert "uv run programstart validate" in gate, f"{spec.filename}: Verification Gate missing 'programstart validate' command"
+    assert "uv run programstart drift" in gate, f"{spec.filename}: Verification Gate missing 'programstart drift' command"
 
 
 # ---------------------------------------------------------------------------
@@ -276,9 +294,7 @@ _KILL_CRITERIA_PROMPTS = tuple(s for s in PB_PROMPTS if s.has_kill_criteria)
 def test_kill_criteria_recheck_section(spec: PromptSpec) -> None:
     """## Kill Criteria Re-check section present (re-reads FEASIBILITY.md before starting)."""
     text = _text(spec)
-    assert re.search(r"^## Kill Criteria", text, re.MULTILINE), (
-        f"{spec.filename}: missing '## Kill Criteria' section heading"
-    )
+    assert re.search(r"^## Kill Criteria", text, re.MULTILINE), f"{spec.filename}: missing '## Kill Criteria' section heading"
 
 
 # ---------------------------------------------------------------------------
@@ -291,9 +307,7 @@ def test_kill_criteria_recheck_section(spec: PromptSpec) -> None:
 def test_decision_log_mandatory_language(spec: PromptSpec) -> None:
     """## DECISION_LOG section present with 'MUST update' language."""
     text = _text(spec)
-    assert "## DECISION_LOG" in text, (
-        f"{spec.filename}: missing '## DECISION_LOG' section"
-    )
+    assert "## DECISION_LOG" in text, f"{spec.filename}: missing '## DECISION_LOG' section"
     assert re.search(r"MUST\b.{0,80}DECISION_LOG", text, re.IGNORECASE | re.DOTALL), (
         f"{spec.filename}: DECISION_LOG section lacks 'MUST' enforcement language"
     )
@@ -315,9 +329,7 @@ def test_programbuild_md_authority_reference(spec: PromptSpec) -> None:
     text = _text(spec)
     # Allow 0-4 chars between '.md' and '§N' to accommodate the backtick-quoted
     # path variant used in shape-idea and shape-feasibility.
-    assert re.search(r"PROGRAMBUILD\.md.{0,4}§\d+", text), (
-        f"{spec.filename}: no 'PROGRAMBUILD.md §N' reference found"
-    )
+    assert re.search(r"PROGRAMBUILD\.md.{0,4}§\d+", text), f"{spec.filename}: no 'PROGRAMBUILD.md §N' reference found"
 
 
 # ---------------------------------------------------------------------------
@@ -330,9 +342,7 @@ def test_programbuild_md_authority_reference(spec: PromptSpec) -> None:
 def test_data_grounding_rule_section(spec: PromptSpec) -> None:
     """## Data Grounding Rule section present (prompt injection defense)."""
     text = _text(spec)
-    assert "## Data Grounding Rule" in text, (
-        f"{spec.filename}: missing '## Data Grounding Rule' section"
-    )
+    assert "## Data Grounding Rule" in text, f"{spec.filename}: missing '## Data Grounding Rule' section"
 
 
 # ---------------------------------------------------------------------------
@@ -348,9 +358,7 @@ def test_verification_gate_check_values_registered(spec: PromptSpec) -> None:
     found = _gate_check_values(text)
     assert found, f"{spec.filename}: Verification Gate contains no '--check' invocations"
     for value in found:
-        assert value in VALID_CHECKS, (
-            f"{spec.filename}: Verification Gate '--check {value}' is not a registered CLI choice"
-        )
+        assert value in VALID_CHECKS, f"{spec.filename}: Verification Gate '--check {value}' is not a registered CLI choice"
 
 
 # ---------------------------------------------------------------------------
@@ -363,12 +371,9 @@ def test_verification_gate_check_values_registered(spec: PromptSpec) -> None:
 def test_verification_gate_contains_declared_check_values(spec: PromptSpec) -> None:
     """Every check value declared in the PromptSpec appears in the Verification Gate."""
     text = _text(spec)
-    gate = _gate_body(text)
     found = set(_gate_check_values(text))
     for expected in spec.check_values:
-        assert expected in found, (
-            f"{spec.filename}: Verification Gate missing '--check {expected}'"
-        )
+        assert expected in found, f"{spec.filename}: Verification Gate missing '--check {expected}'"
 
 
 # ---------------------------------------------------------------------------
@@ -387,12 +392,8 @@ def test_next_steps_routes_to_stage_transition(spec: PromptSpec) -> None:
     it is excluded from this check (has_stage_transition=False).
     """
     text = _text(spec)
-    assert "## Next Steps" in text, (
-        f"{spec.filename}: missing '## Next Steps' section"
-    )
-    assert "stage-transition" in text, (
-        f"{spec.filename}: Next Steps does not route to 'programstart-stage-transition'"
-    )
+    assert "## Next Steps" in text, f"{spec.filename}: missing '## Next Steps' section"
+    assert "stage-transition" in text, f"{spec.filename}: Next Steps does not route to 'programstart-stage-transition'"
 
 
 # ---------------------------------------------------------------------------
@@ -420,9 +421,7 @@ def test_cross_stage_validation_reference(spec: PromptSpec) -> None:
 def test_sync_rules_cited_in_protocol(spec: PromptSpec) -> None:
     """'sync_rule:' appears in the Protocol ordering note."""
     text = _text(spec)
-    assert "sync_rule:" in text, (
-        f"{spec.filename}: no 'sync_rule:' citation in Protocol ordering note"
-    )
+    assert "sync_rule:" in text, f"{spec.filename}: no 'sync_rule:' citation in Protocol ordering note"
 
 
 # ---------------------------------------------------------------------------
@@ -437,9 +436,7 @@ _PRODUCT_SHAPE_PROMPTS = tuple(s for s in PB_PROMPTS if s.has_product_shape)
 def test_product_shape_conditioning_section(spec: PromptSpec) -> None:
     """## PRODUCT_SHAPE Conditioning section present."""
     text = _text(spec)
-    assert "## PRODUCT_SHAPE Conditioning" in text, (
-        f"{spec.filename}: missing '## PRODUCT_SHAPE Conditioning' section"
-    )
+    assert "## PRODUCT_SHAPE Conditioning" in text, f"{spec.filename}: missing '## PRODUCT_SHAPE Conditioning' section"
 
 
 # ---------------------------------------------------------------------------
@@ -455,25 +452,17 @@ def test_all_gate_check_values_across_all_prompts_are_registered() -> None:
         for value in _gate_check_values(text):
             if value not in VALID_CHECKS:
                 unregistered.append(f"{spec.filename}: --check {value}")
-    assert not unregistered, (
-        "Unregistered --check values found in prompt gates:\n" + "\n".join(unregistered)
-    )
+    assert not unregistered, "Unregistered --check values found in prompt gates:\n" + "\n".join(unregistered)
 
 
 def test_valid_checks_set_matches_validate_argparse_choices() -> None:
     """VALID_CHECKS in this test file matches the argparse choices list in validate.py."""
-    import argparse
-
-    from scripts import programstart_validate as v
-
-    # Build the arg parser and extract actual choices
-    parser = argparse.ArgumentParser()
     # Re-invoke the parser setup by calling main with --help suppressed
     # Instead, grep the choices from source directly via the module attribute
     # We import and introspect the choices list from the module
     source = (ROOT / "scripts" / "programstart_validate.py").read_text(encoding="utf-8")
     # Extract all "…"-quoted values in the choices= list block
-    choices_block_m = re.search(r'choices=\[(.*?)\]', source, re.DOTALL)
+    choices_block_m = re.search(r"choices=\[(.*?)\]", source, re.DOTALL)
     assert choices_block_m, "Could not find choices= block in programstart_validate.py"
     choices_block = choices_block_m.group(1)
     actual_choices = frozenset(re.findall(r'"([^"]+)"', choices_block))
@@ -491,21 +480,13 @@ def test_valid_checks_set_matches_validate_argparse_choices() -> None:
 
 def test_all_pb_prompt_files_exist() -> None:
     """All declared PB shaping prompt files exist on disk."""
-    missing = [
-        spec.filename
-        for spec in PB_PROMPTS
-        if not (PROMPTS_DIR / spec.filename).exists()
-    ]
+    missing = [spec.filename for spec in PB_PROMPTS if not (PROMPTS_DIR / spec.filename).exists()]
     assert not missing, f"Missing PB prompt files: {missing}"
 
 
 def test_all_uj_prompt_files_exist() -> None:
     """All declared UJ shaping prompt files exist on disk."""
-    missing = [
-        spec.filename
-        for spec in UJ_PROMPTS
-        if not (PROMPTS_DIR / spec.filename).exists()
-    ]
+    missing = [spec.filename for spec in UJ_PROMPTS if not (PROMPTS_DIR / spec.filename).exists()]
     assert not missing, f"Missing UJ prompt files: {missing}"
 
 
@@ -555,9 +536,7 @@ def test_every_gate_check_value_is_in_validate_choices() -> None:
 
     assert seen, "No --check values found in any prompt gate"
     unknown = seen - VALID_CHECKS
-    assert not unknown, (
-        f"These --check values appear in prompt gates but are not registered: {sorted(unknown)}"
-    )
+    assert not unknown, f"These --check values appear in prompt gates but are not registered: {sorted(unknown)}"
 
 
 def test_validate_argparse_accepts_all_gate_check_values(monkeypatch) -> None:
@@ -566,7 +545,6 @@ def test_validate_argparse_accepts_all_gate_check_values(monkeypatch) -> None:
     Verifies that following any Verification Gate instruction will not produce an
     'invalid choice' argparse error.
     """
-    import argparse
 
     from scripts.programstart_validate import main as validate_main
 
@@ -589,9 +567,7 @@ def test_validate_argparse_accepts_all_gate_check_values(monkeypatch) -> None:
         except SystemExit as exc:
             # Only acceptable exits: 0 (pass) or 1 (validation failures).
             # Exit code 2 = argparse error (unrecognized choice) — that is a test failure.
-            assert exc.code != 2, (
-                f"'programstart validate --check {check_value}' produced argparse error (exit 2)"
-            )
+            assert exc.code != 2, f"'programstart validate --check {check_value}' produced argparse error (exit 2)"
         except Exception:
             # Runtime errors (missing files etc.) are acceptable — we're testing dispatch only.
             pass
@@ -616,18 +592,14 @@ def test_uj_prompts_decision_log_mandatory(spec: PromptSpec) -> None:
     """UJ shaping prompts have ## DECISION_LOG section with MUST language."""
     text = _text(spec)
     assert "## DECISION_LOG" in text, f"{spec.filename}: missing '## DECISION_LOG'"
-    assert re.search(r"MUST\b", text, re.IGNORECASE), (
-        f"{spec.filename}: DECISION_LOG section lacks 'MUST' enforcement language"
-    )
+    assert re.search(r"MUST\b", text, re.IGNORECASE), f"{spec.filename}: DECISION_LOG section lacks 'MUST' enforcement language"
 
 
 @pytest.mark.parametrize("spec", UJ_PROMPTS, ids=_names(UJ_PROMPTS))
 def test_uj_prompts_kill_criteria_recheck(spec: PromptSpec) -> None:
     """UJ shaping prompts have ## Kill Criteria Re-check section."""
     text = _text(spec)
-    assert re.search(r"^## Kill Criteria", text, re.MULTILINE), (
-        f"{spec.filename}: missing '## Kill Criteria' section heading"
-    )
+    assert re.search(r"^## Kill Criteria", text, re.MULTILINE), f"{spec.filename}: missing '## Kill Criteria' section heading"
 
 
 @pytest.mark.parametrize("spec", UJ_PROMPTS, ids=_names(UJ_PROMPTS))
@@ -635,9 +607,7 @@ def test_uj_prompts_verification_gate_check_values_registered(spec: PromptSpec) 
     """All --check values in UJ Verification Gates are registered CLI choices."""
     text = _text(spec)
     for value in _gate_check_values(text):
-        assert value in VALID_CHECKS, (
-            f"{spec.filename}: '--check {value}' is not a registered CLI choice"
-        )
+        assert value in VALID_CHECKS, f"{spec.filename}: '--check {value}' is not a registered CLI choice"
 
 
 # ---------------------------------------------------------------------------
@@ -649,6 +619,4 @@ def test_promptaudit_matrix_score_reflects_full_coverage() -> None:
     """promptaudit.md score line declares 117/117 (or equivalent full coverage)."""
     audit_path = ROOT / "devlog" / "notes" / "promptaudit.md"
     text = audit_path.read_text(encoding="utf-8")
-    assert "117/117" in text, (
-        "promptaudit.md score line no longer states 117/117 — update after matrix changes"
-    )
+    assert "117/117" in text, "promptaudit.md score line no longer states 117/117 — update after matrix changes"

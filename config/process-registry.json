@@ -560,11 +560,10 @@
       ],
       "dependent_files": [
         "scripts/check_commit_msg.py",
-        ".pre-commit-config.yaml",
         ".gitlint"
       ],
       "require_authority_when_dependents_change": true,
-      "description": "The Conventional Commits instruction file is the authority for commit message rules. Changes to the enforcement script, pre-commit config, or gitlint spec must be consistent with it."
+      "description": "The Conventional Commits instruction file is the authority for commit message rules. Changes to the enforcement script or gitlint spec must be consistent with it. The pre-commit config is intentionally excluded because drift operates at file granularity and unrelated hook edits must not require a commit-policy authority touch."
     },
     {
       "name": "knowledge_base_docs_alignment",

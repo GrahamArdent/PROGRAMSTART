@@ -121,7 +121,7 @@ jobs:
         run: uv run pre-commit run --all-files
 
       - name: Type check
-        run: uv run pyright
+        run: uv run --extra dev pyright
 
       - name: Test suite
         run: uv run pytest --cov-report=term-missing --cov-report=xml
@@ -315,9 +315,24 @@ jobs:
       - name: Factory command dry-run matrix
         shell: bash
         run: |
-          uv run programstart create --dest .tmp_compat_create_cli --project-name COMPAT-CLI --product-shape "CLI tool" --dry-run
-          uv run programstart create --dest .tmp_compat_create_api --project-name COMPAT-API --product-shape "API service" --need rag --need agents --dry-run
-          uv run programstart create --dest .tmp_compat_create_web --project-name COMPAT-WEB --product-shape "web app" --attachment-source USERJOURNEY --dry-run
+          uv run programstart create \
+            --dest .tmp_compat_create_cli \
+            --project-name COMPAT-CLI \
+            --product-shape "CLI tool" \
+            --dry-run
+          uv run programstart create \
+            --dest .tmp_compat_create_api \
+            --project-name COMPAT-API \
+            --product-shape "API service" \
+            --need rag \
+            --need agents \
+            --dry-run
+          uv run programstart create \
+            --dest .tmp_compat_create_web \
+            --project-name COMPAT-WEB \
+            --product-shape "web app" \
+            --attachment-source USERJOURNEY \
+            --dry-run
 
       - name: Dashboard API smoke
         run: uv run python scripts/programstart_dashboard_smoke.py

@@ -293,7 +293,7 @@ If template improvements were proposed, commit the changes to the relevant PROGR
 
 ### O1. PRODUCT_SHAPE Conditioning
 
-**When**: Stages 3+ (requirements, architecture, scaffold, test-strategy, release-readiness)  
+**When**: Stages 3+ (requirements, architecture, scaffold, test-strategy, release-readiness)
 
 Exception: Stage 9 (`shape-audit`) is exempt — an audit reviews all stage outputs and is shape-agnostic by definition.
 **Why**: Different product shapes have different structural requirements. A CLI tool doesn't need route contracts; a web app does. Without shape conditioning, the AI may suggest browser tooling for a CLI project.
@@ -311,15 +311,15 @@ Read `PRODUCT_SHAPE` from `PROGRAMBUILD_KICKOFF_PACKET.md`. Apply only the eleme
 Do not invent elements for shapes that do not need them.
 ```
 
-**Stages that currently have it**: shape-requirements (S3), shape-architecture (S4), shape-scaffold (S5), shape-test-strategy (S6)  
+**Stages that currently have it**: shape-requirements (S3), shape-architecture (S4), shape-scaffold (S5), shape-test-strategy (S6)
 **Gap**: shape-release-readiness (S8) is missing this section (Gap-4 in `promptaudit.md`).
 
 ---
 
 ### O2. Kill Criteria Re-check
 
-**When**: Stages 2+ (research, requirements, architecture, scaffold, test-strategy, release-readiness)  
-**Why**: Kill criteria are defined at Stage 1. They describe conditions under which the project should stop. Without a re-check at each subsequent stage, these conditions are structurally forgotten after Stage 1.  
+**When**: Stages 2+ (research, requirements, architecture, scaffold, test-strategy, release-readiness)
+**Why**: Kill criteria are defined at Stage 1. They describe conditions under which the project should stop. Without a re-check at each subsequent stage, these conditions are structurally forgotten after Stage 1.
 **Not needed for**: Stage 0 (defines criteria, not re-checking), Stage 1 (creates them), Stage 10 (post-launch, criteria no longer blocking though decision confirmations are logged).
 
 **Pattern**:
@@ -337,7 +337,7 @@ with the current state before proceeding — assumptions may have shifted.
 
 ### O3. Entry Criteria Verification
 
-**When**: Stage 7 only (implementation_loop)  
+**When**: Stage 7 only (implementation_loop)
 **Why**: Implementation entry has 4 explicit criteria in `process-registry.json` `implementation_loop.entry_criteria`. Starting implementation before all criteria pass means building on an incomplete design.
 
 **Pattern** (from PROMPT_STANDARD §O3):

@@ -17,6 +17,7 @@ MADRs are used for significant decisions that affect core contracts, workflow ru
 | [0007](0007-clarify-canonical-rule-1-temporal-semantics.md) | Clarify CANONICAL rule 1 temporal semantics | accepted | 2026-04-12 |
 | [0008](0008-cross-cutting-prompts-registry.md) | Cross-cutting prompts registered at workflow_guidance level | accepted | 2026-04-12 |
 | [0009](0009-canonical-section-alignment.md) | Canonical section alignment in shaping prompts | accepted | 2026-04-13 |
+| [0010](0010-unified-cli-kb-diff-rollback.md) | Unified CLI aliases for knowledge-base and state recovery workflows | accepted | 2026-04-14 |
 
 ## Rules
 

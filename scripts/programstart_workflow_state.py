@@ -250,6 +250,24 @@ def list_snapshots(registry: dict[str, Any]) -> list[Path]:
     return sorted(snap_dir.glob("state_*.json"))
 
 
+def _load_live_state_bundle(registry: dict[str, Any]) -> dict[str, Any]:
+    payload: dict[str, Any] = {"systems": {}}
+    for system_name in registry.get("systems", {}):
+        state_path = workflow_state_path(registry, system_name)
+        if state_path.exists():
+            payload["systems"][system_name] = load_json(state_path)
+    return payload
+
+
+def _resolve_rollback_target(registry: dict[str, Any], target: str) -> Path | None:
+    if not target:
+        return None
+    if target == "last":
+        snapshots = list_snapshots(registry)
+        return snapshots[-1] if snapshots else None
+    return Path(target)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Show or update PROGRAMSTART workflow state.")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -321,6 +339,18 @@ def main() -> int:
     diff_parser = subparsers.add_parser("diff", help="Compare two state snapshots or current state vs latest snapshot.")
     diff_parser.add_argument("--old", default="", help="Path to older snapshot (default: latest saved snapshot).")
     diff_parser.add_argument("--new", default="", help="Path to newer snapshot (default: current live state).")
+
+    rollback_parser = subparsers.add_parser("rollback", help="Restore workflow state from a saved snapshot.")
+    rollback_parser.add_argument(
+        "--to",
+        default="",
+        help="Snapshot path to restore from, or 'last' to use the most recent snapshot.",
+    )
+    rollback_parser.add_argument(
+        "--confirm",
+        action="store_true",
+        help="Required safety flag. Rollback will not run without this confirmation.",
+    )
 
     subparsers.add_parser("snapshots", help="List all saved state snapshots.")
 
@@ -398,6 +428,42 @@ def main() -> int:
             print(f"State diff ({old_label} → {new_label}):")
             for c in changes:
                 print(f"  - {c}")
+        return 0
+
+    if args.command == "rollback":
+        if not args.confirm:
+            print("Rollback requires --confirm. Use '--to last --confirm' or specify a snapshot path.")
+            return 1
+
+        target_path = _resolve_rollback_target(registry, args.to)
+        if not args.to:
+            snapshots = list_snapshots(registry)
+            if not snapshots:
+                print("No snapshots available for rollback.")
+                return 1
+            print("Available snapshots:")
+            for snapshot in snapshots:
+                print(f"  {snapshot.name}")
+            print("Specify --to <snapshot-path> or --to last with --confirm to apply rollback.")
+            return 1
+        if target_path is None or not target_path.exists():
+            print(f"Snapshot not found for rollback: {args.to}")
+            return 1
+
+        snapshot_payload = load_json(target_path)
+        systems = cast(dict[str, Any], snapshot_payload.get("systems", {}))
+        if not systems:
+            print(f"Rollback snapshot contains no system state: {target_path}")
+            return 1
+
+        backup_path = snapshot_state(registry, label="pre_rollback")
+        for system_name, system_state in systems.items():
+            if system_name not in registry.get("systems", {}):
+                continue
+            save_workflow_state(registry, system_name, cast(dict[str, Any], system_state))
+
+        print(f"Rollback applied from {target_path}")
+        print(f"Pre-rollback backup saved: {backup_path}")
         return 0
 
     if args.command == "advance":
@@ -480,8 +546,7 @@ def main() -> int:
         if actual_active != expected_active:
             print(
                 clr_yellow(
-                    f"⚠  Post-advance warning: expected active step '{expected_active}' "
-                    f"but state file shows '{actual_active}'"
+                    f"⚠  Post-advance warning: expected active step '{expected_active}' but state file shows '{actual_active}'"
                 ),
                 file=sys.stderr,
             )

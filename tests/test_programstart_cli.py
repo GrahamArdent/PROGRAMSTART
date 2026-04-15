@@ -138,6 +138,42 @@ def test_unified_cli_advance_dispatch(monkeypatch) -> None:
     assert captured == [["programstart advance", "advance", "--system", "programbuild", "--dry-run"]]
 
 
+def test_unified_cli_kb_search_dispatch(monkeypatch) -> None:
+    captured: list[list[str]] = []
+
+    def fake_retrieval_main() -> int:
+        captured.append(sys.argv[:])
+        return 0
+
+    monkeypatch.setattr(programstart_cli.programstart_retrieval, "main", fake_retrieval_main)
+    assert programstart_cli.main(["kb", "search", "architecture"]) == 0
+    assert captured == [["programstart kb", "search", "architecture"]]
+
+
+def test_unified_cli_kb_ask_dispatch(monkeypatch) -> None:
+    captured: list[list[str]] = []
+
+    def fake_retrieval_main() -> int:
+        captured.append(sys.argv[:])
+        return 0
+
+    monkeypatch.setattr(programstart_cli.programstart_retrieval, "main", fake_retrieval_main)
+    assert programstart_cli.main(["kb", "ask", "What is the architecture?"]) == 0
+    assert captured == [["programstart kb", "ask", "What is the architecture?"]]
+
+
+def test_unified_cli_diff_dispatch_translates_from_to(monkeypatch) -> None:
+    captured: list[list[str]] = []
+
+    def fake_workflow_main() -> int:
+        captured.append(sys.argv[:])
+        return 0
+
+    monkeypatch.setattr(programstart_cli.programstart_workflow_state, "main", fake_workflow_main)
+    assert programstart_cli.main(["diff", "--from", "old.json", "--to", "new.json"]) == 0
+    assert captured == [["programstart diff", "diff", "--old", "old.json", "--new", "new.json"]]
+
+
 def test_unified_cli_next_dispatch(monkeypatch) -> None:
     calls: list[tuple[str, list[str]]] = []
 
@@ -256,6 +292,13 @@ def test_unified_cli_next_rejects_extra_args() -> None:
             ["programstart context", "query", "--concern", "activation"],
         ),
         (
+            "kb",
+            "programstart_retrieval",
+            "programstart kb",
+            ["search", "architecture"],
+            ["programstart kb", "search", "architecture"],
+        ),
+        (
             "validate",
             "programstart_validate",
             "programstart validate",
@@ -263,6 +306,13 @@ def test_unified_cli_next_rejects_extra_args() -> None:
             ["programstart validate", "--check", "all"],
         ),
         ("state", "programstart_workflow_state", "programstart state", ["show"], ["programstart state", "show"]),
+        (
+            "diff",
+            "programstart_workflow_state",
+            "programstart diff",
+            ["--old", "a.json", "--new", "b.json"],
+            ["programstart diff", "diff", "--old", "a.json", "--new", "b.json"],
+        ),
         (
             "log",
             "programstart_log",

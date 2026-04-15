@@ -2,7 +2,7 @@
 
 Purpose: Running record of material project decisions, reversals, and rationale.
 Owner: Solo operator
-Last updated: 2026-04-12
+Last updated: 2026-04-14
 Depends on: FEASIBILITY.md, RESEARCH_SUMMARY.md, ARCHITECTURE.md
 Authority: Canonical for project decision history
 
@@ -31,6 +31,7 @@ Authority: Canonical for project decision history
 | DEC-004 | 2026-04-12 | inputs_and_mode_selection | Clarify CANONICAL rule 1 with temporal semantics: code outranks docs retroactively; developers MUST update docs proactively | ACTIVE | — | Solo operator | PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md |
 | DEC-005 | 2026-04-12 | inputs_and_mode_selection | Cross-cutting prompts registered via `cross_cutting_prompts` array at workflow_guidance level, merged by step_guide at display time — avoids polluting every stage's prompts array | ACTIVE | — | Solo operator | config/process-registry.json, scripts/programstart_step_guide.py |
 | DEC-006 | 2026-04-13 | inputs_and_mode_selection | Both `PROGRAMBUILD_CANONICAL.md §N` and `PROGRAMBUILD.md §N` required in shaping prompt Authority Loading — CANONICAL provides stage boundaries and required output list; PROGRAMBUILD.md provides procedural protocol for how to do the work | ACTIVE | — | Solo operator | .github/prompts/shape-*.prompt.md |
+| DEC-007 | 2026-04-14 | inputs_and_mode_selection | Expose retrieval and state snapshot operations through unified CLI aliases (`programstart kb`, `programstart diff`) and require explicit `--confirm` for `programstart state rollback` restores | ACTIVE | — | Solo operator | scripts/programstart_cli.py, scripts/programstart_workflow_state.py, PROGRAMBUILD/ARCHITECTURE.md |
 
 ## Decision Details
 
@@ -82,5 +83,13 @@ Authority: Canonical for project decision history
 - Why: Protocol Declaration tells the AI what authority section to follow, but if that file isn't pre-loaded in Authority Loading, the AI may proceed without reading it. Loading both ensures complete authority coverage.
 - Alternatives considered: Remove Protocol Declaration's PROGRAMBUILD.md reference — weakens the protocol clarity.
 - Consequences: All 7 stage shaping prompts now pre-load both authority files before beginning work.
+
+### DEC-007
+
+- Context: Retrieval commands and snapshot comparison already existed in lower-level script modules, but the unified `programstart` CLI did not expose a first-class `kb` alias or a top-level `diff` alias. State restore capability was also missing, despite existing snapshot infrastructure.
+- Decision: Add `programstart kb search` and `programstart kb ask` as unified CLI aliases over `programstart_retrieval`; add `programstart diff` as a unified CLI alias over workflow-state diff; add `programstart state rollback` that restores from a saved snapshot only when `--confirm` is provided.
+- Why: The unified CLI is the documented operator entry point. Aliases reduce command-surface fragmentation while reusing existing retrieval and state-snapshot logic. Mandatory confirmation on rollback keeps destructive state restoration explicit.
+- Alternatives considered: (1) Keep retrieval and diff only in script-specific CLIs — leaves the unified CLI incomplete. (2) Add interactive rollback selection — increases complexity and is less automation-friendly. (3) Restore without a safety flag — too risky for workflow state.
+- Consequences: Operators can query the knowledge base and compare snapshots entirely through `programstart`. Rollback now creates a pre-rollback snapshot before restoring saved state and refuses to run without explicit confirmation.
 
 ---

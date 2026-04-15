@@ -2,7 +2,7 @@
 
 Purpose: System boundaries, contracts, data ownership, auth model, and technical decisions.
 Owner: Solo operator
-Last updated: 2026-03-31
+Last updated: 2026-04-14
 Depends on: REQUIREMENTS.md, USER_FLOWS.md, RESEARCH_SUMMARY.md
 Authority: Canonical for technical architecture
 
@@ -84,11 +84,15 @@ PROGRAMSTART is a CLI-driven planning automation tool. It has no server, no depl
 | programstart-retrieval search | programstart_retrieval | BM25/hybrid/vector search |
 | programstart-retrieval ask | programstart_retrieval | RAG question answering |
 | programstart-retrieval validate | programstart_retrieval | Pydantic schema validation |
+| programstart kb search | programstart_retrieval | Unified CLI alias for lexical/hybrid/vector knowledge-base search |
+| programstart kb ask | programstart_retrieval | Unified CLI alias for RAG question answering |
 | programstart-context | programstart_context | Context index build |
 | programstart-bootstrap | programstart_bootstrap | Project scaffolding |
 | programstart-validate | programstart_validate | Planning file checks |
 | programstart-status | programstart_status | Stage and blocker summary |
 | programstart-workflow | programstart_workflow_state | State inspection/advancement |
+| programstart diff | programstart_workflow_state | Unified CLI alias for state snapshot comparison |
+| programstart state rollback | programstart_workflow_state | Restore workflow state from a saved snapshot with mandatory confirmation |
 | programstart-drift | programstart_drift_check | Source-of-truth drift detection |
 
 ## Retrieval Pipeline Architecture

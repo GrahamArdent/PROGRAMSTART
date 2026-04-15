@@ -2,7 +2,7 @@
 
 Purpose: Test model, fixture strategy, coverage rules, and endpoint-to-test registry.
 Owner: Solo operator
-Last updated: 2026-03-31
+Last updated: 2026-04-14
 Depends on: REQUIREMENTS.md, USER_FLOWS.md, ARCHITECTURE.md
 Authority: Canonical for quality model
 
@@ -35,6 +35,7 @@ Both rows apply. PROGRAMSTART is a CLI tool that also serves a local dashboard w
 - Tests must not depend on network access or external services. Use monkeypatch or tmp_path fixtures for isolation.
 - New scripts added to `scripts/` must have a corresponding `tests/test_<name>.py` file and be registered in `config/process-registry.json` bootstrap_assets.
 - Prefer testing the function directly over testing via subprocess unless the test specifically validates CLI arg parsing.
+- New unified CLI aliases (for example `programstart kb` and `programstart diff`) must have parser/dispatch coverage in `test_programstart_cli.py`; destructive state commands must also have direct workflow-state safety tests.
 
 ## Component Test Rules
 

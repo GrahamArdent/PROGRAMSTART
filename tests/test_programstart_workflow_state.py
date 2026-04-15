@@ -11,9 +11,16 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts.programstart_common import create_default_workflow_state, load_registry, system_is_optional_and_absent, validate_state_against_schema
+from scripts.programstart_common import (
+    create_default_workflow_state,
+    load_registry,
+    system_is_optional_and_absent,
+    validate_state_against_schema,
+)
 from scripts.programstart_workflow_state import (
     _check_challenge_gate_log,
+    _load_live_state_bundle,
+    _resolve_rollback_target,
     diff_states,
     list_snapshots,
     main,
@@ -785,8 +792,28 @@ def test_main_diff_no_snapshots(tmp_path: Path, capsys, monkeypatch) -> None:
 def test_main_diff_with_explicit_paths(tmp_path: Path, capsys, monkeypatch) -> None:
     old_snap = tmp_path / "old.json"
     new_snap = tmp_path / "new.json"
-    old_snap.write_text(json.dumps({"systems": {"programbuild": {"active_stage": "a", "stages": {"a": {"status": "in_progress", "signoff": {}}}}}}), encoding="utf-8")
-    new_snap.write_text(json.dumps({"systems": {"programbuild": {"active_stage": "b", "stages": {"a": {"status": "completed", "signoff": {"decision": "approved"}}, "b": {"status": "in_progress", "signoff": {}}}}}}), encoding="utf-8")
+    old_snap.write_text(
+        json.dumps(
+            {"systems": {"programbuild": {"active_stage": "a", "stages": {"a": {"status": "in_progress", "signoff": {}}}}}}
+        ),
+        encoding="utf-8",
+    )
+    new_snap.write_text(
+        json.dumps(
+            {
+                "systems": {
+                    "programbuild": {
+                        "active_stage": "b",
+                        "stages": {
+                            "a": {"status": "completed", "signoff": {"decision": "approved"}},
+                            "b": {"status": "in_progress", "signoff": {}},
+                        },
+                    }
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
     monkeypatch.setattr("sys.argv", ["ws", "diff", "--old", str(old_snap), "--new", str(new_snap)])
     result = main()
     out = capsys.readouterr().out
@@ -796,7 +823,12 @@ def test_main_diff_with_explicit_paths(tmp_path: Path, capsys, monkeypatch) -> N
 
 def test_main_diff_no_changes(tmp_path: Path, capsys, monkeypatch) -> None:
     snap = tmp_path / "snap.json"
-    snap.write_text(json.dumps({"systems": {"programbuild": {"active_stage": "a", "stages": {"a": {"status": "in_progress", "signoff": {}}}}}}), encoding="utf-8")
+    snap.write_text(
+        json.dumps(
+            {"systems": {"programbuild": {"active_stage": "a", "stages": {"a": {"status": "in_progress", "signoff": {}}}}}}
+        ),
+        encoding="utf-8",
+    )
     monkeypatch.setattr("sys.argv", ["ws", "diff", "--old", str(snap), "--new", str(snap)])
     result = main()
     out = capsys.readouterr().out
@@ -814,12 +846,13 @@ def test_check_challenge_gate_log_oserror(monkeypatch, tmp_path) -> None:
     gate.parent.mkdir(parents=True)
     gate.write_text("content", encoding="utf-8")
     # Make the file unreadable by replacing read_text on the returned path
-    original_workspace_path_result = gate.parent.parent / "PROGRAMBUILD" / "PROGRAMBUILD_CHALLENGE_GATE.md"
 
     class UnreadablePath:
         """A path-like that exists but raises OSError on read_text."""
+
         def exists(self):
             return True
+
         def read_text(self, encoding="utf-8"):
             raise OSError("disk error")
 
@@ -849,9 +882,7 @@ def test_advance_final_step(capsys, monkeypatch) -> None:
     )
     monkeypatch.setattr("scripts.programstart_workflow_state.preflight_problems", lambda _r, _s, _a=None: [])
     monkeypatch.setattr("scripts.programstart_workflow_state._check_challenge_gate_log", lambda _step: None)
-    monkeypatch.setattr(
-        "scripts.programstart_workflow_state.save_workflow_state", lambda _r, _s, value: saved.update(value)
-    )
+    monkeypatch.setattr("scripts.programstart_workflow_state.save_workflow_state", lambda _r, _s, value: saved.update(value))
     monkeypatch.setattr("sys.argv", ["ws", "advance", "--system", "programbuild"])
     result = main()
     out = capsys.readouterr().out
@@ -896,13 +927,25 @@ def test_set_with_signoff_fields(capsys, monkeypatch) -> None:
         lambda _r, _s: ["feasibility"],
     )
     monkeypatch.setattr("scripts.programstart_workflow_state.workflow_entry_key", lambda _s: "stages")
-    monkeypatch.setattr(
-        "scripts.programstart_workflow_state.save_workflow_state", lambda _r, _s, value: saved.update(value)
-    )
+    monkeypatch.setattr("scripts.programstart_workflow_state.save_workflow_state", lambda _r, _s, value: saved.update(value))
     monkeypatch.setattr(
         "sys.argv",
-        ["ws", "set", "--system", "programbuild", "--step", "feasibility",
-         "--status", "completed", "--decision", "approved", "--date", "2026-04-15", "--notes", "done"],
+        [
+            "ws",
+            "set",
+            "--system",
+            "programbuild",
+            "--step",
+            "feasibility",
+            "--status",
+            "completed",
+            "--decision",
+            "approved",
+            "--date",
+            "2026-04-15",
+            "--notes",
+            "done",
+        ],
     )
     result = main()
     assert result == 0
@@ -927,9 +970,7 @@ def test_set_in_progress_updates_active_stage(capsys, monkeypatch) -> None:
         lambda _r, _s: ["inputs_and_mode_selection", "feasibility"],
     )
     monkeypatch.setattr("scripts.programstart_workflow_state.workflow_entry_key", lambda _s: "stages")
-    monkeypatch.setattr(
-        "scripts.programstart_workflow_state.save_workflow_state", lambda _r, _s, value: saved.update(value)
-    )
+    monkeypatch.setattr("scripts.programstart_workflow_state.save_workflow_state", lambda _r, _s, value: saved.update(value))
     monkeypatch.setattr(
         "sys.argv",
         ["ws", "set", "--system", "programbuild", "--step", "feasibility", "--status", "in_progress"],
@@ -1133,13 +1174,27 @@ def test_diff_command_uses_latest_snapshot_as_old(tmp_path: Path, capsys, monkey
     # Single snapshot — becomes snaps[-1] (the "old" baseline)
     old_snap = snap_dir / "state_20260101T000000Z.json"
     old_snap.write_text(
-        json.dumps({"systems": {"programbuild": {"active_stage": "a", "stages": {"a": {"status": "in_progress", "signoff": {}}}}}}),
+        json.dumps(
+            {"systems": {"programbuild": {"active_stage": "a", "stages": {"a": {"status": "in_progress", "signoff": {}}}}}}
+        ),
         encoding="utf-8",
     )
     # New state file — different from the snapshot
     new_state_file = tmp_path / "new_state.json"
     new_state_file.write_text(
-        json.dumps({"systems": {"programbuild": {"active_stage": "b", "stages": {"a": {"status": "completed", "signoff": {"decision": "approved"}}, "b": {"status": "in_progress", "signoff": {}}}}}}),
+        json.dumps(
+            {
+                "systems": {
+                    "programbuild": {
+                        "active_stage": "b",
+                        "stages": {
+                            "a": {"status": "completed", "signoff": {"decision": "approved"}},
+                            "b": {"status": "in_progress", "signoff": {}},
+                        },
+                    }
+                }
+            }
+        ),
         encoding="utf-8",
     )
     monkeypatch.setattr(
@@ -1160,7 +1215,9 @@ def test_diff_command_loads_current_state_when_no_new_arg(tmp_path: Path, capsys
     snap_dir.mkdir()
     old_snap = snap_dir / "state_20260101T000000Z.json"
     old_snap.write_text(
-        json.dumps({"systems": {"programbuild": {"active_stage": "a", "stages": {"a": {"status": "in_progress", "signoff": {}}}}}}),
+        json.dumps(
+            {"systems": {"programbuild": {"active_stage": "a", "stages": {"a": {"status": "in_progress", "signoff": {}}}}}}
+        ),
         encoding="utf-8",
     )
     state_file = tmp_path / "pb_state.json"
@@ -1178,5 +1235,111 @@ def test_diff_command_loads_current_state_when_no_new_arg(tmp_path: Path, capsys
     )
     monkeypatch.setattr("sys.argv", ["ws", "diff", "--old", str(old_snap)])
     result = main()
+    capsys.readouterr()
+    assert result == 0
+
+
+def test_load_live_state_bundle_reads_existing_system_states(tmp_path: Path, monkeypatch) -> None:
+    registry = load_registry()
+    pb_state = tmp_path / "pb_state.json"
+    uj_state = tmp_path / "uj_state.json"
+    pb_state.write_text(json.dumps({"active_stage": "feasibility"}), encoding="utf-8")
+    uj_state.write_text(json.dumps({"active_phase": "phase_0"}), encoding="utf-8")
+
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workflow_state_path",
+        lambda _reg, system: pb_state if system == "programbuild" else uj_state,
+    )
+
+    payload = _load_live_state_bundle(registry)
+
+    assert payload["systems"]["programbuild"]["active_stage"] == "feasibility"
+    assert payload["systems"]["userjourney"]["active_phase"] == "phase_0"
+
+
+def test_resolve_rollback_target_uses_last_snapshot(tmp_path: Path, monkeypatch) -> None:
+    registry = load_registry()
+    snap_dir = tmp_path / "state-snapshots"
+    snap_dir.mkdir()
+    older = snap_dir / "state_20260101T000000Z.json"
+    newer = snap_dir / "state_20260102T000000Z.json"
+    older.write_text("{}", encoding="utf-8")
+    newer.write_text("{}", encoding="utf-8")
+    monkeypatch.setattr("scripts.programstart_workflow_state.generated_outputs_root", lambda _reg: tmp_path)
+
+    assert _resolve_rollback_target(registry, "last") == newer
+
+
+def test_main_rollback_requires_confirm(capsys, monkeypatch) -> None:
+    monkeypatch.setattr("sys.argv", ["ws", "rollback", "--to", "last"])
+
+    result = main()
+
+    out = capsys.readouterr().out
+    assert result == 1
+    assert "requires --confirm" in out
+
+
+def test_main_rollback_no_snapshots(tmp_path: Path, capsys, monkeypatch) -> None:
+    monkeypatch.setattr("scripts.programstart_workflow_state.generated_outputs_root", lambda _reg: tmp_path)
+    monkeypatch.setattr("sys.argv", ["ws", "rollback", "--to", "last", "--confirm"])
+
+    result = main()
+
+    out = capsys.readouterr().out
+    assert result == 1
+    assert "Snapshot not found" in out
+
+
+def test_main_rollback_lists_snapshots_when_to_omitted(tmp_path: Path, capsys, monkeypatch) -> None:
+    snap_dir = tmp_path / "state-snapshots"
+    snap_dir.mkdir()
+    (snap_dir / "state_20260101T000000Z.json").write_text("{}", encoding="utf-8")
+    monkeypatch.setattr("scripts.programstart_workflow_state.generated_outputs_root", lambda _reg: tmp_path)
+    monkeypatch.setattr("sys.argv", ["ws", "rollback", "--confirm"])
+
+    result = main()
+
+    out = capsys.readouterr().out
+    assert result == 1
+    assert "Available snapshots" in out
+
+
+def test_main_rollback_restores_snapshot_and_creates_backup(tmp_path: Path, capsys, monkeypatch) -> None:
+    target = tmp_path / "target.json"
+    target.write_text(
+        json.dumps(
+            {
+                "systems": {
+                    "programbuild": {
+                        "active_stage": "feasibility",
+                        "stages": {"feasibility": {"status": "in_progress", "signoff": {}}},
+                    },
+                    "userjourney": {"active_phase": "phase_0", "phases": {"phase_0": {"status": "in_progress", "signoff": {}}}},
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    calls: list[tuple[str, str]] = []
+    backup_path = tmp_path / "backup.json"
+    backup_path.write_text("{}", encoding="utf-8")
+
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.snapshot_state",
+        lambda _registry, label="": calls.append(("backup", label)) or backup_path,
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.save_workflow_state",
+        lambda _registry, system, _state: calls.append(("save", system)),
+    )
+    monkeypatch.setattr("sys.argv", ["ws", "rollback", "--to", str(target), "--confirm"])
+
+    result = main()
+
     out = capsys.readouterr().out
     assert result == 0
+    assert calls[0] == ("backup", "pre_rollback")
+    assert ("save", "programbuild") in calls
+    assert ("save", "userjourney") in calls
+    assert "Rollback applied" in out

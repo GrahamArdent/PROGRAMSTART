@@ -2,7 +2,7 @@
 
 Purpose: Project viability, kill criteria, and go/no-go decision.
 Owner: Product Lead
-Last updated: 2026-04-12
+Last updated: 2026-04-14
 Depends on: Program inputs block
 Authority: Canonical for project viability
 
@@ -37,12 +37,13 @@ State assumptions about the *problem*, not the stack. Technology choices belong 
 - assumption
 - assumption
 - assumption
+- Local filesystem snapshots remain available and trustworthy enough to support operator-driven rollback and state diff workflows without adding a remote persistence layer.
 
 ## Top Risks
 
 | Risk | Type | Severity | Notes |
 |---|---|---|---|
-| | business / technical / legal / delivery | high / medium / low | |
+| Workflow rollback could restore stale or unintended state if the operator selects the wrong snapshot. | delivery | low | Mitigated by explicit `--confirm`, human-readable snapshot listing, and automatic pre-rollback backup creation. |
 | | | | |
 | | | | |
 

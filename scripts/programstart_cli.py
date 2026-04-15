@@ -85,6 +85,14 @@ def run_passthrough(main_fn: MainFn, argv0: str, arguments: list[str]) -> int:
         return int(main_fn())
 
 
+def _translate_diff_arguments(arguments: list[str]) -> list[str]:
+    translated: list[str] = []
+    replacements = {"--from": "--old", "--to": "--new"}
+    for argument in arguments:
+        translated.append(replacements.get(argument, argument))
+    return translated
+
+
 def run_next(arguments: list[str]) -> int:
     if arguments:
         raise SystemExit("'next' does not accept additional arguments")
@@ -134,10 +142,18 @@ def dispatch(command: str, arguments: list[str], parser: argparse.ArgumentParser
         return run_passthrough(programstart_context.main, "programstart context", arguments)
     if command == "retrieval":
         return run_passthrough(programstart_retrieval.main, "programstart retrieval", arguments)
+    if command == "kb":
+        return run_passthrough(programstart_retrieval.main, "programstart kb", arguments)
     if command == "state":
         return run_passthrough(programstart_workflow_state.main, "programstart state", arguments)
     if command == "advance":
         return run_passthrough(programstart_workflow_state.main, "programstart advance", ["advance", *arguments])
+    if command == "diff":
+        return run_passthrough(
+            programstart_workflow_state.main,
+            "programstart diff",
+            ["diff", *_translate_diff_arguments(arguments)],
+        )
     if command == "next":
         return run_next(arguments)
     if command == "log":

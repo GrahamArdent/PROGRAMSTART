@@ -31,6 +31,7 @@ dev = [
   "detect-secrets>=1.5.0",
   "mkdocs>=1.6.1",
   "mkdocs-material>=9.7.6",
+  "mutmut>=3.5.0",
   "nox>=2025.10.16",
   "pip-audit>=2.9.0",
   "pillow>=11.2.1",
@@ -128,6 +129,13 @@ reportMissingTypeStubs = false
 addopts = "-ra --strict-markers"
 testpaths = ["tests"]
 
+[tool.mutmut]
+paths_to_mutate = ["scripts/programstart_recommend.py"]
+pytest_add_cli_args_test_selection = ["tests/test_programstart_recommend.py"]
+mutate_only_covered_lines = true
+max_stack_depth = 8
+use_setproctitle = false
+
 [tool.coverage.run]
 branch = true
 source = [
@@ -176,3 +184,8 @@ source = [
 show_missing = true
 skip_covered = false
 fail_under = 90
+
+[dependency-groups]
+dev = [
+    "mutmut>=3.5.0",
+]

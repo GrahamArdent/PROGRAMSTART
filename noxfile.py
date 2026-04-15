@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import os
+import shlex
 import shutil
 import stat
+import subprocess
 import tempfile
 import time
 from pathlib import Path
@@ -77,6 +79,22 @@ def dashboard_golden_args(expect_userjourney: str) -> list[str]:
     if os.name == "nt":
         args.extend(["--max-diff-pixels", "4000"])
     return args
+
+
+def windows_path_to_wsl(path: Path) -> str:
+    drive = path.drive.rstrip(":").lower()
+    tail = path.as_posix()[2:]
+    return f"/mnt/{drive}{tail}"
+
+
+def has_wsl_python_pip() -> bool:
+    result = subprocess.run(
+        ["wsl.exe", "bash", "-lc", "python3 -m pip --version"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    return result.returncode == 0
 
 
 @nox.session(reuse_venv=True)
@@ -274,6 +292,37 @@ def quick(session: nox.Session) -> None:
     """Fast feedback — lint + typecheck only (~10s)."""
     for name in ("lint", "typecheck"):
         session.notify(name)
+
+
+@nox.session(reuse_venv=True)
+def mutation(session: nox.Session) -> None:
+    """Run focused mutation testing for the recommendation engine."""
+    target = session.posargs[0] if session.posargs else "scripts/programstart_recommend.py"
+    if os.name == "nt":
+        if not has_wsl_python_pip():
+            session.error(
+                "Mutation testing requires WSL Python with pip installed. "
+                "In Ubuntu run: sudo apt install python3-pip python3-venv. "
+                "Then install repo dev deps inside WSL and rerun `nox -s mutation`."
+            )
+        repo_root = windows_path_to_wsl(ROOT)
+        quoted_repo_root = shlex.quote(repo_root)
+        quoted_target = shlex.quote(target)
+        session.run(
+            "wsl.exe",
+            "bash",
+            "-lc",
+            (
+                f"cd {quoted_repo_root} && "
+                "python3 -m pip install -e '.[dev]' >/dev/null && "
+                f"python3 -m mutmut run {quoted_target}"
+            ),
+            external=True,
+        )
+        return
+
+    install_dev(session)
+    session.run("mutmut", "run", target)
 
 
 @nox.session(reuse_venv=True)

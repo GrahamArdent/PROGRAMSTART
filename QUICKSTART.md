@@ -52,6 +52,8 @@ Use `uv run --extra dev pyright` for local type checks. The pyright gate depends
 
 `nox -s smoke_readonly` now runs the dashboard browser and golden smoke on both Windows and Linux. Windows smoke uses a higher golden diff budget to absorb Chromium rasterization differences while still checking the normalized shell and signoff modal surfaces.
 
+`nox -s mutation` runs focused `mutmut` coverage for `scripts/programstart_recommend.py`. Because `mutmut` requires fork support, Windows delegates this session through WSL and expects Ubuntu to have `python3-pip` and `python3-venv` installed.
+
 If you want the tool outside a dev checkout, build and install the wheel:
 
 ```powershell
@@ -229,6 +231,7 @@ programstart attach userjourney --source "C:\ PYTHON APPS\PROGRAMSTART\USERJOURN
 | `nox -s quick` | Fast feedback: lint + typecheck only (~10s) |
 | `nox -s gate_safe` | Local pre-merge gate: lint, typecheck, tests, validate, readonly smoke, docs |
 | `nox -s ci` | Full CI-equivalent gate: everything including package and security |
+| `nox -s mutation` | Focused mutation test pass for `scripts/programstart_recommend.py` (Linux or WSL) |
 | `mkdocs build --strict` | Build the searchable docs site |
 
 ---

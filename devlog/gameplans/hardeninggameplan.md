@@ -815,6 +815,10 @@ Update imports in all files that import from `programstart_create`.
 
 #### J-3: Mutation testing (T-5)
 
+**Status**: IN PROGRESS
+**Checkpoint**: Added `mutmut` to the dev dependency set, defined a focused `[tool.mutmut]` configuration for `scripts/programstart_recommend.py`, and added a `nox -s mutation` session that runs directly on Linux and delegates to WSL on Windows.
+**Current blocker**: The active Windows workspace has WSL available, but the Ubuntu environment is missing `python3-pip` and `python3-venv`, so the first real `mutmut run` cannot complete until those system packages are installed.
+
 **Install `mutmut`**: `uv add --dev mutmut`. Run on core modules: `uv run mutmut run --paths-to-mutate=scripts/programstart_recommend.py --no-progress`. Review survivors and add targeted tests.
 
 ---

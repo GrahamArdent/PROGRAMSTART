@@ -186,6 +186,7 @@
       ".github/prompts/product-jit-check.prompt.md",
       ".github/prompts/execute-enhancement-gameplan.prompt.md",
       ".github/prompts/execute-hardening-gameplan.prompt.md",
+      ".github/prompts/execute-gate-gameplan.prompt.md",
       ".github/prompts/PROMPT_STANDARD.md",
       ".github/instructions/conventional-commits.instructions.md",
       ".gitlint",

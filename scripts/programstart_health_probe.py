@@ -231,8 +231,6 @@ def _check_step_order(target_root: Path, registry: dict, system: str, state: dic
         return violations
     active_idx = steps.index(active)
     step_files = config.get("step_files", {})
-    entry_key = _entry_key(system)
-    entries = state.get(entry_key, {})
     for cf in changed_files:
         owning = next((s for s in steps if cf in step_files.get(s, [])), None)
         if not owning:
@@ -542,14 +540,19 @@ def print_report(report: HealthProbeReport) -> None:
         print(f"    Output files:      {sys_report.present_output_files}/{sys_report.total_output_files}")
         if sys_report.checklist_total:
             print(
-                f"    Checklist:         {sys_report.checklist_checked}/{sys_report.checklist_total} ({sys_report.checklist_pct}%)"
+                "    Checklist:         "
+                f"{sys_report.checklist_checked}/{sys_report.checklist_total} "
+                f"({sys_report.checklist_pct}%)"
             )
         print(f"    Completed steps:   {', '.join(sys_report.completed_steps) or 'none'}")
         if sys_report.blocked_steps:
             print(f"    Blocked steps:     {', '.join(sys_report.blocked_steps)}")
         if sys_report.last_signoff_date:
             print(
-                f"    Last signoff:      {sys_report.last_signoff_date} ({sys_report.last_signoff_decision}) — {sys_report.days_since_last_signoff}d ago"
+                "    Last signoff:      "
+                f"{sys_report.last_signoff_date} "
+                f"({sys_report.last_signoff_decision}) - "
+                f"{sys_report.days_since_last_signoff}d ago"
             )
         else:
             print("    Last signoff:      none")

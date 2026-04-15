@@ -247,9 +247,9 @@ def test_cross_system_no_warning_when_uj_not_attached(monkeypatch) -> None:
 # F-1: Stage stale label tests
 # ---------------------------------------------------------------------------
 
+
 def test_stale_label_no_signoffs_returns_empty(monkeypatch) -> None:
     """_stale_label returns '' when there are no signoff dates in the state."""
-    from datetime import date
     from scripts.programstart_common import load_registry
 
     registry = load_registry()
@@ -264,6 +264,7 @@ def test_stale_label_no_signoffs_returns_empty(monkeypatch) -> None:
 def test_stale_label_recent_signoff_returns_empty(monkeypatch) -> None:
     """_stale_label returns '' when last signoff is within the threshold."""
     from datetime import date, timedelta
+
     from scripts.programstart_common import load_registry
 
     registry = load_registry()
@@ -280,6 +281,7 @@ def test_stale_label_recent_signoff_returns_empty(monkeypatch) -> None:
 def test_stale_label_old_signoff_returns_label(monkeypatch) -> None:
     """_stale_label returns '[STALE — N days]' when last signoff exceeds threshold."""
     from datetime import date, timedelta
+
     from scripts.programstart_common import load_registry
 
     registry = load_registry()
@@ -297,6 +299,7 @@ def test_stale_label_old_signoff_returns_label(monkeypatch) -> None:
 def test_stale_label_custom_threshold_via_env(monkeypatch) -> None:
     """PROGRAMSTART_STALE_DAYS env var controls the stale threshold."""
     from datetime import date, timedelta
+
     from scripts.programstart_common import load_registry
 
     registry = load_registry()

@@ -15,7 +15,6 @@ try:
         workflow_active_step,
         workflow_state_config,
         workflow_steps,
-        workspace_path,
     )
 except ImportError:  # pragma: no cover - standalone script execution fallback
     from programstart_common import (
@@ -27,7 +26,6 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
         workflow_active_step,
         workflow_state_config,
         workflow_steps,
-        workspace_path,
     )
 
 

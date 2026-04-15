@@ -10,13 +10,11 @@ dedicated coverage for uncovered branches and edge cases:
   - main() --list-stages without --json (tabular format)
   - main() Output Ordering "." branch (stage with no sync rule)
 """
+
 from __future__ import annotations
 
-import contextlib
-import io
 import sys
 from pathlib import Path
-from unittest.mock import patch
 
 import pytest
 
@@ -24,19 +22,18 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from scripts.programstart_common import load_registry
 from scripts.programstart_prompt_build import (
     AUTO_HEADER,
     _render_body,
     build_prompt,
-    list_stages,
     main,
 )
-from scripts.programstart_common import load_registry
-
 
 # ---------------------------------------------------------------------------
 # build_prompt — explicit registry parameter (covers `if registry is None` False branch)
 # ---------------------------------------------------------------------------
+
 
 class TestBuildPromptWithExplicitRegistry:
     def test_explicit_registry_skips_reload(self) -> None:
@@ -55,6 +52,7 @@ class TestBuildPromptWithExplicitRegistry:
 # ---------------------------------------------------------------------------
 # _render_body — stage with no sync_rules (covers else: lines.append(".\n"))
 # ---------------------------------------------------------------------------
+
 
 class TestRenderBodyNoSyncRules:
     def test_no_rule_name_outputs_period(self) -> None:
@@ -77,6 +75,7 @@ class TestRenderBodyNoSyncRules:
 # _render_body — early stage (id=0): no kill criteria, no shape conditioning
 # ---------------------------------------------------------------------------
 
+
 class TestRenderBodyEarlyStage:
     def test_stage_0_has_no_kill_criteria(self) -> None:
         content = build_prompt("inputs_and_mode_selection")
@@ -94,6 +93,7 @@ class TestRenderBodyEarlyStage:
 # ---------------------------------------------------------------------------
 # _render_body — stages with scripts listed
 # ---------------------------------------------------------------------------
+
 
 class TestRenderBodyWithScripts:
     def test_stage_with_scripts_lists_them(self) -> None:
@@ -113,6 +113,7 @@ class TestRenderBodyWithScripts:
 # ---------------------------------------------------------------------------
 # main() — stdout output (no --output flag) and --list-stages tabular
 # ---------------------------------------------------------------------------
+
 
 class TestMainOutputPaths:
     def test_stdout_output_no_flag(self, capsys: pytest.CaptureFixture) -> None:
@@ -150,11 +151,15 @@ class TestMainOutputPaths:
 # cross-stage-validation reference in all generated prompts
 # ---------------------------------------------------------------------------
 
+
 class TestCrossStageValidationReference:
-    @pytest.mark.parametrize("stage_entry", [
-        pytest.param(stage, id=stage["name"])
-        for stage in load_registry().get("systems", {}).get("programbuild", {}).get("stage_order", [])
-    ])
+    @pytest.mark.parametrize(
+        "stage_entry",
+        [
+            pytest.param(stage, id=stage["name"])
+            for stage in load_registry().get("systems", {}).get("programbuild", {}).get("stage_order", [])
+        ],
+    )
     def test_every_stage_references_cross_stage_validation(self, stage_entry: dict) -> None:
         content = build_prompt(stage_entry["name"])
         assert "programstart-cross-stage-validation" in content, (

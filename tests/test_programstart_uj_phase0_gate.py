@@ -15,9 +15,7 @@ from scripts.programstart_common import load_registry
 from scripts.programstart_workflow_state import preflight_problems
 
 
-def test_uj_phase0_advance_blocked_on_unresolved_questions(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_uj_phase0_advance_blocked_on_unresolved_questions(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """preflight returns problem when OPEN_QUESTIONS has unresolved items at UJ phase_0."""
     uj = tmp_path / "USERJOURNEY"
     uj.mkdir()
@@ -44,9 +42,7 @@ def test_uj_phase0_advance_blocked_on_unresolved_questions(
     assert eng_errors, f"Expected engineering-ready gate error, got: {problems}"
 
 
-def test_uj_phase0_advance_passes_on_resolved_questions(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_uj_phase0_advance_passes_on_resolved_questions(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """No problems when OPEN_QUESTIONS has no numbered items under the decisions heading."""
     uj = tmp_path / "USERJOURNEY"
     uj.mkdir()
@@ -69,16 +65,13 @@ def test_uj_phase0_advance_passes_on_resolved_questions(
     assert eng_errors == [], f"Expected no engineering-ready errors, got: {eng_errors}"
 
 
-def test_uj_non_phase0_advance_not_checked(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_uj_non_phase0_advance_not_checked(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """preflight at phase_1 does not run the engineering-ready gate."""
     uj = tmp_path / "USERJOURNEY"
     uj.mkdir()
     # Put unresolved items that WOULD trigger the gate at phase_0
     (uj / "OPEN_QUESTIONS.md").write_text(
-        "## Remaining Operational And Legal Decisions\n\n"
-        "1. Unresolved item that should not block phase_1.\n",
+        "## Remaining Operational And Legal Decisions\n\n1. Unresolved item that should not block phase_1.\n",
         encoding="utf-8",
     )
 

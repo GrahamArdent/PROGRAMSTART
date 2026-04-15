@@ -21,18 +21,14 @@ def _reqs(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     return pb
 
 
-def _write_requirements(pb: Path, table_rows: list[dict[str, str]] | None = None,
-                         stories: str | None = None) -> None:
+def _write_requirements(pb: Path, table_rows: list[dict[str, str]] | None = None, stories: str | None = None) -> None:
     lines = ["# REQUIREMENTS.md\n"]
     lines.append("## Functional Requirements\n")
     lines.append("| ID | Requirement | Priority | Notes |")
     lines.append("|---|---|---|---|")
     if table_rows:
         for r in table_rows:
-            lines.append(
-                f"| {r.get('ID', '')} | {r.get('Requirement', '')} "
-                f"| {r.get('Priority', '')} | {r.get('Notes', '')} |"
-            )
+            lines.append(f"| {r.get('ID', '')} | {r.get('Requirement', '')} | {r.get('Priority', '')} | {r.get('Notes', '')} |")
     else:
         lines.append("| FR-001 | | P0 | |")
     lines.append("")
@@ -57,12 +53,14 @@ _GOOD_ROWS = [
 
 # --- Missing file ---
 
+
 def test_missing_requirements_file(_reqs: Path) -> None:
     problems = validate_requirements_complete({})
     assert any("REQUIREMENTS.md does not exist" in p for p in problems)
 
 
 # --- Template (no real rows) ---
+
 
 def test_template_no_requirements(_reqs: Path) -> None:
     _write_requirements(_reqs)  # default = template placeholder
@@ -72,6 +70,7 @@ def test_template_no_requirements(_reqs: Path) -> None:
 
 
 # --- Missing priority ---
+
 
 def test_missing_priority(_reqs: Path) -> None:
     rows = [{"ID": "FR-001", "Requirement": "Do something", "Priority": "", "Notes": ""}]
@@ -83,6 +82,7 @@ def test_missing_priority(_reqs: Path) -> None:
 
 # --- Invalid priority ---
 
+
 def test_invalid_priority(_reqs: Path) -> None:
     rows = [{"ID": "FR-001", "Requirement": "Do something", "Priority": "High", "Notes": ""}]
     _write_requirements(_reqs, table_rows=rows)
@@ -92,6 +92,7 @@ def test_invalid_priority(_reqs: Path) -> None:
 
 
 # --- Missing ID ---
+
 
 def test_missing_id(_reqs: Path) -> None:
     rows = [{"ID": "", "Requirement": "Do something", "Priority": "P0", "Notes": ""}]
@@ -103,6 +104,7 @@ def test_missing_id(_reqs: Path) -> None:
 
 # --- Empty acceptance criteria ---
 
+
 def test_empty_acceptance_criteria(_reqs: Path) -> None:
     stories = "### Story 1\n\nAs a user\nI want to do things\nSo that life is good\n\nAcceptance criteria:\n-\n-\n"
     _write_requirements(_reqs, table_rows=_GOOD_ROWS, stories=stories)
@@ -112,6 +114,7 @@ def test_empty_acceptance_criteria(_reqs: Path) -> None:
 
 
 # --- Flow cross-reference ---
+
 
 def test_missing_flow_reference(_reqs: Path) -> None:
     _write_requirements(_reqs, table_rows=_GOOD_ROWS)
@@ -143,6 +146,7 @@ def test_missing_user_flows_file(_reqs: Path) -> None:
 
 
 # --- Clean pass ---
+
 
 def test_fully_filled_no_problems(_reqs: Path) -> None:
     stories = (

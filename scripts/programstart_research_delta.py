@@ -250,7 +250,8 @@ def render_status(report: ResearchStatusReport) -> str:
                 else "last review missing"
             )
             lines.append(
-                f"- {track.track}: {track.status} | owner={track.owner or 'unassigned'} | freshness={track.freshness_days}d | {timing}"
+                f"- {track.track}: {track.status} | owner={track.owner or 'unassigned'} "
+                f"| freshness={track.freshness_days}d | {timing}"
             )
 
     lines.extend(["", "Coverage Domains"])

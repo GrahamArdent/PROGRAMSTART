@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import sys
 from pathlib import Path
 from unittest.mock import patch
@@ -351,12 +352,21 @@ def test_merge_unique_names_deduplicates() -> None:
 def test_matching_decision_rules_by_shape() -> None:
     kb = {
         "decision_rules": [
-            {"title": "Use JWT", "match_product_shapes": ["web app"], "match_needs": [], "match_domains": [],
-             "layer": "auth", "preferred_items": ["JWT"]},
+            {
+                "title": "Use JWT",
+                "match_product_shapes": ["web app"],
+                "match_needs": [],
+                "match_domains": [],
+                "layer": "auth",
+                "preferred_items": ["JWT"],
+            },
         ],
     }
     rules = recommend.matching_decision_rules(
-        product_shape="web app", needs=set(), matched_domains=[], knowledge_base=kb,
+        product_shape="web app",
+        needs=set(),
+        matched_domains=[],
+        knowledge_base=kb,
     )
     assert len(rules) == 1
     assert rules[0]["title"] == "Use JWT"
@@ -365,12 +375,21 @@ def test_matching_decision_rules_by_shape() -> None:
 def test_matching_decision_rules_no_match() -> None:
     kb = {
         "decision_rules": [
-            {"title": "Use JWT", "match_product_shapes": ["mobile app"], "match_needs": [], "match_domains": [],
-             "layer": "auth", "preferred_items": ["JWT"]},
+            {
+                "title": "Use JWT",
+                "match_product_shapes": ["mobile app"],
+                "match_needs": [],
+                "match_domains": [],
+                "layer": "auth",
+                "preferred_items": ["JWT"],
+            },
         ],
     }
     rules = recommend.matching_decision_rules(
-        product_shape="cli tool", needs=set(), matched_domains=[], knowledge_base=kb,
+        product_shape="cli tool",
+        needs=set(),
+        matched_domains=[],
+        knowledge_base=kb,
     )
     assert len(rules) == 0
 
@@ -589,8 +608,17 @@ def test_select_triggered_entries_with_decision_rules() -> None:
     entries = [
         {"name": "FastAPI", "trigger_shapes": ["api service"], "trigger_needs": []},
     ]
-    rules = [{"title": "Use FastAPI", "match_product_shapes": ["api service"], "match_needs": [], "match_domains": [],
-              "target_layers": [], "prefer_items": ["FastAPI"], "avoid_items": []}]
+    rules = [
+        {
+            "title": "Use FastAPI",
+            "match_product_shapes": ["api service"],
+            "match_needs": [],
+            "match_domains": [],
+            "target_layers": [],
+            "prefer_items": ["FastAPI"],
+            "avoid_items": [],
+        }
+    ]
     names, notes, evidence, alts = recommend.select_triggered_entries(
         entries=entries,
         product_shape="api service",
@@ -660,7 +688,9 @@ def test_print_recommendation_full_branches(capsys) -> None:
         api_evidence=[{"name": "Stripe", "score": 7, "reasons": ["payments"]}],
         cli_evidence=[{"name": "uv", "score": 6, "reasons": ["fast installs"]}],
         rule_evidence=[{"title": "Use FastAPI", "because": "typed", "confidence": "high"}],
-        actionability_summary=[{"name": "Vercel", "category": "service", "actionability": "automation-supported", "reason": "API available"}],
+        actionability_summary=[
+            {"name": "Vercel", "category": "service", "actionability": "automation-supported", "reason": "API available"}
+        ],
         alternatives=[{"item": "Django", "category": "stack", "rationale": "monolithic"}],
         service_notes=["Needs API key"],
         cli_notes=["Install via pipx"],
@@ -704,7 +734,7 @@ def test_re_evaluate_project(tmp_path) -> None:
 
 
 def test_load_recommendation_inputs_explicit_shape() -> None:
-    ns = type("NS", (), {"product_shape": "cli tool", "need": ["rag"]})()
+    ns = argparse.Namespace(product_shape="cli tool", need=["rag"])
     with patch.object(recommend, "parse_kickoff_inputs", return_value={}):
         shape, needs = recommend.load_recommendation_inputs(ns)
     assert shape == "cli tool"
@@ -742,11 +772,7 @@ def test_build_actionability_summary_skips_unknown_service_name() -> None:
         service_names=["NONEXISTENT_SERVICE_PHASE_B"],
         api_names=[],
         cli_names=[],
-        knowledge_base={
-            "provisioning_services": [
-                {"name": "other_service", "automation_supported": False}
-            ]
-        },
+        knowledge_base={"provisioning_services": [{"name": "other_service", "automation_supported": False}]},
     )
     names_in_result = [item.get("name") for item in result]
     assert "NONEXISTENT_SERVICE_PHASE_B" not in names_in_result
@@ -960,8 +986,7 @@ def test_integration_patterns_boost_stacks_in_real_kb() -> None:
         attach_userjourney=False,
     )
     pattern_mentioned = any(
-        any("integration pattern" in str(r).lower() for r in item.get("reasons", []))
-        for item in rec.stack_evidence
+        any("integration pattern" in str(r).lower() for r in item.get("reasons", [])) for item in rec.stack_evidence
     )
     assert pattern_mentioned, "Expected at least one stack to mention integration pattern matching"
 
@@ -974,8 +999,7 @@ def test_integration_patterns_do_not_inflate_unrelated_shapes() -> None:
         attach_userjourney=False,
     )
     pattern_mentioned = any(
-        any("integration pattern" in str(r).lower() for r in item.get("reasons", []))
-        for item in rec.stack_evidence
+        any("integration pattern" in str(r).lower() for r in item.get("reasons", [])) for item in rec.stack_evidence
     )
     assert not pattern_mentioned, "Plain CLI tool should not get integration pattern boosts"
 

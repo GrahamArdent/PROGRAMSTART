@@ -94,7 +94,9 @@ jobs:
           ]
           for track in due_tracks:
             body_lines.append(
-              f"- {track['track']} | status={track['status']} | last_review_date={track['last_review_date']} | freshness={track['freshness_days']}d"
+              f"- {track['track']} | status={track['status']} | "
+              f"last_review_date={track['last_review_date']} | "
+              f"freshness={track['freshness_days']}d"
             )
           body_lines.extend(
             [

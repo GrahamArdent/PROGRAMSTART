@@ -220,9 +220,7 @@ def test_drift_check_allows_completed_prior_steps(capsys, monkeypatch) -> None:
 
 
 def test_strict_exits_1_on_notes(capsys, monkeypatch) -> None:
-    monkeypatch.setattr(
-        "sys.argv", ["programstart_drift_check.py", "--strict", "PROGRAMBUILD/PROGRAMBUILD.md"]
-    )
+    monkeypatch.setattr("sys.argv", ["programstart_drift_check.py", "--strict", "PROGRAMBUILD/PROGRAMBUILD.md"])
     monkeypatch.setattr(
         "scripts.programstart_drift_check.load_registry",
         lambda: {
@@ -264,9 +262,7 @@ def test_strict_exits_1_on_notes(capsys, monkeypatch) -> None:
 
 
 def test_strict_exits_0_when_no_notes(capsys, monkeypatch) -> None:
-    monkeypatch.setattr(
-        "sys.argv", ["programstart_drift_check.py", "--strict", "PROGRAMBUILD/PROGRAMBUILD.md"]
-    )
+    monkeypatch.setattr("sys.argv", ["programstart_drift_check.py", "--strict", "PROGRAMBUILD/PROGRAMBUILD.md"])
     monkeypatch.setattr(
         "scripts.programstart_drift_check.load_registry",
         lambda: {"sync_rules": [], "systems": {"programbuild": {}, "userjourney": {"optional": True, "root": "_missing"}}},

@@ -1,7 +1,7 @@
 """Tests for scripts/programstart_doctor.py — environment health checks."""
+
 from __future__ import annotations
 
-import json
 import subprocess
 import sys
 from pathlib import Path
@@ -13,7 +13,6 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-import scripts.programstart_doctor as doctor_mod
 from scripts.programstart_doctor import (
     _check_git_repo,
     _check_playwright,
@@ -37,6 +36,7 @@ class TestCheckPythonVersion:
         ok, msg = _check_python_version()
         # Must contain a dotted version like 3.x.y
         import re
+
         assert re.search(r"\d+\.\d+\.\d+", msg)
 
 
@@ -123,17 +123,13 @@ class TestCheckGitRepo:
     def test_git_dir_present(self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
         git_dir = tmp_path / ".git"
         git_dir.mkdir()
-        monkeypatch.setattr(
-            "scripts.programstart_doctor.workspace_path", lambda name: tmp_path / name
-        )
+        monkeypatch.setattr("scripts.programstart_doctor.workspace_path", lambda name: tmp_path / name)
         ok, msg = _check_git_repo()
         assert ok
         assert "git repo" in msg
 
     def test_git_dir_missing(self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
-        monkeypatch.setattr(
-            "scripts.programstart_doctor.workspace_path", lambda name: tmp_path / name
-        )
+        monkeypatch.setattr("scripts.programstart_doctor.workspace_path", lambda name: tmp_path / name)
         ok, msg = _check_git_repo()
         assert not ok
         assert "missing" in msg
@@ -141,22 +137,16 @@ class TestCheckGitRepo:
 
 class TestCheckRegistrySchema:
     def test_registry_not_found(self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
-        monkeypatch.setattr(
-            "scripts.programstart_doctor.workspace_path", lambda name: tmp_path / name
-        )
+        monkeypatch.setattr("scripts.programstart_doctor.workspace_path", lambda name: tmp_path / name)
         ok, msg = _check_registry_schema()
         assert not ok
         assert "not found" in msg
 
-    def test_schema_file_missing_skips_validation(
-        self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
-    ) -> None:
+    def test_schema_file_missing_skips_validation(self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
         registry = tmp_path / "config" / "process-registry.json"
         registry.parent.mkdir(parents=True)
         registry.write_text('{"version": "1"}', encoding="utf-8")
-        monkeypatch.setattr(
-            "scripts.programstart_doctor.workspace_path", lambda name: tmp_path / name
-        )
+        monkeypatch.setattr("scripts.programstart_doctor.workspace_path", lambda name: tmp_path / name)
         ok, msg = _check_registry_schema()
         assert ok
         assert "schema file missing" in msg
@@ -168,9 +158,7 @@ class TestCheckRegistrySchema:
         schema = tmp_path / "schemas" / "process-registry.schema.json"
         schema.parent.mkdir(parents=True)
         schema.write_text('{"type": "object"}', encoding="utf-8")
-        monkeypatch.setattr(
-            "scripts.programstart_doctor.workspace_path", lambda name: tmp_path / name
-        )
+        monkeypatch.setattr("scripts.programstart_doctor.workspace_path", lambda name: tmp_path / name)
         ok, msg = _check_registry_schema()
         assert ok
         assert "valid JSON" in msg
@@ -182,9 +170,7 @@ class TestCheckRegistrySchema:
         schema = tmp_path / "schemas" / "process-registry.schema.json"
         schema.parent.mkdir(parents=True)
         schema.write_text('{"type": "object"}', encoding="utf-8")
-        monkeypatch.setattr(
-            "scripts.programstart_doctor.workspace_path", lambda name: tmp_path / name
-        )
+        monkeypatch.setattr("scripts.programstart_doctor.workspace_path", lambda name: tmp_path / name)
         ok, msg = _check_registry_schema()
         assert not ok
         assert "parse error" in msg
@@ -192,9 +178,7 @@ class TestCheckRegistrySchema:
 
 class TestCheckStateFiles:
     def test_state_file_missing(self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
-        monkeypatch.setattr(
-            "scripts.programstart_doctor.workspace_path", lambda name: tmp_path / name
-        )
+        monkeypatch.setattr("scripts.programstart_doctor.workspace_path", lambda name: tmp_path / name)
         ok, msg = _check_state_files()
         assert not ok
         assert "missing" in msg
@@ -203,9 +187,7 @@ class TestCheckStateFiles:
         state = tmp_path / "PROGRAMBUILD" / "PROGRAMBUILD_STATE.json"
         state.parent.mkdir(parents=True)
         state.write_text("{invalid json", encoding="utf-8")
-        monkeypatch.setattr(
-            "scripts.programstart_doctor.workspace_path", lambda name: tmp_path / name
-        )
+        monkeypatch.setattr("scripts.programstart_doctor.workspace_path", lambda name: tmp_path / name)
         ok, msg = _check_state_files()
         assert not ok
 
@@ -213,9 +195,7 @@ class TestCheckStateFiles:
         state = tmp_path / "PROGRAMBUILD" / "PROGRAMBUILD_STATE.json"
         state.parent.mkdir(parents=True)
         state.write_text('{"stage": "feasibility"}', encoding="utf-8")
-        monkeypatch.setattr(
-            "scripts.programstart_doctor.workspace_path", lambda name: tmp_path / name
-        )
+        monkeypatch.setattr("scripts.programstart_doctor.workspace_path", lambda name: tmp_path / name)
         ok, msg = _check_state_files()
         assert ok
         assert "valid JSON" in msg
@@ -235,9 +215,7 @@ class TestRunChecks:
 
 
 class TestMain:
-    def test_main_all_pass_returns_zero(
-        self, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture
-    ) -> None:
+    def test_main_all_pass_returns_zero(self, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture) -> None:
         monkeypatch.setattr(
             "scripts.programstart_doctor.run_checks",
             lambda: [(True, "check 1 ok"), (True, "check 2 ok")],
@@ -247,9 +225,7 @@ class TestMain:
         captured = capsys.readouterr()
         assert "All checks passed" in captured.out
 
-    def test_main_some_fail_returns_one(
-        self, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture
-    ) -> None:
+    def test_main_some_fail_returns_one(self, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture) -> None:
         monkeypatch.setattr(
             "scripts.programstart_doctor.run_checks",
             lambda: [(True, "ok"), (False, "something failed")],
@@ -259,9 +235,7 @@ class TestMain:
         captured = capsys.readouterr()
         assert "Some checks failed" in captured.out
 
-    def test_main_prints_each_check(
-        self, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture
-    ) -> None:
+    def test_main_prints_each_check(self, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture) -> None:
         monkeypatch.setattr(
             "scripts.programstart_doctor.run_checks",
             lambda: [(True, "uv ok"), (False, "playwright not found on PATH")],

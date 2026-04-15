@@ -290,11 +290,7 @@ class TestActiveStep:
 
 class TestStepOrder:
     def test_returns_names(self) -> None:
-        registry = {
-            "workflow_state": {
-                "programbuild": {"step_order": [{"name": "a"}, {"name": "b"}]}
-            }
-        }
+        registry = {"workflow_state": {"programbuild": {"step_order": [{"name": "a"}, {"name": "b"}]}}}
         assert _step_order(registry, "programbuild") == ["a", "b"]
 
     def test_handles_string_steps(self) -> None:
@@ -311,7 +307,7 @@ class TestEntryKey:
 
 
 class TestGitChangedFiles:
-    def test_returns_files_from_subprocess(self, monkeypatch: "pytest.MonkeyPatch", tmp_path: Path) -> None:
+    def test_returns_files_from_subprocess(self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
         import subprocess
 
         call_count = 0
@@ -328,7 +324,7 @@ class TestGitChangedFiles:
         assert "file2.md" in result
         assert "file3.md" in result
 
-    def test_handles_subprocess_failure(self, monkeypatch: "pytest.MonkeyPatch", tmp_path: Path) -> None:
+    def test_handles_subprocess_failure(self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
         import subprocess
 
         def fake_run(cmd, **_kw):
@@ -338,7 +334,7 @@ class TestGitChangedFiles:
         result = _git_changed_files(tmp_path)
         assert result == []
 
-    def test_handles_os_error(self, monkeypatch: "pytest.MonkeyPatch", tmp_path: Path) -> None:
+    def test_handles_os_error(self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
         def fake_run(cmd, **_kw):
             raise OSError("git not found")
 
@@ -413,9 +409,7 @@ class TestCheckWorkflowState:
     def test_clean_state(self, tmp_path: Path) -> None:
         pb = tmp_path / "PROGRAMBUILD"
         pb.mkdir()
-        (pb / "STATE.json").write_text(
-            '{"active_stage": "s1", "stages": {"s1": {}, "s2": {}}}', encoding="utf-8"
-        )
+        (pb / "STATE.json").write_text('{"active_stage": "s1", "stages": {"s1": {}, "s2": {}}}', encoding="utf-8")
         registry = {
             "workflow_state": {
                 "programbuild": {
@@ -470,7 +464,7 @@ class TestCheckStepOrder:
 
 
 class TestFilesChangedSinceCommit:
-    def test_returns_count(self, monkeypatch: "pytest.MonkeyPatch", tmp_path: Path) -> None:
+    def test_returns_count(self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
         import subprocess
 
         def fake_run(cmd, **_kw):
@@ -479,7 +473,7 @@ class TestFilesChangedSinceCommit:
         monkeypatch.setattr("subprocess.run", fake_run)
         assert _files_changed_since_commit(tmp_path, "abc123") == 2
 
-    def test_returns_none_on_failure(self, monkeypatch: "pytest.MonkeyPatch", tmp_path: Path) -> None:
+    def test_returns_none_on_failure(self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
         import subprocess
 
         def fake_run(cmd, **_kw):
@@ -488,7 +482,7 @@ class TestFilesChangedSinceCommit:
         monkeypatch.setattr("subprocess.run", fake_run)
         assert _files_changed_since_commit(tmp_path, "abc123") is None
 
-    def test_returns_none_on_timeout(self, monkeypatch: "pytest.MonkeyPatch", tmp_path: Path) -> None:
+    def test_returns_none_on_timeout(self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
         import subprocess
 
         def fake_run(cmd, **_kw):
@@ -683,7 +677,9 @@ class TestPrintReport:
 class TestPrintMultiSummary:
     def test_prints_table(self, capsys) -> None:
         reports = [
-            HealthProbeReport(target="/tmp/a", overall_health="healthy", systems=[SystemHealthReport(system="prog", present=True)]),
+            HealthProbeReport(
+                target="/tmp/a", overall_health="healthy", systems=[SystemHealthReport(system="prog", present=True)]
+            ),
             HealthProbeReport(target="/tmp/b", overall_health="critical", structural_problems=["missing"]),
         ]
         print_multi_summary(reports)
@@ -728,6 +724,6 @@ class TestMain:
     def test_multi_target_text(self, capsys, tmp_path: Path) -> None:
         a = tmp_path / "a"
         a.mkdir()
-        code = main(["--target", str(a), "--target", str(a)])
+        main(["--target", str(a), "--target", str(a)])
         out = capsys.readouterr().out
         assert "Health" in out or "Repo" in out

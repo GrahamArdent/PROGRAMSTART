@@ -12,20 +12,22 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts.programstart_serve import _STATIC_CONTENT_TYPES, _CSP, _load_dashboard_html
+from scripts.programstart_command_registry import CLI_COMMANDS
 from scripts.programstart_prompt_build import (
     AUTO_HEADER,
     build_prompt,
     eject_prompt,
     list_stages,
+)
+from scripts.programstart_prompt_build import (
     main as prompt_build_main,
 )
-from scripts.programstart_command_registry import CLI_COMMANDS
-
+from scripts.programstart_serve import _CSP, _STATIC_CONTENT_TYPES, _load_dashboard_html
 
 # ---------------------------------------------------------------------------
 # L-1: Dashboard static file extraction
 # ---------------------------------------------------------------------------
+
 
 class TestDashboardStaticFiles:
     """Verify the dashboard/ directory contains the extracted static files."""
@@ -50,8 +52,8 @@ class TestDashboardStaticFiles:
 
     def test_index_references_external_assets(self) -> None:
         html = (ROOT / "dashboard" / "index.html").read_text(encoding="utf-8")
-        assert '/static/style.css' in html
-        assert '/static/app.js' in html
+        assert "/static/style.css" in html
+        assert "/static/app.js" in html
 
     def test_index_has_data_root_attribute(self) -> None:
         html = (ROOT / "dashboard" / "index.html").read_text(encoding="utf-8")
@@ -72,6 +74,7 @@ class TestDashboardStaticFiles:
 # ---------------------------------------------------------------------------
 # L-1 continued: static file serving
 # ---------------------------------------------------------------------------
+
 
 class TestStaticFileServing:
     """Verify serve.py has static file serving infrastructure."""
@@ -107,6 +110,7 @@ class TestStaticFileServing:
 # L-2: CSP headers
 # ---------------------------------------------------------------------------
 
+
 class TestCSPHeaders:
     """Verify Content-Security-Policy is configured."""
 
@@ -123,6 +127,7 @@ class TestCSPHeaders:
 # ---------------------------------------------------------------------------
 # L-3: Prompt builder
 # ---------------------------------------------------------------------------
+
 
 class TestPromptBuilder:
     """Verify programstart_prompt_build.py generates valid prompts."""
@@ -187,8 +192,8 @@ class TestPromptBuilder:
         assert result == 1
 
     def test_main_list_stages_json(self) -> None:
-        import io
         import contextlib
+        import io
 
         buf = io.StringIO()
         with contextlib.redirect_stdout(buf):

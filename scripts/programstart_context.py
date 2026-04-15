@@ -8,6 +8,7 @@ import json
 import re
 from pathlib import Path
 from typing import Any
+from datetime import UTC
 
 try:
     from .programstart_command_registry import CLI_COMMANDS, dashboard_allowed_commands
@@ -47,9 +48,9 @@ def _compute_index_version() -> str:
     Uses today's date so the version advances whenever the code is deployed,
     avoiding stale hard-coded date strings (KB-1).
     """
-    from datetime import date, timezone, datetime
+    from datetime import datetime
 
-    return datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    return datetime.now(UTC).strftime("%Y-%m-%d")
 
 
 def default_index_path() -> Path:

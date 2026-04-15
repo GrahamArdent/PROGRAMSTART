@@ -28,11 +28,12 @@ import sys
 import threading
 import webbrowser
 from datetime import date
-from filelock import FileLock
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 from typing import Any, cast
 from urllib.parse import parse_qs, urlparse
+
+from filelock import FileLock
 
 ROOT = Path(__file__).resolve().parents[1]
 PYTHON = sys.executable
@@ -133,6 +134,8 @@ def run_command(command_key: str, extra_args: list[str] | None = None) -> dict[s
         return {"output": "Error: command timed out after 60 seconds", "exit_code": 1}
     output = result.stdout + (f"\nSTDERR:\n{result.stderr}" if result.stderr.strip() else "")
     return {"output": strip_ansi(output.strip()), "exit_code": result.returncode}
+
+
 _SAFE_PATH_RE = re.compile(
     r"^[A-Za-z]:[/\\][A-Za-z0-9 /\\._-]{1,259}$"  # Windows
     r"|^/[A-Za-z0-9 /._-]{1,259}$"  # Unix
@@ -500,7 +503,9 @@ def save_workflow_signoff(system: str, decision: str, signoff_date: str, notes: 
         if len(history) > MAX_SIGNOFF_HISTORY:
             logger.warning(
                 "signoff_history for %s %s exceeded %d entries; oldest trimmed",
-                system, active_step, MAX_SIGNOFF_HISTORY,
+                system,
+                active_step,
+                MAX_SIGNOFF_HISTORY,
             )
             entry["signoff_history"] = history[-MAX_SIGNOFF_HISTORY:]
         save_workflow_state(registry, system, state)
@@ -572,7 +577,9 @@ def advance_workflow_with_signoff(
         if len(history) > MAX_SIGNOFF_HISTORY:
             logger.warning(
                 "signoff_history for %s %s exceeded %d entries; oldest trimmed",
-                system, active_step, MAX_SIGNOFF_HISTORY,
+                system,
+                active_step,
+                MAX_SIGNOFF_HISTORY,
             )
             current_entry["signoff_history"] = history[-MAX_SIGNOFF_HISTORY:]
         if current_index + 1 < len(steps):
@@ -740,7 +747,7 @@ class DashboardHandler(BaseHTTPRequestHandler):
             report = _probe_target(ROOT)
             self._send_json(_asdict(report))
         elif parsed.path.startswith("/static/"):
-            self._serve_static(parsed.path[len("/static/"):])
+            self._serve_static(parsed.path[len("/static/") :])
         else:
             self.send_response(404)
             self.end_headers()

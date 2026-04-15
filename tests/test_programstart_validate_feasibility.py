@@ -8,7 +8,6 @@ import pytest
 
 from scripts.programstart_validate import validate_feasibility_criteria
 
-
 _FEAS_DECISION_LOG = """\
 # DECISION_LOG.md
 
@@ -33,8 +32,7 @@ def _feas(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     return pb
 
 
-def _write_feasibility(pb: Path, kill_criteria: list[str] | None = None,
-                        recommendation: str | None = None) -> None:
+def _write_feasibility(pb: Path, kill_criteria: list[str] | None = None, recommendation: str | None = None) -> None:
     lines = ["# FEASIBILITY.md\n"]
     lines.append("## Kill Criteria\n")
     if kill_criteria is not None:
@@ -63,12 +61,14 @@ _GOOD_CRITERIA = [
 
 # --- Missing file ---
 
+
 def test_missing_feasibility(_feas: Path) -> None:
     problems = validate_feasibility_criteria({})
     assert any("FEASIBILITY.md does not exist" in p for p in problems)
 
 
 # --- Template placeholders ---
+
 
 def test_template_kill_criteria_rejected(_feas: Path) -> None:
     _write_feasibility(_feas)  # default = template placeholders
@@ -84,14 +84,15 @@ def test_template_recommendation_rejected(_feas: Path) -> None:
 
 # --- Insufficient criteria ---
 
+
 def test_fewer_than_3_criteria(_feas: Path) -> None:
-    _write_feasibility(_feas, kill_criteria=_GOOD_CRITERIA[:2],
-                        recommendation="Decision: go")
+    _write_feasibility(_feas, kill_criteria=_GOOD_CRITERIA[:2], recommendation="Decision: go")
     problems = validate_feasibility_criteria({})
     assert any("2 kill criteria found" in p for p in problems)
 
 
 # --- Format check ---
+
 
 def test_bad_format_detected(_feas: Path) -> None:
     criteria = [
@@ -109,40 +110,42 @@ def test_bad_format_detected(_feas: Path) -> None:
 
 # --- Valid recommendation ---
 
+
 def test_go_recommendation_accepted(_feas: Path) -> None:
-    _write_feasibility(_feas, kill_criteria=_GOOD_CRITERIA,
-                        recommendation="Decision: go\n\nReasoning: evidence supports viability.")
+    _write_feasibility(
+        _feas, kill_criteria=_GOOD_CRITERIA, recommendation="Decision: go\n\nReasoning: evidence supports viability."
+    )
     problems = validate_feasibility_criteria({})
     assert problems == []
 
 
 def test_no_go_recommendation_accepted(_feas: Path) -> None:
-    _write_feasibility(_feas, kill_criteria=_GOOD_CRITERIA,
-                        recommendation="Decision: no-go\n\nReasoning: market too small.")
+    _write_feasibility(_feas, kill_criteria=_GOOD_CRITERIA, recommendation="Decision: no-go\n\nReasoning: market too small.")
     problems = validate_feasibility_criteria({})
     assert problems == []
 
 
 def test_limited_spike_accepted(_feas: Path) -> None:
-    _write_feasibility(_feas, kill_criteria=_GOOD_CRITERIA,
-                        recommendation="Decision: limited spike\n\nReasoning: need more data.")
+    _write_feasibility(
+        _feas, kill_criteria=_GOOD_CRITERIA, recommendation="Decision: limited spike\n\nReasoning: need more data."
+    )
     problems = validate_feasibility_criteria({})
     assert problems == []
 
 
 # --- No decision word ---
 
+
 def test_empty_recommendation(_feas: Path) -> None:
-    _write_feasibility(_feas, kill_criteria=_GOOD_CRITERIA,
-                        recommendation="We should think about this more.")
+    _write_feasibility(_feas, kill_criteria=_GOOD_CRITERIA, recommendation="We should think about this more.")
     problems = validate_feasibility_criteria({})
     assert any("no go/no-go decision" in p for p in problems)
 
 
 # --- Clean pass ---
 
+
 def test_fully_filled_no_problems(_feas: Path) -> None:
-    _write_feasibility(_feas, kill_criteria=_GOOD_CRITERIA,
-                        recommendation="Decision: go\n\nAll criteria met.")
+    _write_feasibility(_feas, kill_criteria=_GOOD_CRITERIA, recommendation="Decision: go\n\nAll criteria met.")
     problems = validate_feasibility_criteria({})
     assert problems == []

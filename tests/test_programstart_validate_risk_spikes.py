@@ -52,9 +52,7 @@ def test_no_spike_entries(_patch_workspace: Path) -> None:
 
 def test_spike_without_pass_criteria(_patch_workspace: Path) -> None:
     pb = _patch_workspace
-    text = SPIKE_REGISTER_HEADER + (
-        "| S-001 | ARCHITECTURE | Hypothesis | Prototype in 1 day |  | Pending | TBD |\n"
-    )
+    text = SPIKE_REGISTER_HEADER + ("| S-001 | ARCHITECTURE | Hypothesis | Prototype in 1 day |  | Pending | TBD |\n")
     (pb / "RISK_SPIKES.md").write_text(text, encoding="utf-8")
     problems = validate_risk_spikes({})
     assert any("pass criteria" in p for p in problems)
@@ -62,9 +60,7 @@ def test_spike_without_pass_criteria(_patch_workspace: Path) -> None:
 
 def test_spike_without_method(_patch_workspace: Path) -> None:
     pb = _patch_workspace
-    text = SPIKE_REGISTER_HEADER + (
-        "| S-001 | ARCHITECTURE | Hypothesis |  | Test passes in CI | Pending | TBD |\n"
-    )
+    text = SPIKE_REGISTER_HEADER + ("| S-001 | ARCHITECTURE | Hypothesis |  | Test passes in CI | Pending | TBD |\n")
     (pb / "RISK_SPIKES.md").write_text(text, encoding="utf-8")
     problems = validate_risk_spikes({})
     assert any("method" in p for p in problems)

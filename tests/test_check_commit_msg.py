@@ -13,7 +13,6 @@ if str(ROOT) not in sys.path:
 
 from scripts.check_commit_msg import main, validate
 
-
 # ── validate ───────────────────────────────────────────────────────────────────
 
 
@@ -51,7 +50,7 @@ def test_validate_valid_messages(msg: str) -> None:
     [
         "Merge branch 'main'",
         "WIP: work in progress",
-        "Revert \"feat: something\"",
+        'Revert "feat: something"',
         "chore(release): v1.0.0",
     ],
     ids=["merge", "wip", "revert", "release"],
@@ -132,9 +131,7 @@ def test_commit_types_synced_with_instruction_file() -> None:
 
     from scripts.check_commit_msg import VALID_TYPES
 
-    instruction = (
-        ROOT / ".github" / "instructions" / "conventional-commits.instructions.md"
-    )
+    instruction = ROOT / ".github" / "instructions" / "conventional-commits.instructions.md"
     text = instruction.read_text(encoding="utf-8")
     # Extract types from "| `type` |" markdown rows
     types_from_doc = set(_re.findall(r"^\|\s*`(\w+)`\s*\|", text, _re.MULTILINE))

@@ -457,4 +457,3 @@ def collect_registry_integrity_files(registry: dict[str, Any]) -> list[Path]:
             files.setdefault(relative, path)
 
     return sorted(files.values())
-

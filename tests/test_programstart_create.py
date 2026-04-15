@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+from typing import Any, cast
 from unittest.mock import patch
 from urllib import error as urllib_error
 
@@ -105,7 +106,7 @@ def test_merge_service_names_returns_sorted() -> None:
 
 
 def test_sanitize_connection_uri_removes_password() -> None:
-    uri = "postgresql://user:supersecret@db.example.com:5432/mydb"
+    uri = "postgresql://user:supersecret@db.example.com:5432/mydb"  # pragma: allowlist secret
     result = create.sanitize_connection_uri(uri)
     assert "supersecret" not in result
     assert "user" in result
@@ -126,7 +127,7 @@ def test_sanitize_connection_uri_returns_original_when_no_host() -> None:
 
 
 def test_sanitize_connection_uri_redacts_password_marker() -> None:
-    uri = "postgresql://user:secret@host.io/db"
+    uri = "postgresql://user:secret@host.io/db"  # pragma: allowlist secret
     result = create.sanitize_connection_uri(uri)
     assert ":<set-me>" in result
 
@@ -220,7 +221,11 @@ def test_http_json_request_raises_runtime_on_http_error() -> None:
         hdrs=None,  # type: ignore[arg-type]
         fp=None,  # type: ignore[arg-type]
     )
-    mock_exc.read = lambda: b"token invalid"
+
+    def fake_read(n: int = -1) -> bytes:
+        return b"token invalid"
+
+    cast(Any, mock_exc).read = fake_read
     with patch("scripts.programstart_create.request.urlopen", side_effect=mock_exc):
         with pytest.raises(RuntimeError, match="HTTP 401"):
             create.http_json_request(

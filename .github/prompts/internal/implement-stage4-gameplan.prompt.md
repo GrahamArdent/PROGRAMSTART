@@ -460,7 +460,7 @@ uv run pytest --tb=short -q 2>&1 | Select-Object -Last 5   # no new failures
    ```
 5. Add `audit-process-drift.prompt.md` to the exempt list in `PROMPT_STANDARD.md` line 5. The current text is:
    > Internal build prompts (`implement-gameplan-phase*`, `implement-stage2-gameplan`, `implement-phase-f`, `implement-protocol-alignment`) follow their own Binding Rules format and are exempt from this standard.
-   
+
    Change to add `, `audit-process-drift.prompt.md`` before the closing parenthesis.
 6. Add `audit-process-drift.prompt.md` to the exempt list in `promptingguidelines.md` "What This Document Is For" section. Find the sentence referencing the same 4 exempt prompts and add `audit-process-drift.prompt.md` to the list.
 

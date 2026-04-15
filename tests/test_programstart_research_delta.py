@@ -149,6 +149,7 @@ def test_mark_reviewed_updates_track_and_kb_version(tmp_path: Path, monkeypatch,
 def test_find_track_raises_on_empty_tracks(monkeypatch) -> None:
     """find_track should exit when knowledge base has zero tracks."""
     import pytest
+
     from scripts.programstart_models import KnowledgeBase, ResearchLedger
 
     kb = KnowledgeBase.__new__(KnowledgeBase)
@@ -226,7 +227,15 @@ def test_main_mark_reviewed_without_track() -> None:
 def test_main_fail_on_due_in_template_mode(tmp_path: Path) -> None:
     """--fail-on-due outside --status mode should check after writing template."""
     result = programstart_research_delta.main(
-        ["--track", "Python runtime and packaging", "--date", "2026-04-25", "--output", str(tmp_path / "delta.md"), "--fail-on-due"]
+        [
+            "--track",
+            "Python runtime and packaging",
+            "--date",
+            "2026-04-25",
+            "--output",
+            str(tmp_path / "delta.md"),
+            "--fail-on-due",
+        ]
     )
     # With a date far in the future, tracks should be due
     assert result == 1
@@ -277,9 +286,7 @@ def test_mark_reviewed_rejects_status_combo() -> None:
 
 def test_fail_on_due_in_template_path(capsys) -> None:
     """K-4: --fail-on-due should return 1 in template generation path when tracks are overdue."""
-    result = programstart_research_delta.main(
-        ["--fail-on-due", "--date", "2099-01-01"]
-    )
+    result = programstart_research_delta.main(["--fail-on-due", "--date", "2099-01-01"])
     assert result == 1
 
 

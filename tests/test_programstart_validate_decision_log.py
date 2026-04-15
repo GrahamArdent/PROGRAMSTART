@@ -47,9 +47,7 @@ def test_empty_decision_register(_patch_workspace: Path) -> None:
 
 def test_no_stage_reference(_patch_workspace: Path) -> None:
     pb = _patch_workspace
-    text = DECISION_LOG_HEADER + (
-        "| DEC-001 | 2026-01-01 | other_stage | Some decision | ACTIVE | — | Solo | file.py |\n"
-    )
+    text = DECISION_LOG_HEADER + ("| DEC-001 | 2026-01-01 | other_stage | Some decision | ACTIVE | — | Solo | file.py |\n")
     (pb / "DECISION_LOG.md").write_text(text, encoding="utf-8")
     problems = _check_decision_log_entries("inputs_and_mode_selection")
     assert len(problems) == 1
@@ -58,9 +56,7 @@ def test_no_stage_reference(_patch_workspace: Path) -> None:
 
 def test_valid_stage_entry(_patch_workspace: Path) -> None:
     pb = _patch_workspace
-    text = DECISION_LOG_HEADER + (
-        "| DEC-001 | 2026-01-01 | inputs_and_mode_selection | Decision | ACTIVE | — | Solo | f.py |\n"
-    )
+    text = DECISION_LOG_HEADER + ("| DEC-001 | 2026-01-01 | inputs_and_mode_selection | Decision | ACTIVE | — | Solo | f.py |\n")
     (pb / "DECISION_LOG.md").write_text(text, encoding="utf-8")
     problems = _check_decision_log_entries("inputs_and_mode_selection")
     assert problems == []

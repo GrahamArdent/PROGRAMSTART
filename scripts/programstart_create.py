@@ -9,6 +9,7 @@ import re
 import secrets
 import shutil
 import subprocess
+from collections.abc import Mapping
 from dataclasses import asdict
 from pathlib import Path
 from urllib.parse import urlencode, urlsplit, urlunsplit
@@ -55,9 +56,16 @@ def mapping_value(payload: object) -> dict[str, object]:
     return payload if isinstance(payload, dict) else {}
 
 
-def string_value(payload: dict[str, object], key: str) -> str:
+def string_value(payload: Mapping[str, object], key: str) -> str:
     value = payload.get(key)
     return value.strip() if isinstance(value, str) else ""
+
+
+def string_list_value(payload: Mapping[str, object], key: str) -> list[str]:
+    value = payload.get(key)
+    if not isinstance(value, list):
+        return []
+    return [item for item in value if isinstance(item, str)]
 
 
 def sanitize_connection_uri(value: str) -> str:
@@ -75,7 +83,7 @@ def sanitize_connection_uri(value: str) -> str:
     return urlunsplit((parsed.scheme, netloc, parsed.path, parsed.query, parsed.fragment))
 
 
-def first_connection_uri(payload: dict[str, object]) -> str:
+def first_connection_uri(payload: Mapping[str, object]) -> str:
     for key in ("connection_uri", "connectionString", "connection_string"):
         value = string_value(payload, key)
         if value:
@@ -208,7 +216,7 @@ def provision_supabase_project(
 
     db_password = secrets.token_urlsafe(24)
 
-    payload = {
+    payload: dict[str, object] = {
         "organization_id": organization_id,
         "name": project_name,
         "region": region,
@@ -646,10 +654,10 @@ def render_setup_surface(
     )
     cli_sections: list[str] = []
     for entry in cli_entries:
-        install_methods = "\n".join(f"- {item}" for item in entry.get("install_methods", [])) or "- see provider docs"
-        commands = "\n".join(f"- {item}" for item in entry.get("recommended_commands", [])) or "- none"
-        required_config = "\n".join(f"- {item}" for item in entry.get("required_config", [])) or "- none"
-        notes = "\n".join(f"- {item}" for item in entry.get("notes", [])) or "- none"
+        install_methods = "\n".join(f"- {item}" for item in string_list_value(entry, "install_methods")) or "- see provider docs"
+        commands = "\n".join(f"- {item}" for item in string_list_value(entry, "recommended_commands")) or "- none"
+        required_config = "\n".join(f"- {item}" for item in string_list_value(entry, "required_config")) or "- none"
+        notes = "\n".join(f"- {item}" for item in string_list_value(entry, "notes")) or "- none"
         cli_sections.append(
             f"### {entry.get('name', '')}\n\n"
             f"- Provider: {entry.get('provider', '') or 'unknown'}\n"
@@ -666,9 +674,9 @@ def render_setup_surface(
 
     api_sections: list[str] = []
     for entry in api_entries:
-        server_env_vars = "\n".join(f"- {item}" for item in entry.get("server_env_vars", [])) or "- none"
-        public_env_vars = "\n".join(f"- {item}" for item in entry.get("public_env_vars", [])) or "- none"
-        notes = "\n".join(f"- {item}" for item in entry.get("notes", [])) or "- none"
+        server_env_vars = "\n".join(f"- {item}" for item in string_list_value(entry, "server_env_vars")) or "- none"
+        public_env_vars = "\n".join(f"- {item}" for item in string_list_value(entry, "public_env_vars")) or "- none"
+        notes = "\n".join(f"- {item}" for item in string_list_value(entry, "notes")) or "- none"
         api_sections.append(
             f"### {entry.get('name', '')}\n\n"
             f"- Provider: {entry.get('provider', '') or 'unknown'}\n"
@@ -689,7 +697,8 @@ def render_setup_surface(
         "This artifact lists the recommended CLIs and saved third-party API templates inferred for the generated repo.\n\n"
         "## Recommendation Context\n\n"
         f"- Confidence: {recommendation.confidence}\n"
-        "- These setup surfaces were inferred from the KB-driven recommendation and may include advice from partial coverage domains.\n\n"
+        "- These setup surfaces were inferred from the KB-driven recommendation "
+        "and may include advice from partial coverage domains.\n\n"
         "### Matched Domains\n\n"
         f"{matched_domains}\n\n"
         "### Coverage Warnings\n\n"
@@ -765,11 +774,14 @@ def render_provisioning_plan(
         f"{service_lines}\n\n"
         "### Automation Support\n\n"
         "- GitHub repo creation can be executed during the factory run with --create-github-repo.\n"
-        "- Supabase can be provisioned during the factory run with --provision-services plus SUPABASE_ACCESS_TOKEN and an organization id.\n"
+        "- Supabase can be provisioned during the factory run with "
+        "--provision-services plus SUPABASE_ACCESS_TOKEN and an organization id.\n"
         "- Vercel can be provisioned during the factory run with --provision-services plus VERCEL_ACCESS_TOKEN.\n"
-        "- Neon can be provisioned during the factory run with --provision-services plus NEON_API_KEY and optional --neon-org-id.\n"
+        "- Neon can be provisioned during the factory run with --provision-services "
+        "plus NEON_API_KEY and optional --neon-org-id.\n"
         "- Other services remain documented as manual follow-up until provider automation is added.\n\n"
-        "Example: if the product needs Supabase, create a dedicated Supabase project for this generated repo and record its env vars in that repo only.\n"
+        "Example: if the product needs Supabase, create a dedicated Supabase "
+        "project for this generated repo and record its env vars in that repo only.\n"
     )
 
 
@@ -912,6 +924,9 @@ def main(argv: list[str] | None = None) -> int:
             kickoff_files=recommendation.kickoff_files,
             rationale=recommendation.rationale,
             prompt_principles=recommendation.prompt_principles,
+            prompt_patterns=recommendation.prompt_patterns,
+            prompt_anti_patterns=recommendation.prompt_anti_patterns,
+            coverage_warnings=recommendation.coverage_warnings,
             service_names=recommendation.service_names,
             cli_tool_names=recommendation.cli_tool_names,
             api_names=recommendation.api_names,

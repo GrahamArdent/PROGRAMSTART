@@ -50,12 +50,14 @@ Local CLI tool with script modules.
 
 # --- Missing file ---
 
+
 def test_missing_architecture(_arch: Path) -> None:
     problems = validate_architecture_contracts({})
     assert any("ARCHITECTURE.md does not exist" in p for p in problems)
 
 
 # --- Empty topology ---
+
 
 def test_empty_topology(_arch: Path) -> None:
     text = _FULL_ARCH.replace(
@@ -68,6 +70,7 @@ def test_empty_topology(_arch: Path) -> None:
 
 
 # --- Missing sections ---
+
 
 def test_no_data_model(_arch: Path) -> None:
     text = _FULL_ARCH.replace("## Data Model And Ownership", "## Other Section")
@@ -85,6 +88,7 @@ def test_no_contracts_section(_arch: Path) -> None:
 
 # --- Empty tech table ---
 
+
 def test_empty_tech_table(_arch: Path) -> None:
     text = _FULL_ARCH.replace("| Language | Python | Go | Rich ecosystem |", "")
     (_arch / "ARCHITECTURE.md").write_text(text, encoding="utf-8")
@@ -93,6 +97,7 @@ def test_empty_tech_table(_arch: Path) -> None:
 
 
 # --- Alternative section names ---
+
 
 def test_api_contracts_accepted(_arch: Path) -> None:
     text = _FULL_ARCH.replace("## Command Surface", "## API Contracts")
@@ -120,6 +125,7 @@ _DECISION_LOG = """\
 
 
 # --- Clean pass ---
+
 
 def test_fully_filled_no_problems(_arch: Path) -> None:
     (_arch / "ARCHITECTURE.md").write_text(_FULL_ARCH, encoding="utf-8")

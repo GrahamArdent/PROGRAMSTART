@@ -61,7 +61,11 @@ def test_test_strategy_no_categories(_patch_workspace: Path) -> None:
 
 def test_test_strategy_no_requirement_refs(_patch_workspace: Path) -> None:
     pb = _patch_workspace
-    text = "# TEST_STRATEGY.md\n\n## Test Pyramid Targets\n\n| Layer | Target | Notes |\n|---|---|---|\n| Unit | Tests | No reqs listed |\n"
+    text = (
+        "# TEST_STRATEGY.md\n\n## Test Pyramid Targets\n\n"
+        "| Layer | Target | Notes |\n|---|---|---|\n"
+        "| Unit | Tests | No reqs listed |\n"
+    )
     (pb / "TEST_STRATEGY.md").write_text(text, encoding="utf-8")
     problems = validate_test_strategy_complete({})
     assert any("requirement IDs" in p for p in problems)

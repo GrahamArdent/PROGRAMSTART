@@ -10,8 +10,8 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from scripts.install_hooks import (
-    HOOKS_SOURCE_DIR,
     _HOOK_NAMES,
+    HOOKS_SOURCE_DIR,
     check_hooks,
     install_hooks,
     main,

@@ -4,7 +4,6 @@ import json
 import shutil
 import subprocess
 import sys
-from pathlib import Path
 
 try:
     from .programstart_common import warn_direct_script_invocation, workspace_path
@@ -29,7 +28,9 @@ def _check_playwright() -> tuple[bool, str]:
     try:
         result = subprocess.run(
             ["playwright", "--version"],
-            capture_output=True, text=True, timeout=10,
+            capture_output=True,
+            text=True,
+            timeout=10,
         )
         if result.returncode == 0:
             return True, f"playwright {result.stdout.strip()}"

@@ -340,6 +340,7 @@ def test_detect_workspace_root_falls_back_to_package_root(tmp_path: Path, monkey
 
 def test_warn_direct_script_invocation_emits_warning(monkeypatch, caplog) -> None:
     import logging
+
     monkeypatch.setattr(sys, "argv", ["scripts/programstart_validate.py", "--check", "all"])
 
     with caplog.at_level(logging.WARNING, logger="scripts.programstart_common"):
@@ -351,6 +352,7 @@ def test_warn_direct_script_invocation_emits_warning(monkeypatch, caplog) -> Non
 
 def test_warn_direct_script_invocation_skips_console_script(monkeypatch, caplog) -> None:
     import logging
+
     monkeypatch.setattr(sys, "argv", ["programstart", "status"])
 
     with caplog.at_level(logging.WARNING, logger="scripts.programstart_common"):

@@ -71,9 +71,7 @@ def test_empty_result_fails(_patch_workspace: Path) -> None:
 def test_open_spike_fails(_patch_workspace: Path) -> None:
     """Row with Result = 'Pending' → reports problem with spike ID."""
     pb = _patch_workspace
-    text = SPIKE_REGISTER_HEADER + (
-        "| S-002 | PERFORMANCE | Redis scales | Load test | p99 < 200ms | Pending | TBD |\n"
-    )
+    text = SPIKE_REGISTER_HEADER + ("| S-002 | PERFORMANCE | Redis scales | Load test | p99 < 200ms | Pending | TBD |\n")
     (pb / "RISK_SPIKES.md").write_text(text, encoding="utf-8")
     problems = validate_risk_spike_resolution({})
     assert any("S-002" in p for p in problems)

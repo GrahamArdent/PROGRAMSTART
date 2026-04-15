@@ -168,11 +168,20 @@ def validate_intake_complete(_registry: dict) -> list[str]:
             if not value:
                 problems.append(f"PROGRAMBUILD_KICKOFF_PACKET.md: {field} is empty")
             elif field == "PRODUCT_SHAPE":
-                VALID_PRODUCT_SHAPES = frozenset({
-                    "web-app", "mobile-app", "api-service", "cli-tool",
-                    "data-pipeline", "browser-extension", "desktop-app",
-                    "library/sdk", "platform/marketplace", "ai-agent/assistant",
-                })
+                VALID_PRODUCT_SHAPES = frozenset(
+                    {
+                        "web-app",
+                        "mobile-app",
+                        "api-service",
+                        "cli-tool",
+                        "data-pipeline",
+                        "browser-extension",
+                        "desktop-app",
+                        "library/sdk",
+                        "platform/marketplace",
+                        "ai-agent/assistant",
+                    }
+                )
                 if value.lower().replace(" ", "-") not in VALID_PRODUCT_SHAPES:
                     problems.append(
                         f"PROGRAMBUILD_KICKOFF_PACKET.md: PRODUCT_SHAPE '{value}' is not a recognized shape. "
@@ -282,15 +291,12 @@ def validate_research_complete(_registry: dict) -> list[str]:
     problems: list[str] = []
     research_path = workspace_path("PROGRAMBUILD/RESEARCH_SUMMARY.md")
     if not research_path.exists():
-        problems.append(
-            "RESEARCH_SUMMARY.md: file does not exist (See: shape-research.prompt.md)"
-        )
+        problems.append("RESEARCH_SUMMARY.md: file does not exist (See: shape-research.prompt.md)")
         return problems
     content = research_path.read_text(encoding="utf-8")
     if not re.search(r"^## ", content, re.MULTILINE):
         problems.append(
-            "RESEARCH_SUMMARY.md: no ## section headings found "
-            "(expected structured research output with at least one section)"
+            "RESEARCH_SUMMARY.md: no ## section headings found (expected structured research output with at least one section)"
         )
     return problems
 
@@ -344,10 +350,7 @@ def validate_requirements_complete(_registry: dict) -> list[str]:
     if flow_path.exists():
         flow_text = flow_path.read_text(encoding="utf-8")
         if not re.search(r"^#{2,3} .+", flow_text, re.MULTILINE):
-            problems.append(
-                "USER_FLOWS.md: no ## or ### section headings found "
-                "(expected at least one flow definition section)"
-            )
+            problems.append("USER_FLOWS.md: no ## or ### section headings found (expected at least one flow definition section)")
         for row in real_rows:
             req_id = row.get("ID", "").strip()
             if req_id and not re.search(r"\b" + re.escape(req_id) + r"\b", flow_text):
@@ -599,9 +602,7 @@ def validate_post_launch_review(_registry: dict) -> list[str]:
     text = plr_path.read_text(encoding="utf-8")
     # Require at least one non-blank, non-heading, non-metadata line of real content
     content_lines = [
-        ln
-        for ln in text.splitlines()
-        if ln.strip() and not ln.strip().startswith("#") and not ln.strip().startswith("---")
+        ln for ln in text.splitlines() if ln.strip() and not ln.strip().startswith("#") and not ln.strip().startswith("---")
     ]
     if len(content_lines) < 3:
         problems.append("POST_LAUNCH_REVIEW.md appears to be a stub — add review content before Stage 10 advance")
@@ -1286,10 +1287,7 @@ def validate_file_hygiene(_registry: dict) -> list[str]:
     root = workspace_path(".")
     for md in sorted(root.glob("*.md")):
         if md.name not in ALLOWED_ROOT_MD:
-            problems.append(
-                f"Unexpected .md file at repo root: {md.name} — "
-                f"should it be in devlog/ or outputs/?"
-            )
+            problems.append(f"Unexpected .md file at repo root: {md.name} — should it be in devlog/ or outputs/?")
     return problems
 
 

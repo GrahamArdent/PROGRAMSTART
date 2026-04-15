@@ -426,7 +426,11 @@ def test_create_can_provision_neon_and_hydrate_env(monkeypatch, tmp_path: Path, 
                     "databases": [{"name": "factoryapi"}],
                     "connection_uris": [
                         {
-                            "connection_uri": "postgresql://factoryapi_owner:supersecret@ep-cool-darkness-123456.us-east-2.aws.neon.tech/factoryapi?sslmode=require"
+                            "connection_uri": (
+                                "postgresql://factoryapi_owner:supersecret@"  # pragma: allowlist secret
+                                "ep-cool-darkness-123456.us-east-2.aws.neon.tech/"
+                                "factoryapi?sslmode=require"
+                            )
                         }
                     ],
                     "operations": [{"id": "op_123", "status": "running"}],
@@ -457,15 +461,19 @@ def test_create_can_provision_neon_and_hydrate_env(monkeypatch, tmp_path: Path, 
     payload = json.loads(state_path.read_text(encoding="utf-8"))
     env_example = (destination / "starter" / "api_service" / ".env.example").read_text(encoding="utf-8")
     neon = next(item for item in payload["services"] if item["name"] == "Neon")
+    project_id = str(neon["env"]["NEON_PROJECT_ID"])
+    branch_id = str(neon["env"]["NEON_BRANCH_ID"])
+    host = str(neon["env"]["NEON_HOST"])
     assert neon["status"] == "provisioning_started"
-    assert neon["env"]["NEON_PROJECT_ID"] == "spring-example-302709"
+    assert project_id == "spring-example-302709"
     assert neon["env"]["DATABASE_URL"].endswith("sslmode=require")
-    assert "NEON_PROJECT_ID=spring-example-302709" in env_example
-    assert "NEON_BRANCH_ID=br-wispy-meadow-118737" in env_example
-    assert "NEON_HOST=ep-cool-darkness-123456.us-east-2.aws.neon.tech" in env_example
+    assert f"NEON_PROJECT_ID={project_id}" in env_example
+    assert f"NEON_BRANCH_ID={branch_id}" in env_example
+    assert f"NEON_HOST={host}" in env_example
     assert (
-        "DATABASE_URL=postgresql://factoryapi_owner:<set-me>@ep-cool-darkness-123456.us-east-2.aws.neon.tech/factoryapi?sslmode=require"
-        in env_example
+        "DATABASE_URL=postgresql://factoryapi_owner:<set-me>@"  # pragma: allowlist secret
+        "ep-cool-darkness-123456.us-east-2.aws.neon.tech/"
+        "factoryapi?sslmode=require" in env_example  # pragma: allowlist secret
     )
     assert "Hydrated starter env template" in out
 

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import textwrap
 from pathlib import Path
 
 import pytest
@@ -15,8 +14,6 @@ def _kickoff(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     """Return a KICKOFF_PACKET path and patch workspace_path for PROGRAMBUILD/."""
     pb = tmp_path / "PROGRAMBUILD"
     pb.mkdir()
-    kickoff = pb / "PROGRAMBUILD_KICKOFF_PACKET.md"
-    intake = pb / "PROGRAMBUILD_IDEA_INTAKE.md"
 
     def _workspace_path(rel: str) -> Path:
         return tmp_path / rel
@@ -124,8 +121,7 @@ def test_blank_kickoff_all_fields_reported(_kickoff: Path) -> None:
     _write_kickoff(pb, {})  # All defaults = empty
     _write_intake(pb, _filled_intake_fields())
     problems = validate_intake_complete({})
-    for field in ["PROJECT_NAME", "ONE_LINE_DESCRIPTION", "PRIMARY_USER",
-                  "CORE_PROBLEM", "SUCCESS_METRIC", "PRODUCT_SHAPE"]:
+    for field in ["PROJECT_NAME", "ONE_LINE_DESCRIPTION", "PRIMARY_USER", "CORE_PROBLEM", "SUCCESS_METRIC", "PRODUCT_SHAPE"]:
         assert any(field in p for p in problems), f"Expected error for {field}"
 
 
@@ -134,8 +130,7 @@ def test_blank_intake_all_fields_reported(_kickoff: Path) -> None:
     _write_kickoff(pb, _filled_kickoff_fields())
     _write_intake(pb, {})  # All defaults = empty
     problems = validate_intake_complete({})
-    for field in ["PROBLEM_RAW", "WHO_HAS_THIS_PROBLEM", "CURRENT_SOLUTION",
-                  "SUCCESS_OUTCOME", "CHEAPEST_VALIDATION"]:
+    for field in ["PROBLEM_RAW", "WHO_HAS_THIS_PROBLEM", "CURRENT_SOLUTION", "SUCCESS_OUTCOME", "CHEAPEST_VALIDATION"]:
         assert any(field in p for p in problems), f"Expected error for {field}"
     assert any("NOT_BUILDING" in p for p in problems)
     assert any("KILL_SIGNAL" in p for p in problems)

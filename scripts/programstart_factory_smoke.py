@@ -149,15 +149,15 @@ def wait_for_http(url: str, *, expected_text: str, process: subprocess.Popen[str
 
 
 def start_server(command: list[str], cwd: Path) -> subprocess.Popen[str]:
-    kwargs: dict[str, object] = {
-        "cwd": cwd,
-        "env": clean_subprocess_env(),
-        "stdout": subprocess.PIPE,
-        "stderr": subprocess.STDOUT,
-        "text": True,
-        "start_new_session": True,
-    }
-    return subprocess.Popen(command, **kwargs)
+    return subprocess.Popen(
+        command,
+        cwd=cwd,
+        env=clean_subprocess_env(),
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        start_new_session=True,
+    )
 
 
 def create_repo(

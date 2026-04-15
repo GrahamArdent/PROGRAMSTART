@@ -40,10 +40,10 @@ class ProjectRecommendation:
     matched_domains: list[str] = field(default_factory=list)
     coverage_warnings: list[dict[str, str]] = field(default_factory=list)
     suggested_companion_surfaces: list[str] = field(default_factory=list)
-    stack_evidence: list[dict[str, object]] = field(default_factory=list)
-    service_evidence: list[dict[str, object]] = field(default_factory=list)
-    api_evidence: list[dict[str, object]] = field(default_factory=list)
-    cli_evidence: list[dict[str, object]] = field(default_factory=list)
+    stack_evidence: list[dict[str, Any]] = field(default_factory=list)
+    service_evidence: list[dict[str, Any]] = field(default_factory=list)
+    api_evidence: list[dict[str, Any]] = field(default_factory=list)
+    cli_evidence: list[dict[str, Any]] = field(default_factory=list)
     rule_evidence: list[dict[str, str]] = field(default_factory=list)
     actionability_summary: list[dict[str, str]] = field(default_factory=list)
     alternatives: list[dict[str, str]] = field(default_factory=list)
@@ -118,6 +118,18 @@ def expand_capability_terms(values: set[str]) -> set[str]:
 
 def normalized_trigger_set(values: list[str]) -> set[str]:
     return {normalize_text(value) for value in values if normalize_text(value)}
+
+
+def list_of_dicts(value: object) -> list[dict[str, Any]]:
+    if not isinstance(value, list):
+        return []
+    return [item for item in value if isinstance(item, dict)]
+
+
+def list_of_strings(value: object) -> list[str]:
+    if not isinstance(value, list):
+        return []
+    return [item for item in value if isinstance(item, str)]
 
 
 def matching_decision_rules(
@@ -481,10 +493,10 @@ def select_triggered_entries(
     matched_domains: list[str] | None = None,
     category: str = "",
     min_score: int = 4,
-) -> tuple[list[str], list[str], list[dict[str, object]], list[dict[str, str]]]:
+) -> tuple[list[str], list[str], list[dict[str, Any]], list[dict[str, str]]]:
     selected_names: list[str] = []
     notes: list[str] = []
-    evidence: list[dict[str, object]] = []
+    evidence: list[dict[str, Any]] = []
     alternatives: list[dict[str, str]] = []
     normalized_shape = normalize_text(product_shape)
     normalized_needs = expand_capability_terms(needs)
@@ -499,18 +511,18 @@ def select_triggered_entries(
         knowledge_base={"decision_rules": decision_rules or []},
     )
 
-    candidates: list[dict[str, object]] = []
+    candidates: list[dict[str, Any]] = []
     for item in entries:
         name = str(item.get("name", "")).strip()
         if not name:
             continue
         score = 0
         reasons: list[str] = []
-        trigger_shapes = normalized_trigger_set(item.get("trigger_shapes", []))
-        trigger_needs = normalized_trigger_set(item.get("trigger_needs", []))
-        trigger_stacks = normalized_trigger_set(item.get("trigger_stacks", []))
-        trigger_services = normalized_trigger_set(item.get("trigger_services", []))
-        trigger_apis = normalized_trigger_set(item.get("trigger_apis", []))
+        trigger_shapes = normalized_trigger_set(list_of_strings(item.get("trigger_shapes", [])))
+        trigger_needs = normalized_trigger_set(list_of_strings(item.get("trigger_needs", [])))
+        trigger_stacks = normalized_trigger_set(list_of_strings(item.get("trigger_stacks", [])))
+        trigger_services = normalized_trigger_set(list_of_strings(item.get("trigger_services", [])))
+        trigger_apis = normalized_trigger_set(list_of_strings(item.get("trigger_apis", [])))
         need_matches = sorted(trigger_needs & normalized_needs)
         stack_matches = sorted(trigger_stacks & normalized_stacks)
         service_matches = sorted(trigger_services & normalized_services)
@@ -536,14 +548,14 @@ def select_triggered_entries(
 
         normalized_name = normalize_text(name)
         for rule in applicable_rules:
-            target_layers = normalized_trigger_set(rule.get("target_layers", []))
+            target_layers = normalized_trigger_set(list_of_strings(rule.get("target_layers", [])))
             if target_layers and category and category not in target_layers:
                 continue
-            if normalized_name in normalized_trigger_set(rule.get("prefer_items", [])):
+            if normalized_name in normalized_trigger_set(list_of_strings(rule.get("prefer_items", []))):
                 score += 4
                 rule_preferred = True
                 reasons.append(f"KB rule preference: {rule.get('title', '')}.")
-            if normalized_name in normalized_trigger_set(rule.get("avoid_items", [])):
+            if normalized_name in normalized_trigger_set(list_of_strings(rule.get("avoid_items", []))):
                 score -= 3
                 rule_cautioned = True
                 reasons.append(f"KB rule caution: {rule.get('title', '')}.")
@@ -579,7 +591,7 @@ def select_triggered_entries(
         evidence.append({"name": name, "score": int(candidate["score"]), "reasons": list(candidate.get("reasons", []))[:4]})
         entry = next((entry for entry in entries if str(entry.get("name", "")).strip() == name), None)
         if entry:
-            for note in entry.get("notes", []):
+            for note in list_of_strings(entry.get("notes", [])):
                 if note not in notes:
                     notes.append(note)
 
@@ -592,12 +604,14 @@ def build_stack_candidates(
     regulated: bool,
     knowledge_base: dict[str, Any],
 ) -> tuple[
-    str, list[str], list[dict[str, object]], list[str], list[dict[str, str]], list[dict[str, str]], list[dict[str, str]], str
+    str, list[str], list[dict[str, Any]], list[str], list[dict[str, str]], list[dict[str, str]], list[dict[str, str]], str
 ]:
     archetype, baseline_stacks, intent_terms, matched_domain_names = shape_profile(product_shape)
     selected_domain_names = infer_domain_names(product_shape, needs, regulated, knowledge_base)
     selected_domains = [
-        item for item in knowledge_base.get("coverage_domains", []) if item.get("name", "") in selected_domain_names
+        item
+        for item in list_of_dicts(knowledge_base.get("coverage_domains", []))
+        if str(item.get("name", "")) in selected_domain_names
     ]
     intent_terms = {normalize_text(item) for item in intent_terms | set(needs) if normalize_text(item)}
     applicable_rules = matching_decision_rules(
@@ -619,16 +633,16 @@ def build_stack_candidates(
     )
     preferred_lookup = {item.lower() for item in preferred_stack_names}
 
-    comparisons = knowledge_base.get("comparisons", [])
-    relations = knowledge_base.get("relationships", [])
+    comparisons = list_of_dicts(knowledge_base.get("comparisons", []))
+    relations = list_of_dicts(knowledge_base.get("relationships", []))
     pattern_boosts = matching_integration_patterns(
         product_shape=product_shape,
         needs=needs,
         knowledge_base=knowledge_base,
     )
-    candidates: list[dict[str, object]] = []
+    candidates: list[dict[str, Any]] = []
 
-    for entry in knowledge_base.get("stacks", []):
+    for entry in list_of_dicts(knowledge_base.get("stacks", [])):
         name = str(entry.get("name", "")).strip()
         if not name:
             continue
@@ -645,7 +659,7 @@ def build_stack_candidates(
             reasons.append(f"Baseline fit for {product_shape}.")
 
         for domain in selected_domains:
-            representative = {item.lower() for item in domain.get("representative_tools", [])}
+            representative = {item.lower() for item in list_of_strings(domain.get("representative_tools", []))}
             if normalized_name in representative:
                 status = str(domain.get("status", ""))
                 domain_score = {"strong": 8, "partial": 6, "seed": 4}.get(status, 5)
@@ -673,13 +687,13 @@ def build_stack_candidates(
             reasons.append("Improves governance, validation, or observability for regulated work.")
 
         for rule in applicable_rules:
-            target_layers = normalized_trigger_set(rule.get("target_layers", []))
+            target_layers = normalized_trigger_set(list_of_strings(rule.get("target_layers", [])))
             if target_layers and "stacks" not in target_layers:
                 continue
-            if normalized_name in normalized_trigger_set(rule.get("prefer_items", [])):
+            if normalized_name in normalized_trigger_set(list_of_strings(rule.get("prefer_items", []))):
                 score += 4
                 reasons.append(f"KB rule preference: {rule.get('title', '')}.")
-            if normalized_name in normalized_trigger_set(rule.get("avoid_items", [])):
+            if normalized_name in normalized_trigger_set(list_of_strings(rule.get("avoid_items", []))):
                 score -= 3
                 reasons.append(f"KB rule caution: {rule.get('title', '')}.")
 
@@ -734,14 +748,16 @@ def build_stack_candidates(
             break
         selected_stack_names.append(name)
 
-    stack_evidence: list[dict[str, object]] = []
+    stack_evidence: list[dict[str, Any]] = []
     for name in selected_stack_names:
         candidate = candidate_lookup.get(name)
         if not candidate:
             continue
         evidence_reasons = list(candidate.get("reasons", []))
         related_decisions = [
-            item.get("decision", "") for item in comparisons if name in item.get("related_items", []) and item.get("decision", "")
+            str(item.get("decision", ""))
+            for item in comparisons
+            if name in list_of_strings(item.get("related_items", [])) and item.get("decision", "")
         ]
         if related_decisions:
             evidence_reasons.append(related_decisions[0])
@@ -781,7 +797,7 @@ def build_stack_candidates(
         if len(alternatives) >= 2:
             break
     for comparison in comparisons:
-        related_items = {item.lower() for item in comparison.get("related_items", [])}
+        related_items = {item.lower() for item in list_of_strings(comparison.get("related_items", []))}
         selected_items = {item.lower() for item in [*selected_stack_names]}
         if not (related_items & selected_items or related_items & {item.lower() for item in needs}):
             continue
@@ -1114,7 +1130,9 @@ def build_recommendation(
         rationale.append("The product shape implies real end-user onboarding or activation design work.")
     if unrecognized_needs:
         rationale.append(
-            f"Unrecognized capability needs (not in KB aliases): {', '.join(unrecognized_needs)}. These were not factored into stack or service selection."
+            "Unrecognized capability needs (not in KB aliases): "
+            f"{', '.join(unrecognized_needs)}. These were not factored into stack "
+            "or service selection."
         )
     if service_evidence:
         rationale.append(f"Inferred services: {', '.join(str(item['name']) for item in service_evidence[:3])}.")
@@ -1142,28 +1160,29 @@ def build_recommendation(
     ui_adjacent_needs = {"monitoring", "dashboard", "admin", "config", "analytics", "reporting"}
     if product_shape not in ("web app", "mobile app") and normalized_needs & ui_adjacent_needs:
         companion_surfaces.append("admin dashboard")
-        coverage_warnings.append({
-            "domain": "Companion UI",
-            "status": "advisory",
-            "summary": (
-                "Your API/CLI needs suggest a companion management UI. "
-                "Consider adding --need dashboard or running a separate web app build."
-            ),
-            "gaps": "",
-        })
-    if (
-        "Web and frontend product delivery" not in matched_domains
-        and product_shape in ("api service", "data pipeline")
-    ):
-        coverage_warnings.append({
-            "domain": "Frontend coverage",
-            "status": "advisory",
-            "summary": (
-                "No frontend domain matched. Many production API services need "
-                "an admin dashboard. Add --need dashboard if applicable."
-            ),
-            "gaps": "",
-        })
+        coverage_warnings.append(
+            {
+                "domain": "Companion UI",
+                "status": "advisory",
+                "summary": (
+                    "Your API/CLI needs suggest a companion management UI. "
+                    "Consider adding --need dashboard or running a separate web app build."
+                ),
+                "gaps": "",
+            }
+        )
+    if "Web and frontend product delivery" not in matched_domains and product_shape in ("api service", "data pipeline"):
+        coverage_warnings.append(
+            {
+                "domain": "Frontend coverage",
+                "status": "advisory",
+                "summary": (
+                    "No frontend domain matched. Many production API services need "
+                    "an admin dashboard. Add --need dashboard if applicable."
+                ),
+                "gaps": "",
+            }
+        )
 
     return ProjectRecommendation(
         product_shape=product_shape,
@@ -1260,10 +1279,9 @@ def re_evaluate_project(project_dir: str) -> dict[str, Any]:
     deltas: list[str] = []
     if target_state.get("variant") and target_state["variant"] != current_rec.variant:
         deltas.append(f"Variant drift: project uses '{target_state['variant']}', current KB recommends '{current_rec.variant}'")
-    if target_state.get("registry_version") and target_state["registry_version"] != load_registry().get("version", ""):
-        deltas.append(
-            f"Registry version drift: project has '{target_state['registry_version']}', current is '{load_registry().get('version', '')}'"
-        )
+    current_version = load_registry().get("version", "")
+    if target_state.get("registry_version") and target_state["registry_version"] != current_version:
+        deltas.append(f"Registry version drift: project has '{target_state['registry_version']}', current is '{current_version}'")
 
     return {
         "project_dir": str(target),

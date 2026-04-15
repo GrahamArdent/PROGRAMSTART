@@ -11,7 +11,6 @@ try:
         system_is_attached,
         warn_direct_script_invocation,
         workflow_active_step,
-        workspace_path,
     )
 except ImportError:  # pragma: no cover - standalone script execution fallback
     from programstart_common import (
@@ -20,7 +19,6 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
         system_is_attached,
         warn_direct_script_invocation,
         workflow_active_step,
-        workspace_path,
     )
 
 
@@ -55,7 +53,18 @@ def main() -> int:
     if args.kickoff:
         section = cast(dict[str, Any], guidance.get("kickoff", {}))
         if args.json:
-            print(json.dumps({"type": "kickoff", "description": section.get("description", ""), "files": section.get("files", []), "scripts": section.get("scripts", []), "prompts": section.get("prompts", [])}, indent=2))
+            print(
+                json.dumps(
+                    {
+                        "type": "kickoff",
+                        "description": section.get("description", ""),
+                        "files": section.get("files", []),
+                        "scripts": section.get("scripts", []),
+                        "prompts": section.get("prompts", []),
+                    },
+                    indent=2,
+                )
+            )
         else:
             print("PROGRAMSTART Kickoff")
             print(section.get("description", ""))
@@ -80,7 +89,18 @@ def main() -> int:
             if p not in stage_prompts:
                 stage_prompts.append(p)
         if args.json:
-            print(json.dumps({"type": "programbuild", "stage": stage, "files": section.get("files", []), "scripts": section.get("scripts", []), "prompts": stage_prompts}, indent=2))
+            print(
+                json.dumps(
+                    {
+                        "type": "programbuild",
+                        "stage": stage,
+                        "files": section.get("files", []),
+                        "scripts": section.get("scripts", []),
+                        "prompts": stage_prompts,
+                    },
+                    indent=2,
+                )
+            )
         else:
             print(f"PROGRAMBUILD Stage: {stage}")
             print_section("Files", cast(list[str], section.get("files", [])))
@@ -109,7 +129,19 @@ def main() -> int:
             parser.error(f"No guidance found for USERJOURNEY phase '{phase}'")
         section = cast(dict[str, Any], section)
         if args.json:
-            print(json.dumps({"type": "userjourney", "phase": phase, "attached": True, "files": section.get("files", []), "scripts": section.get("scripts", []), "prompts": section.get("prompts", [])}, indent=2))
+            print(
+                json.dumps(
+                    {
+                        "type": "userjourney",
+                        "phase": phase,
+                        "attached": True,
+                        "files": section.get("files", []),
+                        "scripts": section.get("scripts", []),
+                        "prompts": section.get("prompts", []),
+                    },
+                    indent=2,
+                )
+            )
         else:
             print(f"USERJOURNEY Phase: {phase}")
             print_section("Files", cast(list[str], section.get("files", [])))

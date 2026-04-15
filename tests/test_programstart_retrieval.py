@@ -8,6 +8,7 @@ import json
 import logging
 import sys
 from pathlib import Path
+from typing import Any, cast
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -565,6 +566,7 @@ def test_hybrid_searcher_vector_raises_without_store() -> None:
     lexical = programstart_retrieval.LexicalSearcher([])
     hs = programstart_retrieval.HybridSearcher(lexical, embedding_store=None)
     import pytest as _pt
+
     with _pt.raises(ValueError, match="embedding store"):
         hs.search("q", method="vector")
 
@@ -629,7 +631,10 @@ def test_validate_cited_sources_passes_all_valid() -> None:
     rag = programstart_retrieval.RAGAssistant(hs)
     results = [_make_search_result(source_type="doc", source_id="A.md")]
     response = programstart_retrieval.RAGQueryResponse(
-        answer="test", reasoning="r", confidence="high", cited_sources=["doc: A.md"],
+        answer="test",
+        reasoning="r",
+        confidence="high",
+        cited_sources=["doc: A.md"],
     )
     validated = rag._validate_cited_sources(response, results)
     assert len(validated.cited_sources) == 1
@@ -685,7 +690,10 @@ def test_print_structured_response(capsys) -> None:
 
 def test_print_structured_response_no_reasoning(capsys) -> None:
     resp = programstart_retrieval.RAGQueryResponse(
-        answer="Short.", reasoning="", confidence="low", cited_sources=[],
+        answer="Short.",
+        reasoning="",
+        confidence="low",
+        cited_sources=[],
     )
     programstart_retrieval._print_structured_response(resp)
     out = capsys.readouterr().out
@@ -717,6 +725,7 @@ def test_load_or_build_index_missing_rebuilds() -> None:
 
 def test_main_search_json(tmp_path) -> None:
     from scripts import programstart_context
+
     index = programstart_context.build_context_index()
     idx_path = tmp_path / "index.json"
     idx_path.write_text(json.dumps(index), encoding="utf-8")
@@ -730,6 +739,7 @@ def test_main_search_json(tmp_path) -> None:
 
 def test_main_search_text(tmp_path) -> None:
     from scripts import programstart_context
+
     index = programstart_context.build_context_index()
     idx_path = tmp_path / "index.json"
     idx_path.write_text(json.dumps(index), encoding="utf-8")
@@ -843,6 +853,7 @@ def test_retrieval_main_validate_subcommand(tmp_path) -> None:
 
 def test_main_validate(tmp_path) -> None:
     from scripts import programstart_context
+
     index = programstart_context.build_context_index()
     idx_path = tmp_path / "index.json"
     idx_path.write_text(json.dumps(index), encoding="utf-8")
@@ -905,7 +916,10 @@ def test_rag_assistant_ask_structured_with_mock(monkeypatch) -> None:
     rag = programstart_retrieval.RAGAssistant(hs)
 
     structured = programstart_retrieval.RAGQueryResponse(
-        answer="Structured answer", reasoning="r", confidence="high", cited_sources=[],
+        answer="Structured answer",
+        reasoning="r",
+        confidence="high",
+        cited_sources=[],
     )
     monkeypatch.setattr(rag, "_generate_structured", lambda sys_msg, user_msg: structured)
     response = rag.ask_structured("What is consent?")
@@ -953,7 +967,10 @@ def test_rag_assistant_generate_structured_success(monkeypatch) -> None:
     rag = programstart_retrieval.RAGAssistant(hs)
 
     expected = programstart_retrieval.RAGQueryResponse(
-        answer="A", reasoning="R", confidence="high", cited_sources=[],
+        answer="A",
+        reasoning="R",
+        confidence="high",
+        cited_sources=[],
     )
     monkeypatch.setattr(rag, "_generate_structured", lambda s, u: expected)
     result = rag._generate("sys", "user")
@@ -991,7 +1008,7 @@ def test_ask_structured_falls_back_to_low_confidence_plain_response(caplog) -> N
         def search(self, *_args, **_kwargs):
             return []
 
-    engine = programstart_retrieval.RAGAssistant(DummySearcher(), model="test-model")
+    engine = programstart_retrieval.RAGAssistant(cast(Any, DummySearcher()), model="test-model")
 
     def fake_structured(system: str, user: str) -> str:
         raise RuntimeError("structured gen failed")

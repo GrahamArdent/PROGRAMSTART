@@ -357,18 +357,14 @@ def test_get_state_json_userjourney_optional_not_attached_sets_placeholder(monke
     assert uj.get("attached") is False
 
 
-def test_load_dashboard_html_returns_fallback_when_index_html_missing(
-    monkeypatch, tmp_path: Path
-) -> None:
+def test_load_dashboard_html_returns_fallback_when_index_html_missing(monkeypatch, tmp_path: Path) -> None:
     """Line 660: dashboard/index.html missing → fallback placeholder HTML returned."""
     monkeypatch.setattr(programstart_serve, "DASHBOARD_DIR", tmp_path / "no_dashboard_here")
     html = programstart_serve._load_dashboard_html()
     assert "Dashboard files not found" in html
 
 
-def test_advance_workflow_with_signoff_dry_run_final_step_shows_completion(
-    monkeypatch, tmp_path: Path
-) -> None:
+def test_advance_workflow_with_signoff_dry_run_final_step_shows_completion(monkeypatch, tmp_path: Path) -> None:
     """Lines 572-576: dry_run=True with no next step → '[dry-run] Would mark final ...' message."""
     state = {
         "active_stage": "release",
@@ -414,9 +410,7 @@ def test_run_bootstrap_dry_run_false_does_not_add_dry_run_arg(monkeypatch, tmp_p
     assert result["exit_code"] == 0
 
 
-def test_update_implementation_tracker_phase_phase_not_found_returns_error(
-    tmp_path: Path, monkeypatch
-) -> None:
+def test_update_implementation_tracker_phase_phase_not_found_returns_error(tmp_path: Path, monkeypatch) -> None:
     """Lines 408->421, 422: for loop exhausted without matching phase → error returned."""
     tracker = tmp_path / "USERJOURNEY" / "IMPLEMENTATION_TRACKER.md"
     tracker.parent.mkdir(parents=True)
@@ -434,9 +428,7 @@ def test_update_implementation_tracker_phase_phase_not_found_returns_error(
     assert "not found" in result["output"]
 
 
-def test_update_implementation_tracker_slice_no_userjourney_dir_returns_error(
-    tmp_path: Path, monkeypatch
-) -> None:
+def test_update_implementation_tracker_slice_no_userjourney_dir_returns_error(tmp_path: Path, monkeypatch) -> None:
     """Line 436: USERJOURNEY directory absent → early-return error."""
     monkeypatch.setattr(programstart_serve, "ROOT", tmp_path)  # no USERJOURNEY subdir
     result = update_implementation_tracker_slice("Slice 1", "Ready", "")

@@ -1195,9 +1195,7 @@ def test_kb_freshness_warns_when_stale(tmp_path, monkeypatch) -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_check_content_quality_returns_empty_on_read_error(
-    tmp_path: Path, monkeypatch
-) -> None:
+def test_check_content_quality_returns_empty_on_read_error(tmp_path: Path, monkeypatch) -> None:
     """Lines 83-84: OSError when reading file → returns empty list."""
     f = tmp_path / "unreadable.md"
     f.write_text("content", encoding="utf-8")
@@ -1228,9 +1226,7 @@ def test_validate_implementation_entry_criteria_covers_all_subchecks(
     assert result == []
 
 
-def test_validate_feasibility_criteria_template_recommendation_flagged(
-    tmp_path: Path, monkeypatch
-) -> None:
+def test_validate_feasibility_criteria_template_recommendation_flagged(tmp_path: Path, monkeypatch) -> None:
     """Lines 235-236: Recommendation section with 'go / limited spike / no-go' template text."""
     feas = tmp_path / "PROGRAMBUILD" / "FEASIBILITY.md"
     feas.parent.mkdir(parents=True, exist_ok=True)
@@ -1248,9 +1244,7 @@ def test_validate_feasibility_criteria_template_recommendation_flagged(
     assert any("still contains the template option list" in p for p in problems)
 
 
-def test_validate_feasibility_criteria_missing_recommendation_section(
-    tmp_path: Path, monkeypatch
-) -> None:
+def test_validate_feasibility_criteria_missing_recommendation_section(tmp_path: Path, monkeypatch) -> None:
     """Line 273: FEASIBILITY.md without ## Recommendation section → appropriate problem."""
     feas = tmp_path / "PROGRAMBUILD" / "FEASIBILITY.md"
     feas.parent.mkdir(parents=True, exist_ok=True)
@@ -1369,7 +1363,7 @@ class TestCoverageSourceCompleteness:
         (scripts_dir / "programstart_something_smoke.py").write_text("# smoke", encoding="utf-8")
         (scripts_dir / "__init__.py").write_text("", encoding="utf-8")
         pyproject = tmp_path / "pyproject.toml"
-        pyproject.write_text('[tool.coverage.run]\nsource = []', encoding="utf-8")
+        pyproject.write_text("[tool.coverage.run]\nsource = []", encoding="utf-8")
         monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
         warnings = validate.validate_coverage_source_completeness({})
         assert warnings == []

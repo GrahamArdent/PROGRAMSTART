@@ -223,6 +223,7 @@ def test_main_query_no_filters_returns_summary(tmp_path: Path, monkeypatch, caps
 
 def test_main_query_uses_existing_compatible_index(tmp_path: Path, monkeypatch) -> None:
     import json as _json
+
     index = programstart_context.build_context_index()
     index_path = tmp_path / "existing.json"
     index_path.write_text(_json.dumps(index), encoding="utf-8")
@@ -233,6 +234,7 @@ def test_main_query_uses_existing_compatible_index(tmp_path: Path, monkeypatch) 
 
 def test_main_query_rebuilds_incompatible_cached_index(tmp_path: Path, monkeypatch) -> None:
     import json as _json
+
     bad_index = {"workspace": {}, "knowledge_base": {"stacks": []}}
     index_path = tmp_path / "index.json"
     index_path.write_text(_json.dumps(bad_index), encoding="utf-8")

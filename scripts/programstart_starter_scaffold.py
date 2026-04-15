@@ -732,7 +732,8 @@ def build_mobile_app_plan(project_name: str, recommendation: ProjectRecommendati
                 "      <View style={styles.hero}>\n"
                 f"        <Text style={{styles.eyebrow}}>{project_name}</Text>\n"
                 "        <Text style={styles.title}>Expo starter aligned to the recommended mobile stack.</Text>\n"
-                "        <Text style={styles.lede}>Use this shell to connect auth, purchases, and push flows after the planning package is approved.</Text>\n"
+                "        <Text style={styles.lede}>Use this shell to connect auth, "
+                "purchases, and push flows after the planning package is approved.</Text>\n"
                 "      </View>\n"
                 "      <View style={styles.list}>\n"
                 "        {priorities.map((item) => (\n"
@@ -755,10 +756,14 @@ def build_mobile_app_plan(project_name: str, recommendation: ProjectRecommendati
                 "  cardText: { fontSize: 15, color: '#1f2937' },\n"
                 "});\n"
             ),
-            f"{root_dir}/tsconfig.json": '{\n  "extends": "expo/tsconfig.base",\n  "compilerOptions": {\n    "strict": true\n  }\n}\n',
+            f"{root_dir}/tsconfig.json": (
+                '{\n  "extends": "expo/tsconfig.base",\n  "compilerOptions": {\n    "strict": true\n  }\n}\n'
+            ),
             f"{root_dir}/README.md": (
                 f"# {project_name} Mobile Starter\n\n"
-                "This scaffold mirrors the recommended Expo and React Native path so mobile-specific auth, purchases, and release wiring start from a native-first baseline.\n"
+                "This scaffold mirrors the recommended Expo and React Native path so "
+                "mobile-specific auth, purchases, and release wiring start from a "
+                "native-first baseline.\n"
             ),
         },
     )
@@ -768,12 +773,15 @@ def build_web_optional_files(recommendation: ProjectRecommendation) -> dict[str,
     root_dir = "starter/web_app"
     files: dict[str, str] = {}
     if has_stack(recommendation, "Yjs") or has_api(recommendation, "Ably") or has_api(recommendation, "Pusher"):
+        transport = "ably" if has_api(recommendation, "Ably") else "pusher" if has_api(recommendation, "Pusher") else "custom"
+        collaboration_model = "yjs" if has_stack(recommendation, "Yjs") else "event-stream"
         files[f"{root_dir}/lib/realtime.ts"] = (
             "export function realtimePlan() {\n"
             "  return {\n"
-            f'    transport: "{"ably" if has_api(recommendation, "Ably") else "pusher" if has_api(recommendation, "Pusher") else "custom"}",\n'
-            f'    collaborationModel: "{"yjs" if has_stack(recommendation, "Yjs") else "event-stream"}",\n'
-            '    nextStep: "define presence, permissions, and conflict resolution before wiring live state",\n'
+            f'    transport: "{transport}",\n'
+            f'    collaborationModel: "{collaboration_model}",\n'
+            '    nextStep: "define presence, permissions, and conflict resolution '
+            'before wiring live state",\n'
             "  };\n"
             "}\n"
         )
@@ -988,7 +996,7 @@ def build_admin_dashboard_plan(project_name: str) -> dict[str, str]:
             "}\n"
         ),
         f"{root_dir}/src/api.ts": (
-            f"const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000';\n\n"
+            "const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000';\n\n"
             "export async function fetchStatus(): Promise<Record<string, unknown>> {\n"
             "  const res = await fetch(`${BASE_URL}/status`);\n"
             "  return res.json() as Promise<Record<string, unknown>>;\n"

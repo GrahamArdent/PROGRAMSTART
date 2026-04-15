@@ -18,6 +18,7 @@ from scripts import programstart_bootstrap as bootstrap
 
 def _minimal_registry(tmp_path: Path) -> dict:
     return {
+        "version": "test",
         "prompt_generation": {
             "artifact_root": "outputs/generated-prompts",
             "managed_stage_prompts": [

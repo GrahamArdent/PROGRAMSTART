@@ -6,9 +6,9 @@ import subprocess
 import sys
 
 try:
-    from .programstart_common import warn_direct_script_invocation, workspace_path
+    from .programstart_common import load_registry_from_path, warn_direct_script_invocation, workspace_path
 except ImportError:  # pragma: no cover - standalone script execution fallback
-    from programstart_common import warn_direct_script_invocation, workspace_path
+    from programstart_common import load_registry_from_path, warn_direct_script_invocation, workspace_path
 
 
 def _check_python_version() -> tuple[bool, str]:
@@ -53,9 +53,9 @@ def _check_registry_schema() -> tuple[bool, str]:
     if not schema_path.exists():
         return True, "process-registry.json present (schema file missing, skipped validation)"
     try:
-        json.loads(registry_path.read_text(encoding="utf-8"))
-        return True, "process-registry.json valid JSON"
-    except (json.JSONDecodeError, OSError) as exc:
+        load_registry_from_path(registry_path)
+        return True, "process-registry.json and registry fragments valid JSON"
+    except (ValueError, json.JSONDecodeError, OSError) as exc:
         return False, f"process-registry.json parse error: {exc}"
 
 

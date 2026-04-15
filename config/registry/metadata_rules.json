@@ -1,0 +1,12 @@
+{
+  "metadata_rules": {
+    "required_prefixes": [
+      "Purpose:",
+      "Owner:",
+      "Last updated:",
+      "Depends on:",
+      "Authority:"
+    ],
+    "owner_placeholder": "[ASSIGN]"
+  }
+}

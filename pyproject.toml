@@ -167,6 +167,7 @@ source = [
   "scripts.lint_prompts",
   "scripts.install_hooks",
   "scripts.programstart_research_delta",
+  "scripts.check_process_registry_schema",
   "scripts.check_commit_msg",
   "scripts.programstart_repo_clean_check",
 ]

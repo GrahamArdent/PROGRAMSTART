@@ -1,0 +1,126 @@
+{
+  "workflow_state": {
+    "programbuild": {
+      "state_file": "PROGRAMBUILD/PROGRAMBUILD_STATE.json",
+      "active_key": "active_stage",
+      "initial_step": "inputs_and_mode_selection",
+      "step_order": [
+        "inputs_and_mode_selection",
+        "feasibility",
+        "research",
+        "requirements_and_ux",
+        "architecture_and_risk_spikes",
+        "scaffold_and_guardrails",
+        "test_strategy",
+        "implementation_loop",
+        "release_readiness",
+        "audit_and_drift_control",
+        "post_launch_review"
+      ],
+      "step_files": {
+        "inputs_and_mode_selection": [
+          "PROGRAMBUILD/PROGRAMBUILD.md",
+          "PROGRAMBUILD/PROGRAMBUILD_CHECKLIST.md"
+        ],
+        "feasibility": [
+          "PROGRAMBUILD/FEASIBILITY.md",
+          "PROGRAMBUILD/DECISION_LOG.md"
+        ],
+        "research": [
+          "PROGRAMBUILD/RESEARCH_SUMMARY.md",
+          "PROGRAMBUILD/DECISION_LOG.md"
+        ],
+        "requirements_and_ux": [
+          "PROGRAMBUILD/REQUIREMENTS.md",
+          "PROGRAMBUILD/USER_FLOWS.md"
+        ],
+        "architecture_and_risk_spikes": [
+          "PROGRAMBUILD/ARCHITECTURE.md",
+          "PROGRAMBUILD/RISK_SPIKES.md"
+        ],
+        "scaffold_and_guardrails": [
+          "PROGRAMBUILD/ARCHITECTURE.md",
+          "PROGRAMBUILD/TEST_STRATEGY.md"
+        ],
+        "test_strategy": [
+          "PROGRAMBUILD/TEST_STRATEGY.md"
+        ],
+        "implementation_loop": [
+          "PROGRAMBUILD/DECISION_LOG.md",
+          "PROGRAMBUILD/PROGRAMBUILD_CHECKLIST.md"
+        ],
+        "release_readiness": [
+          "PROGRAMBUILD/RELEASE_READINESS.md"
+        ],
+        "audit_and_drift_control": [
+          "PROGRAMBUILD/AUDIT_REPORT.md"
+        ],
+        "post_launch_review": [
+          "PROGRAMBUILD/POST_LAUNCH_REVIEW.md"
+        ]
+      }
+    },
+    "userjourney": {
+      "state_file": "USERJOURNEY/USERJOURNEY_STATE.json",
+      "active_key": "active_phase",
+      "initial_step": "phase_0",
+      "step_order": [
+        "phase_0",
+        "phase_1",
+        "phase_2",
+        "phase_3",
+        "phase_4",
+        "phase_5",
+        "phase_6",
+        "phase_7",
+        "phase_8"
+      ],
+      "step_files": {
+        "phase_0": [
+          "USERJOURNEY/OPEN_QUESTIONS.md",
+          "USERJOURNEY/DECISION_LOG.md",
+          "USERJOURNEY/ROUTE_AND_STATE_FREEZE.md"
+        ],
+        "phase_1": [
+          "USERJOURNEY/LEGAL_AND_CONSENT.md",
+          "USERJOURNEY/LEGAL_REVIEW_NOTES.md",
+          "USERJOURNEY/EXTERNAL_REVIEW_PACKET.md"
+        ],
+        "phase_2": [
+          "USERJOURNEY/SCREEN_INVENTORY.md",
+          "USERJOURNEY/UX_COPY_DRAFT.md",
+          "USERJOURNEY/USER_FLOWS.md"
+        ],
+        "phase_3": [
+          "USERJOURNEY/STATES_AND_RULES.md",
+          "USERJOURNEY/ROUTE_AND_STATE_FREEZE.md",
+          "USERJOURNEY/IMPLEMENTATION_PLAN.md"
+        ],
+        "phase_4": [
+          "USERJOURNEY/ACCEPTANCE_CRITERIA.md",
+          "USERJOURNEY/IMPLEMENTATION_PLAN.md",
+          "USERJOURNEY/EXECUTION_SLICES.md"
+        ],
+        "phase_5": [
+          "USERJOURNEY/EXECUTION_SLICES.md",
+          "USERJOURNEY/FILE_BY_FILE_IMPLEMENTATION_CHECKLIST.md",
+          "USERJOURNEY/DELIVERY_GAMEPLAN.md"
+        ],
+        "phase_6": [
+          "USERJOURNEY/USER_FLOWS.md",
+          "USERJOURNEY/SCREEN_INVENTORY.md",
+          "USERJOURNEY/ACCEPTANCE_CRITERIA.md"
+        ],
+        "phase_7": [
+          "USERJOURNEY/ANALYTICS_AND_OUTCOMES.md",
+          "USERJOURNEY/STATES_AND_RULES.md"
+        ],
+        "phase_8": [
+          "USERJOURNEY/ANALYTICS_AND_OUTCOMES.md",
+          "USERJOURNEY/LEGAL_REVIEW_NOTES.md",
+          "USERJOURNEY/ACCEPTANCE_CRITERIA.md"
+        ]
+      }
+    }
+  }
+}

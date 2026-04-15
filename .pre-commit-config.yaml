@@ -43,11 +43,10 @@ repos:
 
       - id: check-process-registry-schema
         name: check process registry schema
-        entry: check-jsonschema --schemafile schemas/process-registry.schema.json config/process-registry.json
-        language: python
-        additional_dependencies: [check-jsonschema>=0.37.1]
+        entry: uv run python scripts/check_process_registry_schema.py
+        language: system
         pass_filenames: false
-        files: ^(config/process-registry\.json|schemas/process-registry\.schema\.json)$
+        files: ^(config/process-registry\.json|config/registry/|schemas/process-registry\.schema\.json|scripts/check_process_registry_schema\.py)$
 
       - id: check-programbuild-state-schema
         name: check programbuild state schema

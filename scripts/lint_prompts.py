@@ -11,6 +11,11 @@ import re
 import sys
 from pathlib import Path
 
+try:
+    from .programstart_common import load_registry_from_path
+except ImportError:  # pragma: no cover - standalone script execution fallback
+    from programstart_common import load_registry_from_path
+
 REQUIRED_FIELDS = {"description", "name", "agent"}
 OPTIONAL_FIELDS = {"argument-hint", "version", "deprecated"}
 ALLOWED_FIELDS = REQUIRED_FIELDS | OPTIONAL_FIELDS
@@ -57,7 +62,7 @@ def _extract_frontmatter(text: str) -> dict[str, str] | None:
 
 
 def _load_prompt_registry() -> dict[str, str]:
-    registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+    registry = load_registry_from_path(REGISTRY_PATH)
     prompt_registry = registry.get("prompt_registry", {})
     mapping: dict[str, str] = {}
 

@@ -1,0 +1,447 @@
+{
+  "workflow_guidance": {
+    "kickoff": {
+      "description": "Kick off a new project repository using the durable assets instead of chat memory. Attach USERJOURNEY separately only when the project needs it.",
+      "files": [
+        "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+        "PROGRAMBUILD/PROGRAMBUILD_FILE_INDEX.md",
+        "PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md"
+      ],
+      "scripts": [
+        "scripts/programstart_bootstrap.py",
+        "scripts/programstart_create.py",
+        "scripts/programstart_init.py",
+        "scripts/programstart_recommend.py",
+        "scripts/programstart_attach.py",
+        "scripts/programstart_validate.py",
+        "scripts/programstart_step_guide.py"
+      ],
+      "prompts": [
+        ".github/prompts/start-programstart-project.prompt.md",
+        ".github/prompts/programstart-stage-guide.prompt.md",
+        ".github/prompts/programstart-stage-transition.prompt.md",
+        ".github/prompts/programstart-cross-stage-validation.prompt.md"
+      ]
+    },
+    "cross_cutting_workflow_prompts": [
+      ".github/prompts/propagate-canonical-change.prompt.md",
+      ".github/prompts/programstart-cross-stage-validation.prompt.md"
+    ],
+    "programbuild": {
+      "inputs_and_mode_selection": {
+        "description": "Choose the PROGRAMBUILD variant (lite/product/enterprise), fill in the kickoff packet, and set executive scope.",
+        "files": [
+          "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+          "PROGRAMBUILD/PROGRAMBUILD_FILE_INDEX.md",
+          "PROGRAMBUILD/PROGRAMBUILD.md",
+          "PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md",
+          "PROGRAMBUILD/PROGRAMBUILD_IDEA_INTAKE.md",
+          "PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md"
+        ],
+        "scripts": [
+          "scripts/programstart_step_guide.py",
+          "scripts/programstart_validate.py",
+          "scripts/programstart_checklist_progress.py"
+        ],
+        "prompts": [
+          ".github/prompts/start-programstart-project.prompt.md",
+          ".github/prompts/programstart-stage-guide.prompt.md",
+          ".github/prompts/shape-idea.prompt.md"
+        ]
+      },
+      "feasibility": {
+        "description": "Validate whether the idea is technically and commercially viable before committing resources.",
+        "files": [
+          "PROGRAMBUILD/FEASIBILITY.md",
+          "PROGRAMBUILD/DECISION_LOG.md",
+          "PROGRAMBUILD/PROGRAMBUILD_CHECKLIST.md",
+          "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
+          "PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md"
+        ],
+        "scripts": [
+          "scripts/programstart_validate.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/programstart-stage-guide.prompt.md",
+          ".github/prompts/programstart-stage-transition.prompt.md",
+          ".github/prompts/shape-feasibility.prompt.md"
+        ]
+      },
+      "research": {
+        "description": "Gather competitive, technical, and market research to inform requirements.",
+        "files": [
+          "PROGRAMBUILD/RESEARCH_SUMMARY.md",
+          "PROGRAMBUILD/DECISION_LOG.md",
+          "PROGRAMBUILD/RISK_SPIKES.md",
+          "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
+          "PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md"
+        ],
+        "scripts": [
+          "scripts/programstart_validate.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/programstart-stage-guide.prompt.md",
+          ".github/prompts/programstart-stage-transition.prompt.md",
+          ".github/prompts/shape-research.prompt.md"
+        ]
+      },
+      "requirements_and_ux": {
+        "description": "Define functional requirements, user flows, and UX expectations.",
+        "files": [
+          "PROGRAMBUILD/REQUIREMENTS.md",
+          "PROGRAMBUILD/USER_FLOWS.md",
+          "PROGRAMBUILD/DECISION_LOG.md",
+          "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
+          "PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md"
+        ],
+        "scripts": [
+          "scripts/programstart_drift_check.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/programstart-stage-guide.prompt.md",
+          ".github/prompts/programstart-stage-transition.prompt.md",
+          ".github/prompts/shape-requirements.prompt.md"
+        ]
+      },
+      "architecture_and_risk_spikes": {
+        "description": "Design the system architecture and spike on high-risk technical areas.",
+        "files": [
+          "PROGRAMBUILD/ARCHITECTURE.md",
+          "PROGRAMBUILD/RISK_SPIKES.md",
+          "PROGRAMBUILD/DECISION_LOG.md",
+          "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
+          "PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md"
+        ],
+        "scripts": [
+          "scripts/programstart_drift_check.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/programstart-stage-guide.prompt.md",
+          ".github/prompts/programstart-stage-transition.prompt.md",
+          ".github/prompts/shape-architecture.prompt.md"
+        ]
+      },
+      "scaffold_and_guardrails": {
+        "description": "Set up project scaffolding, CI, linting, and process guardrails.",
+        "files": [
+          "PROGRAMBUILD/ARCHITECTURE.md",
+          "PROGRAMBUILD/TEST_STRATEGY.md",
+          "PROGRAMBUILD/PROGRAMBUILD_CHECKLIST.md",
+          "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
+          "PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md"
+        ],
+        "scripts": [
+          "scripts/programstart_drift_check.py",
+          "scripts/programstart_validate.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/programstart-stage-guide.prompt.md",
+          ".github/prompts/programstart-stage-transition.prompt.md",
+          ".github/prompts/shape-scaffold.prompt.md"
+        ]
+      },
+      "test_strategy": {
+        "description": "Finalize the testing plan: unit, integration, E2E, and acceptance criteria.",
+        "files": [
+          "PROGRAMBUILD/TEST_STRATEGY.md",
+          "PROGRAMBUILD/REQUIREMENTS.md",
+          "PROGRAMBUILD/ARCHITECTURE.md"
+        ],
+        "scripts": [
+          "scripts/programstart_drift_check.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/programstart-stage-guide.prompt.md",
+          ".github/prompts/programstart-stage-transition.prompt.md",
+          ".github/prompts/shape-test-strategy.prompt.md"
+        ]
+      },
+      "implementation_loop": {
+        "description": "Build, test, and iterate — the main development cycle.",
+        "entry_criteria": [
+          "ARCHITECTURE.md is complete and all spikes in RISK_SPIKES.md are resolved or explicitly deferred with a decision.",
+          "TEST_STRATEGY.md is complete with a requirements-to-test traceability matrix covering all P0 requirements.",
+          "Every P0 requirement in REQUIREMENTS.md has at least one named purpose test.",
+          "DECISION_LOG.md is current — no decisions made since the last stage that are not recorded."
+        ],
+        "first_steps": [
+          "Scaffold the project structure — run the appropriate project initializer (e.g. create-next-app, uv init, cargo init) based on your PRODUCT_SHAPE and ARCHITECTURE.md technology decisions.",
+          "Write the first purpose test before writing the first feature. Pick the highest-risk P0 requirement and write its test first so the first line of feature code has something to fail.",
+          "Commit after each meaningful unit of work so the drift check has a clean baseline for the next advance.",
+          "Run 'programstart status' if you are unsure what to do next — it will surface the active stage and any blockers."
+        ],
+        "files": [
+          "PROGRAMBUILD/ARCHITECTURE.md",
+          "PROGRAMBUILD/REQUIREMENTS.md",
+          "PROGRAMBUILD/USER_FLOWS.md",
+          "PROGRAMBUILD/TEST_STRATEGY.md",
+          "PROGRAMBUILD/DECISION_LOG.md",
+          "PROGRAMBUILD/PROGRAMBUILD_CHECKLIST.md",
+          "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
+          "PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md"
+        ],
+        "scripts": [
+          "scripts/programstart_checklist_progress.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/programstart-stage-guide.prompt.md",
+          ".github/prompts/programstart-stage-transition.prompt.md",
+          ".github/prompts/product-jit-check.prompt.md"
+        ]
+      },
+      "release_readiness": {
+        "description": "Final pre-launch review: all checks green, sign-off from stakeholders.",
+        "files": [
+          "PROGRAMBUILD/RELEASE_READINESS.md",
+          "PROGRAMBUILD/TEST_STRATEGY.md",
+          "PROGRAMBUILD/AUDIT_REPORT.md"
+        ],
+        "scripts": [
+          "scripts/programstart_validate.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/programstart-stage-guide.prompt.md",
+          ".github/prompts/programstart-stage-transition.prompt.md",
+          ".github/prompts/shape-release-readiness.prompt.md"
+        ]
+      },
+      "audit_and_drift_control": {
+        "description": "Post-release audit: verify no drift between docs, code, and decisions.",
+        "files": [
+          "PROGRAMBUILD/AUDIT_REPORT.md",
+          "PROGRAMBUILD/RELEASE_READINESS.md",
+          "PROGRAMBUILD/ARCHITECTURE.md"
+        ],
+        "scripts": [
+          "scripts/programstart_drift_check.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/shape-audit.prompt.md",
+          ".github/prompts/programstart-stage-guide.prompt.md",
+          ".github/prompts/programstart-stage-transition.prompt.md"
+        ]
+      },
+      "post_launch_review": {
+        "description": "Retrospective: capture lessons learned, update the planning kit for next time.",
+        "files": [
+          "PROGRAMBUILD/POST_LAUNCH_REVIEW.md",
+          "PROGRAMBUILD/DECISION_LOG.md",
+          "PROGRAMBUILD/RELEASE_READINESS.md"
+        ],
+        "scripts": [
+          "scripts/programstart_step_guide.py",
+          "scripts/programstart_refresh_integrity.py"
+        ],
+        "prompts": [
+          ".github/prompts/programstart-stage-guide.prompt.md",
+          ".github/prompts/programstart-stage-transition.prompt.md",
+          ".github/prompts/shape-post-launch-review.prompt.md"
+        ]
+      },
+      "stage_subagents": {
+        "inputs_and_mode_selection": ["Product Analyst"],
+        "feasibility": ["Research Scout", "Product Analyst"],
+        "research": ["Research Scout"],
+        "requirements_and_ux": ["Product Analyst", "UX Flow Designer"],
+        "architecture_and_risk_spikes": ["Architecture Reviewer", "Risk Spike Agent", "Security Reviewer"],
+        "scaffold_and_guardrails": ["Contract Auditor"],
+        "test_strategy": ["Test Planner"],
+        "implementation_loop": ["Contract Auditor", "Test Planner"],
+        "release_readiness": ["Release Readiness Reviewer"],
+        "audit_and_drift_control": ["Contract Auditor", "Security Reviewer"],
+        "post_launch_review": ["Release Readiness Reviewer"]
+      }
+    },
+    "operator": {
+      "diagnostics": {
+        "description": "Prompt surfaces for operator diagnostics that inspect repo policy or source-of-truth consistency without advancing workflow state.",
+        "prompts": [
+          ".github/prompts/audit-process-drift.prompt.md"
+        ]
+      },
+      "maintenance_and_remediation": {
+        "description": "Prompt surfaces for multi-phase PROGRAMSTART maintenance, repair, hardening, and remediation work.",
+        "prompts": [
+          ".github/prompts/execute-enhancement-gameplan.prompt.md",
+          ".github/prompts/execute-hardening-gameplan.prompt.md",
+          ".github/prompts/execute-gate-gameplan.prompt.md",
+          ".github/prompts/execute-prompt-architecture-remediation-gameplan.prompt.md"
+        ]
+      }
+    },
+    "userjourney": {
+      "phase_0": {
+        "description": "Freeze product decisions, resolve open legal/operational questions, lock route & state model.",
+        "files": [
+          "USERJOURNEY/OPEN_QUESTIONS.md",
+          "USERJOURNEY/EXTERNAL_REVIEW_PACKET.md",
+          "USERJOURNEY/DELIVERY_GAMEPLAN.md",
+          "USERJOURNEY/DECISION_LOG.md"
+        ],
+        "scripts": [
+          "scripts/programstart_status.py",
+          "scripts/programstart_validate.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/userjourney-next-slice.prompt.md",
+          ".github/prompts/programstart-stage-guide.prompt.md",
+          ".github/prompts/shape-uj-decision-freeze.prompt.md"
+        ]
+      },
+      "phase_1": {
+        "description": "Draft and review legal documents: Terms of Service, Privacy Policy, consent flows.",
+        "files": [
+          "USERJOURNEY/LEGAL_AND_CONSENT.md",
+          "USERJOURNEY/LEGAL_REVIEW_NOTES.md",
+          "USERJOURNEY/TERMS_OF_SERVICE_DRAFT.md",
+          "USERJOURNEY/PRIVACY_POLICY_DRAFT.md"
+        ],
+        "scripts": [
+          "scripts/programstart_status.py",
+          "scripts/programstart_validate.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/userjourney-next-slice.prompt.md",
+          ".github/prompts/programstart-stage-guide.prompt.md",
+          ".github/prompts/shape-uj-legal-drafts.prompt.md"
+        ]
+      },
+      "phase_2": {
+        "description": "Design screens, UX copy, and user flows for signup and onboarding.",
+        "files": [
+          "USERJOURNEY/SCREEN_INVENTORY.md",
+          "USERJOURNEY/UX_COPY_DRAFT.md",
+          "USERJOURNEY/USER_FLOWS.md"
+        ],
+        "scripts": [
+          "scripts/programstart_status.py",
+          "scripts/programstart_drift_check.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/userjourney-next-slice.prompt.md",
+          ".github/prompts/programstart-stage-guide.prompt.md",
+          ".github/prompts/shape-uj-ux-surfaces.prompt.md"
+        ]
+      },
+      "phase_3": {
+        "description": "Define state machine rules, routing logic, and implementation architecture.",
+        "files": [
+          "USERJOURNEY/STATES_AND_RULES.md",
+          "USERJOURNEY/ROUTE_AND_STATE_FREEZE.md",
+          "USERJOURNEY/IMPLEMENTATION_PLAN.md"
+        ],
+        "scripts": [
+          "scripts/programstart_status.py",
+          "scripts/programstart_drift_check.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/userjourney-next-slice.prompt.md",
+          ".github/prompts/programstart-stage-guide.prompt.md",
+          ".github/prompts/shape-uj-decision-freeze.prompt.md"
+        ]
+      },
+      "phase_4": {
+        "description": "Write acceptance criteria, plan execution slices, and prepare implementation backlog.",
+        "files": [
+          "USERJOURNEY/ACCEPTANCE_CRITERIA.md",
+          "USERJOURNEY/IMPLEMENTATION_PLAN.md",
+          "USERJOURNEY/EXECUTION_SLICES.md",
+          "USERJOURNEY/FILE_BY_FILE_IMPLEMENTATION_CHECKLIST.md"
+        ],
+        "scripts": [
+          "scripts/programstart_status.py",
+          "scripts/programstart_drift_check.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/userjourney-next-slice.prompt.md",
+          ".github/prompts/programstart-stage-guide.prompt.md"
+        ]
+      },
+      "phase_5": {
+        "description": "Execute implementation slices and track delivery against the gameplan.",
+        "files": [
+          "USERJOURNEY/EXECUTION_SLICES.md",
+          "USERJOURNEY/FILE_BY_FILE_IMPLEMENTATION_CHECKLIST.md",
+          "USERJOURNEY/DELIVERY_GAMEPLAN.md",
+          "USERJOURNEY/ACCEPTANCE_CRITERIA.md"
+        ],
+        "scripts": [
+          "scripts/programstart_status.py",
+          "scripts/programstart_drift_check.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/userjourney-next-slice.prompt.md",
+          ".github/prompts/programstart-stage-guide.prompt.md"
+        ]
+      },
+      "phase_6": {
+        "description": "QA and polish: verify all flows, screens, and acceptance criteria pass.",
+        "files": [
+          "USERJOURNEY/EXECUTION_SLICES.md",
+          "USERJOURNEY/USER_FLOWS.md",
+          "USERJOURNEY/SCREEN_INVENTORY.md",
+          "USERJOURNEY/ACCEPTANCE_CRITERIA.md"
+        ],
+        "scripts": [
+          "scripts/programstart_status.py",
+          "scripts/programstart_drift_check.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/userjourney-next-slice.prompt.md",
+          ".github/prompts/programstart-stage-guide.prompt.md"
+        ]
+      },
+      "phase_7": {
+        "description": "Wire analytics events and validate outcome tracking against state rules.",
+        "files": [
+          "USERJOURNEY/ANALYTICS_AND_OUTCOMES.md",
+          "USERJOURNEY/STATES_AND_RULES.md",
+          "USERJOURNEY/ACCEPTANCE_CRITERIA.md"
+        ],
+        "scripts": [
+          "scripts/programstart_status.py",
+          "scripts/programstart_drift_check.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/userjourney-next-slice.prompt.md",
+          ".github/prompts/programstart-stage-guide.prompt.md"
+        ]
+      },
+      "phase_8": {
+        "description": "Final activation review: confirm first_value_achieved fires correctly, legal sign-off complete.",
+        "files": [
+          "USERJOURNEY/ANALYTICS_AND_OUTCOMES.md",
+          "USERJOURNEY/LEGAL_REVIEW_NOTES.md",
+          "USERJOURNEY/ACCEPTANCE_CRITERIA.md",
+          "USERJOURNEY/DELIVERY_GAMEPLAN.md"
+        ],
+        "scripts": [
+          "scripts/programstart_status.py",
+          "scripts/programstart_validate.py",
+          "scripts/programstart_step_guide.py"
+        ],
+        "prompts": [
+          ".github/prompts/userjourney-next-slice.prompt.md",
+          ".github/prompts/programstart-stage-guide.prompt.md"
+        ]
+      }
+    }
+  }
+}

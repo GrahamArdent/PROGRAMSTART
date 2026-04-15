@@ -1,0 +1,228 @@
+{
+  "prompt_registry": {
+    "workflow_prompt_files": [
+      ".github/prompts/start-programstart-project.prompt.md",
+      ".github/prompts/shape-idea.prompt.md",
+      ".github/prompts/shape-feasibility.prompt.md",
+      ".github/prompts/shape-research.prompt.md",
+      ".github/prompts/shape-requirements.prompt.md",
+      ".github/prompts/shape-architecture.prompt.md",
+      ".github/prompts/shape-scaffold.prompt.md",
+      ".github/prompts/shape-test-strategy.prompt.md",
+      ".github/prompts/shape-release-readiness.prompt.md",
+      ".github/prompts/shape-audit.prompt.md",
+      ".github/prompts/shape-post-launch-review.prompt.md",
+      ".github/prompts/shape-uj-decision-freeze.prompt.md",
+      ".github/prompts/shape-uj-legal-drafts.prompt.md",
+      ".github/prompts/shape-uj-ux-surfaces.prompt.md",
+      ".github/prompts/programstart-stage-guide.prompt.md",
+      ".github/prompts/programstart-stage-transition.prompt.md",
+      ".github/prompts/programstart-cross-stage-validation.prompt.md",
+      ".github/prompts/programstart-what-next.prompt.md",
+      ".github/prompts/userjourney-next-slice.prompt.md",
+      ".github/prompts/product-jit-check.prompt.md",
+      ".github/prompts/propagate-canonical-change.prompt.md"
+    ],
+    "operator_prompt_files": [
+      ".github/prompts/audit-process-drift.prompt.md",
+      ".github/prompts/execute-enhancement-gameplan.prompt.md",
+      ".github/prompts/execute-hardening-gameplan.prompt.md",
+      ".github/prompts/execute-gate-gameplan.prompt.md",
+      ".github/prompts/execute-prompt-architecture-remediation-gameplan.prompt.md"
+    ],
+    "internal_prompt_files": [
+      ".github/prompts/internal/implement-stage2-gameplan.prompt.md",
+      ".github/prompts/internal/implement-stage4-gameplan.prompt.md",
+      ".github/prompts/internal/implement-stage5-gameplan.prompt.md",
+      ".github/prompts/internal/implement-stage6-gameplan.prompt.md",
+      ".github/prompts/internal/implement-stage7-gameplan.prompt.md",
+      ".github/prompts/internal/implement-protocol-alignment.prompt.md",
+      ".github/prompts/internal/implement-phase-f.prompt.md",
+      ".github/prompts/internal/implement-gameplan-phase1.prompt.md",
+      ".github/prompts/internal/implement-gameplan-phase2.prompt.md",
+      ".github/prompts/internal/implement-gameplan-phase3.prompt.md",
+      ".github/prompts/internal/implement-gameplan-phase4.prompt.md",
+      ".github/prompts/internal/implement-gameplan-phase7.prompt.md",
+      ".github/prompts/internal/implement-gameplan-phase8.prompt.md",
+      ".github/prompts/internal/implement-gameplan-phase9.prompt.md",
+      ".github/prompts/internal/implement-gameplan-phase10.prompt.md"
+    ]
+  },
+  "prompt_authority": {
+    ".github/prompts/execute-enhancement-gameplan.prompt.md": {
+      "authority_files": [
+        "devlog/gameplans/enhancegameplan.md",
+        "devlog/reports/enhanceopportunity.md",
+        "config/process-registry.json",
+        "PROGRAMBUILD/ARCHITECTURE.md"
+      ]
+    },
+    ".github/prompts/execute-hardening-gameplan.prompt.md": {
+      "authority_files": [
+        "devlog/gameplans/hardeninggameplan.md",
+        "config/process-registry.json",
+        "PROGRAMBUILD/ARCHITECTURE.md"
+      ]
+    },
+    ".github/prompts/execute-gate-gameplan.prompt.md": {
+      "authority_files": [
+        "devlog/gameplans/gategameplan.md",
+        ".pre-commit-config.yaml",
+        "pyproject.toml",
+        "scripts/lint_prompts.py",
+        "tests/test_lint_prompts.py",
+        "tests/test_prompt_compliance.py"
+      ]
+    },
+    ".github/prompts/execute-prompt-architecture-remediation-gameplan.prompt.md": {
+      "authority_files": [
+        "docs/decisions/0011-separate-workflow-and-operator-prompt-architecture.md",
+        "PROGRAMBUILD/DECISION_LOG.md",
+        "devlog/gameplans/prompt-architecture-remediation-gameplan.md",
+        "config/process-registry.json"
+      ]
+    },
+    ".github/prompts/shape-architecture.prompt.md": {
+      "authority_files": [
+        "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+        "PROGRAMBUILD/PROGRAMBUILD.md",
+        "PROGRAMBUILD/REQUIREMENTS.md",
+        "PROGRAMBUILD/USER_FLOWS.md",
+        "PROGRAMBUILD/RISK_SPIKES.md",
+        "PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md"
+      ]
+    },
+    ".github/prompts/shape-audit.prompt.md": {
+      "authority_files": [
+        "PROGRAMBUILD/PROGRAMBUILD.md",
+        "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+        "PROGRAMBUILD/FEASIBILITY.md",
+        "PROGRAMBUILD/ARCHITECTURE.md",
+        "PROGRAMBUILD/DECISION_LOG.md",
+        "PROGRAMBUILD/RISK_SPIKES.md",
+        "PROGRAMBUILD/RELEASE_READINESS.md",
+        "PROGRAMBUILD/AUDIT_REPORT.md"
+      ]
+    },
+    ".github/prompts/shape-feasibility.prompt.md": {
+      "authority_files": [
+        "PROGRAMBUILD/PROGRAMBUILD.md",
+        "PROGRAMBUILD/PROGRAMBUILD_IDEA_INTAKE.md",
+        "PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md",
+        "PROGRAMBUILD/FEASIBILITY.md"
+      ]
+    },
+    ".github/prompts/shape-idea.prompt.md": {
+      "authority_files": [
+        "PROGRAMBUILD/PROGRAMBUILD.md",
+        "PROGRAMBUILD/PROGRAMBUILD_IDEA_INTAKE.md",
+        "PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md"
+      ]
+    },
+    ".github/prompts/shape-post-launch-review.prompt.md": {
+      "authority_files": [
+        "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+        "PROGRAMBUILD/PROGRAMBUILD.md",
+        "PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md",
+        "PROGRAMBUILD/RELEASE_READINESS.md",
+        "PROGRAMBUILD/AUDIT_REPORT.md"
+      ]
+    },
+    ".github/prompts/shape-release-readiness.prompt.md": {
+      "authority_files": [
+        "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+        "PROGRAMBUILD/PROGRAMBUILD.md",
+        "PROGRAMBUILD/ARCHITECTURE.md",
+        "PROGRAMBUILD/TEST_STRATEGY.md",
+        "PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md"
+      ]
+    },
+    ".github/prompts/shape-requirements.prompt.md": {
+      "authority_files": [
+        "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+        "PROGRAMBUILD/PROGRAMBUILD.md",
+        "PROGRAMBUILD/FEASIBILITY.md",
+        "PROGRAMBUILD/RESEARCH_SUMMARY.md",
+        "PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md"
+      ]
+    },
+    ".github/prompts/shape-research.prompt.md": {
+      "authority_files": [
+        "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+        "PROGRAMBUILD/PROGRAMBUILD.md",
+        "PROGRAMBUILD/FEASIBILITY.md",
+        "PROGRAMBUILD/RISK_SPIKES.md",
+        "PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md"
+      ]
+    },
+    ".github/prompts/shape-scaffold.prompt.md": {
+      "authority_files": [
+        "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+        "PROGRAMBUILD/PROGRAMBUILD.md",
+        "PROGRAMBUILD/ARCHITECTURE.md",
+        "PROGRAMBUILD/USER_FLOWS.md",
+        "PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md"
+      ]
+    },
+    ".github/prompts/shape-test-strategy.prompt.md": {
+      "authority_files": [
+        "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+        "PROGRAMBUILD/PROGRAMBUILD.md",
+        "PROGRAMBUILD/REQUIREMENTS.md",
+        "PROGRAMBUILD/USER_FLOWS.md",
+        "PROGRAMBUILD/ARCHITECTURE.md"
+      ]
+    },
+    ".github/prompts/shape-uj-decision-freeze.prompt.md": {
+      "authority_files": [
+        "USERJOURNEY/DELIVERY_GAMEPLAN.md",
+        "USERJOURNEY/DECISION_LOG.md",
+        "USERJOURNEY/ROUTE_AND_STATE_FREEZE.md",
+        "USERJOURNEY/STATES_AND_RULES.md",
+        "USERJOURNEY/OPEN_QUESTIONS.md"
+      ]
+    },
+    ".github/prompts/shape-uj-legal-drafts.prompt.md": {
+      "authority_files": [
+        "USERJOURNEY/DELIVERY_GAMEPLAN.md",
+        "USERJOURNEY/LEGAL_AND_CONSENT.md",
+        "USERJOURNEY/OPEN_QUESTIONS.md",
+        "USERJOURNEY/LEGAL_REVIEW_NOTES.md",
+        "USERJOURNEY/DECISION_LOG.md"
+      ]
+    },
+    ".github/prompts/shape-uj-ux-surfaces.prompt.md": {
+      "authority_files": [
+        "USERJOURNEY/DELIVERY_GAMEPLAN.md",
+        "USERJOURNEY/SCREEN_INVENTORY.md",
+        "USERJOURNEY/USER_FLOWS.md",
+        "USERJOURNEY/UX_COPY_DRAFT.md",
+        "USERJOURNEY/ROUTE_AND_STATE_FREEZE.md",
+        "USERJOURNEY/DECISION_LOG.md"
+      ]
+    }
+  },
+  "prompt_generation": {
+    "artifact_root": "outputs/generated-prompts",
+    "managed_stage_prompts": [
+      { "stage": "inputs_and_mode_selection", "path": "outputs/generated-prompts/inputs_and_mode_selection.prompt.md" },
+      { "stage": "feasibility", "path": "outputs/generated-prompts/feasibility.prompt.md" },
+      { "stage": "research", "path": "outputs/generated-prompts/research.prompt.md" },
+      { "stage": "requirements_and_ux", "path": "outputs/generated-prompts/requirements_and_ux.prompt.md" },
+      { "stage": "architecture_and_risk_spikes", "path": "outputs/generated-prompts/architecture_and_risk_spikes.prompt.md" },
+      { "stage": "scaffold_and_guardrails", "path": "outputs/generated-prompts/scaffold_and_guardrails.prompt.md" },
+      { "stage": "test_strategy", "path": "outputs/generated-prompts/test_strategy.prompt.md" },
+      { "stage": "implementation_loop", "path": "outputs/generated-prompts/implementation_loop.prompt.md" },
+      { "stage": "release_readiness", "path": "outputs/generated-prompts/release_readiness.prompt.md" },
+      { "stage": "audit_and_drift_control", "path": "outputs/generated-prompts/audit_and_drift_control.prompt.md" },
+      { "stage": "post_launch_review", "path": "outputs/generated-prompts/post_launch_review.prompt.md" }
+    ]
+  },
+  "adr_policy": {
+    "legacy_pre_register_adrs": [
+      "0001",
+      "0002",
+      "0003"
+    ]
+  }
+}

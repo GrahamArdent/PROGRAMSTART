@@ -983,6 +983,7 @@ def expected_bootstrap_assets() -> set[str]:
     }
     patterns = [
         "config/*.json",
+        "config/registry/**/*.json",
         "dashboard/*",
         "docs/*.md",
         "docs/decisions/*.md",

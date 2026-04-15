@@ -1,0 +1,291 @@
+{
+  "sync_rules": [
+    {
+      "name": "programbuild_control_inventory",
+      "system": "programbuild",
+      "authority_files": [
+        "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+        "PROGRAMBUILD/PROGRAMBUILD_FILE_INDEX.md"
+      ],
+      "dependent_files": [
+        "PROGRAMBUILD/PROGRAMBUILD.md",
+        "PROGRAMBUILD/PROGRAMBUILD_LITE.md",
+        "PROGRAMBUILD/PROGRAMBUILD_PRODUCT.md",
+        "PROGRAMBUILD/PROGRAMBUILD_ENTERPRISE.md",
+        "PROGRAMBUILD/PROGRAMBUILD_ADR_TEMPLATE.md",
+        "PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md",
+        "PROGRAMBUILD/PROGRAMBUILD_SUBAGENTS.md",
+        "PROGRAMBUILD/PROGRAMBUILD_CHECKLIST.md",
+        "PROGRAMBUILD/PROGRAMBUILD_IDEA_INTAKE.md",
+        "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
+        "PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md"
+      ],
+      "require_authority_when_dependents_change": true,
+      "require_dependents_when_authority_changes": true,
+      "description": "Changes to Program Build control behavior should update the canonical and file index docs in the same change."
+    },
+    {
+      "name": "programbuild_architecture_contracts",
+      "system": "programbuild",
+      "authority_files": [
+        "PROGRAMBUILD/ARCHITECTURE.md"
+      ],
+      "dependent_files": [
+        "PROGRAMBUILD/TEST_STRATEGY.md",
+        "PROGRAMBUILD/RELEASE_READINESS.md",
+        "PROGRAMBUILD/RISK_SPIKES.md"
+      ],
+      "require_authority_when_dependents_change": true,
+      "require_dependents_when_authority_changes": true,
+      "description": "Test strategy, release readiness, and risk spikes depend on architecture contracts. Update ARCHITECTURE.md first when contracts change."
+    },
+    {
+      "name": "programbuild_requirements_scope",
+      "system": "programbuild",
+      "authority_files": [
+        "PROGRAMBUILD/REQUIREMENTS.md"
+      ],
+      "dependent_files": [
+        "PROGRAMBUILD/USER_FLOWS.md",
+        "PROGRAMBUILD/ARCHITECTURE.md",
+        "PROGRAMBUILD/TEST_STRATEGY.md"
+      ],
+      "require_authority_when_dependents_change": true,
+      "require_dependents_when_authority_changes": true,
+      "description": "User flows, architecture, and test strategy must stay aligned with requirements scope. Update REQUIREMENTS.md first when scope changes."
+    },
+    {
+      "name": "programbuild_feasibility_cascade",
+      "system": "programbuild",
+      "authority_files": [
+        "PROGRAMBUILD/FEASIBILITY.md"
+      ],
+      "dependent_files": [
+        "PROGRAMBUILD/RESEARCH_SUMMARY.md",
+        "PROGRAMBUILD/REQUIREMENTS.md",
+        "PROGRAMBUILD/RISK_SPIKES.md"
+      ],
+      "require_authority_when_dependents_change": true,
+      "require_dependents_when_authority_changes": true,
+      "description": "Feasibility outcomes, kill criteria, and early risk framing should be updated before downstream research, scope, and spike plans drift."
+    },
+    {
+      "name": "programbuild_variant_alignment",
+      "system": "programbuild",
+      "authority_files": [
+        "PROGRAMBUILD/PROGRAMBUILD.md"
+      ],
+      "dependent_files": [
+        "PROGRAMBUILD/PROGRAMBUILD_LITE.md",
+        "PROGRAMBUILD/PROGRAMBUILD_PRODUCT.md",
+        "PROGRAMBUILD/PROGRAMBUILD_ENTERPRISE.md"
+      ],
+      "require_authority_when_dependents_change": true,
+      "require_dependents_when_authority_changes": true,
+      "description": "Variant playbooks should stay compatible with the master playbook stage order and naming rules. Review PROGRAMBUILD.md when variants change."
+    },
+    {
+      "name": "userjourney_external_review_packet",
+      "system": "userjourney",
+      "authority_files": [
+        "USERJOURNEY/OPEN_QUESTIONS.md",
+        "USERJOURNEY/LEGAL_REVIEW_NOTES.md",
+        "USERJOURNEY/LEGAL_AND_CONSENT.md"
+      ],
+      "dependent_files": [
+        "USERJOURNEY/EXTERNAL_REVIEW_PACKET.md",
+        "USERJOURNEY/TERMS_OF_SERVICE_DRAFT.md",
+        "USERJOURNEY/PRIVACY_POLICY_DRAFT.md"
+      ],
+      "require_authority_when_dependents_change": true,
+      "description": "External legal and operational review framing must stay aligned with the open questions, legal notes, and consent authority docs."
+    },
+    {
+      "name": "userjourney_route_state_logic",
+      "system": "userjourney",
+      "authority_files": [
+        "USERJOURNEY/DECISION_LOG.md",
+        "USERJOURNEY/ROUTE_AND_STATE_FREEZE.md",
+        "USERJOURNEY/STATES_AND_RULES.md"
+      ],
+      "dependent_files": [
+        "USERJOURNEY/USER_FLOWS.md",
+        "USERJOURNEY/SCREEN_INVENTORY.md",
+        "USERJOURNEY/IMPLEMENTATION_PLAN.md",
+        "USERJOURNEY/IMPLEMENTATION_TRACKER.md"
+      ],
+      "require_authority_when_dependents_change": true,
+      "description": "Route or state behavior changes must update the decision and route/state authority docs before dependent execution docs."
+    },
+    {
+      "name": "userjourney_legal_consent_behavior",
+      "system": "userjourney",
+      "authority_files": [
+        "USERJOURNEY/DECISION_LOG.md",
+        "USERJOURNEY/LEGAL_AND_CONSENT.md"
+      ],
+      "dependent_files": [
+        "USERJOURNEY/TERMS_OF_SERVICE_DRAFT.md",
+        "USERJOURNEY/PRIVACY_POLICY_DRAFT.md",
+        "USERJOURNEY/LEGAL_REVIEW_NOTES.md",
+        "USERJOURNEY/UX_COPY_DRAFT.md",
+        "USERJOURNEY/ACCEPTANCE_CRITERIA.md"
+      ],
+      "require_authority_when_dependents_change": true,
+      "description": "Legal or consent behavior changes must update the authority docs before drafts, copy, and acceptance criteria."
+    },
+    {
+      "name": "userjourney_ux_surfaces_copy",
+      "system": "userjourney",
+      "authority_files": [
+        "USERJOURNEY/SCREEN_INVENTORY.md",
+        "USERJOURNEY/USER_FLOWS.md",
+        "USERJOURNEY/UX_COPY_DRAFT.md"
+      ],
+      "dependent_files": [
+        "USERJOURNEY/ACCEPTANCE_CRITERIA.md",
+        "USERJOURNEY/ANALYTICS_AND_OUTCOMES.md"
+      ],
+      "require_authority_when_dependents_change": true,
+      "description": "UX surface changes should update inventory, flows, and copy before downstream acceptance and analytics docs."
+    },
+    {
+      "name": "userjourney_implementation_sequence",
+      "system": "userjourney",
+      "authority_files": [
+        "USERJOURNEY/IMPLEMENTATION_TRACKER.md"
+      ],
+      "dependent_files": [
+        "USERJOURNEY/EXECUTION_SLICES.md",
+        "USERJOURNEY/FILE_BY_FILE_IMPLEMENTATION_CHECKLIST.md",
+        "USERJOURNEY/DELIVERY_GAMEPLAN.md"
+      ],
+      "require_authority_when_dependents_change": true,
+      "description": "Implementation sequence changes must start in the tracker and then flow to slices, file checklist, and delivery gameplan."
+    },
+    {
+      "name": "decisions_adr_template",
+      "system": "cross",
+      "authority_files": [
+        "PROGRAMBUILD/PROGRAMBUILD_ADR_TEMPLATE.md"
+      ],
+      "dependent_files": [
+        "docs/decisions/README.md",
+        "docs/decisions/0001-use-programbuild-workflow-system.md",
+        "docs/decisions/0002-adopt-conventional-commits.md",
+        "docs/decisions/0003-adopt-madr-for-architecture-decisions.md",
+        "docs/decisions/0004-root-workspace-smoke-readonly.md",
+        "docs/decisions/0005-cap-signoff-history-at-100-entries.md",
+        "docs/decisions/0006-accept-sys-argv-mutation-pattern.md",
+        "docs/decisions/0007-clarify-canonical-rule-1-temporal-semantics.md",
+        "docs/decisions/0008-cross-cutting-prompts-registry.md",
+        "docs/decisions/0009-canonical-section-alignment.md",
+        "docs/decisions/0010-unified-cli-kb-diff-rollback.md",
+        "docs/decisions/0011-separate-workflow-and-operator-prompt-architecture.md",
+        "docs/decisions/0012-require-hardening-adr-triage-and-audit-loop.md",
+        "docs/decisions/0013-require-governance-close-out-for-durable-operator-checkpoints.md",
+        "docs/decisions/0014-compose-process-registry-from-manifest-and-fragments.md"
+      ],
+      "require_authority_when_dependents_change": false,
+      "description": "ADR format is defined in PROGRAMBUILD_ADR_TEMPLATE.md. New decision records in docs/decisions/ must follow that template. If the template format changes, review existing records for alignment."
+    },
+    {
+      "name": "commit_enforcement_alignment",
+      "system": "cross",
+      "authority_files": [
+        ".github/instructions/conventional-commits.instructions.md"
+      ],
+      "dependent_files": [
+        "scripts/check_commit_msg.py",
+        ".gitlint"
+      ],
+      "require_authority_when_dependents_change": true,
+      "description": "The Conventional Commits instruction file is the authority for commit message rules. Changes to the enforcement script or gitlint spec must be consistent with it. The pre-commit config is intentionally excluded because drift operates at file granularity and unrelated hook edits must not require a commit-policy authority touch."
+    },
+    {
+      "name": "knowledge_base_docs_alignment",
+      "system": "cross",
+      "authority_files": [
+        "config/knowledge-base.json",
+        "docs/knowledge-base.md",
+        "docs/knowledge-ops.md"
+      ],
+      "dependent_files": [
+        "README.md"
+      ],
+      "require_authority_when_dependents_change": true,
+      "description": "README.md knowledge-base workflow guidance must stay aligned with the KB data model and the canonical knowledge-base operations docs. README changes about KB refresh behavior require a paired authority-file change."
+    },
+    {
+      "name": "automation_gate_jit_alignment",
+      "system": "cross",
+      "authority_files": [
+        "noxfile.py",
+        ".vscode/tasks.json",
+        ".github/instructions/source-of-truth.instructions.md"
+      ],
+      "dependent_files": [
+        ".github/copilot-instructions.md",
+        "QUICKSTART.md"
+      ],
+      "require_authority_when_dependents_change": true,
+      "require_dependents_when_authority_changes": true,
+      "description": "Nox sessions, editor tasks, and the JIT source-of-truth protocol instruction file must stay aligned. When any of the three authority files change, review the others for alignment before updating copilot-instructions.md or QUICKSTART.md."
+    },
+    {
+      "name": "architecture_decision_alignment",
+      "system": "programbuild",
+      "authority_files": [
+        "PROGRAMBUILD/ARCHITECTURE.md"
+      ],
+      "dependent_files": [
+        "PROGRAMBUILD/DECISION_LOG.md"
+      ],
+      "require_authority_when_dependents_change": false,
+      "require_dependents_when_authority_changes": true,
+      "description": "When ARCHITECTURE.md contracts change, DECISION_LOG.md must carry the corresponding decision update in the same change. Decisions can still be added independently."
+    },
+    {
+      "name": "requirements_test_alignment",
+      "system": "programbuild",
+      "authority_files": [
+        "PROGRAMBUILD/REQUIREMENTS.md"
+      ],
+      "dependent_files": [
+        "PROGRAMBUILD/TEST_STRATEGY.md"
+      ],
+      "require_authority_when_dependents_change": true,
+      "require_dependents_when_authority_changes": true,
+      "description": "Test strategy must stay aligned with requirements. When requirements change, review TEST_STRATEGY.md for coverage gaps. When TEST_STRATEGY.md changes, confirm the change is driven by a requirements update."
+    },
+    {
+      "name": "pyproject_requirements_sync",
+      "system": "cross",
+      "authority_files": [
+        "pyproject.toml"
+      ],
+      "dependent_files": [
+        "requirements.txt"
+      ],
+      "require_authority_when_dependents_change": false,
+      "require_dependents_when_authority_changes": true,
+      "description": "requirements.txt is auto-generated from pyproject.toml via 'uv export --extra dev'. pyproject.toml is the authority for dependency declarations. When pyproject.toml changes, regenerate requirements.txt with: uv export --format requirements-txt --extra dev --no-hashes -o requirements.txt"
+    },
+    {
+      "name": "process_registry_schema_enforcement",
+      "system": "cross",
+      "authority_files": [
+        "schemas/process-registry.schema.json",
+        "config/process-registry.json"
+      ],
+      "dependent_files": [
+        "scripts/check_process_registry_schema.py",
+        ".pre-commit-config.yaml",
+        "tests/test_schema_conformance.py"
+      ],
+      "require_authority_when_dependents_change": true,
+      "require_dependents_when_authority_changes": true,
+      "description": "The process registry schema and composed registry manifest are the authority for registry structure. Schema enforcement code, tests, and hook wiring must stay aligned with them."
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "systems": {
+    "programbuild": {
+      "root": "PROGRAMBUILD",
+      "packaging": "template_repo",
+      "control_files": [
+        "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+        "PROGRAMBUILD/PROGRAMBUILD_FILE_INDEX.md",
+        "PROGRAMBUILD/PROGRAMBUILD_ADR_TEMPLATE.md",
+        "PROGRAMBUILD/PROGRAMBUILD_CHANGELOG.md",
+        "PROGRAMBUILD/PROGRAMBUILD_STATE.json",
+        "PROGRAMBUILD/PROGRAMBUILD.md",
+        "PROGRAMBUILD/PROGRAMBUILD_LITE.md",
+        "PROGRAMBUILD/PROGRAMBUILD_PRODUCT.md",
+        "PROGRAMBUILD/PROGRAMBUILD_ENTERPRISE.md",
+        "PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md",
+        "PROGRAMBUILD/PROGRAMBUILD_SUBAGENTS.md",
+        "PROGRAMBUILD/PROGRAMBUILD_CHECKLIST.md",
+        "PROGRAMBUILD/PROGRAMBUILD_IDEA_INTAKE.md",
+        "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
+        "PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md"
+      ],
+      "output_files": [
+        "PROGRAMBUILD/FEASIBILITY.md",
+        "PROGRAMBUILD/DECISION_LOG.md",
+        "PROGRAMBUILD/RESEARCH_SUMMARY.md",
+        "PROGRAMBUILD/REQUIREMENTS.md",
+        "PROGRAMBUILD/USER_FLOWS.md",
+        "PROGRAMBUILD/ARCHITECTURE.md",
+        "PROGRAMBUILD/RISK_SPIKES.md",
+        "PROGRAMBUILD/TEST_STRATEGY.md",
+        "PROGRAMBUILD/RELEASE_READINESS.md",
+        "PROGRAMBUILD/AUDIT_REPORT.md",
+        "PROGRAMBUILD/POST_LAUNCH_REVIEW.md"
+      ],
+      "variants": [
+        "PROGRAMBUILD/PROGRAMBUILD_LITE.md",
+        "PROGRAMBUILD/PROGRAMBUILD_PRODUCT.md",
+        "PROGRAMBUILD/PROGRAMBUILD_ENTERPRISE.md"
+      ],
+      "stage_order": [
+        { "id": 0, "name": "inputs_and_mode_selection", "main_output": "inputs block" },
+        { "id": 1, "name": "feasibility", "main_output": "PROGRAMBUILD/FEASIBILITY.md" },
+        { "id": 2, "name": "research", "main_output": "PROGRAMBUILD/RESEARCH_SUMMARY.md" },
+        { "id": 3, "name": "requirements_and_ux", "main_output": "PROGRAMBUILD/REQUIREMENTS.md" },
+        { "id": 4, "name": "architecture_and_risk_spikes", "main_output": "PROGRAMBUILD/ARCHITECTURE.md" },
+        { "id": 5, "name": "scaffold_and_guardrails", "main_output": "working skeleton and CI gates" },
+        { "id": 6, "name": "test_strategy", "main_output": "PROGRAMBUILD/TEST_STRATEGY.md" },
+        { "id": 7, "name": "implementation_loop", "main_output": "feature code and tests" },
+        { "id": 8, "name": "release_readiness", "main_output": "PROGRAMBUILD/RELEASE_READINESS.md" },
+        { "id": 9, "name": "audit_and_drift_control", "main_output": "PROGRAMBUILD/AUDIT_REPORT.md" },
+        { "id": 10, "name": "post_launch_review", "main_output": "PROGRAMBUILD/POST_LAUNCH_REVIEW.md" }
+      ],
+      "metadata_required": [
+        "PROGRAMBUILD/FEASIBILITY.md",
+        "PROGRAMBUILD/DECISION_LOG.md",
+        "PROGRAMBUILD/RESEARCH_SUMMARY.md",
+        "PROGRAMBUILD/REQUIREMENTS.md",
+        "PROGRAMBUILD/USER_FLOWS.md",
+        "PROGRAMBUILD/ARCHITECTURE.md",
+        "PROGRAMBUILD/RISK_SPIKES.md",
+        "PROGRAMBUILD/TEST_STRATEGY.md",
+        "PROGRAMBUILD/RELEASE_READINESS.md",
+        "PROGRAMBUILD/AUDIT_REPORT.md",
+        "PROGRAMBUILD/POST_LAUNCH_REVIEW.md"
+      ]
+    }
+  }
+}

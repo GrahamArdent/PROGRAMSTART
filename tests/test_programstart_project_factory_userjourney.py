@@ -12,6 +12,7 @@ from pathlib import Path
 
 from scripts import (
     programstart_attach,
+    programstart_common,
     programstart_create,
     programstart_init,
 )
@@ -27,7 +28,7 @@ def test_attach_userjourney_copies_from_source(tmp_path: Path) -> None:
     destination = tmp_path / "repo"
     destination.mkdir()
     (destination / "config").mkdir()
-    project_registry = json.loads((ROOT / "config" / "process-registry.json").read_text(encoding="utf-8"))
+    project_registry = programstart_common.load_registry()
     project_registry["workspace"] = dict(project_registry.get("workspace", {}))
     project_registry["workspace"]["repo_role"] = "project_repo"
     project_registry["workspace"]["bootstrap_assets"] = [

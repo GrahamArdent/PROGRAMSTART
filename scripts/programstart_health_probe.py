@@ -20,11 +20,13 @@ from typing import Any
 try:
     from .programstart_common import (
         ROOT,
+        load_registry_from_path,
         warn_direct_script_invocation,
     )
 except ImportError:  # pragma: no cover - standalone script execution fallback
     from programstart_common import (
         ROOT,
+        load_registry_from_path,
         warn_direct_script_invocation,
     )
 
@@ -93,7 +95,10 @@ def _load_json_from(path: Path) -> dict[str, Any]:
 
 
 def _load_target_registry(target_root: Path) -> dict[str, Any]:
-    return _load_json_from(target_root / "config" / "process-registry.json")
+    registry_path = target_root / "config" / "process-registry.json"
+    if not registry_path.exists():
+        return {}
+    return load_registry_from_path(registry_path)
 
 
 def _load_target_state(target_root: Path, registry: dict, system: str) -> dict[str, Any]:

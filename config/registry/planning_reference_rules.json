@@ -1,0 +1,22 @@
+{
+  "planning_reference_rules": {
+    "docs": [
+      "USERJOURNEY/DELIVERY_GAMEPLAN.md",
+      "USERJOURNEY/FILE_BY_FILE_IMPLEMENTATION_CHECKLIST.md",
+      "USERJOURNEY/IMPLEMENTATION_PLAN.md"
+    ],
+    "workspace_prefixes": [
+      ".github/",
+      ".vscode/",
+      "BACKUPS/",
+      "PROGRAMBUILD/",
+      "USERJOURNEY/",
+      "config/",
+      "docs/",
+      "schemas/",
+      "scripts/",
+      "tests/"
+    ],
+    "allowlist_manifest": "USERJOURNEY/USERJOURNEY_INTEGRITY_REFERENCE.json"
+  }
+}

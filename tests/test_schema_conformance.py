@@ -7,6 +7,8 @@ from pathlib import Path
 
 import pytest
 
+from scripts.programstart_common import load_registry
+
 try:
     import jsonschema
 except ImportError:
@@ -29,7 +31,10 @@ def test_data_conforms_to_schema(data_file: str, schema_file: str) -> None:
     data_path = ROOT / data_file
     if not data_path.exists():
         pytest.skip(f"{data_file} not present")
-    data = json.loads(data_path.read_text(encoding="utf-8"))
+    if data_file == "config/process-registry.json":
+        data = load_registry()
+    else:
+        data = json.loads(data_path.read_text(encoding="utf-8"))
     schema = json.loads((ROOT / schema_file).read_text(encoding="utf-8"))
     jsonschema.validate(instance=data, schema=schema)
 
@@ -54,7 +59,7 @@ def test_programbuild_state_keys_subset_of_registry_stages() -> None:
     state_path = ROOT / "PROGRAMBUILD" / "PROGRAMBUILD_STATE.json"
     if not state_path.exists():
         pytest.skip("PROGRAMBUILD_STATE.json not present")
-    registry = json.loads((ROOT / "config" / "process-registry.json").read_text(encoding="utf-8"))
+    registry = load_registry()
     state = json.loads(state_path.read_text(encoding="utf-8"))
     valid_stages = {s["name"] for s in registry["systems"]["programbuild"]["stage_order"]}
     actual_stages = set(state.get("stages", {}).keys())
@@ -69,7 +74,7 @@ def test_programbuild_state_keys_subset_of_registry_stages() -> None:
 
 def test_registry_has_version_key() -> None:
     """D-3: config/process-registry.json must have a top-level 'version' key."""
-    registry = json.loads((ROOT / "config" / "process-registry.json").read_text(encoding="utf-8"))
+    registry = load_registry()
     assert "version" in registry, "process-registry.json is missing the 'version' key"
     assert isinstance(registry["version"], str) and registry["version"]
 
@@ -133,7 +138,7 @@ def test_pyproject_direct_deps_present_in_requirements_txt() -> None:
 
 def test_registry_pyproject_requirements_sync_rule_exists() -> None:
     """D-5: process-registry.json must document pyproject.toml as authority over requirements.txt."""
-    registry = json.loads((ROOT / "config" / "process-registry.json").read_text(encoding="utf-8"))
+    registry = load_registry()
     sync_names = {rule["name"] for rule in registry.get("sync_rules", [])}
     assert "pyproject_requirements_sync" in sync_names, (
         "sync_rules must include 'pyproject_requirements_sync' documenting pyproject.toml authority"
@@ -142,7 +147,7 @@ def test_registry_pyproject_requirements_sync_rule_exists() -> None:
 
 def test_commit_enforcement_alignment_excludes_entire_pre_commit_file() -> None:
     """Conventional Commits authority must not claim unrelated pre-commit hook edits."""
-    registry = json.loads((ROOT / "config" / "process-registry.json").read_text(encoding="utf-8"))
+    registry = load_registry()
     rule = next(rule for rule in registry.get("sync_rules", []) if rule["name"] == "commit_enforcement_alignment")
     assert ".pre-commit-config.yaml" not in rule["dependent_files"]
 
@@ -152,7 +157,7 @@ def test_userjourney_state_keys_subset_of_registry_phases() -> None:
     state_path = ROOT / "USERJOURNEY" / "USERJOURNEY_STATE.json"
     if not state_path.exists():
         pytest.skip("USERJOURNEY_STATE.json not present")
-    registry = json.loads((ROOT / "config" / "process-registry.json").read_text(encoding="utf-8"))
+    registry = load_registry()
     state = json.loads(state_path.read_text(encoding="utf-8"))
     valid_phases = set(registry["workflow_state"]["userjourney"]["step_order"])
     actual_phases = set(state.get("phases", {}).keys())

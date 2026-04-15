@@ -1,0 +1,51 @@
+{
+  "integrity": {
+    "manifest_collection": {
+      "include_workspace_readme": true,
+      "include_bootstrap_assets": true,
+      "include_system_file_groups": [
+        "control_files",
+        "output_files",
+        "core_files"
+      ],
+      "include_baseline_roots": true,
+      "exclude_prefixes": [
+        ".git",
+        ".venv",
+        ".pytest_cache",
+        "scripts/install_hooks.py",
+        ".ruff_cache",
+        ".mypy_cache",
+        ".nox",
+        ".tmp_dist_smoke",
+        "__pycache__",
+        "build",
+        "dist",
+        "outputs"
+      ],
+      "exclude_names": [
+        "PROGRAMSTART_2026-03-27.zip"
+      ],
+      "exclude_globs": [
+        "tests/test_install_hooks.py",
+        "MANIFEST_*.txt",
+        "VERIFICATION_REPORT_*.md",
+        "*.pyc"
+      ]
+    },
+    "baselines": [
+      {
+        "name": "programbuild_backup_snapshot",
+        "system": "programbuild",
+        "kind": "snapshot",
+        "root": "BACKUPS/2026-03-27_pre-structure_flat_export_snapshot"
+      },
+      {
+        "name": "userjourney_attachment_reference",
+        "system": "userjourney",
+        "kind": "attachment-manifest",
+        "manifest": "USERJOURNEY/USERJOURNEY_INTEGRITY_REFERENCE.json"
+      }
+    ]
+  }
+}

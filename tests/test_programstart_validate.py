@@ -168,7 +168,7 @@ def test_extract_bullets_after_marker_returns_empty_when_marker_missing() -> Non
 
 
 def test_validate_authority_sync_passes_on_current_repo() -> None:
-    assert validate.validate_authority_sync(load_json(ROOT / "config" / "process-registry.json")) == []
+    assert validate.validate_authority_sync(common.load_registry()) == []
 
 
 def test_validate_authority_sync_reports_guidance_and_sync_rule_drift(tmp_path: Path, monkeypatch) -> None:
@@ -921,7 +921,7 @@ def test_validate_workflow_state_skips_optional_absent(tmp_path: Path, monkeypat
 
 
 def test_bootstrap_programbuild_dry_run_and_main_refuses_non_empty(tmp_path: Path, monkeypatch, capsys) -> None:
-    registry = load_json(ROOT / "config" / "process-registry.json")
+    registry = common.load_registry()
     destination = tmp_path / "dest"
     destination.mkdir()
     (destination / "existing.txt").write_text("x", encoding="utf-8")
@@ -938,7 +938,7 @@ def test_bootstrap_programbuild_dry_run_and_main_refuses_non_empty(tmp_path: Pat
 
 
 def test_bootstrap_programbuild_writes_variant(tmp_path: Path) -> None:
-    registry = load_json(ROOT / "config" / "process-registry.json")
+    registry = common.load_registry()
     destination = tmp_path / "dest"
     bootstrap.bootstrap_programbuild(destination, registry, "enterprise", dry_run=False)
     state_path = destination / registry["workflow_state"]["programbuild"]["state_file"]

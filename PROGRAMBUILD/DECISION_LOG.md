@@ -35,6 +35,7 @@ Authority: Canonical for project decision history
 | DEC-008 | 2026-04-15 | inputs_and_mode_selection | Separate prompt architecture into `workflow`, `operator`, and `internal` classes; restrict workflow routing to `workflow` prompts; and require class-aware standards, registry placement, and validation | ACTIVE | — | Solo operator | docs/decisions/0011-separate-workflow-and-operator-prompt-architecture.md |
 | DEC-009 | 2026-04-15 | inputs_and_mode_selection | Structural hardening sessions MUST run ADR triage and a targeted audit loop before checkpoint close-out; Phase J items MUST do this every session | SUPERSEDED | DEC-010 | Solo operator | docs/decisions/0012-require-hardening-adr-triage-and-audit-loop.md |
 | DEC-010 | 2026-04-15 | inputs_and_mode_selection | Long-form operator execution prompts that can land durable structural or policy changes MUST require a governance close-out loop and truthful direct-command verification; ADR-0013 supersedes the hardening-only framing of ADR-0012 | REVERSED | DEC-009 | Solo operator | docs/decisions/0013-require-governance-close-out-for-durable-operator-checkpoints.md |
+| DEC-011 | 2026-04-15 | inputs_and_mode_selection | Split the template `process-registry` into a root manifest plus fragments, keep `load_registry()` as the stable merged contract, and stamp generated project repos back to a flat registry during bootstrap | ACTIVE | — | Solo operator | docs/decisions/0014-compose-process-registry-from-manifest-and-fragments.md |
 
 ## Decision Details
 
@@ -118,5 +119,13 @@ Authority: Canonical for project decision history
 - Why: The gap is architectural, not hardening-specific. Fixing it at the operator-prompt layer prevents repeated prompt-by-prompt rediscovery and keeps durable repo changes auditable.
 - Alternatives considered: (1) Keep the hardening-only rule — leaves the same weakness elsewhere. (2) Rely on reviewers to infer when governance close-out is needed — not deterministic enough.
 - Consequences: Operator prompts now have a shared governance pattern for durable checkpoints. Hardening remains a concrete application, but enhancement, gate repair, and prompt-architecture remediation now follow the same close-out model.
+
+### DEC-011
+
+- Context: `config/process-registry.json` had grown into a large monolith that mixed workspace assets, workflow guidance, prompt metadata, and workflow-state config in one file. J-2 required splitting that structure without breaking the many scripts, tests, and generated-project flows that depend on `load_registry()`.
+- Decision: Convert the template registry to a root manifest plus fragment files under `config/registry/`, keep `scripts.programstart_common.load_registry()` and `load_registry_from_path()` as the stable merged interface, and stamp bootstrapped project repos back to a flat registry so generated repos do not inherit template-only fragments accidentally.
+- Why: This isolates change domains inside the template repo, reduces edit blast radius, and preserves backward compatibility for runtime consumers and generated project repos.
+- Alternatives considered: (1) Keep the monolith and accept ongoing merge conflicts and high-risk edits. (2) Split the registry and force all consumers, including generated repos, to become fragment-aware immediately.
+- Consequences: Template-side tooling now validates a composed registry, schema enforcement runs through a dedicated script, and generated repos remain compatible because bootstrap resolves the manifest before writing the project registry.
 
 ---

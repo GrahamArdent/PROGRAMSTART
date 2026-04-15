@@ -28,7 +28,6 @@ UJ bonus tests:
 
 from __future__ import annotations
 
-import json
 import re
 import sys
 from dataclasses import dataclass
@@ -38,14 +37,14 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 PROMPTS_DIR = ROOT / ".github" / "prompts"
-REGISTRY_PATH = ROOT / "config" / "process-registry.json"
 
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from scripts.programstart_common import load_registry
 from scripts.programstart_step_guide import main as guide_main
 
-REGISTRY = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+REGISTRY = load_registry()
 OPERATOR_PROMPTS = tuple(PROMPTS_DIR.parent.parent / path for path in REGISTRY["prompt_registry"]["operator_prompt_files"])
 
 # ---------------------------------------------------------------------------

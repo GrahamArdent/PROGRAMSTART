@@ -90,6 +90,8 @@ def status_color(status: str) -> str:
 
 
 PACKAGE_ROOT = Path(__file__).resolve().parents[1]
+REGISTRY_MANIFEST_RELATIVE_PATH = "config/process-registry.json"
+REGISTRY_INCLUDE_KEY = "include"
 
 
 def detect_workspace_root(start_dir: Path | None = None) -> Path:
@@ -99,7 +101,7 @@ def detect_workspace_root(start_dir: Path | None = None) -> Path:
 
     current = (start_dir or Path.cwd()).resolve()
     for candidate in (current, *current.parents):
-        if (candidate / "config" / "process-registry.json").exists():
+        if (candidate / REGISTRY_MANIFEST_RELATIVE_PATH).exists():
             return candidate
 
     warnings.warn(
@@ -112,14 +114,45 @@ def detect_workspace_root(start_dir: Path | None = None) -> Path:
 ROOT = detect_workspace_root()
 
 
-def load_registry() -> dict[str, Any]:
-    data = json.loads(workspace_path("config/process-registry.json").read_text(encoding="utf-8"))
-    if "version" not in data:
+def _merge_registry_fragment(base: dict[str, Any], fragment: dict[str, Any]) -> dict[str, Any]:
+    merged = dict(base)
+    for key, value in fragment.items():
+        existing = merged.get(key)
+        if isinstance(existing, dict) and isinstance(value, dict):
+            merged[key] = _merge_registry_fragment(existing, value)
+            continue
+        merged[key] = value
+    return merged
+
+
+def load_registry_from_path(path: Path) -> dict[str, Any]:
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        raise ValueError(f"Registry manifest at {path} must be a JSON object")
+
+    includes = data.get(REGISTRY_INCLUDE_KEY, [])
+    merged = {key: value for key, value in data.items() if key != REGISTRY_INCLUDE_KEY}
+    config_root = path.parent
+    if includes:
+        if not isinstance(includes, list) or not all(isinstance(item, str) for item in includes):
+            raise ValueError(f"Registry manifest at {path} must declare '{REGISTRY_INCLUDE_KEY}' as a list of strings")
+        for relative_path in includes:
+            fragment_path = config_root / relative_path
+            fragment = json.loads(fragment_path.read_text(encoding="utf-8"))
+            if not isinstance(fragment, dict):
+                raise ValueError(f"Registry fragment at {fragment_path} must be a JSON object")
+            merged = _merge_registry_fragment(merged, fragment)
+
+    if "version" not in merged:
         warnings.warn(
             "config/process-registry.json is missing 'version' key — registry integrity may be degraded",
             stacklevel=2,
         )
-    return data
+    return merged
+
+
+def load_registry() -> dict[str, Any]:
+    return load_registry_from_path(workspace_path(REGISTRY_MANIFEST_RELATIVE_PATH))
 
 
 def _pyproject_dependency_surface(payload: bytes) -> tuple[tuple[str, ...], tuple[tuple[str, tuple[str, ...]], ...]]:

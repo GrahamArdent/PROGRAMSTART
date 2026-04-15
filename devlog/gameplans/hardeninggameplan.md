@@ -801,7 +801,11 @@ Update imports in all files that import from `programstart_create`.
 
 ---
 
-#### J-2: Split process-registry.json (SD-1)
+#### ✅ J-2: Split process-registry.json (SD-1) — COMPLETE
+
+**Status**: COMPLETE
+**Result**: Replaced the monolithic `config/process-registry.json` with a root manifest plus focused fragments under `config/registry/`, kept `load_registry()` as the stable merged contract via `load_registry_from_path()`, updated validation/tooling/tests to consume the composed registry, added dedicated schema enforcement for the merged payload, and stamped generated project repos back to a flat registry during bootstrap so downstream repos stay backward-compatible.
+**ADR triage**: ADR required for J-2 because the change introduced a durable registry-composition architecture and generated-repo compatibility rule. Recorded in `docs/decisions/0014-compose-process-registry-from-manifest-and-fragments.md` and `PROGRAMBUILD/DECISION_LOG.md` as DEC-011.
 
 **Pre-flight**: Read `config/process-registry.json` end-to-end. Identify separable logical sections: programbuild system, userjourney system, sync_rules, workflow_guidance, metadata_rules. Design a composable `$include` or merge pattern that `load_registry()` can handle.
 

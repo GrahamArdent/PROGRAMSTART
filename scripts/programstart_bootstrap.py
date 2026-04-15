@@ -12,6 +12,7 @@ try:
     from .programstart_common import (
         create_default_workflow_state,
         load_registry,
+        load_registry_from_path,
         warn_direct_script_invocation,
         workspace_path,
         write_json,
@@ -20,6 +21,7 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
     from programstart_common import (
         create_default_workflow_state,
         load_registry,
+        load_registry_from_path,
         warn_direct_script_invocation,
         workspace_path,
         write_json,
@@ -236,8 +238,8 @@ def stamp_bootstrapped_registry(destination_root: Path, *, project_name: str, dr
         print(f"STAMP  {registry_path}")
         return
     try:
-        registry = json.loads(registry_path.read_text(encoding="utf-8"))
-    except json.JSONDecodeError as exc:
+        registry = load_registry_from_path(registry_path)
+    except (json.JSONDecodeError, ValueError) as exc:
         raise ValueError(f"Cannot parse bootstrapped registry at {registry_path}: {exc}") from exc
     workspace = dict(registry.get("workspace", {}))
     workspace["repo_role"] = "project_repo"
@@ -261,6 +263,7 @@ def stamp_bootstrapped_registry(destination_root: Path, *, project_name: str, dr
     registry["prompt_registry"] = prompt_registry
     registry["prompt_authority"] = prompt_authority
     registry.pop("prompt_generation", None)
+    registry.pop("include", None)
     registry["workflow_guidance"] = workflow_guidance
     write_json(registry_path, registry)
 

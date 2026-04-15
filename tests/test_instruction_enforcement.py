@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import sys
 from pathlib import Path
 
@@ -8,9 +7,11 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from scripts.programstart_common import load_registry as load_composed_registry
+
 
 def load_registry() -> dict:
-    return json.loads((ROOT / "config" / "process-registry.json").read_text(encoding="utf-8"))
+    return load_composed_registry()
 
 
 def test_sync_rule_authority_files_exist() -> None:

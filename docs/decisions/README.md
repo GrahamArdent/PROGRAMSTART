@@ -23,6 +23,7 @@ Legacy pre-register ADRs: `0001`-`0003` predate the current `DECISION_LOG.md` li
 | [0011](0011-separate-workflow-and-operator-prompt-architecture.md) | Separate workflow and operator prompt architecture | accepted | 2026-04-15 |
 | [0012](0012-require-hardening-adr-triage-and-audit-loop.md) | Require ADR triage and targeted audit loop for structural hardening checkpoints | superseded by ADR-0013 | 2026-04-15 |
 | [0013](0013-require-governance-close-out-for-durable-operator-checkpoints.md) | Require governance close-out loop for durable operator checkpoints | accepted | 2026-04-15 |
+| [0014](0014-compose-process-registry-from-manifest-and-fragments.md) | Compose process registry from a manifest and fragments | accepted | 2026-04-15 |
 
 ## Rules
 

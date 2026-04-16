@@ -1,21 +1,31 @@
 from __future__ import annotations
 
-import json
 from dataclasses import asdict
 from pathlib import Path
 
 try:
     from .programstart_common import generated_outputs_root, load_registry, workspace_path
     from .programstart_context import load_knowledge_base
-    from .programstart_create_core import knowledge_base_entries_by_name, string_list_value, string_value, summarize_provisioning_results
+    from .programstart_create_core import (
+        knowledge_base_entries_by_name,
+        string_list_value,
+        string_value,
+        summarize_provisioning_results,
+    )
     from .programstart_recommend import ProjectRecommendation
     from .programstart_starter_scaffold import StarterScaffoldPlan
 except ImportError:  # pragma: no cover - standalone script execution fallback
-    from programstart_common import generated_outputs_root, load_registry, workspace_path
     from programstart_context import load_knowledge_base
-    from programstart_create_core import knowledge_base_entries_by_name, string_list_value, string_value, summarize_provisioning_results
+    from programstart_create_core import (
+        knowledge_base_entries_by_name,
+        string_list_value,
+        string_value,
+        summarize_provisioning_results,
+    )
     from programstart_recommend import ProjectRecommendation
     from programstart_starter_scaffold import StarterScaffoldPlan
+
+    from programstart_common import generated_outputs_root, load_registry, workspace_path
 
 
 def render_factory_plan(

@@ -27,8 +27,8 @@ from scripts.programstart_prompt_build import (
     AUTO_HEADER,
     _render_body,
     build_prompt,
-    managed_stage_prompts,
     main,
+    managed_stage_prompts,
     sync_managed_prompts,
 )
 
@@ -172,9 +172,7 @@ class TestMainOutputPaths:
         registry = {
             "prompt_generation": {
                 "artifact_root": "outputs/generated-prompts",
-                "managed_stage_prompts": [
-                    {"stage": "feasibility", "path": "outputs/generated-prompts/feasibility.prompt.md"}
-                ],
+                "managed_stage_prompts": [{"stage": "feasibility", "path": "outputs/generated-prompts/feasibility.prompt.md"}],
             }
         }
 

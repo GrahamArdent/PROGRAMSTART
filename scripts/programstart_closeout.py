@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -19,6 +19,9 @@ try:
     from .programstart_drift_check import evaluate_drift
     from .programstart_validate import validate_adr_coherence, validate_adr_coverage, validate_authority_sync
 except ImportError:  # pragma: no cover - standalone script execution fallback
+    from programstart_drift_check import evaluate_drift
+    from programstart_validate import validate_adr_coherence, validate_adr_coverage, validate_authority_sync
+
     from programstart_common import (
         display_workspace_path,
         generated_outputs_root,
@@ -27,8 +30,6 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
         warn_direct_script_invocation,
         write_json,
     )
-    from programstart_drift_check import evaluate_drift
-    from programstart_validate import validate_adr_coherence, validate_adr_coverage, validate_authority_sync
 
 
 ADR_RESULT_CHOICES = ("created", "updated", "not-required")
@@ -40,7 +41,7 @@ def slugify(value: str) -> str:
 
 
 def default_output_path(label: str) -> Path:
-    timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H-%M-%SZ")
+    timestamp = datetime.now(UTC).strftime("%Y-%m-%dT%H-%M-%SZ")
     return generated_outputs_root() / "governance" / f"{timestamp}_{slugify(label)}.json"
 
 
@@ -75,7 +76,7 @@ def build_evidence(
 
     return {
         "label": label,
-        "timestamp_utc": datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
+        "timestamp_utc": datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
         "status": status,
         "adr_result": adr_result,
         "adr_ids": adr_ids,

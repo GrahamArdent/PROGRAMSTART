@@ -21,9 +21,7 @@ def _minimal_registry(tmp_path: Path) -> dict:
         "version": "test",
         "prompt_generation": {
             "artifact_root": "outputs/generated-prompts",
-            "managed_stage_prompts": [
-                {"stage": "feasibility", "path": "outputs/generated-prompts/feasibility.prompt.md"}
-            ],
+            "managed_stage_prompts": [{"stage": "feasibility", "path": "outputs/generated-prompts/feasibility.prompt.md"}],
         },
         "prompt_registry": {
             "workflow_prompt_files": [".github/prompts/workflow.prompt.md"],
@@ -147,9 +145,7 @@ def test_stamp_bootstrapped_registry_writes_correct_fields(tmp_path: Path) -> No
     assert result["prompt_registry"]["workflow_prompt_files"] == [".github/prompts/workflow.prompt.md"]
     assert result["prompt_registry"]["operator_prompt_files"] == []
     assert result["prompt_registry"]["internal_prompt_files"] == []
-    assert result["prompt_authority"] == {
-        ".github/prompts/workflow.prompt.md": {"authority_files": ["docs/index.md"]}
-    }
+    assert result["prompt_authority"] == {".github/prompts/workflow.prompt.md": {"authority_files": ["docs/index.md"]}}
     assert "prompt_generation" not in result
     assert result["workflow_guidance"]["operator"] == {}
 
@@ -166,9 +162,7 @@ def test_generated_repo_bootstrap_assets_exclude_operator_prompt_files(tmp_path:
 def test_generated_repo_prompt_registry_excludes_userjourney_prompts(tmp_path: Path) -> None:
     registry = _minimal_registry(tmp_path)
     registry["prompt_registry"]["workflow_prompt_files"].append(".github/prompts/shape-uj-ux-surfaces.prompt.md")
-    registry["workflow_guidance"]["userjourney"] = {
-        "phase_2": {"prompts": [".github/prompts/shape-uj-ux-surfaces.prompt.md"]}
-    }
+    registry["workflow_guidance"]["userjourney"] = {"phase_2": {"prompts": [".github/prompts/shape-uj-ux-surfaces.prompt.md"]}}
 
     result = bootstrap.generated_repo_prompt_registry(registry)
 
@@ -179,9 +173,7 @@ def test_generated_repo_prompt_registry_excludes_userjourney_prompts(tmp_path: P
 def test_generated_repo_prompt_registry_can_include_userjourney_prompts_when_requested(tmp_path: Path) -> None:
     registry = _minimal_registry(tmp_path)
     registry["prompt_registry"]["workflow_prompt_files"].append(".github/prompts/shape-uj-ux-surfaces.prompt.md")
-    registry["workflow_guidance"]["userjourney"] = {
-        "phase_2": {"prompts": [".github/prompts/shape-uj-ux-surfaces.prompt.md"]}
-    }
+    registry["workflow_guidance"]["userjourney"] = {"phase_2": {"prompts": [".github/prompts/shape-uj-ux-surfaces.prompt.md"]}}
 
     result = bootstrap.generated_repo_prompt_registry_for_mode(registry, include_userjourney=True)
 

@@ -185,11 +185,7 @@ def generated_repo_prompt_authority(registry: dict) -> dict:
 def generated_repo_prompt_authority_for_mode(registry: dict, *, include_userjourney: bool) -> dict:
     allowed_prompts = set(generated_repo_prompt_assets_for_mode(registry, include_userjourney=include_userjourney))
     prompt_authority = dict(registry.get("prompt_authority", {}))
-    return {
-        prompt_path: payload
-        for prompt_path, payload in prompt_authority.items()
-        if prompt_path in allowed_prompts
-    }
+    return {prompt_path: payload for prompt_path, payload in prompt_authority.items() if prompt_path in allowed_prompts}
 
 
 def bootstrap_programbuild(destination_root: Path, registry: dict, variant: str, dry_run: bool) -> None:

@@ -64,8 +64,7 @@ def test_prompt_registry_class_files_exist_and_are_disjoint() -> None:
     prompt_registry = registry["prompt_registry"]
 
     class_sets = {
-        name: set(prompt_registry[name])
-        for name in ("workflow_prompt_files", "operator_prompt_files", "internal_prompt_files")
+        name: set(prompt_registry[name]) for name in ("workflow_prompt_files", "operator_prompt_files", "internal_prompt_files")
     }
 
     for class_name, prompt_paths in class_sets.items():

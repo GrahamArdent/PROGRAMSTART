@@ -6,7 +6,6 @@ class-aware structural requirements derived from the prompt registry.
 
 from __future__ import annotations
 
-import json
 import re
 import sys
 from pathlib import Path

@@ -184,7 +184,9 @@
         "docs/decisions/0011-separate-workflow-and-operator-prompt-architecture.md",
         "docs/decisions/0012-require-hardening-adr-triage-and-audit-loop.md",
         "docs/decisions/0013-require-governance-close-out-for-durable-operator-checkpoints.md",
-        "docs/decisions/0014-compose-process-registry-from-manifest-and-fragments.md"
+        "docs/decisions/0014-compose-process-registry-from-manifest-and-fragments.md",
+        "docs/decisions/0015-reuse-external-agent-systems-by-pattern-not-wholesale.md",
+        "docs/decisions/0016-require-execution-prompt-for-operator-gameplans.md"
       ],
       "require_authority_when_dependents_change": false,
       "description": "ADR format is defined in PROGRAMBUILD_ADR_TEMPLATE.md. New decision records in docs/decisions/ must follow that template. If the template format changes, review existing records for alignment."

@@ -3,6 +3,7 @@
 Purpose: Restore trust in PROGRAMSTART's quality gates before any further hardening or feature execution resumes. This plan aligns direct commands, pre-commit hooks, prompt lint policy, pyright scope/environment, and repo-state verification. It exists because the repo currently presents contradictory signals: `validate`, direct `drift`, and pytest pass, while `pre-commit --all-files` fails for reasons that are partly latent policy mismatch rather than newly introduced feature regressions.
 Status: **NOT STARTED**
 Authority: Non-canonical working plan derived from live gate output on 2026-04-14, `.pre-commit-config.yaml`, `scripts/lint_prompts.py`, `tests/test_lint_prompts.py`, `pyproject.toml`, and `config/process-registry.json` sync rules.
+Prompt: exempt — infrastructure-repair
 Last updated: 2026-04-14
 
 Recommended operator prompt: `.github/prompts/execute-gate-gameplan.prompt.md`

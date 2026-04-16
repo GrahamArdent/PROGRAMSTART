@@ -143,6 +143,36 @@ Even short-form utility prompts MUST still include:
 5. Operator prompts that change durable repo policy MUST instruct the operator to update `PROGRAMBUILD/DECISION_LOG.md` and related authority docs in the same change set.
 6. Long-form operator prompts that can change durable structure, workflow policy, authority relationships, or trust boundaries MUST define a governance close-out loop that requires ADR triage before the checkpoint is marked complete.
 7. Long-form operator prompts MUST use the truthful direct command surface for their verification steps and MUST NOT instruct the operator to diagnose failures from truncated command output.
+8. Every operator gameplan in `devlog/gameplans/` MUST have a corresponding `execute-*` operator prompt registered in `operator_prompt_files` — unless it declares an explicit exemption in its header (see Gameplan-Prompt Pairing below). `programstart validate --check gameplan-prompt-pairing` enforces this rule.
+
+## Gameplan-Prompt Pairing
+
+Operator gameplans MUST have a matching execution prompt by default. This ensures JIT protocol, scope guards, verification gates, and governance close-out loops are enforced during execution.
+
+### Exempt categories
+
+A gameplan is EXEMPT from this rule when requiring a prompt would create a circular dependency or logical impossibility:
+
+1. **Infrastructure-repair gameplans.** A gameplan whose primary purpose is repairing the systems that execution prompts depend on (quality gates, prompt lint, CI pipeline, pre-commit hooks). The prompt's protocol would require passing gates that the gameplan is trying to fix. Declare: `Prompt: exempt — infrastructure-repair`.
+2. **Bootstrap gameplans.** A gameplan that creates or establishes the prompt system, prompt standard, or prompt architecture for the first time. The prompt standard cannot govern a prompt that bootstraps the standard itself. Declare: `Prompt: exempt — bootstrap`.
+3. **Internal stage gameplans.** Gameplans scoped to a single PROGRAMBUILD stage (e.g., `stage2gameplan.md`) that use `implement-*` prompts in `.github/prompts/internal/` are internal build artifacts, not operator gameplans. They are outside the scope of this rule.
+4. **Experimental/working artifacts.** Files in `devlog/gameplans/` that are experimental run configurations, mutation test artifacts, or similar working documents — not multi-phase execution plans — are outside scope.
+
+### Machine enforcement
+
+`config/registry/prompting.json` MUST include a `gameplan_prompt_policy` section mapping operator gameplans to their prompt status. `programstart validate --check gameplan-prompt-pairing` MUST fail when an operator gameplan is missing its execution prompt without a declared exemption.
+
+### Header field
+
+Exempt gameplans MUST declare the exemption in their metadata header:
+
+```
+Prompt: exempt — <reason>
+```
+
+Valid reasons: `infrastructure-repair`, `bootstrap`.
+
+Related: ADR-0016.
 
 ## Governance Close-out Loop
 

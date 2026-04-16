@@ -36,6 +36,8 @@ Authority: Canonical for project decision history
 | DEC-009 | 2026-04-15 | inputs_and_mode_selection | Structural hardening sessions MUST run ADR triage and a targeted audit loop before checkpoint close-out; Phase J items MUST do this every session | SUPERSEDED | DEC-010 | Solo operator | docs/decisions/0012-require-hardening-adr-triage-and-audit-loop.md |
 | DEC-010 | 2026-04-15 | inputs_and_mode_selection | Long-form operator execution prompts that can land durable structural or policy changes MUST require a governance close-out loop and truthful direct-command verification; ADR-0013 supersedes the hardening-only framing of ADR-0012 | REVERSED | DEC-009 | Solo operator | docs/decisions/0013-require-governance-close-out-for-durable-operator-checkpoints.md |
 | DEC-011 | 2026-04-15 | inputs_and_mode_selection | Split the template `process-registry` into a root manifest plus fragments, keep `load_registry()` as the stable merged contract, and stamp generated project repos back to a flat registry during bootstrap | ACTIVE | — | Solo operator | docs/decisions/0014-compose-process-registry-from-manifest-and-fragments.md |
+| DEC-012 | 2026-04-16 | inputs_and_mode_selection | External agent systems SHOULD be reused by adopt/adapt/reject decomposition: keep transferable evidence-and-policy scaffolding, but do not adopt prompt-led control loops wholesale as the governing architecture | ACTIVE | — | Solo operator | docs/decisions/0015-reuse-external-agent-systems-by-pattern-not-wholesale.md |
+| DEC-013 | 2026-04-16 | inputs_and_mode_selection | Every operator gameplan MUST have a corresponding execution prompt unless it declares an explicit exemption (infrastructure-repair or bootstrap); `programstart validate --check gameplan-prompt-pairing` enforces this rule | ACTIVE | — | Solo operator | docs/decisions/0016-require-execution-prompt-for-operator-gameplans.md |
 
 ## Decision Details
 
@@ -127,5 +129,25 @@ Authority: Canonical for project decision history
 - Why: This isolates change domains inside the template repo, reduces edit blast radius, and preserves backward compatibility for runtime consumers and generated project repos.
 - Alternatives considered: (1) Keep the monolith and accept ongoing merge conflicts and high-risk edits. (2) Split the registry and force all consumers, including generated repos, to become fragment-aware immediately.
 - Consequences: Template-side tooling now validates a composed registry, schema enforcement runs through a dedicated script, and generated repos remain compatible because bootstrap resolves the manifest before writing the project registry.
+
+---
+
+### DEC-012
+
+- Context: External agent systems (Orchestra, CrewAI, AutoGen, etc.) offer reusable patterns for evidence-gathering and policy scaffolding, but their prompt-led control loops are incompatible with PROGRAMSTART's evidence-and-registry governance model.
+- Decision: Reuse external agent systems by adopt/adapt/reject decomposition rather than wholesale adoption.
+- Why: Prompt-based scheduling lacks the trustworthiness guarantees needed for durable governance. Extracting transferable patterns gives the benefit without the liability.
+- Alternatives considered: (1) Adopt an external agent framework wholesale. (2) Ignore external systems entirely.
+- Consequences: PROGRAMSTART retains its own governance model while selectively adopting useful patterns like structured health probes, assessment prompts, and evidence-gathering protocols.
+
+---
+
+### DEC-013
+
+- Context: No written rule defined when an operator gameplan requires an execution prompt. During hardening Phase G, the execution prompt's verification protocol required all gates to pass, but Phase G exposed broken gate infrastructure. The prompt's scope guard forbade gate repairs, creating a circular dependency that blocked execution.
+- Decision: Every operator gameplan MUST have a corresponding `execute-*` operator prompt registered in `operator_prompt_files` — unless it declares an explicit exemption (`infrastructure-repair` or `bootstrap`). Machine enforcement via `programstart validate --check gameplan-prompt-pairing`.
+- Why: Execution prompts enforce JIT protocol, scope guards, verification gates, and governance close-out loops. Without them, multi-phase work lacks predictability and resumability. The exemptions prevent the Phase G deadlock pattern where a prompt's protocol depends on infrastructure the gameplan is repairing.
+- Alternatives considered: (1) Require a prompt for every gameplan with no exceptions. (2) Continue with the implicit de facto pattern and no enforcement.
+- Consequences: Operator gameplans get execution prompts by default with machine-enforced pairing. Exempt gameplans must declare their exemption explicitly. The Phase G deadlock pattern is documented and prevented.
 
 ---

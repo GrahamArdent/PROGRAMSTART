@@ -1211,6 +1211,72 @@ def validate_prompt_generation_boundary(registry: dict) -> list[str]:
     return problems
 
 
+def validate_gameplan_prompt_pairing(registry: dict) -> list[str]:
+    """Validate that operator gameplans have execution prompts per ADR-0016.
+
+    Checks gameplan_prompt_policy in the registry:
+    - Every 'operator_gameplans' entry with status 'paired' must have a valid prompt
+      that exists on disk and is registered in operator_prompt_files.
+    - Every 'operator_gameplans' entry with status 'pending' is flagged as a problem.
+    - Gameplans listed in exempt_gameplans must exist and have a valid reason.
+    - Internal, excluded, and legacy gameplans are informational only.
+
+    Skipped for project repos — gameplan policy is template-repo metadata only.
+    """
+    problems: list[str] = []
+    repo_role = cast(dict[str, Any], registry.get("workspace", {})).get("repo_role", "template_repo")
+    if repo_role != "template_repo":
+        return problems
+
+    policy = cast(dict[str, Any], registry.get("gameplan_prompt_policy", {}))
+    if not policy:
+        return problems
+
+    prompt_registry = cast(dict[str, Any], registry.get("prompt_registry", {}))
+    operator_prompts = set(cast(list[str], prompt_registry.get("operator_prompt_files", [])))
+
+    valid_exempt_reasons = {"infrastructure-repair", "bootstrap"}
+
+    operator_gameplans = cast(dict[str, Any], policy.get("operator_gameplans", {}))
+    for gameplan_path, entry in sorted(operator_gameplans.items()):
+        entry = cast(dict[str, Any], entry)
+        if not workspace_path(gameplan_path).exists():
+            problems.append(f"gameplan_prompt_policy references missing gameplan: {gameplan_path}")
+            continue
+
+        status = str(entry.get("status", "")).strip()
+        if status == "paired":
+            prompt_path = entry.get("prompt")
+            if not prompt_path:
+                problems.append(f"gameplan_prompt_policy paired gameplan has no prompt: {gameplan_path}")
+            elif not workspace_path(str(prompt_path)).exists():
+                problems.append(f"gameplan_prompt_policy prompt file missing for {gameplan_path}: {prompt_path}")
+            elif str(prompt_path) not in operator_prompts:
+                problems.append(
+                    f"gameplan_prompt_policy prompt not registered in operator_prompt_files "
+                    f"for {gameplan_path}: {prompt_path}"
+                )
+        elif status == "pending":
+            problems.append(
+                f"gameplan_prompt_policy operator gameplan missing required execution prompt: "
+                f"{gameplan_path} (status: pending)"
+            )
+        else:
+            problems.append(f"gameplan_prompt_policy unrecognized status '{status}' for {gameplan_path}")
+
+    exempt_gameplans = cast(dict[str, Any], policy.get("exempt_gameplans", {}))
+    for gameplan_path, entry in sorted(exempt_gameplans.items()):
+        entry = cast(dict[str, Any], entry)
+        reason = str(entry.get("reason", "")).strip()
+        if reason not in valid_exempt_reasons:
+            problems.append(
+                f"gameplan_prompt_policy exempt gameplan has invalid reason '{reason}' "
+                f"for {gameplan_path}; valid: {', '.join(sorted(valid_exempt_reasons))}"
+            )
+
+    return problems
+
+
 def validate_rule_enforcement(registry: dict) -> list[str]:
     """Verify that structural rules from the authority model are enforced.
 
@@ -1803,6 +1869,7 @@ def main() -> int:
             "decision-log-coherence",
             "prompt-authority",
             "prompt-generation",
+            "gameplan-prompt-pairing",
             "placeholder-content",
             "kb-freshness",
             "intake-complete",
@@ -1862,6 +1929,7 @@ def main() -> int:
         problems.extend(validate_decision_log_reversal_invariants(registry))
         problems.extend(validate_prompt_authority_metadata(registry))
         problems.extend(validate_prompt_generation_boundary(registry))
+        problems.extend(validate_gameplan_prompt_pairing(registry))
         placeholder_problems, placeholder_warnings = validate_placeholder_content(registry)
         problems.extend(placeholder_problems)
         warnings.extend(placeholder_warnings)
@@ -1899,6 +1967,8 @@ def main() -> int:
         problems.extend(validate_prompt_authority_metadata(registry))
     elif args.check == "prompt-generation":
         problems.extend(validate_prompt_generation_boundary(registry))
+    elif args.check == "gameplan-prompt-pairing":
+        problems.extend(validate_gameplan_prompt_pairing(registry))
     elif args.check == "placeholder-content":
         placeholder_problems, placeholder_warnings = validate_placeholder_content(registry)
         problems.extend(placeholder_problems)

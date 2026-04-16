@@ -1159,6 +1159,132 @@ def test_validate_main_prompt_authority_passes(capsys, monkeypatch) -> None:
     assert "Validation passed" in out
 
 
+# ---------- gameplan-prompt-pairing ----------
+
+
+def test_validate_gameplan_prompt_pairing_flags_pending_gameplan(tmp_path: Path, monkeypatch) -> None:
+    gameplans_dir = tmp_path / "devlog" / "gameplans"
+    gameplans_dir.mkdir(parents=True)
+    (gameplans_dir / "upgradegameplan.md").write_text("# Upgrade\n", encoding="utf-8")
+    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+
+    problems = validate.validate_gameplan_prompt_pairing(
+        {
+            "prompt_registry": {"operator_prompt_files": []},
+            "gameplan_prompt_policy": {
+                "operator_gameplans": {
+                    "devlog/gameplans/upgradegameplan.md": {
+                        "status": "pending",
+                        "prompt": None,
+                    }
+                }
+            },
+        }
+    )
+
+    assert any("missing required execution prompt" in p for p in problems)
+    assert any("upgradegameplan.md" in p for p in problems)
+
+
+def test_validate_gameplan_prompt_pairing_passes_when_paired(tmp_path: Path, monkeypatch) -> None:
+    gameplans_dir = tmp_path / "devlog" / "gameplans"
+    gameplans_dir.mkdir(parents=True)
+    (gameplans_dir / "enhancegameplan.md").write_text("# Enhance\n", encoding="utf-8")
+    prompts_dir = tmp_path / ".github" / "prompts"
+    prompts_dir.mkdir(parents=True)
+    (prompts_dir / "execute-enhancement-gameplan.prompt.md").write_text("# prompt\n", encoding="utf-8")
+    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+
+    problems = validate.validate_gameplan_prompt_pairing(
+        {
+            "prompt_registry": {
+                "operator_prompt_files": [".github/prompts/execute-enhancement-gameplan.prompt.md"]
+            },
+            "gameplan_prompt_policy": {
+                "operator_gameplans": {
+                    "devlog/gameplans/enhancegameplan.md": {
+                        "status": "paired",
+                        "prompt": ".github/prompts/execute-enhancement-gameplan.prompt.md",
+                    }
+                }
+            },
+        }
+    )
+
+    assert problems == []
+
+
+def test_validate_gameplan_prompt_pairing_flags_invalid_exempt_reason(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+
+    problems = validate.validate_gameplan_prompt_pairing(
+        {
+            "prompt_registry": {"operator_prompt_files": []},
+            "gameplan_prompt_policy": {
+                "operator_gameplans": {},
+                "exempt_gameplans": {
+                    "devlog/gameplans/somegameplan.md": {
+                        "reason": "just-because",
+                    }
+                },
+            },
+        }
+    )
+
+    assert any("invalid reason 'just-because'" in p for p in problems)
+
+
+def test_validate_gameplan_prompt_pairing_flags_missing_prompt_file(tmp_path: Path, monkeypatch) -> None:
+    gameplans_dir = tmp_path / "devlog" / "gameplans"
+    gameplans_dir.mkdir(parents=True)
+    (gameplans_dir / "upgradegameplan.md").write_text("# Upgrade\n", encoding="utf-8")
+    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+
+    problems = validate.validate_gameplan_prompt_pairing(
+        {
+            "prompt_registry": {
+                "operator_prompt_files": [".github/prompts/execute-upgrade-gameplan.prompt.md"]
+            },
+            "gameplan_prompt_policy": {
+                "operator_gameplans": {
+                    "devlog/gameplans/upgradegameplan.md": {
+                        "status": "paired",
+                        "prompt": ".github/prompts/execute-upgrade-gameplan.prompt.md",
+                    }
+                }
+            },
+        }
+    )
+
+    assert any("prompt file missing" in p for p in problems)
+
+
+def test_validate_gameplan_prompt_pairing_flags_unregistered_prompt(tmp_path: Path, monkeypatch) -> None:
+    gameplans_dir = tmp_path / "devlog" / "gameplans"
+    gameplans_dir.mkdir(parents=True)
+    (gameplans_dir / "upgradegameplan.md").write_text("# Upgrade\n", encoding="utf-8")
+    prompts_dir = tmp_path / ".github" / "prompts"
+    prompts_dir.mkdir(parents=True)
+    (prompts_dir / "execute-upgrade-gameplan.prompt.md").write_text("# prompt\n", encoding="utf-8")
+    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+
+    problems = validate.validate_gameplan_prompt_pairing(
+        {
+            "prompt_registry": {"operator_prompt_files": []},
+            "gameplan_prompt_policy": {
+                "operator_gameplans": {
+                    "devlog/gameplans/upgradegameplan.md": {
+                        "status": "paired",
+                        "prompt": ".github/prompts/execute-upgrade-gameplan.prompt.md",
+                    }
+                }
+            },
+        }
+    )
+
+    assert any("not registered in operator_prompt_files" in p for p in problems)
+
+
 def test_validate_rule_enforcement_includes_prompt_registry_completeness(monkeypatch, tmp_path: Path) -> None:
     prompts_dir = tmp_path / ".github" / "prompts"
     prompts_dir.mkdir(parents=True)
@@ -2020,11 +2146,7 @@ class TestRepoWidePlaceholderContent:
                     "programbuild": {"output_files": []},
                     "userjourney": {"optional": True, "root": "USERJOURNEY"},
                 },
-                "workflow_state": {
-                    "userjourney": {
-                        "step_files": {"phase_0": ["USERJOURNEY/OPEN_QUESTIONS.md"]}
-                    }
-                },
+                "workflow_state": {"userjourney": {"step_files": {"phase_0": ["USERJOURNEY/OPEN_QUESTIONS.md"]}}},
             }
         )
 
@@ -2066,12 +2188,11 @@ def test_validate_prompt_generation_boundary_flags_outdated_managed_prompt(tmp_p
     monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
 
     problems = validate.validate_prompt_generation_boundary(
-        common.load_registry() | {
+        common.load_registry()
+        | {
             "prompt_generation": {
                 "artifact_root": "outputs/generated-prompts",
-                "managed_stage_prompts": [
-                    {"stage": "feasibility", "path": "outputs/generated-prompts/feasibility.prompt.md"}
-                ],
+                "managed_stage_prompts": [{"stage": "feasibility", "path": "outputs/generated-prompts/feasibility.prompt.md"}],
             }
         }
     )

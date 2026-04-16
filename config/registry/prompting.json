@@ -218,6 +218,54 @@
       { "stage": "post_launch_review", "path": "outputs/generated-prompts/post_launch_review.prompt.md" }
     ]
   },
+  "gameplan_prompt_policy": {
+    "operator_gameplans": {
+      "devlog/gameplans/enhancegameplan.md": {
+        "status": "paired",
+        "prompt": ".github/prompts/execute-enhancement-gameplan.prompt.md"
+      },
+      "devlog/gameplans/hardeninggameplan.md": {
+        "status": "paired",
+        "prompt": ".github/prompts/execute-hardening-gameplan.prompt.md"
+      },
+      "devlog/gameplans/gategameplan.md": {
+        "status": "paired",
+        "prompt": ".github/prompts/execute-gate-gameplan.prompt.md"
+      },
+      "devlog/gameplans/prompt-architecture-remediation-gameplan.md": {
+        "status": "paired",
+        "prompt": ".github/prompts/execute-prompt-architecture-remediation-gameplan.prompt.md"
+      },
+      "devlog/gameplans/upgradegameplan.md": {
+        "status": "pending",
+        "prompt": null,
+        "note": "Execution prompt required before implementation begins"
+      }
+    },
+    "exempt_gameplans": {
+      "devlog/gameplans/gategameplan.md": {
+        "reason": "infrastructure-repair",
+        "note": "Repairs quality gates that execution prompts depend on; prompt exists but exemption applies if gates are broken"
+      },
+      "devlog/gameplans/stage3gameplan.md": {
+        "reason": "bootstrap",
+        "note": "Bootstrapped the prompt system itself; prompt standard did not exist yet"
+      }
+    },
+    "internal_gameplans": [
+      "devlog/gameplans/stage2gameplan.md",
+      "devlog/gameplans/stage4gameplan.md",
+      "devlog/gameplans/stage5gameplan.md",
+      "devlog/gameplans/stage6gameplan.md",
+      "devlog/gameplans/stage7gameplan.md"
+    ],
+    "excluded_artifacts": [
+      "devlog/gameplans/mutation_15_cycle_autonomy_prompt.md"
+    ],
+    "legacy_gameplans": [
+      "devlog/gameplans/improvegameplan.md"
+    ]
+  },
   "adr_policy": {
     "legacy_pre_register_adrs": [
       "0001",

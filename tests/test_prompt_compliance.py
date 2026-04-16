@@ -70,6 +70,7 @@ VALID_CHECKS: frozenset[str] = frozenset(
         "decision-log-coherence",
         "prompt-authority",
         "prompt-generation",
+        "gameplan-prompt-pairing",
         "placeholder-content",
         "kb-freshness",
         "intake-complete",

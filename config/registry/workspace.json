@@ -85,6 +85,8 @@
       "scripts/programstart_impact.py",
       "scripts/programstart_init.py",
       "scripts/programstart_log.py",
+      "scripts/programstart_mutation_edit_hook.py",
+      "scripts/programstart_mutation_loop.py",
       "scripts/programstart_research_delta.py",
       "scripts/programstart_models.py",
       "scripts/programstart_prompt_eval.py",
@@ -133,6 +135,8 @@
       "tests/golden/dashboard/attached-signoff-modal.png",
       "tests/test_programstart_log.py",
       "tests/test_programstart_models.py",
+      "tests/test_programstart_mutation_edit_hook.py",
+      "tests/test_programstart_mutation_loop.py",
       "tests/test_programstart_project_factory.py",
       "tests/test_programstart_prompt_eval.py",
       "tests/test_programstart_research_delta.py",
@@ -242,6 +246,8 @@
       "docs/decisions/0012-require-hardening-adr-triage-and-audit-loop.md",
       "docs/decisions/0013-require-governance-close-out-for-durable-operator-checkpoints.md",
       "docs/decisions/0014-compose-process-registry-from-manifest-and-fragments.md",
+      "docs/decisions/0015-reuse-external-agent-systems-by-pattern-not-wholesale.md",
+      "docs/decisions/0016-require-execution-prompt-for-operator-gameplans.md",
       ".vscode/tasks.json"
     ],
     "userjourney_bootstrap_assets": [

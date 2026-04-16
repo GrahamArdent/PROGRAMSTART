@@ -3,6 +3,7 @@
 Purpose: Implementation plan for aligning all prompts with JIT protocol, fixing known bugs, adding missing validators, creating missing shaping prompts, and closing the coverage gaps identified in `automation.md` (40 findings) and `promptaudit.md` (20 findings PA-1 through PA-20).
 Status: **COMPLETE — All 9 phases (A-I) implemented. Post-impl gate passed 2026-04-12.**
 Authority: Non-canonical working plan derived from `automation.md` and `promptaudit.md` audits of 2026-04-12.
+Prompt: exempt — bootstrap
 Last updated: 2026-04-12
 
 ---

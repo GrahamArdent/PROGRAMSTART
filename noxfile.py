@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import os
 import shlex
 import shutil
@@ -48,6 +49,62 @@ def remove_tree(path: Path) -> None:
 
     if last_error is not None:
         raise last_error
+
+
+def reset_mutation_workspace() -> None:
+    mutation_workspace = ROOT / "mutants"
+    if mutation_workspace.exists():
+        remove_tree(mutation_workspace)
+
+
+def mutation_meta_path() -> Path:
+    return ROOT / "mutants" / "scripts" / "programstart_recommend.py.meta"
+
+
+def mutation_result_summary() -> dict[str, int]:
+    meta_path = mutation_meta_path()
+    if not meta_path.exists():
+        raise RuntimeError(f"Mutation results metadata was not created: {meta_path}")
+
+    try:
+        payload = json.loads(meta_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise RuntimeError(f"Mutation metadata is invalid JSON: {meta_path}") from exc
+
+    exit_code_by_key = payload.get("exit_code_by_key")
+    if not isinstance(exit_code_by_key, dict):
+        raise RuntimeError("Mutation metadata is missing exit_code_by_key entries")
+
+    values = list(exit_code_by_key.values())
+    total = len(values)
+    pending = sum(value is None for value in values)
+    killed = sum(value == 1 for value in values)
+    survived = sum(value == 0 for value in values)
+    other = total - pending - killed - survived
+    return {
+        "total": total,
+        "pending": pending,
+        "killed": killed,
+        "survived": survived,
+        "other": other,
+    }
+
+
+def ensure_materialized_mutation_results(session: nox.Session) -> None:
+    summary = mutation_result_summary()
+    if summary["total"] == 0:
+        session.error("Mutation run completed without generating any mutant entries. Treating result as invalid.")
+    if summary["pending"] == summary["total"]:
+        session.error(
+            "Mutation run completed without materializing any mutant outcomes. "
+            "Treating all-pending metadata as an invalid result."
+        )
+
+    session.log(
+        "Mutation results materialized: "
+        f"total={summary['total']} pending={summary['pending']} killed={summary['killed']} "
+        f"survived={summary['survived']} other={summary['other']}"
+    )
 
 
 def uv_external_env() -> dict[str, str]:
@@ -297,7 +354,8 @@ def quick(session: nox.Session) -> None:
 @nox.session(reuse_venv=True)
 def mutation(session: nox.Session) -> None:
     """Run focused mutation testing for the recommendation engine."""
-    target = session.posargs[0] if session.posargs else "scripts/programstart_recommend.py"
+    target_filter = session.posargs[0] if session.posargs else ""
+    reset_mutation_workspace()
     if os.name == "nt":
         if not has_wsl_python_pip():
             session.error(
@@ -307,22 +365,42 @@ def mutation(session: nox.Session) -> None:
             )
         repo_root = windows_path_to_wsl(ROOT)
         quoted_repo_root = shlex.quote(repo_root)
-        quoted_target = shlex.quote(target)
+        quoted_target = shlex.quote(target_filter)
+        wsl_venv = ".nox/mutation-wsl"
+        mutmut_command = f"{wsl_venv}/bin/python -m mutmut run"
+        if target_filter:
+            mutmut_command += f" {quoted_target}"
         session.run(
             "wsl.exe",
             "bash",
             "-lc",
             (
                 f"cd {quoted_repo_root} && "
-                "python3 -m pip install -e '.[dev]' >/dev/null && "
-                f"python3 -m mutmut run {quoted_target}"
+                f"rm -rf {wsl_venv} && "
+                f"python3 -m venv {wsl_venv} && "
+                f"PIP_DISABLE_PIP_VERSION_CHECK=1 {wsl_venv}/bin/python -m pip install -e . mutmut pytest >/dev/null && "
+                f'{wsl_venv}/bin/python -c "from pathlib import Path; import sys; '
+                "path = next(Path(sys.prefix).glob('lib/python*/site-packages/mutmut/__main__.py')); "
+                "text = path.read_text(); "
+                "needle = \\\"set_start_method('fork')\\n\\\"; "
+                "replacement = \\\"try:\\n    set_start_method('fork')\\nexcept RuntimeError:\\n    pass\\n\\\"; "
+                "already_patched = replacement in text; "
+                "has_needle = needle in text; "
+                "_ = path.write_text(text.replace(needle, replacement, 1)) if has_needle else None; "
+                "sys.exit('Unable to patch mutmut fork start method') if (not already_patched and not has_needle) else None\" && "
+                f"{mutmut_command}"
             ),
             external=True,
         )
+        ensure_materialized_mutation_results(session)
         return
 
     install_dev(session)
-    session.run("mutmut", "run", target)
+    if target_filter:
+        session.run("mutmut", "run", target_filter)
+    else:
+        session.run("mutmut", "run")
+    ensure_materialized_mutation_results(session)
 
 
 @nox.session(reuse_venv=True)

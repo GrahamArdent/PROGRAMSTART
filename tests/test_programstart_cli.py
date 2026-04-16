@@ -93,6 +93,8 @@ def test_bootstrap_helpers_copy_core_assets(tmp_path: Path) -> None:
     assert (destination / "scripts" / "programstart_models.py").exists()
     assert (destination / "scripts" / "programstart_init.py").exists()
     assert (destination / "scripts" / "programstart_attach.py").exists()
+    assert (destination / "scripts" / "programstart_mutation_edit_hook.py").exists()
+    assert (destination / "scripts" / "programstart_mutation_loop.py").exists()
     assert (destination / "scripts" / "programstart_recommend.py").exists()
     assert (destination / "scripts" / "programstart_research_delta.py").exists()
     assert (destination / "scripts" / "programstart_impact.py").exists()
@@ -101,6 +103,8 @@ def test_bootstrap_helpers_copy_core_assets(tmp_path: Path) -> None:
     assert (destination / "tests" / "golden" / "dashboard" / "absent-shell.png").exists()
     assert (destination / "tests" / "golden" / "dashboard" / "attached-shell.png").exists()
     assert (destination / "tests" / "golden" / "dashboard" / "attached-signoff-modal.png").exists()
+    assert (destination / "tests" / "test_programstart_mutation_edit_hook.py").exists()
+    assert (destination / "tests" / "test_programstart_mutation_loop.py").exists()
     assert (destination / "PROGRAMBUILD" / "PROGRAMBUILD.md").exists()
     assert (destination / "PROGRAMBUILD" / "PROGRAMBUILD_STATE.json").exists()
     assert b"\r\n" not in (destination / "scripts" / "programstart_cli.py").read_bytes()
@@ -395,6 +399,20 @@ def test_unified_cli_next_rejects_extra_args() -> None:
             "programstart serve",
             ["--host", "127.0.0.1"],
             ["programstart serve", "--host", "127.0.0.1"],
+        ),
+        (
+            "mutation-edit-hook",
+            "programstart_mutation_edit_hook",
+            "programstart mutation-edit-hook",
+            ["--allow-noop"],
+            ["programstart mutation-edit-hook", "--allow-noop"],
+        ),
+        (
+            "mutation-loop",
+            "programstart_mutation_loop",
+            "programstart mutation-loop",
+            ["--cycles", "2", "--allow-repeat-without-edits", "--skip-gates"],
+            ["programstart mutation-loop", "--cycles", "2", "--allow-repeat-without-edits", "--skip-gates"],
         ),
     ],
 )

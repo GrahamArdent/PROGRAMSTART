@@ -24,6 +24,8 @@ try:
         programstart_impact,
         programstart_init,
         programstart_log,
+        programstart_mutation_edit_hook,
+        programstart_mutation_loop,
         programstart_prompt_eval,
         programstart_research_delta,
         programstart_refresh_integrity,
@@ -55,6 +57,8 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
     import programstart_impact
     import programstart_init
     import programstart_log
+    import programstart_mutation_edit_hook
+    import programstart_mutation_loop
     import programstart_prompt_eval
     import programstart_research_delta
     import programstart_refresh_integrity
@@ -190,6 +194,10 @@ def dispatch(command: str, arguments: list[str], parser: argparse.ArgumentParser
         return run_passthrough(programstart_doctor.main, "programstart doctor", arguments)
     if command == "prompt-build":
         return run_passthrough(programstart_prompt_build.main, "programstart prompt-build", arguments)
+    if command == "mutation-edit-hook":
+        return run_passthrough(programstart_mutation_edit_hook.main, "programstart mutation-edit-hook", arguments)
+    if command == "mutation-loop":
+        return run_passthrough(programstart_mutation_loop.main, "programstart mutation-loop", arguments)
     if command == "help":
         parser.print_help()
         return 0

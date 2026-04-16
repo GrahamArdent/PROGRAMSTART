@@ -156,6 +156,8 @@ source = [
   "scripts.programstart_drift_check",
   "scripts.programstart_step_guide",
   "scripts.programstart_log",
+  "scripts.programstart_mutation_edit_hook",
+  "scripts.programstart_mutation_loop",
   "scripts.programstart_retrieval",
   "scripts.programstart_models",
   "scripts.programstart_attach",

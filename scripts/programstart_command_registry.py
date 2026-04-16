@@ -33,6 +33,8 @@ CLI_COMMANDS: tuple[str, ...] = (
     "health",
     "doctor",
     "prompt-build",
+    "mutation-edit-hook",
+    "mutation-loop",
 )
 
 

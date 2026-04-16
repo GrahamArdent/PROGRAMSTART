@@ -203,6 +203,33 @@
       "problemMatcher": []
     },
     {
+      "label": "PROGRAMSTART: Mutation Edit Hook (noop)",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "programstart", "mutation-edit-hook", "--allow-noop"],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "group": "test" },
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "PROGRAMSTART: Mutation Loop x25",
+      "type": "shell",
+      "command": "uv",
+      "args": [
+        "run",
+        "programstart",
+        "mutation-loop",
+        "--cycles",
+        "25",
+        "--before-cycle-command",
+        "uv run programstart mutation-edit-hook"
+      ],
+      "isBackground": true,
+      "presentation": { "reveal": "always", "panel": "dedicated", "clear": true, "focus": true, "group": "test" },
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
       "label": "PROGRAMSTART: Drift Check",
       "type": "shell",
       "command": "uv",

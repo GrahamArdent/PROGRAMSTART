@@ -4,12 +4,10 @@ import argparse
 import json
 import re
 import subprocess
-import sys
 import time
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
 
 try:
     from .programstart_common import load_json, warn_direct_script_invocation, workspace_path
@@ -17,7 +15,8 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
     from programstart_common import load_json, warn_direct_script_invocation, workspace_path
 
 MATERIALIZED_RE = re.compile(
-    r"Mutation results materialized: total=(?P<total>\d+) pending=(?P<pending>\d+) killed=(?P<killed>\d+) survived=(?P<survived>\d+) other=(?P<other>\d+)"
+    r"Mutation results materialized: total=(?P<total>\d+) pending=(?P<pending>\d+) "
+    r"killed=(?P<killed>\d+) survived=(?P<survived>\d+) other=(?P<other>\d+)"
 )
 SPEED_RE = re.compile(r"(?P<speed>\d+(?:\.\d+)?) mutations/second")
 SURVIVOR_KEY_RE = re.compile(r"^scripts\.programstart_recommend\.x_(.+)__mutmut_\d+$")
@@ -190,7 +189,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--allow-repeat-without-edits",
         action="store_true",
-        help="Keep rerunning mutation even if no edit hook is configured. Use this only when repeated measurement is intentional.",
+        help=(
+            "Keep rerunning mutation even if no edit hook is configured. Use this only when repeated measurement is intentional."
+        ),
     )
     parser.add_argument(
         "--max-wait-seconds",
@@ -223,7 +224,11 @@ def main(argv: list[str] | None = None) -> int:
 
         if args.before_cycle_command:
             print(f"Running before-cycle command: {args.before_cycle_command}")
-            hook_code = subprocess.call(args.before_cycle_command, cwd=workspace_path("."), shell=True)
+            hook_code = subprocess.call(  # noqa: S603
+                args.before_cycle_command,
+                cwd=workspace_path("."),
+                shell=True,  # nosec B602
+            )
             if hook_code != 0:
                 raise SystemExit(f"before-cycle command failed with exit code {hook_code}")
 
@@ -264,7 +269,8 @@ def main(argv: list[str] | None = None) -> int:
         update_status(status_path, record, args.cycles - cycle)
         print(
             "Settled mutation result: "
-            f"total={record.total} pending={record.pending} killed={record.killed} survived={record.survived} other={record.other}"
+            f"total={record.total} pending={record.pending} killed={record.killed} "
+            f"survived={record.survived} other={record.other}"
         )
 
         if cycle < args.cycles:

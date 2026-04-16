@@ -267,6 +267,7 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":  # pragma: no cover
     warn_direct_script_invocation(
-        "'uv run programstart attach programbuild --dest <path>' or 'uv run programstart attach userjourney --source <path> --dest <path>'"
+        "'uv run programstart attach programbuild --dest <path>'"
+        " or 'uv run programstart attach userjourney --source <path> --dest <path>'"
     )
     raise SystemExit(main())

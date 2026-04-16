@@ -1253,13 +1253,11 @@ def validate_gameplan_prompt_pairing(registry: dict) -> list[str]:
                 problems.append(f"gameplan_prompt_policy prompt file missing for {gameplan_path}: {prompt_path}")
             elif str(prompt_path) not in operator_prompts:
                 problems.append(
-                    f"gameplan_prompt_policy prompt not registered in operator_prompt_files "
-                    f"for {gameplan_path}: {prompt_path}"
+                    f"gameplan_prompt_policy prompt not registered in operator_prompt_files for {gameplan_path}: {prompt_path}"
                 )
         elif status == "pending":
             problems.append(
-                f"gameplan_prompt_policy operator gameplan missing required execution prompt: "
-                f"{gameplan_path} (status: pending)"
+                f"gameplan_prompt_policy operator gameplan missing required execution prompt: {gameplan_path} (status: pending)"
             )
         else:
             problems.append(f"gameplan_prompt_policy unrecognized status '{status}' for {gameplan_path}")

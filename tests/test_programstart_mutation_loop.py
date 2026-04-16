@@ -114,9 +114,7 @@ def test_wait_raises_on_timeout(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_wait_timeout_message_includes_process_count(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(
-        mutation_loop, "active_mutation_processes", lambda: ["mutmut: w1", "mutmut: w2", "mutmut: w3"]
-    )
+    monkeypatch.setattr(mutation_loop, "active_mutation_processes", lambda: ["mutmut: w1", "mutmut: w2", "mutmut: w3"])
 
     clock = [0.0]
 

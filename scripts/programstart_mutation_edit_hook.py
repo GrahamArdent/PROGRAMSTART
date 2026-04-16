@@ -8,11 +8,11 @@ import os
 import re
 import subprocess
 import textwrap
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from pprint import pformat
-from typing import Callable
 from unittest.mock import patch
 
 try:
@@ -113,14 +113,14 @@ def scenario_build_stack_candidates_mobile_resilience() -> str:
     }
     expected = recommend.build_stack_candidates("mobile app", {"push notifications", "offline", "analytics"}, False, kb)
     return textwrap.dedent(
-        f'''
+        f"""
         def test_build_stack_candidates_mobile_resilience_exact_output() -> None:
             kb = {_indent_literal(kb).lstrip()}
 
             assert recommend.build_stack_candidates(
                 "mobile app", {{"push notifications", "offline", "analytics"}}, False, kb
             ) == {_indent_literal(expected).lstrip()}
-        '''
+        """
     ).strip()
 
 
@@ -181,14 +181,14 @@ def scenario_build_stack_candidates_ops_console() -> str:
     }
     expected = recommend.build_stack_candidates("api service", {"dashboard", "observability", "authorization"}, True, kb)
     return textwrap.dedent(
-        f'''
+        f"""
         def test_build_stack_candidates_ops_console_exact_output() -> None:
             kb = {_indent_literal(kb).lstrip()}
 
             assert recommend.build_stack_candidates(
                 "api service", {{"dashboard", "observability", "authorization"}}, True, kb
             ) == {_indent_literal(expected).lstrip()}
-        '''
+        """
     ).strip()
 
 
@@ -256,7 +256,7 @@ def scenario_build_recommendation_api_attach_override() -> str:
         "suggested_companion_surfaces": result.suggested_companion_surfaces,
     }
     return textwrap.dedent(
-        f'''
+        f"""
         def test_build_recommendation_api_attach_override_exact_output() -> None:
             registry = {_indent_literal(registry).lstrip()}
             stack_return = {_indent_literal(stack_return).lstrip()}
@@ -291,7 +291,7 @@ def scenario_build_recommendation_api_attach_override() -> str:
                 "alternatives": result.alternatives,
                 "suggested_companion_surfaces": result.suggested_companion_surfaces,
             }} == {_indent_literal(expected).lstrip()}
-        '''
+        """
     ).strip()
 
 
@@ -343,7 +343,7 @@ def scenario_build_recommendation_cli_manual_only() -> str:
         "alternatives": result.alternatives,
     }
     return textwrap.dedent(
-        f'''
+        f"""
         def test_build_recommendation_cli_manual_only_exact_output() -> None:
             registry = {_indent_literal(registry).lstrip()}
             stack_return = {_indent_literal(stack_return).lstrip()}
@@ -376,7 +376,7 @@ def scenario_build_recommendation_cli_manual_only() -> str:
                 "next_commands": result.next_commands,
                 "alternatives": result.alternatives,
             }} == {_indent_literal(expected).lstrip()}
-        '''
+        """
     ).strip()
 
 
@@ -413,7 +413,7 @@ def scenario_select_triggered_entries_cli_tools() -> str:
         min_score=3,
     )
     return textwrap.dedent(
-        f'''
+        f"""
         def test_select_triggered_entries_cli_tools_exact_output() -> None:
             entries = {_indent_literal(entries).lstrip()}
             rules = {_indent_literal(rules).lstrip()}
@@ -431,7 +431,7 @@ def scenario_select_triggered_entries_cli_tools() -> str:
                 category="cli_tools",
                 min_score=3,
             ) == {_indent_literal(expected).lstrip()}
-        '''
+        """
     ).strip()
 
 
@@ -453,7 +453,7 @@ def scenario_main_text_output_detailed() -> str:
     )
     output = _capture_main_output(["--product-shape", "api service", "--need", "dashboard"], recommendation_obj)
     return textwrap.dedent(
-        f'''
+        f"""
         def test_main_text_output_detailed_exact(capsys) -> None:
             recommendation_obj = ProjectRecommendation(
                 product_shape="api service",
@@ -479,7 +479,7 @@ def scenario_main_text_output_detailed() -> str:
 
             assert result == 0
             assert capsys.readouterr().out == {output!r}
-        '''
+        """
     ).strip()
 
 
@@ -501,11 +501,13 @@ def scenario_print_recommendation_sections() -> str:
         next_commands=["programstart next"],
         coverage_warnings=[{"domain": "Ops", "status": "partial", "gaps": "On-call runbooks"}],
         alternatives=[{"item": "Retool", "category": "stack", "rationale": "Alt admin UI"}],
-        actionability_summary=[{"name": "FastAPI", "category": "stack", "actionability": "advice-only", "reason": "Architecture input"}],
+        actionability_summary=[
+            {"name": "FastAPI", "category": "stack", "actionability": "advice-only", "reason": "Architecture input"}
+        ],
     )
     output = _capture_print_output(recommendation_obj)
     return textwrap.dedent(
-        f'''
+        f"""
         def test_print_recommendation_sections_exact(capsys) -> None:
             recommendation_obj = ProjectRecommendation(
                 product_shape="api service",
@@ -524,13 +526,17 @@ def scenario_print_recommendation_sections() -> str:
                 next_commands=["programstart next"],
                 coverage_warnings=[{{"domain": "Ops", "status": "partial", "gaps": "On-call runbooks"}}],
                 alternatives=[{{"item": "Retool", "category": "stack", "rationale": "Alt admin UI"}}],
-                actionability_summary=[{{"name": "FastAPI", "category": "stack", "actionability": "advice-only", "reason": "Architecture input"}}],
+                actionability_summary=[
+                    {{"name": "FastAPI", "category": "stack",
+                     "actionability": "advice-only",
+                     "reason": "Architecture input"}}
+                ],
             )
 
             recommend.print_recommendation(recommendation_obj)
 
             assert capsys.readouterr().out == {output!r}
-        '''
+        """
     ).strip()
 
 
@@ -546,27 +552,29 @@ def scenario_infer_domain_names_desktop_security_ai() -> str:
     }
     expected = recommend.infer_domain_names("cli tool", {"offline", "llm", "audit readiness", "deploy"}, True, kb)
     return textwrap.dedent(
-        f'''
+        f"""
         def test_infer_domain_names_desktop_security_ai_exact_output() -> None:
             kb = {_indent_literal(kb).lstrip()}
 
             assert recommend.infer_domain_names(
                 "cli tool", {{"offline", "llm", "audit readiness", "deploy"}}, True, kb
             ) == {_indent_literal(expected).lstrip()}
-        '''
+        """
     ).strip()
 
 
 def scenario_re_evaluate_project_exact_output() -> str:
     return textwrap.dedent(
-        '''
+        """
         def test_re_evaluate_project_exact_output(tmp_path) -> None:
             from datetime import UTC, datetime
 
             kickoff = tmp_path / "PROGRAMBUILD" / "PROGRAMBUILD_KICKOFF_PACKET.md"
             kickoff.parent.mkdir(parents=True)
             kickoff.write_text(
-                "PRODUCT_SHAPE: api service\nCORE_PROBLEM: Need dashboard and payments support\nKNOWN_CONSTRAINTS: compliance required\n",
+                "PRODUCT_SHAPE: api service\\n"
+                "CORE_PROBLEM: Need dashboard and payments support\\n"
+                "KNOWN_CONSTRAINTS: compliance required\\n",
                 encoding="utf-8",
             )
             config_dir = tmp_path / "config"
@@ -646,18 +654,42 @@ def scenario_re_evaluate_project_exact_output() -> str:
                 ],
                 "re_evaluated_at": "2026-04-16T12:00:00+00:00",
             }
-        '''
+        """
     ).strip()
 
 
 SCENARIOS: tuple[GeneratedScenario, ...] = (
-    GeneratedScenario("test_build_stack_candidates_mobile_resilience_exact_output", "build_stack_candidates", scenario_build_stack_candidates_mobile_resilience),
-    GeneratedScenario("test_build_stack_candidates_ops_console_exact_output", "build_stack_candidates", scenario_build_stack_candidates_ops_console),
-    GeneratedScenario("test_build_recommendation_api_attach_override_exact_output", "build_recommendation", scenario_build_recommendation_api_attach_override),
-    GeneratedScenario("test_build_recommendation_cli_manual_only_exact_output", "build_recommendation", scenario_build_recommendation_cli_manual_only),
-    GeneratedScenario("test_select_triggered_entries_cli_tools_exact_output", "select_triggered_entries", scenario_select_triggered_entries_cli_tools),
+    GeneratedScenario(
+        "test_build_stack_candidates_mobile_resilience_exact_output",
+        "build_stack_candidates",
+        scenario_build_stack_candidates_mobile_resilience,
+    ),
+    GeneratedScenario(
+        "test_build_stack_candidates_ops_console_exact_output",
+        "build_stack_candidates",
+        scenario_build_stack_candidates_ops_console,
+    ),
+    GeneratedScenario(
+        "test_build_recommendation_api_attach_override_exact_output",
+        "build_recommendation",
+        scenario_build_recommendation_api_attach_override,
+    ),
+    GeneratedScenario(
+        "test_build_recommendation_cli_manual_only_exact_output",
+        "build_recommendation",
+        scenario_build_recommendation_cli_manual_only,
+    ),
+    GeneratedScenario(
+        "test_select_triggered_entries_cli_tools_exact_output",
+        "select_triggered_entries",
+        scenario_select_triggered_entries_cli_tools,
+    ),
     GeneratedScenario("test_main_text_output_detailed_exact", "main", scenario_main_text_output_detailed),
-    GeneratedScenario("test_infer_domain_names_desktop_security_ai_exact_output", "infer_domain_names", scenario_infer_domain_names_desktop_security_ai),
+    GeneratedScenario(
+        "test_infer_domain_names_desktop_security_ai_exact_output",
+        "infer_domain_names",
+        scenario_infer_domain_names_desktop_security_ai,
+    ),
     GeneratedScenario("test_re_evaluate_project_exact_output", "re_evaluate_project", scenario_re_evaluate_project_exact_output),
     GeneratedScenario("test_print_recommendation_sections_exact", "print_recommendation", scenario_print_recommendation_sections),
 )
@@ -756,7 +788,7 @@ def build_parser() -> argparse.ArgumentParser:
 def run_external_command(command: str, prompt_path: Path) -> int:
     full_command = f'{command} "{prompt_path}"'
     print(f"Running external mutation edit hook command: {full_command}")
-    return subprocess.call(full_command, cwd=workspace_path("."), shell=True)
+    return subprocess.call(full_command, cwd=workspace_path("."), shell=True)  # nosec B602
 
 
 def main(argv: list[str] | None = None) -> int:

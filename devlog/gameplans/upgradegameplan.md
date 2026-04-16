@@ -1,10 +1,10 @@
 # Upgrade Gameplan — Necessary Improvements for PROGRAMSTART
 
 Purpose: Prioritized upgrade plan covering all necessary improvements identified from a full codebase audit on 2026-04-16. Addresses CI integrity, coverage debt, operator workflow gaps, architecture debt, release readiness, and remaining strategic items from the hardening gameplan.
-Status: **DRAFT — not yet approved for implementation**
+Status: **IN PROGRESS**
 Authority: Non-canonical working plan derived from full baseline audit (1488 tests, 92% coverage, pyright clean, validate PASS, drift PASS) on 2026-04-16.
 Review scan count: **4** (Scan 1: baseline verification; Scan 2: post-update review; Scan 3: mutation scanner loop review; Scan 4: deadlock fix + accuracy corrections)
-Last updated: 2026-04-16 (Scan 4)
+Last updated: 2026-04-16
 
 ---
 
@@ -131,7 +131,7 @@ Baseline recorded 2026-04-16 (post hardening Phases A–I, K complete; J partial
 
 ## 4. Detailed Phase Instructions
 
-### Phase 0: Dirty-Tree Resolution (prerequisite)
+### Phase 0: Dirty-Tree Resolution (prerequisite) ✅ d52f565
 
 **Goal**: Commit or stash the 48 modified + 14 untracked files left over from hardening J-phase work and the Scan 4 deadlock fix. No upgrade work can begin on a dirty tree — this violates the JIT protocol’s "clean baseline" requirement.
 
@@ -167,7 +167,7 @@ uv run programstart drift
 
 ---
 
-### Phase A: Gate Repair (CI-01, CI-02, CI-03, CI-04)
+### Phase A: Gate Repair (CI-01, CI-02, CI-03, CI-04) ✅
 
 **Goal**: Restore clean pre-commit and MkDocs baselines. This is the blocking prerequisite for every other phase. **Three** pre-commit hooks are currently failing, not one.
 

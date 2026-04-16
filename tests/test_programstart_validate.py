@@ -1197,9 +1197,7 @@ def test_validate_gameplan_prompt_pairing_passes_when_paired(tmp_path: Path, mon
 
     problems = validate.validate_gameplan_prompt_pairing(
         {
-            "prompt_registry": {
-                "operator_prompt_files": [".github/prompts/execute-enhancement-gameplan.prompt.md"]
-            },
+            "prompt_registry": {"operator_prompt_files": [".github/prompts/execute-enhancement-gameplan.prompt.md"]},
             "gameplan_prompt_policy": {
                 "operator_gameplans": {
                     "devlog/gameplans/enhancegameplan.md": {
@@ -1242,9 +1240,7 @@ def test_validate_gameplan_prompt_pairing_flags_missing_prompt_file(tmp_path: Pa
 
     problems = validate.validate_gameplan_prompt_pairing(
         {
-            "prompt_registry": {
-                "operator_prompt_files": [".github/prompts/execute-upgrade-gameplan.prompt.md"]
-            },
+            "prompt_registry": {"operator_prompt_files": [".github/prompts/execute-upgrade-gameplan.prompt.md"]},
             "gameplan_prompt_policy": {
                 "operator_gameplans": {
                     "devlog/gameplans/upgradegameplan.md": {

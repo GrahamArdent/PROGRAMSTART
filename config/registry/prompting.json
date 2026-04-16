@@ -28,7 +28,8 @@
       ".github/prompts/execute-enhancement-gameplan.prompt.md",
       ".github/prompts/execute-hardening-gameplan.prompt.md",
       ".github/prompts/execute-gate-gameplan.prompt.md",
-      ".github/prompts/execute-prompt-architecture-remediation-gameplan.prompt.md"
+      ".github/prompts/execute-prompt-architecture-remediation-gameplan.prompt.md",
+      ".github/prompts/execute-upgrade-gameplan.prompt.md"
     ],
     "internal_prompt_files": [
       ".github/prompts/internal/implement-stage2-gameplan.prompt.md",
@@ -80,6 +81,13 @@
         "PROGRAMBUILD/DECISION_LOG.md",
         "devlog/gameplans/prompt-architecture-remediation-gameplan.md",
         "config/process-registry.json"
+      ]
+    },
+    ".github/prompts/execute-upgrade-gameplan.prompt.md": {
+      "authority_files": [
+        "devlog/gameplans/upgradegameplan.md",
+        "config/process-registry.json",
+        "PROGRAMBUILD/ARCHITECTURE.md"
       ]
     },
     ".github/prompts/shape-architecture.prompt.md": {
@@ -237,9 +245,8 @@
         "prompt": ".github/prompts/execute-prompt-architecture-remediation-gameplan.prompt.md"
       },
       "devlog/gameplans/upgradegameplan.md": {
-        "status": "pending",
-        "prompt": null,
-        "note": "Execution prompt required before implementation begins"
+        "status": "paired",
+        "prompt": ".github/prompts/execute-upgrade-gameplan.prompt.md"
       }
     },
     "exempt_gameplans": {

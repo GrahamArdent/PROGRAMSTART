@@ -226,6 +226,7 @@
       ".github/prompts/execute-hardening-gameplan.prompt.md",
       ".github/prompts/execute-gate-gameplan.prompt.md",
       ".github/prompts/execute-prompt-architecture-remediation-gameplan.prompt.md",
+      ".github/prompts/execute-upgrade-gameplan.prompt.md",
       ".github/prompts/OPERATOR_PROMPT_STANDARD.md",
       ".github/prompts/PROMPT_STANDARD.md",
       ".github/instructions/conventional-commits.instructions.md",

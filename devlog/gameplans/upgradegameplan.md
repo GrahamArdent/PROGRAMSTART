@@ -799,7 +799,7 @@ feat(sync): Phase J-2 — programstart sync --from-template
 
 ## 11. Implementation Prompt
 
-**Status**: REQUIRED by ADR-0016 (DEC-013). This is an operator gameplan — it MUST have a corresponding `execute-upgrade-gameplan.prompt.md` registered in `operator_prompt_files` before implementation begins.
+**Status**: SATISFIED — `execute-upgrade-gameplan.prompt.md` created and registered in `operator_prompt_files` per ADR-0016 (DEC-013).
 
 **Prompt specification**: The execution prompt MUST follow `OPERATOR_PROMPT_STANDARD.md` and include all 10 mandatory sections:
 

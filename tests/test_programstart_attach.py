@@ -25,6 +25,51 @@ def make_valid_source(base: Path) -> Path:
     return source
 
 
+def make_programbuild_template(base: Path) -> tuple[Path, dict]:
+    template = base / "template"
+    (template / "PROGRAMBUILD").mkdir(parents=True, exist_ok=True)
+    (template / "config").mkdir(parents=True, exist_ok=True)
+    (template / "PROGRAMBUILD" / "PROGRAMBUILD.md").write_text("# PROGRAMBUILD\n", encoding="utf-8")
+    (template / "PROGRAMBUILD" / "PROGRAMBUILD_CANONICAL.md").write_text("# CANONICAL\n", encoding="utf-8")
+    (template / "README.md").write_text("template readme\n", encoding="utf-8")
+    (template / ".gitignore").write_text("template ignore\n", encoding="utf-8")
+    (template / "pyproject.toml").write_text("[project]\nname='programstart'\n", encoding="utf-8")
+    (template / "config" / "process-registry.json").write_text("{}\n", encoding="utf-8")
+    (template / "PROGRAMBUILD" / "ARCHITECTURE.md").write_text(
+        "Purpose: Architecture\n---\nReal content that should not copy\n",
+        encoding="utf-8",
+    )
+    registry = {
+        "workspace": {
+            "bootstrap_assets": [
+                "README.md",
+                ".gitignore",
+                "pyproject.toml",
+                "config/process-registry.json",
+            ]
+        },
+        "systems": {
+            "programbuild": {
+                "control_files": [
+                    "PROGRAMBUILD/PROGRAMBUILD.md",
+                    "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md",
+                    "PROGRAMBUILD/PROGRAMBUILD_STATE.json",
+                ],
+                "output_files": ["PROGRAMBUILD/ARCHITECTURE.md"],
+            }
+        },
+        "workflow_state": {
+            "programbuild": {
+                "state_file": "PROGRAMBUILD/PROGRAMBUILD_STATE.json",
+                "active_key": "current_stage",
+                "initial_step": "inputs_and_mode_selection",
+                "step_order": ["inputs_and_mode_selection", "feasibility_and_kill_criteria"],
+            }
+        },
+    }
+    return template, registry
+
+
 # ── resolve_attachment_source ──────────────────────────────────────────────────
 
 
@@ -149,6 +194,60 @@ def test_attach_raises_filenotfounderror_for_missing_required_source_files(tmp_p
         attach.attach_userjourney(dest_root, source)
 
 
+def test_attach_programbuild_dry_run_prints_without_copying(tmp_path: Path, capsys: pytest.CaptureFixture) -> None:
+    template_root, registry = make_programbuild_template(tmp_path)
+    destination = tmp_path / "dest"
+    destination.mkdir()
+    with (
+        patch.object(attach, "load_registry", return_value=registry),
+        patch.object(
+            attach, "workspace_path", side_effect=lambda relative: template_root if relative == "." else template_root / relative
+        ),
+    ):
+        attach.attach_programbuild(destination, project_name="Orchestra Agent", dry_run=True)
+    captured = capsys.readouterr()
+    assert "ATTACH PROGRAMBUILD" in captured.out
+    assert not (destination / "PROGRAMBUILD").exists()
+
+
+def test_attach_programbuild_preserves_existing_root_files(tmp_path: Path) -> None:
+    template_root, registry = make_programbuild_template(tmp_path)
+    destination = tmp_path / "dest"
+    destination.mkdir()
+    (destination / "README.md").write_text("host readme\n", encoding="utf-8")
+    (destination / ".gitignore").write_text("host ignore\n", encoding="utf-8")
+    with (
+        patch.object(attach, "load_registry", return_value=registry),
+        patch.object(
+            attach, "workspace_path", side_effect=lambda relative: template_root if relative == "." else template_root / relative
+        ),
+        patch.object(attach, "create_default_workflow_state", return_value={"stage": "inputs_and_mode_selection"}),
+        patch.object(attach, "stamp_bootstrapped_registry") as mock_stamp,
+        patch.object(attach, "sanitize_bootstrapped_secrets_baseline"),
+        patch.object(attach, "refresh_secrets_baseline"),
+    ):
+        attach.attach_programbuild(destination, project_name="Orchestra Agent")
+
+    assert (destination / "PROGRAMBUILD" / "PROGRAMBUILD.md").exists()
+    assert (destination / "PROGRAMBUILD" / "PROGRAMBUILD_CANONICAL.md").exists()
+    assert (destination / "PROGRAMBUILD" / "PROGRAMBUILD_STATE.json").exists()
+    assert (destination / "pyproject.toml").exists()
+    assert (destination / "config" / "process-registry.json").exists()
+    assert (destination / "README.md").read_text(encoding="utf-8") == "host readme\n"
+    assert (destination / ".gitignore").read_text(encoding="utf-8") == "host ignore\n"
+    architecture_stub = (destination / "PROGRAMBUILD" / "ARCHITECTURE.md").read_text(encoding="utf-8")
+    assert architecture_stub.endswith("---\n\n")
+    assert "Real content that should not copy" not in architecture_stub
+    mock_stamp.assert_called_once()
+
+
+def test_attach_programbuild_raises_when_programbuild_exists_without_force(tmp_path: Path) -> None:
+    destination = tmp_path / "dest"
+    (destination / "PROGRAMBUILD").mkdir(parents=True)
+    with pytest.raises(FileExistsError, match="--force"):
+        attach.attach_programbuild(destination, project_name="Orchestra Agent")
+
+
 def test_attach_restores_userjourney_prompt_delta_from_shared_policy(tmp_path: Path) -> None:
     source = make_valid_source(tmp_path)
     template_root = tmp_path / "template"
@@ -268,3 +367,26 @@ def test_main_passes_force_flag(tmp_path: Path) -> None:
     assert result == 0
     _, kwargs = mock_attach.call_args
     assert kwargs.get("force") is True
+
+
+def test_main_programbuild_uses_dest_variant_and_project_name(tmp_path: Path) -> None:
+    destination = tmp_path / "orchestra"
+    destination.mkdir()
+    with patch.object(attach, "attach_programbuild") as mock_attach:
+        result = attach.main(
+            [
+                "programbuild",
+                "--dest",
+                str(destination),
+                "--variant",
+                "enterprise",
+                "--project-name",
+                "Orchestra Agent",
+            ]
+        )
+    assert result == 0
+    mock_attach.assert_called_once()
+    args, kwargs = mock_attach.call_args
+    assert args[0] == destination.resolve()
+    assert kwargs["variant"] == "enterprise"
+    assert kwargs["project_name"] == "Orchestra Agent"

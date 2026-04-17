@@ -74,9 +74,9 @@ Baseline recorded 2026-04-16 (post hardening Phases A–I, K complete; J partial
 
 | ID | Gap | Module | Current | Target | Phase |
 |---|---|---|---|---|---|
-| **COV-C1** | `programstart_common.py` — 27 uncovered stmts | common.py | 90% | ≥93% | C |
-| **COV-C2** | `programstart_closeout.py` — 5 uncovered stmts | closeout.py | 90% | ≥95% | C |
-| **COV-C3** | `programstart_create_core.py` — 16 uncovered stmts | create_core.py | 90% | ≥93% | C |
+| **COV-C1** | `programstart_common.py` — 27 uncovered stmts | common.py | 90% → 96% | ≥93% | C ✅ |
+| **COV-C2** | `programstart_closeout.py` — 5 uncovered stmts | closeout.py | 90% → 96% | ≥95% | C ✅ |
+| **COV-C3** | `programstart_create_core.py` — 16 uncovered stmts | create_core.py | 90% → 96% | ≥93% | C ✅ |
 
 ### P3 — Operator Workflow Gaps
 
@@ -372,7 +372,7 @@ Expected: All production modules ≥90% (retrieval ≥88%). Mutation tooling ≥
 
 ---
 
-### Phase C: Boundary Consolidation (COV-C1 through COV-C3)
+### Phase C: Boundary Consolidation (COV-C1 through COV-C3) ✅ 2803eca
 
 **Goal**: Push modules sitting at exactly 90% to ≥93% so they don't regress below the floor with a single missed branch.
 

@@ -7,13 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-04-17
+
 ### Features
 
+- `programstart jit-check` command: wraps `guide` + `drift` + sync-rule summary into a single JIT source-of-truth protocol entry point (ADR-0017).
+- `programstart advance --defer` flag: marks the active step as intentionally paused without advancing; staleness detection uses the deferred date (ADR-0018).
 - `programstart prompt-build` command: generates a stage-specific `.prompt.md` file from the process registry (`--stage`, `--output`, `--eject`, `--list-stages`, `--json` flags).
 - `programstart doctor` command: environment health checks for PATH, Python version, uv, and key dependencies.
+- Typed Pydantic models for all 16 process-registry sections via `load_validated_registry()` alongside existing dict API (ADR-0019).
+- Split `programstart_validate.py` (1710 lines) into `programstart_validate_core.py` (check implementations) and facade (CLI dispatch).
+- Composed process registry from manifest + fragments (`config/registry/`) with stable merged `load_registry()` contract (ADR-0014).
+- Separate workflow, operator, and internal prompt architecture with class-aware validation (ADR-0011).
 - `lint-prompts` validation check: enforces PROMPT_STANDARD.md compliance rows against all `.prompt.md` files.
 - `file-hygiene` validate check: catches stale or untracked planning artefacts.
 - Prompt `version` field in frontmatter validated by compliance tests.
+- Stage-gate validation checks for PROGRAMBUILD Stages 0–4: `intake-complete`, `feasibility-criteria`, `requirements-complete`, `architecture-contracts`.
+- Per-stage dispatch in `preflight_problems()` — advancing a PROGRAMBUILD stage now runs the corresponding content validation automatically.
+- Five collaborative shaping prompts for Stages 0–4: `shape-idea`, `shape-feasibility`, `shape-research`, `shape-requirements`, `shape-architecture`.
+- DRY consolidation of registry and state helpers with file-locking via `filelock`.
+- UI blind spot coverage: dashboard button-flow smoke, missing-route detection.
+- JSON schema hardening: added schemas for knowledge-base and prompt-eval-scenarios.
+- CI matrix hardening: lockfile check, pip-audit, CHANGELOG enforcement.
+- Coverage push: all production modules ≥90% (retrieval ≥88%, mutation ≥80%), aggregate ≥93%.
+- Post-advance sanity check, content quality gates, cross-system health warning.
+- Recommendation engine companion surfaces: `suggested_companion_surfaces` field, cross-shape UI advisory, `ui_tier()` classifier, admin dashboard scaffold generator.
+- 19 ADR decision records documenting significant architecture and policy choices.
+- 1752 tests with comprehensive coverage across all modules.
 
 ### Fixes
 
@@ -22,29 +42,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `GET /static/<filename>` route in the dashboard server with path-traversal protection.
 - `_ensure_scripts_importable()` helper added to `programstart_common.py` to consolidate `sys.path` bootstrap logic across standalone scripts.
 - Removed 29 redundant `# type: ignore` annotations from standalone import-fallback blocks across all scripts.
-
-
-
-### Features
-
-- Stage-gate validation checks for PROGRAMBUILD Stages 0-4: `intake-complete`, `feasibility-criteria`, `requirements-complete`, `architecture-contracts`.
-- Per-stage dispatch in `preflight_problems()` — advancing a PROGRAMBUILD stage now runs the corresponding content validation automatically.
-- `run_stage_gate_check()` dispatcher in `programstart_validate.py` for stage-gate content checks.
-- Five collaborative shaping prompts for Stages 0-4: `shape-idea`, `shape-feasibility`, `shape-research`, `shape-requirements`, `shape-architecture`.
-- DRY consolidation of registry and state helpers with file-locking via `filelock`.
-- UI blind spot coverage: dashboard button-flow smoke, missing-route detection.
-- JSON schema hardening: added schemas for knowledge-base and prompt-eval-scenarios.
-- Sync-enforcing tests and INDEX_VERSION consistency fix.
-- CI matrix hardening: lockfile check, pip-audit, CHANGELOG enforcement.
-- Coverage push: `programstart_serve` 82→85%, `research_delta` 80→92%.
-- Post-advance sanity check, content quality gates, cross-system health warning.
-- Recommendation engine companion surfaces: `suggested_companion_surfaces` field, cross-shape UI advisory, `ui_tier()` classifier, admin dashboard scaffold generator.
-- 3 hybrid prompt-eval scenarios and 3 cross-shape KB decision rules.
-- Companion UI section in factory plan output.
-- UI Surface Assessment step in shape-requirements prompt, topology note in shape-architecture prompt.
-
-### Fixes
-
 - `preflight_problems()` was returning `None` due to dead code trapped inside `_check_challenge_gate_log()` — restored full body with real checks.
 - Monkeypatch lambda arity in advance tests updated for new `active_step` parameter.
 - Narrow exception handlers and subprocess timeouts for robustness.

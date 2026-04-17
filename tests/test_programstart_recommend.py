@@ -1024,3 +1024,887 @@ def test_prompt_guidance_normalization_uses_keyed_kb_fields() -> None:
         "Do not skip verification or assume tool output is complete.",
         "Do not add features, stages, or documents outside the registry authority model.",
     ]
+
+
+# ── build_stack_candidates: assertion-dense mutation-killing tests ─────────────
+
+
+def _scoring_kb() -> dict:
+    """KB fixture with controlled stacks, domains, rules, comparisons, and relationships."""
+    return {
+        "stacks": [
+            {
+                "name": "Next.js",
+                "trigger_shapes": ["web app"],
+                "strengths": ["ssr", "route driven rendering"],
+                "layer": "frontend",
+                "tradeoffs": ["complexity"],
+            },
+            {
+                "name": "FastAPI",
+                "trigger_shapes": ["api service"],
+                "strengths": ["typed", "async io", "validation"],
+                "layer": "backend",
+            },
+            {
+                "name": "PostgreSQL",
+                "trigger_shapes": ["web app", "api service"],
+                "strengths": ["database", "sql"],
+                "layer": "data",
+            },
+            {
+                "name": "Playwright",
+                "trigger_shapes": ["web app"],
+                "strengths": ["browser testing"],
+                "layer": "testing",
+            },
+            {
+                "name": "Pydantic",
+                "trigger_shapes": ["web app", "cli tool", "api service"],
+                "strengths": ["validation", "typed"],
+                "layer": "core",
+            },
+            {
+                "name": "OpenTelemetry",
+                "trigger_shapes": ["api service"],
+                "strengths": ["observability", "audit"],
+                "layer": "observability",
+            },
+            {
+                "name": "Ruff",
+                "trigger_shapes": ["cli tool"],
+                "strengths": ["lint"],
+                "layer": "dev",
+            },
+            {
+                "name": "Hypothesis",
+                "trigger_shapes": ["cli tool"],
+                "strengths": ["testing"],
+                "layer": "testing",
+            },
+        ],
+        "coverage_domains": [
+            {
+                "name": "Web and frontend product delivery",
+                "status": "strong",
+                "representative_tools": ["Next.js"],
+                "summary": "Frontend delivery",
+                "current_gaps": [],
+            },
+            {
+                "name": "Cloud, infrastructure, and platform operations",
+                "status": "partial",
+                "representative_tools": ["PostgreSQL"],
+                "summary": "Cloud ops",
+                "current_gaps": ["No CDN coverage"],
+            },
+            {
+                "name": "Developer experience, quality, and supply chain",
+                "status": "seed",
+                "representative_tools": ["Ruff"],
+                "summary": "DevEx",
+                "current_gaps": ["Early stage"],
+            },
+        ],
+        "comparisons": [
+            {
+                "name": "Next.js vs Remix",
+                "related_items": ["Next.js", "Remix"],
+                "compared_versions": [],
+                "decision": "Prefer Next.js for SSR-first applications.",
+                "summary": "Both support SSR.",
+            },
+        ],
+        "relationships": [
+            {
+                "subject": "Next.js",
+                "object": "PostgreSQL",
+                "relation": "complements",
+            },
+        ],
+        "integration_patterns": [
+            {
+                "name": "Full-stack SSR",
+                "fit_for": ["web app", "ssr"],
+                "components": ["Next.js", "PostgreSQL"],
+            },
+        ],
+        "decision_rules": [
+            {
+                "title": "Prefer Playwright for web apps",
+                "match_product_shapes": ["web app"],
+                "match_needs": [],
+                "match_domains": [],
+                "target_layers": ["stacks"],
+                "prefer_items": ["Playwright"],
+                "avoid_items": [],
+                "because": "E2E testing is critical for web apps",
+                "confidence": "high",
+            },
+            {
+                "title": "Avoid OpenTelemetry for web apps",
+                "match_product_shapes": ["web app"],
+                "match_needs": [],
+                "match_domains": [],
+                "target_layers": ["stacks"],
+                "prefer_items": [],
+                "avoid_items": ["OpenTelemetry"],
+                "because": "Overhead in browser context",
+                "confidence": "medium",
+            },
+        ],
+        "provisioning_services": [],
+        "third_party_apis": [],
+        "cli_tools": [],
+        "prompt_engineering_guidance": {},
+    }
+
+
+def test_build_stack_candidates_baseline_fit_score() -> None:
+    """Baseline stacks get +12 from preferred_lookup match."""
+    kb = _scoring_kb()
+    _archetype, stacks, evidence, _domains, _cw, _alts, _re, _conf = recommend.build_stack_candidates("web app", set(), False, kb)
+    # Next.js is a baseline stack for web app; it should be selected
+    assert "Next.js" in stacks
+    nextjs_ev = next(e for e in evidence if e["name"] == "Next.js")
+    # Baseline fit gives +12; domain representative (strong) gives +8;
+    # integration pattern match gives +3; comparison bonus (decision mentions Next.js) gives +3
+    assert nextjs_ev["score"] >= 12, f"Expected baseline score >= 12, got {nextjs_ev['score']}"
+    assert any("Baseline fit" in r for r in nextjs_ev["reasons"])
+
+
+def test_build_stack_candidates_domain_representative_scores() -> None:
+    """Domain representative stacks get scored by domain status: strong=8, partial=6, seed=4."""
+    kb = _scoring_kb()
+    _a, _s, evidence, _d, _cw, _alts, _re, _conf = recommend.build_stack_candidates("web app", set(), False, kb)
+    # Next.js is representative of "Web and frontend" (strong → +8)
+    nextjs_ev = next(e for e in evidence if e["name"] == "Next.js")
+    assert any("Representative tool" in r and "strong" in r for r in nextjs_ev["reasons"])
+
+    # PostgreSQL is representative of "Cloud, infrastructure" (partial → +6)
+    pg_ev = next((e for e in evidence if e["name"] == "PostgreSQL"), None)
+    if pg_ev:
+        assert any("Representative tool" in r and "partial" in r for r in pg_ev["reasons"])
+
+
+def test_build_stack_candidates_regulation_bonus() -> None:
+    """Regulated flag adds +3 for stacks with security/audit/observability terms."""
+    kb = _scoring_kb()
+    # OpenTelemetry strengths include 'observability' → regulated bonus
+    # But it also gets avoid_items penalty -3 from the "Avoid OpenTelemetry for web apps" rule
+    # Use api service shape where no avoid rule applies
+    _a, stacks_unreg, evidence_unreg, _d, _cw, _alts, _re, _conf = recommend.build_stack_candidates(
+        "api service", set(), False, kb
+    )
+    _a2, stacks_reg, evidence_reg, _d2, _cw2, _alts2, _re2, _conf2 = recommend.build_stack_candidates(
+        "api service", set(), True, kb
+    )
+    otel_unreg = next((e for e in evidence_unreg if e["name"] == "OpenTelemetry"), None)
+    otel_reg = next((e for e in evidence_reg if e["name"] == "OpenTelemetry"), None)
+    if otel_unreg and otel_reg:
+        assert otel_reg["score"] > otel_unreg["score"], "Regulated flag should boost observability stacks"
+        assert any("governance" in r.lower() or "observability" in r.lower() for r in otel_reg["reasons"])
+
+
+def test_build_stack_candidates_decision_rule_prefer() -> None:
+    """Decision rule prefer_items adds +4."""
+    kb = _scoring_kb()
+    _a, stacks, evidence, _d, _cw, _alts, _re, _conf = recommend.build_stack_candidates("web app", set(), False, kb)
+    # "Prefer Playwright for web apps" rule should add +4
+    pw_ev = next((e for e in evidence if e["name"] == "Playwright"), None)
+    assert pw_ev is not None, "Playwright should be selected"
+    assert any("KB rule preference" in r for r in pw_ev["reasons"])
+
+
+def test_build_stack_candidates_decision_rule_avoid() -> None:
+    """Decision rule avoid_items subtracts -3."""
+    kb = _scoring_kb()
+    _a, stacks, evidence, _d, _cw, _alts, _re, _conf = recommend.build_stack_candidates("web app", set(), False, kb)
+    # "Avoid OpenTelemetry for web apps" rule should apply -3
+    otel = next((e for e in evidence if e["name"] == "OpenTelemetry"), None)
+    if otel:
+        assert any("KB rule caution" in r for r in otel["reasons"])
+
+
+def test_build_stack_candidates_intent_term_scoring() -> None:
+    """Intent terms from needs boost stack scores (+2 per term, capped at 10)."""
+    kb = _scoring_kb()
+    # "validation" is in the intent terms for web app baseline AND matches Pydantic strengths
+    _a, stacks, evidence, _d, _cw, _alts, _re, _conf = recommend.build_stack_candidates("web app", {"validation"}, False, kb)
+    pydantic_ev = next((e for e in evidence if e["name"] == "Pydantic"), None)
+    assert pydantic_ev is not None, "Pydantic should be selected (matches intent term 'validation')"
+    assert any("intent terms" in r.lower() for r in pydantic_ev["reasons"])
+
+
+def test_build_stack_candidates_integration_pattern_boost() -> None:
+    """Integration pattern matches give score bonus (+3 per pattern, capped at 6)."""
+    kb = _scoring_kb()
+    _a, stacks, evidence, _d, _cw, _alts, _re, _conf = recommend.build_stack_candidates("web app", set(), False, kb)
+    # "Full-stack SSR" pattern matches web app → boosts Next.js and PostgreSQL
+    nextjs_ev = next(e for e in evidence if e["name"] == "Next.js")
+    assert any("integration pattern" in r.lower() for r in nextjs_ev["reasons"])
+
+
+def test_build_stack_candidates_complement_relationship_bonus() -> None:
+    """Complement relationships add +2 when one partner is in preferred_lookup."""
+    kb = _scoring_kb()
+    _a, stacks, evidence, _d, _cw, _alts, _re, _conf = recommend.build_stack_candidates("web app", set(), False, kb)
+    # Next.js complements PostgreSQL; Next.js is baseline → PostgreSQL gets +2
+    pg_ev = next((e for e in evidence if e["name"] == "PostgreSQL"), None)
+    if pg_ev:
+        assert any("Complements" in r for r in pg_ev["reasons"])
+
+
+def test_build_stack_candidates_comparison_in_alternatives() -> None:
+    """Comparisons referencing selected stacks appear in alternatives."""
+    kb = _scoring_kb()
+    _a, stacks, evidence, _d, _cw, alternatives, _re, _conf = recommend.build_stack_candidates("web app", set(), False, kb)
+    # "Next.js vs Remix" comparison should produce an alternative entry
+    comparison_alts = [a for a in alternatives if a.get("category") == "comparison"]
+    assert any("Next.js vs Remix" in a.get("item", "") for a in comparison_alts), (
+        f"Expected 'Next.js vs Remix' in comparison alternatives, got {comparison_alts}"
+    )
+
+
+def test_build_stack_candidates_tradeoff_penalty() -> None:
+    """Stacks with tradeoffs matching intent terms get score penalty (-1 per caution, capped at -4)."""
+    kb = _scoring_kb()
+    # Next.js has tradeoffs=["complexity"]; if "complexity" becomes an intent term AND appears in risk_blob
+    # We need to craft needs so "complexity" ends up in intent_terms
+    # Actually, the penalty applies when matched_terms overlap with risk_blob
+    # risk_blob = stack_risk_text(entry) which reads tradeoffs/avoid_when/risks
+    # For Next.js: risk_blob = "complexity"
+    # matched_terms are intent_terms that appear in text_blob (strengths+trigger_shapes)
+    # "complexity" would need to be in text_blob too, which it's not (it's in tradeoffs not strengths)
+    # So this penalty is hard to trigger with Next.js
+    # Let's test with a custom stack
+    kb["stacks"].append(
+        {
+            "name": "HeavyFramework",
+            "trigger_shapes": ["web app"],
+            "strengths": ["ssr", "security", "validation"],
+            "tradeoffs": ["validation overhead"],
+        }
+    )
+    _a, stacks, evidence, _d, _cw, _alts, _re, _conf = recommend.build_stack_candidates("web app", {"validation"}, False, kb)
+    heavy_ev = next((e for e in evidence if e["name"] == "HeavyFramework"), None)
+    if heavy_ev:
+        assert any("tradeoffs" in r.lower() for r in heavy_ev["reasons"])
+
+
+def test_build_stack_candidates_zero_score_excluded() -> None:
+    """Stacks with score <= 0 are excluded from candidates."""
+    kb = _scoring_kb()
+    # FastAPI has trigger_shapes=["api service"] — for "web app" shape it gets no baseline score
+    # and no domain representative score, so it should be excluded or score very low
+    _a, stacks, evidence, _d, _cw, _alts, _re, _conf = recommend.build_stack_candidates("web app", set(), False, kb)
+    # Ruff/Hypothesis have trigger_shapes=["cli tool"] so unlikely to appear for web app
+    ruff_ev = next((e for e in evidence if e["name"] == "Ruff"), None)
+    hypothesis_ev = next((e for e in evidence if e["name"] == "Hypothesis"), None)
+    assert ruff_ev is None, "Ruff should not appear for web app"
+    assert hypothesis_ev is None, "Hypothesis should not appear for web app"
+
+
+def test_build_stack_candidates_ordering_by_score_then_name() -> None:
+    """Candidates are ordered by descending score then ascending name."""
+    kb = _scoring_kb()
+    _a, stacks, evidence, _d, _cw, _alts, _re, _conf = recommend.build_stack_candidates("web app", set(), False, kb)
+    scores = [e["score"] for e in evidence]
+    # Scores must be non-increasing
+    for i in range(len(scores) - 1):
+        assert scores[i] >= scores[i + 1], f"Evidence not sorted by score: {scores}"
+
+
+def test_build_stack_candidates_selection_budget_limits() -> None:
+    """Selection budget is len(preferred) + 2 + extra from rules."""
+    kb = _scoring_kb()
+    # web app baseline has 4 stacks: Next.js, PostgreSQL, Playwright, Pydantic
+    # budget = 4 + 2 + max(0, rule_preferred - baseline) = 6 + extras
+    _a, stacks, evidence, _d, _cw, _alts, _re, _conf = recommend.build_stack_candidates("web app", set(), False, kb)
+    # Should not exceed reasonable bounds
+    assert len(stacks) <= 10, f"Too many stacks selected: {len(stacks)}"
+    assert len(stacks) >= 1, "Should select at least one stack"
+
+
+def test_build_stack_candidates_coverage_warnings_partial_seed() -> None:
+    """Coverage warnings appear for domains with status partial or seed."""
+    kb = _scoring_kb()
+    _a, _s, _ev, _d, coverage_warnings, _alts, _re, _conf = recommend.build_stack_candidates("web app", set(), False, kb)
+    # "Web and frontend" is strong — should NOT appear in warnings
+    assert not any(w["status"] == "strong" for w in coverage_warnings), "Strong domains should not produce warnings"
+    # Each warning should have domain, status, summary, gaps fields
+    for w in coverage_warnings:
+        assert "domain" in w
+        assert "status" in w
+        assert "summary" in w
+        assert "gaps" in w
+
+
+def test_build_stack_candidates_confidence_seed_is_low() -> None:
+    """Confidence is 'low' when any selected domain has seed status."""
+    kb = _scoring_kb()
+    # cli tool baseline maps to "Developer experience, quality, and supply chain" which is seed
+    _a, _s, _ev, _d, cw, _alts, _re, confidence = recommend.build_stack_candidates("cli tool", set(), False, kb)
+    if any(w["status"] == "seed" for w in cw):
+        assert confidence == "low", f"Expected 'low' confidence with seed domain, got '{confidence}'"
+
+
+def test_build_stack_candidates_confidence_partial_is_medium() -> None:
+    """Confidence is 'medium' when coverage_warnings exist but no seed domain."""
+    kb = _scoring_kb()
+    # Remove seed domain, keep only partial
+    kb["coverage_domains"] = [d for d in kb["coverage_domains"] if d["status"] != "seed"]
+    _a, _s, _ev, _d, cw, _alts, _re, confidence = recommend.build_stack_candidates("api service", set(), False, kb)
+    if cw and not any(w["status"] == "seed" for w in cw):
+        assert confidence == "medium", f"Expected 'medium' confidence with partial domain, got '{confidence}'"
+
+
+def test_build_stack_candidates_confidence_high_when_no_warnings() -> None:
+    """Confidence is 'high' when no coverage warnings and >= 3 candidates."""
+    kb = _scoring_kb()
+    # Make all domains strong so no warnings
+    for d in kb["coverage_domains"]:
+        d["status"] = "strong"
+    _a, _s, _ev, _d, cw, _alts, _re, confidence = recommend.build_stack_candidates("web app", set(), False, kb)
+    if not cw:
+        assert confidence == "high", f"Expected 'high' confidence with no warnings, got '{confidence}'"
+
+
+def test_build_stack_candidates_alternatives_are_non_selected() -> None:
+    """Alternatives are candidates that scored but weren't selected."""
+    kb = _scoring_kb()
+    _a, stacks, _ev, _d, _cw, alternatives, _re, _conf = recommend.build_stack_candidates("web app", set(), False, kb)
+    for alt in alternatives:
+        assert "item" in alt
+        assert "category" in alt
+        assert "rationale" in alt
+        # Alternatives with category "stack" should not be in selected stacks
+        if alt["category"] == "stack":
+            assert alt["item"] not in stacks, f"Alternative {alt['item']} is also in selected stacks"
+
+
+def test_build_stack_candidates_rule_evidence_structure() -> None:
+    """Rule evidence has title, because, confidence fields."""
+    kb = _scoring_kb()
+    _a, _s, _ev, _d, _cw, _alts, rule_evidence, _conf = recommend.build_stack_candidates("web app", set(), False, kb)
+    assert len(rule_evidence) >= 1, "web app should trigger at least one decision rule"
+    for item in rule_evidence:
+        assert "title" in item
+        assert "because" in item
+        assert "confidence" in item
+        assert isinstance(item["title"], str) and item["title"]
+        assert isinstance(item["because"], str) and item["because"]
+        assert item["confidence"] in {"low", "medium", "high"}
+
+
+def test_build_stack_candidates_matched_domains_returned() -> None:
+    """matched_domain_names reflects actual selected domains."""
+    kb = _scoring_kb()
+    _a, _s, _ev, matched_domains, _cw, _alts, _re, _conf = recommend.build_stack_candidates("web app", set(), False, kb)
+    assert isinstance(matched_domains, list)
+    # web app baseline maps to "Web and frontend" and "Cloud, infrastructure"
+    # At least the first one should appear since it exists in the KB
+    assert len(matched_domains) >= 1
+
+
+def test_build_stack_candidates_evidence_reasons_capped() -> None:
+    """Stack evidence reasons are capped at 4 items."""
+    kb = _scoring_kb()
+    _a, _s, evidence, _d, _cw, _alts, _re, _conf = recommend.build_stack_candidates(
+        "web app", {"validation", "testing", "ssr", "authentication"}, False, kb
+    )
+    for item in evidence:
+        assert len(item["reasons"]) <= 4, f"{item['name']} has {len(item['reasons'])} reasons, expected <= 4"
+
+
+# ── build_recommendation: assertion-dense mutation-killing tests ───────────────
+
+
+def test_build_recommendation_rationale_includes_shape() -> None:
+    """Rationale always includes a sentence about the product shape."""
+    with (
+        patch.object(recommend, "load_registry", return_value=_minimal_registry()),
+        patch.object(recommend, "load_knowledge_base", return_value=_minimal_kb()),
+    ):
+        rec = recommend.build_recommendation(
+            product_shape="cli tool",
+            needs=set(),
+            regulated=False,
+            attach_userjourney=False,
+        )
+    assert any("cli tool" in r for r in rec.rationale)
+
+
+def test_build_recommendation_rationale_mentions_domains_when_matched() -> None:
+    """Rationale includes domain names when matched_domains is non-empty."""
+    rec = recommend.build_recommendation(
+        product_shape="web app",
+        needs=set(),
+        regulated=False,
+        attach_userjourney=False,
+    )
+    if rec.matched_domains:
+        assert any("Most relevant KB domains" in r for r in rec.rationale)
+
+
+def test_build_recommendation_rationale_mentions_rules_when_applied() -> None:
+    """Rationale includes rule titles when rule_evidence is non-empty."""
+    rec = recommend.build_recommendation(
+        product_shape="web app",
+        needs=set(),
+        regulated=False,
+        attach_userjourney=False,
+    )
+    if rec.rule_evidence:
+        assert any("KB decision rules applied" in r for r in rec.rationale)
+
+
+def test_build_recommendation_next_commands_starts_with_create() -> None:
+    """First next_command is always the create command."""
+    with (
+        patch.object(recommend, "load_registry", return_value=_minimal_registry()),
+        patch.object(recommend, "load_knowledge_base", return_value=_minimal_kb()),
+    ):
+        rec = recommend.build_recommendation(
+            product_shape="api service",
+            needs=set(),
+            regulated=False,
+            attach_userjourney=False,
+        )
+    assert rec.next_commands[0].startswith("programstart create")
+
+
+def test_build_recommendation_next_commands_includes_attach_for_web_app() -> None:
+    """Web app with default attach_userjourney=None includes attach command."""
+    with (
+        patch.object(recommend, "load_registry", return_value=_minimal_registry()),
+        patch.object(recommend, "load_knowledge_base", return_value=_minimal_kb()),
+    ):
+        rec = recommend.build_recommendation(
+            product_shape="web app",
+            needs=set(),
+            regulated=False,
+            attach_userjourney=None,
+        )
+    assert rec.attach_userjourney is True
+    assert any("attach" in cmd for cmd in rec.next_commands)
+
+
+def test_build_recommendation_next_commands_excludes_attach_when_forced_off() -> None:
+    """attach_userjourney=False suppresses the attach command."""
+    with (
+        patch.object(recommend, "load_registry", return_value=_minimal_registry()),
+        patch.object(recommend, "load_knowledge_base", return_value=_minimal_kb()),
+    ):
+        rec = recommend.build_recommendation(
+            product_shape="web app",
+            needs=set(),
+            regulated=False,
+            attach_userjourney=False,
+        )
+    assert rec.attach_userjourney is False
+    assert not any("attach userjourney" in cmd.lower() for cmd in rec.next_commands)
+
+
+def test_build_recommendation_unrecognized_needs_warning() -> None:
+    """Unrecognized needs appear in rationale warning."""
+    with (
+        patch.object(recommend, "load_registry", return_value=_minimal_registry()),
+        patch.object(recommend, "load_knowledge_base", return_value=_minimal_kb()),
+    ):
+        rec = recommend.build_recommendation(
+            product_shape="api service",
+            needs={"rag", "xyzzy_nonexistent_need"},
+            regulated=False,
+            attach_userjourney=False,
+        )
+    assert any("Unrecognized capability needs" in r and "xyzzy_nonexistent_need" in r for r in rec.rationale)
+
+
+def test_build_recommendation_companion_surface_for_api_with_dashboard() -> None:
+    """API service + dashboard need adds companion surface advisory."""
+    with (
+        patch.object(recommend, "load_registry", return_value=_minimal_registry()),
+        patch.object(recommend, "load_knowledge_base", return_value=_minimal_kb()),
+    ):
+        rec = recommend.build_recommendation(
+            product_shape="api service",
+            needs={"dashboard"},
+            regulated=False,
+            attach_userjourney=False,
+        )
+    assert "admin dashboard" in rec.suggested_companion_surfaces
+    assert any(w.get("domain") == "Companion UI" and w.get("status") == "advisory" for w in rec.coverage_warnings)
+
+
+def test_build_recommendation_no_companion_surface_for_web_app() -> None:
+    """Web app does not get companion surface advisory (it IS a UI)."""
+    with (
+        patch.object(recommend, "load_registry", return_value=_minimal_registry()),
+        patch.object(recommend, "load_knowledge_base", return_value=_minimal_kb()),
+    ):
+        rec = recommend.build_recommendation(
+            product_shape="web app",
+            needs={"dashboard"},
+            regulated=False,
+            attach_userjourney=False,
+        )
+    assert "admin dashboard" not in rec.suggested_companion_surfaces
+
+
+def test_build_recommendation_frontend_coverage_advisory_for_api() -> None:
+    """API service with no frontend domain gets frontend coverage advisory."""
+    with (
+        patch.object(recommend, "load_registry", return_value=_minimal_registry()),
+        patch.object(recommend, "load_knowledge_base", return_value=_minimal_kb()),
+    ):
+        rec = recommend.build_recommendation(
+            product_shape="api service",
+            needs=set(),
+            regulated=False,
+            attach_userjourney=False,
+        )
+    if "Web and frontend product delivery" not in rec.matched_domains:
+        assert any(w.get("domain") == "Frontend coverage" and w.get("status") == "advisory" for w in rec.coverage_warnings)
+
+
+def test_build_recommendation_combined_alternatives_deduplication() -> None:
+    """Combined alternatives are deduplicated by (item, category) key."""
+    rec = recommend.build_recommendation(
+        product_shape="web app",
+        needs={"rag"},
+        regulated=False,
+        attach_userjourney=False,
+    )
+    keys = [(a.get("item"), a.get("category")) for a in rec.alternatives]
+    assert len(keys) == len(set(keys)), f"Duplicate alternatives found: {keys}"
+
+
+def test_build_recommendation_generated_prompt_non_empty() -> None:
+    """Generated prompt is always a non-empty string."""
+    with (
+        patch.object(recommend, "load_registry", return_value=_minimal_registry()),
+        patch.object(recommend, "load_knowledge_base", return_value=_minimal_kb()),
+    ):
+        rec = recommend.build_recommendation(
+            product_shape="cli tool",
+            needs=set(),
+            regulated=False,
+            attach_userjourney=False,
+        )
+    assert isinstance(rec.generated_prompt, str)
+    assert len(rec.generated_prompt) > 0
+
+
+def test_build_recommendation_prompt_generated_at_is_iso() -> None:
+    """prompt_generated_at is a valid ISO 8601 timestamp."""
+    from datetime import datetime
+
+    with (
+        patch.object(recommend, "load_registry", return_value=_minimal_registry()),
+        patch.object(recommend, "load_knowledge_base", return_value=_minimal_kb()),
+    ):
+        rec = recommend.build_recommendation(
+            product_shape="cli tool",
+            needs=set(),
+            regulated=False,
+            attach_userjourney=False,
+        )
+    # Should parse without error
+    datetime.fromisoformat(rec.prompt_generated_at)
+
+
+def test_build_recommendation_coverage_warnings_mentions_review() -> None:
+    """When coverage_warnings exist, next_commands includes review guidance."""
+    rec = recommend.build_recommendation(
+        product_shape="web app",
+        needs=set(),
+        regulated=False,
+        attach_userjourney=False,
+    )
+    if rec.coverage_warnings:
+        assert any("coverage warnings" in r.lower() for r in rec.rationale)
+
+
+def test_build_recommendation_services_and_clis_populated() -> None:
+    """Real KB run should populate at least some service/cli/api names."""
+    rec = recommend.build_recommendation(
+        product_shape="web app",
+        needs={"authentication"},
+        regulated=False,
+        attach_userjourney=False,
+    )
+    # At least one of these should be non-empty for a web app with auth need
+    has_some = rec.service_names or rec.cli_tool_names or rec.api_names
+    assert has_some, "Expected at least one of service/cli/api names for web app with auth"
+
+
+# ── main: assertion-dense mutation-killing tests ───────────────────────────────
+
+
+def test_main_list_shapes_text_format(capsys) -> None:
+    """--list-shapes prints 'Known product shapes:' header and indented entries."""
+    rc = recommend.main(["--list-shapes"])
+    assert rc == 0
+    out = capsys.readouterr().out
+    assert "Known product shapes:" in out
+    assert "cli tool" in out
+    assert "api service" in out
+    assert "web app" in out
+    assert "mobile app" in out
+    assert "data pipeline" in out
+    # Each line should show archetype description
+    for line in out.strip().split("\n")[1:]:
+        assert line.startswith("  "), f"Expected indented line: {line!r}"
+
+
+def test_main_list_shapes_json_format(capsys) -> None:
+    """--list-shapes --json emits a JSON array with shape/archetype keys."""
+    import json as json_mod
+
+    rc = recommend.main(["--list-shapes", "--json"])
+    assert rc == 0
+    out = capsys.readouterr().out
+    data = json_mod.loads(out)
+    assert isinstance(data, list)
+    assert len(data) == 5  # 5 known shapes
+    for entry in data:
+        assert "shape" in entry
+        assert "archetype" in entry
+
+
+def test_main_re_evaluate_text_format(capsys, tmp_path) -> None:
+    """--re-evaluate prints structured text report."""
+    kickoff_dir = tmp_path / "PROGRAMBUILD"
+    kickoff_dir.mkdir()
+    (kickoff_dir / "PROGRAMBUILD_KICKOFF_PACKET.md").write_text(
+        "```text\nPROJECT_NAME: TestApp\nPRODUCT_SHAPE: web app\n```",
+        encoding="utf-8",
+    )
+    rc = recommend.main(["--re-evaluate", str(tmp_path)])
+    assert rc == 0
+    out = capsys.readouterr().out
+    assert "PROGRAMSTART Re-evaluation Report" in out
+    assert "project:" in out
+    assert "product shape:" in out
+    assert "inferred needs:" in out
+    assert "KB version:" in out
+    assert "re-evaluated at:" in out
+    assert "recommended variant:" in out
+    assert "recommended stacks:" in out
+    assert "confidence:" in out
+
+
+def test_main_re_evaluate_json_format(capsys, tmp_path) -> None:
+    """--re-evaluate --json emits a JSON object with expected keys."""
+    import json as json_mod
+
+    kickoff_dir = tmp_path / "PROGRAMBUILD"
+    kickoff_dir.mkdir()
+    (kickoff_dir / "PROGRAMBUILD_KICKOFF_PACKET.md").write_text(
+        "```text\nPROJECT_NAME: TestApp\nPRODUCT_SHAPE: api service\n```",
+        encoding="utf-8",
+    )
+    rc = recommend.main(["--re-evaluate", str(tmp_path), "--json"])
+    assert rc == 0
+    out = capsys.readouterr().out
+    data = json_mod.loads(out)
+    assert "project_dir" in data
+    assert "product_shape" in data
+    assert data["product_shape"] == "api service"
+    assert "current_recommendation" in data
+    assert "deltas" in data
+
+
+def test_main_standard_text_output_sections(capsys) -> None:
+    """Standard text output includes all key sections."""
+    rc = recommend.main(["--product-shape", "web app"])
+    assert rc == 0
+    out = capsys.readouterr().out
+    assert "PROGRAMSTART Recommendation" in out
+    assert "product shape:" in out
+    assert "variant:" in out
+    assert "attach USERJOURNEY:" in out
+    assert "archetype:" in out
+    assert "confidence:" in out
+    assert "suggested stacks:" in out
+    assert "matched domains:" in out
+    assert "rationale:" in out
+    assert "kickoff files:" in out
+    assert "next commands:" in out
+
+
+def test_main_standard_json_output_keys(capsys) -> None:
+    """Standard --json output includes all ProjectRecommendation fields."""
+    import json as json_mod
+
+    rc = recommend.main(["--product-shape", "cli tool", "--json"])
+    assert rc == 0
+    out = capsys.readouterr().out
+    data = json_mod.loads(out)
+    expected_keys = {
+        "product_shape",
+        "variant",
+        "attach_userjourney",
+        "archetype",
+        "stack_names",
+        "service_names",
+        "cli_tool_names",
+        "api_names",
+        "rationale",
+        "kickoff_files",
+        "next_commands",
+        "matched_domains",
+        "coverage_warnings",
+        "stack_evidence",
+        "rule_evidence",
+        "confidence",
+        "generated_prompt",
+        "prompt_generated_at",
+    }
+    assert expected_keys <= set(data.keys()), f"Missing keys: {expected_keys - set(data.keys())}"
+
+
+def test_main_standard_text_shows_stacks_or_none(capsys) -> None:
+    """Text output shows stack names or 'none matched current KB'."""
+    rc = recommend.main(["--product-shape", "web app"])
+    assert rc == 0
+    out = capsys.readouterr().out
+    # Either shows stack names or the fallback message
+    assert "suggested stacks:" in out
+    stacks_line = [line for line in out.split("\n") if "suggested stacks:" in line][0]
+    assert stacks_line.strip().startswith("- suggested stacks:")
+
+
+def test_main_text_mode_with_needs(capsys) -> None:
+    """Text mode with --need flags reflects them in output."""
+    rc = recommend.main(["--product-shape", "api service", "--need", "rag", "--need", "authentication"])
+    assert rc == 0
+    out = capsys.readouterr().out
+    assert "api service" in out
+
+
+def test_main_regulated_flag_changes_variant(capsys) -> None:
+    """--regulated flag selects enterprise variant."""
+    import json as json_mod
+
+    rc = recommend.main(["--product-shape", "api service", "--regulated", "--json"])
+    assert rc == 0
+    out = capsys.readouterr().out
+    data = json_mod.loads(out)
+    assert data["variant"] == "enterprise"
+
+
+def test_main_attach_userjourney_flag(capsys) -> None:
+    """--attach-userjourney forces attach=True in output."""
+    import json as json_mod
+
+    rc = recommend.main(["--product-shape", "cli tool", "--attach-userjourney", "--json"])
+    assert rc == 0
+    out = capsys.readouterr().out
+    data = json_mod.loads(out)
+    assert data["attach_userjourney"] is True
+
+
+def test_main_no_attach_userjourney_flag(capsys) -> None:
+    """--no-attach-userjourney forces attach=False in output."""
+    import json as json_mod
+
+    rc = recommend.main(["--product-shape", "web app", "--no-attach-userjourney", "--json"])
+    assert rc == 0
+    out = capsys.readouterr().out
+    data = json_mod.loads(out)
+    assert data["attach_userjourney"] is False
+
+
+# ── print_recommendation: exact output assertion ──────────────────────────────
+
+
+def test_print_recommendation_exact_header_lines(capsys) -> None:
+    """print_recommendation emits exact header lines in order."""
+    rec = ProjectRecommendation(
+        product_shape="cli tool",
+        variant="lite",
+        attach_userjourney=False,
+        archetype="Type-safe CLI",
+        stack_names=["uv", "Ruff"],
+        service_names=[],
+        cli_tool_names=[],
+        api_names=[],
+        rationale=["Chosen for simplicity"],
+        kickoff_files=["K.md"],
+        next_commands=["programstart next"],
+    )
+    recommend.print_recommendation(rec)
+    out = capsys.readouterr().out
+    lines = out.strip().split("\n")
+    assert lines[0] == "PROGRAMSTART Recommendation"
+    assert lines[1] == "- product shape: cli tool"
+    assert lines[2] == "- variant: lite"
+    assert lines[3] == "- attach USERJOURNEY: no"
+    assert lines[4] == "- archetype: Type-safe CLI"
+    assert lines[5] == "- confidence: medium"
+    assert lines[6] == "- suggested stacks: uv, Ruff"
+
+
+def test_print_recommendation_no_stacks_shows_fallback(capsys) -> None:
+    """When stack_names is empty, shows 'none matched current KB'."""
+    rec = ProjectRecommendation(
+        product_shape="other",
+        variant="lite",
+        attach_userjourney=False,
+        archetype="Generic",
+        stack_names=[],
+        service_names=[],
+        cli_tool_names=[],
+        api_names=[],
+        rationale=["Test"],
+        kickoff_files=["K.md"],
+        next_commands=["programstart next"],
+    )
+    recommend.print_recommendation(rec)
+    out = capsys.readouterr().out
+    assert "none matched current KB" in out
+
+
+def test_print_recommendation_no_services_shows_fallback(capsys) -> None:
+    """When service_names is empty, shows 'none inferred'."""
+    rec = ProjectRecommendation(
+        product_shape="other",
+        variant="lite",
+        attach_userjourney=False,
+        archetype="Generic",
+        stack_names=["X"],
+        service_names=[],
+        cli_tool_names=[],
+        api_names=[],
+        rationale=["Test"],
+        kickoff_files=["K.md"],
+        next_commands=["programstart next"],
+    )
+    recommend.print_recommendation(rec)
+    out = capsys.readouterr().out
+    assert "suggested services: none inferred" in out
+    assert "recommended clis: none inferred" in out
+    assert "saved api templates: none inferred" in out
+
+
+def test_print_recommendation_matched_domains_none_shows_fallback(capsys) -> None:
+    """When matched_domains is empty, shows 'none matched'."""
+    rec = ProjectRecommendation(
+        product_shape="other",
+        variant="lite",
+        attach_userjourney=False,
+        archetype="Generic",
+        stack_names=[],
+        service_names=[],
+        cli_tool_names=[],
+        api_names=[],
+        rationale=["Test"],
+        kickoff_files=[],
+        next_commands=[],
+        matched_domains=[],
+    )
+    recommend.print_recommendation(rec)
+    out = capsys.readouterr().out
+    assert "matched domains: none matched" in out

@@ -317,3 +317,60 @@ def test_stale_label_custom_threshold_via_env(monkeypatch) -> None:
     monkeypatch.setenv("PROGRAMSTART_STALE_DAYS", "30")
     result2 = _stale_label(registry, "programbuild")
     assert result2 == ""
+
+
+# ---------------------------------------------------------------------------
+# Phase F: deferred date resets staleness timer
+# ---------------------------------------------------------------------------
+
+
+def test_stale_label_deferred_date_resets_staleness(monkeypatch) -> None:
+    """A recent deferred date prevents the STALE label even when signoff is old."""
+    from datetime import date, timedelta
+
+    from scripts.programstart_common import load_registry
+
+    registry = load_registry()
+    old_signoff = (date.today() - timedelta(days=30)).isoformat()
+    recent_defer = (date.today() - timedelta(days=2)).isoformat()
+    monkeypatch.setattr(
+        "scripts.programstart_status.load_workflow_state",
+        lambda _reg, _sys: {
+            "stages": {
+                "kickoff": {
+                    "signoff": {"date": old_signoff},
+                    "deferred": {"date": recent_defer, "reason": "Template repo"},
+                },
+            }
+        },
+    )
+    monkeypatch.setenv("PROGRAMSTART_STALE_DAYS", "14")
+    result = _stale_label(registry, "programbuild")
+    assert result == ""
+
+
+def test_latest_activity_date_picks_deferred_over_signoff() -> None:
+    """_latest_activity_date returns the most recent date across signoff and deferred."""
+    from datetime import date
+
+    from scripts.programstart_status import _latest_activity_date
+
+    entries = {
+        "step_a": {
+            "signoff": {"date": "2026-03-01"},
+            "deferred": {"date": "2026-04-15"},
+        },
+        "step_b": {
+            "signoff": {"date": "2026-04-01"},
+        },
+    }
+    result = _latest_activity_date(entries)
+    assert result == date(2026, 4, 15)
+
+
+def test_latest_activity_date_no_dates_returns_none() -> None:
+    """_latest_activity_date returns None when no dates are present."""
+    from scripts.programstart_status import _latest_activity_date
+
+    entries = {"step_a": {"signoff": {}}}
+    assert _latest_activity_date(entries) is None

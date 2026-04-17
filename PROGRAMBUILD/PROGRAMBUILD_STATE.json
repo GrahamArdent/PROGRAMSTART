@@ -18,7 +18,11 @@
           "notes": "Ship \u00a6 it now",
           "saved_at": "2026-04-01"
         }
-      ]
+      ],
+      "deferred": {
+        "date": "2026-04-17",
+        "reason": "Template repo \u2014 stage gates apply to generated repos, not PROGRAMSTART itself"
+      }
     },
     "feasibility": {
       "status": "planned",

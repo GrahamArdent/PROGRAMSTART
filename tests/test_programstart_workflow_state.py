@@ -1360,6 +1360,134 @@ def test_main_rollback_lists_snapshots_when_to_omitted(tmp_path: Path, capsys, m
     assert "Available snapshots" in out
 
 
+# ---------------------------------------------------------------------------
+# Phase F: --defer mechanism tests
+# ---------------------------------------------------------------------------
+
+
+def test_advance_defer_records_deferred_object(capsys, monkeypatch) -> None:
+    """--defer records a deferred object on the active entry without advancing."""
+    saved: dict[str, Any] = {}
+    state: dict[str, Any] = {
+        "active_stage": "inputs_and_mode_selection",
+        "stages": {
+            "inputs_and_mode_selection": {"status": "in_progress", "signoff": {"decision": "", "date": "", "notes": ""}},
+            "feasibility": {"status": "planned", "signoff": {"decision": "", "date": "", "notes": ""}},
+        },
+    }
+    monkeypatch.setattr("scripts.programstart_workflow_state.load_workflow_state", lambda _registry, _system: state)
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workflow_active_step",
+        lambda _registry, _system, _state=None: "inputs_and_mode_selection",
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workflow_steps",
+        lambda _registry, _system: ["inputs_and_mode_selection", "feasibility"],
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.save_workflow_state", lambda _registry, _system, value: saved.update(value)
+    )
+    monkeypatch.setattr(
+        "sys.argv",
+        ["ws", "advance", "--system", "programbuild", "--defer", "--notes", "Template repo — paused"],
+    )
+    result = main()
+    out = capsys.readouterr().out
+    assert result == 0
+    assert "Deferred" in out
+    # Step did NOT advance
+    assert saved["active_stage"] == "inputs_and_mode_selection"
+    # Deferred object was recorded
+    deferred = saved["stages"]["inputs_and_mode_selection"]["deferred"]
+    assert deferred["reason"] == "Template repo — paused"
+    assert deferred["date"]  # non-empty date string
+
+
+def test_advance_defer_dry_run_does_not_write(capsys, monkeypatch) -> None:
+    """--defer --dry-run previews the deferral without writing state."""
+    state: dict[str, Any] = {
+        "active_stage": "inputs_and_mode_selection",
+        "stages": {
+            "inputs_and_mode_selection": {"status": "in_progress", "signoff": {"decision": "", "date": "", "notes": ""}},
+        },
+    }
+    monkeypatch.setattr("scripts.programstart_workflow_state.load_workflow_state", lambda _registry, _system: state)
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workflow_active_step",
+        lambda _registry, _system, _state=None: "inputs_and_mode_selection",
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workflow_steps",
+        lambda _registry, _system: ["inputs_and_mode_selection"],
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.save_workflow_state",
+        lambda _registry, _system, value: (_ for _ in ()).throw(AssertionError("save should not be called")),
+    )
+    monkeypatch.setattr(
+        "sys.argv",
+        ["ws", "advance", "--system", "programbuild", "--defer", "--dry-run"],
+    )
+    result = main()
+    out = capsys.readouterr().out
+    assert result == 0
+    assert "dry-run" in out.lower()
+    assert "Would defer" in out
+
+
+def test_advance_clears_prior_deferred_field(capsys, monkeypatch) -> None:
+    """Normal advance (without --defer) clears any prior deferred field."""
+    saved: dict[str, Any] = {}
+    state: dict[str, Any] = {
+        "active_stage": "inputs_and_mode_selection",
+        "stages": {
+            "inputs_and_mode_selection": {
+                "status": "in_progress",
+                "signoff": {"decision": "", "date": "", "notes": ""},
+                "deferred": {"date": "2026-04-01", "reason": "old deferral"},
+            },
+            "feasibility": {"status": "planned", "signoff": {"decision": "", "date": "", "notes": ""}},
+        },
+    }
+    monkeypatch.setattr("scripts.programstart_workflow_state.load_workflow_state", lambda _registry, _system: state)
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workflow_active_step",
+        lambda _registry, _system, _state=None: "inputs_and_mode_selection",
+    )
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.workflow_steps",
+        lambda _registry, _system: ["inputs_and_mode_selection", "feasibility"],
+    )
+    monkeypatch.setattr("scripts.programstart_workflow_state.preflight_problems", lambda _r, _s, _a=None: [])
+    monkeypatch.setattr("scripts.programstart_workflow_state._check_challenge_gate_log", lambda _step: None)
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.save_workflow_state", lambda _registry, _system, value: saved.update(value)
+    )
+    monkeypatch.setattr("sys.argv", ["ws", "advance", "--system", "programbuild"])
+    result = main()
+    assert result == 0
+    # The prior deferred field should be cleared
+    assert "deferred" not in saved["stages"]["inputs_and_mode_selection"]
+
+
+def test_print_state_shows_deferred_marker(capsys, monkeypatch) -> None:
+    """print_state shows [DEFERRED] for entries with a deferred field."""
+    monkeypatch.setenv("NO_COLOR", "1")
+    state: dict[str, Any] = {
+        "variant": "product",
+        "stages": {
+            "inputs_and_mode_selection": {
+                "status": "in_progress",
+                "signoff": {"decision": "", "date": "", "notes": ""},
+                "deferred": {"date": "2026-04-17", "reason": "Template repo"},
+            },
+        },
+    }
+    print_state("programbuild", state, "inputs_and_mode_selection")
+    out = capsys.readouterr().out
+    assert "DEFERRED" in out
+
+
 def test_main_rollback_restores_snapshot_and_creates_backup(tmp_path: Path, capsys, monkeypatch) -> None:
     target = tmp_path / "target.json"
     target.write_text(

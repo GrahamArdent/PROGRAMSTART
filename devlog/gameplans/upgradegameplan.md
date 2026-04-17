@@ -406,9 +406,9 @@ Expected: common ≥93%, closeout ≥95%, create_core ≥93%. Total ≥93%.
 
 ---
 
-### Phase D: `jit-check` CLI Command (OP-01)
+### Phase D: `jit-check` CLI Command (OP-01) — COMPLETE
 
-**Goal**: Implement the `jit-check` command designed in `devlog/reports/instructionsrepo.md`. This converts the JIT source-of-truth protocol from a manual discipline into a single command.
+**Completed**: 2026-04-17. Commit `2f1c87d`. ADR-0017 (DEC-014). 6 tests added, 1723 total passing.
 
 **Pre-flight**: Re-read `devlog/reports/instructionsrepo.md` for the **reference design (not approved for implementation — requires ADR before coding)**. Re-read `.github/instructions/source-of-truth.instructions.md` for the exact protocol steps.
 

@@ -39,6 +39,7 @@ Authority: Canonical for project decision history
 | DEC-012 | 2026-04-16 | inputs_and_mode_selection | External agent systems SHOULD be reused by adopt/adapt/reject decomposition: keep transferable evidence-and-policy scaffolding, but do not adopt prompt-led control loops wholesale as the governing architecture | ACTIVE | — | Solo operator | docs/decisions/0015-reuse-external-agent-systems-by-pattern-not-wholesale.md |
 | DEC-013 | 2026-04-16 | inputs_and_mode_selection | Every operator gameplan MUST have a corresponding execution prompt unless it declares an explicit exemption (infrastructure-repair or bootstrap); `programstart validate --check gameplan-prompt-pairing` enforces this rule | ACTIVE | — | Solo operator | docs/decisions/0016-require-execution-prompt-for-operator-gameplans.md |
 | DEC-014 | 2026-04-17 | inputs_and_mode_selection | `programstart jit-check` wraps `guide` + `drift` + sync-rule summary into a single CLI command; exit 0 = clean, 1 = drift, 2 = guide failure; implemented inline in `programstart_cli.py` following the `run_next` pattern | ACTIVE | — | Solo operator | docs/decisions/0017-jit-check-cli-command.md |
+| DEC-015 | 2026-04-17 | inputs_and_mode_selection | `programstart advance --defer` marks the active step as intentionally paused without advancing; records a `deferred` object with date and reason; staleness detection treats the deferred date as latest activity | ACTIVE | — | Solo operator | docs/decisions/0018-workflow-deferral-mechanism.md |
 
 ## Decision Details
 

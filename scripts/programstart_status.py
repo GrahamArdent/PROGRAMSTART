@@ -35,23 +35,32 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
     )
 
 
+def _latest_activity_date(entries: dict) -> date | None:
+    """Return the most recent signoff or deferral date across all entries."""
+    latest: date | None = None
+    for _step, entry in entries.items():
+        for raw in (
+            (entry.get("signoff") or {}).get("date", ""),
+            (entry.get("deferred") or {}).get("date", ""),
+        ):
+            if not raw:
+                continue
+            try:
+                d = datetime.strptime(raw, "%Y-%m-%d").date()
+            except ValueError:
+                continue
+            if latest is None or d > latest:
+                latest = d
+    return latest
+
+
 def _stale_label(registry: dict, system: str, *, today: date | None = None) -> str:
     """Return ' [STALE — N days]' if the last signoff is older than PROGRAMSTART_STALE_DAYS (default 14)."""
     threshold = int(os.environ.get("PROGRAMSTART_STALE_DAYS", _DEFAULT_STALE_DAYS))
     state = load_workflow_state(registry, system)
     entry_key = workflow_entry_key(system)
     entries = state.get(entry_key, {})
-    latest: date | None = None
-    for _step, entry in entries.items():
-        raw = (entry.get("signoff") or {}).get("date", "")
-        if not raw:
-            continue
-        try:
-            d = datetime.strptime(raw, "%Y-%m-%d").date()
-        except ValueError:
-            continue
-        if latest is None or d > latest:
-            latest = d
+    latest = _latest_activity_date(entries)
     if latest is None:
         return ""
     ref = today or date.today()
@@ -174,17 +183,7 @@ def staleness_warnings(
     state = load_workflow_state(registry, system)
     entry_key = workflow_entry_key(system)
     entries = state.get(entry_key, {})
-    latest: date | None = None
-    for _step, entry in entries.items():
-        raw = (entry.get("signoff") or {}).get("date", "")
-        if not raw:
-            continue
-        try:
-            d = datetime.strptime(raw, "%Y-%m-%d").date()
-        except ValueError:
-            continue
-        if latest is None or d > latest:
-            latest = d
+    latest = _latest_activity_date(entries)
     if latest is None:
         return []
     ref = today or date.today()

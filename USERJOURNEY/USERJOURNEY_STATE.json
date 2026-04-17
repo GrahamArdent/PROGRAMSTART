@@ -172,7 +172,11 @@
           "notes": "",
           "saved_at": "2026-03-29"
         }
-      ]
+      ],
+      "deferred": {
+        "date": "2026-04-17",
+        "reason": "Template repo \u2014 phase gates apply to generated repos, not PROGRAMSTART itself"
+      }
     },
     "phase_2": {
       "status": "planned",

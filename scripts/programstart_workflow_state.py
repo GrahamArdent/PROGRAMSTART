@@ -69,7 +69,10 @@ def print_state(system: str, state: dict[str, Any], active_step: str) -> None:
     for name, entry in cast(dict[str, Any], state.get(entry_key, {})).items():
         status = cast(dict[str, Any], entry).get("status", "planned")
         decision = cast(dict[str, Any], entry).get("signoff", {}).get("decision", "")
+        deferred = cast(dict[str, Any], entry).get("deferred")
         suffix = f" ({clr_dim(decision)})" if decision else ""
+        if deferred:
+            suffix += f" {clr_yellow('[DEFERRED]')}"
         marker = " <" if name == active_step else ""
         print(f"- {name}: {status_color(str(status))}{suffix}{clr_cyan(marker)}")
 
@@ -344,6 +347,11 @@ def main() -> int:
         default="",
         help="Optional structured Challenge Gate notes to persist with the transition.",
     )
+    advance_parser.add_argument(
+        "--defer",
+        action="store_true",
+        help="Mark the active step as intentionally deferred without advancing. Resets the staleness timer.",
+    )
 
     snapshot_parser = subparsers.add_parser("snapshot", help="Save a timestamped copy of current workflow state.")
     snapshot_parser.add_argument("--label", default="", help="Optional label for the snapshot.")
@@ -490,6 +498,21 @@ def main() -> int:
         current_entry = cast(dict[str, Any], entries[active_step])
         if str(current_entry.get("status", "planned")) != "in_progress":
             parser.error(f"Active {system} step '{active_step}' is not in_progress")
+
+        # --defer: mark the step as intentionally paused without advancing.
+        if getattr(args, "defer", False):
+            dry_run_defer: bool = getattr(args, "dry_run", False)
+            deferred_record = {
+                "date": args.date,
+                "reason": args.notes or "Intentionally deferred",
+            }
+            if dry_run_defer:
+                print(f"[dry-run] Would defer {system} '{active_step}' (reason={deferred_record['reason']!r})")
+                return 0
+            current_entry["deferred"] = deferred_record
+            save_workflow_state(registry, system, state)
+            print(f"Deferred {system} '{active_step}': {deferred_record['reason']}")
+            return 0
         current_index = steps.index(active_step)
         next_step = steps[current_index + 1] if current_index + 1 < len(steps) else None
         dry_run: bool = getattr(args, "dry_run", False)
@@ -550,6 +573,7 @@ def main() -> int:
                 print(f"[dry-run] '{active_step}' is the final {system} step — would mark workflow complete")
             return 0
         current_entry["status"] = "completed"
+        current_entry.pop("deferred", None)  # Clear any prior deferral.
         _commit_hash = _git_head_hash()
         current_entry["signoff"] = {
             "decision": args.decision,

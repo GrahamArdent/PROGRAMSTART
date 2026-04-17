@@ -253,6 +253,7 @@
       "docs/decisions/0016-require-execution-prompt-for-operator-gameplans.md",
       "docs/decisions/0017-jit-check-cli-command.md",
       "docs/decisions/0018-workflow-deferral-mechanism.md",
+      "docs/decisions/0019-typed-pydantic-models-for-process-registry.md",
       ".vscode/tasks.json"
     ],
     "userjourney_bootstrap_assets": [

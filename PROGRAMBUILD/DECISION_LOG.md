@@ -2,7 +2,7 @@
 
 Purpose: Running record of material project decisions, reversals, and rationale.
 Owner: Solo operator
-Last updated: 2026-04-15
+Last updated: 2026-04-18
 Depends on: FEASIBILITY.md, RESEARCH_SUMMARY.md, ARCHITECTURE.md
 Authority: Canonical for project decision history
 
@@ -40,6 +40,7 @@ Authority: Canonical for project decision history
 | DEC-013 | 2026-04-16 | inputs_and_mode_selection | Every operator gameplan MUST have a corresponding execution prompt unless it declares an explicit exemption (infrastructure-repair or bootstrap); `programstart validate --check gameplan-prompt-pairing` enforces this rule | ACTIVE | — | Solo operator | docs/decisions/0016-require-execution-prompt-for-operator-gameplans.md |
 | DEC-014 | 2026-04-17 | inputs_and_mode_selection | `programstart jit-check` wraps `guide` + `drift` + sync-rule summary into a single CLI command; exit 0 = clean, 1 = drift, 2 = guide failure; implemented inline in `programstart_cli.py` following the `run_next` pattern | ACTIVE | — | Solo operator | docs/decisions/0017-jit-check-cli-command.md |
 | DEC-015 | 2026-04-17 | inputs_and_mode_selection | `programstart advance --defer` marks the active step as intentionally paused without advancing; records a `deferred` object with date and reason; staleness detection treats the deferred date as latest activity | ACTIVE | — | Solo operator | docs/decisions/0018-workflow-deferral-mechanism.md |
+| DEC-016 | 2026-04-18 | inputs_and_mode_selection | Add typed Pydantic models for the process registry via parallel `load_validated_registry()` alongside existing `load_registry()` dict API; lazy import; `extra="allow"` for schema evolution | ACTIVE | — | Solo operator | docs/decisions/0019-typed-pydantic-models-for-process-registry.md |
 
 ## Decision Details
 

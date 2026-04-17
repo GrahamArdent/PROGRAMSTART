@@ -12,9 +12,12 @@ import tomllib
 import warnings
 from fnmatch import fnmatch
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from filelock import FileLock
+
+if TYPE_CHECKING:
+    from .programstart_models import ProcessRegistry
 
 logger = logging.getLogger(__name__)
 
@@ -153,6 +156,18 @@ def load_registry_from_path(path: Path) -> dict[str, Any]:
 
 def load_registry() -> dict[str, Any]:
     return load_registry_from_path(workspace_path(REGISTRY_MANIFEST_RELATIVE_PATH))
+
+
+def load_validated_registry() -> ProcessRegistry:
+    """Load and validate the process registry through the Pydantic model.
+
+    Returns a :class:`ProcessRegistry` instance.  Import is deferred to avoid
+    a hard dependency on Pydantic at module-load time.
+    """
+    from .programstart_models import ProcessRegistry
+
+    raw = load_registry()
+    return ProcessRegistry.model_validate(raw)
 
 
 def _pyproject_dependency_surface(payload: bytes) -> tuple[tuple[str, ...], tuple[tuple[str, tuple[str, ...]], ...]]:

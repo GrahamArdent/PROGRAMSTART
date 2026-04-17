@@ -1838,5 +1838,3 @@ def validate_file_hygiene(_registry: dict) -> list[str]:
         if md.name not in ALLOWED_ROOT_MD:
             problems.append(f"Unexpected .md file at repo root: {md.name} — should it be in devlog/ or outputs/?")
     return problems
-
-

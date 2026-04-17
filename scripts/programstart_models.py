@@ -369,3 +369,262 @@ class RAGQueryResponse(BaseModel):
         default_factory=list,
         description="List of source_type:source_id strings that were used to form the answer.",
     )
+
+
+# ---------------------------------------------------------------------------
+# Process Registry models
+# ---------------------------------------------------------------------------
+
+
+class SyncRule(BaseModel):
+    """A single authority/dependent file synchronisation rule."""
+
+    name: str
+    system: str = ""
+    authority_files: list[str] = Field(default_factory=list)
+    dependent_files: list[str] = Field(default_factory=list)
+    require_authority_when_dependents_change: bool = False
+    require_dependents_when_authority_changes: bool = False
+    description: str = ""
+
+
+class MetadataRules(BaseModel):
+    """Rules governing metadata prefixes and owner placeholders."""
+
+    required_prefixes: list[str] = Field(default_factory=list)
+    owner_placeholder: str = "[ASSIGN]"
+
+
+class ValidationPolicy(BaseModel):
+    """Validation behavior flags."""
+
+    enforce_engineering_ready_in_all: bool = False
+
+    model_config = {"extra": "allow"}
+
+
+class RepoBoundaryDoc(BaseModel):
+    """A document enforcing repository boundary rules."""
+
+    path: str
+    must_contain: list[str] = Field(default_factory=list)
+
+
+class RepoBoundaryPolicy(BaseModel):
+    """Repo boundary enforcement policy."""
+
+    enabled: bool = False
+    docs: list[RepoBoundaryDoc] = Field(default_factory=list)
+
+
+class StageGuidance(BaseModel):
+    """Guidance for a single workflow stage or phase."""
+
+    description: str = ""
+    files: list[str] = Field(default_factory=list)
+    scripts: list[str] = Field(default_factory=list)
+    prompts: list[str] = Field(default_factory=list)
+
+    model_config = {"extra": "allow"}
+
+
+class WorkflowGuidance(BaseModel):
+    """Workflow guidance for all stages, keyed by stage name."""
+
+    kickoff: StageGuidance = Field(default_factory=StageGuidance)
+    cross_cutting_workflow_prompts: list[str] = Field(default_factory=list)
+    programbuild: dict[str, StageGuidance | dict[str, list[str]]] = Field(default_factory=dict)
+    operator: dict[str, StageGuidance] = Field(default_factory=dict)
+    userjourney: dict[str, StageGuidance] = Field(default_factory=dict)
+
+    model_config = {"extra": "allow"}
+
+
+class WorkflowStateConfig(BaseModel):
+    """Configuration for a workflow system's state tracking."""
+
+    state_file: str = ""
+    active_key: str = ""
+    initial_step: str = ""
+    step_order: list[str] = Field(default_factory=list)
+    step_files: dict[str, list[str]] = Field(default_factory=dict)
+
+
+class StageOrderEntry(BaseModel):
+    """A single entry in a system's stage_order list."""
+
+    id: int
+    name: str
+    main_output: str = ""
+
+    model_config = {"extra": "allow"}
+
+
+class SystemDefinition(BaseModel):
+    """Definition of a workflow system (programbuild or userjourney)."""
+
+    root: str = ""
+    packaging: str = ""
+    control_files: list[str] = Field(default_factory=list)
+    output_files: list[str] = Field(default_factory=list)
+    variants: list[str] = Field(default_factory=list)
+    stage_order: list[StageOrderEntry] = Field(default_factory=list)
+    metadata_required: list[str] = Field(default_factory=list)
+    optional: bool = False
+    bootstrap_supported: bool = True
+    attachment_role: str = ""
+    core_files: list[str] = Field(default_factory=list)
+    engineering_blocker_file: str = ""
+    activation_event: str = ""
+
+    model_config = {"extra": "allow"}
+
+
+class PlanningReferenceRules(BaseModel):
+    """Rules for validating cross-document references."""
+
+    docs: list[str] = Field(default_factory=list)
+    workspace_prefixes: list[str] = Field(default_factory=list)
+    allowlist_manifest: str = ""
+
+
+class PromptRegistryConfig(BaseModel):
+    """Prompt file registries for workflow, operator, and internal prompts."""
+
+    workflow_prompt_files: list[str] = Field(default_factory=list)
+    operator_prompt_files: list[str] = Field(default_factory=list)
+    internal_prompt_files: list[str] = Field(default_factory=list)
+
+
+class ManagedStagePrompt(BaseModel):
+    """A stage-to-prompt-path mapping for managed prompt generation."""
+
+    stage: str
+    path: str
+
+
+class PromptGenerationConfig(BaseModel):
+    """Configuration for managed prompt generation."""
+
+    artifact_root: str = ""
+    managed_stage_prompts: list[ManagedStagePrompt] = Field(default_factory=list)
+
+
+class GeneratedRepoPromptPolicy(BaseModel):
+    """Policy for prompts in generated repos."""
+
+    allowed_prompt_classes: list[str] = Field(default_factory=list)
+    support_files: list[str] = Field(default_factory=list)
+
+
+class WorkspaceConfig(BaseModel):
+    """Workspace-level metadata and asset lists."""
+
+    name: str = ""
+    description: str = ""
+    repo_role: str = ""
+    root_readme: str = ""
+    generated_outputs_root: str = "outputs"
+    generated_repo_prompt_policy: GeneratedRepoPromptPolicy = Field(default_factory=GeneratedRepoPromptPolicy)
+    bootstrap_assets: list[str] = Field(default_factory=list)
+    userjourney_bootstrap_assets: list[str] = Field(default_factory=list)
+
+
+class OperatorGameplanEntry(BaseModel):
+    """An operator gameplan pairing entry."""
+
+    status: str = ""
+    prompt: str = ""
+
+    model_config = {"extra": "allow"}
+
+
+class ExemptGameplanEntry(BaseModel):
+    """An exempt gameplan entry with reason and note."""
+
+    reason: str = ""
+    note: str = ""
+
+    model_config = {"extra": "allow"}
+
+
+class GameplanPromptPolicy(BaseModel):
+    """Policy governing which gameplans require prompt pairing."""
+
+    operator_gameplans: dict[str, OperatorGameplanEntry] = Field(default_factory=dict)
+    exempt_gameplans: dict[str, ExemptGameplanEntry] = Field(default_factory=dict)
+    internal_gameplans: list[str] = Field(default_factory=list)
+    excluded_artifacts: list[str] = Field(default_factory=list)
+    legacy_gameplans: list[str] = Field(default_factory=list)
+
+    model_config = {"extra": "allow"}
+
+
+class AdrPolicy(BaseModel):
+    """ADR management policy."""
+
+    legacy_pre_register_adrs: list[str] = Field(default_factory=list)
+
+    model_config = {"extra": "allow"}
+
+
+class ManifestCollectionConfig(BaseModel):
+    """Settings for manifest file collection."""
+
+    include_workspace_readme: bool = False
+    include_bootstrap_assets: bool = False
+    include_system_file_groups: list[str] = Field(default_factory=list)
+    include_baseline_roots: bool = False
+    exclude_prefixes: list[str] = Field(default_factory=list)
+    exclude_names: list[str] = Field(default_factory=list)
+    exclude_globs: list[str] = Field(default_factory=list)
+
+    model_config = {"extra": "allow"}
+
+
+class BaselineEntry(BaseModel):
+    """A baseline snapshot or reference."""
+
+    name: str
+    system: str = ""
+    kind: str = ""
+    root: str = ""
+
+    model_config = {"extra": "allow"}
+
+
+class IntegrityConfig(BaseModel):
+    """Manifest and baseline integrity configuration."""
+
+    manifest_collection: ManifestCollectionConfig = Field(default_factory=ManifestCollectionConfig)
+    baselines: list[BaselineEntry] = Field(default_factory=list)
+
+    model_config = {"extra": "allow"}
+
+
+class ProcessRegistry(BaseModel):
+    """Validated model for the merged process-registry.json.
+
+    Provides typed access to all registry sections while remaining backward
+    compatible with the existing ``dict[str, Any]`` API via ``.model_dump()``.
+    Sections use ``extra="allow"`` where schema evolution is expected.
+    """
+
+    version: str = ""
+    workspace: WorkspaceConfig = Field(default_factory=WorkspaceConfig)
+    systems: dict[str, SystemDefinition] = Field(default_factory=dict)
+    sync_rules: list[SyncRule] = Field(default_factory=list)
+    metadata_rules: MetadataRules = Field(default_factory=MetadataRules)
+    validation: ValidationPolicy = Field(default_factory=ValidationPolicy)
+    repo_boundary_policy: RepoBoundaryPolicy = Field(default_factory=RepoBoundaryPolicy)
+    workflow_guidance: WorkflowGuidance = Field(default_factory=WorkflowGuidance)
+    workflow_state: dict[str, WorkflowStateConfig] = Field(default_factory=dict)
+    planning_reference_rules: PlanningReferenceRules = Field(default_factory=PlanningReferenceRules)
+    prompt_registry: PromptRegistryConfig = Field(default_factory=PromptRegistryConfig)
+    prompt_authority: dict[str, dict[str, list[str]]] = Field(default_factory=dict)
+    prompt_generation: PromptGenerationConfig = Field(default_factory=PromptGenerationConfig)
+    gameplan_prompt_policy: GameplanPromptPolicy = Field(default_factory=GameplanPromptPolicy)
+    adr_policy: AdrPolicy = Field(default_factory=AdrPolicy)
+    integrity: IntegrityConfig = Field(default_factory=IntegrityConfig)
+
+    model_config = {"extra": "allow"}

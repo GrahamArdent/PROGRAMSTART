@@ -397,3 +397,156 @@ def test_concern_record_missing_concern_raises() -> None:
 def test_route_record_missing_method_raises() -> None:
     with pytest.raises(Exception):
         RouteRecord.model_validate({"path": "/api/state"})
+
+
+# ---------------------------------------------------------------------------
+# Registry Pydantic Models (G-2)
+# ---------------------------------------------------------------------------
+
+from scripts.programstart_models import (
+    BaselineEntry,
+    ExemptGameplanEntry,
+    ManifestCollectionConfig,
+    ManagedStagePrompt,
+    OperatorGameplanEntry,
+    ProcessRegistry,
+    RepoBoundaryDoc,
+    StageOrderEntry,
+    SyncRule,
+    SystemDefinition,
+    WorkspaceConfig,
+)
+
+
+class TestRegistryModelsUnit:
+    """Unit tests for individual registry model classes."""
+
+    def test_stage_order_entry_minimal(self) -> None:
+        entry = StageOrderEntry(id=0, name="inputs")
+        assert entry.id == 0
+        assert entry.name == "inputs"
+        assert entry.main_output == ""
+
+    def test_stage_order_entry_full(self) -> None:
+        entry = StageOrderEntry(id=3, name="requirements", main_output="REQUIREMENTS.md")
+        assert entry.main_output == "REQUIREMENTS.md"
+
+    def test_stage_order_entry_extra_fields_allowed(self) -> None:
+        entry = StageOrderEntry.model_validate({"id": 1, "name": "feasibility", "future_field": True})
+        assert entry.name == "feasibility"
+
+    def test_repo_boundary_doc(self) -> None:
+        doc = RepoBoundaryDoc(path="README.md", must_contain=["boundary rule"])
+        assert doc.path == "README.md"
+        assert len(doc.must_contain) == 1
+
+    def test_managed_stage_prompt(self) -> None:
+        p = ManagedStagePrompt(stage="feasibility", path="prompts/feasibility.prompt.md")
+        assert p.stage == "feasibility"
+
+    def test_operator_gameplan_entry(self) -> None:
+        g = OperatorGameplanEntry(status="paired", prompt="execute.prompt.md")
+        assert g.status == "paired"
+
+    def test_exempt_gameplan_entry(self) -> None:
+        g = ExemptGameplanEntry(reason="infrastructure-repair", note="gates broken")
+        assert g.reason == "infrastructure-repair"
+
+    def test_manifest_collection_config_defaults(self) -> None:
+        m = ManifestCollectionConfig()
+        assert m.include_workspace_readme is False
+        assert m.exclude_prefixes == []
+
+    def test_baseline_entry(self) -> None:
+        b = BaselineEntry(name="pb_snap", system="programbuild", kind="snapshot", root="BACKUPS/snap")
+        assert b.kind == "snapshot"
+
+    def test_sync_rule_minimal(self) -> None:
+        r = SyncRule(name="canonical_authority")
+        assert r.authority_files == []
+        assert r.require_authority_when_dependents_change is False
+
+    def test_system_definition_stage_order_takes_entries(self) -> None:
+        sd = SystemDefinition(
+            root="PB",
+            stage_order=[StageOrderEntry(id=0, name="inputs", main_output="block")],
+        )
+        assert isinstance(sd.stage_order[0], StageOrderEntry)
+        assert sd.stage_order[0].name == "inputs"
+
+    def test_workspace_config_defaults(self) -> None:
+        w = WorkspaceConfig()
+        assert w.generated_outputs_root == "outputs"
+        assert w.bootstrap_assets == []
+
+
+class TestProcessRegistryIntegration:
+    """Integration tests loading the real registry."""
+
+    def test_load_validated_registry_succeeds(self) -> None:
+        from scripts.programstart_common import load_validated_registry
+
+        reg = load_validated_registry()
+        assert isinstance(reg, ProcessRegistry)
+
+    def test_registry_version_nonempty(self) -> None:
+        from scripts.programstart_common import load_validated_registry
+
+        reg = load_validated_registry()
+        assert reg.version != ""
+
+    def test_registry_systems_keys(self) -> None:
+        from scripts.programstart_common import load_validated_registry
+
+        reg = load_validated_registry()
+        assert "programbuild" in reg.systems
+        assert reg.systems["programbuild"].root == "PROGRAMBUILD"
+
+    def test_registry_stage_order_typed(self) -> None:
+        from scripts.programstart_common import load_validated_registry
+
+        reg = load_validated_registry()
+        stages = reg.systems["programbuild"].stage_order
+        assert len(stages) > 0
+        assert isinstance(stages[0], StageOrderEntry)
+        assert stages[0].id == 0
+
+    def test_registry_sync_rules_nonempty(self) -> None:
+        from scripts.programstart_common import load_validated_registry
+
+        reg = load_validated_registry()
+        assert len(reg.sync_rules) > 0
+        assert isinstance(reg.sync_rules[0], SyncRule)
+        assert reg.sync_rules[0].name != ""
+
+    def test_registry_workspace_bootstrap_assets(self) -> None:
+        from scripts.programstart_common import load_validated_registry
+
+        reg = load_validated_registry()
+        assert len(reg.workspace.bootstrap_assets) > 0
+
+    def test_registry_round_trip(self) -> None:
+        from scripts.programstart_common import load_validated_registry
+
+        reg = load_validated_registry()
+        dumped = reg.model_dump()
+        assert isinstance(dumped, dict)
+        assert "systems" in dumped
+        re_validated = ProcessRegistry.model_validate(dumped)
+        assert re_validated.version == reg.version
+
+    def test_registry_integrity_manifest_collection(self) -> None:
+        from scripts.programstart_common import load_validated_registry
+
+        reg = load_validated_registry()
+        mc = reg.integrity.manifest_collection
+        assert isinstance(mc, ManifestCollectionConfig)
+        assert mc.include_workspace_readme is True
+        assert len(mc.exclude_prefixes) > 0
+
+    def test_registry_baselines(self) -> None:
+        from scripts.programstart_common import load_validated_registry
+
+        reg = load_validated_registry()
+        assert len(reg.integrity.baselines) > 0
+        assert isinstance(reg.integrity.baselines[0], BaselineEntry)

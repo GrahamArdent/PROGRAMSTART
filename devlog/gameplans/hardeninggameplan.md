@@ -829,9 +829,9 @@ A fourteenth completed canonical run on 2026-04-17, after adding ~47 unit-level 
 
 ---
 
-#### J-4: Registry Pydantic models (S-6)
+#### ✅ J-4: Registry Pydantic models (S-6) — COMPLETE
 
-Replace the raw `dict` returned by `load_registry()` with a Pydantic model. Define `ProcessRegistry`, `ProgramBuildSystem`, `UserJourneySystem`, `SyncRule`, `WorkflowGuidance` models in `scripts/programstart_models.py`. Validate on load.
+**Status**: COMPLETE — delivered as upgrade gameplan Phase G-2 (commit `1189f4c`). 22 Pydantic model classes covering all 16 registry sections added to `programstart_models.py`. `load_validated_registry()` provides typed access alongside the existing `load_registry()` dict API. ADR-0019 / DEC-016.
 
 ---
 

@@ -615,9 +615,14 @@ uv run nox -s package
 
 ---
 
-### Phase I: Mutation Triage Closure (STR-01)
+### Phase I: Mutation Triage Closure (STR-01) — COMPLETE
 
 **Goal**: Close J-3 from the hardening gameplan with a documented survivor policy instead of continuing indefinite triage.
+
+> **Completed**: 2026-04-17. J-3 was already closed in `hardeninggameplan.md` with 14
+> canonical runs (41.0% → 56.9% kill rate), documented survivor policy, and decision
+> to accept remaining survivors as low-risk string-formatting mutations. No further
+> scanner loop runs needed. Phase I exit criteria satisfied by existing J-3 closure.
 
 **Pre-flight**: Re-read J-3 checkpoint in `hardeninggameplan.md`. Current state: 13 runs (12 manual + 1 automated via scanner loop), 2209 killed, 1072 survived out of 3281 total (67.3% kill rate).
 

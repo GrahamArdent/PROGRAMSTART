@@ -189,7 +189,7 @@ pygments==2.19.2
     #   pytest
     #   rich
     #   textual
-pymdown-extensions==10.21
+pymdown-extensions==10.21.2
     # via mkdocs-material
 pyparsing==3.3.2
     # via pip-requirements-parser

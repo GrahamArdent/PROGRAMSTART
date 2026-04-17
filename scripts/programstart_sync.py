@@ -17,7 +17,10 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
     from programstart_common import warn_direct_script_invocation, workspace_path
 
 SYNC_DESCRIPTION = (
-    "Propagate changed PROGRAMSTART files to a downstream repo.\n\n"
+    "Propagate changed PROGRAMSTART files to/from a downstream repo.\n\n"
+    "Push mode (--dest): copies changed files from the PROGRAMSTART template to a\n"
+    "downstream repo.  Pull mode (--from-template): copies changed files from an\n"
+    "upstream PROGRAMSTART template into the current (or --dest) repo.\n\n"
     "Reads the .programstart-manifest.json written at attach time and copies only\n"
     "files that differ between the template and the destination. Without --confirm\n"
     "the command runs in dry-run mode and shows what would change."
@@ -83,10 +86,12 @@ def sync(
     *,
     confirm: bool = False,
     file_filter: str | None = None,
+    template_root: Path | None = None,
 ) -> int:
     manifest = _load_manifest(destination_root)
     manifest_files: list[str] = manifest.get("files", [])
-    template_root = workspace_path(".")
+    if template_root is None:
+        template_root = workspace_path(".")
     preserve = _preserve_path(destination_root)
 
     changes = _files_needing_sync(template_root, destination_root, manifest_files, preserve, file_filter)
@@ -128,12 +133,28 @@ def main(argv: list[str] | None = None) -> int:
         prog="programstart sync",
         description=SYNC_DESCRIPTION,
     )
-    parser.add_argument("--dest", required=True, help="Destination repository root.")
+    parser.add_argument("--dest", help="Destination repository root (default: current directory with --from-template).")
+    parser.add_argument(
+        "--from-template",
+        metavar="PATH",
+        help="Pull mode: path to the upstream PROGRAMSTART template root. Copies changed files into --dest (or .).",
+    )
     parser.add_argument("--confirm", action="store_true", help="Apply changes (default is dry-run).")
     parser.add_argument("--files", dest="file_filter", help="Only sync files matching this glob pattern.")
     args = parser.parse_args(argv)
 
-    destination_root = Path(args.dest).resolve()
+    if not args.dest and not args.from_template:
+        parser.error("--dest or --from-template is required")
+
+    # Pull mode: --from-template sets template_root; --dest defaults to "."
+    template_root: Path | None = None
+    if args.from_template:
+        template_root = Path(args.from_template).resolve()
+        if not template_root.is_dir():
+            print(f"ERROR: Template root does not exist: {template_root}", file=sys.stderr)
+            return 1
+
+    destination_root = Path(args.dest).resolve() if args.dest else Path.cwd()
     if not destination_root.is_dir():
         print(f"ERROR: Destination does not exist: {destination_root}", file=sys.stderr)
         return 1
@@ -142,6 +163,7 @@ def main(argv: list[str] | None = None) -> int:
         destination_root,
         confirm=args.confirm,
         file_filter=args.file_filter,
+        template_root=template_root,
     )
 
 

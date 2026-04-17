@@ -258,6 +258,7 @@
       "docs/decisions/0019-typed-pydantic-models-for-process-registry.md",
       "docs/decisions/0020-downstream-sync-mechanism-with-manifest-tracking.md",
       "docs/decisions/0021-prompt-builder-mode-b-context-driven-generation.md",
+      "docs/decisions/0022-sync-pull-mode-with-from-template.md",
       ".vscode/tasks.json"
     ],
     "userjourney_bootstrap_assets": [

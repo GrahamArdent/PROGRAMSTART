@@ -842,9 +842,10 @@ A fourteenth completed canonical run on 2026-04-17, after adding ~47 unit-level 
 
 ---
 
-#### J-6: programstart sync --from-template (S-7)
+#### ✅ J-6: programstart sync --from-template (S-7) — COMPLETE
 
-Design and implement a command that pulls latest `.github/prompts/*.prompt.md` from the upstream PROGRAMSTART repository and applies them to the current project's `.github/prompts/`, preserving local customizations.
+**Status**: COMPLETE
+**Result**: Added `--from-template <path>` pull mode to `programstart sync`. Overrides the template root so downstream repos can pull latest PROGRAMSTART files without running the push command from the template side. `--dest` defaults to `.` when `--from-template` is used; all existing push-mode behavior unchanged. Shares manifest, preserve, and filter logic with push mode (zero code duplication). 11 new tests (25 total in sync test file). ADR-0022 / DEC-019.
 
 ---
 

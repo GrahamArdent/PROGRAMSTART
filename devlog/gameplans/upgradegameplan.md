@@ -713,9 +713,10 @@ Expected: 7 cycles complete (~2.2 hours total at ~19 min/cycle). If a cycle hits
 **Status**: COMPLETE
 **Result**: Added `--mode context` to `programstart prompt-build` with `--context key=value` (repeatable) flags. `build_context_prompt()` generates structured `.prompt.md` from arbitrary context without requiring a bootstrapped PROGRAMBUILD project. Required key: `goal`; well-known keys: `project`, `stage`, `stack`, `shape`. 15 new tests. ADR-0021 / DEC-018.
 
-#### J-2: `programstart sync --from-template` (STR-03)
+#### ✅ J-2: `programstart sync --from-template` (STR-03) — COMPLETE
 
-Pull latest prompts and tooling from the PROGRAMSTART template into the current project. This is the inverse of `programstart sync --dest` from Phase E — it updates the consumer repo from the template.
+**Status**: COMPLETE
+**Result**: Added `--from-template <path>` pull mode to `programstart sync`. Overrides the template root so downstream repos can pull latest PROGRAMSTART files. `--dest` defaults to `.` when `--from-template` is used; shares manifest, preserve, and filter logic with push mode. 11 new tests. ADR-0022 / DEC-019.
 
 **Each J-* item requires its own session and planning pass before starting.**
 

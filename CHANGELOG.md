@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Features
 
 - `programstart prompt-build --mode context` (Mode B): generates structured `.prompt.md` from arbitrary `--context key=value` pairs without requiring a bootstrapped PROGRAMBUILD project (ADR-0021, DEC-018).
+- `programstart sync --from-template <path>` pull mode: copies changed files from an upstream PROGRAMSTART template into the current (or `--dest`) repo; bidirectional sync story now complete (ADR-0022, DEC-019).
 - `programstart sync --dest <path>` command: propagates changed PROGRAMSTART files to a downstream repo using a manifest written at attach time; dry-run by default, `--confirm` to apply (ADR-0020, DEC-017).
 - `.programstart-manifest.json` written during `programstart attach programbuild` with file list, source commit hash, and timestamp.
 - `.programstart-preserve` file support for downstream repos to declare additional files protected from sync.

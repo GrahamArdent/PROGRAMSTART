@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import subprocess
 import sys
+import warnings
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -14,6 +15,9 @@ if str(ROOT) not in sys.path:
 
 from scripts.programstart_common import (
     _ensure_scripts_importable,
+    _merge_registry_fragment,
+    _normalise_gate_proceed,
+    _normalise_stage_name,
     _use_color,
     challenge_gate_record_from_log,
     clr_bold,
@@ -31,6 +35,7 @@ from scripts.programstart_common import (
     git_changed_files,
     has_required_metadata,
     load_registry,
+    load_registry_from_path,
     load_workflow_state,
     metadata_prefixes,
     metadata_value,
@@ -348,6 +353,160 @@ def test_generated_outputs_root_uses_registry_workspace_setting(tmp_path: Path, 
 
 def test_display_workspace_path_falls_back_for_external_paths(tmp_path: Path) -> None:
     assert display_workspace_path(tmp_path / "outside.txt") == str(tmp_path / "outside.txt")
+
+
+# --- load_registry_from_path ---
+
+
+def test_load_registry_from_path_rejects_non_dict(tmp_path: Path) -> None:
+    bad = tmp_path / "bad.json"
+    bad.write_text("[1,2]", encoding="utf-8")
+    with pytest.raises(ValueError, match="must be a JSON object"):
+        load_registry_from_path(bad)
+
+
+def test_load_registry_from_path_with_includes(tmp_path: Path) -> None:
+    fragment = tmp_path / "extra.json"
+    fragment.write_text(json.dumps({"extra_key": "value"}), encoding="utf-8")
+    main_reg = {"version": "1.0", "include": ["extra.json"], "base_key": "kept"}
+    main_path = tmp_path / "main.json"
+    main_path.write_text(json.dumps(main_reg), encoding="utf-8")
+    result = load_registry_from_path(main_path)
+    assert result["extra_key"] == "value"
+    assert result["base_key"] == "kept"
+    assert "$includes" not in result
+
+
+def test_load_registry_from_path_bad_includes_type(tmp_path: Path) -> None:
+    main_reg = {"version": "1.0", "include": "not-a-list"}
+    main_path = tmp_path / "main.json"
+    main_path.write_text(json.dumps(main_reg), encoding="utf-8")
+    with pytest.raises(ValueError, match="list of strings"):
+        load_registry_from_path(main_path)
+
+
+def test_load_registry_from_path_fragment_not_dict(tmp_path: Path) -> None:
+    fragment = tmp_path / "frag.json"
+    fragment.write_text('"scalar"', encoding="utf-8")
+    main_reg = {"version": "1.0", "include": ["frag.json"]}
+    main_path = tmp_path / "main.json"
+    main_path.write_text(json.dumps(main_reg), encoding="utf-8")
+    with pytest.raises(ValueError, match="fragment.*must be a JSON object"):
+        load_registry_from_path(main_path)
+
+
+def test_load_registry_from_path_warns_missing_version(tmp_path: Path) -> None:
+    main_path = tmp_path / "main.json"
+    main_path.write_text(json.dumps({"systems": {}}), encoding="utf-8")
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        result = load_registry_from_path(main_path)
+    assert any("missing 'version'" in str(x.message) for x in w)
+    assert result["systems"] == {}
+
+
+def test_merge_registry_fragment_recursive() -> None:
+    base = {"a": {"x": 1, "y": 2}, "b": 10}
+    frag = {"a": {"y": 99, "z": 3}, "c": 20}
+    result = _merge_registry_fragment(base, frag)
+    assert result == {"a": {"x": 1, "y": 99, "z": 3}, "b": 10, "c": 20}
+
+
+# --- _normalise_stage_name / _normalise_gate_proceed ---
+
+
+def test_normalise_stage_name() -> None:
+    assert _normalise_stage_name("  Stage_One  ") == "stage one"
+    assert _normalise_stage_name("DISCOVERY") == "discovery"
+
+
+def test_normalise_gate_proceed_values() -> None:
+    assert _normalise_gate_proceed(" Yes ") == "yes"
+    assert _normalise_gate_proceed("CONDITIONAL") == "conditional"
+    assert _normalise_gate_proceed("NO") == "no"
+    assert _normalise_gate_proceed("maybe") == ""
+
+
+# --- challenge_gate_record_from_log edge cases ---
+
+
+def test_challenge_gate_record_missing_file(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setattr("scripts.programstart_common.ROOT", tmp_path)
+    result = challenge_gate_record_from_log("discovery")
+    assert result is None
+
+
+def test_challenge_gate_record_from_log_malformed_table(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setattr("scripts.programstart_common.ROOT", tmp_path)
+    gate = tmp_path / "PROGRAMBUILD" / "PROGRAMBUILD_CHALLENGE_GATE.md"
+    gate.parent.mkdir(parents=True)
+    gate.write_text("# Challenge Gate Log\n\n| From Stage |\n", encoding="utf-8")
+    result = challenge_gate_record_from_log("discovery")
+    assert result is None
+
+
+def test_challenge_gate_record_from_log_matching_row(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setattr("scripts.programstart_common.ROOT", tmp_path)
+    gate = tmp_path / "PROGRAMBUILD" / "PROGRAMBUILD_CHALLENGE_GATE.md"
+    gate.parent.mkdir(parents=True)
+    table = (
+        "# Challenge Gate Log\n\n"
+        "| From Stage | To Stage | Date | Proceed? | Quality | Notes |\n"
+        "|---|---|---|---|---|---|\n"
+        "| Discovery | Requirements | 2026-01-01 | Yes | ✅ | ok |\n"
+    )
+    gate.write_text(table, encoding="utf-8")
+    result = challenge_gate_record_from_log("discovery")
+    assert result is not None
+    assert result["result"] == "clear"
+    assert result["proceed"] == "yes"
+
+
+def test_challenge_gate_record_from_log_blocked(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setattr("scripts.programstart_common.ROOT", tmp_path)
+    gate = tmp_path / "PROGRAMBUILD" / "PROGRAMBUILD_CHALLENGE_GATE.md"
+    gate.parent.mkdir(parents=True)
+    table = (
+        "# Challenge Gate Log\n\n"
+        "| From Stage | To Stage | Date | Proceed? | Quality | Notes |\n"
+        "|---|---|---|---|---|---|\n"
+        "| Discovery | Requirements | 2026-01-01 | No | ❌ | fail |\n"
+    )
+    gate.write_text(table, encoding="utf-8")
+    result = challenge_gate_record_from_log("discovery")
+    assert result is not None
+    assert result["result"] == "blocked"
+
+
+def test_challenge_gate_record_from_log_warning(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setattr("scripts.programstart_common.ROOT", tmp_path)
+    gate = tmp_path / "PROGRAMBUILD" / "PROGRAMBUILD_CHALLENGE_GATE.md"
+    gate.parent.mkdir(parents=True)
+    table = (
+        "# Challenge Gate Log\n\n"
+        "| From Stage | To Stage | Date | Proceed? | Quality | Notes |\n"
+        "|---|---|---|---|---|---|\n"
+        "| Discovery | Requirements | 2026-01-01 | Conditional | ⚠ | risks |\n"
+    )
+    gate.write_text(table, encoding="utf-8")
+    result = challenge_gate_record_from_log("discovery")
+    assert result is not None
+    assert result["result"] == "warning"
+
+
+def test_challenge_gate_record_from_log_no_match(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setattr("scripts.programstart_common.ROOT", tmp_path)
+    gate = tmp_path / "PROGRAMBUILD" / "PROGRAMBUILD_CHALLENGE_GATE.md"
+    gate.parent.mkdir(parents=True)
+    table = (
+        "# Challenge Gate Log\n\n"
+        "| From Stage | To Stage | Date | Proceed? | Notes |\n"
+        "|---|---|---|---|---|\n"
+        "| Other | Requirements | 2026-01-01 | Yes | ok |\n"
+    )
+    gate.write_text(table, encoding="utf-8")
+    result = challenge_gate_record_from_log("discovery")
+    assert result is None
 
 
 def test_detect_workspace_root_prefers_current_workspace(tmp_path: Path) -> None:

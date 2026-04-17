@@ -147,3 +147,73 @@ def test_main_uninstall_removes_hooks(tmp_path: Path, monkeypatch) -> None:
     assert result == 0
     for name in _HOOK_NAMES:
         assert not (fake_git_hooks / name).exists()
+
+
+def test_main_check_dispatches(tmp_path: Path, monkeypatch, capsys) -> None:
+    """main(--check) dispatches to check_hooks."""
+    import scripts.install_hooks as install_hooks_mod
+
+    fake_git_hooks = tmp_path / ".git" / "hooks"
+    fake_git_hooks.mkdir(parents=True)
+    monkeypatch.setattr(install_hooks_mod, "GIT_HOOKS_DIR", fake_git_hooks)
+
+    result = main(["--check"])
+    assert result == 1
+    assert "not installed" in capsys.readouterr().err.lower()
+
+
+def test_install_hooks_warns_when_source_missing(tmp_path: Path, monkeypatch, capsys) -> None:
+    """Hook source file missing → prints warning and continues."""
+    import scripts.install_hooks as install_hooks_mod
+
+    fake_git_hooks = tmp_path / ".git" / "hooks"
+    fake_git_hooks.mkdir(parents=True)
+    monkeypatch.setattr(install_hooks_mod, "GIT_HOOKS_DIR", fake_git_hooks)
+    monkeypatch.setattr(install_hooks_mod, "HOOKS_SOURCE_DIR", tmp_path / "no-hooks")
+
+    result = install_hooks()
+    assert result == 0
+    assert "WARNING" in capsys.readouterr().err
+
+
+def test_uninstall_hooks_dry_run(tmp_path: Path, monkeypatch, capsys) -> None:
+    """uninstall_hooks(dry_run=True) prints but does not remove."""
+    import scripts.install_hooks as install_hooks_mod
+
+    fake_git_hooks = tmp_path / ".git" / "hooks"
+    fake_git_hooks.mkdir(parents=True)
+    for name in _HOOK_NAMES:
+        (fake_git_hooks / name).write_text("#!/bin/sh\n", encoding="utf-8")
+    monkeypatch.setattr(install_hooks_mod, "GIT_HOOKS_DIR", fake_git_hooks)
+
+    result = uninstall_hooks(dry_run=True)
+    assert result == 0
+    for name in _HOOK_NAMES:
+        assert (fake_git_hooks / name).exists(), "Dry run should not remove hook"
+    assert "dry-run" in capsys.readouterr().out.lower()
+
+
+def test_make_executable_on_non_windows(tmp_path: Path, monkeypatch) -> None:
+    """_make_executable calls chmod with execute bits on non-Windows."""
+    import stat
+
+    import scripts.install_hooks as install_hooks_mod
+
+    hook_file = tmp_path / "my-hook"
+    hook_file.write_text("#!/bin/sh\n", encoding="utf-8")
+    monkeypatch.setattr(install_hooks_mod.sys, "platform", "linux")
+
+    chmod_calls: list[int] = []
+
+    class FakeStat:
+        st_mode = 0o100644
+
+    monkeypatch.setattr(type(hook_file), "stat", lambda self: FakeStat())
+    monkeypatch.setattr(type(hook_file), "chmod", lambda self, m: chmod_calls.append(m))
+
+    install_hooks_mod._make_executable(hook_file)
+
+    assert len(chmod_calls) == 1
+    assert chmod_calls[0] & stat.S_IXUSR
+    assert chmod_calls[0] & stat.S_IXGRP
+    assert chmod_calls[0] & stat.S_IXOTH

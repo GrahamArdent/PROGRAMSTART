@@ -4,6 +4,7 @@ import sys
 from copy import deepcopy
 from pathlib import Path
 from typing import Any
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -13,6 +14,7 @@ from scripts import programstart_serve
 from scripts.programstart_serve import (
     ALLOWED_COMMANDS,
     advance_workflow_with_signoff,
+    build_drift_summary,
     get_doc_preview,
     run_command,
     save_workflow_signoff,
@@ -644,3 +646,190 @@ def test_run_bootstrap_timeout(monkeypatch) -> None:
     )
     assert result["exit_code"] == 1
     assert "timed out" in result["output"]
+
+
+# ── build_drift_summary ───────────────────────────────────────────────────────
+
+
+def _minimal_registry_for_drift(tmp_path: Path) -> dict[str, Any]:
+    """Return a minimal registry for drift summary tests."""
+    return {
+        "version": "1.0",
+        "sync_rules": [],
+        "systems": {
+            "programbuild": {
+                "root": "PROGRAMBUILD",
+                "optional": False,
+            },
+            "userjourney": {
+                "root": "USERJOURNEY",
+                "optional": True,
+            },
+        },
+        "workflow_state": {
+            "programbuild": {
+                "state_file": "PROGRAMBUILD/PROGRAMBUILD_STATE.json",
+                "active_key": "active_stage",
+                "initial_step": "discovery",
+                "step_order": ["discovery", "requirements", "architecture"],
+                "step_files": {
+                    "discovery": ["PROGRAMBUILD/DISCOVERY.md"],
+                    "requirements": ["PROGRAMBUILD/REQUIREMENTS.md"],
+                    "architecture": ["PROGRAMBUILD/ARCHITECTURE.md"],
+                },
+            },
+            "userjourney": {
+                "state_file": "USERJOURNEY/STATE.json",
+                "active_key": "active_phase",
+                "initial_step": "phase_a",
+                "step_order": ["phase_a"],
+                "step_files": {},
+            },
+        },
+    }
+
+
+def test_build_drift_summary_no_violations(monkeypatch, tmp_path: Path) -> None:
+    registry = _minimal_registry_for_drift(tmp_path)
+    state = {
+        "active_stage": "requirements",
+        "stages": {
+            "discovery": {"status": "completed"},
+            "requirements": {"status": "in_progress"},
+            "architecture": {"status": "planned"},
+        },
+    }
+
+    monkeypatch.setattr(programstart_serve, "ROOT", tmp_path)
+    (tmp_path / "PROGRAMBUILD").mkdir()
+    # Don't create USERJOURNEY — it's optional and should be skipped
+
+    with (
+        patch.object(programstart_serve, "load_registry", return_value=registry),
+        patch.object(programstart_serve, "git_changed_files", return_value=[]),
+        patch.object(programstart_serve, "load_workflow_state", return_value=state),
+        patch.object(programstart_serve, "workspace_path", side_effect=lambda p: tmp_path / p),
+    ):
+        result = build_drift_summary()
+
+    assert result["status"] == "passed"
+    assert result["violations"] == []
+
+
+def test_build_drift_summary_future_step_violation(monkeypatch, tmp_path: Path) -> None:
+    registry = _minimal_registry_for_drift(tmp_path)
+    state = {
+        "active_stage": "discovery",
+        "stages": {
+            "discovery": {"status": "in_progress"},
+            "requirements": {"status": "planned"},
+            "architecture": {"status": "planned"},
+        },
+    }
+
+    monkeypatch.setattr(programstart_serve, "ROOT", tmp_path)
+    (tmp_path / "PROGRAMBUILD").mkdir()
+
+    with (
+        patch.object(programstart_serve, "load_registry", return_value=registry),
+        patch.object(programstart_serve, "git_changed_files", return_value=["PROGRAMBUILD/ARCHITECTURE.md"]),
+        patch.object(programstart_serve, "load_workflow_state", return_value=state),
+        patch.object(programstart_serve, "workspace_path", side_effect=lambda p: tmp_path / p),
+    ):
+        result = build_drift_summary()
+
+    assert result["status"] == "failed"
+    assert any("future step" in v for v in result["violations"])
+
+
+def test_build_drift_summary_sync_rule_violation(monkeypatch, tmp_path: Path) -> None:
+    registry = _minimal_registry_for_drift(tmp_path)
+    registry["sync_rules"] = [
+        {
+            "name": "test_rule",
+            "authority_files": ["PROGRAMBUILD/CANONICAL.md"],
+            "dependent_files": ["PROGRAMBUILD/DERIVED.md"],
+            "require_authority_when_dependents_change": True,
+        },
+    ]
+    state = {
+        "active_stage": "discovery",
+        "stages": {
+            "discovery": {"status": "in_progress"},
+            "requirements": {"status": "planned"},
+            "architecture": {"status": "planned"},
+        },
+    }
+
+    monkeypatch.setattr(programstart_serve, "ROOT", tmp_path)
+    (tmp_path / "PROGRAMBUILD").mkdir()
+
+    with (
+        patch.object(programstart_serve, "load_registry", return_value=registry),
+        patch.object(programstart_serve, "git_changed_files", return_value=["PROGRAMBUILD/DERIVED.md"]),
+        patch.object(programstart_serve, "load_workflow_state", return_value=state),
+        patch.object(programstart_serve, "workspace_path", side_effect=lambda p: tmp_path / p),
+    ):
+        result = build_drift_summary()
+
+    assert result["status"] == "failed"
+    assert any("without authority" in v for v in result["violations"])
+
+
+def test_build_drift_summary_authority_only_note(monkeypatch, tmp_path: Path) -> None:
+    registry = _minimal_registry_for_drift(tmp_path)
+    registry["sync_rules"] = [
+        {
+            "name": "docs_rule",
+            "authority_files": ["PROGRAMBUILD/CANONICAL.md"],
+            "dependent_files": ["PROGRAMBUILD/DERIVED.md"],
+        },
+    ]
+    state = {
+        "active_stage": "discovery",
+        "stages": {
+            "discovery": {"status": "in_progress"},
+            "requirements": {"status": "planned"},
+            "architecture": {"status": "planned"},
+        },
+    }
+
+    monkeypatch.setattr(programstart_serve, "ROOT", tmp_path)
+    (tmp_path / "PROGRAMBUILD").mkdir()
+
+    with (
+        patch.object(programstart_serve, "load_registry", return_value=registry),
+        patch.object(programstart_serve, "git_changed_files", return_value=["PROGRAMBUILD/CANONICAL.md"]),
+        patch.object(programstart_serve, "load_workflow_state", return_value=state),
+        patch.object(programstart_serve, "workspace_path", side_effect=lambda p: tmp_path / p),
+    ):
+        result = build_drift_summary()
+
+    assert result["status"] == "passed"
+    assert any("authority files changed without dependent" in n for n in result["notes"])
+
+
+def test_build_drift_summary_skips_optional_missing_system(monkeypatch, tmp_path: Path) -> None:
+    registry = _minimal_registry_for_drift(tmp_path)
+    state = {
+        "active_stage": "discovery",
+        "stages": {
+            "discovery": {"status": "in_progress"},
+            "requirements": {"status": "planned"},
+            "architecture": {"status": "planned"},
+        },
+    }
+
+    monkeypatch.setattr(programstart_serve, "ROOT", tmp_path)
+    (tmp_path / "PROGRAMBUILD").mkdir()
+    # Don't create USERJOURNEY dir — it should be skipped
+
+    with (
+        patch.object(programstart_serve, "load_registry", return_value=registry),
+        patch.object(programstart_serve, "git_changed_files", return_value=[]),
+        patch.object(programstart_serve, "load_workflow_state", return_value=state),
+        patch.object(programstart_serve, "workspace_path", side_effect=lambda p: tmp_path / p),
+    ):
+        result = build_drift_summary()
+
+    assert result["status"] == "passed"

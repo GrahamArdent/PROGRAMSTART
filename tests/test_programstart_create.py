@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any, cast
@@ -356,3 +357,163 @@ def test_render_factory_plan_excludes_companion_section_when_no_surfaces() -> No
         services=[],
     )
     assert "## Companion UI Recommendation" not in result
+
+
+# ── main: GitHub repo creation error paths ─────────────────────────────────────
+
+
+def test_main_github_repo_runtime_error(tmp_path: Path) -> None:
+    dest = tmp_path / "proj"
+    mock_rec = _make_recommendation(product_shape="cli tool", variant="lite")
+
+    with (
+        patch.object(create, "build_recommendation", return_value=mock_rec),
+        patch.object(create, "init_main", return_value=0),
+        patch.object(create, "write_factory_plan", return_value=tmp_path / "plan.md"),
+        patch.object(create, "write_setup_surface", return_value=tmp_path / "setup.md"),
+        patch.object(create, "write_provisioning_plan", return_value=tmp_path / "prov.md"),
+        patch.object(create, "write_starter_scaffold", return_value=[]),
+        patch.object(create, "create_github_repo", side_effect=RuntimeError("auth failed")),
+    ):
+        result = create.main(
+            [
+                "--dest",
+                str(dest),
+                "--project-name",
+                "test",
+                "--product-shape",
+                "cli tool",
+                "--create-github-repo",
+            ]
+        )
+    assert result == 1
+
+
+def test_main_github_repo_called_process_error(tmp_path: Path) -> None:
+    dest = tmp_path / "proj"
+    mock_rec = _make_recommendation(product_shape="cli tool", variant="lite")
+
+    with (
+        patch.object(create, "build_recommendation", return_value=mock_rec),
+        patch.object(create, "init_main", return_value=0),
+        patch.object(create, "write_factory_plan", return_value=tmp_path / "plan.md"),
+        patch.object(create, "write_setup_surface", return_value=tmp_path / "setup.md"),
+        patch.object(create, "write_provisioning_plan", return_value=tmp_path / "prov.md"),
+        patch.object(create, "write_starter_scaffold", return_value=[]),
+        patch.object(
+            create,
+            "create_github_repo",
+            side_effect=subprocess.CalledProcessError(1, "gh"),
+        ),
+    ):
+        result = create.main(
+            [
+                "--dest",
+                str(dest),
+                "--project-name",
+                "test",
+                "--product-shape",
+                "cli tool",
+                "--create-github-repo",
+            ]
+        )
+    assert result == 1
+
+
+# ── main: variant override ─────────────────────────────────────────────────────
+
+
+def test_main_variant_override_rebuilds_prompt(tmp_path: Path) -> None:
+    dest = tmp_path / "proj"
+    mock_rec = _make_recommendation(product_shape="web app", variant="product")
+
+    prompt_calls: list[dict] = []
+
+    def fake_build_prompt(**kwargs):
+        prompt_calls.append(kwargs)
+        return "overridden prompt"
+
+    with (
+        patch.object(create, "build_recommendation", return_value=mock_rec),
+        patch.object(create, "init_main", return_value=0),
+        patch.object(create, "write_factory_plan", return_value=tmp_path / "plan.md"),
+        patch.object(create, "write_setup_surface", return_value=tmp_path / "setup.md"),
+        patch.object(create, "write_provisioning_plan", return_value=tmp_path / "prov.md"),
+        patch.object(create, "write_starter_scaffold", return_value=[]),
+        patch.object(create, "build_generated_prompt", side_effect=fake_build_prompt),
+    ):
+        create.main(
+            [
+                "--dest",
+                str(dest),
+                "--project-name",
+                "test",
+                "--product-shape",
+                "web app",
+                "--variant",
+                "enterprise",
+                "--dry-run",
+            ]
+        )
+    assert len(prompt_calls) == 1
+    assert prompt_calls[0]["variant"] == "enterprise"
+
+
+# ── main: dry-run with provisioning ───────────────────────────────────────────
+
+
+def test_main_dry_run_with_provision_services(tmp_path: Path, capsys) -> None:
+    dest = tmp_path / "proj"
+    mock_rec = _make_recommendation(product_shape="web app", variant="lite", service_names=["Supabase"])
+
+    with (
+        patch.object(create, "build_recommendation", return_value=mock_rec),
+        patch.object(create, "init_main", return_value=0),
+    ):
+        result = create.main(
+            [
+                "--dest",
+                str(dest),
+                "--project-name",
+                "test",
+                "--product-shape",
+                "web app",
+                "--dry-run",
+                "--provision-services",
+            ]
+        )
+    assert result == 0
+    captured = capsys.readouterr()
+    assert "PLAN   provision services" in captured.out
+
+
+# ── main: dry-run with create-github-repo ──────────────────────────────────────
+
+
+def test_main_dry_run_create_github_repo(tmp_path: Path) -> None:
+    dest = tmp_path / "proj"
+    mock_rec = _make_recommendation(product_shape="cli tool", variant="lite")
+    dry_run_calls: list[bool] = []
+
+    def fake_create_repo(**kwargs):
+        dry_run_calls.append(kwargs.get("dry_run", False))
+
+    with (
+        patch.object(create, "build_recommendation", return_value=mock_rec),
+        patch.object(create, "init_main", return_value=0),
+        patch.object(create, "create_github_repo", side_effect=fake_create_repo),
+    ):
+        result = create.main(
+            [
+                "--dest",
+                str(dest),
+                "--project-name",
+                "test",
+                "--product-shape",
+                "cli tool",
+                "--dry-run",
+                "--create-github-repo",
+            ]
+        )
+    assert result == 0
+    assert dry_run_calls == [True]

@@ -4,7 +4,7 @@ Purpose: Prioritized upgrade plan covering all necessary improvements identified
 Status: **IN PROGRESS**
 Authority: Non-canonical working plan derived from full baseline audit (1488 tests, 92% coverage, pyright clean, validate PASS, drift PASS) on 2026-04-16.
 Review scan count: **4** (Scan 1: baseline verification; Scan 2: post-update review; Scan 3: mutation scanner loop review; Scan 4: deadlock fix + accuracy corrections)
-Last updated: 2026-04-16
+Last updated: 2026-04-17
 
 ---
 
@@ -63,12 +63,12 @@ Baseline recorded 2026-04-16 (post hardening Phases A–I, K complete; J partial
 
 | ID | Gap | Module | Current | Target | Phase |
 |---|---|---|---|---|---|
-| **COV-B1** | `programstart_backup.py` at 70% — production CLI command | backup.py | 70% | ≥90% | B |
-| **COV-B2** | `install_hooks.py` at 84% — utility | install_hooks.py | 84% | ≥90% | B |
-| **COV-B3** | `programstart_serve.py` at 87% — HTTP paths | serve.py | 87% | ≥90% | B |
-| **COV-B4** | `programstart_create.py` at 89% — CLI facade | create.py | 89% | ≥90% | B |
-| **COV-B5** | `programstart_retrieval.py` at 85% — ChromaDB blocked | retrieval.py | 85% | ≥88% | B |
-| **COV-B6** | Mutation tooling (53%, 69%) — **now wired into CLI dispatch** (`mutation-edit-hook`, `mutation-loop` in `CLI_COMMANDS`) — must meet ≥80%. Deadlock fix (Scan 4) added `max_wait_seconds` timeout + 4 tests. | mutation_*.py | 53/69% | ≥80% | B |
+| **COV-B1** | `programstart_backup.py` at 70% — production CLI command | backup.py | 70% → 97% | ≥90% | B ✅ |
+| **COV-B2** | `install_hooks.py` at 84% — utility | install_hooks.py | 84% → 98% | ≥90% | B ✅ |
+| **COV-B3** | `programstart_serve.py` at 87% — HTTP paths | serve.py | 87% → 94% | ≥90% | B ✅ |
+| **COV-B4** | `programstart_create.py` at 89% — CLI facade | create.py | 89% → 95% | ≥90% | B ✅ |
+| **COV-B5** | `programstart_retrieval.py` at 85% — ChromaDB blocked | retrieval.py | 85% → 90% | ≥88% | B ✅ |
+| **COV-B6** | Mutation tooling (53%, 69%) — **now wired into CLI dispatch** (`mutation-edit-hook`, `mutation-loop` in `CLI_COMMANDS`) — must meet ≥80%. Deadlock fix (Scan 4) added `max_wait_seconds` timeout + 4 tests. | mutation_*.py | 53/69% → 95/97% | ≥80% | B ✅ |
 
 ### P2 — Boundary Consolidation (90–91%, fragile)
 
@@ -248,7 +248,7 @@ Expected: Both PASS with zero warnings. All 4 CI-0x items resolved.
 
 ---
 
-### Phase B: Coverage Floor Enforcement (COV-B1 through COV-B6)
+### Phase B: Coverage Floor Enforcement (COV-B1 through COV-B6) ✅ bae73a6
 
 **Goal**: Bring all production modules to ≥90% coverage. This is the single biggest quality gap — `backup.py` at 70% is a shipped CLI command with 30% of its logic untested.
 

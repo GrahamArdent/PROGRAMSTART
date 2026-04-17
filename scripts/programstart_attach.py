@@ -73,7 +73,7 @@ def _git_head_hash() -> str:
 
 def _write_manifest(destination_root: Path, files: list[str]) -> None:
     manifest = {
-        "programstart_version": "0.9.0",
+        "programstart_version": "1.0.0",
         "source_commit": _git_head_hash(),
         "attached_at": datetime.now(UTC).isoformat(),
         "files": sorted(files),

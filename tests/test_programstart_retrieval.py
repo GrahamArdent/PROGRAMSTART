@@ -10,6 +10,8 @@ import sys
 from pathlib import Path
 from typing import Any, cast
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
@@ -1052,3 +1054,158 @@ def test_validate_cited_sources_strips_invalid_entries() -> None:
     assert validated.cited_sources == ["document: PROGRAMBUILD/README.md"]
     assert validated.confidence == "low"
     assert "discarded" in validated.reasoning
+
+
+# ── _generate_litellm real body coverage (lines 729-746) ──────────────────
+
+
+def test_generate_litellm_calls_litellm_completion(monkeypatch) -> None:
+    """Exercise the actual _generate_litellm method body with a mocked litellm module."""
+    import types
+
+    fake_litellm = types.ModuleType("litellm")
+
+    class _Choice:
+        class _Msg:
+            content = "mocked answer"
+
+        message = _Msg()
+
+    class _Response:
+        choices = [_Choice()]
+
+    fake_litellm.completion = lambda **kwargs: _Response()  # type: ignore[attr-defined]
+    monkeypatch.setitem(sys.modules, "litellm", fake_litellm)
+
+    index = _minimal_index()
+    chunks = programstart_retrieval.build_corpus(index)
+    lexical = programstart_retrieval.LexicalSearcher(chunks)
+    hs = programstart_retrieval.HybridSearcher(lexical)
+    rag = programstart_retrieval.RAGAssistant(hs, model="test-model")
+
+    result = rag._generate_litellm("system prompt", "user question")
+    assert result == "mocked answer"
+
+
+def test_generate_litellm_import_error(monkeypatch) -> None:
+    """_generate_litellm raises ImportError when litellm is not installed."""
+    monkeypatch.setitem(sys.modules, "litellm", None)
+
+    index = _minimal_index()
+    chunks = programstart_retrieval.build_corpus(index)
+    lexical = programstart_retrieval.LexicalSearcher(chunks)
+    hs = programstart_retrieval.HybridSearcher(lexical)
+    rag = programstart_retrieval.RAGAssistant(hs)
+
+    with pytest.raises(ImportError, match="LiteLLM"):
+        rag._generate_litellm("sys", "usr")
+
+
+def test_generate_structured_calls_instructor(monkeypatch) -> None:
+    """Exercise _generate_structured with mocked instructor + litellm modules."""
+    import types
+
+    fake_litellm = types.ModuleType("litellm")
+    fake_litellm.completion = lambda **kwargs: None  # type: ignore[attr-defined]
+
+    expected_response = programstart_retrieval.RAGQueryResponse(
+        answer="structured answer",
+        reasoning="because",
+        confidence="high",
+        cited_sources=[],
+    )
+
+    class _FakeClient:
+        class chat:
+            class completions:
+                @staticmethod
+                def create(**kwargs):
+                    return expected_response
+
+    fake_instructor = types.ModuleType("instructor")
+    fake_instructor.from_litellm = lambda fn: _FakeClient()  # type: ignore[attr-defined]
+
+    monkeypatch.setitem(sys.modules, "litellm", fake_litellm)
+    monkeypatch.setitem(sys.modules, "instructor", fake_instructor)
+
+    index = _minimal_index()
+    chunks = programstart_retrieval.build_corpus(index)
+    lexical = programstart_retrieval.LexicalSearcher(chunks)
+    hs = programstart_retrieval.HybridSearcher(lexical)
+    rag = programstart_retrieval.RAGAssistant(hs, model="test-model")
+
+    result = rag._generate_structured("system", "user")
+    assert result.answer == "structured answer"
+
+
+def test_generate_structured_import_error(monkeypatch) -> None:
+    """_generate_structured raises ImportError without instructor."""
+    monkeypatch.setitem(sys.modules, "instructor", None)
+
+    index = _minimal_index()
+    chunks = programstart_retrieval.build_corpus(index)
+    lexical = programstart_retrieval.LexicalSearcher(chunks)
+    hs = programstart_retrieval.HybridSearcher(lexical)
+    rag = programstart_retrieval.RAGAssistant(hs)
+
+    with pytest.raises(ImportError, match="Instructor"):
+        rag._generate_structured("sys", "usr")
+
+
+# ── CLI ask subcommand (lines 909-919) ────────────────────────────────────
+
+
+def test_main_ask_subcommand(tmp_path, monkeypatch) -> None:
+    """Exercise CLI 'ask' subcommand with mocked RAG."""
+    from scripts import programstart_context
+
+    index = programstart_context.build_context_index()
+    idx_path = tmp_path / "index.json"
+    idx_path.write_text(json.dumps(index), encoding="utf-8")
+
+    fake_response = programstart_retrieval.RAGResponse(
+        answer="test answer",
+        sources=[],
+        model="mock",
+        retrieval_method="lexical",
+    )
+
+    monkeypatch.setattr(
+        programstart_retrieval.RAGAssistant,
+        "ask",
+        lambda self, q, **kw: fake_response,
+    )
+
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf):
+        rc = programstart_retrieval.main(["ask", "what is this?", "--index", str(idx_path)])
+    assert rc == 0
+    assert "test answer" in buf.getvalue()
+
+
+def test_main_ask_structured_subcommand(tmp_path, monkeypatch) -> None:
+    """Exercise CLI 'ask --structured' subcommand with mocked RAG."""
+    from scripts import programstart_context
+
+    index = programstart_context.build_context_index()
+    idx_path = tmp_path / "index.json"
+    idx_path.write_text(json.dumps(index), encoding="utf-8")
+
+    fake_response = programstart_retrieval.RAGQueryResponse(
+        answer="structured answer",
+        reasoning="because reasons",
+        confidence="high",
+        cited_sources=["doc: test"],
+    )
+
+    monkeypatch.setattr(
+        programstart_retrieval.RAGAssistant,
+        "ask_structured",
+        lambda self, q, **kw: fake_response,
+    )
+
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf):
+        rc = programstart_retrieval.main(["ask", "what?", "--index", str(idx_path), "--structured"])
+    assert rc == 0
+    assert "structured answer" in buf.getvalue()

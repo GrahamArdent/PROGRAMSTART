@@ -833,3 +833,220 @@ def test_build_drift_summary_skips_optional_missing_system(monkeypatch, tmp_path
         result = build_drift_summary()
 
     assert result["status"] == "passed"
+
+
+# ── advance_workflow_with_signoff: signoff_history cap during advance ─────
+
+
+def test_advance_signoff_history_capped(monkeypatch, tmp_path: Path) -> None:
+    """signoff_history trimmed during advance when it exceeds MAX_SIGNOFF_HISTORY (lines 616-623)."""
+    saved: dict[str, Any] = {}
+    existing_history = [
+        {"decision": "approved", "date": f"2026-01-{i:02d}", "notes": f"e{i}", "saved_at": f"2026-01-{i:02d}"}
+        for i in range(1, 106)
+    ]
+    state = {
+        "active_stage": "inputs_and_mode_selection",
+        "stages": {
+            "inputs_and_mode_selection": {
+                "status": "in_progress",
+                "signoff": {},
+                "signoff_history": list(existing_history),
+            },
+            "requirements": {"status": "planned"},
+        },
+    }
+    registry = {"systems": {"programbuild": {}}}
+
+    monkeypatch.setattr(programstart_serve, "load_registry", lambda: registry)
+    monkeypatch.setattr(programstart_serve, "load_workflow_state", lambda _r, _s: deepcopy(state))
+    monkeypatch.setattr(
+        programstart_serve,
+        "workflow_active_step",
+        lambda _r, _s, _st=None: "inputs_and_mode_selection",
+    )
+    monkeypatch.setattr(programstart_serve, "workflow_entry_key", lambda _s: "stages")
+    monkeypatch.setattr(
+        programstart_serve,
+        "workflow_steps",
+        lambda _r, _s: ["inputs_and_mode_selection", "requirements"],
+    )
+    monkeypatch.setattr(programstart_serve, "save_workflow_state", lambda _r, _s, v: saved.update(v))
+    monkeypatch.setattr(programstart_serve, "workflow_state_path", lambda _r, _s: tmp_path / "state.json")
+    monkeypatch.setattr(
+        programstart_serve,
+        "challenge_gate_record_from_log",
+        lambda _step: {
+            "source": "challenge_gate_log",
+            "from_stage": "inputs_and_mode_selection",
+            "to_stage": "requirements",
+            "date": "2026-06-01",
+            "proceed": "yes",
+            "result": "clear",
+            "notes": "",
+            "checks": {},
+        },
+    )
+
+    result = advance_workflow_with_signoff("programbuild", "approved", "2026-06-01", "overflow test", dry_run=False)
+    assert result["exit_code"] == 0
+    history = saved["stages"]["inputs_and_mode_selection"]["signoff_history"]
+    assert len(history) <= programstart_serve.MAX_SIGNOFF_HISTORY
+
+
+# ── advance_workflow_with_signoff: blocked gate returns error ─────────────
+
+
+def test_advance_blocked_gate_result_payload_returns_error(monkeypatch, tmp_path: Path) -> None:
+    """gate_result='blocked' in payload returns error (line 577-578)."""
+    state = {
+        "active_stage": "inputs_and_mode_selection",
+        "stages": {
+            "inputs_and_mode_selection": {"status": "in_progress", "signoff": {}, "signoff_history": []},
+            "requirements": {"status": "planned"},
+        },
+    }
+    registry = {"systems": {"programbuild": {}}}
+
+    monkeypatch.setattr(programstart_serve, "load_registry", lambda: registry)
+    monkeypatch.setattr(programstart_serve, "load_workflow_state", lambda _r, _s: deepcopy(state))
+    monkeypatch.setattr(
+        programstart_serve,
+        "workflow_active_step",
+        lambda _r, _s, _st=None: "inputs_and_mode_selection",
+    )
+    monkeypatch.setattr(programstart_serve, "workflow_entry_key", lambda _s: "stages")
+    monkeypatch.setattr(
+        programstart_serve,
+        "workflow_steps",
+        lambda _r, _s: ["inputs_and_mode_selection", "requirements"],
+    )
+    monkeypatch.setattr(programstart_serve, "workflow_state_path", lambda _r, _s: tmp_path / "state.json")
+
+    result = advance_workflow_with_signoff(
+        "programbuild",
+        "approved",
+        "2026-06-01",
+        "",
+        dry_run=False,
+        gate_result="blocked",
+        gate_date="2026-06-01",
+        gate_notes="blocker",
+    )
+    assert result["exit_code"] == 1
+    assert "blocking" in result["output"]
+
+
+# ── advance final step (no next step) ────────────────────────────────────
+
+
+def test_advance_final_step_completes(monkeypatch, tmp_path: Path) -> None:
+    """Advancing the last step with no next_step sets completed message (line 632)."""
+    saved: dict[str, Any] = {}
+    state = {
+        "active_stage": "release",
+        "stages": {
+            "release": {"status": "in_progress", "signoff": {}, "signoff_history": []},
+        },
+    }
+    registry = {"systems": {"programbuild": {}}}
+
+    monkeypatch.setattr(programstart_serve, "load_registry", lambda: registry)
+    monkeypatch.setattr(programstart_serve, "load_workflow_state", lambda _r, _s: deepcopy(state))
+    monkeypatch.setattr(programstart_serve, "workflow_active_step", lambda _r, _s, _st=None: "release")
+    monkeypatch.setattr(programstart_serve, "workflow_entry_key", lambda _s: "stages")
+    monkeypatch.setattr(programstart_serve, "workflow_steps", lambda _r, _s: ["release"])
+    monkeypatch.setattr(programstart_serve, "save_workflow_state", lambda _r, _s, v: saved.update(v))
+    monkeypatch.setattr(programstart_serve, "workflow_state_path", lambda _r, _s: tmp_path / "state.json")
+    monkeypatch.setattr(
+        programstart_serve,
+        "challenge_gate_record_from_log",
+        lambda _step: {
+            "source": "challenge_gate_log",
+            "from_stage": "release",
+            "to_stage": "",
+            "date": "2026-06-01",
+            "proceed": "yes",
+            "result": "clear",
+            "notes": "",
+            "checks": {},
+        },
+    )
+
+    result = advance_workflow_with_signoff("programbuild", "approved", "2026-06-01", "final", dry_run=False)
+    assert result["exit_code"] == 0
+    assert "final" in result["output"].lower() or "Completed" in result["output"]
+
+
+# ── update_implementation_tracker_slice: malformed row ────────────────────
+
+
+def test_update_tracker_slice_malformed_row(tmp_path: Path, monkeypatch) -> None:
+    """Slice row with unexpected column count returns error (line 465)."""
+    uj = tmp_path / "USERJOURNEY"
+    uj.mkdir()
+    (uj / "IMPLEMENTATION_TRACKER.md").write_text(
+        "# Tracker\nLast updated: 2026-03-27\n\n| Slice | Status |\n| --- | --- |\n| Slice 1 | Ready |\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(programstart_serve, "ROOT", tmp_path)
+    result = update_implementation_tracker_slice("Slice 1", "Completed", "done")
+    assert result["exit_code"] == 1
+    assert "unexpected shape" in result["output"]
+
+
+# ── update_implementation_tracker_slice: slice not found ──────────────────
+
+
+def test_update_tracker_slice_not_found(tmp_path: Path, monkeypatch) -> None:
+    """Slice name absent from tracker returns error (line 473)."""
+    uj = tmp_path / "USERJOURNEY"
+    uj.mkdir()
+    (uj / "IMPLEMENTATION_TRACKER.md").write_text(
+        "# Tracker\nLast updated: 2026-03-27\n\n"
+        "| Slice | Status | Gate | Notes |\n| --- | --- | --- | --- |\n"
+        "| Slice 1 | Ready | G | x |\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(programstart_serve, "ROOT", tmp_path)
+    result = update_implementation_tracker_slice("Slice 9", "Completed", "done")
+    assert result["exit_code"] == 1
+    assert "not found" in result["output"]
+
+
+# ── drift summary: pyproject_requirements_sync skip ───────────────────────
+
+
+def test_build_drift_summary_pyproject_sync_skip(monkeypatch, tmp_path: Path) -> None:
+    """pyproject_requirements_sync rule is skipped when sync not required (line 656)."""
+    registry = _minimal_registry_for_drift(tmp_path)
+    registry["sync_rules"] = [
+        {
+            "name": "pyproject_requirements_sync",
+            "authority_files": ["pyproject.toml"],
+            "dependent_files": ["requirements.txt"],
+        },
+    ]
+    state = {
+        "active_stage": "discovery",
+        "stages": {
+            "discovery": {"status": "in_progress"},
+            "requirements": {"status": "planned"},
+            "architecture": {"status": "planned"},
+        },
+    }
+
+    monkeypatch.setattr(programstart_serve, "ROOT", tmp_path)
+    (tmp_path / "PROGRAMBUILD").mkdir()
+
+    with (
+        patch.object(programstart_serve, "load_registry", return_value=registry),
+        patch.object(programstart_serve, "git_changed_files", return_value=["pyproject.toml"]),
+        patch.object(programstart_serve, "load_workflow_state", return_value=state),
+        patch.object(programstart_serve, "workspace_path", side_effect=lambda p: tmp_path / p),
+        patch.object(programstart_serve, "pyproject_dependency_sync_required", return_value=False),
+    ):
+        result = build_drift_summary()
+
+    # The note should be skipped when sync is not required
+    assert result["status"] == "passed"

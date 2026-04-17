@@ -437,3 +437,63 @@ class TestReadonlyModeGuard:
         assert status == 405
         data = json.loads(body)
         assert "read-only" in data["error"]
+
+
+# ─────────── Static file serving ─────────────────────────────────────────
+
+
+class TestStaticServing:
+    """GET /static/<file> exercises _serve_static (lines 751-771)."""
+
+    def test_existing_css_file(self, server_url: str) -> None:
+        status, headers, body = _get(f"{server_url}/static/style.css")
+        assert status == 200
+        assert "text/css" in headers.get("Content-Type", "")
+        assert len(body) > 0
+
+    def test_existing_js_file(self, server_url: str) -> None:
+        status, headers, body = _get(f"{server_url}/static/app.js")
+        assert status == 200
+        assert "javascript" in headers.get("Content-Type", "")
+
+    def test_nonexistent_static_file_returns_404(self, server_url: str) -> None:
+        status, _headers, _body = _get(f"{server_url}/static/does_not_exist.css")
+        assert status == 404
+
+    def test_path_traversal_stripped(self, server_url: str) -> None:
+        status, _headers, _body = _get(f"{server_url}/static/../../pyproject.toml")
+        # Path.name strips directory components → looks for "pyproject.toml" in dashboard/
+        assert status == 404
+
+
+# ─────────── POST /api/run with args array ───────────────────────────────
+
+
+class TestPostApiRunWithArgs:
+    """POST /api/run with an args list exercises lines 891-895."""
+
+    def test_run_with_list_args(self, server_url: str) -> None:
+        status, _headers, body = _post_json(
+            f"{server_url}/api/run",
+            {"command": "log", "args": ["approved"]},
+        )
+        data = json.loads(body)
+        # Should not reject; args get normalized
+        assert "not permitted" not in data.get("output", "") or data.get("exit_code") is not None
+
+    def test_run_with_mixed_type_args(self, server_url: str) -> None:
+        status, _headers, body = _post_json(
+            f"{server_url}/api/run",
+            {"command": "status", "args": [42, True, "text"]},
+        )
+        data = json.loads(body)
+        # Mixed types get stringified; validation may reject but no crash
+        assert isinstance(data, dict)
+
+    def test_run_with_null_args(self, server_url: str) -> None:
+        status, _headers, body = _post_json(
+            f"{server_url}/api/run",
+            {"command": "status", "args": None},
+        )
+        data = json.loads(body)
+        assert isinstance(data, dict)

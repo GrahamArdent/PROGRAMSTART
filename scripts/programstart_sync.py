@@ -13,6 +13,7 @@ try:
 except ImportError:  # pragma: no cover - standalone script execution fallback
     from programstart_attach import MANIFEST_FILENAME, PROGRAMBUILD_PRESERVE_EXISTING_FILES
     from programstart_bootstrap import copy_file
+
     from programstart_common import warn_direct_script_invocation, workspace_path
 
 SYNC_DESCRIPTION = (

@@ -14,7 +14,6 @@ if str(ROOT) not in sys.path:
 from scripts import programstart_attach as attach
 from scripts import programstart_sync as sync
 
-
 # ── helpers ────────────────────────────────────────────────────────────────────
 
 
@@ -96,7 +95,8 @@ class TestManifest:
         with (
             patch.object(attach, "load_registry", return_value=registry),
             patch.object(
-                attach, "workspace_path",
+                attach,
+                "workspace_path",
                 side_effect=lambda relative: template if relative == "." else template / relative,
             ),
             patch.object(attach, "create_default_workflow_state", return_value={"stage": "inputs_and_mode_selection"}),
@@ -138,7 +138,8 @@ class TestManifest:
         with (
             patch.object(attach, "load_registry", return_value=registry),
             patch.object(
-                attach, "workspace_path",
+                attach,
+                "workspace_path",
                 side_effect=lambda relative: template if relative == "." else template / relative,
             ),
         ):
@@ -202,7 +203,9 @@ class TestSyncChangedFiles:
 class TestSyncPreserve:
     def test_sync_skips_preserved_files(self, tmp_path: Path, capsys: pytest.CaptureFixture) -> None:
         files = {"README.md": "template readme", "config/reg.json": "new"}
-        template, dest = _make_template_and_dest(tmp_path, files, dest_overrides={"README.md": "host readme", "config/reg.json": "old"})
+        template, dest = _make_template_and_dest(
+            tmp_path, files, dest_overrides={"README.md": "host readme", "config/reg.json": "old"}
+        )
         with patch.object(sync, "workspace_path", return_value=template):
             result = sync.sync(dest, confirm=True)
         assert result == 0
@@ -212,7 +215,8 @@ class TestSyncPreserve:
     def test_custom_preserve_file_is_respected(self, tmp_path: Path, capsys: pytest.CaptureFixture) -> None:
         files = {"config/reg.json": "new", "scripts/custom.py": "new"}
         template, dest = _make_template_and_dest(
-            tmp_path, files,
+            tmp_path,
+            files,
             dest_overrides={"config/reg.json": "old", "scripts/custom.py": "old"},
         )
         (dest / ".programstart-preserve").write_text("scripts/custom.py\n", encoding="utf-8")
@@ -230,7 +234,8 @@ class TestSyncFilter:
     def test_file_filter_limits_scope(self, tmp_path: Path, capsys: pytest.CaptureFixture) -> None:
         files = {"config/reg.json": "new", "scripts/cli.py": "new"}
         template, dest = _make_template_and_dest(
-            tmp_path, files,
+            tmp_path,
+            files,
             dest_overrides={"config/reg.json": "old", "scripts/cli.py": "old"},
         )
         with patch.object(sync, "workspace_path", return_value=template):
@@ -294,7 +299,8 @@ class TestSyncMain:
     def test_main_file_filter(self, tmp_path: Path) -> None:
         files = {"config/reg.json": "new", "scripts/cli.py": "new"}
         template, dest = _make_template_and_dest(
-            tmp_path, files,
+            tmp_path,
+            files,
             dest_overrides={"config/reg.json": "old", "scripts/cli.py": "old"},
         )
         with patch.object(sync, "workspace_path", return_value=template):

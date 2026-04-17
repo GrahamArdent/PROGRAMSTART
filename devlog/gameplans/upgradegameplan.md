@@ -708,9 +708,10 @@ Expected: 7 cycles complete (~2.2 hours total at ~19 min/cycle). If a cycle hits
 
 **Goal**: Implement the remaining strategic items from the hardening gameplan. These are lower priority and each is its own session.
 
-#### J-1: Prompt builder Mode B (STR-02)
+#### ✅ J-1: Prompt builder Mode B (STR-02) — COMPLETE
 
-Accept arbitrary repo context (not just bootstrapped projects) in `programstart prompt-build`. This enables using PROGRAMSTART's prompt generation for any repo.
+**Status**: COMPLETE
+**Result**: Added `--mode context` to `programstart prompt-build` with `--context key=value` (repeatable) flags. `build_context_prompt()` generates structured `.prompt.md` from arbitrary context without requiring a bootstrapped PROGRAMBUILD project. Required key: `goal`; well-known keys: `project`, `stage`, `stack`, `shape`. 15 new tests. ADR-0021 / DEC-018.
 
 #### J-2: `programstart sync --from-template` (STR-03)
 

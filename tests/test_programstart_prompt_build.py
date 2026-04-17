@@ -9,6 +9,8 @@ dedicated coverage for uncovered branches and edge cases:
   - main() stdout path (no --output flag)
   - main() --list-stages without --json (tabular format)
   - main() Output Ordering "." branch (stage with no sync rule)
+  - build_context_prompt() Mode B (context-driven prompt generation)
+  - main() --mode context CLI routing
 """
 
 from __future__ import annotations
@@ -26,6 +28,7 @@ from scripts.programstart_common import load_registry
 from scripts.programstart_prompt_build import (
     AUTO_HEADER,
     _render_body,
+    build_context_prompt,
     build_prompt,
     main,
     managed_stage_prompts,
@@ -199,3 +202,119 @@ class TestCrossStageValidationReference:
         assert "programstart-cross-stage-validation" in content, (
             f"Stage '{stage_entry['name']}' is missing the cross-stage-validation reference"
         )
+
+
+# ---------------------------------------------------------------------------
+# Mode B — build_context_prompt()
+# ---------------------------------------------------------------------------
+
+
+class TestBuildContextPrompt:
+    def test_minimal_context_with_goal_only(self) -> None:
+        content = build_context_prompt({"goal": "Build a receipt reader"})
+        assert AUTO_HEADER in content
+        assert "Build a receipt reader" in content
+        assert "Data Grounding Rule" in content
+        assert "Protocol" in content
+        assert "Verification" in content
+
+    def test_all_well_known_keys(self) -> None:
+        ctx = {
+            "project": "ReceiptReader",
+            "goal": "OCR pipeline for receipts",
+            "stage": "architecture",
+            "stack": "Python, FastAPI, Supabase",
+            "shape": "web-app",
+        }
+        content = build_context_prompt(ctx)
+        assert "ReceiptReader" in content
+        assert "OCR pipeline for receipts" in content
+        assert "Architecture" in content
+        assert "Python, FastAPI, Supabase" in content
+        assert "web-app" in content
+
+    def test_extra_custom_keys_in_context(self) -> None:
+        ctx = {
+            "goal": "Build an API",
+            "team_size": "3",
+            "deadline": "2026-06-01",
+        }
+        content = build_context_prompt(ctx)
+        assert "Team Size" in content
+        assert "3" in content
+        assert "Deadline" in content
+        assert "2026-06-01" in content
+
+    def test_missing_goal_raises_system_exit(self) -> None:
+        with pytest.raises(SystemExit, match="goal"):
+            build_context_prompt({})
+
+    def test_empty_goal_raises_system_exit(self) -> None:
+        with pytest.raises(SystemExit, match="goal"):
+            build_context_prompt({"goal": ""})
+
+    def test_frontmatter_present(self) -> None:
+        content = build_context_prompt({"goal": "Test frontmatter"})
+        assert "---" in content
+        assert "description:" in content
+        assert "version:" in content
+
+    def test_defaults_for_missing_optional_keys(self) -> None:
+        content = build_context_prompt({"goal": "Test defaults"})
+        # Default project name used
+        assert "the project" in content
+        # Default stage used
+        assert "planning" in content.lower()
+
+
+# ---------------------------------------------------------------------------
+# Mode B — CLI routing via main()
+# ---------------------------------------------------------------------------
+
+
+class TestMainModeContext:
+    def test_mode_context_stdout(self, capsys: pytest.CaptureFixture) -> None:
+        rc = main(["--mode", "context", "--context", "goal=Build a CLI tool"])
+        assert rc == 0
+        captured = capsys.readouterr()
+        assert AUTO_HEADER in captured.out
+        assert "Build a CLI tool" in captured.out
+
+    def test_mode_context_to_file(self, tmp_path: Path) -> None:
+        out = tmp_path / "ctx.prompt.md"
+        rc = main(["--mode", "context", "--context", "goal=Ship it", "--output", str(out)])
+        assert rc == 0
+        assert out.exists()
+        content = out.read_text(encoding="utf-8")
+        assert AUTO_HEADER in content
+        assert "Ship it" in content
+
+    def test_mode_context_multiple_fields(self, capsys: pytest.CaptureFixture) -> None:
+        rc = main(
+            [
+                "--mode",
+                "context",
+                "--context",
+                "project=Foo",
+                "--context",
+                "goal=Build Foo",
+                "--context",
+                "stack=Rust",
+            ]
+        )
+        assert rc == 0
+        captured = capsys.readouterr()
+        assert "Foo" in captured.out
+        assert "Rust" in captured.out
+
+    def test_mode_context_missing_goal_exits(self) -> None:
+        with pytest.raises(SystemExit):
+            main(["--mode", "context"])
+
+    def test_mode_context_bad_format_exits(self) -> None:
+        with pytest.raises(SystemExit):
+            main(["--mode", "context", "--context", "no-equals-sign"])
+
+    def test_mode_registry_still_requires_stage(self) -> None:
+        with pytest.raises(SystemExit):
+            main(["--mode", "registry"])

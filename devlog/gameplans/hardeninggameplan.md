@@ -835,9 +835,10 @@ A fourteenth completed canonical run on 2026-04-17, after adding ~47 unit-level 
 
 ---
 
-#### J-5: Prompt builder Mode B (S-5)
+#### ✅ J-5: Prompt builder Mode B (S-5) — COMPLETE
 
-**Pre-flight**: Read `scripts/programstart_prompt_build.py` Mode A implementation. Understand the shape-context injection mechanism. Design Mode B: instead of requiring a bootstrapped project directory, accept arbitrary context fields via CLI flags.
+**Status**: COMPLETE
+**Result**: Added `--mode context` to `programstart prompt-build` with `--context key=value` (repeatable) CLI flags. `build_context_prompt()` generates structured `.prompt.md` from arbitrary context without requiring a bootstrapped PROGRAMBUILD project. Required key: `goal`; well-known keys: `project`, `stage`, `stack`, `shape`; extra keys rendered as custom context fields. 15 new tests (37 total in test file). ADR-0021 / DEC-018.
 
 ---
 

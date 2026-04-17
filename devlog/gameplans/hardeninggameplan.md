@@ -1,9 +1,9 @@
 # Hardening Gameplan — Post-Enhancement Coverage, Observability, and Defence
 
 Purpose: Prioritized hardening plan for all items deferred from Phase N of `enhancegameplan.md` plus new coverage gaps identified from the post-enhancement-gameplan baseline. Phases are ordered by severity, dependency, and value impact. Each phase is scoped for a single execution session.
-Status: **IN PROGRESS**
+Status: **COMPLETE** — All phases (A–K) executed. Released as v1.0.0 (commit `01900ae`, 2026-04-17).
 Authority: Non-canonical working plan derived from `devlog/gameplans/enhancegameplan.md` Phase N deferred items, post-Phase-N coverage run (1288 tests, 93.19%, 2026-04-14), and `config/process-registry.json`.
-Last updated: 2026-04-16
+Last updated: 2026-04-17
 
 ---
 
@@ -769,7 +769,7 @@ uv run pytest --tb=no -q --no-header
 
 ---
 
-### Phase J: Strategic (B-2, SD-1, T-5, S-5, S-6, S-7)
+### ✅ Phase J: Strategic (B-2, SD-1, T-5, S-5, S-6, S-7) — COMPLETE
 
 **Goal**: Large-scope improvements deferred from the enhancement gameplan. Execute only when Phase A–I are complete and the team has a dedicated session for each item. Each sub-item in Phase J is effectively its own session.
 
@@ -853,7 +853,7 @@ A fourteenth completed canonical run on 2026-04-17, after adding ~47 unit-level 
 
 ---
 
-### Phase K: Automation & Human-Error Reduction (AUTO-01..AUTO-10)
+### ✅ Phase K: Automation & Human-Error Reduction (AUTO-01..AUTO-10) — COMPLETE
 
 **Goal**: Convert the highest-risk human loops identified in the 2026-04-15 automation review into executable controls. This phase is intentionally ordered by control leverage, not by implementation ease.
 

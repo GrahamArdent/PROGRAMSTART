@@ -1,7 +1,7 @@
 # Upgrade Gameplan — Necessary Improvements for PROGRAMSTART
 
 Purpose: Prioritized upgrade plan covering all necessary improvements identified from a full codebase audit on 2026-04-16. Addresses CI integrity, coverage debt, operator workflow gaps, architecture debt, release readiness, and remaining strategic items from the hardening gameplan.
-Status: **IN PROGRESS**
+Status: **COMPLETE** — All phases (0, A–J) executed. Released as v1.0.0 (commit `01900ae`, 2026-04-17).
 Authority: Non-canonical working plan derived from full baseline audit (1488 tests, 92% coverage, pyright clean, validate PASS, drift PASS) on 2026-04-16.
 Review scan count: **4** (Scan 1: baseline verification; Scan 2: post-update review; Scan 3: mutation scanner loop review; Scan 4: deadlock fix + accuracy corrections)
 Last updated: 2026-04-17
@@ -704,7 +704,7 @@ Expected: 7 cycles complete (~2.2 hours total at ~19 min/cycle). If a cycle hits
 
 ---
 
-### Phase J: Strategic Features (STR-02, STR-03)
+### ✅ Phase J: Strategic Features (STR-02, STR-03) — COMPLETE
 
 **Goal**: Implement the remaining strategic items from the hardening gameplan. These are lower priority and each is its own session.
 

@@ -249,6 +249,7 @@
       "docs/decisions/0014-compose-process-registry-from-manifest-and-fragments.md",
       "docs/decisions/0015-reuse-external-agent-systems-by-pattern-not-wholesale.md",
       "docs/decisions/0016-require-execution-prompt-for-operator-gameplans.md",
+      "docs/decisions/0017-jit-check-cli-command.md",
       ".vscode/tasks.json"
     ],
     "userjourney_bootstrap_assets": [

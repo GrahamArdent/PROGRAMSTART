@@ -38,7 +38,7 @@ try:
         programstart_workflow_state,
         programstart_health_probe,
     )
-    from .programstart_common import warn_direct_script_invocation
+    from .programstart_common import load_registry, warn_direct_script_invocation
     from .programstart_command_registry import CLI_COMMANDS
 except ImportError:  # pragma: no cover - standalone script execution fallback
     import programstart_attach
@@ -71,7 +71,7 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
     import programstart_workflow_state
     import programstart_health_probe
 
-    from programstart_common import warn_direct_script_invocation
+    from programstart_common import load_registry, warn_direct_script_invocation
 
     CLI_COMMANDS = programstart_command_registry.CLI_COMMANDS
 
@@ -99,6 +99,43 @@ def _translate_diff_arguments(arguments: list[str]) -> list[str]:
     for argument in arguments:
         translated.append(replacements.get(argument, argument))
     return translated
+
+
+def run_jit_check(arguments: list[str]) -> int:
+    parser = argparse.ArgumentParser(prog="programstart jit-check", description="Run the JIT source-of-truth protocol.")
+    parser.add_argument("--system", choices=["programbuild", "userjourney"], required=True, help="Workflow system to check.")
+    args = parser.parse_args(arguments)
+
+    print()
+    print("  JIT Source-of-Truth Check")
+    print()
+
+    # Step 1: Guide — derive the minimal file set
+    guide_result = run_passthrough(programstart_step_guide.main, "programstart guide", ["--system", args.system])
+    if guide_result != 0:
+        print(f"\n  Guide failed (exit {guide_result}).")
+        return 2
+
+    # Step 2: Drift — verify baseline
+    drift_result = run_passthrough(programstart_drift_check.main, "programstart drift", ["--system", args.system])
+
+    # Step 3: Print sync rule summary
+    registry = load_registry()
+    rules = [rule for rule in registry.get("sync_rules", []) if rule.get("system", "") in (args.system, "cross", "")]
+    if rules:
+        print()
+        print("  Sync rules (authority → dependents):")
+        for rule in rules:
+            authority = ", ".join(rule.get("authority_files", []))
+            print(f"  - {rule['name']}: {authority}")
+    print()
+
+    if drift_result != 0:
+        print("  Drift detected — resolve before editing.")
+        return 1
+
+    print("  JIT check passed — baseline is clean.")
+    return 0
 
 
 def run_next(arguments: list[str]) -> int:
@@ -198,6 +235,8 @@ def dispatch(command: str, arguments: list[str], parser: argparse.ArgumentParser
         return run_passthrough(programstart_mutation_edit_hook.main, "programstart mutation-edit-hook", arguments)
     if command == "mutation-loop":
         return run_passthrough(programstart_mutation_loop.main, "programstart mutation-loop", arguments)
+    if command == "jit-check":
+        return run_jit_check(arguments)
     if command == "help":
         parser.print_help()
         return 0

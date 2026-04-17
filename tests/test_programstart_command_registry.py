@@ -56,6 +56,7 @@ def test_cli_commands_contains_expected_public_commands() -> None:
         "prompt-build",
         "mutation-edit-hook",
         "mutation-loop",
+        "jit-check",
     )
 
 

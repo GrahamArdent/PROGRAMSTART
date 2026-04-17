@@ -26,6 +26,7 @@ Legacy pre-register ADRs: `0001`-`0003` predate the current `DECISION_LOG.md` li
 | [0014](0014-compose-process-registry-from-manifest-and-fragments.md) | Compose process registry from a manifest and fragments | accepted | 2026-04-15 |
 | [0015](0015-reuse-external-agent-systems-by-pattern-not-wholesale.md) | Reuse external agent systems by pattern, not wholesale | accepted | 2026-04-16 |
 | [0016](0016-require-execution-prompt-for-operator-gameplans.md) | Require execution prompt for operator gameplans | accepted | 2026-04-16 |
+| [0017](0017-jit-check-cli-command.md) | JIT Check CLI Command | accepted | 2026-04-17 |
 
 ## Rules
 

@@ -35,6 +35,7 @@ CLI_COMMANDS: tuple[str, ...] = (
     "prompt-build",
     "mutation-edit-hook",
     "mutation-loop",
+    "jit-check",
 )
 
 

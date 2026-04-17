@@ -73,12 +73,22 @@ Or use **VS Code**: press `Ctrl+Shift+P` → **Tasks: Run Task** → **PROGRAMST
 ```
   ┌─────────────────────────────────────────────┐
   │  pb next          ← "where am I & what now?" │
-  │  pb drift         ← "is my baseline clean?"  │
+  │  pb jit-check     ← "is my baseline clean?"  │
   │  (do the work in the listed authority files) │
   │  pb validate      ← "is everything correct?" │
-  │  pb drift         ← "did I introduce drift?" │
+  │  pb jit-check     ← "did I introduce drift?" │
   │  pb advance       ← "I'm done, move forward" │
   └─────────────────────────────────────────────┘
+```
+
+### JIT source-of-truth check
+
+`programstart jit-check --system programbuild` runs the full JIT protocol in one command: derives the minimal file set (`guide`), verifies baseline (`drift`), and prints the active sync rules. Use it before and after editing authority files.
+
+```powershell
+.\scripts\pb.ps1 jit-check --system programbuild
+# USERJOURNEY only if attached:
+.\scripts\pb.ps1 jit-check --system userjourney
 ```
 
 ### Step 1 — Understand what's active

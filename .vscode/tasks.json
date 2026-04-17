@@ -242,10 +242,8 @@
       "label": "PROGRAMSTART: JIT Check",
       "type": "shell",
       "command": "uv",
-      "args": ["run", "programstart", "guide", "--system", "programbuild"],
-      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "group": "workflow" },
-      "dependsOn": ["PROGRAMSTART: Drift Check"],
-      "dependsOrder": "sequence"
+      "args": ["run", "programstart", "jit-check", "--system", "programbuild"],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true, "group": "workflow" }
     },
     {
       "label": "PROGRAMSTART: Safe Gate",

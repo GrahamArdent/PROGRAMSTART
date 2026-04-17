@@ -440,3 +440,101 @@ def test_unified_cli_dispatch_rejects_unknown_command() -> None:
 
     with pytest.raises(SystemExit, match="Unknown command: unknown"):
         programstart_cli.dispatch("unknown", [], parser)
+
+
+# -- jit-check tests -------------------------------------------------------------------
+
+
+def test_jit_check_clean_baseline(monkeypatch, capsys) -> None:
+    """jit-check exits 0 when guide and drift both succeed."""
+    calls: list[tuple[str, list[str]]] = []
+
+    def fake_guide_main() -> int:
+        calls.append(("guide", sys.argv[:]))
+        return 0
+
+    def fake_drift_main() -> int:
+        calls.append(("drift", sys.argv[:]))
+        return 0
+
+    monkeypatch.setattr(programstart_cli.programstart_step_guide, "main", fake_guide_main)
+    monkeypatch.setattr(programstart_cli.programstart_drift_check, "main", fake_drift_main)
+    assert programstart_cli.main(["jit-check", "--system", "programbuild"]) == 0
+    assert calls == [
+        ("guide", ["programstart guide", "--system", "programbuild"]),
+        ("drift", ["programstart drift", "--system", "programbuild"]),
+    ]
+    output = capsys.readouterr().out
+    assert "JIT check passed" in output
+
+
+def test_jit_check_drift_detected(monkeypatch, capsys) -> None:
+    """jit-check exits 1 when drift check finds violations."""
+
+    def fake_guide_main() -> int:
+        return 0
+
+    def fake_drift_main() -> int:
+        return 1
+
+    monkeypatch.setattr(programstart_cli.programstart_step_guide, "main", fake_guide_main)
+    monkeypatch.setattr(programstart_cli.programstart_drift_check, "main", fake_drift_main)
+    assert programstart_cli.main(["jit-check", "--system", "programbuild"]) == 1
+    output = capsys.readouterr().out
+    assert "Drift detected" in output
+
+
+def test_jit_check_guide_failure(monkeypatch, capsys) -> None:
+    """jit-check exits 2 when guide fails."""
+
+    def fake_guide_main() -> int:
+        return 1
+
+    monkeypatch.setattr(programstart_cli.programstart_step_guide, "main", fake_guide_main)
+    assert programstart_cli.main(["jit-check", "--system", "programbuild"]) == 2
+    output = capsys.readouterr().out
+    assert "Guide failed" in output
+
+
+def test_jit_check_userjourney_system(monkeypatch) -> None:
+    """jit-check accepts --system userjourney and passes it through."""
+    calls: list[tuple[str, list[str]]] = []
+
+    def fake_guide_main() -> int:
+        calls.append(("guide", sys.argv[:]))
+        return 0
+
+    def fake_drift_main() -> int:
+        calls.append(("drift", sys.argv[:]))
+        return 0
+
+    monkeypatch.setattr(programstart_cli.programstart_step_guide, "main", fake_guide_main)
+    monkeypatch.setattr(programstart_cli.programstart_drift_check, "main", fake_drift_main)
+    assert programstart_cli.main(["jit-check", "--system", "userjourney"]) == 0
+    assert calls == [
+        ("guide", ["programstart guide", "--system", "userjourney"]),
+        ("drift", ["programstart drift", "--system", "userjourney"]),
+    ]
+
+
+def test_jit_check_prints_sync_rules(monkeypatch, capsys) -> None:
+    """jit-check prints sync rule names for the selected system."""
+
+    def fake_guide_main() -> int:
+        return 0
+
+    def fake_drift_main() -> int:
+        return 0
+
+    monkeypatch.setattr(programstart_cli.programstart_step_guide, "main", fake_guide_main)
+    monkeypatch.setattr(programstart_cli.programstart_drift_check, "main", fake_drift_main)
+    programstart_cli.main(["jit-check", "--system", "programbuild"])
+    output = capsys.readouterr().out
+    assert "Sync rules" in output
+    assert "programbuild_control_inventory" in output
+
+
+def test_jit_check_requires_system_flag() -> None:
+    """jit-check exits with error when --system is missing."""
+    with pytest.raises(SystemExit):
+        programstart_cli.main(["jit-check"])

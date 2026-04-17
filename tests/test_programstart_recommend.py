@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import sys
 from pathlib import Path
+from typing import Any
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -1534,6 +1535,598 @@ def test_build_recommendation_companion_surface_for_api_with_dashboard() -> None
             attach_userjourney=False,
         )
     assert "admin dashboard" in rec.suggested_companion_surfaces
+
+
+# ── Unit-level exact-value tests for high-survivor-rate helpers ─────────────
+
+
+# ── comparison_bonus unit tests ────────────────────────────────────────────
+
+
+def test_comparison_bonus_no_comparisons_returns_zero() -> None:
+    bonus, reasons, alternatives = recommend.comparison_bonus(
+        item_name="Next.js",
+        selected_stacks={"fastapi"},
+        needs={"ssr"},
+        comparisons=[],
+    )
+    assert bonus == 0
+    assert reasons == []
+    assert alternatives == []
+
+
+def test_comparison_bonus_no_match_returns_zero() -> None:
+    comp = {
+        "name": "X vs Y",
+        "related_items": ["X", "Y"],
+        "compared_versions": [],
+        "decision": "X wins",
+        "summary": "X is better",
+    }
+    bonus, reasons, alternatives = recommend.comparison_bonus(
+        item_name="Next.js",
+        selected_stacks=set(),
+        needs=set(),
+        comparisons=[comp],
+    )
+    assert bonus == 0
+    assert reasons == []
+    assert alternatives == []
+
+
+def test_comparison_bonus_related_item_match_with_stack_overlap() -> None:
+    comp = {
+        "name": "FastAPI vs Flask",
+        "related_items": ["FastAPI", "Flask"],
+        "compared_versions": [],
+        "decision": "FastAPI recommended for APIs",
+        "summary": "Good API framework",
+    }
+    bonus, reasons, alternatives = recommend.comparison_bonus(
+        item_name="FastAPI",
+        selected_stacks={"Flask"},
+        needs=set(),
+        comparisons=[comp],
+    )
+    # "fastapi" in normalize_text("FastAPI recommended for APIs") → True → bonus += 3
+    assert bonus == 3
+    assert len(reasons) == 1
+    assert reasons[0] == "FastAPI recommended for APIs"
+    assert len(alternatives) == 1
+    assert alternatives[0]["item"] == "FastAPI vs Flask"
+    assert alternatives[0]["category"] == "comparison"
+    assert alternatives[0]["rationale"] == "FastAPI recommended for APIs"
+
+
+def test_comparison_bonus_summary_fallback_when_item_not_in_decision() -> None:
+    comp = {
+        "name": "Nuxt vs Remix",
+        "related_items": ["Nuxt", "Remix"],
+        "compared_versions": [],
+        "decision": "Remix recommended",
+        "summary": "Nuxt SSR is solid",
+    }
+    bonus, reasons, alternatives = recommend.comparison_bonus(
+        item_name="Nuxt",
+        selected_stacks={"Remix"},
+        needs=set(),
+        comparisons=[comp],
+    )
+    # "nuxt" not in normalize_text("Remix recommended") → else branch → bonus += 1
+    assert bonus == 1
+    assert reasons == ["Nuxt SSR is solid"]
+    assert alternatives[0]["rationale"] == "Remix recommended"
+
+
+def test_comparison_bonus_needs_overlap_triggers_match() -> None:
+    comp = {
+        "name": "A vs B",
+        "related_items": ["React", "Vue"],
+        "compared_versions": [],
+        "decision": "React for SPA",
+        "summary": "Both good",
+    }
+    bonus, reasons, alternatives = recommend.comparison_bonus(
+        item_name="React",
+        selected_stacks=set(),
+        needs={"react"},
+        comparisons=[comp],
+    )
+    assert bonus == 3
+    assert len(alternatives) == 1
+
+
+def test_comparison_bonus_compared_versions_match() -> None:
+    comp = {
+        "name": "FastAPI 0.100 vs 0.111",
+        "related_items": [],
+        "compared_versions": ["FastAPI"],
+        "decision": "Upgrade to FastAPI 0.111",
+        "summary": "Minor improvements",
+    }
+    bonus, reasons, alternatives = recommend.comparison_bonus(
+        item_name="FastAPI",
+        selected_stacks=set(),
+        needs={"fastapi"},
+        comparisons=[comp],
+    )
+    assert bonus == 3
+    assert "Upgrade to FastAPI 0.111" in reasons
+
+
+def test_comparison_bonus_multiple_comparisons_accumulate() -> None:
+    comps = [
+        {
+            "name": "A vs B",
+            "related_items": ["FastAPI", "Flask"],
+            "compared_versions": [],
+            "decision": "FastAPI wins",
+            "summary": "FastAPI is faster",
+        },
+        {
+            "name": "C vs D",
+            "related_items": ["FastAPI", "Django"],
+            "compared_versions": [],
+            "decision": "Use FastAPI for APIs",
+            "summary": "Django REST alt",
+        },
+    ]
+    bonus, reasons, alternatives = recommend.comparison_bonus(
+        item_name="FastAPI",
+        selected_stacks={"Flask", "Django"},
+        needs=set(),
+        comparisons=comps,
+    )
+    # Both match: 3 + 3 = 6
+    assert bonus == 6
+    assert len(reasons) == 2
+    assert len(alternatives) == 2
+
+
+def test_comparison_bonus_rationale_uses_decision_when_present() -> None:
+    bonus, reasons, alternatives = recommend.comparison_bonus(
+        item_name="X",
+        selected_stacks={"X"},
+        needs=set(),
+        comparisons=[{"related_items": ["X"], "compared_versions": [], "name": "comp1", "decision": "", "summary": "fallback"}],
+    )
+    # decision is empty → "x" not in normalize_text("") → else branch, bonus += 1
+    assert bonus == 1
+    assert alternatives[0]["rationale"] == "fallback"
+
+
+def test_comparison_bonus_empty_decision_falls_through_to_summary() -> None:
+    comp = {
+        "name": "comp",
+        "related_items": ["X"],
+        "compared_versions": [],
+        "decision": "",
+        "summary": "summary only",
+    }
+    bonus, reasons, alternatives = recommend.comparison_bonus(
+        item_name="X",
+        selected_stacks={"X"},
+        needs=set(),
+        comparisons=[comp],
+    )
+    assert bonus == 1
+    assert reasons == ["summary only"]
+    assert alternatives[0]["rationale"] == "summary only"
+
+
+# ── actionability_follow_up_commands unit tests ────────────────────────────
+
+
+def test_actionability_follow_up_commands_empty_returns_empty() -> None:
+    assert recommend.actionability_follow_up_commands([]) == []
+
+
+def test_actionability_follow_up_commands_advice_only() -> None:
+    cmds = recommend.actionability_follow_up_commands([{"actionability": "advice-only"}])
+    assert len(cmds) == 1
+    assert "create-plan.md" in cmds[0]
+
+
+def test_actionability_follow_up_commands_automation_supported() -> None:
+    cmds = recommend.actionability_follow_up_commands([{"actionability": "automation-supported"}])
+    assert len(cmds) == 1
+    assert "provisioning-plan.md" in cmds[0]
+
+
+def test_actionability_follow_up_commands_manual_setup() -> None:
+    cmds = recommend.actionability_follow_up_commands([{"actionability": "manual-setup"}])
+    assert len(cmds) == 1
+    assert "setup-surface.md" in cmds[0]
+
+
+def test_actionability_follow_up_commands_all_three() -> None:
+    items = [
+        {"actionability": "advice-only"},
+        {"actionability": "automation-supported"},
+        {"actionability": "manual-setup"},
+    ]
+    cmds = recommend.actionability_follow_up_commands(items)
+    assert len(cmds) == 3
+    assert "create-plan.md" in cmds[0]
+    assert "provisioning-plan.md" in cmds[1]
+    assert "setup-surface.md" in cmds[2]
+
+
+def test_actionability_follow_up_commands_unknown_category_ignored() -> None:
+    cmds = recommend.actionability_follow_up_commands([{"actionability": "unknown-type"}])
+    assert cmds == []
+
+
+def test_actionability_follow_up_commands_missing_key_ignored() -> None:
+    cmds = recommend.actionability_follow_up_commands([{"name": "SomeService"}])
+    assert cmds == []
+
+
+def test_actionability_follow_up_commands_duplicate_category() -> None:
+    items = [
+        {"actionability": "advice-only"},
+        {"actionability": "advice-only"},
+    ]
+    cmds = recommend.actionability_follow_up_commands(items)
+    # advice-only matched by `any()`, so only one command
+    assert len(cmds) == 1
+
+
+# ── shape_profile exact-value unit tests ───────────────────────────────────
+
+
+def test_shape_profile_cli_tool_exact() -> None:
+    archetype, baselines, intents, domains = recommend.shape_profile("cli tool")
+    assert archetype == "Type-safe CLI planning toolkit"
+    assert baselines == ["Pydantic", "pytest", "Hypothesis", "Ruff", "uv"]
+    assert intents == {"cli", "validation", "testing", "automation", "developer tooling"}
+    assert domains == ["Developer experience, quality, and supply chain"]
+
+
+def test_shape_profile_api_service_exact() -> None:
+    archetype, baselines, intents, domains = recommend.shape_profile("api service")
+    assert archetype == "Typed API and automation platform"
+    assert baselines == ["FastAPI", "PostgreSQL", "Pydantic", "OpenTelemetry", "pytest"]
+    assert "api contracts" in intents
+    assert "async io" in intents
+    assert len(domains) == 2
+
+
+def test_shape_profile_web_app_exact() -> None:
+    archetype, baselines, intents, domains = recommend.shape_profile("web app")
+    assert archetype == "Interactive product workflow"
+    assert baselines == ["Next.js", "PostgreSQL", "Playwright", "Pydantic"]
+    assert "ssr" in intents
+    assert "authentication" in intents
+    assert "Web and frontend product delivery" in domains
+
+
+def test_shape_profile_mobile_app_exact() -> None:
+    archetype, baselines, intents, domains = recommend.shape_profile("mobile app")
+    assert archetype == "Mobile product workflow"
+    assert baselines == ["React Native", "Expo", "Firebase", "Pydantic"]
+    assert "ios" in intents
+    assert "android" in intents
+    assert "push notifications" in intents
+    assert "in app purchases" in intents
+
+
+def test_shape_profile_data_pipeline_exact() -> None:
+    archetype, baselines, intents, domains = recommend.shape_profile("data pipeline")
+    assert archetype == "Data and automation workflow"
+    assert baselines == ["FastAPI", "DuckDB", "Polars", "Pydantic"]
+    assert "etl" in intents
+    assert "columnar processing" in intents
+    assert "Data engineering and analytics" in domains
+
+
+def test_shape_profile_unknown_exact() -> None:
+    archetype, baselines, intents, domains = recommend.shape_profile("something weird")
+    assert archetype == "Balanced production workflow"
+    assert baselines == ["Pydantic", "pytest", "Ruff", "uv"]
+    assert intents == {"validation", "testing", "automation"}
+    assert domains == ["Developer experience, quality, and supply chain"]
+
+
+# ── infer_domain_names exact-value unit tests ──────────────────────────────
+
+
+def _domain_kb() -> dict[str, Any]:
+    """KB with all coverage domains for domain inference tests."""
+    return {
+        "coverage_domains": [
+            {"name": "Developer experience, quality, and supply chain"},
+            {"name": "Web and frontend product delivery"},
+            {"name": "Cloud, infrastructure, and platform operations"},
+            {"name": "API, workflow, and backend platforms"},
+            {"name": "AI, retrieval, and agent systems"},
+            {"name": "Data engineering and analytics"},
+            {"name": "Identity, security, and regulated delivery"},
+            {"name": "Realtime collaboration, messaging, and eventing"},
+            {"name": "Commerce, communication, and product integrations"},
+            {"name": "Mobile and cross-platform apps"},
+            {"name": "Desktop, local-first, and offline-capable software"},
+        ],
+    }
+
+
+def test_infer_domain_names_cli_no_needs() -> None:
+    domains = recommend.infer_domain_names("cli tool", set(), False, _domain_kb())
+    assert domains == ["Developer experience, quality, and supply chain"]
+
+
+def test_infer_domain_names_web_app_no_needs() -> None:
+    domains = recommend.infer_domain_names("web app", set(), False, _domain_kb())
+    assert "Web and frontend product delivery" in domains
+    assert "Cloud, infrastructure, and platform operations" in domains
+
+
+def test_infer_domain_names_ai_need_adds_ai_domain() -> None:
+    domains = recommend.infer_domain_names("cli tool", {"ai"}, False, _domain_kb())
+    assert "AI, retrieval, and agent systems" in domains
+    assert "Developer experience, quality, and supply chain" in domains
+
+
+def test_infer_domain_names_realtime_need() -> None:
+    domains = recommend.infer_domain_names("api service", {"realtime"}, False, _domain_kb())
+    assert "Realtime collaboration, messaging, and eventing" in domains
+
+
+def test_infer_domain_names_payments_need() -> None:
+    domains = recommend.infer_domain_names("web app", {"payments"}, False, _domain_kb())
+    assert "Commerce, communication, and product integrations" in domains
+
+
+def test_infer_domain_names_regulated_adds_identity_domain() -> None:
+    domains = recommend.infer_domain_names("cli tool", set(), True, _domain_kb())
+    assert "Identity, security, and regulated delivery" in domains
+
+
+def test_infer_domain_names_regulated_with_auth_need() -> None:
+    domains = recommend.infer_domain_names("api service", {"authentication"}, True, _domain_kb())
+    assert "Identity, security, and regulated delivery" in domains
+
+
+def test_infer_domain_names_desktop_need() -> None:
+    domains = recommend.infer_domain_names("cli tool", {"desktop"}, False, _domain_kb())
+    assert "Desktop, local-first, and offline-capable software" in domains
+
+
+def test_infer_domain_names_observability_need() -> None:
+    domains = recommend.infer_domain_names("api service", {"observability"}, False, _domain_kb())
+    assert "Cloud, infrastructure, and platform operations" in domains
+
+
+def test_infer_domain_names_mobile_need() -> None:
+    domains = recommend.infer_domain_names("cli tool", {"mobile"}, False, _domain_kb())
+    assert "Mobile and cross-platform apps" in domains
+
+
+def test_infer_domain_names_multiple_needs() -> None:
+    domains = recommend.infer_domain_names("web app", {"payments", "ai", "realtime"}, False, _domain_kb())
+    assert "Commerce, communication, and product integrations" in domains
+    assert "AI, retrieval, and agent systems" in domains
+    assert "Realtime collaboration, messaging, and eventing" in domains
+
+
+def test_infer_domain_names_data_pipeline_base_domains() -> None:
+    domains = recommend.infer_domain_names("data pipeline", set(), False, _domain_kb())
+    assert "Data engineering and analytics" in domains
+    assert "API, workflow, and backend platforms" in domains
+
+
+def test_infer_domain_names_no_duplicate_domains() -> None:
+    # observability maps to Cloud domain; api service base already has Cloud domain
+    domains = recommend.infer_domain_names("api service", {"observability"}, False, _domain_kb())
+    cloud_count = domains.count("Cloud, infrastructure, and platform operations")
+    assert cloud_count == 1
+
+
+def test_infer_domain_names_unknown_need_ignored() -> None:
+    domains = recommend.infer_domain_names("cli tool", {"completely_unknown_xyzzy"}, False, _domain_kb())
+    assert domains == ["Developer experience, quality, and supply chain"]
+
+
+def test_infer_domain_names_missing_kb_domain_skipped() -> None:
+    # KB missing the AI domain → even with 'ai' need, it won't appear
+    kb = {"coverage_domains": [{"name": "Developer experience, quality, and supply chain"}]}
+    domains = recommend.infer_domain_names("cli tool", {"ai"}, False, kb)
+    assert "AI, retrieval, and agent systems" not in domains
+
+
+# ── build_generated_prompt exact-value unit tests ──────────────────────────
+
+
+def test_build_generated_prompt_basic_structure() -> None:
+    prompt = recommend.build_generated_prompt(
+        product_shape="cli tool",
+        variant="standard",
+        attach_userjourney=False,
+        kickoff_files=["KICKOFF.md"],
+        rationale=["reason1"],
+        prompt_principles=["principle1"],
+        prompt_patterns=["pattern1"],
+        prompt_anti_patterns=["anti1"],
+        coverage_warnings=[],
+        service_names=["Supabase"],
+        cli_tool_names=["uv"],
+        api_names=["Stripe"],
+    )
+    assert "## Task" in prompt
+    assert "## Project Context" in prompt
+    assert "Product shape: cli tool" in prompt
+    assert "Variant: standard" in prompt
+    assert "USERJOURNEY attached: no" in prompt
+    assert "KICKOFF.md" in prompt
+    assert "## Infrastructure" in prompt
+    assert "Supabase" in prompt
+    assert "uv" in prompt
+    assert "Stripe" in prompt
+    assert "## Decision Rationale" in prompt
+    assert "reason1" in prompt
+    assert "## Prompt Principles" in prompt
+    assert "principle1" in prompt
+    assert "## Prompt Patterns" in prompt
+    assert "pattern1" in prompt
+    assert "## Anti-Patterns" in prompt
+    assert "anti1" in prompt
+    assert "## Coverage Warnings" in prompt
+    assert "none" in prompt
+    assert "## Constraints" in prompt
+
+
+def test_build_generated_prompt_userjourney_attached() -> None:
+    prompt = recommend.build_generated_prompt(
+        product_shape="web app",
+        variant="product",
+        attach_userjourney=True,
+        kickoff_files=[],
+        rationale=[],
+        prompt_principles=[],
+        prompt_patterns=[],
+        prompt_anti_patterns=[],
+        coverage_warnings=[],
+        service_names=[],
+        cli_tool_names=[],
+        api_names=[],
+    )
+    assert "USERJOURNEY attached: yes" in prompt
+    assert "registry kickoff files" in prompt
+    assert "none inferred" in prompt
+
+
+def test_build_generated_prompt_coverage_warnings() -> None:
+    warnings = [
+        {"domain": "Cloud ops", "gaps": "no observability stack"},
+        {"domain": "Identity", "gaps": "no auth provider"},
+    ]
+    prompt = recommend.build_generated_prompt(
+        product_shape="api service",
+        variant="product",
+        attach_userjourney=False,
+        kickoff_files=["F1.md"],
+        rationale=["r"],
+        prompt_principles=["p"],
+        prompt_patterns=["pat"],
+        prompt_anti_patterns=["ap"],
+        coverage_warnings=warnings,
+        service_names=[],
+        cli_tool_names=[],
+        api_names=[],
+    )
+    assert "Cloud ops: no observability stack" in prompt
+    assert "Identity: no auth provider" in prompt
+
+
+def test_build_generated_prompt_default_anti_patterns() -> None:
+    prompt = recommend.build_generated_prompt(
+        product_shape="cli tool",
+        variant="standard",
+        attach_userjourney=False,
+        kickoff_files=[],
+        rationale=[],
+        prompt_principles=[],
+        prompt_patterns=[],
+        prompt_anti_patterns=[],
+        coverage_warnings=[],
+        service_names=[],
+        cli_tool_names=[],
+        api_names=[],
+    )
+    assert "Do not invent unsupported files" in prompt
+
+
+def test_build_generated_prompt_rationale_capped_at_6() -> None:
+    rationale = [f"reason{i}" for i in range(10)]
+    prompt = recommend.build_generated_prompt(
+        product_shape="cli tool",
+        variant="standard",
+        attach_userjourney=False,
+        kickoff_files=[],
+        rationale=rationale,
+        prompt_principles=[],
+        prompt_patterns=[],
+        prompt_anti_patterns=[],
+        coverage_warnings=[],
+        service_names=[],
+        cli_tool_names=[],
+        api_names=[],
+    )
+    assert "reason5" in prompt
+    assert "reason6" not in prompt
+
+
+def test_build_generated_prompt_principles_capped_at_8() -> None:
+    principles = [f"principle{i}" for i in range(12)]
+    prompt = recommend.build_generated_prompt(
+        product_shape="cli tool",
+        variant="standard",
+        attach_userjourney=False,
+        kickoff_files=[],
+        rationale=[],
+        prompt_principles=principles,
+        prompt_patterns=[],
+        prompt_anti_patterns=[],
+        coverage_warnings=[],
+        service_names=[],
+        cli_tool_names=[],
+        api_names=[],
+    )
+    assert "principle7" in prompt
+    assert "principle8" not in prompt
+
+
+def test_build_generated_prompt_coverage_warnings_capped_at_4() -> None:
+    warnings = [{"domain": f"D{i}", "gaps": f"gap{i}"} for i in range(6)]
+    prompt = recommend.build_generated_prompt(
+        product_shape="cli tool",
+        variant="standard",
+        attach_userjourney=False,
+        kickoff_files=[],
+        rationale=[],
+        prompt_principles=[],
+        prompt_patterns=[],
+        prompt_anti_patterns=[],
+        coverage_warnings=warnings,
+        service_names=[],
+        cli_tool_names=[],
+        api_names=[],
+    )
+    assert "D3: gap3" in prompt
+    assert "D4: gap4" not in prompt
+
+
+def test_build_generated_prompt_reasoning_steps() -> None:
+    prompt = recommend.build_generated_prompt(
+        product_shape="cli tool",
+        variant="standard",
+        attach_userjourney=False,
+        kickoff_files=[],
+        rationale=[],
+        prompt_principles=[],
+        prompt_patterns=[],
+        prompt_anti_patterns=[],
+        coverage_warnings=[],
+        service_names=[],
+        cli_tool_names=[],
+        api_names=[],
+    )
+    assert "1. Identify which authority files" in prompt
+    assert "5. Produce the plan" in prompt
+
+
+def test_build_recommendation_companion_surface_coverage_warning() -> None:
+    """Companion surface advisory generates a coverage warning."""
+    with (
+        patch.object(recommend, "load_registry", return_value=_minimal_registry()),
+        patch.object(recommend, "load_knowledge_base", return_value=_minimal_kb()),
+    ):
+        rec = recommend.build_recommendation(
+            product_shape="api service",
+            needs={"dashboard"},
+            regulated=False,
+            attach_userjourney=False,
+        )
     assert any(w.get("domain") == "Companion UI" and w.get("status") == "advisory" for w in rec.coverage_warnings)
 
 

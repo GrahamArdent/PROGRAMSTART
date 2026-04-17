@@ -514,9 +514,17 @@ Expected: No STALE flags in `next` output.
 
 ---
 
-### Phase G: Architecture Debt (ARCH-01, ARCH-02)
+### Phase G: Architecture Debt (ARCH-01, ARCH-02) — COMPLETE
 
 **Goal**: Address the two remaining architecture risks.
+
+> **G-1 completed**: 2026-04-17. Commit `79f233e`. Split validate.py (1710 lines) into
+> `programstart_validate_core.py` (1838 lines, all check implementations) and
+> `programstart_validate.py` (facade, ≤200 lines). 1731 tests passing.
+>
+> **G-2 completed**: 2026-04-18. Commit `1189f4c`. 22 Pydantic model classes for all 16
+> registry sections. `load_validated_registry()` alongside existing dict API. Lazy import,
+> `extra="allow"` for schema evolution. ADR-0019 / DEC-016. 1752 tests passing.
 
 #### G-1: Split `programstart_validate.py` (ARCH-01)
 

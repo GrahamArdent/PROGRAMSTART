@@ -18,6 +18,7 @@ from scripts.programstart_common import (
     _merge_registry_fragment,
     _normalise_gate_proceed,
     _normalise_stage_name,
+    _pyproject_dependency_surface,
     _use_color,
     challenge_gate_record_from_log,
     clr_bold,
@@ -40,6 +41,7 @@ from scripts.programstart_common import (
     metadata_prefixes,
     metadata_value,
     parse_markdown_table,
+    pyproject_dependency_sync_required,
     save_workflow_state,
     status_color,
     to_posix,
@@ -608,3 +610,133 @@ def test_write_json_raises_after_all_retries_exhausted(tmp_path: Path, monkeypat
 def test_validate_state_against_schema_unknown_system_is_noop() -> None:
     """Unknown system name should return early without raising."""
     validate_state_against_schema({"active_stage": "x", "stages": {}}, "unknown_system")
+
+
+# ---------------------------------------------------------------------------
+# Phase C: boundary consolidation — common.py → ≥93%
+# ---------------------------------------------------------------------------
+
+
+def test_pyproject_dependency_surface_parses_dependencies_and_optional() -> None:
+    payload = b'[project]\ndependencies = ["click>=8"]\n[project.optional-dependencies]\ndev = ["pytest"]\n'
+    deps, optional = _pyproject_dependency_surface(payload)
+    assert deps == ("click>=8",)
+    assert optional == (("dev", ("pytest",)),)
+
+
+def test_pyproject_dependency_surface_handles_missing_sections() -> None:
+    payload = b"[project]\nname = 'x'\n"
+    deps, optional = _pyproject_dependency_surface(payload)
+    assert deps == ()
+    assert optional == ()
+
+
+def test_pyproject_dependency_sync_required_returns_true_when_no_pyproject(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setattr("scripts.programstart_common.ROOT", tmp_path)
+    assert pyproject_dependency_sync_required() is True
+
+
+def test_pyproject_dependency_sync_required_returns_true_on_parse_error(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setattr("scripts.programstart_common.ROOT", tmp_path)
+    (tmp_path / "pyproject.toml").write_bytes(b"\xff\xfe not valid toml")
+    assert pyproject_dependency_sync_required() is True
+
+
+def test_pyproject_dependency_sync_required_returns_true_when_git_fails(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setattr("scripts.programstart_common.ROOT", tmp_path)
+    (tmp_path / "pyproject.toml").write_text('[project]\ndependencies = ["click"]\n', encoding="utf-8")
+    monkeypatch.setattr(
+        subprocess,
+        "run",
+        lambda *a, **kw: SimpleNamespace(returncode=128, stdout=b"", stderr=b""),
+    )
+    assert pyproject_dependency_sync_required() is True
+
+
+def test_pyproject_dependency_sync_required_returns_false_when_unchanged(tmp_path: Path, monkeypatch) -> None:
+    content = b'[project]\ndependencies = ["click>=8"]\n'
+    monkeypatch.setattr("scripts.programstart_common.ROOT", tmp_path)
+    (tmp_path / "pyproject.toml").write_bytes(content)
+    monkeypatch.setattr(
+        subprocess,
+        "run",
+        lambda *a, **kw: SimpleNamespace(returncode=0, stdout=content, stderr=b""),
+    )
+    assert pyproject_dependency_sync_required() is False
+
+
+def test_pyproject_dependency_sync_required_returns_true_when_changed(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setattr("scripts.programstart_common.ROOT", tmp_path)
+    (tmp_path / "pyproject.toml").write_text('[project]\ndependencies = ["click>=9"]\n', encoding="utf-8")
+    monkeypatch.setattr(
+        subprocess,
+        "run",
+        lambda *a, **kw: SimpleNamespace(returncode=0, stdout=b'[project]\ndependencies = ["click>=8"]\n', stderr=b""),
+    )
+    assert pyproject_dependency_sync_required() is True
+
+
+def test_pyproject_dependency_sync_required_returns_true_when_previous_is_bad_toml(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setattr("scripts.programstart_common.ROOT", tmp_path)
+    (tmp_path / "pyproject.toml").write_text('[project]\ndependencies = ["click"]\n', encoding="utf-8")
+    monkeypatch.setattr(
+        subprocess,
+        "run",
+        lambda *a, **kw: SimpleNamespace(returncode=0, stdout=b"not valid toml {{", stderr=b""),
+    )
+    assert pyproject_dependency_sync_required() is True
+
+
+def test_challenge_gate_record_from_log_returns_none_on_oserror(tmp_path: Path, monkeypatch) -> None:
+    """OSError during gate file read returns None (lines 373-374)."""
+    monkeypatch.setattr("scripts.programstart_common.ROOT", tmp_path)
+    gate = tmp_path / "PROGRAMBUILD" / "PROGRAMBUILD_CHALLENGE_GATE.md"
+    gate.parent.mkdir(parents=True)
+    gate.write_text("# Challenge Gate Log\n", encoding="utf-8")
+
+    original_read_text = Path.read_text
+
+    def raise_oserror(self: Path, *args: object, **kwargs: object) -> str:
+        if "CHALLENGE_GATE" in str(self):
+            raise OSError("disk error")
+        return original_read_text(self, *args, **kwargs)  # type: ignore[arg-type]
+
+    monkeypatch.setattr(Path, "read_text", raise_oserror)
+    assert challenge_gate_record_from_log("discovery") is None
+
+
+def test_challenge_gate_record_from_log_stops_at_next_heading(tmp_path: Path, monkeypatch) -> None:
+    """A heading after the log section ends parsing (line 387)."""
+    monkeypatch.setattr("scripts.programstart_common.ROOT", tmp_path)
+    gate = tmp_path / "PROGRAMBUILD" / "PROGRAMBUILD_CHALLENGE_GATE.md"
+    gate.parent.mkdir(parents=True)
+    table = (
+        "# Challenge Gate Log\n\n"
+        "| From Stage | To Stage | Date | Proceed? | Notes |\n"
+        "|---|---|---|---|---|\n"
+        "| Discovery | Requirements | 2026-01-01 | Yes | ok |\n"
+        "## Another Section\n"
+        "Some unrelated text\n"
+    )
+    gate.write_text(table, encoding="utf-8")
+    result = challenge_gate_record_from_log("discovery")
+    assert result is not None
+    assert result["result"] == "clear"
+
+
+def test_challenge_gate_record_from_log_skips_mismatched_columns(tmp_path: Path, monkeypatch) -> None:
+    """Row with wrong column count is skipped, next row is used (line 403)."""
+    monkeypatch.setattr("scripts.programstart_common.ROOT", tmp_path)
+    gate = tmp_path / "PROGRAMBUILD" / "PROGRAMBUILD_CHALLENGE_GATE.md"
+    gate.parent.mkdir(parents=True)
+    table = (
+        "# Challenge Gate Log\n\n"
+        "| From Stage | To Stage | Date | Proceed? | Notes |\n"
+        "|---|---|---|---|---|\n"
+        "| Bad | Row |\n"
+        "| Discovery | Requirements | 2026-01-01 | Yes | passed |\n"
+    )
+    gate.write_text(table, encoding="utf-8")
+    result = challenge_gate_record_from_log("discovery")
+    assert result is not None
+    assert result["result"] == "clear"

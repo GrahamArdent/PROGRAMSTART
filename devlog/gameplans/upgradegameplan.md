@@ -480,7 +480,7 @@ uv run programstart validate --check all
 
 ---
 
-### Phase F: Workflow State Triage (OP-03)
+### Phase F: Workflow State Triage (OP-03) — COMPLETE
 
 **Goal**: Resolve the stale workflow state flags. Both PROGRAMBUILD and USERJOURNEY have been stale for 15–20 days. Either advance them or explicitly defer them with a documented reason.
 
@@ -507,6 +507,10 @@ uv run programstart state show
 uv run programstart validate --check all
 ```
 Expected: No STALE flags in `next` output.
+
+> **Completed**: 2026-04-17. Commit `02b8327`. Option B implemented — `--defer` flag
+> added to `programstart advance`. Both systems deferred. ADR-0018 (DEC-015).
+> 7 tests added, 1730 total passing. `programstart next` shows no STALE flags.
 
 ---
 

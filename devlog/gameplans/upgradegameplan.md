@@ -563,9 +563,17 @@ uv run --extra dev pyright
 
 ---
 
-### Phase H: Release Readiness (REL-01, REL-02, REL-03)
+### Phase H: Release Readiness (REL-01, REL-02, REL-03) — COMPLETE
 
 **Goal**: Prepare PROGRAMSTART for a semver release that reflects its actual maturity.
+
+> **H-1 completed**: 2026-04-17. Commit `07240e2`. Version bumped to 0.9.0 in pyproject.toml.
+> CHANGELOG.md consolidated with [0.9.0] section covering all features, fixes, automation,
+> and docs since 0.1.0. `uv build` produces `programstart_workflow-0.9.0-py3-none-any.whl`.
+>
+> **H-2 verified**: Release workflow `.github/workflows/release-package.yml` already exists
+> and is complete — triggers on `v*` tag push, builds wheel, runs dist smoke, uploads to
+> GitHub Releases. No changes needed.
 
 #### H-1: Version bump to 0.9.0 (REL-01)
 

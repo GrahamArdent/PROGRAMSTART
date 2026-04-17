@@ -17,7 +17,7 @@ def _reqs(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     def _workspace_path(rel: str) -> Path:
         return tmp_path / rel
 
-    monkeypatch.setattr("scripts.programstart_validate.workspace_path", _workspace_path)
+    monkeypatch.setattr("scripts.programstart_validate_core.workspace_path", _workspace_path)
     return pb
 
 

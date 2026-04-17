@@ -147,6 +147,7 @@ source = [
   "scripts.programstart_command_registry",
   "scripts.programstart_common",
   "scripts.programstart_validate",
+  "scripts.programstart_validate_core",
   "scripts.programstart_bootstrap",
   "scripts.programstart_create",
   "scripts.programstart_create_core",

@@ -562,7 +562,7 @@ def test_preflight_problems_dispatches_stage_gate(tmp_path: Path, monkeypatch: p
     )
     # Redirect doc lookups to tmp_path.
     monkeypatch.setattr(
-        "scripts.programstart_validate.workspace_path",
+        "scripts.programstart_validate_core.workspace_path",
         lambda rel: tmp_path / rel,
     )
     # Prevent validate_authority_sync crash — it calls .read_text() on
@@ -570,7 +570,7 @@ def test_preflight_problems_dispatches_stage_gate(tmp_path: Path, monkeypatch: p
     # doesn't exist in tmp_path.  Authority sync is not part of the
     # dispatch chain under test.
     monkeypatch.setattr(
-        "scripts.programstart_validate.validate_authority_sync",
+        "scripts.programstart_validate_core.validate_authority_sync",
         lambda _registry: [],
     )
 
@@ -597,10 +597,10 @@ def test_preflight_problems_skips_gate_for_userjourney(tmp_path: Path, monkeypat
 
     Upstream validators: All skip because userjourney is optional (registry)
     and USERJOURNEY/ doesn't exist in tmp_path, so system_is_optional_and_absent
-    returns True (via monkeypatched scripts.programstart_validate.workspace_path).
+    returns True (via monkeypatched scripts.programstart_validate_core.workspace_path).
     """
     monkeypatch.setattr(
-        "scripts.programstart_validate.workspace_path",
+        "scripts.programstart_validate_core.workspace_path",
         lambda rel: tmp_path / rel,
     )
 
@@ -659,11 +659,11 @@ def test_advance_blocked_by_real_stage_gate(
     # stages.inputs_and_mode_selection.status="in_progress"
 
     monkeypatch.setattr(
-        "scripts.programstart_validate.workspace_path",
+        "scripts.programstart_validate_core.workspace_path",
         lambda rel: tmp_path / rel,
     )
     monkeypatch.setattr(
-        "scripts.programstart_validate.validate_authority_sync",
+        "scripts.programstart_validate_core.validate_authority_sync",
         lambda _registry: [],
     )
     # State management — load_workflow_state uses programstart_common.workspace_path
@@ -1042,8 +1042,8 @@ def test_preflight_problems_userjourney_phase0_gate(tmp_path: Path, monkeypatch)
     uj.mkdir()
     # Create stub files that validate_engineering_ready reads
     (uj / "OPEN_QUESTIONS.md").write_text("# Open Questions\n\nNone remaining.\n", encoding="utf-8")
-    monkeypatch.setattr("scripts.programstart_validate.workspace_path", lambda rel: tmp_path / rel)
-    monkeypatch.setattr("scripts.programstart_validate.validate_authority_sync", lambda _r: [])
+    monkeypatch.setattr("scripts.programstart_validate_core.workspace_path", lambda rel: tmp_path / rel)
+    monkeypatch.setattr("scripts.programstart_validate_core.validate_authority_sync", lambda _r: [])
     registry = load_registry()
     problems = preflight_problems(registry, "userjourney", active_step="phase_0")
     assert isinstance(problems, list)

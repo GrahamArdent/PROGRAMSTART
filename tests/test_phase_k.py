@@ -238,7 +238,9 @@ class TestFileHygiene:
         # Create a fake repo root with an unexpected .md file
         (tmp_path / "README.md").write_text("ok", encoding="utf-8")
         (tmp_path / "STRAY_FILE.md").write_text("bad", encoding="utf-8")
-        monkeypatch.setattr("scripts.programstart_validate.workspace_path", lambda p: tmp_path / p if p == "." else tmp_path / p)
+        monkeypatch.setattr(
+            "scripts.programstart_validate_core.workspace_path", lambda p: tmp_path / p if p == "." else tmp_path / p
+        )
         from scripts.programstart_validate import validate_file_hygiene
 
         problems = validate_file_hygiene({})

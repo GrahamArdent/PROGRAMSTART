@@ -11,6 +11,7 @@ if str(ROOT) not in sys.path:
 from scripts import programstart_bootstrap as bootstrap
 from scripts import programstart_common as common
 from scripts import programstart_validate as validate
+from scripts import programstart_validate_core as validate_core
 from scripts.programstart_common import load_json, write_json
 
 
@@ -209,7 +210,7 @@ def test_validate_authority_sync_reports_guidance_and_sync_rule_drift(tmp_path: 
         registry["systems"]["programbuild"]["control_files"],
         registry["systems"]["programbuild"]["output_files"],
     )
-    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda relative: tmp_path / relative)
 
     problems = validate.validate_authority_sync(registry)
 
@@ -279,7 +280,7 @@ def test_validate_authority_sync_reports_inventory_and_authority_map_drift(tmp_p
         ),
         encoding="utf-8",
     )
-    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda relative: tmp_path / relative)
 
     problems = validate.validate_authority_sync(registry)
 
@@ -321,7 +322,7 @@ def test_validate_authority_sync_reports_declared_missing_workspace_file(tmp_pat
         registry["systems"]["programbuild"]["control_files"],
         registry["systems"]["programbuild"]["output_files"],
     )
-    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda relative: tmp_path / relative)
 
     problems = validate.validate_authority_sync(registry)
 
@@ -368,7 +369,7 @@ def test_validate_authority_sync_skips_optional_absent_userjourney(tmp_path: Pat
         registry["systems"]["programbuild"]["control_files"],
         registry["systems"]["programbuild"]["output_files"],
     )
-    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda relative: tmp_path / relative)
     monkeypatch.setattr(common, "workspace_path", lambda relative: tmp_path / relative)
 
     problems = validate.validate_authority_sync(registry)
@@ -396,7 +397,7 @@ def test_validate_planning_references_detects_missing_workspace_and_external_ref
         '{"allowed_external_paths": ["frontend/app/auth/login/page.tsx"]}',
         encoding="utf-8",
     )
-    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda relative: tmp_path / relative)
 
     problems, warnings = validate.validate_planning_references(build_registry())
 
@@ -422,7 +423,7 @@ def test_validate_planning_references_allows_manifested_external_paths(tmp_path:
         '{"allowed_external_paths": ["frontend/app/auth/login/page.tsx"]}',
         encoding="utf-8",
     )
-    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda relative: tmp_path / relative)
 
     problems, warnings = validate.validate_planning_references(build_registry())
 
@@ -431,7 +432,7 @@ def test_validate_planning_references_allows_manifested_external_paths(tmp_path:
 
 
 def test_validate_planning_references_skips_missing_docs(tmp_path: Path, monkeypatch) -> None:
-    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda relative: tmp_path / relative)
 
     problems, warnings = validate.validate_planning_references(build_registry())
 
@@ -441,7 +442,7 @@ def test_validate_planning_references_skips_missing_docs(tmp_path: Path, monkeyp
 
 def test_validate_required_files_reports_missing_file(tmp_path: Path, monkeypatch) -> None:
     registry = build_registry()
-    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda relative: tmp_path / relative)
     problems = validate.validate_required_files(registry, "programbuild")
     assert any("Missing required file" in item for item in problems)
 
@@ -462,7 +463,7 @@ def test_validate_metadata_and_warnings(tmp_path: Path, monkeypatch) -> None:
         ),
         encoding="utf-8",
     )
-    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda relative: tmp_path / relative)
     assert validate.validate_metadata(registry, "programbuild") == []
     warnings = validate.metadata_warnings(registry, "programbuild")
     assert any("Owner not assigned" in item for item in warnings)
@@ -476,8 +477,8 @@ def test_validate_engineering_ready_detects_open_questions(tmp_path: Path, monke
         "## Remaining Operational And Legal Decisions\n1. Need legal signoff\n",
         encoding="utf-8",
     )
-    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
-    monkeypatch.setattr(validate, "validate_required_files", lambda registry: [])
+    monkeypatch.setattr(validate_core, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(validate_core, "validate_required_files", lambda registry: [])
     problems = validate.validate_engineering_ready(registry)
     assert any("not engineering-ready" in item for item in problems)
 
@@ -516,11 +517,11 @@ def test_validate_workflow_state_handles_valid_and_invalid_states(tmp_path: Path
             },
         },
     )
-    monkeypatch.setattr(validate, "workflow_state_path", lambda registry, system: state_path)
-    monkeypatch.setattr(validate, "load_workflow_state", lambda registry, system: load_json(state_path))
-    monkeypatch.setattr(validate, "workflow_steps", lambda registry, system: ["inputs_and_mode_selection", "feasibility"])
-    monkeypatch.setattr(validate, "workflow_active_step", lambda registry, system, state=None: "feasibility")
-    monkeypatch.setattr(validate, "workflow_entry_key", lambda system: "stages")
+    monkeypatch.setattr(validate_core, "workflow_state_path", lambda registry, system: state_path)
+    monkeypatch.setattr(validate_core, "load_workflow_state", lambda registry, system: load_json(state_path))
+    monkeypatch.setattr(validate_core, "workflow_steps", lambda registry, system: ["inputs_and_mode_selection", "feasibility"])
+    monkeypatch.setattr(validate_core, "workflow_active_step", lambda registry, system, state=None: "feasibility")
+    monkeypatch.setattr(validate_core, "workflow_entry_key", lambda system: "stages")
     assert validate.validate_workflow_state(registry, "programbuild") == []
 
     write_json(
@@ -588,17 +589,17 @@ def test_validate_main_all_runs_engineering_ready_when_policy_enabled(capsys, mo
             "metadata_rules": {"required_prefixes": [], "owner_placeholder": "[ASSIGN]"},
         },
     )
-    monkeypatch.setattr(validate, "validate_registry", lambda _registry: [])
-    monkeypatch.setattr(validate, "validate_required_files", lambda _registry, _sf=None: [])
-    monkeypatch.setattr(validate, "validate_metadata", lambda _registry, _sf=None: [])
-    monkeypatch.setattr(validate, "validate_workflow_state", lambda _registry, _sf=None: [])
-    monkeypatch.setattr(validate, "validate_authority_sync", lambda _registry: [])
-    monkeypatch.setattr(validate, "validate_repo_boundary_policy", lambda _registry: [])
-    monkeypatch.setattr(validate, "validate_bootstrap_assets", lambda _registry: [])
-    monkeypatch.setattr(validate, "validate_test_coverage", lambda _registry: [])
-    monkeypatch.setattr(validate, "validate_planning_references", lambda _registry: ([], []))
-    monkeypatch.setattr(validate, "metadata_warnings", lambda _registry, _sf=None: [])
-    monkeypatch.setattr(validate, "validate_engineering_ready", lambda _registry: ["engineering blocked"])
+    monkeypatch.setattr(validate_core, "validate_registry", lambda _registry: [])
+    monkeypatch.setattr(validate_core, "validate_required_files", lambda _registry, _sf=None: [])
+    monkeypatch.setattr(validate_core, "validate_metadata", lambda _registry, _sf=None: [])
+    monkeypatch.setattr(validate_core, "validate_workflow_state", lambda _registry, _sf=None: [])
+    monkeypatch.setattr(validate_core, "validate_authority_sync", lambda _registry: [])
+    monkeypatch.setattr(validate_core, "validate_repo_boundary_policy", lambda _registry: [])
+    monkeypatch.setattr(validate_core, "validate_bootstrap_assets", lambda _registry: [])
+    monkeypatch.setattr(validate_core, "validate_test_coverage", lambda _registry: [])
+    monkeypatch.setattr(validate_core, "validate_planning_references", lambda _registry: ([], []))
+    monkeypatch.setattr(validate_core, "metadata_warnings", lambda _registry, _sf=None: [])
+    monkeypatch.setattr(validate_core, "validate_engineering_ready", lambda _registry: ["engineering blocked"])
     monkeypatch.setattr("sys.argv", ["programstart_validate.py", "--check", "all"])
 
     result = validate.main()
@@ -645,14 +646,14 @@ def test_validate_metadata_reports_missing_prefixes(tmp_path: Path, monkeypatch)
     output_path = tmp_path / "PROGRAMBUILD" / "OUTPUT.md"
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text("Purpose: Example\n", encoding="utf-8")
-    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda relative: tmp_path / relative)
     problems = validate.validate_metadata(registry, "programbuild")
     assert any("Metadata incomplete" in item for item in problems)
 
 
 def test_validate_required_files_skips_optional_absent(tmp_path: Path, monkeypatch) -> None:
     registry = build_registry()
-    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda relative: tmp_path / relative)
     monkeypatch.setattr(common, "workspace_path", lambda relative: tmp_path / relative)
     problems = validate.validate_required_files(registry, "userjourney")
     assert problems == []
@@ -670,7 +671,7 @@ def test_validate_workflow_state_reports_missing_file(tmp_path: Path, monkeypatc
         }
     }
     missing = tmp_path / "PROGRAMBUILD" / "PROGRAMBUILD_STATE.json"
-    monkeypatch.setattr(validate, "workflow_state_path", lambda _registry, _system: missing)
+    monkeypatch.setattr(validate_core, "workflow_state_path", lambda _registry, _system: missing)
     problems = validate.validate_workflow_state(registry, "programbuild")
     assert any("Missing workflow state file" in item for item in problems)
 
@@ -688,10 +689,10 @@ def test_validate_workflow_state_reports_invalid_active_step(tmp_path: Path, mon
     }
     state_path = tmp_path / "PROGRAMBUILD_STATE.json"
     write_json(state_path, {"active_stage": "unknown", "stages": {}})
-    monkeypatch.setattr(validate, "workflow_state_path", lambda _registry, _system: state_path)
-    monkeypatch.setattr(validate, "load_workflow_state", lambda _registry, _system: load_json(state_path))
-    monkeypatch.setattr(validate, "workflow_steps", lambda _registry, _system: ["inputs_and_mode_selection", "feasibility"])
-    monkeypatch.setattr(validate, "workflow_active_step", lambda _registry, _system, _state=None: "unknown")
+    monkeypatch.setattr(validate_core, "workflow_state_path", lambda _registry, _system: state_path)
+    monkeypatch.setattr(validate_core, "load_workflow_state", lambda _registry, _system: load_json(state_path))
+    monkeypatch.setattr(validate_core, "workflow_steps", lambda _registry, _system: ["inputs_and_mode_selection", "feasibility"])
+    monkeypatch.setattr(validate_core, "workflow_active_step", lambda _registry, _system, _state=None: "unknown")
     problems = validate.validate_workflow_state(registry, "programbuild")
     assert any("Invalid active step" in item for item in problems)
 
@@ -719,13 +720,13 @@ def test_validate_workflow_state_reports_entry_and_progress_problems(tmp_path: P
             },
         },
     )
-    monkeypatch.setattr(validate, "workflow_state_path", lambda _registry, _system: state_path)
-    monkeypatch.setattr(validate, "load_workflow_state", lambda _registry, _system: load_json(state_path))
+    monkeypatch.setattr(validate_core, "workflow_state_path", lambda _registry, _system: state_path)
+    monkeypatch.setattr(validate_core, "load_workflow_state", lambda _registry, _system: load_json(state_path))
     monkeypatch.setattr(
-        validate, "workflow_steps", lambda _registry, _system: ["inputs_and_mode_selection", "feasibility", "architecture"]
+        validate_core, "workflow_steps", lambda _registry, _system: ["inputs_and_mode_selection", "feasibility", "architecture"]
     )
-    monkeypatch.setattr(validate, "workflow_active_step", lambda _registry, _system, _state=None: "feasibility")
-    monkeypatch.setattr(validate, "workflow_entry_key", lambda _system: "stages")
+    monkeypatch.setattr(validate_core, "workflow_active_step", lambda _registry, _system, _state=None: "feasibility")
+    monkeypatch.setattr(validate_core, "workflow_entry_key", lambda _system: "stages")
     problems = validate.validate_workflow_state(registry, "programbuild")
     assert any("must be completed before active step" in item for item in problems)
     assert any("missing approved sign-off" in item for item in problems)
@@ -735,7 +736,7 @@ def test_validate_workflow_state_reports_entry_and_progress_problems(tmp_path: P
 
 
 def test_validate_main_engineering_ready_failure(capsys, monkeypatch) -> None:
-    monkeypatch.setattr(validate, "validate_engineering_ready", lambda _registry: ["blocked"])
+    monkeypatch.setattr(validate_core, "validate_engineering_ready", lambda _registry: ["blocked"])
     monkeypatch.setattr("sys.argv", ["programstart_validate.py", "--check", "engineering-ready"])
     result = validate.main()
     out = capsys.readouterr().out
@@ -744,8 +745,8 @@ def test_validate_main_engineering_ready_failure(capsys, monkeypatch) -> None:
 
 
 def test_validate_main_metadata_warnings(capsys, monkeypatch) -> None:
-    monkeypatch.setattr(validate, "validate_metadata", lambda _registry, _sf=None: [])
-    monkeypatch.setattr(validate, "metadata_warnings", lambda _registry, _sf=None: ["warn owner"])
+    monkeypatch.setattr(validate_core, "validate_metadata", lambda _registry, _sf=None: [])
+    monkeypatch.setattr(validate_core, "metadata_warnings", lambda _registry, _sf=None: ["warn owner"])
     monkeypatch.setattr("sys.argv", ["programstart_validate.py", "--check", "metadata"])
     result = validate.main()
     out = capsys.readouterr().out
@@ -754,7 +755,7 @@ def test_validate_main_metadata_warnings(capsys, monkeypatch) -> None:
 
 
 def test_validate_main_planning_references_warnings(capsys, monkeypatch) -> None:
-    monkeypatch.setattr(validate, "validate_planning_references", lambda _registry: ([], ["warn path"]))
+    monkeypatch.setattr(validate_core, "validate_planning_references", lambda _registry: ([], ["warn path"]))
     monkeypatch.setattr("sys.argv", ["programstart_validate.py", "--check", "planning-references"])
     result = validate.main()
     out = capsys.readouterr().out
@@ -763,7 +764,7 @@ def test_validate_main_planning_references_warnings(capsys, monkeypatch) -> None
 
 
 def test_validate_main_authority_sync_failure(capsys, monkeypatch) -> None:
-    monkeypatch.setattr(validate, "validate_authority_sync", lambda _registry: ["authority mismatch"])
+    monkeypatch.setattr(validate_core, "validate_authority_sync", lambda _registry: ["authority mismatch"])
     monkeypatch.setattr("sys.argv", ["programstart_validate.py", "--check", "authority-sync"])
     result = validate.main()
     out = capsys.readouterr().out
@@ -776,7 +777,7 @@ def test_validate_repo_boundary_policy_detects_missing_phrase(tmp_path: Path, mo
     policy_file = tmp_path / ".github" / "copilot-instructions.md"
     policy_file.parent.mkdir(parents=True, exist_ok=True)
     policy_file.write_text("missing required text\n", encoding="utf-8")
-    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda relative: tmp_path / relative)
 
     problems = validate.validate_repo_boundary_policy(registry)
 
@@ -784,7 +785,7 @@ def test_validate_repo_boundary_policy_detects_missing_phrase(tmp_path: Path, mo
 
 
 def test_validate_main_repo_boundary_failure(capsys, monkeypatch) -> None:
-    monkeypatch.setattr(validate, "validate_repo_boundary_policy", lambda _registry: ["repo boundary drift"])
+    monkeypatch.setattr(validate_core, "validate_repo_boundary_policy", lambda _registry: ["repo boundary drift"])
     monkeypatch.setattr("sys.argv", ["programstart_validate.py", "--check", "repo-boundary"])
 
     result = validate.main()
@@ -810,15 +811,15 @@ def test_metadata_warnings_ignores_assigned_owner(tmp_path: Path, monkeypatch) -
         ),
         encoding="utf-8",
     )
-    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda relative: tmp_path / relative)
     assert validate.metadata_warnings(registry, "programbuild") == []
 
 
 def test_validate_engineering_ready_optional_absent(tmp_path: Path, monkeypatch) -> None:
     registry = build_registry()
-    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda relative: tmp_path / relative)
     monkeypatch.setattr(common, "workspace_path", lambda relative: tmp_path / relative)
-    monkeypatch.setattr(validate, "validate_required_files", lambda _registry: ["missing base"])
+    monkeypatch.setattr(validate_core, "validate_required_files", lambda _registry: ["missing base"])
     problems = validate.validate_engineering_ready(registry)
     assert problems == ["missing base"]
 
@@ -844,11 +845,13 @@ def test_validate_workflow_state_reports_missing_entry(tmp_path: Path, monkeypat
             },
         },
     )
-    monkeypatch.setattr(validate, "workflow_state_path", lambda _registry, _system: state_path)
-    monkeypatch.setattr(validate, "load_workflow_state", lambda _registry, _system: load_json(state_path))
-    monkeypatch.setattr(validate, "workflow_steps", lambda _registry, _system: ["inputs_and_mode_selection", "feasibility"])
-    monkeypatch.setattr(validate, "workflow_active_step", lambda _registry, _system, _state=None: "inputs_and_mode_selection")
-    monkeypatch.setattr(validate, "workflow_entry_key", lambda _system: "stages")
+    monkeypatch.setattr(validate_core, "workflow_state_path", lambda _registry, _system: state_path)
+    monkeypatch.setattr(validate_core, "load_workflow_state", lambda _registry, _system: load_json(state_path))
+    monkeypatch.setattr(validate_core, "workflow_steps", lambda _registry, _system: ["inputs_and_mode_selection", "feasibility"])
+    monkeypatch.setattr(
+        validate_core, "workflow_active_step", lambda _registry, _system, _state=None: "inputs_and_mode_selection"
+    )
+    monkeypatch.setattr(validate_core, "workflow_entry_key", lambda _system: "stages")
     problems = validate.validate_workflow_state(registry, "programbuild")
     assert any("Missing state entry 'feasibility'" in item for item in problems)
 
@@ -878,11 +881,11 @@ def test_validate_workflow_state_reports_active_step_mismatch(tmp_path: Path, mo
             },
         },
     )
-    monkeypatch.setattr(validate, "workflow_state_path", lambda _registry, _system: state_path)
-    monkeypatch.setattr(validate, "load_workflow_state", lambda _registry, _system: load_json(state_path))
-    monkeypatch.setattr(validate, "workflow_steps", lambda _registry, _system: ["inputs_and_mode_selection", "feasibility"])
-    monkeypatch.setattr(validate, "workflow_active_step", lambda _registry, _system, _state=None: "feasibility")
-    monkeypatch.setattr(validate, "workflow_entry_key", lambda _system: "stages")
+    monkeypatch.setattr(validate_core, "workflow_state_path", lambda _registry, _system: state_path)
+    monkeypatch.setattr(validate_core, "load_workflow_state", lambda _registry, _system: load_json(state_path))
+    monkeypatch.setattr(validate_core, "workflow_steps", lambda _registry, _system: ["inputs_and_mode_selection", "feasibility"])
+    monkeypatch.setattr(validate_core, "workflow_active_step", lambda _registry, _system, _state=None: "feasibility")
+    monkeypatch.setattr(validate_core, "workflow_entry_key", lambda _system: "stages")
     problems = validate.validate_workflow_state(registry, "programbuild")
     assert any("does not match in_progress step" in item for item in problems)
 
@@ -892,14 +895,14 @@ def test_validate_engineering_ready_passes_when_open_items_empty(tmp_path: Path,
     open_questions = tmp_path / "USERJOURNEY" / "OPEN_QUESTIONS.md"
     open_questions.parent.mkdir(parents=True, exist_ok=True)
     open_questions.write_text("## Remaining Operational And Legal Decisions\n", encoding="utf-8")
-    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
-    monkeypatch.setattr(validate, "validate_required_files", lambda _registry: [])
+    monkeypatch.setattr(validate_core, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(validate_core, "validate_required_files", lambda _registry: [])
     assert validate.validate_engineering_ready(registry) == []
 
 
 def test_validate_metadata_skips_missing_files_and_optional_absent(tmp_path: Path, monkeypatch) -> None:
     registry = build_registry()
-    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda relative: tmp_path / relative)
     assert validate.validate_metadata(registry) == []
     assert validate.metadata_warnings(registry) == []
 
@@ -915,7 +918,7 @@ def test_validate_workflow_state_skips_optional_absent(tmp_path: Path, monkeypat
             }
         }
     }
-    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda relative: tmp_path / relative)
     monkeypatch.setattr(common, "workspace_path", lambda relative: tmp_path / relative)
     assert validate.validate_workflow_state(registry, "userjourney") == []
 
@@ -967,11 +970,11 @@ def test_validate_workflow_state_rejects_invalid_status(tmp_path: Path, monkeypa
             },
         },
     )
-    monkeypatch.setattr(validate, "workflow_state_path", lambda _r, _s: state_path)
-    monkeypatch.setattr(validate, "load_workflow_state", lambda _r, _s: load_json(state_path))
-    monkeypatch.setattr(validate, "workflow_steps", lambda _r, _s: ["step_a"])
-    monkeypatch.setattr(validate, "workflow_active_step", lambda _r, _s, _st=None: "step_a")
-    monkeypatch.setattr(validate, "workflow_entry_key", lambda _s: "stages")
+    monkeypatch.setattr(validate_core, "workflow_state_path", lambda _r, _s: state_path)
+    monkeypatch.setattr(validate_core, "load_workflow_state", lambda _r, _s: load_json(state_path))
+    monkeypatch.setattr(validate_core, "workflow_steps", lambda _r, _s: ["step_a"])
+    monkeypatch.setattr(validate_core, "workflow_active_step", lambda _r, _s, _st=None: "step_a")
+    monkeypatch.setattr(validate_core, "workflow_entry_key", lambda _s: "stages")
 
     problems = validate.validate_workflow_state(registry, "programbuild")
 
@@ -1003,11 +1006,11 @@ def test_validate_workflow_state_rejects_bad_date_format(tmp_path: Path, monkeyp
             },
         },
     )
-    monkeypatch.setattr(validate, "workflow_state_path", lambda _r, _s: state_path)
-    monkeypatch.setattr(validate, "load_workflow_state", lambda _r, _s: load_json(state_path))
-    monkeypatch.setattr(validate, "workflow_steps", lambda _r, _s: ["step_a", "step_b"])
-    monkeypatch.setattr(validate, "workflow_active_step", lambda _r, _s, _st=None: "step_b")
-    monkeypatch.setattr(validate, "workflow_entry_key", lambda _s: "stages")
+    monkeypatch.setattr(validate_core, "workflow_state_path", lambda _r, _s: state_path)
+    monkeypatch.setattr(validate_core, "load_workflow_state", lambda _r, _s: load_json(state_path))
+    monkeypatch.setattr(validate_core, "workflow_steps", lambda _r, _s: ["step_a", "step_b"])
+    monkeypatch.setattr(validate_core, "workflow_active_step", lambda _r, _s, _st=None: "step_b")
+    monkeypatch.setattr(validate_core, "workflow_entry_key", lambda _s: "stages")
 
     problems = validate.validate_workflow_state(registry, "programbuild")
 
@@ -1020,7 +1023,7 @@ def test_validate_rule_enforcement_adr_sequence_gap(tmp_path: Path, monkeypatch)
     (decisions_dir / "README.md").write_text("# ADRs", encoding="utf-8")
     (decisions_dir / "0001-first.md").write_text("# ADR 1", encoding="utf-8")
     (decisions_dir / "0003-third.md").write_text("# ADR 3", encoding="utf-8")  # gap at 0002
-    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda relative: tmp_path / relative)
 
     registry = build_registry() | {"workspace": {"bootstrap_assets": []}}
     problems = validate.validate_rule_enforcement(registry)
@@ -1033,7 +1036,7 @@ def test_validate_rule_enforcement_adr_bad_naming(tmp_path: Path, monkeypatch) -
     decisions_dir.mkdir(parents=True)
     (decisions_dir / "README.md").write_text("# ADRs", encoding="utf-8")
     (decisions_dir / "my-decision.md").write_text("# bad name", encoding="utf-8")
-    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda relative: tmp_path / relative)
 
     registry = build_registry() | {"workspace": {"bootstrap_assets": []}}
     problems = validate.validate_rule_enforcement(registry)
@@ -1042,15 +1045,15 @@ def test_validate_rule_enforcement_adr_bad_naming(tmp_path: Path, monkeypatch) -
 
 
 def test_validate_rule_enforcement_project_repo_does_not_require_template_operator_prompt(monkeypatch) -> None:
-    real_workspace_path = validate.workspace_path
+    real_workspace_path = validate_core.workspace_path
 
     def fake_workspace_path(relative: str) -> Path:
         if relative == ".github/prompts/audit-process-drift.prompt.md":
             return Path("C:/definitely-missing/audit-process-drift.prompt.md")
         return real_workspace_path(relative)
 
-    monkeypatch.setattr(validate, "workspace_path", fake_workspace_path)
-    monkeypatch.setattr(validate, "validate_prompt_registry_completeness", lambda _registry: [])
+    monkeypatch.setattr(validate_core, "workspace_path", fake_workspace_path)
+    monkeypatch.setattr(validate_core, "validate_prompt_registry_completeness", lambda _registry: [])
     registry = common.load_registry()
     workspace = dict(registry.get("workspace", {}))
     workspace["repo_role"] = "project_repo"
@@ -1065,7 +1068,7 @@ def test_validate_prompt_registry_completeness_flags_unregistered_prompt_file(tm
     prompts_dir = tmp_path / ".github" / "prompts"
     prompts_dir.mkdir(parents=True)
     (prompts_dir / "orphan.prompt.md").write_text("---\nname: orphan\ndescription: orphan\nagent: agent\n---\n", encoding="utf-8")
-    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda relative: tmp_path / relative)
 
     problems = validate.validate_prompt_registry_completeness(
         {
@@ -1081,7 +1084,7 @@ def test_validate_prompt_registry_completeness_flags_unregistered_prompt_file(tm
 
 
 def test_validate_prompt_registry_completeness_flags_missing_registered_prompt_file(tmp_path: Path, monkeypatch) -> None:
-    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda relative: tmp_path / relative)
 
     problems = validate.validate_prompt_registry_completeness(
         {
@@ -1105,7 +1108,7 @@ def test_validate_prompt_authority_metadata_flags_missing_metadata_for_prompt_wi
     )
     (tmp_path / "PROGRAMBUILD").mkdir(parents=True)
     (tmp_path / "PROGRAMBUILD" / "PROGRAMBUILD.md").write_text("# stub\n", encoding="utf-8")
-    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda relative: tmp_path / relative)
 
     problems = validate.validate_prompt_authority_metadata(
         {
@@ -1131,7 +1134,7 @@ def test_validate_prompt_authority_metadata_flags_prompt_text_mismatch(tmp_path:
     (tmp_path / "PROGRAMBUILD").mkdir(parents=True)
     (tmp_path / "PROGRAMBUILD" / "PROGRAMBUILD.md").write_text("# stub\n", encoding="utf-8")
     (tmp_path / "PROGRAMBUILD" / "REQUIREMENTS.md").write_text("# stub\n", encoding="utf-8")
-    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda relative: tmp_path / relative)
 
     problems = validate.validate_prompt_authority_metadata(
         {
@@ -1166,7 +1169,7 @@ def test_validate_gameplan_prompt_pairing_flags_pending_gameplan(tmp_path: Path,
     gameplans_dir = tmp_path / "devlog" / "gameplans"
     gameplans_dir.mkdir(parents=True)
     (gameplans_dir / "upgradegameplan.md").write_text("# Upgrade\n", encoding="utf-8")
-    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda relative: tmp_path / relative)
 
     problems = validate.validate_gameplan_prompt_pairing(
         {
@@ -1193,7 +1196,7 @@ def test_validate_gameplan_prompt_pairing_passes_when_paired(tmp_path: Path, mon
     prompts_dir = tmp_path / ".github" / "prompts"
     prompts_dir.mkdir(parents=True)
     (prompts_dir / "execute-enhancement-gameplan.prompt.md").write_text("# prompt\n", encoding="utf-8")
-    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda relative: tmp_path / relative)
 
     problems = validate.validate_gameplan_prompt_pairing(
         {
@@ -1213,7 +1216,7 @@ def test_validate_gameplan_prompt_pairing_passes_when_paired(tmp_path: Path, mon
 
 
 def test_validate_gameplan_prompt_pairing_flags_invalid_exempt_reason(tmp_path: Path, monkeypatch) -> None:
-    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda relative: tmp_path / relative)
 
     problems = validate.validate_gameplan_prompt_pairing(
         {
@@ -1236,7 +1239,7 @@ def test_validate_gameplan_prompt_pairing_flags_missing_prompt_file(tmp_path: Pa
     gameplans_dir = tmp_path / "devlog" / "gameplans"
     gameplans_dir.mkdir(parents=True)
     (gameplans_dir / "upgradegameplan.md").write_text("# Upgrade\n", encoding="utf-8")
-    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda relative: tmp_path / relative)
 
     problems = validate.validate_gameplan_prompt_pairing(
         {
@@ -1262,7 +1265,7 @@ def test_validate_gameplan_prompt_pairing_flags_unregistered_prompt(tmp_path: Pa
     prompts_dir = tmp_path / ".github" / "prompts"
     prompts_dir.mkdir(parents=True)
     (prompts_dir / "execute-upgrade-gameplan.prompt.md").write_text("# prompt\n", encoding="utf-8")
-    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda relative: tmp_path / relative)
 
     problems = validate.validate_gameplan_prompt_pairing(
         {
@@ -1285,7 +1288,7 @@ def test_validate_rule_enforcement_includes_prompt_registry_completeness(monkeyp
     prompts_dir = tmp_path / ".github" / "prompts"
     prompts_dir.mkdir(parents=True)
     (prompts_dir / "orphan.prompt.md").write_text("---\nname: orphan\ndescription: orphan\nagent: agent\n---\n", encoding="utf-8")
-    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda relative: tmp_path / relative)
 
     registry = build_registry() | {
         "workspace": {"bootstrap_assets": []},
@@ -1309,7 +1312,7 @@ def test_validate_test_coverage_warns_on_missing_test_file(tmp_path: Path, monke
     (scripts_dir / "programstart_bar.py").write_text("", encoding="utf-8")
     (scripts_dir / "programstart_baz_smoke.py").write_text("", encoding="utf-8")  # excluded
     (tests_dir / "test_programstart_foo.py").write_text("", encoding="utf-8")  # exists
-    monkeypatch.setattr(validate, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda relative: tmp_path / relative)
 
     warnings = validate.validate_test_coverage({})
 
@@ -1328,7 +1331,7 @@ def test_validate_main_test_coverage_passes(capsys, monkeypatch) -> None:
 
 
 def test_validate_main_all_includes_bootstrap_assets(capsys, monkeypatch) -> None:
-    monkeypatch.setattr(validate, "validate_bootstrap_assets", lambda _registry: ["bootstrap gap"])
+    monkeypatch.setattr(validate_core, "validate_bootstrap_assets", lambda _registry: ["bootstrap gap"])
     monkeypatch.setattr("sys.argv", ["programstart_validate.py", "--check", "all"])
     result = validate.main()
     out = capsys.readouterr().out
@@ -1410,7 +1413,7 @@ def test_adr_coverage_no_warning_when_adr_references_decision(tmp_path, monkeypa
     decisions = tmp_path / "docs" / "decisions"
     decisions.mkdir(parents=True)
     (decisions / "0001-adopt-foo.md").write_text("Relates to DEC-001\n", encoding="utf-8")
-    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
 
     warnings = validate.validate_adr_coverage({})
     assert warnings == []
@@ -1424,7 +1427,7 @@ def test_adr_coverage_warning_when_no_matching_adr(tmp_path, monkeypatch) -> Non
     decisions.mkdir(parents=True)
     # ADR exists but references a different decision
     (decisions / "0001-something-else.md").write_text("Unrelated content\n", encoding="utf-8")
-    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
 
     warnings = validate.validate_adr_coverage({})
     assert len(warnings) == 1
@@ -1441,7 +1444,7 @@ def test_adr_coverage_warns_for_reversed_decision_without_matching_adr(tmp_path,
     decisions = tmp_path / "docs" / "decisions"
     decisions.mkdir(parents=True)
     (decisions / "README.md").write_text("# ADRs", encoding="utf-8")
-    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
 
     warnings = validate.validate_adr_coverage({})
     assert len(warnings) == 1
@@ -1454,7 +1457,7 @@ def test_adr_coverage_ignores_superseded_decisions(tmp_path, monkeypatch) -> Non
     (tmp_path / "PROGRAMBUILD").mkdir()
     (tmp_path / "PROGRAMBUILD" / "DECISION_LOG.md").write_text(log, encoding="utf-8")
     (tmp_path / "docs" / "decisions").mkdir(parents=True)
-    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
 
     warnings = validate.validate_adr_coverage({})
     assert warnings == []
@@ -1464,14 +1467,14 @@ def test_adr_coverage_no_warning_when_no_decisions(tmp_path, monkeypatch) -> Non
     log = _DECISION_LOG_TEMPLATE.format(rows="")
     (tmp_path / "PROGRAMBUILD").mkdir()
     (tmp_path / "PROGRAMBUILD" / "DECISION_LOG.md").write_text(log, encoding="utf-8")
-    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
 
     warnings = validate.validate_adr_coverage({})
     assert warnings == []
 
 
 def test_adr_coverage_no_warning_when_decision_log_missing(tmp_path, monkeypatch) -> None:
-    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
     warnings = validate.validate_adr_coverage({})
     assert warnings == []
 
@@ -1494,7 +1497,7 @@ def test_validate_adr_coherence_passes_for_consistent_records(tmp_path, monkeypa
     decisions.mkdir(parents=True)
     write_adr(decisions, "0001-adopt-foo.md", status="accepted", date="2026-04-15", title="Adopt foo")
     write_adr_readme(decisions, ["| [0001](0001-adopt-foo.md) | Adopt foo | accepted | 2026-04-15 |"])
-    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
 
     assert validate.validate_adr_coherence({}) == []
 
@@ -1509,7 +1512,7 @@ def test_validate_adr_coherence_flags_readme_status_mismatch(tmp_path, monkeypat
     decisions.mkdir(parents=True)
     write_adr(decisions, "0001-adopt-foo.md", status="accepted", date="2026-04-15", title="Adopt foo")
     write_adr_readme(decisions, ["| [0001](0001-adopt-foo.md) | Adopt foo | superseded by ADR-0002 | 2026-04-15 |"])
-    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
 
     problems = validate.validate_adr_coherence({})
     assert any("README status mismatch" in problem for problem in problems)
@@ -1531,7 +1534,7 @@ def test_validate_adr_coherence_flags_missing_superseding_adr(tmp_path, monkeypa
         title="Adopt foo",
     )
     write_adr_readme(decisions, ["| [0001](0001-adopt-foo.md) | Adopt foo | superseded by ADR-0002 | 2026-04-15 |"])
-    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
 
     problems = validate.validate_adr_coherence({})
     assert any("ADR-0002" in problem and "does not exist" in problem for problem in problems)
@@ -1562,7 +1565,7 @@ def test_validate_adr_coherence_flags_missing_decision_link(tmp_path, monkeypatc
         encoding="utf-8",
     )
     write_adr_readme(decisions, ["| [0001](0001-adopt-foo.md) | Adopt foo | accepted | 2026-04-15 |"])
-    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
 
     problems = validate.validate_adr_coherence({})
     assert any("missing decision-log linkage comment" in problem for problem in problems)
@@ -1576,7 +1579,7 @@ def test_validate_adr_coherence_allows_listed_legacy_pre_register_adr_without_de
     decisions.mkdir(parents=True)
     write_adr(decisions, "0001-adopt-foo.md", status="accepted", date="2026-04-15", title="Adopt foo", decision_id=None)
     write_adr_readme(decisions, ["| [0001](0001-adopt-foo.md) | Adopt foo | accepted | 2026-04-15 |"])
-    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
 
     assert validate.validate_adr_coherence({"adr_policy": {"legacy_pre_register_adrs": ["0001"]}}) == []
 
@@ -1589,7 +1592,7 @@ def test_validate_adr_coherence_flags_unlisted_legacy_style_adr_without_decision
     decisions.mkdir(parents=True)
     write_adr(decisions, "0001-adopt-foo.md", status="accepted", date="2026-04-15", title="Adopt foo", decision_id=None)
     write_adr_readme(decisions, ["| [0001](0001-adopt-foo.md) | Adopt foo | accepted | 2026-04-15 |"])
-    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
 
     problems = validate.validate_adr_coherence({})
     assert any("missing decision-log linkage comment" in problem for problem in problems)
@@ -1603,7 +1606,7 @@ def test_validate_adr_coherence_allows_inherited_template_adr_links_in_project_r
     decisions.mkdir(parents=True)
     write_adr(decisions, "0004-adopt-foo.md", status="accepted", date="2026-04-15", title="Adopt foo", decision_id="DEC-001")
     write_adr_readme(decisions, ["| [0004](0004-adopt-foo.md) | Adopt foo | accepted | 2026-04-15 |"])
-    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
 
     assert validate.validate_adr_coherence({"workspace": {"repo_role": "project_repo"}}) == []
 
@@ -1615,7 +1618,7 @@ def test_validate_adr_coherence_flags_missing_legacy_pre_register_adr_from_polic
     decisions = tmp_path / "docs" / "decisions"
     decisions.mkdir(parents=True)
     write_adr_readme(decisions, [])
-    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
 
     problems = validate.validate_adr_coherence({"adr_policy": {"legacy_pre_register_adrs": ["0001"]}})
     assert any("legacy_pre_register_adrs references missing ADR file: 0001" in problem for problem in problems)
@@ -1631,7 +1634,7 @@ def test_validate_adr_coherence_flags_decision_log_reference_to_legacy_pre_regis
     decisions.mkdir(parents=True)
     write_adr(decisions, "0001-adopt-foo.md", status="accepted", date="2026-04-15", title="Adopt foo")
     write_adr_readme(decisions, ["| [0001](0001-adopt-foo.md) | Adopt foo | accepted | 2026-04-15 |"])
-    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
 
     problems = validate.validate_adr_coherence({"adr_policy": {"legacy_pre_register_adrs": ["0001"]}})
     assert any("references legacy pre-register ADR 0001-adopt-foo.md" in problem for problem in problems)
@@ -1660,7 +1663,7 @@ def test_validate_adr_coherence_flags_active_decision_pointing_to_superseded_adr
             "| [0002](0002-adopt-bar.md) | Adopt bar | accepted | 2026-04-15 |",
         ],
     )
-    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
 
     problems = validate.validate_adr_coherence({})
     assert any("references superseded ADR 0001-adopt-foo.md" in problem for problem in problems)
@@ -1685,7 +1688,7 @@ def test_validate_decision_log_reversal_invariants_passes_for_reciprocal_pair(tm
     )
     (tmp_path / "PROGRAMBUILD").mkdir()
     (tmp_path / "PROGRAMBUILD" / "DECISION_LOG.md").write_text(log, encoding="utf-8")
-    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
 
     assert validate.validate_decision_log_reversal_invariants({}) == []
 
@@ -1696,7 +1699,7 @@ def test_validate_decision_log_reversal_invariants_flags_missing_reversed_target
     )
     (tmp_path / "PROGRAMBUILD").mkdir()
     (tmp_path / "PROGRAMBUILD" / "DECISION_LOG.md").write_text(log, encoding="utf-8")
-    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
 
     problems = validate.validate_decision_log_reversal_invariants({})
     assert any("missing decision DEC-099" in problem for problem in problems)
@@ -1713,7 +1716,7 @@ def test_validate_decision_log_reversal_invariants_flags_non_reciprocal_pair(tmp
     )
     (tmp_path / "PROGRAMBUILD").mkdir()
     (tmp_path / "PROGRAMBUILD" / "DECISION_LOG.md").write_text(log, encoding="utf-8")
-    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
 
     problems = validate.validate_decision_log_reversal_invariants({})
     assert any("must point back via Replaces=DEC-001" in problem for problem in problems)
@@ -1738,7 +1741,7 @@ def test_kb_freshness_no_warning_when_fresh(tmp_path, monkeypatch) -> None:
     kb_path = tmp_path / "config" / "knowledge-base.json"
     kb_path.parent.mkdir(parents=True)
     kb_path.write_text(json.dumps(kb), encoding="utf-8")
-    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
 
     warnings = validate.validate_kb_freshness({})
     assert warnings == []
@@ -1752,7 +1755,7 @@ def test_kb_freshness_warns_when_stale(tmp_path, monkeypatch) -> None:
     kb_path = tmp_path / "config" / "knowledge-base.json"
     kb_path.parent.mkdir(parents=True)
     kb_path.write_text(json.dumps(kb), encoding="utf-8")
-    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
 
     warnings = validate.validate_kb_freshness({})
     assert len(warnings) == 1
@@ -1788,10 +1791,10 @@ def test_validate_implementation_entry_criteria_covers_all_subchecks(
     monkeypatch,
 ) -> None:
     """Lines 530-535: validate_implementation_entry_criteria calls all four sub-checks."""
-    monkeypatch.setattr(validate, "validate_architecture_contracts", lambda _r: [])
-    monkeypatch.setattr(validate, "validate_test_strategy_complete", lambda _r: [])
-    monkeypatch.setattr(validate, "validate_risk_spikes", lambda _r: [])
-    monkeypatch.setattr(validate, "validate_risk_spike_resolution", lambda _r: [])
+    monkeypatch.setattr(validate_core, "validate_architecture_contracts", lambda _r: [])
+    monkeypatch.setattr(validate_core, "validate_test_strategy_complete", lambda _r: [])
+    monkeypatch.setattr(validate_core, "validate_risk_spikes", lambda _r: [])
+    monkeypatch.setattr(validate_core, "validate_risk_spike_resolution", lambda _r: [])
     result = validate.validate_implementation_entry_criteria({})
     assert result == []
 
@@ -1809,7 +1812,7 @@ def test_validate_feasibility_criteria_template_recommendation_flagged(tmp_path:
         "go / limited spike / no-go\n",
         encoding="utf-8",
     )
-    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
     problems = validate.validate_feasibility_criteria({})
     assert any("still contains the template option list" in p for p in problems)
 
@@ -1827,7 +1830,7 @@ def test_validate_feasibility_criteria_missing_recommendation_section(tmp_path: 
         "No recommendation here.\n",
         encoding="utf-8",
     )
-    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
     problems = validate.validate_feasibility_criteria({})
     assert any("no '## Recommendation' section found" in p for p in problems)
 
@@ -1852,7 +1855,7 @@ def test_kb_freshness_warns_when_fields_missing(tmp_path, monkeypatch) -> None:
     kb_path = tmp_path / "config" / "knowledge-base.json"
     kb_path.parent.mkdir(parents=True)
     kb_path.write_text(json.dumps(kb), encoding="utf-8")
-    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
 
     warnings = validate.validate_kb_freshness({})
     assert len(warnings) == 1
@@ -1864,7 +1867,7 @@ def test_kb_freshness_warns_on_bad_date(tmp_path, monkeypatch) -> None:
     kb_path = tmp_path / "config" / "knowledge-base.json"
     kb_path.parent.mkdir(parents=True)
     kb_path.write_text(json.dumps(kb), encoding="utf-8")
-    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
 
     warnings = validate.validate_kb_freshness({})
     assert len(warnings) == 1
@@ -1872,7 +1875,7 @@ def test_kb_freshness_warns_on_bad_date(tmp_path, monkeypatch) -> None:
 
 
 def test_kb_freshness_returns_empty_when_no_kb_file(tmp_path, monkeypatch) -> None:
-    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
     warnings = validate.validate_kb_freshness({})
     assert warnings == []
 
@@ -1893,7 +1896,7 @@ def test_validate_main_kb_freshness_passes(capsys, monkeypatch) -> None:
 class TestStrictModeValidate:
     def test_strict_exits_1_on_warnings(self, capsys, monkeypatch) -> None:
         monkeypatch.setattr("sys.argv", ["programstart_validate.py", "--check", "test-coverage", "--strict"])
-        monkeypatch.setattr(validate, "validate_test_coverage", lambda _reg: ["fake warning"])
+        monkeypatch.setattr(validate_core, "validate_test_coverage", lambda _reg: ["fake warning"])
         result = validate.main()
         out = capsys.readouterr().out
         assert result == 1
@@ -1901,7 +1904,7 @@ class TestStrictModeValidate:
 
     def test_strict_exits_0_when_no_warnings(self, capsys, monkeypatch) -> None:
         monkeypatch.setattr("sys.argv", ["programstart_validate.py", "--check", "test-coverage", "--strict"])
-        monkeypatch.setattr(validate, "validate_test_coverage", lambda _reg: [])
+        monkeypatch.setattr(validate_core, "validate_test_coverage", lambda _reg: [])
         result = validate.main()
         assert result == 0
 
@@ -1913,7 +1916,7 @@ class TestCoverageSourceCompleteness:
         (scripts_dir / "programstart_new.py").write_text("# new", encoding="utf-8")
         pyproject = tmp_path / "pyproject.toml"
         pyproject.write_text('[tool.coverage.run]\nsource = ["scripts.programstart_old"]', encoding="utf-8")
-        monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+        monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
         warnings = validate.validate_coverage_source_completeness({})
         assert any("programstart_new.py" in w for w in warnings)
 
@@ -1923,7 +1926,7 @@ class TestCoverageSourceCompleteness:
         (scripts_dir / "programstart_foo.py").write_text("# foo", encoding="utf-8")
         pyproject = tmp_path / "pyproject.toml"
         pyproject.write_text('[tool.coverage.run]\nsource = ["scripts.programstart_foo"]', encoding="utf-8")
-        monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+        monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
         warnings = validate.validate_coverage_source_completeness({})
         assert warnings == []
 
@@ -1934,14 +1937,14 @@ class TestCoverageSourceCompleteness:
         (scripts_dir / "__init__.py").write_text("", encoding="utf-8")
         pyproject = tmp_path / "pyproject.toml"
         pyproject.write_text("[tool.coverage.run]\nsource = []", encoding="utf-8")
-        monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+        monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
         warnings = validate.validate_coverage_source_completeness({})
         assert warnings == []
 
 
 class TestPostLaunchReview:
     def test_missing_file_fails(self, tmp_path, monkeypatch) -> None:
-        monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+        monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
         problems = validate.validate_post_launch_review({})
         assert any("does not exist" in p for p in problems)
 
@@ -1949,7 +1952,7 @@ class TestPostLaunchReview:
         plr = tmp_path / "PROGRAMBUILD" / "POST_LAUNCH_REVIEW.md"
         plr.parent.mkdir(parents=True)
         plr.write_text("# Post Launch Review\n---\n", encoding="utf-8")
-        monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+        monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
         problems = validate.validate_post_launch_review({})
         assert any("stub" in p for p in problems)
 
@@ -1960,7 +1963,7 @@ class TestPostLaunchReview:
             "# Post Launch Review\n\nFinding 1: all tests green.\nOutcome: stable.\nVerdict: ship it.\nExtra: yes.\n",
             encoding="utf-8",
         )
-        monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+        monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
         problems = validate.validate_post_launch_review({})
         assert problems == []
 
@@ -1972,7 +1975,7 @@ class TestBroadenedTestCoverage:
         (scripts_dir / "check_commit_msg.py").write_text("# commit msg", encoding="utf-8")
         tests_dir = tmp_path / "tests"
         tests_dir.mkdir()
-        monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+        monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
         warnings = validate.validate_test_coverage({})
         assert any("check_commit_msg.py" in w for w in warnings)
 
@@ -2041,7 +2044,7 @@ class TestStageContentQualityWarnings:
         feas = tmp_path / "PROGRAMBUILD" / "FEASIBILITY.md"
         feas.parent.mkdir(parents=True)
         feas.write_text("# Feasibility\nTBD\n", encoding="utf-8")
-        monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+        monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
         warnings = validate.stage_content_quality_warnings("feasibility")
         assert len(warnings) == 1
         assert "TBD" in warnings[0]
@@ -2050,7 +2053,7 @@ class TestStageContentQualityWarnings:
         feas = tmp_path / "PROGRAMBUILD" / "FEASIBILITY.md"
         feas.parent.mkdir(parents=True)
         feas.write_text("# Feasibility\nReal analysis.\n", encoding="utf-8")
-        monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+        monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
         warnings = validate.stage_content_quality_warnings("feasibility")
         assert warnings == []
 
@@ -2063,7 +2066,7 @@ class TestStageContentQualityWarnings:
         pb.mkdir(parents=True)
         (pb / "REQUIREMENTS.md").write_text("TODO: write reqs\n", encoding="utf-8")
         (pb / "USER_FLOWS.md").write_text("Clean content.\n", encoding="utf-8")
-        monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+        monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
         warnings = validate.stage_content_quality_warnings("requirements_and_ux")
         assert len(warnings) == 1
         assert "REQUIREMENTS.md" in warnings[0]
@@ -2075,7 +2078,7 @@ class TestRepoWidePlaceholderContent:
         docs_decisions.mkdir(parents=True)
         (docs_decisions / "0001-test.md").write_text("# ADR\n", encoding="utf-8")
         (tmp_path / "README.md").write_text("# Readme\n", encoding="utf-8")
-        monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+        monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
 
         registry = {
             "systems": {
@@ -2097,7 +2100,7 @@ class TestRepoWidePlaceholderContent:
         pb = tmp_path / "PROGRAMBUILD"
         pb.mkdir(parents=True)
         (pb / "FEASIBILITY.md").write_text("TBD\n", encoding="utf-8")
-        monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+        monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
 
         problems, warnings = validate.validate_placeholder_content(
             {
@@ -2116,7 +2119,7 @@ class TestRepoWidePlaceholderContent:
 
     def test_validate_placeholder_content_flags_repo_docs_as_warnings(self, tmp_path, monkeypatch) -> None:
         (tmp_path / "README.md").write_text("TODO: finish summary\n", encoding="utf-8")
-        monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+        monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
 
         problems, warnings = validate.validate_placeholder_content(
             {
@@ -2134,7 +2137,7 @@ class TestRepoWidePlaceholderContent:
         assert "README.md" in warnings[0]
 
     def test_validate_placeholder_content_skips_optional_userjourney_when_absent(self, tmp_path, monkeypatch) -> None:
-        monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+        monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
 
         targets = validate.placeholder_content_targets(
             {
@@ -2161,7 +2164,7 @@ def test_validate_prompt_generation_boundary_flags_public_auto_generated_prompt(
     prompt = tmp_path / ".github" / "prompts" / "bad.prompt.md"
     prompt.parent.mkdir(parents=True)
     prompt.write_text("# AUTO-GENERATED by programstart prompt-build — do not hand-edit\n", encoding="utf-8")
-    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
 
     problems = validate.validate_prompt_generation_boundary(
         {
@@ -2181,7 +2184,7 @@ def test_validate_prompt_generation_boundary_flags_outdated_managed_prompt(tmp_p
     generated = tmp_path / "outputs" / "generated-prompts" / "feasibility.prompt.md"
     generated.parent.mkdir(parents=True)
     generated.write_text("stale\n", encoding="utf-8")
-    monkeypatch.setattr(validate, "workspace_path", lambda rel: tmp_path / rel)
+    monkeypatch.setattr(validate_core, "workspace_path", lambda rel: tmp_path / rel)
 
     problems = validate.validate_prompt_generation_boundary(
         common.load_registry()

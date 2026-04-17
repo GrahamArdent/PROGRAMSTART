@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any, cast
 
 try:
-    from . import programstart_drift_check, programstart_validate
+    from . import programstart_drift_check, programstart_validate_core
     from .programstart_common import (
         challenge_gate_record_from_log,
         clr_bold,
@@ -33,7 +33,7 @@ try:
     )
 except ImportError:  # pragma: no cover - standalone script execution fallback
     import programstart_drift_check
-    import programstart_validate
+    import programstart_validate_core
 
     from programstart_common import (
         challenge_gate_record_from_log,
@@ -120,11 +120,11 @@ def preflight_problems(
     active_step: str | None = None,
 ) -> list[str]:
     problems: list[str] = []
-    problems.extend(programstart_validate.validate_required_files(registry, system))
-    problems.extend(programstart_validate.validate_metadata(registry, system))
-    problems.extend(programstart_validate.validate_workflow_state(registry, system))
+    problems.extend(programstart_validate_core.validate_required_files(registry, system))
+    problems.extend(programstart_validate_core.validate_metadata(registry, system))
+    problems.extend(programstart_validate_core.validate_workflow_state(registry, system))
     if system == "programbuild":
-        problems.extend(programstart_validate.validate_authority_sync(registry))
+        problems.extend(programstart_validate_core.validate_authority_sync(registry))
 
     changed_files = programstart_drift_check.load_changed_files(argparse.Namespace(changed_file_list=None, files=None))
     if changed_files:
@@ -151,7 +151,7 @@ def preflight_problems(
             if isinstance(check_names, str):
                 check_names = [check_names]
             for check_name in check_names:
-                problems.extend(programstart_validate.run_stage_gate_check(registry, check_name))
+                problems.extend(programstart_validate_core.run_stage_gate_check(registry, check_name))
 
     # --- Stage-gate content checks (userjourney only) ---
     if system == "userjourney" and active_step:
@@ -160,7 +160,7 @@ def preflight_problems(
         }
         check_name = uj_phase_checks.get(active_step)
         if check_name:
-            problems.extend(programstart_validate.run_stage_gate_check(registry, check_name))
+            problems.extend(programstart_validate_core.run_stage_gate_check(registry, check_name))
 
     return problems
 
@@ -548,7 +548,7 @@ def main() -> int:
                     return 1
                 gate_record = challenge_gate_record_from_log(active_step)
         # Content quality advisory (H-2 / W-1, non-blocking).
-        quality_warnings = programstart_validate.stage_content_quality_warnings(active_step)
+        quality_warnings = programstart_validate_core.stage_content_quality_warnings(active_step)
         if quality_warnings:
             print(clr_yellow("⚠  Content quality warnings (non-blocking):"))
             for qw in quality_warnings:

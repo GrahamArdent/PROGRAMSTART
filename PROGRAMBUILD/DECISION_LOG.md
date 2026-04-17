@@ -41,6 +41,7 @@ Authority: Canonical for project decision history
 | DEC-014 | 2026-04-17 | inputs_and_mode_selection | `programstart jit-check` wraps `guide` + `drift` + sync-rule summary into a single CLI command; exit 0 = clean, 1 = drift, 2 = guide failure; implemented inline in `programstart_cli.py` following the `run_next` pattern | ACTIVE | — | Solo operator | docs/decisions/0017-jit-check-cli-command.md |
 | DEC-015 | 2026-04-17 | inputs_and_mode_selection | `programstart advance --defer` marks the active step as intentionally paused without advancing; records a `deferred` object with date and reason; staleness detection treats the deferred date as latest activity | ACTIVE | — | Solo operator | docs/decisions/0018-workflow-deferral-mechanism.md |
 | DEC-016 | 2026-04-18 | inputs_and_mode_selection | Add typed Pydantic models for the process registry via parallel `load_validated_registry()` alongside existing `load_registry()` dict API; lazy import; `extra="allow"` for schema evolution | ACTIVE | — | Solo operator | docs/decisions/0019-typed-pydantic-models-for-process-registry.md |
+| DEC-017 | 2026-04-18 | inputs_and_mode_selection | `programstart sync --dest <path>` propagates changed PROGRAMSTART files to a downstream repo using a manifest written at attach time; dry-run by default, `--confirm` required for writes; `.programstart-preserve` for downstream customization protection | ACTIVE | — | Solo operator | docs/decisions/0020-downstream-sync-mechanism-with-manifest-tracking.md |
 
 ## Decision Details
 

@@ -29,6 +29,7 @@ Legacy pre-register ADRs: `0001`-`0003` predate the current `DECISION_LOG.md` li
 | [0017](0017-jit-check-cli-command.md) | JIT Check CLI Command | accepted | 2026-04-17 |
 | [0018](0018-workflow-deferral-mechanism.md) | Workflow Deferral Mechanism | accepted | 2026-04-17 |
 | [0019](0019-typed-pydantic-models-for-process-registry.md) | Typed Pydantic Models for Process Registry | accepted | 2026-04-18 |
+| [0020](0020-downstream-sync-mechanism-with-manifest-tracking.md) | Downstream Sync Mechanism with Manifest Tracking | accepted | 2026-04-18 |
 
 ## Rules
 

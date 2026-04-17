@@ -34,6 +34,7 @@ try:
         programstart_serve,
         programstart_status,
         programstart_step_guide,
+        programstart_sync,
         programstart_validate,
         programstart_workflow_state,
         programstart_health_probe,
@@ -67,6 +68,7 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
     import programstart_serve
     import programstart_status
     import programstart_step_guide
+    import programstart_sync
     import programstart_validate
     import programstart_workflow_state
     import programstart_health_probe
@@ -235,6 +237,8 @@ def dispatch(command: str, arguments: list[str], parser: argparse.ArgumentParser
         return run_passthrough(programstart_mutation_edit_hook.main, "programstart mutation-edit-hook", arguments)
     if command == "mutation-loop":
         return run_passthrough(programstart_mutation_loop.main, "programstart mutation-loop", arguments)
+    if command == "sync":
+        return run_passthrough(programstart_sync.main, "programstart sync", arguments)
     if command == "jit-check":
         return run_jit_check(arguments)
     if command == "help":

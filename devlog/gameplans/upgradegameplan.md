@@ -446,9 +446,15 @@ uv run programstart drift
 
 ---
 
-### Phase E: Downstream Sync Mechanism (OP-02)
+### Phase E: Downstream Sync Mechanism (OP-02) — COMPLETE
 
 **Goal**: Implement a `programstart sync` command that propagates changed PROGRAMSTART files to an adopted downstream repo.
+
+> **Completed**: 2026-04-18. Manifest written at attach time in
+> `.programstart-manifest.json`. `programstart sync --dest <path>` diffs
+> template vs. destination and copies changed files with `--confirm`. Dry-run
+> default. `.programstart-preserve` for downstream customization protection.
+> ADR-0020 / DEC-017. 16 tests added, 1768 total passing.
 
 **Pre-flight**: Re-read `devlog/reports/instructionsrepo.md` § "Sync only the changed files" for the context. Re-read `scripts/programstart_attach.py` to understand the existing attach surface.
 

@@ -414,6 +414,13 @@ def test_unified_cli_next_rejects_extra_args() -> None:
             ["--cycles", "2", "--allow-repeat-without-edits", "--skip-gates"],
             ["programstart mutation-loop", "--cycles", "2", "--allow-repeat-without-edits", "--skip-gates"],
         ),
+        (
+            "sync",
+            "programstart_sync",
+            "programstart sync",
+            ["--dest", "tmp"],
+            ["programstart sync", "--dest", "tmp"],
+        ),
     ],
 )
 def test_unified_cli_passthrough_commands(

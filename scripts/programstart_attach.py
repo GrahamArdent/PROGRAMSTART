@@ -3,6 +3,8 @@ from __future__ import annotations
 import argparse
 import json
 import shutil
+import subprocess
+from datetime import UTC, datetime
 from pathlib import Path
 
 try:
@@ -55,6 +57,29 @@ PROGRAMBUILD_PRESERVE_EXISTING_FILES = {
     "README.md",
     ".gitignore",
 }
+MANIFEST_FILENAME = ".programstart-manifest.json"
+
+
+def _git_head_hash() -> str:
+    try:
+        return subprocess.check_output(
+            ["git", "rev-parse", "HEAD"],
+            text=True,
+            stderr=subprocess.DEVNULL,
+        ).strip()
+    except (subprocess.SubprocessError, FileNotFoundError):
+        return ""
+
+
+def _write_manifest(destination_root: Path, files: list[str]) -> None:
+    manifest = {
+        "programstart_version": "0.9.0",
+        "source_commit": _git_head_hash(),
+        "attached_at": datetime.now(UTC).isoformat(),
+        "files": sorted(files),
+    }
+    manifest_path = destination_root / MANIFEST_FILENAME
+    write_json(manifest_path, manifest)
 
 
 def _copy_text_or_binary(source: Path, destination: Path) -> None:
@@ -144,18 +169,22 @@ def _copy_programbuild_bootstrap_assets(
     *,
     force: bool = False,
     dry_run: bool = False,
-) -> None:
+) -> list[str]:
     template_root = workspace_path(".")
+    copied: list[str] = []
     for relative_path in generated_repo_bootstrap_assets_for_mode(registry, include_userjourney=False):
         source = template_root / relative_path
         destination = destination_root / relative_path
         if destination.exists() and relative_path in PROGRAMBUILD_PRESERVE_EXISTING_FILES and not force:
             if dry_run:
                 print(f"PRESERVE {destination}")
+            copied.append(relative_path)
             continue
         if destination.exists() and not force:
             raise FileExistsError(f"Destination already has {relative_path}. Use --force to replace it.")
         copy_file(source, destination, dry_run)
+        copied.append(relative_path)
+    return copied
 
 
 def attach_programbuild(
@@ -174,11 +203,14 @@ def attach_programbuild(
     if dry_run:
         print(f"ATTACH PROGRAMBUILD -> {destination_root}")
 
-    _copy_programbuild_bootstrap_assets(destination_root, registry, force=force, dry_run=dry_run)
+    copied = _copy_programbuild_bootstrap_assets(destination_root, registry, force=force, dry_run=dry_run)
     bootstrap_programbuild(destination_root, registry, variant, dry_run)
     stamp_bootstrapped_registry(destination_root, project_name=project_name, dry_run=dry_run)
     sanitize_bootstrapped_secrets_baseline(destination_root, dry_run)
     refresh_secrets_baseline(destination_root, dry_run)
+
+    if not dry_run:
+        _write_manifest(destination_root, copied)
 
 
 def resolve_attachment_source(source: str) -> Path:

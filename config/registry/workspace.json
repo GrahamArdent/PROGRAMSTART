@@ -106,6 +106,7 @@
       "scripts/programstart_repo_clean_check.py",
       "scripts/programstart_status.py",
       "scripts/programstart_step_guide.py",
+      "scripts/programstart_sync.py",
       "scripts/programstart_validate.py",
       "scripts/programstart_validate_core.py",
       "scripts/programstart_workflow_state.py",
@@ -154,6 +155,7 @@
       "tests/test_serve_endpoints.py",
       "tests/test_programstart_status.py",
       "tests/test_programstart_step_guide.py",
+      "tests/test_programstart_sync.py",
       "tests/test_programstart_attach.py",
       "tests/test_programstart_bootstrap.py",
       "tests/test_programstart_create.py",
@@ -254,6 +256,7 @@
       "docs/decisions/0017-jit-check-cli-command.md",
       "docs/decisions/0018-workflow-deferral-mechanism.md",
       "docs/decisions/0019-typed-pydantic-models-for-process-registry.md",
+      "docs/decisions/0020-downstream-sync-mechanism-with-manifest-tracking.md",
       ".vscode/tasks.json"
     ],
     "userjourney_bootstrap_assets": [

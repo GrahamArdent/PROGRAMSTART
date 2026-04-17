@@ -189,7 +189,8 @@
         "docs/decisions/0016-require-execution-prompt-for-operator-gameplans.md",
         "docs/decisions/0017-jit-check-cli-command.md",
         "docs/decisions/0018-workflow-deferral-mechanism.md",
-        "docs/decisions/0019-typed-pydantic-models-for-process-registry.md"
+        "docs/decisions/0019-typed-pydantic-models-for-process-registry.md",
+        "docs/decisions/0020-downstream-sync-mechanism-with-manifest-tracking.md"
       ],
       "require_authority_when_dependents_change": false,
       "description": "ADR format is defined in PROGRAMBUILD_ADR_TEMPLATE.md. New decision records in docs/decisions/ must follow that template. If the template format changes, review existing records for alignment."

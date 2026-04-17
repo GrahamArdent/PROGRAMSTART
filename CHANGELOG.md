@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Features
+
+- `programstart sync --dest <path>` command: propagates changed PROGRAMSTART files to a downstream repo using a manifest written at attach time; dry-run by default, `--confirm` to apply (ADR-0020, DEC-017).
+- `.programstart-manifest.json` written during `programstart attach programbuild` with file list, source commit hash, and timestamp.
+- `.programstart-preserve` file support for downstream repos to declare additional files protected from sync.
+
 ## [0.9.0] - 2026-04-17
 
 ### Features

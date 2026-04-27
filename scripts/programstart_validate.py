@@ -77,7 +77,7 @@ ALLOWED_ROOT_NON_MD = validate_core.ALLOWED_ROOT_NON_MD
 validate_file_hygiene = validate_core.validate_file_hygiene
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Validate PROGRAMSTART structure and process metadata.")
     parser.add_argument(
         "--check",
@@ -130,7 +130,7 @@ def main() -> int:
         action="store_true",
         help="Treat warnings as errors (exit 1 if any warnings).",
     )
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     registry = load_registry()
     problems: list[str] = []

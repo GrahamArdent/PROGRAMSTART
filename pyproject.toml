@@ -176,6 +176,7 @@ source = [
   "scripts.programstart_health_probe",
   "scripts.programstart_doctor",
   "scripts.programstart_prompt_build",
+  "scripts.programstart_precommit_validate",
   "scripts.programstart_sync",
   "scripts.lint_prompts",
   "scripts.install_hooks",

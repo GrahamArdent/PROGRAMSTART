@@ -73,7 +73,7 @@ repos:
 
       - id: programstart-validate
         name: programstart validate
-        entry: uv run programstart validate --check all --strict
+        entry: uv run python scripts/programstart_precommit_validate.py
         language: system
         pass_filenames: false
         files: ^(PROGRAMBUILD/|USERJOURNEY/|config/|scripts/|README\.md|QUICKSTART\.md|pyproject\.toml|schemas/)

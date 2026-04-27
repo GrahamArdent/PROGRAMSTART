@@ -200,6 +200,7 @@ def tests(session: nox.Session) -> None:
 def validate(session: nox.Session) -> None:
     install_dev(session)
     session.run("programstart", "drift")
+    session.run("programstart", "prompt-build", "--sync-managed")
     session.run("programstart", "validate", "--check", "all")
     session.run("programstart", "prompt-eval", "--json")
     session.run("programstart", "validate", "--check", "authority-sync")

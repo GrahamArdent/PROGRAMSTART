@@ -2200,6 +2200,9 @@ def test_validate_prompt_generation_boundary_flags_outdated_managed_prompt(tmp_p
 
 
 def test_validate_main_prompt_generation_passes(capsys, monkeypatch) -> None:
+    from scripts.programstart_prompt_build import sync_managed_prompts
+
+    sync_managed_prompts()
     monkeypatch.setattr("sys.argv", ["programstart_validate.py", "--check", "prompt-generation"])
     result = validate.main()
     out = capsys.readouterr().out

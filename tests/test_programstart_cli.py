@@ -9,6 +9,7 @@ import pytest
 from scripts import programstart_cli
 from scripts.programstart_bootstrap import bootstrap_programbuild, bootstrap_shared_assets
 from scripts.programstart_common import create_default_workflow_state, load_registry, workspace_path
+from scripts.programstart_prompt_build import sync_managed_prompts
 from scripts.programstart_validate import (
     validate_bootstrap_assets,
     validate_registry,
@@ -30,6 +31,7 @@ def run_command(*args: str, cwd: Path | None = None) -> subprocess.CompletedProc
 
 
 def test_validate_all_passes() -> None:
+    sync_managed_prompts()
     result = run_command("scripts/programstart_validate.py", "--check", "all")
     assert result.returncode == 0, result.stdout + result.stderr
     assert "Validation passed" in result.stdout

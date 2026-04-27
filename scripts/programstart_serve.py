@@ -746,6 +746,12 @@ class DashboardHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def _discard_request_body(self) -> None:
+        """Drain any request body before returning early from a POST handler."""
+        length = int(self.headers.get("Content-Length", 0))
+        if length > 0:
+            self.rfile.read(length)
+
     def _serve_static(self, filename: str) -> None:
         """Serve a file from the dashboard/ directory with path traversal protection."""
         safe = Path(filename).name  # strip any directory components
@@ -795,6 +801,7 @@ class DashboardHandler(BaseHTTPRequestHandler):
 
     def do_POST(self) -> None:  # noqa: N802
         if READONLY_MODE:
+            self._discard_request_body()
             self._send_json({"error": "server is in read-only mode"}, 405)
             return
         parsed = urlparse(self.path)
@@ -876,6 +883,7 @@ class DashboardHandler(BaseHTTPRequestHandler):
             self._send_json(result)
             return
         if parsed.path != "/api/run":
+            self._discard_request_body()
             self.send_response(404)
             self.end_headers()
             return

@@ -323,9 +323,18 @@ def validate_state_against_schema(state: dict[str, Any], system: str) -> None:
     jsonschema.validate(instance=state, schema=schema)
 
 
-def save_workflow_state(registry: dict[str, Any], system: str, state: dict[str, Any]) -> None:
+def save_workflow_state(
+    registry: dict[str, Any],
+    system: str,
+    state: dict[str, Any],
+    *,
+    acquire_lock: bool = True,
+) -> None:
     validate_state_against_schema(state, system)
     state_path = workflow_state_path(registry, system)
+    if not acquire_lock:
+        write_json(state_path, state)
+        return
     lock = FileLock(str(state_path) + ".lock", timeout=10)
     with lock:
         write_json(state_path, state)

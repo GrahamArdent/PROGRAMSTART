@@ -119,6 +119,7 @@ def test_update_implementation_tracker_slice_updates_notes_and_status(tmp_path: 
 
 
 def test_save_workflow_signoff_persists_signoff_history(monkeypatch, tmp_path) -> None:
+    acquire_lock_values: list[bool] = []
     saved: dict[str, Any] = {}
     state = {
         "active_stage": "inputs_and_mode_selection",
@@ -136,7 +137,11 @@ def test_save_workflow_signoff_persists_signoff_history(monkeypatch, tmp_path) -
         lambda _registry, _system, _state=None: "inputs_and_mode_selection",
     )
     monkeypatch.setattr(programstart_serve, "workflow_entry_key", lambda _system: "stages")
-    monkeypatch.setattr(programstart_serve, "save_workflow_state", lambda _registry, _system, value: saved.update(value))
+    def fake_save_workflow_state(_registry, _system, value, **kwargs):
+        acquire_lock_values.append(bool(kwargs.get("acquire_lock", True)))
+        saved.update(value)
+
+    monkeypatch.setattr(programstart_serve, "save_workflow_state", fake_save_workflow_state)
     monkeypatch.setattr(programstart_serve, "workflow_state_path", lambda _r, _s: tmp_path / "state.json")
 
     result = save_workflow_signoff("programbuild", "approved", "2026-04-01", "Ship | it\nnow")
@@ -146,10 +151,12 @@ def test_save_workflow_signoff_persists_signoff_history(monkeypatch, tmp_path) -
     assert signoff["decision"] == "approved"
     assert signoff["date"] == "2026-04-01"
     assert signoff["notes"] == "Ship ¦ it now"
+    assert acquire_lock_values == [False]
     assert saved["stages"]["inputs_and_mode_selection"]["signoff_history"][0]["notes"] == "Ship ¦ it now"
 
 
 def test_advance_workflow_with_signoff_completes_current_and_promotes_next(monkeypatch, tmp_path) -> None:
+    acquire_lock_values: list[bool] = []
     saved: dict[str, Any] = {}
     state = {
         "active_stage": "inputs_and_mode_selection",
@@ -187,12 +194,17 @@ def test_advance_workflow_with_signoff_completes_current_and_promotes_next(monke
             "checks": {},
         },
     )
-    monkeypatch.setattr(programstart_serve, "save_workflow_state", lambda _registry, _system, value: saved.update(value))
+    def fake_save_workflow_state(_registry, _system, value, **kwargs):
+        acquire_lock_values.append(bool(kwargs.get("acquire_lock", True)))
+        saved.update(value)
+
+    monkeypatch.setattr(programstart_serve, "save_workflow_state", fake_save_workflow_state)
     monkeypatch.setattr(programstart_serve, "workflow_state_path", lambda _r, _s: tmp_path / "state.json")
 
     result = advance_workflow_with_signoff("programbuild", "approved", "2026-04-02", "Ready | now", False)
 
     assert result["exit_code"] == 0
+    assert acquire_lock_values == [False]
     assert saved["active_stage"] == "feasibility"
     assert saved["stages"]["inputs_and_mode_selection"]["status"] == "completed"
     assert saved["stages"]["inputs_and_mode_selection"]["challenge_gate"]["result"] == "clear"
@@ -256,7 +268,7 @@ def test_advance_workflow_with_signoff_accepts_structured_gate_payload(monkeypat
         "workflow_steps",
         lambda _registry, _system: ["inputs_and_mode_selection", "feasibility"],
     )
-    monkeypatch.setattr(programstart_serve, "save_workflow_state", lambda _registry, _system, value: saved.update(value))
+    monkeypatch.setattr(programstart_serve, "save_workflow_state", lambda _registry, _system, value, **kwargs: saved.update(value))
     monkeypatch.setattr(programstart_serve, "workflow_state_path", lambda _r, _s: tmp_path / "state.json")
 
     result = advance_workflow_with_signoff(
@@ -395,7 +407,7 @@ def test_signoff_history_capped_at_max(monkeypatch, tmp_path) -> None:
         lambda _registry, _system, _state=None: "inputs_and_mode_selection",
     )
     monkeypatch.setattr(programstart_serve, "workflow_entry_key", lambda _system: "stages")
-    monkeypatch.setattr(programstart_serve, "save_workflow_state", lambda _registry, _system, value: saved.update(value))
+    monkeypatch.setattr(programstart_serve, "save_workflow_state", lambda _registry, _system, value, **kwargs: saved.update(value))
     monkeypatch.setattr(programstart_serve, "workflow_state_path", lambda _r, _s: tmp_path / "state.json")
 
     result = save_workflow_signoff("programbuild", "approved", "2026-06-01", "cap test")
@@ -871,7 +883,7 @@ def test_advance_signoff_history_capped(monkeypatch, tmp_path: Path) -> None:
         "workflow_steps",
         lambda _r, _s: ["inputs_and_mode_selection", "requirements"],
     )
-    monkeypatch.setattr(programstart_serve, "save_workflow_state", lambda _r, _s, v: saved.update(v))
+    monkeypatch.setattr(programstart_serve, "save_workflow_state", lambda _r, _s, v, **kwargs: saved.update(v))
     monkeypatch.setattr(programstart_serve, "workflow_state_path", lambda _r, _s: tmp_path / "state.json")
     monkeypatch.setattr(
         programstart_serve,
@@ -956,7 +968,7 @@ def test_advance_final_step_completes(monkeypatch, tmp_path: Path) -> None:
     monkeypatch.setattr(programstart_serve, "workflow_active_step", lambda _r, _s, _st=None: "release")
     monkeypatch.setattr(programstart_serve, "workflow_entry_key", lambda _s: "stages")
     monkeypatch.setattr(programstart_serve, "workflow_steps", lambda _r, _s: ["release"])
-    monkeypatch.setattr(programstart_serve, "save_workflow_state", lambda _r, _s, v: saved.update(v))
+    monkeypatch.setattr(programstart_serve, "save_workflow_state", lambda _r, _s, v, **kwargs: saved.update(v))
     monkeypatch.setattr(programstart_serve, "workflow_state_path", lambda _r, _s: tmp_path / "state.json")
     monkeypatch.setattr(
         programstart_serve,

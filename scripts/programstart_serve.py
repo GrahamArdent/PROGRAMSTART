@@ -512,7 +512,7 @@ def save_workflow_signoff(system: str, decision: str, signoff_date: str, notes: 
                 MAX_SIGNOFF_HISTORY,
             )
             entry["signoff_history"] = history[-MAX_SIGNOFF_HISTORY:]
-        save_workflow_state(registry, system, state)
+        save_workflow_state(registry, system, state, acquire_lock=False)
     return {"output": f"Saved signoff metadata for {system} {active_step}", "exit_code": 0}
 
 
@@ -631,7 +631,7 @@ def advance_workflow_with_signoff(
         else:
             output = f"Completed final {system} step {active_step}"
 
-        save_workflow_state(registry, system, state)
+        save_workflow_state(registry, system, state, acquire_lock=False)
     return {"output": output, "exit_code": 0}
 
 

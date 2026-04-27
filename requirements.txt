@@ -200,7 +200,10 @@ pytest==9.0.2
     #   mutmut
     #   programstart-workflow
     #   pytest-cov
+    #   pytest-timeout
 pytest-cov==7.1.0
+    # via programstart-workflow
+pytest-timeout==2.4.0
     # via programstart-workflow
 python-dateutil==2.9.0.post0
     # via ghp-import

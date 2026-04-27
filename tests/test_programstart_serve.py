@@ -137,6 +137,7 @@ def test_save_workflow_signoff_persists_signoff_history(monkeypatch, tmp_path) -
         lambda _registry, _system, _state=None: "inputs_and_mode_selection",
     )
     monkeypatch.setattr(programstart_serve, "workflow_entry_key", lambda _system: "stages")
+
     def fake_save_workflow_state(_registry, _system, value, **kwargs):
         acquire_lock_values.append(bool(kwargs.get("acquire_lock", True)))
         saved.update(value)
@@ -194,6 +195,7 @@ def test_advance_workflow_with_signoff_completes_current_and_promotes_next(monke
             "checks": {},
         },
     )
+
     def fake_save_workflow_state(_registry, _system, value, **kwargs):
         acquire_lock_values.append(bool(kwargs.get("acquire_lock", True)))
         saved.update(value)
@@ -268,7 +270,11 @@ def test_advance_workflow_with_signoff_accepts_structured_gate_payload(monkeypat
         "workflow_steps",
         lambda _registry, _system: ["inputs_and_mode_selection", "feasibility"],
     )
-    monkeypatch.setattr(programstart_serve, "save_workflow_state", lambda _registry, _system, value, **kwargs: saved.update(value))
+    monkeypatch.setattr(
+        programstart_serve,
+        "save_workflow_state",
+        lambda _registry, _system, value, **kwargs: saved.update(value),
+    )
     monkeypatch.setattr(programstart_serve, "workflow_state_path", lambda _r, _s: tmp_path / "state.json")
 
     result = advance_workflow_with_signoff(
@@ -407,7 +413,11 @@ def test_signoff_history_capped_at_max(monkeypatch, tmp_path) -> None:
         lambda _registry, _system, _state=None: "inputs_and_mode_selection",
     )
     monkeypatch.setattr(programstart_serve, "workflow_entry_key", lambda _system: "stages")
-    monkeypatch.setattr(programstart_serve, "save_workflow_state", lambda _registry, _system, value, **kwargs: saved.update(value))
+    monkeypatch.setattr(
+        programstart_serve,
+        "save_workflow_state",
+        lambda _registry, _system, value, **kwargs: saved.update(value),
+    )
     monkeypatch.setattr(programstart_serve, "workflow_state_path", lambda _r, _s: tmp_path / "state.json")
 
     result = save_workflow_signoff("programbuild", "approved", "2026-06-01", "cap test")

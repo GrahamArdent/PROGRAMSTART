@@ -132,7 +132,7 @@ nodeenv==1.10.0
     # via
     #   pre-commit
     #   pyright
-nox==2026.2.9
+nox==2026.4.10
     # via programstart-workflow
 packageurl-python==0.17.6
     # via cyclonedx-python-lib
@@ -173,7 +173,7 @@ pluggy==1.6.0
     # via
     #   pytest
     #   pytest-cov
-pre-commit==4.5.1
+pre-commit==4.6.0
     # via programstart-workflow
 py-serializable==2.1.0
     # via cyclonedx-python-lib
@@ -193,7 +193,7 @@ pymdown-extensions==10.21
     # via mkdocs-material
 pyparsing==3.3.2
     # via pip-requirements-parser
-pyright==1.1.408
+pyright==1.1.409
     # via programstart-workflow
 pytest==9.0.3
     # via
@@ -248,7 +248,7 @@ rpds-py==0.30.0
     #   referencing
 ruamel-yaml==0.19.1
     # via check-jsonschema
-ruff==0.15.8
+ruff==0.15.12
     # via programstart-workflow
 setproctitle==1.3.7
     # via mutmut

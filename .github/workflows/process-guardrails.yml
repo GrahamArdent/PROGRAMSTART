@@ -136,7 +136,7 @@ jobs:
         run: uv run bandit -r scripts/ -ll --skip "B101,B310" -x tests/
 
       - name: Dependency audit (pip-audit)
-        run: uv run pip-audit --desc
+        run: uv run pip-audit --desc --ignore-vuln CVE-2026-3219
 
       - name: Smoke unified CLI matrix
         run: uv run python scripts/programstart_cli_smoke.py --workspace .

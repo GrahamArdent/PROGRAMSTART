@@ -150,7 +150,7 @@ pathspec==1.0.4
     # via
     #   mkdocs
     #   yamllint
-pillow==12.1.1
+pillow==12.2.0
     # via programstart-workflow
 pip==26.0.1
     # via pip-api
@@ -183,7 +183,7 @@ pydantic-core==2.41.5
     # via pydantic
 pyee==13.0.1
     # via playwright
-pygments==2.19.2
+pygments==2.20.0
     # via
     #   mkdocs-material
     #   pytest
@@ -195,7 +195,7 @@ pyparsing==3.3.2
     # via pip-requirements-parser
 pyright==1.1.408
     # via programstart-workflow
-pytest==9.0.2
+pytest==9.0.3
     # via
     #   mutmut
     #   programstart-workflow
@@ -282,7 +282,7 @@ uc-micro-py==2.0.0
     # via linkify-it-py
 urllib3==2.6.3
     # via requests
-uv==0.11.2
+uv==0.11.8
     # via programstart-workflow
 virtualenv==21.2.0
     # via

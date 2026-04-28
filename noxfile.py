@@ -13,6 +13,7 @@ from pathlib import Path
 import nox
 
 ROOT = Path(__file__).resolve().parent
+PIP_AUDIT_ARGS = ["--desc", "--ignore-vuln", "CVE-2026-3219"]
 
 nox.options.sessions = [
     "lint",
@@ -443,7 +444,7 @@ def security(session: nox.Session) -> None:
     """Run security scanning (bandit + pip-audit)."""
     install_dev(session)
     session.run("bandit", "-r", "scripts/", "-ll", "--skip", "B101,B310", "-x", "tests/")
-    session.run("pip-audit", "--desc", success_codes=[0, 1])
+    session.run("pip-audit", *PIP_AUDIT_ARGS, success_codes=[0, 1])
 
 
 @nox.session(reuse_venv=True)

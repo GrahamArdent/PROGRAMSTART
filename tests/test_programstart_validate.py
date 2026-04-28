@@ -10,6 +10,7 @@ if str(ROOT) not in sys.path:
 
 from scripts import programstart_bootstrap as bootstrap
 from scripts import programstart_common as common
+from scripts import programstart_prompt_build
 from scripts import programstart_validate as validate
 from scripts import programstart_validate_core as validate_core
 from scripts.programstart_common import load_json, write_json
@@ -571,6 +572,7 @@ def test_bootstrap_helpers_support_dry_run_and_main(tmp_path: Path, monkeypatch,
 
 
 def test_validate_main_all_passes(capsys, monkeypatch) -> None:
+    programstart_prompt_build.sync_managed_prompts()
     monkeypatch.setattr("sys.argv", ["programstart_validate.py", "--check", "all"])
     result = validate.main()
     out = capsys.readouterr().out
@@ -634,6 +636,7 @@ def test_validate_main_workflow_state(capsys, monkeypatch) -> None:
 
 
 def test_validate_main_with_system_filter(capsys, monkeypatch) -> None:
+    programstart_prompt_build.sync_managed_prompts()
     monkeypatch.setattr("sys.argv", ["programstart_validate.py", "--check", "all", "--system", "programbuild"])
     result = validate.main()
     out = capsys.readouterr().out

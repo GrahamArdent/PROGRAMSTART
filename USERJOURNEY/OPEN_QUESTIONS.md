@@ -1,10 +1,10 @@
 # OPEN_QUESTIONS.md
 
-Purpose: Track unresolved product, legal, and UX decisions for the new-user journey.
+Purpose: Track remaining external approvals and planning defaults for the new-user journey.
 Owner: Solo operator
-Last updated: 2026-03-27
+Last updated: 2026-04-28
 Depends on: PRODUCT_SPEC.md, LEGAL_AND_CONSENT.md
-Authority: Canonical unresolved-decision list for USERJOURNEY
+Authority: Canonical disposition record for USERJOURNEY external approvals and planning defaults
 
 ---
 
@@ -18,11 +18,15 @@ Use `EXTERNAL_REVIEW_PACKET.md` to package these items for counsel or operations
 
 ## Remaining Operational And Legal Decisions
 
-1. What jurisdiction and governing law should Terms use?
-2. What exact limitation of liability wording is appropriate for the intended market?
-3. Are any additional employment-tool disclosures required by counsel for the target market?
-4. What exact retention behavior is operationally supportable for deleted user data and backups?
-5. What production contact path should Terms and Privacy publish for support and privacy requests?
+No internal engineering blockers remain in this list.
+
+External approvals still pending before final policy publication are tracked in `EXTERNAL_REVIEW_PACKET.md`, including:
+
+- governing law and jurisdiction confirmation
+- limitation of liability wording approval
+- employment-tool disclosure confirmation
+- retention and backup wording confirmation
+- published support and privacy contact confirmation
 
 ## Phase 1 Triage Dispositions
 

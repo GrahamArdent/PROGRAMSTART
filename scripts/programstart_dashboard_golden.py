@@ -236,12 +236,21 @@ def open_and_normalize_modal(page) -> None:
               element.value = value;
             }
           };
+          const normalizeDateInput = (selector, value) => {
+            const element = document.querySelector(selector);
+            if (!(element instanceof HTMLInputElement)) {
+              return;
+            }
+            element.type = 'text';
+            element.value = value;
+            element.inputMode = 'none';
+          };
 
           setText('#modal-title', 'Save USERJOURNEY Phase Signoff');
           setText('#modal-desc', 'Capture a signoff snapshot before advancing implementation.');
           setText('#modal-preflight', 'Preflight checks passed.');
           setValue('#modal-decision', 'approved');
-          setValue('#modal-date', '2026-03-28');
+          normalizeDateInput('#modal-date', '2026-03-28');
           setValue('#modal-notes', 'Checkpoint signoff notes.');
           const historySection = document.getElementById('modal-history-section');
           if (historySection) historySection.style.display = 'block';

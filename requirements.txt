@@ -167,7 +167,7 @@ platformdirs==4.9.4
     #   python-discovery
     #   textual
     #   virtualenv
-playwright==1.58.0
+playwright==1.59.0
     # via programstart-workflow
 pluggy==1.6.0
     # via

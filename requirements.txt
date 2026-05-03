@@ -70,7 +70,7 @@ greenlet==3.3.2
     # via playwright
 humanize==4.15.0
     # via nox
-hypothesis==6.151.10
+hypothesis==6.152.4
     # via programstart-workflow
 identify==2.6.18
     # via pre-commit

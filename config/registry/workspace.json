@@ -159,6 +159,7 @@
       "tests/test_programstart_sync.py",
       "tests/test_programstart_attach.py",
       "tests/test_programstart_bootstrap.py",
+      "tests/test_bootstrap_workflow_templates.py",
       "tests/test_programstart_create.py",
       "tests/test_programstart_create_core.py",
       "tests/test_programstart_create_output.py",

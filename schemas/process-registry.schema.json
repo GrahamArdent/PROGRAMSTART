@@ -49,7 +49,10 @@
               "properties": {
                 "core_output_files": { "type": "array", "items": { "type": "string" } },
                 "conditional_output_files": { "type": "array", "items": { "type": "string" } },
-                "conditional_stage_checks": { "type": "array", "items": { "type": "string" } }
+                "conditional_stage_checks": {
+                  "type": "object",
+                  "additionalProperties": { "type": "string" }
+                }
               },
               "additionalProperties": false
             }

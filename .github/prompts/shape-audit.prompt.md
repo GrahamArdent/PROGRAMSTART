@@ -36,7 +36,7 @@ If drift reports violations, STOP and resolve them before proceeding.
 The guide output confirms the minimal file set for this stage (JIT Step 1).
 A clean baseline is required.
 
-For Lite, if the guide omits `AUDIT_REPORT.md`, treat that as a dormant conditional artifact. Perform the lightweight Stage 9 review below and keep the stub untouched unless real findings, wider blast radius, unresolved risk, or another convergence trigger makes a retained report useful.
+For Lite, if the guide omits `AUDIT_REPORT.md`, treat that as a dormant conditional artifact. Perform the lightweight Stage 9 review below and keep `Activation: dormant` unless real findings, wider blast radius, unresolved risk, or another convergence trigger makes a retained report useful. When a formal report becomes necessary, set `Activation: active` before writing it.
 
 ## Authority Loading
 
@@ -79,8 +79,8 @@ For cross-stage consistency, use `programstart-cross-stage-validation.prompt.md`
 3. **Reconcile decisions/evidence.** Confirm material release decisions are present in `DECISION_LOG.md` and that retained evidence is still valid for the released/current candidate.
 
 4. **Choose the evidence form.**
-   - **Lite + no material findings:** record the Stage 9 conclusion in the existing decision/state flow; keep dormant `AUDIT_REPORT.md` untouched.
-   - **Lite + material finding / wider-risk need:** activate `AUDIT_REPORT.md` and use the formal report structure below.
+   - **Lite + no material findings:** record the Stage 9 conclusion in the existing decision/state flow; keep `Activation: dormant` and leave the reusable `AUDIT_REPORT.md` template untouched.
+   - **Lite + material finding / wider-risk need:** set `Activation: active` in `AUDIT_REPORT.md` and use the formal report structure below.
    - **Product / Enterprise:** follow the variant's normal retained-audit requirements.
 
 5. **When a formal report is active, write `PROGRAMBUILD/AUDIT_REPORT.md`.** Record overall verdict, evidence-backed findings, affected surfaces, minimum fixes/owners, drift status, evidence invalidation, and go/no-go recommendation for Stage 10.
@@ -117,5 +117,5 @@ All applicable checks MUST pass before advancing. The preferred `programstart ad
 
 ## Next Steps
 
-If the review is clear: run the `programstart-stage-transition` prompt to advance to Stage 10.
+If the review is clear: run the stage-transition prompt to advance to Stage 10.
 If material gaps remain: resolve or explicitly own/accept them before advancing.

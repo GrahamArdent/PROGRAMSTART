@@ -5,6 +5,7 @@ import json
 from typing import Any, cast
 
 try:
+    from .programstart_artifact_profiles import filter_stage_files
     from .programstart_common import (
         load_registry,
         load_workflow_state,
@@ -13,6 +14,7 @@ try:
         workflow_active_step,
     )
 except ImportError:  # pragma: no cover - standalone script execution fallback
+    from programstart_artifact_profiles import filter_stage_files
     from programstart_common import (
         load_registry,
         load_workflow_state,
@@ -114,15 +116,13 @@ def main() -> int:
         return 0
 
     if args.system == "programbuild":
-        stage = args.stage or workflow_active_step(
-            registry,
-            "programbuild",
-            load_workflow_state(registry, "programbuild"),
-        )
+        state = load_workflow_state(registry, "programbuild")
+        stage = args.stage or workflow_active_step(registry, "programbuild", state)
         section = cast(dict[str, Any], guidance.get("programbuild", {})).get(stage)
         if not section:
             parser.error(f"No guidance found for PROGRAMBUILD stage '{stage}'")
         section = cast(dict[str, Any], section)
+        files = filter_stage_files(registry, list(cast(list[str], section.get("files", []))), state=state)
         stage_prompts = filter_workflow_prompts(registry, list(cast(list[str], section.get("prompts", []))))
         cross_cutting = filter_workflow_prompts(registry, cast(list[str], guidance.get("cross_cutting_workflow_prompts", [])))
         for p in cross_cutting:
@@ -134,7 +134,8 @@ def main() -> int:
                     {
                         "type": "programbuild",
                         "stage": stage,
-                        "files": section.get("files", []),
+                        "variant": state.get("variant") or "product",
+                        "files": files,
                         "scripts": section.get("scripts", []),
                         "prompts": stage_prompts,
                     },
@@ -143,7 +144,7 @@ def main() -> int:
             )
         else:
             print(f"PROGRAMBUILD Stage: {stage}")
-            print_section("Files", cast(list[str], section.get("files", [])))
+            print_section("Files", files)
             print_section("Scripts", cast(list[str], section.get("scripts", [])))
             print_section("Prompts", stage_prompts)
         return 0

@@ -132,7 +132,7 @@ State:
 
 If any box cannot be checked, resolve the authority issue first.
 
-## 5. Targeted verification gate
+## Verification Gate
 
 Verification should prove the changed or at-risk surface, not reflexively replay every prior check.
 

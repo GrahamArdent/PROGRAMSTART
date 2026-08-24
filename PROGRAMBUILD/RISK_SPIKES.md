@@ -2,9 +2,10 @@
 
 Purpose: Resolve technical unknowns before implementation commits the team to the wrong design.
 Owner: Solo operator
-Last updated: 2026-03-27
+Last updated: 2026-08-24
 Depends on: ARCHITECTURE.md
 Authority: Canonical for technical risk resolution
+Activation: dormant
 
 ---
 

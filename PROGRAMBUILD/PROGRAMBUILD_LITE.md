@@ -11,7 +11,7 @@ Authority:
 - `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` defines planning entry modes, one-spine authority, proportional rigor, JIT context loading, and evidence reuse
 - `PROGRAMBUILD_WORK_PACKET.md` defines the optional derived current-slice packet; it never becomes a second game plan
 - `PROGRAMBUILD_IDEA_INTAKE.md` runs before Stage 0 — challenge the idea or existing-project delta before filling the inputs block
-- `PROGRAMBUILD_CHALLENGE_GATE.md` runs at every stage transition — Parts A, C, F, and H are required minimum for Lite
+- `PROGRAMBUILD_CHALLENGE_GATE.md` runs at every stage transition — Parts A, C, and F are the Lite minimum; add B, D, E, G, or H when the change/risk makes them relevant
 - `PROGRAMBUILD_GAMEPLAN.md` defines the execution order with cross-stage validation
 
 ---
@@ -40,7 +40,7 @@ Lite means **less ceremony**, not weaker authority discipline. Keep one strategi
 | Stage | Output | Standard |
 |---|---|---|
 | Inputs | filled inputs block or explicit existing-project delta | must be clear |
-| Feasibility | short go/no-go note | 1 page max |
+| Feasibility | short go/no-go note | concise and decision-useful |
 | Quick research | short validation note or decisions table | only enough to avoid an obvious bad bet |
 | Requirements | lean requirements and top workflows | focused on P0 only |
 | Architecture | one architecture note | only essential contracts |
@@ -65,6 +65,7 @@ Lite means **less ceremony**, not weaker authority discipline. Keep one strategi
 - critical planning files follow the `PROGRAMBUILD_*.md` naming convention
 - non-trivial implementation work SHOULD use a bounded work packet; trivial work MAY state the same objective/non-goal/context/evidence fields inline instead
 - existing verification SHOULD be reused when no documented invalidation trigger occurred
+- convergence reviews SHOULD be triggered by risk, blast radius, accumulated cross-slice change, uncertainty, evidence invalidation, or a stage/release boundary rather than an arbitrary feature count
 
 Attach `USERJOURNEY/` only if the lite project still has real onboarding, consent, activation, or first-run routing decisions to make.
 
@@ -79,8 +80,8 @@ See `PROGRAMBUILD_SUBAGENTS.md` for full prompts and workspace agent files.
 | Discovery & Scoping | quick domain research, scope, and top workflows |
 | Architecture & Security | essential contract surface and trust boundary |
 | Quality & Release | smoke plan and short launch checklist |
-| Risk Spike Agent | when an unknown is rated medium or high impact |
-| Contract Auditor | route and auth drift check |
+| Risk Spike Agent | when a material unknown blocks a decision |
+| Contract Auditor | contract/auth drift check when warranted |
 
 ---
 
@@ -109,6 +110,7 @@ Produce only the artifacts needed for the risk:
 10. short post-launch note
 
 For each implementation slice, name reusable evidence, its invalidation triggers, and the smallest verification set needed for what changed.
+Trigger a wider convergence review when accumulated change/risk warrants it or a stage/release boundary requires it; do not use a fixed feature count as a universal rule.
 ```
 
 ---

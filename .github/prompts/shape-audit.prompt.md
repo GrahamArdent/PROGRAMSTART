@@ -94,7 +94,7 @@ When Lite's report remains dormant, update only the existing durable decision/st
 
 ## DECISION_LOG
 
-Record material Stage 9 conclusions, risk acceptance, reopened concerns, and any decision that changes project authority. Do not create entries solely to manufacture paperwork when no material decision occurred.
+You MUST update `PROGRAMBUILD/DECISION_LOG.md` whenever Stage 9 produces a material conclusion, risk acceptance, reopened concern, or other decision that changes project authority. Do not create entries solely to manufacture paperwork when no material decision occurred.
 
 ## Verification Gate
 
@@ -115,5 +115,5 @@ All applicable checks MUST pass before advancing. The preferred `programstart ad
 
 ## Next Steps
 
-If the review is clear: run the stage-transition prompt to advance to Stage 10.
+If the review is clear: run the `programstart-stage-transition` prompt to advance to Stage 10.
 If material gaps remain: resolve or explicitly own/accept them before advancing.

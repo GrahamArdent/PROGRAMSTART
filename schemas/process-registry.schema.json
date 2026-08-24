@@ -41,7 +41,19 @@
           "metadata_required": { "type": "array", "items": { "type": "string" } },
           "variants": { "type": "array", "items": { "type": "string" } },
           "stage_order": { "type": "array", "items": { "type": "object" } },
-          "step_order": { "type": "array", "items": { "type": "string" } }
+          "step_order": { "type": "array", "items": { "type": "string" } },
+          "artifact_profiles": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "core_output_files": { "type": "array", "items": { "type": "string" } },
+                "conditional_output_files": { "type": "array", "items": { "type": "string" } },
+                "conditional_stage_checks": { "type": "array", "items": { "type": "string" } }
+              },
+              "additionalProperties": false
+            }
+          }
         },
         "additionalProperties": false
       }

@@ -1,5 +1,5 @@
 ---
-description: "Stage 9 audit and drift control — guide to producing AUDIT_REPORT.md and passing the audit-complete gate. Use at Stage 9."
+description: "Stage 9 audit and drift control — guide to proportionate audit evidence and the audit-complete gate when a formal report is active. Use at Stage 9."
 name: "Shape Audit"
 argument-hint: "Name the project being audited"
 agent: "agent"
@@ -8,7 +8,7 @@ version: "1.0"
 
 # Shape Audit — Stage 9 Audit And Drift Control
 
-Run the structured audit protocol to review all stage-gate evidence, check DECISION_LOG completeness, detect drift, and produce `AUDIT_REPORT.md` before advancing to post-launch review.
+Run the Stage 9 audit/drift protocol proportionally. Product/Enterprise keep their normal formal audit evidence. In Lite, a formal `AUDIT_REPORT.md` is conditional: do not create/populate it merely because a reusable stub exists when a lightweight drift/convergence review is sufficient.
 
 ## Data Grounding Rule
 
@@ -36,81 +36,84 @@ If drift reports violations, STOP and resolve them before proceeding.
 The guide output confirms the minimal file set for this stage (JIT Step 1).
 A clean baseline is required.
 
+For Lite, if the guide omits `AUDIT_REPORT.md`, treat that as a dormant conditional artifact. Perform the lightweight Stage 9 review below and keep the stub untouched unless real findings, wider blast radius, unresolved risk, or another convergence trigger makes a retained report useful.
+
 ## Authority Loading
 
-Read the following files before starting protocol steps:
+Read before starting:
 
-1. `PROGRAMBUILD/PROGRAMBUILD.md` §16 — read the audit_and_drift_control protocol
-2. `PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md` §16 — stage definition and required outputs
-3. `PROGRAMBUILD/FEASIBILITY.md` — kill criteria (required by Kill Criteria Re-check)
-4. `PROGRAMBUILD/ARCHITECTURE.md` — system contracts for audit comparison
-5. `PROGRAMBUILD/DECISION_LOG.md` — decisions to audit for completeness
-6. `PROGRAMBUILD/RISK_SPIKES.md` — risk status and spike outcomes
-7. `PROGRAMBUILD/RELEASE_READINESS.md` — release gate evidence
-8. `PROGRAMBUILD/AUDIT_REPORT.md` — if it already exists, read it first
+1. `PROGRAMBUILD/PROGRAMBUILD.md` §16 — audit_and_drift_control protocol
+2. `PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md` §16 — stage definition and authority rules
+3. `PROGRAMBUILD/FEASIBILITY.md` — kill criteria
+4. `PROGRAMBUILD/ARCHITECTURE.md` — material system contracts
+5. `PROGRAMBUILD/DECISION_LOG.md` — durable decisions/reversals
+6. `PROGRAMBUILD/RELEASE_READINESS.md` — release gate evidence
+7. `PROGRAMBUILD/RISK_SPIKES.md` only when the JIT guide includes it or real spike evidence is active
+8. `PROGRAMBUILD/AUDIT_REPORT.md` only when the JIT guide includes it or a formal audit report is already active
 
-Stage-specific deliverables (RESEARCH_SUMMARY.md, REQUIREMENTS.md, TEST_STRATEGY.md) are loaded during Protocol Steps as the audit walks each stage — not pre-loaded here.
+Load additional stage deliverables only when a finding/question requires them; do not preload the entire project hierarchy merely because Stage 9 was reached.
 
 ## Kill Criteria Re-check
 
-Before starting audit work, re-read the `## Kill Criteria` section in `FEASIBILITY.md`.
-For each kill criterion, evaluate whether it has been triggered by evidence gathered across completed stages.
+Before audit work, re-check the `## Kill Criteria` section in `FEASIBILITY.md` against current evidence.
 If any criterion is triggered:
-1. Record the trigger in `DECISION_LOG.md`
-2. Follow the action specified in the criterion (stop / kill / pivot / pause / redirect / no-go)
-3. Do NOT proceed with remaining protocol steps
+1. record the trigger in `DECISION_LOG.md`;
+2. follow the criterion's action;
+3. do not proceed as though the audit were clear.
 
-For cross-stage consistency, also run `programstart-cross-stage-validation.prompt.md` to verify upstream stages have not drifted relative to this stage's inputs.
+For cross-stage consistency, use `programstart-cross-stage-validation.prompt.md` when the release/audit boundary actually requires wider reconciliation.
 
 ## Protocol
 
-> **Ordering note**: Audit outputs follow `sync_rule: programbuild_control_inventory` in `config/process-registry.json`. AUDIT_REPORT.md reviews all outputs against PROGRAMBUILD_CANONICAL.md and PROGRAMBUILD_FILE_INDEX.md (authority sources). Read both authority files before writing AUDIT_REPORT.md.
+1. **Run the mechanical baseline.**
+   ```bash
+   uv run programstart drift
+   uv run programstart validate --check all
+   ```
+   Diagnose any failure from its authoritative cause rather than generating a report first.
 
-1. **Load protocol.** Read `PROGRAMBUILD/PROGRAMBUILD.md §16` for the full audit procedure. Do not rely solely on the steps below — follow the authority section.
+2. **Review material surfaces.** Check only surfaces relevant to this product and the changes accumulated since the last trusted convergence point: contracts, auth/trust, schemas, persistence/migrations, external dependencies, release behavior, stale evidence, test blind spots, and duplicate planning authority.
 
-2. **Walk each completed stage.** For stages 0–8, verify:
-   - Primary output file exists and contains non-template content.
-   - Stage gate was passed (check `PROGRAMBUILD/STATE.json` or gate evidence).
-   - Any override or skip is documented in `DECISION_LOG.md`.
+3. **Reconcile decisions/evidence.** Confirm material release decisions are present in `DECISION_LOG.md` and that retained evidence is still valid for the released/current candidate.
 
-3. **Audit DECISION_LOG completeness.** Confirm each stage has at least one decision entry. Flag any stage with no entries.
+4. **Choose the evidence form.**
+   - **Lite + no material findings:** record the Stage 9 conclusion in the existing decision/state flow; keep dormant `AUDIT_REPORT.md` untouched.
+   - **Lite + material finding / wider-risk need:** activate `AUDIT_REPORT.md` and use the formal report structure below.
+   - **Product / Enterprise:** follow the variant's normal retained-audit requirements.
 
-4. **Run drift check.** Run `uv run programstart drift` and record any violations.
-
-5. **Run validate.** Run `uv run programstart validate --check all` and record any failures.
-
-6. **Write `PROGRAMBUILD/AUDIT_REPORT.md`.** Record:
-   - Overall verdict: pass / pass-with-findings / fail
-   - Per-stage evidence summary
-   - DECISION_LOG completeness assessment
-   - Drift status at audit time
-   - Any re-opened or unresolved risk spikes
-   - Go/no-go recommendation for Stage 10
+5. **When a formal report is active, write `PROGRAMBUILD/AUDIT_REPORT.md`.** Record overall verdict, evidence-backed findings, affected surfaces, minimum fixes/owners, drift status, evidence invalidation, and go/no-go recommendation for Stage 10.
 
 ## Output Ordering
 
-Write files in authority-before-dependent order:
+When `AUDIT_REPORT.md` is active:
 
-1. `PROGRAMBUILD/AUDIT_REPORT.md` — write first (primary output; verdict must be determined before any log entries)
-2. `PROGRAMBUILD/DECISION_LOG.md` — update after audit conclusions are written, not before
+1. `PROGRAMBUILD/AUDIT_REPORT.md` — write the evidence-backed audit result first
+2. `PROGRAMBUILD/DECISION_LOG.md` — adopt material conclusions/acceptances second
+
+When Lite's report remains dormant, update only the existing durable decision/state surfaces actually needed to record the Stage 9 outcome.
 
 ## DECISION_LOG
 
-You MUST update `PROGRAMBUILD/DECISION_LOG.md` after writing `AUDIT_REPORT.md`.
-Record the audit verdict (pass / pass-with-findings / fail), any re-opened risk spikes, and the `audit-complete` gate status.
+Record material Stage 9 conclusions, risk acceptance, reopened concerns, and any decision that changes project authority. Do not create entries solely to manufacture paperwork when no material decision occurred.
 
 ## Verification Gate
 
-Before marking Stage 9 complete, run:
+Always rerun the mechanical baseline relevant to closure:
+
+```bash
+uv run programstart drift
+uv run programstart validate --check all
+```
+
+If `programstart guide --system programbuild` includes `AUDIT_REPORT.md`, also run:
 
 ```bash
 uv run programstart validate --check audit-complete
-uv run programstart drift
 ```
 
-Both MUST pass. All reported issues must be resolved before advancing.
+All applicable checks MUST pass before advancing. The preferred `programstart advance` command uses the same artifact-profile-aware preflight.
 
 ## Next Steps
 
-If audit passed: run the `programstart-stage-transition` prompt to advance to Stage 10.
-If audit found gaps: STOP — do not advance. Resolve all gaps, re-run `shape-audit`, and re-confirm the gate before transitioning.
+If the review is clear: run the stage-transition prompt to advance to Stage 10.
+If material gaps remain: resolve or explicitly own/accept them before advancing.

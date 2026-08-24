@@ -11,17 +11,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added deterministic dependency-graph primitives for typed prerequisite/dependent traversal, stable topological ordering, cycle reporting, blocker eligibility, and bounded provenance-preserving impact paths.
 - Added immutable evidence-invalidation primitives that reuse verification evidence until an explicitly changed or graph-impacted scope/dependency invalidates it; evidence age remains metadata rather than an automatic expiry rule.
+- Added a PROGRAMSTART-only `workflow_dispatch` manual convergence gate so full `nox -s ci` validation is available on demand without restoring push, PR, cron, or nightly CI noise.
 
 ### Changed
 
 - Added the PROGRAMBUILD planning operating model and bounded work-packet standard, including one-strategic-execution-spine authority, proportional rigor, task-scoped/JIT context loading, evidence reuse with invalidation triggers, and research-to-plan delta handling (ADR-0023 / DEC-020).
 - Updated workflow guidance, prompts, registry metadata, canonical documentation, Challenge Gate behavior, and Stage 7/8 execution semantics to narrow during implementation and widen at meaningful convergence gates.
 - Made status staleness and cross-system distance warnings explicitly non-authoritative heuristics; elapsed time or ordinal distance alone no longer implies that evidence is invalid or that re-entry is required.
+- Simplified PROGRAMBUILD execution surfaces around navigator-first startup (`status` / `guide`), compact logical work packets by default, stage/risk-aware Product Challenge Gates, on-demand specialist agents, and targeted verification driven by invalidation rather than ritual.
+- Reduced duplicated operational prose across the Gameplan, Checklist, Quick Start, JIT instructions, Product variant, and algorithm launcher so detailed methodology remains in its canonical owner instead of being reloaded or recopied everywhere.
+- Changed generated-project `full-ci-gate.yml` to manual-only by default; projects may add automatic triggers when their own operating needs justify the cost.
 
 ### Fixed
 
 - Preserved the six intentionally inactive GitHub Actions definitions as dormant `templates/github-workflows/` sources. Bootstrap and PROGRAMBUILD attach materialize them into `.github/workflows/` in standalone project repositories, and downstream sync resolves those canonical project paths back to the dormant template sources. This restores bootstrap-asset validation without re-enabling recurring Actions in the PROGRAMSTART template repository.
 - Corrected stale broad-JIT prompt-standard rules, Lite Challenge Gate minimums, decision-reversal examples, Product JIT verification-section structure, checklist gate columns, and several rigid numeric/calendar rules that conflicted with proportional-risk planning.
+- Removed remaining universal feature/file/project/time/agent-count heuristics from active PROGRAMBUILD guidance where they had started acting like policy rather than optional local reminders.
 
 ## [1.0.0] - 2026-04-17
 

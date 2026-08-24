@@ -2,251 +2,227 @@
 
 # Program Build Work Packet
 
-Purpose: Define the standard structure for the current coherent unit of execution without creating a competing game plan.
+Purpose: Define the smallest useful current-slice planning structure without creating a competing game plan or unnecessary documentation ceremony.
 Owner: Project Lead / Operator
 Last updated: 2026-08-24
-Depends on: `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`, the project's canonical execution spine, relevant requirements/architecture/decisions
-Authority: Canonical for active work-packet structure. A filled work packet is derived execution state and is never canonical over project authority.
+Depends on: `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`, the project's strategic execution spine, relevant requirements/architecture/decisions
+Authority: Canonical for work-packet semantics. A filled packet is derived execution context and is never canonical over project authority.
 
 ---
 
-## 1. What A Work Packet Is
+## 1. Core Rule
 
-A work packet is the smallest useful planning artifact that answers:
+A **work packet is a logical execution contract**, not necessarily a file.
+
+It answers:
 
 - what are we doing now?
-- why is this the next coherent slice?
-- what is in scope and out of scope?
-- which authoritative sources matter?
+- why is it authorized/next?
+- what is in and out of scope?
+- which current authority/evidence matters?
 - what evidence can be reused?
-- what could this work invalidate?
-- what acceptance criteria prove completion?
-- what durable project artifacts must be updated afterward?
+- what could invalidate that evidence?
+- what proves completion?
+- what durable project state must be reconciled afterward?
 
 A work packet is **not**:
 
-- a new master plan
-- a replacement for the project's game plan or roadmap
-- a second requirements document
-- a running diary
-- a place to restate the entire repository
-
-For long-running work, a project MAY keep one replaceable derived file named `CURRENT_WORK_PACKET.md`.
+- a new master plan;
+- a second requirements/architecture document;
+- a running diary;
+- a place to copy the whole repository;
+- mandatory paperwork for trivial or single-step work.
 
 ---
 
-## 2. Creation Rules
+## 2. Choose Compact Or Extended
 
-Create or refresh a work packet when:
+### Compact packet — default
 
-- beginning a coherent implementation/remediation slice
-- moving to the next phase of an existing plan
-- resuming after a meaningful pause
-- new research or evidence materially changes what should happen next
-- a blocker forces replanning of the current slice
+Use for ordinary coherent work that can be executed and reviewed without a durable packet file.
 
-Do not create a packet for trivial work that can be safely completed immediately with obvious scope and verification.
+The compact packet may live in:
 
-Before creating the packet:
+- the task/issue/PR description;
+- the agent's current task state;
+- a concise planning block in the active session.
 
-1. identify the project's canonical execution spine;
-2. identify the current stage/status;
-3. locate the relevant authoritative files;
-4. identify trustworthy existing evidence;
-5. determine what changed since that evidence was produced.
+Required fields:
+
+```text
+OBJECTIVE:
+WHY_NOW / AUTHORITY:
+IN_SCOPE:
+OUT_OF_SCOPE:
+REQUIRED_CONTEXT:
+REUSABLE_EVIDENCE:
+INVALIDATION_TRIGGERS:
+ACCEPTANCE_CRITERIA:
+TARGETED_VERIFICATION:
+DURABLE_UPDATES_IF_NEEDED:
+```
+
+### Extended persisted packet — only when useful
+
+Persist `CURRENT_WORK_PACKET.md` when one or more of these materially benefits execution:
+
+- the slice spans sessions;
+- multiple agents/people must share the same active context;
+- dependencies or blockers make resumption non-obvious;
+- the slice is high-risk or has meaningful blast radius;
+- the evidence/invalidation model is non-trivial;
+- the task is likely to pause and resume;
+- the work is complex enough that a durable packet reduces, rather than adds, coordination cost.
+
+Do **not** persist a file merely because the work is labelled "non-trivial."
+
+A project MAY keep at most one active replaceable `CURRENT_WORK_PACKET.md` unless its own authority explicitly defines a different mechanism.
 
 ---
 
-## 3. Work Packet Template
+## 3. Compact Packet Lifecycle
+
+1. **Derive** from the current strategic execution spine/stage and live project state.
+2. **Narrow** to one coherent objective with explicit non-goals.
+3. **Reference** only the exact authority sections/evidence needed now.
+4. **Reuse** trustworthy evidence whose invalidation conditions have not occurred.
+5. **Execute** without silently widening scope.
+6. **Verify** the changed/at-risk surface with the smallest sufficient check set.
+7. **Reconcile** material decisions/scope/architecture/status into durable authority.
+8. **Close** the packet and derive the next slice from the newly current state.
+
+If the packet needs its own backlog, milestones, or independent sequencing, it is too large. Split it.
+
+---
+
+## 4. Extended `CURRENT_WORK_PACKET.md` Template
+
+Use this only when persistence is justified.
 
 ```markdown
 # CURRENT_WORK_PACKET.md
 
-## Packet Metadata
-
 PACKET_ID:
 STATUS: [ready | active | blocked | complete | superseded]
-CREATED:
-LAST_UPDATED:
-OWNER:
 PROJECT:
 CURRENT_STAGE_OR_MILESTONE:
 AUTHORITY_SPINE:
 AUTHORITY_VERSION_OR_COMMIT:
 
-## 1. Objective
+## Objective
+One concrete outcome.
 
-State one concrete outcome for this packet.
+## Why This Is Next
+Trace to the execution spine, dependency order, blocker resolution, or current stage.
 
-## 2. Why This Is Next
-
-Explain how this packet follows from the canonical execution spine, current state, dependency order, or blocker resolution.
-
-## 3. In Scope
-
-- item
+## Scope
+### In
 - item
 
-## 4. Explicitly Out Of Scope
-
-- item
+### Out
 - item
 
-## 5. Required Context
+## Required Context
+- exact authority file/section/ID
+- specialist evidence only when triggered
 
-### Always-load authority
-- file / source
+## Trusted Evidence + Invalidation
+| Evidence | Why reusable | Invalidated by |
+|---|---|---|
+| | | |
 
-### Task-specific authority
-- file / source
+## Assumptions / Unknowns
+| Item | Confidence | Action |
+|---|---|---|
+| | high / medium / low | reuse / verify / spike / decide |
 
-### Just-in-time specialist context
-- file / source and trigger for loading it
+## Acceptance Criteria
+- [ ] criterion
 
-## 6. Trusted Existing Evidence
+## Verification
+| Changed / at-risk surface | Check | Result |
+|---|---|---|
+| | | pending |
 
-| Evidence | Verified when / against | Why still valid | Invalidation trigger |
-|---|---|---|---|
-| | | | |
-
-## 7. Assumptions And Unknowns
-
-| Item | Type | Confidence | Action |
-|---|---|---|---|
-| | assumption / unknown | high / medium / low | reuse / verify / spike / decide |
-
-## 8. Planned Changes / Actions
-
-1. action
-2. action
-3. action
-
-## 9. Acceptance Criteria
-
-- [ ] measurable completion criterion
-- [ ] measurable completion criterion
-
-## 10. Verification Map
-
-| Change / Risk | Verification required | Existing evidence reusable? | Result |
-|---|---|---|---|
-| | | yes / no / partial | pending |
-
-## 11. Stop / Escalation Conditions
-
-Stop or escalate if:
-- condition
+## Stop / Escalation Conditions
 - condition
 
-## 12. Durable Updates Required On Completion
+## Durable Updates On Completion
+- execution spine/status:
+- decision log / ADR:
+- requirements:
+- architecture:
+- tests / registry:
+- release / operations:
 
-- execution spine / roadmap: [yes/no + required edit]
-- decision log: [yes/no + decision]
-- requirements: [yes/no + change]
-- architecture: [yes/no + change]
-- test strategy / registry: [yes/no + change]
-- release / operational state: [yes/no + change]
-
-## 13. Completion Reconciliation
-
+## Close-Out
 OUTCOME:
 VERIFICATION_SUMMARY:
-DECISIONS_RECORDED:
-AUTHORITY_UPDATED:
+EVIDENCE_INVALIDATED_OR_REUSED:
+AUTHORITY_RECONCILED:
 REMAINING_BLOCKERS:
 NEXT_RECOMMENDED_SLICE:
 ```
 
 ---
 
-## 4. Scope Rule
-
-A packet SHOULD contain one coherent slice that can be reasoned about and verified as a unit.
-
-Good packet examples:
-
-- reconcile one migration boundary and prove the affected data path
-- implement one feature family sharing the same contracts
-- review one research result against an existing master plan and produce specific amendment recommendations
-- remediate one deployment failure class and verify only the affected release surfaces
-
-Bad packet examples:
-
-- "finish the entire project"
-- "fix everything in the repository"
-- a packet containing several unrelated workstreams just because they are all open
-
-If a packet grows large enough to need independent sequencing, split it.
-
----
-
 ## 5. Context-Minimization Rule
 
-The packet SHOULD point to authoritative context rather than duplicate it.
+Reference authority instead of copying it.
 
 Prefer:
 
 ```text
-Relevant contract: ARCHITECTURE.md §4.2
-Relevant requirement: FR-017
-Relevant decision: DEC-021
+ARCHITECTURE.md §4.2
+Requirement FR-017
+Decision DEC-021
 ```
 
-Over copying several pages from those documents into the packet.
+Do not paste pages of authoritative text into a packet unless the task genuinely needs that text inline.
 
-This keeps the active context small and reduces the chance that duplicated text becomes stale.
+The packet should make context **smaller**.
 
 ---
 
 ## 6. Evidence-Reuse Rule
 
-For every verification step, ask in this order:
+For each verification concern, ask in this order:
 
 1. Has this already been proven?
-2. Is that evidence still valid?
-3. Did the current work touch something that can invalidate it?
-4. What is the narrowest verification that closes the remaining uncertainty?
+2. Is the evidence still in scope?
+3. Did this slice trigger an invalidation condition?
+4. What is the narrowest check that closes the remaining uncertainty?
 
-Do not re-run broad verification by habit.
-Do not reuse evidence after a known invalidation trigger.
-
----
-
-## 7. Research-To-Packet Rule
-
-When the packet exists because new research was introduced:
-
-- the research remains reference evidence
-- the packet identifies which findings matter to the current project
-- the packet compares those findings to current authority and implementation state
-- the output should usually be specific decision deltas, risk updates, and proposed edits to the current execution spine
-- the packet MUST NOT declare a new master plan unless the project authority explicitly decides to replace the old one
+Do not repeat broad verification by habit.
+Do not reuse evidence after a relevant invalidation trigger.
+Age/session change alone is not invalidation unless the underlying fact is genuinely time-sensitive.
 
 ---
 
-## 8. Existing-Project Rule
+## 7. Existing-Project / Research Rule
 
 For an existing repository:
 
-- read its repository instructions and canonical authority before acting
-- preserve its established execution spine
-- use the packet as a temporary execution lens
-- record durable changes back into the project's canonical artifacts
-- mark the packet complete or superseded after reconciliation
+- read its current instructions and strategic execution spine first;
+- use the packet only as the current execution lens;
+- keep research/audits as evidence;
+- convert useful findings into explicit deltas to current authority;
+- reconcile accepted changes back into canonical project artifacts;
+- close/replace the packet after the slice.
 
-The packet should make the project easier to resume, but the project must remain understandable without treating old work packets as the source of truth.
+A newer packet or research report never outranks established project authority merely because it is newer.
 
 ---
 
-## 9. Completion Rule
+## 8. Completion Rule
 
-A packet is complete only when:
+A packet is complete when:
 
-- the scoped work is finished or explicitly stopped;
-- defined acceptance criteria are resolved;
+- the scoped outcome is done or explicitly stopped;
+- acceptance criteria are resolved;
 - required targeted verification is complete;
-- material decisions are recorded in the proper durable authority;
-- the project execution spine/status is reconciled if the outcome changes it;
-- blockers and next recommended slice are explicit.
+- material durable decisions/state are reconciled;
+- remaining blockers are durably tracked;
+- the next slice can be derived from current project state without relying on the old packet as authority.
 
-After completion, generate the next packet from the newly current project state. Do not simply carry forward stale assumptions from the previous packet.
+**Success test:** the packet reduced execution ambiguity more than it increased documentation work.

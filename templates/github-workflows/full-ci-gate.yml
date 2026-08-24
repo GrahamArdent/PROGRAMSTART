@@ -1,8 +1,6 @@
-name: Full CI Gate (Scheduled)
+name: Full CI Gate (Manual)
 
 on:
-  schedule:
-    - cron: '0 9 * * *'
   workflow_dispatch:
 
 permissions:
@@ -62,7 +60,7 @@ jobs:
           PROGRAMSTART_NOX_FACTORY_DIR: ${{ runner.temp }}/programstart-nox-factory-smoke
         run: uv run nox -s ci
 
-      - name: Scheduled dependency audit (pip-audit)
+      - name: Dependency audit
         run: uv run pip-audit --desc --ignore-vuln CVE-2026-3219
 
       - name: Upload template golden failures

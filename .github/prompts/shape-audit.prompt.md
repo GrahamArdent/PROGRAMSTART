@@ -65,6 +65,8 @@ For cross-stage consistency, use `programstart-cross-stage-validation.prompt.md`
 
 ## Protocol
 
+> **Ordering note (`sync_rule: programbuild_control_inventory`)**: audit findings are evidence, not control authority. If a finding changes reusable PROGRAMBUILD methodology, update the canonical control owner first and its registered dependents second; otherwise keep the finding local to project evidence/decisions.
+
 1. **Run the mechanical baseline.**
    ```bash
    uv run programstart drift

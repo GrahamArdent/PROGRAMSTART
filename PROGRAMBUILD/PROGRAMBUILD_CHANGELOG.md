@@ -6,6 +6,21 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 
 ---
 
+## 2026-08-24 (Execution Friction Cleanup)
+
+- made forward velocity an explicit design concern: process should earn its cost by reducing risk, uncertainty, rework, or coordination burden
+- changed work packets from mandatory persisted documents for non-trivial work to compact logical execution contracts by default; `CURRENT_WORK_PACKET.md` is persisted only when resumability, multi-agent coordination, dependencies, blockers, or risk make persistence useful
+- changed Product Challenge Gates from all-eight-parts-at-every-transition ceremony to A/C/F baseline plus stage/risk-relevant controls; full A–H remains required at release readiness and other whole-system convergence boundaries
+- shortened always-on Copilot/JIT guidance and changed startup to navigator-first orientation (`programstart status` / `programstart guide`) plus task-specific authority loading
+- simplified `PROGRAMBUILD_GAMEPLAN.md`, `PROGRAMBUILD_CHECKLIST.md`, Product guidance, Quick Start, and the algorithm launcher so they reference canonical owners instead of duplicating detailed methodology
+- removed universal feature/file/project/time/agent-count heuristics from active guidance where they had become policy proxies rather than evidence-based local reminders
+- made specialist agents explicitly on-demand rather than mandatory sequences
+- added PROGRAMSTART's `workflow_dispatch`-only manual convergence gate to run the full nox CI-equivalent suite when broad confidence is actually required, with no push/PR/cron/nightly trigger
+- changed the generated-project full CI template to manual-only by default; generated projects may add automatic triggers when their operating needs justify the cost
+- kept historical devlogs unchanged; the cleanup targets current executable/control guidance rather than rewriting past records
+
+---
+
 ## 2026-08-24 (Planning Operating Model + Bounded Execution)
 
 - added `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` as the canonical owner for planning-to-execution separation, entry modes, proportional rigor, progressive/JIT context loading, evidence reuse, and research-to-plan delta rules

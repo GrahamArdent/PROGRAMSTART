@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Preserved the six intentionally inactive GitHub Actions definitions as dormant `templates/github-workflows/` sources. Bootstrap and PROGRAMBUILD attach materialize them into `.github/workflows/` in standalone project repositories, and downstream sync resolves those canonical project paths back to the dormant template sources. This restores bootstrap-asset validation without re-enabling recurring Actions in the PROGRAMSTART template repository.
+
 ## [1.0.0] - 2026-04-17
 
 ### Features

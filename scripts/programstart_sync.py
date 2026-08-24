@@ -8,11 +8,19 @@ from pathlib import Path
 
 try:
     from .programstart_attach import MANIFEST_FILENAME, PROGRAMBUILD_PRESERVE_EXISTING_FILES
-    from .programstart_bootstrap import copy_file
+    from .programstart_bootstrap import (
+        WORKFLOW_DESTINATION_PREFIX,
+        WORKFLOW_TEMPLATE_PREFIX,
+        copy_file,
+    )
     from .programstart_common import warn_direct_script_invocation, workspace_path
 except ImportError:  # pragma: no cover - standalone script execution fallback
     from programstart_attach import MANIFEST_FILENAME, PROGRAMBUILD_PRESERVE_EXISTING_FILES
-    from programstart_bootstrap import copy_file
+    from programstart_bootstrap import (
+        WORKFLOW_DESTINATION_PREFIX,
+        WORKFLOW_TEMPLATE_PREFIX,
+        copy_file,
+    )
 
     from programstart_common import warn_direct_script_invocation, workspace_path
 
@@ -48,6 +56,24 @@ def _preserve_path(destination_root: Path) -> set[str]:
     return base
 
 
+def _template_source_path(template_root: Path, relative_path: str) -> Path:
+    """Resolve a downstream manifest path back to its source in the template repo.
+
+    Direct same-path sources remain authoritative for backward compatibility. If a
+    generated project's `.github/workflows/*` asset is intentionally dormant in the
+    template repo, fall back to the matching `templates/github-workflows/*` source.
+    """
+    direct = template_root / relative_path
+    if direct.exists():
+        return direct
+    if relative_path.startswith(WORKFLOW_DESTINATION_PREFIX):
+        suffix = relative_path.removeprefix(WORKFLOW_DESTINATION_PREFIX)
+        dormant = template_root / WORKFLOW_TEMPLATE_PREFIX / suffix
+        if dormant.exists():
+            return dormant
+    return direct
+
+
 def _files_needing_sync(
     template_root: Path,
     destination_root: Path,
@@ -62,7 +88,7 @@ def _files_needing_sync(
             continue
         if file_filter and not _matches_filter(relative_path, file_filter):
             continue
-        source = template_root / relative_path
+        source = _template_source_path(template_root, relative_path)
         destination = destination_root / relative_path
         if not source.exists():
             results.append((relative_path, "removed-from-template"))
@@ -117,7 +143,7 @@ def sync(
             print(f"  SKIP {relative_path} (removed from template — delete manually if desired)")
             skipped += 1
             continue
-        source = template_root / relative_path
+        source = _template_source_path(template_root, relative_path)
         destination = destination_root / relative_path
         copy_file(source, destination, dry_run=False)
         copied += 1

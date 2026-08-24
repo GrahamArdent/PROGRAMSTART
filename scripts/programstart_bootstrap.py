@@ -28,6 +28,10 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
     )
 
 
+WORKFLOW_TEMPLATE_PREFIX = "templates/github-workflows/"
+WORKFLOW_DESTINATION_PREFIX = ".github/workflows/"
+
+
 def write_file(path: Path, content: str, dry_run: bool) -> None:
     if dry_run:
         print(f"CREATE {path}")
@@ -136,19 +140,47 @@ def generated_repo_userjourney_prompts(registry: dict) -> set[str]:
     return userjourney_prompts - shared_workflow_prompts
 
 
+def materialized_bootstrap_asset_path(relative_path: str) -> str:
+    """Return the generated-repo destination for a template bootstrap asset.
+
+    Workflow YAML files are intentionally stored outside `.github/workflows/` in the
+    inactive PROGRAMSTART template repository so GitHub does not execute them there.
+    Generated standalone projects receive the same files at their canonical workflow paths.
+    All other bootstrap assets retain their existing path unchanged.
+    """
+    if relative_path.startswith(WORKFLOW_TEMPLATE_PREFIX):
+        suffix = relative_path.removeprefix(WORKFLOW_TEMPLATE_PREFIX)
+        return f"{WORKFLOW_DESTINATION_PREFIX}{suffix}"
+    return relative_path
+
+
+def generated_repo_bootstrap_asset_pairs_for_mode(
+    registry: dict,
+    *,
+    include_userjourney: bool,
+) -> list[tuple[str, str]]:
+    assets = registry.get("workspace", {}).get("bootstrap_assets", [])
+    allowed_prompt_assets = generated_repo_prompt_assets_for_mode(registry, include_userjourney=include_userjourney)
+    pairs: list[tuple[str, str]] = []
+    for source_path in assets:
+        if source_path.startswith(".github/prompts/") and source_path not in allowed_prompt_assets:
+            continue
+        pairs.append((source_path, materialized_bootstrap_asset_path(source_path)))
+    return pairs
+
+
 def generated_repo_bootstrap_assets(registry: dict) -> list[str]:
     return generated_repo_bootstrap_assets_for_mode(registry, include_userjourney=False)
 
 
 def generated_repo_bootstrap_assets_for_mode(registry: dict, *, include_userjourney: bool) -> list[str]:
-    assets = registry.get("workspace", {}).get("bootstrap_assets", [])
-    allowed_prompt_assets = generated_repo_prompt_assets_for_mode(registry, include_userjourney=include_userjourney)
-    filtered: list[str] = []
-    for asset in assets:
-        if asset.startswith(".github/prompts/") and asset not in allowed_prompt_assets:
-            continue
-        filtered.append(asset)
-    return filtered
+    return [
+        destination_path
+        for _source_path, destination_path in generated_repo_bootstrap_asset_pairs_for_mode(
+            registry,
+            include_userjourney=include_userjourney,
+        )
+    ]
 
 
 def generated_repo_prompt_registry(registry: dict) -> dict:
@@ -211,9 +243,12 @@ def bootstrap_programbuild(destination_root: Path, registry: dict, variant: str,
 
 
 def bootstrap_shared_assets(destination_root: Path, registry: dict, dry_run: bool) -> None:
-    for relative_path in generated_repo_bootstrap_assets_for_mode(registry, include_userjourney=False):
-        source = workspace_path(relative_path)
-        destination = destination_root / relative_path
+    for source_path, destination_path in generated_repo_bootstrap_asset_pairs_for_mode(
+        registry,
+        include_userjourney=False,
+    ):
+        source = workspace_path(source_path)
+        destination = destination_root / destination_path
         copy_file(source, destination, dry_run)
 
 

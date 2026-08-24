@@ -13,6 +13,8 @@ If a file is missing from this index, it is not a recognized control file in thi
 |---|---|---|---|---|
 | `PROGRAMBUILD_CANONICAL.md` | control | active | authority map and naming rules | document authority |
 | `PROGRAMBUILD_FILE_INDEX.md` | control | active | inventory of critical files | file inventory |
+| `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` | control | active | separates reusable methodology, project authority, active work, context loading, and evidence reuse | planning-to-execution operating model |
+| `PROGRAMBUILD_WORK_PACKET.md` | template/protocol | active | standard for a derived current execution slice without creating a competing plan | active work-packet structure |
 | `PROGRAMBUILD_ADR_TEMPLATE.md` | template | active | MADR 4.0 format, status lifecycle, decision-log linkage, and supersession hygiene | ADR structure, decision-log linkage, and supersession hygiene |
 | `PROGRAMBUILD_CHANGELOG.md` | control | active | system-level change history | PROGRAMBUILD change history |
 | `PROGRAMBUILD.md` | playbook | active | balanced default process | stage order and base workflow |
@@ -46,6 +48,12 @@ These output files are standard project artifacts. In the template repository th
 | `AUDIT_REPORT.md` | output | standard | drift and risk findings | audit findings |
 | `POST_LAUNCH_REVIEW.md` | output | standard | launch outcomes, lessons, and follow-up actions | post-launch learning |
 
+### Derived Project Execution Aid
+
+| File | Type | Status | Purpose | Canonical for |
+|---|---|---|---|---|
+| `CURRENT_WORK_PACKET.md` | derived output | optional | replaceable current-slice view generated from the project's execution spine and relevant authority | none — must defer to source authority |
+
 ---
 
 ## 3. Tooling and Enforcement Files
@@ -64,7 +72,7 @@ These files live outside the `PROGRAMBUILD/` folder but are part of the build sy
 
 ---
 
-## 5. Shaping Prompts
+## 4. Shaping Prompts
 
 These prompts live in `.github/prompts/` and are registered in `config/process-registry.json` under `workflow_guidance`. All must conform to `.github/prompts/PROMPT_STANDARD.md`.
 
@@ -82,7 +90,7 @@ These prompts live in `.github/prompts/` and are registered in `config/process-r
 
 ---
 
-## 6. Index Rules
+## 5. Index Rules
 
 - Add new critical files here when they are created.
 - Mark files as `active`, `deprecated`, `replaced`, or `derived`.
@@ -92,7 +100,8 @@ These prompts live in `.github/prompts/` and are registered in `config/process-r
 - Use `PROGRAMBUILD_ADR_TEMPLATE.md` as the template and `docs/decisions/` as the location when a project needs durable MADR 4.0 decision records.
 - Update `docs/decisions/README.md` whenever a new ADR is added.
 - Do not treat filled project outputs in this template repository as canonical examples. Canonical project outputs live in the project repository that was bootstrapped from these templates.
+- `CURRENT_WORK_PACKET.md` is optional and derived. It should be replaced or closed as work advances rather than accumulated as a second planning hierarchy.
 
 ---
 
-Last updated: 2026-04-12
+Last updated: 2026-08-24

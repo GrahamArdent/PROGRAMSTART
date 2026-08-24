@@ -2,187 +2,267 @@
 
 # Program Build Subagent Catalog
 
-This file defines the subagent roles for the Program Build system.
-The catalog follows vendor guidance (Anthropic, OpenAI Agents, Microsoft AutoGen):
-start with the minimum number of agents that have clear, non-overlapping roles.
-Add specialization only when a bounded role clearly improves output quality.
+Purpose: Define specialist agent roles that improve quality without fragmenting project authority or loading unnecessary context.
+Owner: Project Lead / Main Agent
+Last updated: 2026-08-24
+Depends on: `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`, `PROGRAMBUILD_WORK_PACKET.md`, project authority for the current stage/slice
+Authority: Canonical for PROGRAMBUILD subagent guidance
+
+The catalog follows a minimum-agent principle: start with a small number of clear, non-overlapping roles and add specialization only when a bounded role materially improves the result.
 
 Workspace implementation status:
 - The three core roles are implemented as reusable workspace agents in `.github/agents/`.
-- `USERJOURNEY/` remains optional and should not be treated as a required attachment when invoking these agents.
+- `USERJOURNEY/` remains optional and must not be treated as a required attachment when invoking these agents.
+
+---
+
+## Agent Authority Rules
+
+Subagents provide **evidence, analysis, options, risks, and recommendations**. They do not independently redefine project strategy, requirements, architecture, or execution sequence.
+
+Every invocation MUST follow these rules:
+
+1. **Trace to authority.** Name the strategic execution spine/current stage or work packet that authorizes the request.
+2. **Bound the task.** Give the subagent one coherent question or review surface rather than the whole project by default.
+3. **Load minimum context.** Provide only the exact authority sections, specialist references, and evidence required for that bounded task.
+4. **Separate fact from recommendation.** Findings must distinguish observed evidence, inference, uncertainty, and proposed action.
+5. **Do not create competing plans.** A subagent may propose explicit deltas to canonical authority; it does not create a new Master Game Plan unless the project explicitly authorizes replacement planning.
+6. **Return invalidation implications.** If a finding would invalidate prior verification, architecture assumptions, requirements, or decisions, name the affected evidence/authority and why.
+7. **Main-agent synthesis.** The main agent/project lead owns cross-agent synthesis, conflict resolution, canonical updates, and final execution decisions.
+
+Every agent report must contain:
+- bounded task/objective
+- authority/context consulted
+- findings/evidence
+- risks
+- assumptions and confidence
+- unresolved questions
+- recommended deltas/actions
+- affected prior evidence or invalidation triggers, if any
+
+---
 
 ## Catalog Structure
 
-**Core agents (3)** — run in sequence for every product build:
+**Core agents (3)** — used at their relevant lifecycle points:
 1. Discovery & Scoping Agent
 2. Architecture & Security Agent
 3. Quality & Release Agent
 
-**On-demand agents (2)** — triggered only when a specific condition is met:
+**On-demand agents (2)** — only when a trigger is present:
 1. Risk Spike Agent
 2. Contract Auditor
 
-Every agent report must contain:
-- findings
-- risks
-- assumptions
-- unresolved questions
-- recommended next actions
+Parallelism is appropriate for independent evidence gathering or reviews. Do not parallelize decisions that depend on one another merely to increase throughput.
 
 ---
 
 ## Core Agent 1 — Discovery & Scoping
 
-**Replaces:** Research Scout, Product Analyst, UX Flow Designer
-
-**Invocation trigger:** Project kickoff — before any architecture decisions or implementation begins.
-
 **Workspace agent:** `.github/agents/discovery-scoping.agent.md`
 
-**Scope:**
-- Competitive and domain research
-- Technology and compliance validations
-- P0 / P1 / P2 scope bounding
-- Measurable user stories and acceptance criteria
-- Out-of-scope list
-- Primary user flows — entry points, step-by-step actions, failure and recovery states
-- Accessibility-sensitive interactions and empty / error / retry states
-- Open questions with confidence levels
+**Invocation triggers:**
+- raw/research-backed kickoff after entry-mode selection;
+- a bounded research/scope delta for an existing project;
+- material uncertainty about users, problem, requirements, or workflow.
 
-**Prompt:**
+**Scope:**
+- competitive/domain evidence
+- technology/compliance validation at the discovery level
+- P0/P1/P2 scope bounding
+- measurable user stories and acceptance criteria
+- out-of-scope boundaries
+- primary user/operator flows and failure/recovery states
+- open questions and confidence
+
+**Prompt pattern:**
 
 ```text
 Act as the Discovery & Scoping Agent.
-Research the project domain and scope it for implementation.
+
+Authority/current slice:
+- [execution spine / stage / work packet]
+
+Use only the supplied/relevant authority and evidence.
 Return:
-1. Domain research — competitive landscape, tech options, compliance concerns
-2. Scope — P0 must-have, P1 important, P2 optional; explicit out-of-scope list
-3. User stories — measurable, with acceptance criteria; identify kill criteria
-4. Primary user flows — entry points, step sequences, failure and recovery states,
-   accessibility-sensitive decisions, and empty/error/retry variants
-5. Open questions with confidence levels and recommended resolution path
+1. Findings supported by evidence
+2. Scope implications: P0/P1/P2 and explicit exclusions
+3. User/operator stories and measurable acceptance criteria where in scope
+4. Relevant flows and failure/recovery states
+5. Assumptions + confidence
+6. Unresolved questions
+7. Explicit recommended deltas to current project authority
+8. Existing evidence/decisions that these findings could invalidate
+
+Do not create a competing project plan.
 ```
 
 ---
 
 ## Core Agent 2 — Architecture & Security
 
-**Replaces:** Architecture Reviewer, Security Reviewer
-
-**Invocation trigger:** After scope is locked and before any implementation begins.
-
 **Workspace agent:** `.github/agents/architecture-security.agent.md`
 
-**Scope:**
-- Service boundaries and API contracts
-- Auth model and trust boundaries
-- Data ownership and tenancy design
-- Threat modeling — authentication, authorization, and abuse paths
-- Secret-management review
-- Required security controls before first line of implementation
+**Invocation triggers:**
+- architecture stage after scope is sufficiently stable;
+- material contract/auth/data-boundary change;
+- bounded security/architecture review for an implementation packet.
 
-**Prompt:**
+**Scope:**
+- service/system boundaries and contracts
+- auth/trust boundaries
+- data ownership/tenancy
+- threat modeling and abuse paths
+- secret management
+- design controls required before implementation
+
+**Prompt pattern:**
 
 ```text
 Act as the Architecture & Security Agent.
-Design and audit the system boundaries and security posture.
+
+Authority/current slice:
+- [execution spine / requirement IDs / architecture sections / work packet]
+
 Return:
-1. System boundary map — services, APIs, data stores, external dependencies
-2. Contract and trust-boundary risks — where assumptions can break
-3. Auth and tenancy design — authentication model, authorization checks,
-   tenant isolation, and any multi-user access-control gaps
-4. Threat model — abuse paths, secret-handling risks, OWASP Top 10 exposure
-5. Required controls and design changes before any implementation begins
+1. Evidence-backed boundary/contract findings
+2. Auth, tenancy, and trust-boundary risks
+3. Threat/abuse-path analysis proportional to the slice
+4. Required controls or architecture deltas
+5. Assumptions + confidence
+6. Verification evidence that a proposed change would invalidate
+7. Recommended canonical updates, if any
+
+Do not silently redefine requirements or project strategy.
 ```
 
 ---
 
 ## Core Agent 3 — Quality & Release
 
-**Replaces:** Test Planner, Release Readiness Reviewer
-
-**Invocation trigger:**
-- First run: before implementation begins (establishes test strategy and quality gates).
-- Second run: before release (validates readiness against the strategy set in first run).
-
 **Workspace agent:** `.github/agents/quality-release.agent.md`
 
-**Scope:**
-- Test pyramid targets and fixture strategy
-- Endpoint-to-test registry
-- Smoke vs regression boundary
-- Release-blocking quality gates
-- Rollback readiness and deployment verification
-- Monitoring, alerting, and on-call coverage
-- Remaining launch blockers
+**Invocation triggers:**
+- Stage 6 to establish test/evidence strategy;
+- major verification-model change;
+- Stage 8 release convergence.
 
-**Prompt:**
+**Scope:**
+- purpose/outcome coverage and test portfolio
+- contract-to-test traceability
+- smoke vs regression boundaries
+- evidence reuse and invalidation rules
+- release-blocking gates
+- rollback/deployment verification
+- monitoring/alerting/support ownership
+
+**Prompt pattern:**
 
 ```text
 Act as the Quality & Release Agent.
-Establish the test strategy and evaluate release readiness.
+
+Authority/current slice or convergence gate:
+- [requirements / architecture / test strategy / release state]
+
 Return:
-1. Test strategy — pyramid targets, fixture approach, endpoint-to-test registry,
-   smoke vs regression split, and release-blocking quality gates
-2. Release gates — explicit pass/fail criteria for each gate before launch
-3. Monitoring and alerting — what must be instrumented before go-live
-4. Rollback readiness — deployment steps, rollback trigger conditions, rollback procedure
-5. Launch blockers — unresolved items that must be closed before release
+1. Outcome and contract coverage gaps
+2. Targeted verification recommended for changed/at-risk surfaces
+3. Broader convergence checks required at this boundary
+4. Existing evidence that remains reusable, with scope
+5. Evidence invalidated by recent changes and why
+6. Release/quality blockers
+7. Monitoring, rollback, and operational gaps
+8. Recommended canonical deltas
 ```
 
 ---
 
 ## On-Demand Agent 1 — Risk Spike
 
-**Invocation trigger:** Any unknown rated medium or high impact that cannot be resolved with
-one hour of research. Do not invoke for low-confidence estimates alone — invoke when
-the unknown blocks a design decision.
+**Invocation trigger:** A medium/high-impact unknown blocks a design or delivery decision and cannot be resolved cheaply from existing trustworthy evidence.
+
+Do not invoke merely because confidence is imperfect. First check whether current research, retained evidence, or a smaller information request already resolves the question.
 
 **Scope:**
-- Auth lifecycle uncertainty
-- Streaming or real-time behavior uncertainty
-- AI latency or cost uncertainty
-- File processing or external integration risk
-- Any spike where pass/fail criteria can be defined in advance
+- auth/session uncertainty
+- streaming/realtime uncertainty
+- AI latency/cost uncertainty
+- file processing/integration risk
+- deployment/runtime assumptions
+- any falsifiable technical/business uncertainty
 
-**Prompt:**
+**Prompt pattern:**
 
 ```text
 Act as the Risk Spike Agent.
-For each risky unknown:
-1. Define the hypothesis being tested
-2. Define the smallest proof-of-concept or experiment that tests it
-3. Define explicit pass and fail criteria
-4. Summarize spike results
-5. Recommend: proceed, redesign, or reject — with rationale
+
+For the bounded unknown:
+1. State the hypothesis
+2. State existing evidence that can be reused
+3. Define the smallest experiment that meaningfully changes confidence
+4. Define pass/fail criteria before running it
+5. Summarize results and uncertainty
+6. Recommend: proceed, redesign, reject, or gather more evidence
+7. Name any architecture/requirements/decision evidence invalidated by the result
 ```
 
 ---
 
 ## On-Demand Agent 2 — Contract Auditor
 
-**Invocation trigger:** After any major refactor; before alpha or beta handoff; or any time
-route, schema, or auth drift is suspected. Do not run on every commit — it is a milestone
-audit, not a CI check.
+**Invocation triggers:**
+- major contract/auth/schema refactor;
+- Stage 7 periodic convergence when drift risk is meaningful;
+- pre-release/audit milestone;
+- explicit suspicion of contract drift.
+
+Do not run on every commit. It is a bounded milestone/convergence review, not a substitute for targeted tests or CI.
 
 **Scope:**
-- Route alignment — planned vs implemented
-- Schema alignment — request/response contracts vs declared types
-- Auth wrapper usage — missing or inconsistent protection
-- Untracked planned or deprecated routes
-- Structural tests missing for contract concerns
+- planned vs implemented contract alignment
+- schema/request/response alignment
+- auth/trust wrapper discipline
+- deprecated/orphaned contracts
+- missing structural coverage
+- work-packet changes that escaped canonical reconciliation
 
-**Prompt:**
+**Prompt pattern:**
 
 ```text
 Act as the Contract Auditor.
-Audit this codebase for contract drift and missing structural coverage.
+
+Audit the bounded contract surface or convergence scope.
 Return:
-1. Route drift — implemented routes not in plan, planned routes not implemented
-2. Schema drift — mismatches between declared and actual request/response shapes
-3. Auth wrapper gaps — unprotected routes, inconsistent middleware application
-4. Deprecated or orphaned routes — code that should be removed or redirected
-5. Missing structural tests — contract-level assertions absent for the above concerns
+1. Implemented-vs-authority drift
+2. Schema/contract mismatches
+3. Auth/trust-boundary gaps
+4. Deprecated/orphaned contracts
+5. Missing structural/outcome tests
+6. Work-packet or decision changes not reconciled into canonical authority
+7. Existing evidence invalidated by discovered drift
+8. Minimum canonical fix + prevention test/guardrail
+
+Findings are audit evidence until adopted by the canonical project owner.
 ```
 
-Last updated: 2026-03-29
+---
+
+## Cross-Agent Conflict Rule
+
+If two agents disagree:
+
+1. compare their evidence and assumptions;
+2. identify whether they are answering the same bounded question;
+3. prefer stronger/direct evidence over unsupported confidence;
+4. escalate unresolved material disagreement to the main agent/project owner;
+5. record the selected decision and rationale in the appropriate canonical project owner/decision log.
+
+Do not resolve agent disagreement by creating two parallel plans.
+
+---
+
+## Operating Principle
+
+**Specialize the analysis, centralize the authority.**
+
+Subagents should reduce context load and improve review quality. They should not increase planning fragmentation.

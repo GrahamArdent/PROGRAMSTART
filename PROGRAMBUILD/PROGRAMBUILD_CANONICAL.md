@@ -18,6 +18,8 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY in this section are in
 5. If a file is deprecated or replaced, the file index and this file MUST be updated in the same change.
 6. The PROGRAMSTART repository is a template repository. Filled project outputs MUST belong in the project repository created from this template, not in the template repository itself.
 7. `USERJOURNEY/` is not part of the reusable PROGRAMBUILD template system. If used, it is a project attachment that MAY be present or absent depending on the project.
+8. A project MUST have one primary strategic execution spine. Research, audits, readiness reviews, checklists, and work packets MUST NOT silently become competing master plans.
+9. Filled work packets are derived execution state. They MUST defer to the project's canonical roadmap/game plan, requirements, architecture, decision records, and validated implementation state.
 
 ---
 
@@ -40,6 +42,8 @@ System control files:
 - `PROGRAMBUILD_IDEA_INTAKE.md`
 - `PROGRAMBUILD_CHALLENGE_GATE.md`
 - `PROGRAMBUILD_GAMEPLAN.md`
+- `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`
+- `PROGRAMBUILD_WORK_PACKET.md`
 - `PROGRAMBUILD.md`
 - `PROGRAMBUILD_LITE.md`
 - `PROGRAMBUILD_PRODUCT.md`
@@ -58,6 +62,9 @@ Project execution outputs:
 - `AUDIT_REPORT.md`
 - `POST_LAUNCH_REVIEW.md`
 
+Optional derived execution aid:
+- `CURRENT_WORK_PACKET.md` — replaceable current-slice view derived from project authority; never canonical
+
 ---
 
 ## 3. Authority Map
@@ -70,6 +77,8 @@ Project execution outputs:
 | enterprise process | `PROGRAMBUILD_ENTERPRISE.md` |
 | document authority and naming rules | `PROGRAMBUILD_CANONICAL.md` |
 | critical file inventory and status | `PROGRAMBUILD_FILE_INDEX.md` |
+| planning-to-execution separation, proportional rigor, context loading, and evidence reuse | `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` |
+| active work-packet structure | `PROGRAMBUILD_WORK_PACKET.md` |
 | ADR structure, decision-log linkage, and supersession hygiene | `PROGRAMBUILD_ADR_TEMPLATE.md` |
 | architecture decision records index | `docs/decisions/README.md` |
 | commit message format and enforcement | `.github/instructions/conventional-commits.instructions.md` |
@@ -110,6 +119,8 @@ If a conflict is found:
 - update dependent files second
 - record the change in the file index
 
+A filled `CURRENT_WORK_PACKET.md` never outranks its source authority. If a packet conflicts with the strategic execution spine or another canonical concern owner, regenerate or correct the packet rather than changing authority to match it.
+
 ---
 
 ## 5. Canonical Maintenance Rules
@@ -120,8 +131,9 @@ If a conflict is found:
 - Derived summaries must point back to the canonical owner.
 - `PROGRAMBUILD_CHANGELOG.md` records system-level changes but does not, by itself, redefine canonical ownership or file inventory.
 - Material architecture and policy changes should be recorded in `DECISION_LOG.md`, with enterprise work promoting major decisions into ADRs using `PROGRAMBUILD_ADR_TEMPLATE.md`.
-- The template repository should keep project output files in reusable template form. Do not store filled, project-specific feasibility, requirements, architecture, or release documents here.
+- The template repository should keep project output files in reusable template form. Do not store filled, project-specific feasibility, requirements, architecture, release documents, work packets, or portfolio state here.
+- New research that affects an existing project's plan should be converted into explicit delta recommendations and adopted through that project's authority process; research does not become execution authority merely by being newer.
 
 ---
 
-Last updated: 2026-03-31
+Last updated: 2026-08-24

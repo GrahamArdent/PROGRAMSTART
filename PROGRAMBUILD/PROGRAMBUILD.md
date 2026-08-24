@@ -2,9 +2,9 @@
 
 # Master Program Build Playbook
 
-This is the default playbook for building a new software product with strong engineering discipline and low rework.
+This is the default playbook for building or materially improving a software product with strong engineering discipline and low rework.
 It is organized around decision gates, not just task lists.
-The point is to prevent the predictable failures that usually appear later as silent bugs, auth gaps, schema drift, route drift, weak test coverage, and launch surprises.
+The point is to prevent predictable failures such as silent bugs, auth gaps, schema drift, route drift, weak test coverage, duplicated planning authority, stale context, repeated low-value verification, and launch surprises.
 
 Use this file when you want a balanced process: strong enough for a real production system, lighter than a full enterprise program.
 
@@ -16,12 +16,14 @@ Companion variants:
 Control files:
 - `PROGRAMBUILD_CANONICAL.md` is the source of truth for document authority, naming, and stage ownership
 - `PROGRAMBUILD_FILE_INDEX.md` is the index of all critical planning files and their roles
+- `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` defines planning entry modes, one-spine authority, proportional rigor, task-scoped context loading, evidence reuse, and research-to-plan delta rules
+- `PROGRAMBUILD_WORK_PACKET.md` defines the standard derived active-work packet; filled packets never outrank project authority
 - `PROGRAMBUILD_ADR_TEMPLATE.md` defines the standard ADR structure for material design and policy decisions
 - `PROGRAMBUILD_CHANGELOG.md` records how the PROGRAMBUILD system itself changes over time
-- `PROGRAMBUILD_KICKOFF_PACKET.md` is the standardized starter pack for new projects
+- `PROGRAMBUILD_KICKOFF_PACKET.md` is the standardized starter pack for new projects and existing-project adoption
 - `PROGRAMBUILD_SUBAGENTS.md` is the subagent catalog with reusable prompts
 - `PROGRAMBUILD_CHECKLIST.md` is the execution checklist version of this system
-- `PROGRAMBUILD_IDEA_INTAKE.md` is the pre-feasibility challenge interview — run this before filling the inputs block
+- `PROGRAMBUILD_IDEA_INTAKE.md` is the pre-feasibility challenge interview for raw ideas, research-backed opportunities, and existing-project deltas
 - `PROGRAMBUILD_CHALLENGE_GATE.md` is the 8-part stage-transition checklist (A–H) with architecture alignment — run this at every stage boundary
 - `PROGRAMBUILD_GAMEPLAN.md` is the chained execution sequence with cross-stage validation — use this to run stages in the correct order
 
@@ -29,22 +31,29 @@ Control files:
 
 ## 1. How To Use This File
 
-1. Run `PROGRAMBUILD_IDEA_INTAKE.md` before filling the inputs block. The Idea Intake interview challenges the raw idea before any planning begins.
-2. Fill in the Inputs block using the Idea Intake output.
-3. Decide the dominant `PRODUCT_SHAPE`, whether `USERJOURNEY/` is needed, and which variant fits the risk and team model.
-4. Read `PROGRAMBUILD_CANONICAL.md` first and treat it as authoritative when documents disagree.
-5. Use `PROGRAMBUILD_FILE_INDEX.md` to locate the right planning artifact.
-6. Follow `PROGRAMBUILD_GAMEPLAN.md` to run stages in the correct order with cross-stage validation at each boundary.
-7. Run `PROGRAMBUILD_CHALLENGE_GATE.md` at every stage transition. This is not optional.
-8. Do not start the next stage until the current stage output is reviewed and the Challenge Gate passes.
-9. Treat every interface between layers as a contract that must be explicit and tested in both directions.
-10. Use this playbook inside the project repository created from the template. Do not keep filled project outputs in the template repository.
+1. Read `PROGRAMBUILD_CANONICAL.md` and `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` first.
+2. Select the correct planning entry mode:
+   - raw idea
+   - research-backed project
+   - existing / in-flight project
+3. If the project already has a canonical roadmap, Master Game Plan, or equivalent strategic execution spine, identify and preserve it before creating planning artifacts. PROGRAMBUILD should strengthen that authority or propose explicit deltas to it, not silently create a competing plan.
+4. Run `PROGRAMBUILD_IDEA_INTAKE.md` in the appropriate mode. Reuse valid existing evidence instead of re-asking settled questions.
+5. Fill or reconcile the Inputs block from the intake output/current project authority.
+6. Decide the dominant `PRODUCT_SHAPE`, whether `USERJOURNEY/` is needed, and which variant fits the risk and team model.
+7. Use `PROGRAMBUILD_FILE_INDEX.md` to locate the right planning artifact.
+8. Follow `PROGRAMBUILD_GAMEPLAN.md` to run stages in the correct order with cross-stage validation at each boundary.
+9. Run `PROGRAMBUILD_CHALLENGE_GATE.md` at every stage transition. Do not start the next stage until the current stage output is reviewed and the gate passes.
+10. During non-trivial implementation work, use `PROGRAMBUILD_WORK_PACKET.md` to derive or refresh a bounded `CURRENT_WORK_PACKET.md`. The packet narrows the task; it does not redefine strategy, requirements, architecture, or decision authority.
+11. Load context progressively: establish the stage baseline from registry guidance, then read only the authority sections and specialist references needed for the current slice.
+12. Reuse still-valid verification evidence until a documented invalidation trigger occurs. Broaden verification again at stage transitions, release boundaries, and other convergence gates.
+13. Treat every interface between layers as a contract that must be explicit and tested in both directions.
+14. Use this playbook inside the project repository created from the template, or map it explicitly onto an existing repository's authority model. Do not keep filled project outputs, work packets, or portfolio state in the PROGRAMSTART template repository.
 
 ---
 
 ## 2. Inputs
 
-Fill these in once. Reuse them in every stage.
+Fill these in once for a new PROGRAMBUILD-managed project. For an existing project, reconcile them against current authority and record only genuine deltas rather than rewriting settled scope without cause.
 
 ```text
 PROJECT_NAME:
@@ -82,32 +91,42 @@ When a stage mentions routes, handlers, UI states, or E2E behavior, interpret th
 
 Resolve these choices before you leave Stage 0:
 
+- `ENTRY_MODE`: raw idea, research-backed project, or existing/in-flight project.
+- `EXECUTION_SPINE`: for an existing project, the authoritative roadmap/game plan/current stage that PROGRAMBUILD must defer to.
 - `PRODUCT_SHAPE`: what execution model actually delivers the value.
 - `Variant`: how much evidence and governance the project needs.
 - `USERJOURNEY/`: attach it only if onboarding, consent, activation, or first-run routing is part of the product scope.
 
-Bad kickoff pattern:
-- picking a stack or variant first, then forcing the product into that shape.
+Bad kickoff patterns:
+- picking a stack or variant first, then forcing the product into that shape;
+- turning a newer research document or audit into a second master plan merely because it is newer;
+- asking the operator to restate verified facts that are already current and authoritative.
 
 Good kickoff pattern:
-- identify the execution model first, then choose the lightest workflow that still matches the delivery risk.
+- identify the authority and execution model first, then choose the lightest workflow that still matches delivery risk and fill only the gaps that genuinely remain.
 
 ### Inputs Stage Gate Status
 
 | Item | Status | Notes |
 |---|---|---|
-| Core inputs block completed | Pending | All required fields populated above |
+| Entry mode selected | Pending | Raw idea, research-backed, or existing project |
+| Existing execution spine identified | Pending / N/A | Required for in-flight projects before planning deltas |
+| Core inputs block completed/reconciled | Pending | All required fields populated or confirmed current |
 | Project name assigned | Pending | Must be set before advancing to feasibility |
 | Product shape identified | Pending | Drives which architecture patterns and guardrails apply |
 | USERJOURNEY decision recorded | Pending | Attach only if real end-user onboarding or activation design exists |
 | Delivery target set | Pending | Set after feasibility stage completes |
 | Variant selected | Pending | Choose lite, product, or enterprise |
-| Inputs reviewed by product owner | Pending | Use dashboard Signoff action to record approval |
+| Inputs reviewed by product owner | Pending | Use dashboard Signoff action to record approval where applicable |
 
 ---
 
 ## 3. Core Rules
 
+- One project has one primary strategic execution spine. Research, audits, readiness reviews, checklists, and work packets MUST NOT silently become competing master plans.
+- `CURRENT_WORK_PACKET.md`, when used, is derived execution state and must trace to canonical project authority.
+- Context loading is progressive: stage baseline first, current-slice authority second, specialist context only when needed.
+- Verification is change-based: reuse trustworthy evidence until its invalidation trigger occurs, then rerun the smallest check set that restores confidence; widen again at required convergence gates.
 - No hardcoded API paths outside the route contract layer.
 - No raw network calls for authenticated endpoints outside the approved auth-aware client.
 - No endpoint is considered done until auth behavior, schema shape, and route registration are tested.
@@ -132,6 +151,8 @@ Rules:
 Required critical files:
 - `PROGRAMBUILD_CANONICAL.md`
 - `PROGRAMBUILD_FILE_INDEX.md`
+- `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`
+- `PROGRAMBUILD_WORK_PACKET.md`
 - `PROGRAMBUILD_ADR_TEMPLATE.md`
 - `PROGRAMBUILD_CHANGELOG.md`
 - `PROGRAMBUILD_KICKOFF_PACKET.md`
@@ -153,6 +174,9 @@ Recommended stage outputs for each project:
 - `RELEASE_READINESS.md`
 - `AUDIT_REPORT.md`
 - `POST_LAUNCH_REVIEW.md`
+
+Optional derived execution aid:
+- `CURRENT_WORK_PACKET.md` — replaceable bounded current-slice view; canonical for nothing
 
 ---
 
@@ -181,6 +205,7 @@ Guidance:
 - Use subagents for parallel research and review work.
 - Use the main agent for synthesis, decisions, and code edits.
 - Require each subagent to return findings, risks, and unresolved assumptions.
+- Subagent findings are evidence/advice until adopted into the appropriate canonical project owner.
 
 ---
 
@@ -188,16 +213,16 @@ Guidance:
 
 | Stage | Purpose | Main output | Gate |
 |---|---|---|---|
-| 0 | Inputs and mode selection | completed inputs block | human review |
+| 0 | Inputs and mode selection | completed/reconciled inputs block | human review |
 | 1 | Feasibility and kill criteria | `FEASIBILITY.md` | clear go / no-go |
-| 2 | Research | `RESEARCH_SUMMARY.md` | stack and market confidence |
+| 2 | Research | `RESEARCH_SUMMARY.md` or explicit research delta | stack and market confidence |
 | 3 | Requirements and UX | `REQUIREMENTS.md` and `USER_FLOWS.md` | approved scope and workflows |
 | 4 | Architecture and risk spikes | `ARCHITECTURE.md` and `RISK_SPIKES.md` | approved contracts and resolved unknowns |
 | 5 | Scaffold and guardrails | working skeleton and CI gates | structural tests green |
 | 6 | Test strategy | `TEST_STRATEGY.md` | coverage plan approved |
-| 7 | Implementation loop | feature code and tests | feature DoD complete |
-| 8 | Release readiness | `RELEASE_READINESS.md` | deploy gate passed |
-| 9 | Audit and drift control | `AUDIT_REPORT.md` | critical gaps resolved |
+| 7 | Implementation loop | bounded work packets + feature code/tests | slice/feature DoD complete |
+| 8 | Release readiness | `RELEASE_READINESS.md` | deploy convergence gate passed |
+| 9 | Audit and drift control | `AUDIT_REPORT.md` | critical gaps resolved/adopted |
 | 10 | Post-launch review and retrospective | `POST_LAUNCH_REVIEW.md` | learnings captured and follow-up owners assigned |
 
 ---
@@ -223,6 +248,7 @@ Every stage gate should answer:
 - Did any kill criteria from `FEASIBILITY.md` become true?
 - Are the must-meet conditions satisfied?
 - What decision should be recorded in `DECISION_LOG.md`?
+- Which previously accepted evidence remains valid, and which evidence was invalidated by changes since the last convergence gate?
 
 Recommended gate scoring pattern:
 - Lite: pass/fail note written by the owner
@@ -242,7 +268,7 @@ ADR threshold for a mostly solo workflow:
 ## 8. Stage 1: Feasibility And Kill Criteria
 
 Purpose:
-Decide whether the product is worth building before substantial design or implementation effort.
+Decide whether the product or material change is worth pursuing before substantial design or implementation effort.
 
 Output:
 `FEASIBILITY.md`
@@ -252,14 +278,15 @@ Must answer:
 - Is the proposed solution materially better than current alternatives?
 - What would cause us to stop or reshape the project early?
 - What are the top 3 business and technical risks?
+- For an existing project, does the proposed change strengthen the current strategic spine or conflict with it?
 
 Prompt template:
 
 ```text
-Create FEASIBILITY.md for this product.
+Create or update FEASIBILITY.md for this product/change.
 
 Inputs:
-- Project inputs block
+- Project inputs block or existing project authority + proposed delta
 
 Produce:
 1. Problem statement
@@ -268,9 +295,10 @@ Produce:
 4. Business viability assumptions
 5. Technical feasibility assumptions
 6. Top 3 risks
-7. Kill criteria: what evidence would stop or materially redirect this project
+7. Kill criteria: what evidence would stop or materially redirect this project/change
 8. Rough cost and effort estimate
 9. Recommendation: go, limited spike, or no-go
+10. Existing-project alignment note when applicable: what current authority changes, if anything
 ```
 
 Gate:
@@ -281,25 +309,27 @@ Do not proceed without an explicit go or limited-spike decision, and record that
 ## 9. Stage 2: Research
 
 Purpose:
-Validate stack choices, understand the market, identify constraints, and find avoidable failure patterns before architecture is locked.
+Validate stack choices, understand the market, identify constraints, and find avoidable failure patterns before architecture is locked or materially changed.
 
 Output:
-`RESEARCH_SUMMARY.md`
+`RESEARCH_SUMMARY.md` for a new project, or a clearly scoped research delta for an existing project when a full rewrite would create duplication.
 
 Must answer:
 - What already exists?
 - Which stack choices are mature and supportable?
 - Which compliance, AI, or integration concerns matter?
 - Which pitfalls are expensive if discovered late?
+- What existing project assumptions are confirmed, weakened, contradicted, or newly exposed?
 
 Prompt template:
 
 ```text
-Create RESEARCH_SUMMARY.md for this product.
+Create or update the research evidence for this product.
 
 Inputs:
-- Project inputs block
+- Project inputs block / existing execution spine
 - Feasibility outcome
+- Relevant existing research and verification evidence
 
 Produce sections for:
 1. Existing solutions and competitors
@@ -308,13 +338,19 @@ Produce sections for:
 4. Compliance and regulatory considerations
 5. Tooling recommendations
 6. Known failure patterns and how to prevent them
+7. Existing-project delta analysis when applicable
 
 End with a decisions table:
 | Decision | Proposed choice | Alternatives | Confidence | Open question |
+
+If applying research to an existing project, also produce:
+| Current authority item | Research finding | Recommended delta | Why | Confidence |
+
+Research is evidence. It does not become a replacement execution plan merely because it is newer.
 ```
 
 Gate:
-Any low-confidence decision must be explicitly approved or deferred into a risk spike.
+Any low-confidence decision must be explicitly approved or deferred into a risk spike. Existing-project recommendations must be adopted through the project's authority process before they become execution instructions.
 
 ---
 
@@ -336,12 +372,12 @@ Must answer:
 Prompt template:
 
 ```text
-Create REQUIREMENTS.md and USER_FLOWS.md.
+Create or update REQUIREMENTS.md and USER_FLOWS.md.
 
 Inputs:
 - Project inputs block
 - Feasibility outcome
-- Research summary
+- Research summary/deltas
 
 REQUIREMENTS.md must include:
 1. Functional requirements with IDs
@@ -359,7 +395,7 @@ USER_FLOWS.md must include:
 ```
 
 Gate:
-No architecture work begins until scope, user stories, and workflows are approved.
+No architecture work begins until scope, user stories, and workflows are approved. In an existing project, update only the affected authority rather than duplicating already-current requirements or flows.
 
 ---
 
@@ -380,13 +416,13 @@ Must answer:
 Prompt template:
 
 ```text
-Create ARCHITECTURE.md and RISK_SPIKES.md.
+Create or update ARCHITECTURE.md and RISK_SPIKES.md.
 
 Inputs:
 - Project inputs block
 - Requirements
 - User flows
-- Research summary
+- Research summary/deltas
 
 First adapt the deliverable to `PRODUCT_SHAPE`:
 - if `web app` or `mobile app`, include client/server boundaries and user-facing state transitions
@@ -398,10 +434,10 @@ First adapt the deliverable to `PRODUCT_SHAPE`:
 ARCHITECTURE.md must include:
 1. System topology
 2. Technology decision table
-3. API contract table
+3. API/contract table appropriate to shape
 4. Data model and ownership
-5. Route contract plan
-6. Auth matrix
+5. Route/command/job/public-API contract plan where applicable
+6. Auth/trust matrix
 7. Error contract
 8. Environment strategy
 9. Observability plan
@@ -414,7 +450,7 @@ RISK_SPIKES.md must include:
 5. Decision taken after each spike
 ```
 
-Mandatory spike candidates:
+Mandatory spike candidates where applicable:
 - authentication and session lifecycle
 - streaming or long-lived connection behavior
 - external integrations
@@ -422,7 +458,7 @@ Mandatory spike candidates:
 - file handling or document processing
 
 Gate:
-Do not scaffold until the architecture is approved and the high-risk unknowns have been resolved or explicitly accepted.
+Do not scaffold or implement a new contradictory design until the relevant architecture is approved and high-risk unknowns have been resolved or explicitly accepted.
 
 ---
 
@@ -465,8 +501,8 @@ Apply only the scaffold elements that fit `PRODUCT_SHAPE`. Do not invent route l
 
 Produce:
 1. Repo structure
-2. Route contract layer
-3. Auth-aware client layer
+2. Dominant contract layer
+3. Auth-aware/trusted boundary layer where applicable
 4. Structural test suite
 5. CI pipeline with explicit timeouts
 6. PR checklist and conventions
@@ -475,7 +511,7 @@ Produce:
 ```
 
 Gate:
-Feature work starts only after every structural test is green.
+Feature work starts only after the required structural tests are green.
 
 ---
 
@@ -488,9 +524,10 @@ Output:
 `TEST_STRATEGY.md`
 
 Must answer:
-- What belongs in unit, component, purpose, golden, and E2E tests?
+- What belongs in unit, component, purpose, golden, contract, integration, and E2E tests for this product shape?
 - What fixtures exist and who owns them?
-- Which tests block PRs, nightly runs, and releases?
+- Which tests block PRs, scheduled regressions, and releases?
+- Which evidence can be retained/reused across slices, and what invalidates it?
 
 Prompt template:
 
@@ -505,23 +542,24 @@ Inputs:
 Use `PRODUCT_SHAPE` to determine the dominant test layers. Browser E2E is not universal.
 
 Include:
-1. Test pyramid targets
+1. Test pyramid/portfolio targets
 2. Unit test rules
-3. Component test rules
-4. Service-layer purpose and auth test rules
-5. Golden baseline policy
-7. E2E and smoke/regression strategy
+3. Component test rules where applicable
+4. Service/contract purpose and auth test rules
+5. Golden baseline policy where applicable
+6. E2E and smoke/regression strategy
 7. Test data and fixture strategy
 8. Requirements traceability matrix
-9. Endpoint-to-test registry
-10. Gap analysis
+9. Contract/endpoint-to-test registry
+10. Evidence-reuse and invalidation rules for expensive or stateful verification
+11. Gap analysis
 ```
 
 Non-negotiables:
 - golden tests use the exact production code path
 - mocked shapes match real contract shapes
 - auth behavior is tested explicitly, not assumed
-- every endpoint appears in a registry that points to its tests
+- every material contract appears in a registry that points to its tests
 
 Gate:
 No feature implementation starts until the test model is approved.
@@ -531,53 +569,81 @@ No feature implementation starts until the test model is approved.
 ## 14. Stage 7: Implementation Loop
 
 Purpose:
-Build one feature at a time with a repeatable definition of done.
+Build one bounded slice at a time with a repeatable definition of done, minimal necessary context, and verification proportional to what changed.
 
 Output:
-Working feature code with complete coverage for its risk profile.
+Working feature code/tests plus current-slice evidence. `CURRENT_WORK_PACKET.md` is optional derived state for non-trivial slices and is replaced as work advances.
 
-Implementation loop (adapt to architecture — not all steps apply to every product shape):
-1. Write purpose and auth tests first.
-2. Implement service contract and validation.
-3. Register endpoint and keep alignment tests green.
-4. Implement client or consumer layer using contract constants and auth-aware helpers.
-5. Build user-facing layer with loading, success, empty, and error states where applicable.
-6. Add component or integration tests.
-7. Add E2E coverage for P0 behavior.
-8. Add or update golden baseline if the feature produces complex or AI-driven output.
-9. Update the endpoint-to-test registry.
-10. Re-run the relevant structural tests.
+### Stage baseline
+
+Use registry-backed guidance to establish the allowed Stage 7 authority surface. Do not treat that file list as an instruction to fully re-read every planning document for every feature.
+
+### Work-packet loop
+
+For each non-trivial slice:
+
+1. Derive or refresh `CURRENT_WORK_PACKET.md` from `PROGRAMBUILD_WORK_PACKET.md`.
+2. Trace the packet to the strategic execution spine/current stage and exact requirement IDs.
+3. State one bounded objective and explicit non-goals.
+4. Identify the exact architecture contracts, requirement sections, flows, decisions, and specialist references needed now.
+5. List trusted existing verification evidence and the change conditions that would invalidate it.
+6. Choose the smallest verification set that will prove the changed or at-risk surface.
+7. Write purpose/auth/contract tests first where applicable.
+8. Implement the service/contract/producer side and validation.
+9. Register endpoints, commands, jobs, handlers, or public APIs and keep alignment checks green where applicable.
+10. Implement client/consumer/operator layers using approved contract constants and boundary helpers.
+11. Build user-facing states where applicable.
+12. Add component, integration, scenario, or E2E coverage appropriate to the product shape and risk.
+13. Update golden baselines only when the feature actually affects their governed output.
+14. Update the contract-to-test registry.
+15. Run the targeted verification set plus any broader check whose invalidation trigger occurred.
+16. Record evidence actually produced.
+17. Reconcile any material design/scope change into canonical authority and `DECISION_LOG.md`.
+18. Mark the packet complete/replaced and derive the next slice from updated authority.
 
 Definition of done:
+- the slice traces to approved scope and the strategic execution spine
 - contract shape matches between producer and consumer layers
-- auth behavior is verified
-- endpoint or route registration is verified
+- auth/trust behavior is verified where applicable
+- contract/route/command/job registration is verified where applicable
 - user-visible states are covered where applicable
 - logging and error handling are in place
 - decision log or ADR updated if the design changed
+- reused evidence remains within its documented scope or has been revalidated after invalidation
+- the work packet did not become a second planning hierarchy
 
 Prompt template:
 
 ```text
-Implement one feature using the approved contracts and test strategy.
+Implement one bounded work packet using the approved project authority and test strategy.
 
 Inputs:
-- Feature user story
-- Relevant API contract rows
-- Relevant user flow
-- Relevant test strategy rows
+- strategic execution spine/current stage
+- bounded objective and non-goals
+- exact requirement IDs
+- relevant architecture contracts
+- relevant user flow sections only if affected
+- relevant test strategy rows
+- relevant prior decisions
+- trusted existing evidence + invalidation triggers
 
-Adapt the implementation steps to `PRODUCT_SHAPE` rather than assuming a web frontend and backend split.
-
-Follow the implementation loop exactly and stop if any gate cannot be met.
+Adapt the implementation steps to PRODUCT_SHAPE rather than assuming a web frontend/backend split.
+Load only the context required for this slice.
+Stop if the planned implementation would contradict current authority; update authority first.
+Run targeted verification for what changed or became at risk.
 ```
+
+Periodic convergence:
+- every 3–5 features or another risk-appropriate interval, widen context to catch cross-slice drift
+- run the Challenge Gate / cross-stage checks required by `PROGRAMBUILD_GAMEPLAN.md`
+- re-check kill criteria, scope creep, decision reversals, dependency health, and architecture/requirements alignment
 
 ---
 
 ## 15. Stage 8: Release Readiness
 
 Purpose:
-Prevent “it passed tests” from being mistaken for “it is safe to launch.”
+Prevent “it passed targeted slice tests” from being mistaken for “it is safe to launch.” Release readiness is a deliberate convergence point where context and verification widen again.
 
 Output:
 `RELEASE_READINESS.md`
@@ -586,16 +652,18 @@ Must answer:
 - Can we deploy and roll back safely?
 - Do we have visibility into failures?
 - Are support, ownership, and operational procedures defined?
+- Which retained verification evidence is still valid, and which must be rerun because release-relevant invalidation triggers occurred?
 
 Prompt template:
 
 ```text
-Create RELEASE_READINESS.md.
+Create or update RELEASE_READINESS.md.
 
 Inputs:
 - Architecture
 - Test strategy
 - Current implementation status
+- Retained verification evidence and invalidation history
 
 Include:
 1. Launch scope and excluded items
@@ -606,15 +674,17 @@ Include:
 6. Security checklist
 7. Support runbook ownership
 8. Smoke test list for release day
-9. Go / no-go recommendation with risks
+9. Evidence reuse/revalidation decision for critical gates
+10. Go / no-go recommendation with risks
 ```
 
 Minimum gate:
 - deployment path validated
 - rollback path validated
 - secrets and config verified
-- critical smoke tests pass
+- critical smoke/purpose tests pass
 - monitoring and alerts active
+- any release-critical evidence invalidated by recent changes has been re-established
 
 ---
 
@@ -635,11 +705,13 @@ Audit checklist:
 - invalid-input behavior and error quality
 - multi-user and cross-tenant isolation behavior
 - release-readiness drift between docs and implementation
+- stale or over-trusted retained evidence whose invalidation triggers were missed
+- duplicate planning authority or work packets that have started acting like a second game plan
 
 Prompt template:
 
 ```text
-Audit the application for silent failures, drift, and release risk.
+Audit the application for silent failures, drift, release risk, and authority drift.
 
 Produce findings with:
 - severity
@@ -648,10 +720,11 @@ Produce findings with:
 - impact
 - minimum fix
 - prevention test or guardrail
+- canonical owner that must adopt the finding if it changes project authority
 ```
 
 Gate:
-All critical and high findings must have owners, fixes, or explicit acceptance before release.
+All critical and high findings must have owners, fixes, or explicit acceptance before release/continued operation. The audit itself remains evidence until adopted into the appropriate canonical owner.
 
 ---
 
@@ -668,6 +741,7 @@ Must answer:
 - Which decisions were validated, reversed, or deferred?
 - What incidents, support issues, or adoption gaps appeared after launch?
 - What follow-up changes should be scheduled and owned?
+- Which planning/execution/verification lessons should improve PROGRAMBUILD itself?
 
 Prompt template:
 
@@ -688,7 +762,7 @@ Include:
 5. Lessons learned
 6. Follow-up actions with owners
 7. Template improvement proposals — for each systemic lesson, propose a specific
-   update to a PROGRAMBUILD template file (see PROGRAMBUILD_GAMEPLAN.md Stage 10
+   update to a PROGRAMBUILD template/control file (see PROGRAMBUILD_GAMEPLAN.md Stage 10
    for the Template Improvement Review format and target mapping)
 ```
 
@@ -701,6 +775,12 @@ Do not treat the project as complete until lessons learned, follow-up ownership,
 
 These should be established as early as possible:
 
+- Authority discipline: preserve one strategic execution spine and use `PROGRAMBUILD_CANONICAL.md` to resolve concern ownership.
+- Planning entry discipline: use the raw-idea, research-backed, or existing-project mode from `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` instead of forcing every effort through blank-sheet planning.
+- Work-packet discipline: use bounded packets for non-trivial active slices; packets are replaceable and reconcile back into canonical state.
+- JIT context discipline: stage guidance defines the baseline; the current slice defines the exact authority sections and specialist context to load.
+- Evidence discipline: record provenance/scope for expensive or stateful verification and define invalidation triggers; do not repeat broad checks without a reason.
+- Convergence discipline: narrow during slices, widen at stage transitions, periodic cross-slice reviews, and release gates.
 - Environment parity: CI and production should be materially similar.
 - Dependency hygiene: pin dependencies, review updates on a schedule, and run dependency scanning in CI. Use the KB (`config/knowledge-base.json`) and `programstart research --status` to check for superseded, deprecated, or stale dependencies at every Challenge Gate from Stage 4 onward.
 - Secret management: no secrets in code, examples only in committed env templates.
@@ -744,14 +824,18 @@ Use [PROGRAMBUILD_ENTERPRISE.md](PROGRAMBUILD_ENTERPRISE.md) when:
 
 ## 20. Cardinal Lessons
 
+- One project needs one strategic execution spine; additional artifacts should clarify or derive from it, not compete with it.
 - The most expensive bugs usually come from missing contracts, not missing features.
 - If a route, auth rule, schema, or user-state expectation is implicit, it will drift.
-- Research reduces bad bets.
+- Research reduces bad bets, but research is evidence until adopted into project authority.
 - Risk spikes reduce expensive surprises.
+- Small bounded work packets reduce context drift and make execution easier to verify.
+- Re-reading everything for every slice is not rigor; loading the right authority at the right time is rigor.
+- Re-running everything after every change is not rigor; knowing what invalidates existing evidence and widening verification at convergence points is rigor.
 - Structural tests prevent recurrence better than retrospective debugging.
-- Release readiness is an engineering concern, not a postscript.
+- Release readiness is an engineering convergence concern, not a postscript.
 
 ---
 
-Last updated: 2026-03-27
-Source: lessons from route alignment failures, auth bypasses, response schema drift, and test blind spots discovered in production projects
+Last updated: 2026-08-24
+Source: lessons from route alignment failures, auth bypasses, response schema drift, test blind spots, duplicate planning authority, stale context, and repeated low-value verification discovered in production projects

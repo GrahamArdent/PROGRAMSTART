@@ -55,7 +55,11 @@ def _latest_activity_date(entries: dict) -> date | None:
 
 
 def _stale_label(registry: dict, system: str, *, today: date | None = None) -> str:
-    """Return ' [STALE — N days]' if the last signoff is older than PROGRAMSTART_STALE_DAYS (default 14)."""
+    """Return an inactivity heuristic when the latest activity exceeds the configured reminder threshold.
+
+    Elapsed time is a weak signal only. It does not by itself invalidate project authority
+    or verification evidence; the Challenge Gate determines whether re-entry/convergence is warranted.
+    """
     threshold = int(os.environ.get("PROGRAMSTART_STALE_DAYS", _DEFAULT_STALE_DAYS))
     state = load_workflow_state(registry, system)
     entry_key = workflow_entry_key(system)
@@ -66,7 +70,7 @@ def _stale_label(registry: dict, system: str, *, today: date | None = None) -> s
     ref = today or date.today()
     gap = (ref - latest).days
     if gap > threshold:
-        return f" [STALE — {gap} days]"
+        return f" [STALE? — {gap} days; inactivity heuristic]"
     return ""
 
 
@@ -179,7 +183,11 @@ def staleness_warnings(
     *,
     today: date | None = None,
 ) -> list[str]:
-    """Return staleness warnings if the most recent signoff date is old."""
+    """Return elapsed-time reminders as non-authoritative evidence-validity heuristics.
+
+    The reminder thresholds exist only to prompt a validity check. Elapsed time alone
+    is never treated as proof that a project must rerun the Re-Entry Protocol.
+    """
     state = load_workflow_state(registry, system)
     entry_key = workflow_entry_key(system)
     entries = state.get(entry_key, {})
@@ -192,20 +200,26 @@ def staleness_warnings(
     if gap > 56:
         lines.append(
             f"\033[33m⚠  Last {system} state change was {gap} days ago. "
-            "Strongly consider running the Re-Entry Protocol "
-            "(PROGRAMBUILD_CHALLENGE_GATE.md) before continuing.\033[0m"
+            "Strongly consider checking whether the Re-Entry Protocol "
+            "(PROGRAMBUILD_CHALLENGE_GATE.md) is warranted because evidence, assumptions, dependencies, "
+            "or project context may have changed. Elapsed time alone does not invalidate otherwise current evidence.\033[0m"
         )
     elif gap > 28:
         lines.append(
             f"\033[33m⚠  Last {system} state change was {gap} days ago. "
-            "Consider running the Re-Entry Protocol "
-            "(PROGRAMBUILD_CHALLENGE_GATE.md) before continuing.\033[0m"
+            "Consider running the Re-Entry Protocol (PROGRAMBUILD_CHALLENGE_GATE.md) only if evidence, assumptions, "
+            "dependencies, or project context may have changed. "
+            "Elapsed time alone does not invalidate otherwise current evidence.\033[0m"
         )
     return lines
 
 
 def cross_system_health_warning(registry: dict) -> list[str]:
-    """Warn when PROGRAMBUILD and USERJOURNEY are ≥2 steps apart (G-2)."""
+    """Emit a coarse ordinal-distance heuristic when attached workflows are several steps apart.
+
+    This is a navigation hint, not proof of dependency risk. Explicit project dependencies
+    and blockers should outrank ordinal distance when they are available.
+    """
     if not system_is_attached(registry, "userjourney"):
         return []
     pb_state = load_workflow_state(registry, "programbuild")
@@ -223,14 +237,14 @@ def cross_system_health_warning(registry: dict) -> list[str]:
         return []
     if pb_idx > uj_idx:
         return [
-            f"\033[33m⚠  PROGRAMBUILD is at stage {pb_idx + 1} ({pb_active}) but "
+            f"\033[33m⚠  Ordinal-distance heuristic: PROGRAMBUILD is at stage {pb_idx + 1} ({pb_active}) but "
             f"USERJOURNEY is at phase {uj_idx + 1} ({uj_active}) — "
-            f"consider advancing USERJOURNEY before proceeding.\033[0m"
+            "consider advancing USERJOURNEY if the current PROGRAMBUILD work actually depends on it.\033[0m"
         ]
     return [
-        f"\033[33m⚠  USERJOURNEY is at phase {uj_idx + 1} ({uj_active}) but "
+        f"\033[33m⚠  Ordinal-distance heuristic: USERJOURNEY is at phase {uj_idx + 1} ({uj_active}) but "
         f"PROGRAMBUILD is at stage {pb_idx + 1} ({pb_active}) — "
-        f"consider advancing PROGRAMBUILD before proceeding.\033[0m"
+        "consider advancing PROGRAMBUILD if the current USERJOURNEY work actually depends on it.\033[0m"
     ]
 
 

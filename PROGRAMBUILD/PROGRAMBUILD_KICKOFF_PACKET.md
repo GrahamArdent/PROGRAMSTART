@@ -5,12 +5,16 @@
 Use this file to start a new project with the same naming conventions, the same critical file set, and the same authority model every time.
 
 Before using this packet:
-- run `programstart bootstrap --dest <path/to/new-project> --project-name <name> --variant <lite|product|enterprise>` to create the project repo from this template
+- run `programstart bootstrap --dest <path/to/new-project> --project-name <name> --variant <lite|product|enterprise>` to create the project repo from this template when starting a new repository
 - read `PROGRAMBUILD_CANONICAL.md`
+- read `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` and select the correct entry mode before applying ceremony
 - use `PROGRAMBUILD_FILE_INDEX.md` as the reference list
-- run `PROGRAMBUILD_IDEA_INTAKE.md` before filling the inputs block — use `programstart recommend` at the end to validate your variant and stack choices
-- use `PROGRAMBUILD_GAMEPLAN.md` as the execution sequence guide
-- run `PROGRAMBUILD_CHALLENGE_GATE.md` at every stage transition — follow each gate pass with `programstart advance --system programbuild`
+- run `PROGRAMBUILD_IDEA_INTAKE.md` in the appropriate entry mode before filling the inputs block — or as a delta audit when working on an existing project
+- use `PROGRAMBUILD_GAMEPLAN.md` as the execution sequence guide for PROGRAMBUILD-managed projects
+- use `PROGRAMBUILD_WORK_PACKET.md` to derive the current execution slice when a work packet is useful
+- run `PROGRAMBUILD_CHALLENGE_GATE.md` at every PROGRAMBUILD stage transition — follow each gate pass with `programstart advance --system programbuild`
+
+For an existing project with its own canonical Master Game Plan, roadmap, or execution ledger, preserve that execution spine. PROGRAMBUILD provides methodology and derived work packets; it does not automatically replace project authority.
 
 ---
 
@@ -31,6 +35,10 @@ Create these files first:
 - `RELEASE_READINESS.md`
 - `AUDIT_REPORT.md`
 - `POST_LAUNCH_REVIEW.md`
+
+Optional derived execution aid:
+
+- `CURRENT_WORK_PACKET.md` — create only when a coherent current-slice view is useful; derive it from `PROGRAMBUILD_WORK_PACKET.md` and replace/close it as work advances
 
 ---
 
@@ -58,17 +66,24 @@ Use `PRODUCT_SHAPE` to choose which later-stage guidance applies. When `ADDITION
 
 ## 3. Stage Startup Checklist
 
+### Planning Entry Mode
+- read `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`
+- choose Mode A (raw idea), Mode B (research-backed project), or Mode C (existing/in-flight project)
+- if Mode C, identify the project's current canonical execution spine before creating new planning artifacts
+- if existing evidence is being reused, record its freshness/invalidation basis rather than re-running it by default
+
 ### Idea Intake
-- run `PROGRAMBUILD_IDEA_INTAKE.md` before filling the inputs block
-- answer all 7 challenge questions; do not skip or combine
+- run `PROGRAMBUILD_IDEA_INTAKE.md` before filling the inputs block for new work, or as a delta audit for existing work
+- challenge all 8 dimensions; in Modes B/C, prefill from trustworthy evidence and ask only about gaps, staleness, ambiguity, or contradictions
 - review answers against the red flag table
-- run `programstart recommend --product-shape "<shape>" --need <need1> --need <need2>` to get KB-backed variant, stack, and coverage recommendations before locking the inputs block
+- for new PROGRAMBUILD projects, run `programstart recommend --product-shape "<shape>" --need <need1> --need <need2>` to get KB-backed variant, stack, and coverage recommendations before locking the inputs block
 - stop and record why in `DECISION_LOG.md` if the recommendation is "stop"
+- in Mode C, produce specific delta recommendations for the existing execution spine instead of a competing master plan
 
 ### Stage Transitions
-- run the Challenge Gate from `PROGRAMBUILD_CHALLENGE_GATE.md` at every stage boundary
+- run the Challenge Gate from `PROGRAMBUILD_CHALLENGE_GATE.md` at every PROGRAMBUILD stage boundary
 - Lite minimum: Parts A, C, and F
-- Product and Enterprise: all 7 parts (Part G required at Stages 4+)
+- Product and Enterprise: all 8 parts (Part G required at Stages 4+)
 - if resuming after a pause, run the Re-Entry Protocol instead
 - after each gate pass, run `programstart advance --system programbuild` to move workflow state to the next stage
 - run `programstart log --system programbuild` at any time to review the full sign-off history
@@ -87,6 +102,15 @@ Lock these decisions before filling stage outputs so the rest of the workflow in
 | Variant = `enterprise` | regulated, high-consequence, or multi-team delivery | formal sign-off, retained evidence, stronger governance |
 | Attach `USERJOURNEY/` | onboarding, consent, activation, or first-run routing must be designed for real end users | add the USERJOURNEY workflow and dependency chain |
 | Stay PROGRAMBUILD-only | the product is background automation, a service, a library, a CLI, or otherwise has no meaningful end-user onboarding journey | keep scope inside PROGRAMBUILD and do not inherit UX/legal journey work by default |
+
+### Active Work Packet
+- use `PROGRAMBUILD_WORK_PACKET.md` when the current work is large enough to benefit from an explicit execution slice
+- derive the packet from the canonical execution spine/current PROGRAMBUILD stage, not from chat memory
+- load only the authority and specialist context needed for that slice
+- list trusted existing evidence and its invalidation triggers
+- define targeted verification before execution begins
+- reconcile durable outcomes back into canonical project artifacts when the packet closes
+- never treat `CURRENT_WORK_PACKET.md` as a second game plan
 
 ### Ownership And Gates
 - use the kickoff decision matrix before assigning variant, attachments, or stage owners
@@ -114,6 +138,7 @@ Lock these decisions before filling stage outputs so the rest of the workflow in
 - record compliance concerns
 - surface likely failure modes early
 - log low-confidence decisions and follow-up spikes
+- treat external/deep research as evidence; convert it into decisions and plan deltas rather than an automatic replacement execution plan
 
 ### Requirements And UX
 - run Challenge Gate (Stage 2 → Stage 3), then `programstart advance --system programbuild`
@@ -156,6 +181,7 @@ Lock these decisions before filling stage outputs so the rest of the workflow in
 - every bootstrapped repo should inherit the same testing rigor as this template: explicit contracts, regression coverage, and validated workflow checks
 - desired outcome testing is the highest-priority evidence for product correctness
 - golden, structural, smoke, and regression tests support the system, but they do not replace purpose tests tied to real user or operator outcomes
+- verification should be change-based: reuse still-valid evidence and re-test the surfaces that could have been invalidated
 
 ### Release Readiness
 - run Challenge Gate (Stage 7 → Stage 8), then `programstart advance --system programbuild`
@@ -204,6 +230,8 @@ Every kickoff file must state:
 - any upstream file it depends on
 - whether it is canonical or derived
 
+A filled `CURRENT_WORK_PACKET.md` must explicitly identify its authority spine and state that it is derived.
+
 ---
 
-Last updated: 2026-03-31
+Last updated: 2026-08-24

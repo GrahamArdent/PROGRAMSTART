@@ -12,6 +12,8 @@ Run a weekly KB review on a fixed day and force every review to end with one of 
 
 That constraint keeps research from becoming an ever-growing archive with no decision impact.
 
+The root `README.md` may summarize broader PROGRAMSTART planning, JIT, and execution behavior, but it does not redefine knowledge-base refresh semantics. This document and `config/knowledge-base.json` remain authoritative for KB maintenance, review cadence, freshness, and recommendation-change rules.
+
 ## Weekly Review Contract
 
 Use `programstart research --track <name>` to generate a dated delta template in `outputs/research/`. That keeps weekly reviews consistent and forces each pass to produce comparable artifacts.

@@ -1,0 +1,78 @@
+name: PR38 One-Shot PROGRAMSTART Verification
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr38-one-shot-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    if: github.head_ref == 'feat/planning-operating-model'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
+        with:
+          fetch-depth: 0
+
+      - name: Restore intentionally dormant workflow assets in ephemeral checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .github/workflows
+          for file in \
+            docs-pages.yml \
+            codeql.yml \
+            full-ci-gate.yml \
+            process-guardrails.yml \
+            release-package.yml \
+            weekly-research-delta.yml; do
+            git show 33776ecb9f1b66bd7256ff557382b69de20b3323:.github/workflows/$file > .github/workflows/$file
+          done
+
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6
+        with:
+          python-version: '3.12'
+
+      - name: Install uv
+        run: python -m pip install uv
+
+      - name: Sync development environment
+        run: uv sync --extra dev
+
+      - name: Validate all PROGRAMSTART structure
+        run: uv run programstart validate --check all
+
+      - name: Drift check
+        run: uv run programstart drift
+
+      - name: Validate ADR coverage
+        run: uv run programstart validate --check adr-coverage
+
+      - name: Validate ADR coherence
+        run: uv run programstart validate --check adr-coherence
+
+      - name: Validate decision-log coherence
+        run: uv run programstart validate --check decision-log-coherence
+
+      - name: Validate prompt authority
+        run: uv run programstart validate --check prompt-authority
+
+      - name: Run focused convergence tests
+        run: >-
+          uv run pytest
+          tests/test_instruction_enforcement.py
+          tests/test_prompt_compliance.py
+          tests/test_programstart_drift_check.py
+          tests/test_programstart_validate.py
+          tests/test_lint_prompts.py

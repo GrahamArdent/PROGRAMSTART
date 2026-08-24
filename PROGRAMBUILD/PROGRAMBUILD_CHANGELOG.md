@@ -114,7 +114,7 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 
 ## 2026-04-11 (Phase 3 — Deferred Automation: Repo Check, ADR Coverage, Staleness)
 
-- created `scripts/programstart_repo_clean_check.py` — git working-tree cleanliness helper with `capture_git_status()`, `assert_repo_clean()`, and CLI entry point
+- created `scripts/programstart_repo_clean_check.py` — git working-tree cleanliness helper with `capture_git_status()`, `assert_repo_clean()`, `assert_repo_unchanged()`, and CLI entry point
 - added 10 tests in `tests/test_programstart_repo_clean_check.py`
 - added P3 cross-stage validation advisory to `programstart advance` — at stage 3+ prints a reminder to run the cross-stage validation prompt; suppressed by `--skip-cross-stage-check`
 - added 3 cross-stage advisory tests in `tests/test_programstart_workflow_state.py`

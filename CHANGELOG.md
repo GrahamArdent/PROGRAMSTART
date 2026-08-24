@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Simplified PROGRAMBUILD execution surfaces around navigator-first startup (`status` / `guide`), compact logical work packets by default, stage/risk-aware Product Challenge Gates, on-demand specialist agents, and targeted verification driven by invalidation rather than ritual.
 - Reduced duplicated operational prose across the Gameplan, Checklist, Quick Start, JIT instructions, Product variant, and algorithm launcher so detailed methodology remains in its canonical owner instead of being reloaded or recopied everywhere.
 - Changed generated-project `full-ci-gate.yml` to manual-only by default; projects may add automatic triggers when their own operating needs justify the cost.
+- Added a machine-readable Lite artifact profile so `RISK_SPIKES.md` and `AUDIT_REPORT.md` remain reusable compatibility stubs without becoming mandatory operator work; JIT guidance, status, and the preferred `programstart advance` path activate their context/checks automatically when meaningful content exists.
 
 ### Fixed
 

@@ -8,6 +8,7 @@ from datetime import date, datetime
 _DEFAULT_STALE_DAYS = 14
 
 try:
+    from .programstart_artifact_profiles import active_conditional_outputs, conditional_output_files, core_output_files
     from .programstart_common import (
         extract_numbered_items,
         load_registry,
@@ -21,6 +22,7 @@ try:
         workspace_path,
     )
 except ImportError:  # pragma: no cover - standalone script execution fallback
+    from programstart_artifact_profiles import active_conditional_outputs, conditional_output_files, core_output_files
     from programstart_common import (
         extract_numbered_items,
         load_registry,
@@ -80,15 +82,20 @@ def summarize_programbuild(registry: dict) -> list[str]:
     active_stage = workflow_active_step(registry, "programbuild", state)
     variant = state.get("variant") or "unset"
     missing_control = [path for path in system["control_files"] if not workspace_path(path).exists()]
-    missing_outputs = [path for path in system["output_files"] if not workspace_path(path).exists()]
+    core_outputs = core_output_files(registry, state=state)
+    conditional_outputs = conditional_output_files(registry, state=state)
+    active_conditionals = active_conditional_outputs(registry, state=state)
+    missing_outputs = [path for path in core_outputs if not workspace_path(path).exists()]
     control_total = len(system["control_files"])
-    output_total = len(system["output_files"])
+    output_total = len(core_outputs)
 
     lines = ["PROGRAMBUILD"]
     lines.append(f"- active stage: {active_stage}{_stale_label(registry, 'programbuild')}")
     lines.append(f"- variant: {variant}")
     lines.append(f"- control files present: {control_total - len(missing_control)}/{control_total}")
-    lines.append(f"- output files present: {output_total - len(missing_outputs)}/{output_total}")
+    lines.append(f"- core outputs present: {output_total - len(missing_outputs)}/{output_total}")
+    if conditional_outputs:
+        lines.append(f"- conditional outputs active: {len(active_conditionals)}/{len(conditional_outputs)}")
 
     if missing_control:
         lines.append("- next action: restore missing control files before using the workflow")
@@ -98,12 +105,15 @@ def summarize_programbuild(registry: dict) -> list[str]:
     if missing_outputs:
         next_output = missing_outputs[0]
         lines.append(f"- next action: create or restore {next_output}")
-        lines.append("- missing output files: " + ", ".join(missing_outputs))
+        lines.append("- missing core output files: " + ", ".join(missing_outputs))
         return lines
 
     guide_command = f"programstart guide --system programbuild --stage {active_stage}"
     lines.append(f"- next action: run '{guide_command}' and keep PROGRAMBUILD_STATE.json current")
-    lines.append("- status: all standard PROGRAMBUILD control and output files are present")
+    if conditional_outputs:
+        lines.append("- status: all required PROGRAMBUILD controls and core outputs are present; conditional artifacts activate when used")
+    else:
+        lines.append("- status: all standard PROGRAMBUILD control and output files are present")
     return lines
 
 

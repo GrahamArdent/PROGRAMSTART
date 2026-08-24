@@ -35,6 +35,11 @@ uv run programstart guide --system programbuild
 A clean baseline is required. Fix any drift issues before continuing.
 The guide output confirms the minimal file set for this stage (JIT Step 1).
 
+For the Lite variant, `RISK_SPIKES.md` is conditional. If the guide omits it, do not
+load, populate, or validate it merely because the reusable stub exists. If architecture
+work exposes a material unknown that needs a spike, activate the artifact by writing the
+real spike and then apply the normal spike checks.
+
 ## Authority Loading
 
 Read the following authority files completely before proceeding:
@@ -43,7 +48,7 @@ Read the following authority files completely before proceeding:
 - `PROGRAMBUILD/PROGRAMBUILD.md` §11 — procedural protocol for Stage 4 work
 - `PROGRAMBUILD/REQUIREMENTS.md` — functional and non-functional requirements
 - `PROGRAMBUILD/USER_FLOWS.md` — user journeys and flow definitions
-- `PROGRAMBUILD/RISK_SPIKES.md` — technical risks and spike candidates
+- `PROGRAMBUILD/RISK_SPIKES.md` — only when the JIT guide includes it or a material unknown activates it
 - `PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md` — product shape and constraints
 
 ## Kill Criteria Re-check
@@ -68,13 +73,13 @@ Adapt the protocol steps below to fit the confirmed shape.
 
 ## Protocol
 
-> **Ordering note**: This write order follows `sync_rule: programbuild_architecture_contracts` in `config/process-registry.json`. ARCHITECTURE.md is the authority file; TEST_STRATEGY.md, RELEASE_READINESS.md, and RISK_SPIKES.md are dependents. Do not update a dependent before ARCHITECTURE.md is complete.
+> **Ordering note**: This write order follows `sync_rule: programbuild_architecture_contracts` in `config/process-registry.json`. ARCHITECTURE.md is the authority file; TEST_STRATEGY.md, RELEASE_READINESS.md, and an active RISK_SPIKES.md are dependents. Do not update a dependent before ARCHITECTURE.md is complete.
 
-1. **Load context.** Read the following files:
+1. **Load context.** Read:
    - `PROGRAMBUILD/REQUIREMENTS.md` — functional and non-functional requirements
    - `PROGRAMBUILD/USER_FLOWS.md` — user journeys and flow definitions
-   - `PROGRAMBUILD/RISK_SPIKES.md` — technical risks and spike candidates
-   - `PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md` — product shape and constraints
+   - `PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md` — product shape, constraints, success metric
+   - `PROGRAMBUILD/RISK_SPIKES.md` only when the JIT guide includes it or a real spike is already active
 
 2. **Load output target.** Read `PROGRAMBUILD/ARCHITECTURE.md` template.
 
@@ -107,38 +112,45 @@ Adapt the protocol steps below to fit the confirmed shape.
    - Define where auth is checked and what trusts what.
    - If the product is a local CLI tool with no auth, state this explicitly — do not invent auth.
 
-9. **Handle risk spikes.** For each high-risk area from `RISK_SPIKES.md`:
-   - Define the spike scope, acceptance criteria, and time-box.
-   - Link to the affected contracts or data model entities.
+9. **Decide whether a risk spike is earned.** Identify material technical unknowns whose uncertainty blocks or materially changes an architecture decision.
+   - If none exist and Lite is active, leave the dormant `RISK_SPIKES.md` stub untouched.
+   - If a material unknown exists, define the spike scope, acceptance criteria, method/time-box, and affected contracts, then write/update `RISK_SPIKES.md`.
+   - Product/Enterprise continue to follow their normal risk-evidence requirements.
 
 10. **Write outputs.**
-    - `PROGRAMBUILD/ARCHITECTURE.md` — complete architecture document
-    - `PROGRAMBUILD/RISK_SPIKES.md` — updated with spike outcomes
+    - `PROGRAMBUILD/ARCHITECTURE.md` — always complete the architecture document.
+    - `PROGRAMBUILD/RISK_SPIKES.md` — write/update only when a real spike is active or the selected variant/risk requires it.
 
 ## Output Ordering
 
 Write files in authority-before-dependent order per `config/process-registry.json` `sync_rules` (`programbuild_architecture_contracts` + `architecture_decision_alignment`):
 
 1. `PROGRAMBUILD/ARCHITECTURE.md` — write first (authority)
-2. `PROGRAMBUILD/RISK_SPIKES.md` — update to reflect architecture decisions, write second
+2. active `PROGRAMBUILD/RISK_SPIKES.md` — write second only when required
 3. `PROGRAMBUILD/DECISION_LOG.md` — record decisions after ARCHITECTURE.md is complete, write third
 
 ## DECISION_LOG
 
-You MUST update `PROGRAMBUILD/DECISION_LOG.md` with architecture decisions and their rationale.
+You MUST update `PROGRAMBUILD/DECISION_LOG.md` with material architecture decisions and their rationale.
 
 ## Verification Gate
 
-Before marking Stage 4 complete, run:
+Before marking Stage 4 complete, always run:
 
 ```bash
 uv run programstart validate --check architecture-contracts
-uv run programstart validate --check risk-spikes
-uv run programstart validate --check risk-spikes-resolved
 uv run programstart drift
 ```
 
-Both MUST pass. All reported issues must be resolved before advancing.
+If `programstart guide --system programbuild` includes `RISK_SPIKES.md`, also run:
+
+```bash
+uv run programstart validate --check risk-spikes
+uv run programstart validate --check risk-spikes-resolved
+```
+
+All applicable checks MUST pass before advancing. The preferred `programstart advance`
+command applies the same artifact-profile-aware preflight.
 
 ## Next Steps
 

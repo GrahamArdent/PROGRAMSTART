@@ -141,6 +141,8 @@ use_setproctitle = false
 branch = true
 source = [
   "scripts.programstart_cli",
+  "scripts.programstart_advance",
+  "scripts.programstart_artifact_profiles",
   "scripts.programstart_backup",
   "scripts.programstart_context",
   "scripts.programstart_evidence",

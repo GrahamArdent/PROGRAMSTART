@@ -143,6 +143,8 @@ source = [
   "scripts.programstart_cli",
   "scripts.programstart_backup",
   "scripts.programstart_context",
+  "scripts.programstart_evidence",
+  "scripts.programstart_graph",
   "scripts.programstart_clean",
   "scripts.programstart_closeout",
   "scripts.programstart_command_registry",

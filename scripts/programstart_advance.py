@@ -86,11 +86,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--system", choices=["programbuild", "userjourney"], required=True)
     parser.add_argument("--skip-preflight", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--defer", action="store_true")
     args, _unknown = parser.parse_known_args(arguments)
 
     # Preserve the mature state engine for non-PROGRAMBUILD workflows, explicit bypasses,
-    # and dry runs (the underlying engine already skips mutation preflight for dry runs).
-    if args.system != "programbuild" or args.skip_preflight or args.dry_run:
+    # dry runs, and deferrals. Deferring a stage intentionally does not prove it complete,
+    # so completion preflight must not become a prerequisite to pausing work.
+    if args.system != "programbuild" or args.skip_preflight or args.dry_run or args.defer:
         return _delegate(arguments)
 
     registry = load_registry()

@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added deterministic dependency-graph primitives for typed prerequisite/dependent traversal, stable topological ordering, cycle reporting, blocker eligibility, and bounded provenance-preserving impact paths.
+- Added immutable evidence-invalidation primitives that reuse verification evidence until an explicitly changed or graph-impacted scope/dependency invalidates it; evidence age remains metadata rather than an automatic expiry rule.
+
 ### Changed
 
 - Added the PROGRAMBUILD planning operating model and bounded work-packet standard, including one-strategic-execution-spine authority, proportional rigor, task-scoped/JIT context loading, evidence reuse with invalidation triggers, and research-to-plan delta handling (ADR-0023 / DEC-020).

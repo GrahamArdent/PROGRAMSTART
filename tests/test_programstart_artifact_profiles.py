@@ -3,6 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 
 from scripts import programstart_artifact_profiles as profiles
+from scripts.programstart_bootstrap import bootstrap_programbuild, bootstrap_shared_assets
+from scripts.programstart_common import load_registry
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -73,6 +75,24 @@ def test_artifact_has_body_preserves_legacy_body_fallback(tmp_path: Path) -> Non
 def test_real_conditional_templates_are_dormant() -> None:
     assert not profiles.artifact_has_body(ROOT / "PROGRAMBUILD" / "RISK_SPIKES.md")
     assert not profiles.artifact_has_body(ROOT / "PROGRAMBUILD" / "AUDIT_REPORT.md")
+
+
+def test_lite_bootstrap_preserves_dormancy_until_activation(tmp_path: Path, monkeypatch) -> None:
+    registry = load_registry()
+    destination = tmp_path / "lite-bootstrap"
+    bootstrap_shared_assets(destination, registry, dry_run=False)
+    bootstrap_programbuild(destination, registry, "lite", dry_run=False)
+
+    risk = destination / "PROGRAMBUILD" / "RISK_SPIKES.md"
+    audit = destination / "PROGRAMBUILD" / "AUDIT_REPORT.md"
+    assert "Activation: dormant" in risk.read_text(encoding="utf-8")
+    assert "Activation: dormant" in audit.read_text(encoding="utf-8")
+
+    monkeypatch.setattr(profiles, "workspace_path", lambda relative: destination / relative)
+    assert profiles.active_conditional_outputs(registry, variant="lite") == ()
+
+    risk.write_text(risk.read_text(encoding="utf-8").replace("Activation: dormant", "Activation: active"), encoding="utf-8")
+    assert profiles.active_conditional_outputs(registry, variant="lite") == ("PROGRAMBUILD/RISK_SPIKES.md",)
 
 
 def test_filter_stage_files_removes_only_dormant_conditional_outputs(tmp_path: Path, monkeypatch) -> None:

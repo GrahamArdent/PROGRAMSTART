@@ -37,8 +37,8 @@ The guide output confirms the minimal file set for this stage (JIT Step 1).
 
 For the Lite variant, `RISK_SPIKES.md` is conditional. If the guide omits it, do not
 load, populate, or validate it merely because the reusable stub exists. If architecture
-work exposes a material unknown that needs a spike, activate the artifact by writing the
-real spike and then apply the normal spike checks.
+work exposes a material unknown that needs a spike, set `Activation: active` in the
+artifact metadata before writing the real spike, then apply the normal spike checks.
 
 ## Authority Loading
 
@@ -113,8 +113,8 @@ Adapt the protocol steps below to fit the confirmed shape.
    - If the product is a local CLI tool with no auth, state this explicitly — do not invent auth.
 
 9. **Decide whether a risk spike is earned.** Identify material technical unknowns whose uncertainty blocks or materially changes an architecture decision.
-   - If none exist and Lite is active, leave the dormant `RISK_SPIKES.md` stub untouched.
-   - If a material unknown exists, define the spike scope, acceptance criteria, method/time-box, and affected contracts, then write/update `RISK_SPIKES.md`.
+   - If none exist and Lite is active, leave `Activation: dormant` and the reusable `RISK_SPIKES.md` template untouched.
+   - If a material unknown exists, set `Activation: active`, define the spike scope, acceptance criteria, method/time-box, and affected contracts, then write/update `RISK_SPIKES.md`.
    - Product/Enterprise continue to follow their normal risk-evidence requirements.
 
 10. **Write outputs.**

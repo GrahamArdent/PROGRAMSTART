@@ -57,9 +57,10 @@ def resolve_blast_radius_starts(
 ) -> tuple[str, ...]:
     """Resolve an impact target to existing graph nodes without inventing edges.
 
-    Exact graph-node matches win. Otherwise, use graph nodes surfaced by the existing
-    impact query plus graph-node substring matches. This keeps the old fuzzy discovery
-    behavior for navigation while dependency propagation itself remains deterministic.
+    Exact graph-node matches win. Otherwise, prefer graph nodes already surfaced by
+    the existing impact query. Only if discovery produced no graph seeds do we fall
+    back to graph-node substring matching. Dependency propagation itself remains
+    deterministic and uses only explicit dependency relation types.
     """
     needle = target.strip().lower()
     if not needle:
@@ -86,8 +87,10 @@ def resolve_blast_radius_starts(
             if value in graph_nodes:
                 candidates.add(value)
 
-    candidates.update(node for node in graph.nodes if needle in node.lower())
-    return tuple(sorted(candidates))
+    if candidates:
+        return tuple(sorted(candidates))
+
+    return tuple(sorted(node for node in graph.nodes if needle in node.lower()))
 
 
 def build_blast_radius(

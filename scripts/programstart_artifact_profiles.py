@@ -59,17 +59,39 @@ def conditional_output_files(
     return tuple(str(path) for path in configured)
 
 
+def _explicit_activation(text: str) -> str | None:
+    """Return an explicit conditional-artifact activation marker from the metadata header."""
+    header = text.split("---", 1)[0]
+    for raw_line in header.splitlines():
+        key, separator, value = raw_line.partition(":")
+        if separator and key.strip().lower() == "activation":
+            normalized = value.strip().lower()
+            return normalized or None
+    return None
+
+
 def artifact_has_body(path: Path) -> bool:
-    """Return whether a stub-style artifact contains meaningful content below its metadata header."""
+    """Return whether a conditional artifact should be treated as active.
+
+    New templates use an explicit ``Activation: dormant|active`` metadata marker so
+    reusable headings/placeholder rows do not create operator work. Repositories created
+    before that marker existed keep the previous body-content fallback behavior.
+    """
     if not path.exists():
         return False
     try:
         text = path.read_text(encoding="utf-8")
     except (OSError, UnicodeDecodeError):
         return False
-    if "---" in text:
-        text = text.split("---", 1)[1]
-    meaningful = [line.strip() for line in text.splitlines() if line.strip()]
+
+    activation = _explicit_activation(text)
+    if activation == "dormant":
+        return False
+    if activation == "active":
+        return True
+
+    body = text.split("---", 1)[1] if "---" in text else text
+    meaningful = [line.strip() for line in body.splitlines() if line.strip()]
     return bool(meaningful)
 
 
@@ -79,7 +101,7 @@ def active_conditional_outputs(
     variant: str | None = None,
     state: dict[str, Any] | None = None,
 ) -> tuple[str, ...]:
-    """Return conditional outputs that currently contain meaningful project content."""
+    """Return conditional outputs that are active for the current project."""
     return tuple(
         path
         for path in conditional_output_files(registry, variant=variant, state=state)
@@ -108,12 +130,7 @@ def stage_check_required(
     variant: str | None = None,
     state: dict[str, Any] | None = None,
 ) -> bool:
-    """Return whether a conditional stage check currently has evidence to validate.
-
-    Product and Enterprise have no artifact profile override today, so their checks remain
-    unchanged. For Lite, checks mapped to conditional artifacts wake up automatically once
-    the corresponding artifact contains meaningful content.
-    """
+    """Return whether a conditional stage check is active for the selected variant."""
     profile = artifact_profile(registry, variant=variant, state=state)
     mapping = profile.get("conditional_stage_checks", {})
     if not isinstance(mapping, dict):

@@ -201,14 +201,14 @@ def staleness_warnings(
         lines.append(
             f"\033[33m⚠  Last {system} state change was {gap} days ago. "
             "Strongly consider checking whether the Re-Entry Protocol "
-            "(PROGRAMBUILD_CHALLENGE_GATE.md) is warranted because evidence, assumptions, dependencies, or project context may have changed. "
-            "Elapsed time alone does not invalidate otherwise current evidence.\033[0m"
+            "(PROGRAMBUILD_CHALLENGE_GATE.md) is warranted because evidence, assumptions, dependencies, "
+            "or project context may have changed. Elapsed time alone does not invalidate otherwise current evidence.\033[0m"
         )
     elif gap > 28:
         lines.append(
             f"\033[33m⚠  Last {system} state change was {gap} days ago. "
-            "Consider running the Re-Entry Protocol "
-            "(PROGRAMBUILD_CHALLENGE_GATE.md) only if evidence, assumptions, dependencies, or project context may have changed. "
+            "Consider running the Re-Entry Protocol (PROGRAMBUILD_CHALLENGE_GATE.md) only if evidence, assumptions, "
+            "dependencies, or project context may have changed. "
             "Elapsed time alone does not invalidate otherwise current evidence.\033[0m"
         )
     return lines

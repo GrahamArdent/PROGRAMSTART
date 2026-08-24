@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added deterministic dependency-graph primitives for typed prerequisite/dependent traversal, stable topological ordering, cycle reporting, blocker eligibility, and bounded provenance-preserving impact paths.
 - Added immutable evidence-invalidation primitives that reuse verification evidence until an explicitly changed or graph-impacted scope/dependency invalidates it; evidence age remains metadata rather than an automatic expiry rule.
 - Added a PROGRAMSTART-only `workflow_dispatch` manual convergence gate so full `nox -s ci` validation is available on demand without restoring push, PR, cron, or nightly CI noise.
+- Extended `programstart impact` with deterministic dependency blast-radius paths over `depends_on` and `authority_dependency`, including start-node resolution, path provenance, machine-readable output, and optional `--max-depth` traversal bounds while preserving existing related-record discovery.
 
 ### Changed
 

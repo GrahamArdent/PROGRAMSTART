@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added immutable evidence-invalidation primitives that reuse verification evidence until an explicitly changed or graph-impacted scope/dependency invalidates it; evidence age remains metadata rather than an automatic expiry rule.
 - Added a PROGRAMSTART-only `workflow_dispatch` manual convergence gate so full `nox -s ci` validation is available on demand without restoring push, PR, cron, or nightly CI noise.
 - Extended `programstart impact` with deterministic dependency blast-radius paths over `depends_on` and `authority_dependency`, including start-node resolution, path provenance, machine-readable output, and optional `--max-depth` traversal bounds while preserving existing related-record discovery.
+- Added `programstart-adopt` for non-destructive Mode-C adoption of PROGRAMBUILD into an existing repository. Adoption preserves the host engineering toolchain, adds only PROGRAMBUILD management/output surfaces plus workflow prompts and a project registry, and tracks only reusable methodology files in the sync manifest so project state and project outputs are never overwritten by template sync.
 
 ### Changed
 

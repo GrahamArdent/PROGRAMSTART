@@ -6,6 +6,26 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 
 ---
 
+## 2026-08-24 (Planning Operating Model + Bounded Execution)
+
+- added `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` as the canonical owner for planning-to-execution separation, entry modes, proportional rigor, progressive/JIT context loading, evidence reuse, and research-to-plan delta rules
+- added `PROGRAMBUILD_WORK_PACKET.md` as the standard for bounded current execution slices; `CURRENT_WORK_PACKET.md` is explicitly derived and non-canonical
+- established the one-project/one-strategic-execution-spine rule so research, audits, readiness reviews, checklists, and work packets cannot silently become competing master plans
+- added raw-idea, research-backed, and existing/in-flight project entry modes; existing-project mode preserves the current project execution spine and converts new findings into explicit deltas
+- updated Idea Intake, Kickoff Packet, Checklist, canonical authority, file index, and PROGRAMBUILD machine registry for the new planning model
+- fixed the stale Idea Intake inconsistency where the protocol defined 8 questions while downstream guidance still referred to 7
+- updated the main PROGRAMBUILD playbook and Lite/Product/Enterprise variants so rigor changes ceremony/evidence strength without changing authority discipline
+- rewrote Stage 7 execution around bounded work packets, exact authority sections, explicit non-goals, trusted evidence, invalidation triggers, and targeted verification
+- reframed Stage 8 and periodic Stage 7 reviews as convergence points where context and verification widen again
+- updated Challenge Gate Parts B/E/H to check evidence validity, verification scope, work-packet reconciliation, and duplicate-authority drift
+- updated subagent guidance so specialist agents return bounded evidence/deltas and invalidation implications while the main agent/project owner retains canonical authority
+- updated JIT source-of-truth instructions, product JIT prompt, stage guide, what-next prompt, Copilot instructions, workflow guidance registry, and Quick Start guidance to separate stage baseline context from task-scoped context
+- corrected stale Stage 7 registry guidance that told operators to scaffold the project again even though scaffolding belongs to Stage 5
+- preserved repo-boundary enforcement wording and validation examples required by machine policy
+- GitHub Actions remain intentionally disabled while the repository is inactive; this change therefore relies on connector-based diff/static policy review until a normal CI-capable execution environment is used
+
+---
+
 ## 2026-04-15 (Phase K — Governance Close-out Command)
 
 - added `programstart closeout` — durable-checkpoint close-out command that runs ADR coverage/coherence, authority-sync, and drift evaluation together and writes machine-readable evidence to `outputs/governance/`
@@ -94,7 +114,7 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 
 ## 2026-04-11 (Phase 3 — Deferred Automation: Repo Check, ADR Coverage, Staleness)
 
-- created `scripts/programstart_repo_clean_check.py` — git working-tree cleanliness helper with `capture_git_status()`, `assert_repo_clean()`, `assert_repo_unchanged()`, and CLI entry point
+- created `scripts/programstart_repo_clean_check.py` — git working-tree cleanliness helper with `capture_git_status()`, `assert_repo_clean()`, and CLI entry point
 - added 10 tests in `tests/test_programstart_repo_clean_check.py`
 - added P3 cross-stage validation advisory to `programstart advance` — at stage 3+ prints a reminder to run the cross-stage validation prompt; suppressed by `--skip-cross-stage-check`
 - added 3 cross-stage advisory tests in `tests/test_programstart_workflow_state.py`
@@ -195,7 +215,7 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 - created `.github/prompts/programstart-cross-stage-validation.prompt.md`
 - created `.github/prompts/programstart-stage-transition.prompt.md`
 
-
+---
 
 ## 2026-03-29
 
@@ -218,4 +238,4 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 
 ---
 
-Last updated: 2026-03-31
+Last updated: 2026-08-24

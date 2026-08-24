@@ -8,7 +8,9 @@ The goal is speed without abandoning the guardrails that prevent the most common
 Authority:
 - `PROGRAMBUILD_CANONICAL.md` defines source-of-truth rules
 - `PROGRAMBUILD_FILE_INDEX.md` is the lookup table for critical files
-- `PROGRAMBUILD_IDEA_INTAKE.md` runs before Stage 0 — challenge the idea before filling the inputs block
+- `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` defines planning entry modes, one-spine authority, proportional rigor, JIT context loading, and evidence reuse
+- `PROGRAMBUILD_WORK_PACKET.md` defines the optional derived current-slice packet; it never becomes a second game plan
+- `PROGRAMBUILD_IDEA_INTAKE.md` runs before Stage 0 — challenge the idea or existing-project delta before filling the inputs block
 - `PROGRAMBUILD_CHALLENGE_GATE.md` runs at every stage transition — Parts A, C, F, and H are required minimum for Lite
 - `PROGRAMBUILD_GAMEPLAN.md` defines the execution order with cross-stage validation
 
@@ -29,19 +31,21 @@ Do not use this file when:
 - the system needs formal approvals or audit trails
 - multiple teams must coordinate contracts
 
+Lite means **less ceremony**, not weaker authority discipline. Keep one strategic execution spine, load only the context needed for the current slice, and reuse valid evidence until an invalidation trigger occurs.
+
 ---
 
 ## Essential Stages
 
 | Stage | Output | Standard |
 |---|---|---|
-| Inputs | filled inputs block | must be complete |
+| Inputs | filled inputs block or explicit existing-project delta | must be clear |
 | Feasibility | short go/no-go note | 1 page max |
 | Quick research | short validation note or decisions table | only enough to avoid an obvious bad bet |
 | Requirements | lean requirements and top workflows | focused on P0 only |
 | Architecture | one architecture note | only essential contracts |
-| Scaffold | route layer, auth client, CI, basic tests | must be green |
-| Build | feature loop | one feature at a time |
+| Scaffold | contract layer, boundary helper, CI, basic tests | must be green |
+| Build | feature loop | one bounded slice at a time |
 | Launch check | short readiness checklist | must be explicit |
 | Post-launch note | short review and next actions | capture what changed after first real use |
 
@@ -49,6 +53,7 @@ Do not use this file when:
 
 ## Non-Negotiables
 
+- one strategic execution spine for the project; research, audits, and work packets do not become competing plans
 - one contract layer for the dominant external surface: routes, endpoints, commands, jobs, or public API
 - one auth-aware client, trusted caller wrapper, or equivalent boundary helper when access control exists
 - no hardcoded protected paths, commands, or contract identifiers outside the contract layer
@@ -58,6 +63,8 @@ Do not use this file when:
 - one rollback note before first deployment
 - one short decision log with the reasons for key tradeoffs
 - critical planning files follow the `PROGRAMBUILD_*.md` naming convention
+- non-trivial implementation work SHOULD use a bounded work packet; trivial work MAY state the same objective/non-goal/context/evidence fields inline instead
+- existing verification SHOULD be reused when no documented invalidation trigger occurred
 
 Attach `USERJOURNEY/` only if the lite project still has real onboarding, consent, activation, or first-run routing decisions to make.
 
@@ -80,23 +87,28 @@ See `PROGRAMBUILD_SUBAGENTS.md` for full prompts and workspace agent files.
 ## Minimal Prompt Pattern
 
 ```text
-Build a lean but production-conscious plan for this app.
+Build a lean but production-conscious plan for this app or existing-project change.
 
 Inputs:
-- project inputs block
+- project inputs block, research-backed intake, or existing execution spine + proposed delta
 
-Choose the dominant execution mode first: interactive user flow, operator workflow, CLI scenario, service contract, or scheduled job.
+First select the correct entry mode from PROGRAMBUILD_PLANNING_OPERATING_MODEL.md.
+Preserve any existing project execution authority instead of creating another master plan.
+Choose the dominant execution mode: interactive user flow, operator workflow, CLI scenario, service contract, or scheduled job.
 
-Produce:
+Produce only the artifacts needed for the risk:
 1. short feasibility note
-2. quick stack and dependency validation
+2. quick stack/dependency validation or research delta
 3. P0 requirements only
 4. main workflow for the product shape
 5. basic architecture and dominant contract surface
 6. scaffold with the minimum contract layer and boundary helpers
-7. essential tests: alignment, auth or trust boundary, smoke scenario
-8. short launch checklist
-9. short post-launch note
+7. essential tests: alignment, auth/trust boundary, smoke scenario
+8. bounded implementation slices; use CURRENT_WORK_PACKET.md only when it materially improves focus
+9. short launch checklist
+10. short post-launch note
+
+For each implementation slice, name reusable evidence, its invalidation triggers, and the smallest verification set needed for what changed.
 ```
 
 ---
@@ -108,8 +120,9 @@ Produce:
 - dominant contract alignment test passes
 - one smoke scenario for the main execution mode passes
 - deployment and rollback steps are written down
+- any current work packet is reconciled back into canonical project state rather than accumulated as a second plan
 - a short post-launch review is scheduled or completed
 
 ---
 
-Last updated: 2026-04-14
+Last updated: 2026-08-24

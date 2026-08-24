@@ -2,17 +2,19 @@
 
 ## Repository Role
 
-PROGRAMSTART is a reusable planning/delivery system. `PROGRAMBUILD/` owns reusable project methodology; `USERJOURNEY/` is an optional journey-planning workflow. Machine-readable workflow state/rules live under `config/` and are preferred over conversational memory.
+PROGRAMSTART is a reusable planning/delivery system. `PROGRAMBUILD/` owns reusable project methodology; `USERJOURNEY/` is optional journey-planning. Machine-readable workflow rules live in `config/process-registry.json` and are preferred over conversational memory.
+
+The key words MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY in authority docs follow RFC 2119.
 
 ## Startup / JIT
 
 Do not read the documentation tree up front.
 
 1. inspect current repository/PR state;
-2. use `programstart status` and `programstart guide --system <system>` (or current equivalents) to orient;
+2. use `scripts/programstart_status.py` / `programstart status` and `programstart guide --system <system>` to orient;
 3. identify the current strategic execution spine/stage;
 4. load only the exact authority sections/evidence needed for the current task;
-5. use `.github/instructions/source-of-truth.instructions.md` for the detailed JIT protocol.
+5. use `.github/instructions/source-of-truth.instructions.md` for detailed JIT behavior.
 
 ## Authority Rules
 
@@ -25,25 +27,25 @@ Do not read the documentation tree up front.
 
 ## Work Packets
 
-`PROGRAMBUILD/PROGRAMBUILD_WORK_PACKET.md` defines work-packet semantics.
+`PROGRAMBUILD/PROGRAMBUILD_WORK_PACKET.md` defines packet semantics.
 
-Use the compact logical packet by default. Persist `CURRENT_WORK_PACKET.md` only when multi-session/multi-agent coordination, risk, dependencies/blockers, or resumability make persistence useful. A packet never becomes strategic authority.
+Use the compact logical packet by default. Persist `CURRENT_WORK_PACKET.md` only when multi-session/multi-agent coordination, risk, dependencies/blockers, or resumability makes persistence useful. A packet never becomes strategic authority.
 
 ## Verification Economy
 
 - Reuse trustworthy verification until a relevant invalidation trigger occurs.
 - During a slice, run the smallest sufficient verification for the changed/at-risk surface.
-- Widen at meaningful convergence boundaries (shared-contract change, stage transition, release readiness, material risk), not from an arbitrary feature/time counter.
-- Do not rerun broad checks merely because a new session began.
+- Widen at meaningful convergence boundaries, not from an arbitrary feature/time counter.
+- Do not rerun broad checks merely because a session changed.
 - Use the manual convergence workflow only when a full-repository gate is actually warranted.
 
-## Preferred Commands
+## Preferred Commands / Enforcement
 
-- `programstart status` — current strategic state / orientation
-- `programstart guide --system <system>` — JIT authority baseline
-- `programstart drift` — authority/registry drift when relevant
-- `programstart validate ...` — required validation/convergence checks
-- `programstart advance ...` — workflow state transitions
+- `scripts/programstart_status.py` / `programstart status` — current strategic orientation
+- `scripts/programstart_step_guide.py` / `programstart guide --system <system>` — JIT baseline
+- `scripts/programstart_drift_check.py` / `programstart drift` — authority/registry drift when relevant
+- `scripts/programstart_validate.py` / `programstart validate ...` — required validation/convergence checks
+- `scripts/programstart_workflow_state.py` / `programstart advance ...` — workflow transitions
 
 Prefer registry-backed commands over freehand reconstruction of execution order.
 
@@ -52,7 +54,7 @@ Prefer registry-backed commands over freehand reconstruction of execution order.
 - Keep changes bounded and coherent.
 - Do not create documentation diaries for micro-steps.
 - Record evidence once and reference it elsewhere.
-- ADRs are for durable architecture/policy decisions that cross the repository's current ADR threshold; use `DECISION_LOG.md` for ordinary material choices.
+- Use `PROGRAMBUILD/DECISION_LOG.md` for ordinary material choices; record durable architecture/policy decisions in `docs/decisions/` when the current ADR policy warrants it.
 - All `.github/prompts/*.prompt.md` files must follow `.github/prompts/PROMPT_STANDARD.md`; internal build prompts are exempt where the standard says so.
 - Commit messages must use Conventional Commits.
 
@@ -61,13 +63,6 @@ If the task may require work in another repository, stop and ask for express con
 
 ## Success Test
 
-An agent should be able to answer quickly:
+An agent should quickly answer: what is authoritative, what is happening now, what context is needed, what evidence remains valid, what changed enough to verify, and what proves this slice is done.
 
-- what is authoritative?
-- what are we doing now?
-- what context is actually needed?
-- what evidence is still valid?
-- what changed enough to verify?
-- what proves this slice is done?
-
-If answering those requires reading the whole repo or interpreting multiple competing plans, simplify before adding more process.
+If answering those requires reading the whole repo or interpreting competing plans, simplify before adding more process.

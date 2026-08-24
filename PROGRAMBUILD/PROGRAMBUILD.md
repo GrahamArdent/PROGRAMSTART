@@ -24,14 +24,14 @@ Control files:
 - `PROGRAMBUILD_SUBAGENTS.md` is the subagent catalog with reusable prompts
 - `PROGRAMBUILD_CHECKLIST.md` is the execution checklist version of this system
 - `PROGRAMBUILD_IDEA_INTAKE.md` is the pre-feasibility challenge interview for raw ideas, research-backed opportunities, and existing-project deltas
-- `PROGRAMBUILD_CHALLENGE_GATE.md` is the 8-part stage-transition checklist (A–H) with architecture alignment — run this at every stage boundary
+- `PROGRAMBUILD_CHALLENGE_GATE.md` defines the A–H risk controls and stage/risk-aware gate selection — run the appropriate gate at every stage boundary
 - `PROGRAMBUILD_GAMEPLAN.md` is the chained execution sequence with cross-stage validation — use this to run stages in the correct order
 
 ---
 
 ## 1. How To Use This File
 
-1. Read `PROGRAMBUILD_CANONICAL.md` and `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` first.
+1. Read `PROGRAMBUILD_CANONICAL.md` and `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` first when the current task actually changes PROGRAMBUILD control behavior; otherwise orient with registry-backed status/guide output and load only the relevant authority.
 2. Select the correct planning entry mode:
    - raw idea
    - research-backed project
@@ -40,13 +40,13 @@ Control files:
 4. Run `PROGRAMBUILD_IDEA_INTAKE.md` in the appropriate mode. Reuse valid existing evidence instead of re-asking settled questions.
 5. Fill or reconcile the Inputs block from the intake output/current project authority.
 6. Decide the dominant `PRODUCT_SHAPE`, whether `USERJOURNEY/` is needed, and which variant fits the risk and team model.
-7. Use `PROGRAMBUILD_FILE_INDEX.md` to locate the right planning artifact.
+7. Use `PROGRAMBUILD_FILE_INDEX.md` only when you need to locate an authority; do not load the whole hierarchy by default.
 8. Follow `PROGRAMBUILD_GAMEPLAN.md` to run stages in the correct order with cross-stage validation at each boundary.
-9. Run `PROGRAMBUILD_CHALLENGE_GATE.md` at every stage transition. Do not start the next stage until the current stage output is reviewed and the gate passes.
-10. During non-trivial implementation work, use `PROGRAMBUILD_WORK_PACKET.md` to derive or refresh a bounded `CURRENT_WORK_PACKET.md`. The packet narrows the task; it does not redefine strategy, requirements, architecture, or decision authority.
+9. Run `PROGRAMBUILD_CHALLENGE_GATE.md` at every stage transition using the gate parts required by the selected variant, current stage, and actual risk. Full A–H is a whole-system convergence control, not Product paperwork at every boundary.
+10. During implementation, define a bounded logical work packet using `PROGRAMBUILD_WORK_PACKET.md`. Use the compact form by default; persist `CURRENT_WORK_PACKET.md` only when persistence materially improves coordination, risk control, or resumability.
 11. Load context progressively: establish the stage baseline from registry guidance, then read only the authority sections and specialist references needed for the current slice.
-12. Reuse still-valid verification evidence until a documented invalidation trigger occurs. Broaden verification again at stage transitions, release boundaries, and other convergence gates.
-13. Treat every interface between layers as a contract that must be explicit and tested in both directions.
+12. Reuse still-valid verification evidence until a documented invalidation trigger occurs. Broaden verification again at stage transitions, release boundaries, and other meaningful convergence gates.
+13. Treat every interface between layers as a contract that must be explicit and tested in both directions when that interface is material to the product.
 14. Use this playbook inside the project repository created from the template, or map it explicitly onto an existing repository's authority model. Do not keep filled project outputs, work packets, or portfolio state in the PROGRAMSTART template repository.
 
 ---
@@ -124,15 +124,15 @@ Good kickoff pattern:
 ## 3. Core Rules
 
 - One project has one primary strategic execution spine. Research, audits, readiness reviews, checklists, and work packets MUST NOT silently become competing master plans.
-- `CURRENT_WORK_PACKET.md`, when used, is derived execution state and must trace to canonical project authority.
+- A work packet is a logical derived execution contract. Persist `CURRENT_WORK_PACKET.md` only when doing so adds real coordination/resumption value.
 - Context loading is progressive: stage baseline first, current-slice authority second, specialist context only when needed.
 - Verification is change-based: reuse trustworthy evidence until its invalidation trigger occurs, then rerun the smallest check set that restores confidence; widen again at required convergence gates.
-- No hardcoded API paths outside the route contract layer.
-- No raw network calls for authenticated endpoints outside the approved auth-aware client.
-- No endpoint is considered done until auth behavior, schema shape, and route registration are tested.
-- No feature is considered done until it has loading, success, empty, and error behavior where applicable.
-- No release is considered ready without rollback, observability, and support ownership.
-- Every material decision should be recorded in `DECISION_LOG.md`; enterprise work should promote major architecture or policy changes into ADRs.
+- No hardcoded API paths outside the route contract layer when a route contract layer is part of the architecture.
+- No raw network calls for authenticated endpoints outside the approved auth-aware client where such a client boundary exists.
+- No endpoint is considered done until its material auth behavior, schema shape, and route registration are tested.
+- No feature is considered done until its applicable loading, success, empty, error, or retry behavior is handled.
+- No release is considered ready without rollback, observability, and support ownership appropriate to its operational risk.
+- Every material decision should be recorded in `DECISION_LOG.md`; promote durable architecture/policy rationale into ADRs when the current ADR policy warrants a longer-lived record.
 - `PROGRAMBUILD_CANONICAL.md` defines which document is authoritative for each concern.
 - No document claim survives conflict with validated code, tests, or the canonical authority map.
 
@@ -175,37 +175,33 @@ Recommended stage outputs for each project:
 - `AUDIT_REPORT.md`
 - `POST_LAUNCH_REVIEW.md`
 
-Optional derived execution aid:
-- `CURRENT_WORK_PACKET.md` — replaceable bounded current-slice view; canonical for nothing
+Optional persisted execution aid:
+- `CURRENT_WORK_PACKET.md` — replaceable current-slice view; use only when persistence is beneficial; canonical for nothing
 
 ---
 
 ## 5. Suggested Subagents
 
-If you are using an AI workflow with subagents, assign specialized work instead of asking one agent to do everything.
+Use specialist agents **when decomposition creates real value**. They are not a mandatory sequence for every build.
 
 See `PROGRAMBUILD_SUBAGENTS.md` for full agent definitions, prompts, and invocation triggers.
 
-Core agents (run in sequence for every build):
+Common specialist roles:
 
-| Agent | Use for | Workspace agent |
-|---|---|---|
-| Discovery & Scoping | domain research, scope, user stories, kill criteria, user flows | `.github/agents/discovery-scoping.agent.md` |
-| Architecture & Security | system boundaries, API contracts, auth model, threat model | `.github/agents/architecture-security.agent.md` |
-| Quality & Release | test strategy, release readiness, launch gate | `.github/agents/quality-release.agent.md` |
-
-On-demand agents (trigger only when the condition is met):
-
-| Agent | Trigger | Use for |
-|---|---|---|
-| Risk Spike Agent | unknown rated medium or high impact in RISK_SPIKES.md | prototype risky integrations, auth flow, streaming, AI cost |
-| Contract Auditor | Stage 9 audit or any mid-implementation alignment check | route, auth, schema, and contract drift |
+| Agent | Use when |
+|---|---|
+| Discovery & Scoping | domain ambiguity, scope uncertainty, or research synthesis is material |
+| Architecture & Security | system/trust boundaries or architecture risk need independent review |
+| Quality & Release | test/release risk benefits from a focused reviewer |
+| Risk Spike Agent | a medium/high-impact unknown blocks a decision |
+| Contract Auditor | contract/auth/schema drift is plausible or an audit/convergence boundary requires it |
 
 Guidance:
-- Use subagents for parallel research and review work.
-- Use the main agent for synthesis, decisions, and code edits.
-- Require each subagent to return findings, risks, and unresolved assumptions.
-- Subagent findings are evidence/advice until adopted into the appropriate canonical project owner.
+- Do not spawn agents merely because a role exists.
+- Use parallel specialists when work is genuinely decomposable and their outputs can be synthesized cleanly.
+- Use the main agent/operator for synthesis, decisions, and coherent code changes.
+- Require specialists to return findings, evidence, risks, and unresolved assumptions.
+- Specialist output is evidence/advice until adopted into the appropriate canonical project owner.
 
 ---
 
@@ -220,7 +216,7 @@ Guidance:
 | 4 | Architecture and risk spikes | `ARCHITECTURE.md` and `RISK_SPIKES.md` | approved contracts and resolved unknowns |
 | 5 | Scaffold and guardrails | working skeleton and CI gates | structural tests green |
 | 6 | Test strategy | `TEST_STRATEGY.md` | coverage plan approved |
-| 7 | Implementation loop | bounded work packets + feature code/tests | slice/feature DoD complete |
+| 7 | Implementation loop | bounded slices + feature code/tests + current evidence | slice DoD complete |
 | 8 | Release readiness | `RELEASE_READINESS.md` | deploy convergence gate passed |
 | 9 | Audit and drift control | `AUDIT_REPORT.md` | critical gaps resolved/adopted |
 | 10 | Post-launch review and retrospective | `POST_LAUNCH_REVIEW.md` | learnings captured and follow-up owners assigned |
@@ -234,7 +230,7 @@ The stage order stays stable across variants, but the gate strength changes base
 | Variant | Gate style | Evidence expectation |
 |---|---|---|
 | Lite | lightweight pass/fail notes | short decision notes and the minimum viable proof to move forward |
-| Product | must-meet and should-meet review | explicit decision log entries, approved outputs, and coverage expectations |
+| Product | stage/risk-aware must-meet review | explicit decisions and evidence for the controls relevant to the boundary; full convergence at release/high-risk boundaries |
 | Enterprise | scored gate with sign-off and retained evidence | approvals, ADRs for material changes, control traceability, and review evidence |
 
 Use this default playbook as the balanced middle. Do not force enterprise ceremony into small-business or prototype work, and do not let high-risk enterprise work run with lite evidence.
@@ -245,23 +241,15 @@ Variant selection is independent from `PRODUCT_SHAPE`:
 - `USERJOURNEY/` is decided by whether interactive onboarding/activation design exists, not by variant alone
 
 Every stage gate should answer:
-- Did any kill criteria from `FEASIBILITY.md` become true?
-- Are the must-meet conditions satisfied?
+- Did any applicable kill criteria from `FEASIBILITY.md` become true?
+- Are the must-meet conditions for the selected gate parts satisfied?
 - What decision should be recorded in `DECISION_LOG.md`?
-- Which previously accepted evidence remains valid, and which evidence was invalidated by changes since the last convergence gate?
+- Which previously accepted evidence remains valid, and which evidence was invalidated by changes since the last trusted convergence point?
 
-Recommended gate scoring pattern:
-- Lite: pass/fail note written by the owner
-- Product: all must-meet items pass and most should-meet items pass
-- Enterprise: all must-meet items pass, score recorded, approver named, evidence retained
-
-ADR threshold for a mostly solo workflow:
+ADR guidance for a mostly solo workflow:
 - Use `DECISION_LOG.md` by default.
-- Promote a decision to an ADR only when at least 2 of these are true:
-- it changes a core contract, auth rule, data policy, deployment model, or vendor dependency
-- it affects 3 or more files or more than 1 stage of the workflow
-- reversing it would likely cost more than 1 focused workday
-- you expect to revisit the reasoning later and a short decision-log row would be insufficient
+- Promote a decision to an ADR when the rationale needs durable architecture/policy history because the change is cross-cutting, hard/costly to reverse, changes a public/security/data/deployment/vendor contract, or is likely to be revisited later.
+- Do not create an ADR merely because a numeric file/stage threshold was crossed.
 
 ---
 
@@ -443,14 +431,14 @@ ARCHITECTURE.md must include:
 9. Observability plan
 
 RISK_SPIKES.md must include:
-1. Top 3 to 5 technical unknowns
+1. Top material technical unknowns
 2. Small prototype or investigation plan for each
 3. Success and failure criteria
 4. Result summary
 5. Decision taken after each spike
 ```
 
-Mandatory spike candidates where applicable:
+Mandatory spike candidates where material:
 - authentication and session lifecycle
 - streaming or long-lived connection behavior
 - external integrations
@@ -468,24 +456,21 @@ Purpose:
 Set the rules of the system before feature work begins.
 
 Output:
-Working repo skeleton with CI and structural tests.
+Working repo skeleton with CI and structural tests appropriate to the product shape.
 
-Required guardrails (adapt to product shape — not all apply to every architecture):
+Required guardrails (select only those applicable):
 - route or endpoint contract layer with canonical, deprecated, and planned states
-- auth-aware client (and authenticated streaming helper if applicable)
-- service or handler registration pattern for all endpoints
+- auth-aware client or trusted-caller boundary where applicable
+- service/handler registration pattern where applicable
 - repo-boundary consent rule for AI-assisted work: do not inspect, edit, stage, commit, or push another repository unless the user explicitly names it and asks for that action
-- CI with lint, types, tests, build, and timeouts
+- CI/local verification appropriate to the product's risk and active status
 - local bootstrap command with no tribal knowledge
 
-Required structural tests (select those applicable to your architecture):
-- route alignment: declared routes or endpoints resolve to live handlers
-- reverse alignment: live handlers are either used or explicitly documented
-- auth client discipline: authenticated endpoints do not use raw network calls
-- auth matrix: 401, 403, and cross-tenant expectations are enforced
-- schema completeness: declared interfaces map to actual handler contracts
-- no hardcoded URLs or paths outside the contract layer
-- planned-route safety: stubs are documented and not accidentally called from live code
+Required structural tests should protect the dominant contract surface, for example:
+- route/endpoint/command/job alignment
+- auth boundary discipline
+- schema/interface completeness
+- planned/deprecated contract safety
 
 Prompt template:
 
@@ -495,23 +480,14 @@ Do not implement product features.
 
 Inputs:
 - Architecture
-- User flows
+- User flows where relevant
 
-Apply only the scaffold elements that fit `PRODUCT_SHAPE`. Do not invent route layers, UI shells, or browser tooling for shapes that do not need them.
-
-Produce:
-1. Repo structure
-2. Dominant contract layer
-3. Auth-aware/trusted boundary layer where applicable
-4. Structural test suite
-5. CI pipeline with explicit timeouts
-6. PR checklist and conventions
-7. One-command local setup
-8. Deprecation pattern
+Apply only the scaffold elements that fit PRODUCT_SHAPE.
+Produce the minimum repo structure, contract/trust boundaries, structural tests, verification tooling, local setup, and deprecation pattern needed to make later feature work safe.
 ```
 
 Gate:
-Feature work starts only after the required structural tests are green.
+Feature work starts only after the required structural checks for this architecture are green.
 
 ---
 
@@ -526,7 +502,7 @@ Output:
 Must answer:
 - What belongs in unit, component, purpose, golden, contract, integration, and E2E tests for this product shape?
 - What fixtures exist and who owns them?
-- Which tests block PRs, scheduled regressions, and releases?
+- Which tests block PRs, regressions, and releases?
 - Which evidence can be retained/reused across slices, and what invalidates it?
 
 Prompt template:
@@ -539,111 +515,94 @@ Inputs:
 - User flows
 - Architecture
 
-Use `PRODUCT_SHAPE` to determine the dominant test layers. Browser E2E is not universal.
+Use PRODUCT_SHAPE and actual risk to determine the test layers. Browser E2E is not universal.
 
 Include:
-1. Test pyramid/portfolio targets
-2. Unit test rules
-3. Component test rules where applicable
-4. Service/contract purpose and auth test rules
-5. Golden baseline policy where applicable
-6. E2E and smoke/regression strategy
-7. Test data and fixture strategy
-8. Requirements traceability matrix
-9. Contract/endpoint-to-test registry
-10. Evidence-reuse and invalidation rules for expensive or stateful verification
-11. Gap analysis
+1. Test portfolio and purpose of each layer
+2. Unit/component/contract/integration/E2E rules only where applicable
+3. Test data and fixture strategy
+4. Requirements traceability
+5. Contract-to-test mapping for material contracts
+6. Evidence-reuse and invalidation rules for expensive/stateful verification
+7. Gaps that would prevent credible release confidence
 ```
 
 Non-negotiables:
-- golden tests use the exact production code path
 - mocked shapes match real contract shapes
-- auth behavior is tested explicitly, not assumed
-- every material contract appears in a registry that points to its tests
+- material auth/trust behavior is tested explicitly
+- release-critical outcomes have named proof
 
 Gate:
-No feature implementation starts until the test model is approved.
+No feature implementation starts until the test model is sufficient for the P0 risk surface.
 
 ---
 
 ## 14. Stage 7: Implementation Loop
 
 Purpose:
-Build one bounded slice at a time with a repeatable definition of done, minimal necessary context, and verification proportional to what changed.
+Build one bounded slice at a time with minimal necessary context and verification proportional to what changed.
 
 Output:
-Working feature code/tests plus current-slice evidence. `CURRENT_WORK_PACKET.md` is optional derived state for non-trivial slices and is replaced as work advances.
+Working feature code/tests plus current-slice evidence. A persisted `CURRENT_WORK_PACKET.md` is optional derived state, not the default artifact.
 
 ### Stage baseline
 
-Use registry-backed guidance to establish the allowed Stage 7 authority surface. Do not treat that file list as an instruction to fully re-read every planning document for every feature.
+Use registry-backed guidance to establish the allowed Stage 7 authority surface. Do not fully reread every stage file for each slice.
 
 ### Work-packet loop
 
-For each non-trivial slice:
+For each coherent slice:
 
-1. Derive or refresh `CURRENT_WORK_PACKET.md` from `PROGRAMBUILD_WORK_PACKET.md`.
-2. Trace the packet to the strategic execution spine/current stage and exact requirement IDs.
+1. Define the compact work-packet fields from `PROGRAMBUILD_WORK_PACKET.md`. Persist `CURRENT_WORK_PACKET.md` only when multi-session/multi-agent coordination, risk, dependencies/blockers, or resumability makes persistence useful.
+2. Trace the slice to the strategic execution spine/current stage and exact relevant requirement IDs.
 3. State one bounded objective and explicit non-goals.
-4. Identify the exact architecture contracts, requirement sections, flows, decisions, and specialist references needed now.
-5. List trusted existing verification evidence and the change conditions that would invalidate it.
-6. Choose the smallest verification set that will prove the changed or at-risk surface.
-7. Write purpose/auth/contract tests first where applicable.
-8. Implement the service/contract/producer side and validation.
-9. Register endpoints, commands, jobs, handlers, or public APIs and keep alignment checks green where applicable.
-10. Implement client/consumer/operator layers using approved contract constants and boundary helpers.
-11. Build user-facing states where applicable.
-12. Add component, integration, scenario, or E2E coverage appropriate to the product shape and risk.
-13. Update golden baselines only when the feature actually affects their governed output.
-14. Update the contract-to-test registry.
-15. Run the targeted verification set plus any broader check whose invalidation trigger occurred.
-16. Record evidence actually produced.
-17. Reconcile any material design/scope change into canonical authority and `DECISION_LOG.md`.
-18. Mark the packet complete/replaced and derive the next slice from updated authority.
+4. Identify only the architecture contracts, requirement sections, flows, decisions, and specialist references needed now.
+5. List trusted verification evidence and the conditions that would invalidate it.
+6. Choose the smallest verification set that will prove the changed/at-risk surface.
+7. Write purpose/auth/contract tests first where appropriate.
+8. Implement the slice without prospectively contradicting authority.
+9. Update contract/test registries only when the slice changes their governed surface.
+10. Run targeted verification plus any broader check whose invalidation/convergence trigger occurred.
+11. Record evidence actually produced once.
+12. Reconcile material design/scope/status changes into canonical authority and `DECISION_LOG.md`.
+13. Close/replace the logical or persisted packet and derive the next slice from updated state.
 
 Definition of done:
-- the slice traces to approved scope and the strategic execution spine
-- contract shape matches between producer and consumer layers
-- auth/trust behavior is verified where applicable
-- contract/route/command/job registration is verified where applicable
-- user-visible states are covered where applicable
-- logging and error handling are in place
-- decision log or ADR updated if the design changed
-- reused evidence remains within its documented scope or has been revalidated after invalidation
+- slice traces to approved scope/strategic authority
+- material contract/trust behavior is verified where applicable
+- applicable user/runtime states are handled
+- reused evidence is still within scope or has been revalidated after invalidation
+- durable decisions/state are reconciled
 - the work packet did not become a second planning hierarchy
 
 Prompt template:
 
 ```text
-Implement one bounded work packet using the approved project authority and test strategy.
+Implement one bounded slice using current project authority and test strategy.
 
-Inputs:
-- strategic execution spine/current stage
-- bounded objective and non-goals
-- exact requirement IDs
-- relevant architecture contracts
-- relevant user flow sections only if affected
-- relevant test strategy rows
-- relevant prior decisions
-- trusted existing evidence + invalidation triggers
+State:
+- objective + non-goals
+- exact authority IDs/sections
+- reusable evidence + invalidation triggers
+- acceptance criteria
+- targeted verification
 
-Adapt the implementation steps to PRODUCT_SHAPE rather than assuming a web frontend/backend split.
-Load only the context required for this slice.
-Stop if the planned implementation would contradict current authority; update authority first.
+Load only task-relevant context.
+Stop if the implementation would prospectively contradict current authority; reconcile authority first.
 Run targeted verification for what changed or became at risk.
 ```
 
 Periodic convergence:
-- every 3–5 features or another risk-appropriate interval, widen context to catch cross-slice drift
-- run the Challenge Gate / cross-stage checks required by `PROGRAMBUILD_GAMEPLAN.md`
-- re-check kill criteria, scope creep, decision reversals, dependency health, and architecture/requirements alignment
+- widen when accumulated cross-slice interaction, blast radius, authority churn, invalidated evidence, dependency/environment change, milestone/handoff, or another Challenge Gate trigger makes the narrow slice view insufficient
+- local time/slice reminders may prompt a review but are not proof that one is required
+- run the stage/risk-relevant Challenge Gate controls from `PROGRAMBUILD_CHALLENGE_GATE.md`
 
 ---
 
 ## 15. Stage 8: Release Readiness
 
 Purpose:
-Prevent “it passed targeted slice tests” from being mistaken for “it is safe to launch.” Release readiness is a deliberate convergence point where context and verification widen again.
+Prevent “it passed targeted slice tests” from being mistaken for “it is safe to launch.” Release readiness is a deliberate whole-system convergence point.
 
 Output:
 `RELEASE_READINESS.md`
@@ -651,8 +610,8 @@ Output:
 Must answer:
 - Can we deploy and roll back safely?
 - Do we have visibility into failures?
-- Are support, ownership, and operational procedures defined?
-- Which retained verification evidence is still valid, and which must be rerun because release-relevant invalidation triggers occurred?
+- Are support/ownership/operational procedures defined where needed?
+- Which retained verification evidence is still valid, and which release-critical evidence must be rerun?
 
 Prompt template:
 
@@ -663,139 +622,96 @@ Inputs:
 - Architecture
 - Test strategy
 - Current implementation status
-- Retained verification evidence and invalidation history
+- Retained verification evidence + invalidation history
 
-Include:
-1. Launch scope and excluded items
-2. Environment readiness
-3. Migration and rollback plan
-4. SLOs and monitoring
-5. Alert thresholds and escalation path
-6. Security checklist
-7. Support runbook ownership
-8. Smoke test list for release day
-9. Evidence reuse/revalidation decision for critical gates
-10. Go / no-go recommendation with risks
+Include the launch scope/exclusions, environment readiness, deployment/rollback path, required monitoring/alerts/support ownership, release smoke/purpose checks, evidence reuse/revalidation decisions, and go/no-go risks.
 ```
 
 Minimum gate:
 - deployment path validated
 - rollback path validated
-- secrets and config verified
+- secrets/config verified where applicable
 - critical smoke/purpose tests pass
-- monitoring and alerts active
-- any release-critical evidence invalidated by recent changes has been re-established
+- required observability/support coverage is active
+- invalidated release-critical evidence has been re-established
 
 ---
 
 ## 16. Stage 9: Audit And Drift Control
 
 Purpose:
-Catch silent breakage and contract drift after features have accumulated.
+Catch silent breakage and contract/authority drift after features have accumulated.
 
 Output:
 `AUDIT_REPORT.md`
 
-Audit checklist:
-- route and endpoint alignment in both directions
-- response schema consistency
-- auth wrapper consistency, especially for streaming and admin paths
-- test coverage blind spots
-- planned and deprecated route safety
-- invalid-input behavior and error quality
-- multi-user and cross-tenant isolation behavior
-- release-readiness drift between docs and implementation
-- stale or over-trusted retained evidence whose invalidation triggers were missed
-- duplicate planning authority or work packets that have started acting like a second game plan
+Audit what is materially relevant: contracts, auth/trust, schemas, test blind spots, planned/deprecated behavior, isolation, release readiness, stale evidence, and duplicate planning authority.
 
 Prompt template:
 
 ```text
 Audit the application for silent failures, drift, release risk, and authority drift.
 
-Produce findings with:
-- severity
-- category
-- evidence
-- impact
-- minimum fix
-- prevention test or guardrail
-- canonical owner that must adopt the finding if it changes project authority
+For each real finding provide severity, evidence, impact, minimum fix, recurrence prevention, and the canonical owner that must adopt the finding if authority changes.
 ```
 
 Gate:
-All critical and high findings must have owners, fixes, or explicit acceptance before release/continued operation. The audit itself remains evidence until adopted into the appropriate canonical owner.
+Critical/high findings need fixes, owners, or explicit risk acceptance. The audit remains evidence until adopted into canonical authority.
 
 ---
 
 ## 17. Stage 10: Post-Launch Review And Retrospective
 
 Purpose:
-Close the loop after launch by comparing intended outcomes against reality and capturing lessons before they are forgotten.
+Compare intended outcomes against reality and capture reusable lessons without turning retrospectives into mandatory template churn.
 
 Output:
 `POST_LAUNCH_REVIEW.md`
 
 Must answer:
-- Did the product achieve the stated success metric?
-- Which decisions were validated, reversed, or deferred?
-- What incidents, support issues, or adoption gaps appeared after launch?
-- What follow-up changes should be scheduled and owned?
-- Which planning/execution/verification lessons should improve PROGRAMBUILD itself?
+- Did the product achieve the success metric?
+- Which decisions were validated/reversed/deferred?
+- What incidents/support/adoption gaps appeared?
+- What follow-up changes need ownership?
+- Which systemic lessons, if any, should improve PROGRAMBUILD?
 
 Prompt template:
 
 ```text
-Create POST_LAUNCH_REVIEW.md.
+Create POST_LAUNCH_REVIEW.md from the success metric, release decision, audit evidence, and production signals.
 
-Inputs:
-- Success metric from the inputs block
-- Release readiness decision
-- Audit findings
-- Early production signals
-
-Include:
-1. Launch summary
-2. Metrics versus targets
-3. Incident and support notes
-4. Decision reversals or confirmations
-5. Lessons learned
-6. Follow-up actions with owners
-7. Template improvement proposals — for each systemic lesson, propose a specific
-   update to a PROGRAMBUILD template/control file (see PROGRAMBUILD_GAMEPLAN.md Stage 10
-   for the Template Improvement Review format and target mapping)
+Capture launch outcome, metrics, incidents/support, decision reversals/confirmations, follow-up owners, and only the template/process improvements supported by reusable systemic evidence.
 ```
 
 Gate:
-Do not treat the project as complete until lessons learned, follow-up ownership, and template improvement proposals are recorded. If 3+ projects produce the same systemic lesson without a template update, the system has a feedback failure.
+Do not treat the project as complete until meaningful follow-up ownership and lessons are recorded. A PROGRAMBUILD template change becomes warranted when evidence shows a recurring/systemic prevention opportunity; no universal project count turns an observation into policy.
 
 ---
 
 ## 18. Additional Operating Practices
 
-These should be established as early as possible:
+Apply these proportionally rather than as universal ceremony:
 
-- Authority discipline: preserve one strategic execution spine and use `PROGRAMBUILD_CANONICAL.md` to resolve concern ownership.
-- Planning entry discipline: use the raw-idea, research-backed, or existing-project mode from `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` instead of forcing every effort through blank-sheet planning.
-- Work-packet discipline: use bounded packets for non-trivial active slices; packets are replaceable and reconcile back into canonical state.
-- JIT context discipline: stage guidance defines the baseline; the current slice defines the exact authority sections and specialist context to load.
-- Evidence discipline: record provenance/scope for expensive or stateful verification and define invalidation triggers; do not repeat broad checks without a reason.
-- Convergence discipline: narrow during slices, widen at stage transitions, periodic cross-slice reviews, and release gates.
-- Environment parity: CI and production should be materially similar.
-- Dependency hygiene: pin dependencies, review updates on a schedule, and run dependency scanning in CI. Use the KB (`config/knowledge-base.json`) and `programstart research --status` to check for superseded, deprecated, or stale dependencies at every Challenge Gate from Stage 4 onward.
-- Secret management: no secrets in code, examples only in committed env templates.
-- Migration discipline: versioned migrations, tested in CI, with rollback thought through before merge.
-- Feature flags: use for incomplete or high-risk releases, and define removal criteria.
-- Performance budgets: set them early and enforce them automatically.
-- Accessibility: build it into component and E2E tests, not as a cleanup pass.
-- Error boundaries and user-facing fallbacks: every async path must fail safely.
-- ADRs: record material architecture and policy decisions when they change.
-- Decision reversal discipline: when a decision is overridden, add a new `REVERSED` entry referencing the original decision ID, and mark the original `SUPERSEDED`. Both entries must exist. See `PROGRAMBUILD_CHALLENGE_GATE.md` Part F for the format.
-- Ownership clarity: assign a named owner or `[ASSIGN]` placeholder in every output file until ownership is confirmed.
-- Requirements traceability: map requirement IDs to architecture choices and release-blocking tests.
-- Dependency review: document critical vendors, third-party services, and fallback behavior before release.
-- Maintain `PROGRAMBUILD_FILE_INDEX.md` whenever a critical file is added, renamed, deprecated, or replaced.
-- Update `PROGRAMBUILD_CANONICAL.md` whenever document authority changes.
+- Authority discipline: one strategic execution spine; canonical concern ownership.
+- Planning entry discipline: choose raw-idea, research-backed, or existing-project mode.
+- Work-packet discipline: compact logical packet by default; persisted packet only when useful.
+- JIT context discipline: stage baseline → exact slice authority → specialist context only when triggered.
+- Evidence discipline: provenance/scope/invalidation for expensive or stateful verification; no broad reruns without cause.
+- Convergence discipline: widen when risk/change requires it, especially stage/release boundaries.
+- Environment parity: maintain where deployment/runtime differences can create real risk.
+- Dependency hygiene: pin or constrain critical dependencies appropriately; check current dependency/vendor facts when they are material to architecture/release or when an invalidation signal occurs; use scanning at intentional verification/release gates rather than as an always-running heartbeat.
+- Secret management: never commit secrets; use committed examples/templates only.
+- Migration discipline: version and test migrations when the product has mutable persisted state.
+- Feature flags: use when they materially reduce release risk; define removal criteria.
+- Performance budgets: define/enforce only where performance is a product/reliability requirement.
+- Accessibility: treat as a product requirement for user-facing surfaces where applicable.
+- Error handling/fallbacks: make failures safe and observable for material async/external paths.
+- ADRs: use when durable architecture/policy rationale is warranted; do not create them from a numeric threshold alone.
+- Decision reversals: preserve history using the current reversal invariant in `PROGRAMBUILD_CHALLENGE_GATE.md`.
+- Ownership clarity: name an owner where unresolved responsibility would create risk; do not add placeholders to low-value artifacts merely for ceremony.
+- Requirements traceability: ensure P0 outcomes and release-blocking tests have credible traceability.
+- Maintain `PROGRAMBUILD_FILE_INDEX.md` when a critical file is added/renamed/deprecated/replaced.
+- Update `PROGRAMBUILD_CANONICAL.md` when document authority changes.
 - Repository scope is explicit in AI-assisted workflows: keep work inside the current repo unless the user explicitly names another repo and asks for that action.
 
 ---
@@ -810,15 +726,13 @@ Use [PROGRAMBUILD_LITE.md](PROGRAMBUILD_LITE.md) when:
 
 Use [PROGRAMBUILD_PRODUCT.md](PROGRAMBUILD_PRODUCT.md) when:
 - the product or service is meant to ship reliably
-- multiple engineers are contributing
+- multiple engineers are contributing or the system has enough operational weight to require explicit quality gates
 - quality gates matter, but enterprise ceremony would be excessive
-- the system may be interactive or background, but it has enough operational weight that partial guardrails are not acceptable
 
 Use [PROGRAMBUILD_ENTERPRISE.md](PROGRAMBUILD_ENTERPRISE.md) when:
 - the product touches regulated data or multiple business units
 - auditability, approvals, and operational readiness are mandatory
 - the cost of failure is materially higher than the cost of extra process
-- the dominant execution mode may be end-user, operator-driven, or fully automated; the gate strength follows risk, not UI presence
 
 ---
 
@@ -826,16 +740,17 @@ Use [PROGRAMBUILD_ENTERPRISE.md](PROGRAMBUILD_ENTERPRISE.md) when:
 
 - One project needs one strategic execution spine; additional artifacts should clarify or derive from it, not compete with it.
 - The most expensive bugs usually come from missing contracts, not missing features.
-- If a route, auth rule, schema, or user-state expectation is implicit, it will drift.
+- If a material route, auth rule, schema, or user-state expectation is implicit, it will drift.
 - Research reduces bad bets, but research is evidence until adopted into project authority.
-- Risk spikes reduce expensive surprises.
-- Small bounded work packets reduce context drift and make execution easier to verify.
+- Risk spikes reduce expensive surprises when they target real unknowns.
+- Bounded work packets reduce context drift only when the packet is smaller than the problem; persist them only when useful.
 - Re-reading everything for every slice is not rigor; loading the right authority at the right time is rigor.
-- Re-running everything after every change is not rigor; knowing what invalidates existing evidence and widening verification at convergence points is rigor.
+- Re-running everything after every change is not rigor; knowing what invalidates evidence and widening at convergence is rigor.
 - Structural tests prevent recurrence better than retrospective debugging.
 - Release readiness is an engineering convergence concern, not a postscript.
+- More agents, documents, gates, and algorithms are not improvements unless they reduce real execution risk or cost.
 
 ---
 
 Last updated: 2026-08-24
-Source: lessons from route alignment failures, auth bypasses, response schema drift, test blind spots, duplicate planning authority, stale context, and repeated low-value verification discovered in production projects
+Source: lessons from route alignment failures, auth bypasses, response schema drift, test blind spots, duplicate planning authority, stale context, repeated low-value verification, and execution-friction analysis from active PROGRAMSTART use

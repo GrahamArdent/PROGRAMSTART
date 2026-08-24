@@ -35,6 +35,30 @@
         "PROGRAMBUILD/AUDIT_REPORT.md",
         "PROGRAMBUILD/POST_LAUNCH_REVIEW.md"
       ],
+      "artifact_profiles": {
+        "lite": {
+          "core_output_files": [
+            "PROGRAMBUILD/FEASIBILITY.md",
+            "PROGRAMBUILD/DECISION_LOG.md",
+            "PROGRAMBUILD/RESEARCH_SUMMARY.md",
+            "PROGRAMBUILD/REQUIREMENTS.md",
+            "PROGRAMBUILD/USER_FLOWS.md",
+            "PROGRAMBUILD/ARCHITECTURE.md",
+            "PROGRAMBUILD/TEST_STRATEGY.md",
+            "PROGRAMBUILD/RELEASE_READINESS.md",
+            "PROGRAMBUILD/POST_LAUNCH_REVIEW.md"
+          ],
+          "conditional_output_files": [
+            "PROGRAMBUILD/RISK_SPIKES.md",
+            "PROGRAMBUILD/AUDIT_REPORT.md"
+          ],
+          "conditional_stage_checks": [
+            "risk-spikes",
+            "risk-spikes-resolved",
+            "audit-complete"
+          ]
+        }
+      },
       "variants": [
         "PROGRAMBUILD/PROGRAMBUILD_LITE.md",
         "PROGRAMBUILD/PROGRAMBUILD_PRODUCT.md",

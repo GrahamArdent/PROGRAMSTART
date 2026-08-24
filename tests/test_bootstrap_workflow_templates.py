@@ -4,6 +4,7 @@ from pathlib import Path
 
 from scripts import programstart_attach as attach
 from scripts import programstart_bootstrap as bootstrap
+from scripts import programstart_sync as sync
 
 
 def _registry(*assets: str) -> dict:
@@ -73,3 +74,28 @@ def test_attach_programbuild_assets_materializes_workflow_template(monkeypatch, 
     materialized = destination_root / ".github" / "workflows" / "docs-pages.yml"
     assert materialized.read_text(encoding="utf-8") == "name: Docs Build And Deploy\n"
     assert copied == [".github/workflows/docs-pages.yml"]
+
+
+def test_sync_resolves_materialized_workflow_to_dormant_template(tmp_path: Path) -> None:
+    template_root = tmp_path / "template"
+    dormant = template_root / "templates" / "github-workflows" / "codeql.yml"
+    dormant.parent.mkdir(parents=True)
+    dormant.write_text("name: CodeQL\n", encoding="utf-8")
+
+    resolved = sync._template_source_path(template_root, ".github/workflows/codeql.yml")
+
+    assert resolved == dormant
+
+
+def test_sync_prefers_direct_workflow_source_when_present(tmp_path: Path) -> None:
+    template_root = tmp_path / "template"
+    direct = template_root / ".github" / "workflows" / "codeql.yml"
+    direct.parent.mkdir(parents=True)
+    direct.write_text("name: Active CodeQL\n", encoding="utf-8")
+    dormant = template_root / "templates" / "github-workflows" / "codeql.yml"
+    dormant.parent.mkdir(parents=True)
+    dormant.write_text("name: Dormant CodeQL\n", encoding="utf-8")
+
+    resolved = sync._template_source_path(template_root, ".github/workflows/codeql.yml")
+
+    assert resolved == direct

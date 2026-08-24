@@ -11,15 +11,17 @@ If two planning documents disagree, this file decides which one is authoritative
 
 The key words MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY in this section are interpreted as described in [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119).
 
-1. Validated code and validated tests MUST outrank any planning document when conflicts are discovered retroactively. However, developers MUST update the relevant authority document before introducing new code that would contradict it (see `copilot-instructions.md` Workflow Expectations and `source-of-truth.instructions.md` Temporal Semantics).
+1. Validated code and validated tests MUST outrank any planning document when conflicts are discovered retroactively. However, developers MUST update the relevant authority document before introducing new code that would contradict it.
 2. This file defines which planning document is authoritative for each concern.
 3. `PROGRAMBUILD_FILE_INDEX.md` is the official inventory of critical planning files.
 4. No duplicate authority is allowed. One concern, one primary owner. A file MUST NOT be canonical for more than one concern.
 5. If a file is deprecated or replaced, the file index and this file MUST be updated in the same change.
-6. The PROGRAMSTART repository is a template repository. Filled project outputs MUST belong in the project repository created from this template, not in the template repository itself.
-7. `USERJOURNEY/` is not part of the reusable PROGRAMBUILD template system. If used, it is a project attachment that MAY be present or absent depending on the project.
+6. PROGRAMSTART is a template repository. Filled project outputs belong in the real project repository, not here.
+7. `USERJOURNEY/` is an optional project attachment, not a mandatory PROGRAMBUILD subsystem.
 8. A project MUST have one primary strategic execution spine. Research, audits, readiness reviews, checklists, and work packets MUST NOT silently become competing master plans.
-9. Filled work packets are derived execution state. They MUST defer to the project's canonical roadmap/game plan, requirements, architecture, decision records, and validated implementation state.
+9. A work packet is a **logical derived execution contract**. It MAY be persisted as `CURRENT_WORK_PACKET.md` when persistence adds coordination/risk/resumption value; whether persisted or not, it MUST defer to the strategic spine, requirements, architecture, decisions, and validated implementation state.
+10. Challenge Gate parts A–H are canonical risk controls, but the Product variant MUST select them by stage/risk. Full A–H is required only where `PROGRAMBUILD_CHALLENGE_GATE.md` defines whole-system Product convergence; Enterprise keeps its full-gate requirements.
+11. No universal feature count, calendar cadence, file count, project count, or agent count becomes PROGRAMBUILD policy unless evidence and the canonical owner explicitly justify that threshold.
 
 ---
 
@@ -62,8 +64,8 @@ Project execution outputs:
 - `AUDIT_REPORT.md`
 - `POST_LAUNCH_REVIEW.md`
 
-Optional derived execution aid:
-- `CURRENT_WORK_PACKET.md` — replaceable current-slice view derived from project authority; never canonical
+Optional persisted execution aid:
+- `CURRENT_WORK_PACKET.md` — replaceable persisted view of the current logical packet; never canonical and not required when compact task/session state is sufficient
 
 ---
 
@@ -71,23 +73,23 @@ Optional derived execution aid:
 
 | Concern | Canonical file |
 |---|---|
-| overall process and stage order | `PROGRAMBUILD.md` |
+| overall process and stage deliverables | `PROGRAMBUILD.md` |
 | lighter-weight process | `PROGRAMBUILD_LITE.md` |
 | standard product process | `PROGRAMBUILD_PRODUCT.md` |
 | enterprise process | `PROGRAMBUILD_ENTERPRISE.md` |
 | document authority and naming rules | `PROGRAMBUILD_CANONICAL.md` |
 | critical file inventory and status | `PROGRAMBUILD_FILE_INDEX.md` |
 | planning-to-execution separation, proportional rigor, context loading, and evidence reuse | `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` |
-| active work-packet structure | `PROGRAMBUILD_WORK_PACKET.md` |
+| logical work-packet semantics and optional persisted packet format | `PROGRAMBUILD_WORK_PACKET.md` |
 | ADR structure, decision-log linkage, and supersession hygiene | `PROGRAMBUILD_ADR_TEMPLATE.md` |
 | architecture decision records index | `docs/decisions/README.md` |
 | commit message format and enforcement | `.github/instructions/conventional-commits.instructions.md` |
 | system-level change history | `PROGRAMBUILD_CHANGELOG.md` |
-| new-project starter packet (incl. ADDITIONAL_SURFACES) | `PROGRAMBUILD_KICKOFF_PACKET.md` |
+| new-project starter packet | `PROGRAMBUILD_KICKOFF_PACKET.md` |
 | subagent definitions and prompt templates | `PROGRAMBUILD_SUBAGENTS.md` |
 | execution checklist format | `PROGRAMBUILD_CHECKLIST.md` |
-| 8-question idea decomposition and pre-feasibility challenge | `PROGRAMBUILD_IDEA_INTAKE.md` |
-| stage transition validation and machine gate enforcement (8 parts: A–H) | `PROGRAMBUILD_CHALLENGE_GATE.md` |
+| 8-dimension idea decomposition and pre-feasibility challenge | `PROGRAMBUILD_IDEA_INTAKE.md` |
+| stage transition/convergence risk controls and gate-part selection | `PROGRAMBUILD_CHALLENGE_GATE.md` |
 | execution sequencing and cross-stage validation | `PROGRAMBUILD_GAMEPLAN.md` |
 | project viability decision | `FEASIBILITY.md` |
 | material project decisions and reversals | `DECISION_LOG.md` |
@@ -115,11 +117,11 @@ When documents disagree, resolve in this order:
 4. all other supporting files
 
 If a conflict is found:
-- update the canonical owner first
-- update dependent files second
-- record the change in the file index
+- update the canonical owner first;
+- update dependent files second;
+- update the file index only when inventory/status/role semantics changed.
 
-A filled `CURRENT_WORK_PACKET.md` never outranks its source authority. If a packet conflicts with the strategic execution spine or another canonical concern owner, regenerate or correct the packet rather than changing authority to match it.
+A logical or persisted work packet never outranks its source authority. Correct/regenerate the packet rather than changing authority merely to match derived task state.
 
 ---
 
@@ -127,12 +129,13 @@ A filled `CURRENT_WORK_PACKET.md` never outranks its source authority. If a pack
 
 - No new critical file is added without an entry in `PROGRAMBUILD_FILE_INDEX.md`.
 - No critical file is renamed without updating all references in the same change.
-- No concern is split across multiple “source of truth” files unless one is explicitly marked derived.
+- No concern is split across multiple sources of truth unless one is explicitly derived.
 - Derived summaries must point back to the canonical owner.
-- `PROGRAMBUILD_CHANGELOG.md` records system-level changes but does not, by itself, redefine canonical ownership or file inventory.
-- Material architecture and policy changes should be recorded in `DECISION_LOG.md`, with enterprise work promoting major decisions into ADRs using `PROGRAMBUILD_ADR_TEMPLATE.md`.
-- The template repository should keep project output files in reusable template form. Do not store filled, project-specific feasibility, requirements, architecture, release documents, work packets, or portfolio state here.
-- New research that affects an existing project's plan should be converted into explicit delta recommendations and adopted through that project's authority process; research does not become execution authority merely by being newer.
+- `PROGRAMBUILD_CHANGELOG.md` records system-level changes but does not redefine authority.
+- Material decisions go in `DECISION_LOG.md`; promote durable architecture/policy rationale to an ADR when the repository's current ADR policy warrants it, not because an arbitrary numeric threshold was crossed.
+- The template repository keeps project outputs reusable; do not store filled project-specific feasibility, requirements, architecture, release, packet, or portfolio state here.
+- Research that affects an existing project should become explicit delta recommendations adopted through that project's authority process.
+- Specialist agents, extra documents, broader gates, and recurring automation are mechanisms, not goals. Use them only when they reduce real uncertainty/risk/coordination cost.
 
 ---
 

@@ -16,7 +16,12 @@ try:
         generated_repo_prompt_authority_for_mode,
         generated_repo_prompt_registry_for_mode,
     )
-    from .programstart_common import load_registry, warn_direct_script_invocation, workspace_path, write_json
+    from .programstart_common import (
+        load_registry,
+        warn_direct_script_invocation,
+        workspace_path,
+        write_json,
+    )
 except ImportError:  # pragma: no cover - standalone script execution fallback
     from programstart_attach import MANIFEST_FILENAME
     from programstart_bootstrap import (
@@ -26,7 +31,12 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
         generated_repo_prompt_authority_for_mode,
         generated_repo_prompt_registry_for_mode,
     )
-    from programstart_common import load_registry, warn_direct_script_invocation, workspace_path, write_json
+    from programstart_common import (
+        load_registry,
+        warn_direct_script_invocation,
+        workspace_path,
+        write_json,
+    )
 
 
 def _git_head_hash() -> str:
@@ -49,9 +59,13 @@ def _assert_safe_destination(destination_root: Path, prompt_assets: tuple[str, .
     if (destination_root / "PROGRAMBUILD").exists():
         raise FileExistsError("PROGRAMBUILD already exists in destination; adoption will not overwrite it.")
     if (destination_root / "config" / "process-registry.json").exists():
-        raise FileExistsError("config/process-registry.json already exists in destination; adoption will not overwrite it.")
+        raise FileExistsError(
+            "config/process-registry.json already exists in destination; adoption will not overwrite it."
+        )
     if (destination_root / MANIFEST_FILENAME).exists():
-        raise FileExistsError(f"{MANIFEST_FILENAME} already exists in destination; repository may already be linked.")
+        raise FileExistsError(
+            f"{MANIFEST_FILENAME} already exists in destination; repository may already be linked."
+        )
 
     for relative_path in prompt_assets:
         destination = destination_root / relative_path
@@ -66,7 +80,12 @@ def _assert_safe_destination(destination_root: Path, prompt_assets: tuple[str, .
             raise FileExistsError(f"Adoption would overwrite existing project file: {relative_path}")
 
 
-def _adopted_registry(registry: dict[str, Any], *, project_name: str, prompt_assets: tuple[str, ...]) -> dict[str, Any]:
+def _adopted_registry(
+    registry: dict[str, Any],
+    *,
+    project_name: str,
+    prompt_assets: tuple[str, ...],
+) -> dict[str, Any]:
     adopted = json.loads(json.dumps(registry))
 
     workspace = dict(adopted.get("workspace", {}))
@@ -140,7 +159,7 @@ def adopt_programbuild(
     variant: str = "product",
     dry_run: bool = False,
 ) -> None:
-    """Add PROGRAMBUILD management to an existing repo without replacing its engineering stack."""
+    """Add PROGRAMBUILD management without replacing an existing repo's engineering stack."""
     destination_root = destination_root.resolve()
     if not destination_root.is_dir():
         raise FileNotFoundError(f"Destination repository does not exist: {destination_root}")
@@ -171,7 +190,11 @@ def adopt_programbuild(
 
     write_json(
         registry_path,
-        _adopted_registry(registry, project_name=project_name, prompt_assets=prompt_assets),
+        _adopted_registry(
+            registry,
+            project_name=project_name,
+            prompt_assets=prompt_assets,
+        ),
     )
     _write_adoption_manifest(
         destination_root,
@@ -184,12 +207,23 @@ def adopt_programbuild(
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Adopt PROGRAMBUILD in an existing repository without replacing its native engineering toolchain."
+        description=(
+            "Adopt PROGRAMBUILD in an existing repository without replacing "
+            "its native engineering toolchain."
+        )
     )
     parser.add_argument("--dest", required=True, help="Existing repository root to adopt.")
     parser.add_argument("--project-name", help="Project name to stamp into the adopted registry.")
-    parser.add_argument("--variant", choices=["lite", "product", "enterprise"], default="product")
-    parser.add_argument("--dry-run", action="store_true", help="Preview the management overlay without writing files.")
+    parser.add_argument(
+        "--variant",
+        choices=["lite", "product", "enterprise"],
+        default="product",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Preview the management overlay without writing files.",
+    )
     args = parser.parse_args(argv)
 
     destination_root = Path(args.dest).expanduser().resolve()
@@ -206,5 +240,5 @@ def main(argv: list[str] | None = None) -> int:
 
 
 if __name__ == "__main__":  # pragma: no cover
-    warn_direct_script_invocation("'uv run programstart adopt --dest <path>'")
+    warn_direct_script_invocation("'uv run programstart-adopt --dest <path>'")
     raise SystemExit(main())

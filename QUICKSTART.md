@@ -1,199 +1,190 @@
 # PROGRAMSTART — Quick Start Guide
 
-> Use this workspace to start a product, convert research into an executable project, or apply PROGRAMBUILD discipline to an existing project without creating duplicate planning authority.
-
----
-
-## Workflow Modes
-
-| System | Use it when... | Key state file |
-|---|---|---|
-| **PROGRAMBUILD** | Project intake, scope, architecture, testing, implementation, release, audit, learning | `PROGRAMBUILD/PROGRAMBUILD_STATE.json` |
-| **USERJOURNEY** | Signup, consent, onboarding, activation, analytics, first-run routing | `USERJOURNEY/USERJOURNEY_STATE.json` when attached |
-
-PROGRAMBUILD is the default workflow. USERJOURNEY is optional and should be attached only when real onboarding, consent, activation, or first-run routing work exists.
+> Start, resume, or improve a project without loading the whole methodology or creating duplicate planning authority.
 
 Repo boundary rule: PROGRAMSTART work stays inside this repo unless the user explicitly names another repo and asks you to work there.
 
-PROGRAMBUILD tracks 11 stages from inputs/mode selection through post-launch review.
-
 ---
 
-## 1. Select The Planning Entry Mode
+## 1. Start With Live Orientation
 
-Read `PROGRAMBUILD/PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` first.
-
-- **Raw idea** — little reliable planning/evidence exists.
-- **Research-backed project** — substantial research exists and should be converted into durable project structure.
-- **Existing / in-flight project** — current repository/product authority already exists. Identify its execution spine and propose explicit deltas instead of creating another Master Game Plan.
-
-Then run Idea Intake in the matching mode. Research and audits are evidence until their recommendations are adopted into canonical project authority.
-
----
-
-## 2. Orient Yourself
+Do **not** begin by reading the documentation tree.
 
 From the workspace root:
 
-```bash
-uv run programstart next
-```
-
-Windows shortcut:
-
 ```powershell
-.\scripts\pb.ps1 next
-```
-
-`programstart next` reports current strategic state, blockers, and the registry-backed baseline files/prompts for the active step. The guide output is the **allowed stage context**, not an instruction to read every file in full for every task.
-
-Useful orientation commands:
-
-```powershell
-.\scripts\pb.ps1 state show
-.\scripts\pb.ps1 guide --system programbuild
 .\scripts\pb.ps1 status
-# USERJOURNEY only if attached:
-.\scripts\pb.ps1 guide --system userjourney
+.\scripts\pb.ps1 guide --system programbuild
 ```
+
+Or:
+
+```bash
+uv run programstart status
+uv run programstart guide --system programbuild
+```
+
+`status` tells you where the project is.
+`guide` tells you the allowed baseline authority for the active stage.
+
+The guide is **not a reading list**. Load only the exact authority/evidence needed for the current task.
+
+USERJOURNEY is optional. Use its guide only when that workflow is actually attached/relevant.
 
 ---
 
-## 3. Day-To-Day Execution Loop
+## 2. Know The Authority Model
 
 ```text
-pb next / pb guide
-      ↓
-strategic stage + next convergence milestone
-      ↓
-derive/refresh CURRENT_WORK_PACKET.md for non-trivial work
-      ↓
-load exact authority sections + specialist context needed now
-      ↓
-identify reusable evidence + invalidation triggers
-      ↓
-perform one bounded slice
-      ↓
-run targeted verification for changed/at-risk surfaces
-      ↓
-reconcile material decisions/state into canonical authority
-      ↓
-next packet OR wider stage/release convergence gate
+PROGRAMBUILD methodology
+        ↓
+real project's one strategic execution spine
+        ↓
+current logical work packet (derived, replaceable)
+        ↓
+JIT authority + evidence for this slice
 ```
 
-### Stage baseline vs current slice
+Rules:
 
-Use `pb guide --system programbuild` to establish the stage baseline.
-
-For non-trivial implementation, derive `CURRENT_WORK_PACKET.md` from `PROGRAMBUILD/PROGRAMBUILD_WORK_PACKET.md`. The packet should name:
-
-- strategic execution spine/current stage
-- one bounded objective
-- explicit non-goals
-- requirement IDs and exact authority sections needed now
-- expected changed surfaces
-- specialist references needed only for this slice
-- trusted existing verification evidence
-- invalidation triggers
-- acceptance criteria
-- targeted verification
-
-`CURRENT_WORK_PACKET.md` is derived execution state and canonical for nothing. Replace/close it as work advances rather than accumulating a second planning hierarchy.
-
-For trivial work, state the same fields briefly without creating unnecessary ceremony.
+- PROGRAMBUILD owns reusable methodology, not every project's live plan.
+- Existing projects keep their current Master Game Plan/roadmap unless explicitly replaced.
+- Research, audits, checklists, and packets are evidence/derived aids.
+- A newer document does not automatically outrank established authority.
 
 ---
 
-## 4. JIT, Drift, And Verification
+## 3. Select Entry Mode When Starting/Reshaping A Project
 
-### JIT authority baseline
+Use `PROGRAMBUILD/PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` when entry-mode decisions are actually needed:
 
-```powershell
-.\scripts\pb.ps1 jit-check --system programbuild
+- **Raw idea** — little reliable planning exists.
+- **Research-backed** — substantial evidence exists but needs conversion into decisions/scope.
+- **Existing / in-flight** — code/plans/state already exist; produce deltas to current authority instead of another master plan.
+
+Run Idea Intake using existing evidence to prefill settled questions.
+
+---
+
+## 4. Day-To-Day Execution Loop
+
+```text
+status + guide
+    ↓
+define one compact logical work packet
+    ↓
+load exact task authority/evidence
+    ↓
+reuse still-valid evidence
+    ↓
+execute one bounded slice
+    ↓
+targeted verification
+    ↓
+reconcile durable decisions/state
+    ↓
+next slice OR meaningful convergence gate
 ```
 
-`jit-check` runs guide + drift + sync-rule summary. Use it especially before/after planning-authority or registry changes and at meaningful convergence points.
+### Compact work packet — default
 
-Do **not** run it around every code-only slice purely for ceremony. During bounded implementation, use the task-scoped `product-jit-check.prompt.md` protocol.
+Use `PROGRAMBUILD/PROGRAMBUILD_WORK_PACKET.md` and state:
 
-### Drift
-
-```powershell
-.\scripts\pb.ps1 drift
+```text
+OBJECTIVE:
+WHY_NOW / AUTHORITY:
+IN_SCOPE:
+OUT_OF_SCOPE:
+REQUIRED_CONTEXT:
+REUSABLE_EVIDENCE:
+INVALIDATION_TRIGGERS:
+ACCEPTANCE_CRITERIA:
+TARGETED_VERIFICATION:
+DURABLE_UPDATES_IF_NEEDED:
 ```
 
-Run drift before changing planning authority/registry policy, after those changes, or when source-of-truth drift is suspected.
+This may live in the task/issue/PR/current session.
 
-### Targeted slice verification
+Persist `CURRENT_WORK_PACKET.md` only when multi-session/multi-agent coordination, risk, dependencies/blockers, or resumability makes a file genuinely useful.
 
-Ask:
+A packet is canonical for nothing.
+
+---
+
+## 5. Verification Economy
+
+For each slice ask:
 
 1. What changed?
-2. Which contracts, requirements, decisions, flows, environments, or operational behaviors could it invalidate?
-3. Which prior evidence is still trustworthy because its invalidation trigger did not occur?
-4. What is the smallest verification set that proves the changed/at-risk surface?
+2. What can that change invalidate?
+3. Which prior evidence remains trustworthy?
+4. What is the smallest check that restores confidence?
+5. Is this a convergence boundary requiring wider verification?
 
 Examples:
 
-- contract/auth change → relevant contract/auth/integration/alignment checks
-- isolated internal refactor with unchanged contracts → focused unit/regression checks
-- planning/registry authority change → full validation + drift
-- stage transition/release → wider Challenge Gate/convergence suite
+- contract/auth change → relevant contract/auth/integration checks;
+- isolated internal refactor → focused unit/regression checks;
+- planning/registry authority change → required validation + drift;
+- release readiness → full Product/Enterprise convergence as applicable.
 
-For planning-authority or registry changes:
+Useful commands:
 
 ```powershell
+.\scripts\pb.ps1 drift
 .\scripts\pb.ps1 validate
 .\scripts\pb.ps1 validate --check repo-boundary # cross-repo consent rule still enforced
-.\scripts\pb.ps1 drift
 ```
 
-Narrow verification is appropriate during slices. Broader verification returns at stage transitions, periodic convergence reviews, and release readiness.
+Do not run broad checks because a session changed.
+Do not use a fixed feature/time counter as proof that convergence is due.
 
 ---
 
-## 5. Close A Work Packet
+## 6. Challenge Gates
 
-Before deriving the next slice:
+A completed slice does not automatically finish a stage.
 
-1. record verification evidence actually produced;
-2. reconcile material scope/architecture/decision changes into canonical authority and `DECISION_LOG.md`;
-3. confirm reused evidence remains within scope;
-4. close/replace the current packet;
-5. derive the next packet from updated authority.
+Use `PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md` at stage transitions.
 
-Do not let packet history become a second roadmap.
+- Lite: A/C/F minimum + risk-relevant parts.
+- Product: A/C/F baseline + stage/risk-relevant B/D/E/G/H.
+- Product full A–H: release readiness and other genuinely whole-system convergence.
+- Enterprise: full A–H with retained evidence/sign-off appropriate to risk.
 
----
-
-## 6. Advance Only At A Real Stage Gate
-
-A completed packet does not automatically mean the PROGRAMBUILD stage is complete.
-
-Preview:
+Preview stage advancement:
 
 ```powershell
 .\scripts\pb.ps1 advance --system programbuild --dry-run
 ```
 
-Advance only when the stage’s Challenge Gate is actually satisfied:
+Advance after the actual gate is satisfied:
 
 ```powershell
 .\scripts\pb.ps1 advance --system programbuild --decision "approved" --notes "Stage criteria confirmed"
 ```
 
-USERJOURNEY, when attached:
+---
+
+## 7. Full Convergence — Manual, Not A Heartbeat
+
+During iteration, use targeted checks.
+
+Local confidence tiers:
 
 ```powershell
-.\scripts\pb.ps1 advance --system userjourney --dry-run
-.\scripts\pb.ps1 advance --system userjourney
+nox -s quick
+nox -s gate_safe
+nox -s ci
 ```
 
-Commit completed stage work before advancing so the drift/gate machinery evaluates the intended baseline.
+PROGRAMSTART also has `.github/workflows/manual-convergence.yml`, intentionally `workflow_dispatch`-only. Use it when a meaningful full-repository convergence gate is warranted.
+
+Generated projects receive a manual-only Full CI Gate template by default. Add automatic PR/push/schedule triggers only when that project's actual operating needs justify the cost/noise.
 
 ---
 
-## 7. Starting A New Project
+## 8. Starting A New Project
 
 Recommended factory path:
 
@@ -205,23 +196,6 @@ programstart create `
   --owner "Your Name"
 ```
 
-The generated project lives outside PROGRAMSTART and gets its own planning state, scaffold, setup surface, and git repository.
-
-To also create/provision supported remote services:
-
-```powershell
-programstart create `
-  --dest "C:\Projects\MyNewApp" `
-  --project-name "MyNewApp" `
-  --product-shape "web app" `
-  --github-repo "your-org/MyNewApp" `
-  --create-github-repo `
-  --provision-services `
-  --supabase-org-id "your-supabase-org-id"
-```
-
-Set relevant provider tokens before provisioning. Project-scoped services belong to the generated project, not the PROGRAMSTART template.
-
 Lower-level bootstrap:
 
 ```powershell
@@ -232,32 +206,29 @@ Lower-level bootstrap:
 ```
 
 Variants:
-- `lite` — lean, low-risk
-- `product` — standard production default
-- `enterprise` — high-consequence, regulated, audit-heavy
 
-Variant changes ceremony/evidence strength, not the one-spine or canonical-authority rules.
+- `lite` — lean/low-risk;
+- `product` — normal production default;
+- `enterprise` — high-consequence/regulated/audit-heavy.
 
----
-
-## 8. Applying PROGRAMBUILD To An Existing Project
-
-Do **not** bootstrap a second planning hierarchy into an in-flight repository.
-
-1. Identify the current canonical roadmap/Master Game Plan/execution spine.
-2. Use **existing / in-flight project** mode.
-3. Run Idea Intake as a delta audit, reusing current evidence rather than re-asking settled questions.
-4. Convert research/audits into explicit recommended deltas.
-5. Adopt accepted deltas through the existing project’s authority process.
-6. During implementation, derive bounded work packets from that existing spine.
-
-PROGRAMBUILD owns reusable methodology. The real project owns its live plan and state.
+Variant controls rigor, not the number of documents for its own sake.
 
 ---
 
-## 9. Toolchain Setup
+## 9. Applying PROGRAMBUILD To An Existing Project
 
-Recommended local setup:
+Do **not** bootstrap a second planning hierarchy.
+
+1. Identify the existing strategic execution spine.
+2. Use existing/in-flight mode.
+3. Reuse current evidence.
+4. Convert new research/audits into explicit deltas.
+5. Adopt accepted deltas through existing project authority.
+6. Execute bounded logical packets derived from that spine.
+
+---
+
+## 10. Toolchain Setup
 
 ```powershell
 uv sync --extra dev
@@ -267,63 +238,30 @@ uv run programstart validate --check bootstrap-assets
 uv run --extra dev pyright
 ```
 
-Useful confidence tiers:
-
-```powershell
-nox -s quick       # fast lint + type feedback
-nox -s gate_safe   # local pre-merge convergence gate
-nox -s ci          # full CI-equivalent gate
-```
-
-Use the narrowest truthful check during iteration and the broader required gate at convergence.
-
 ---
 
-## 10. Emergency Reference Card
+## 11. Emergency Reference
 
 | Command | Purpose |
 |---|---|
-| `pb next` | Strategic orientation: status + active-step guides |
-| `pb status` | Blockers and next strategic actions |
-| `pb state show` | Stage/phase and sign-off history |
-| `pb guide --system <s>` | Baseline files/prompts for active step |
-| `pb jit-check --system <s>` | Authority baseline: guide + drift + sync rules |
-| `pb drift` | Source-of-truth/order drift |
-| `pb validate` | Full workspace validation; use at authority/convergence gates |
-| `pb progress` | PROGRAMBUILD checklist progress |
-| `pb advance --system <s> --dry-run` | Preview stage/phase advance |
-| `pb advance --system <s>` | Advance after gate approval |
-| `pb recommend` | Variant/stack recommendation |
-| `pb impact <target>` | Downstream impact analysis |
-| `pb research` | Knowledge/research delta operations |
-| `pb create` | One-shot standalone project factory |
-| `pb bootstrap` | Lower-level project bootstrap |
-| `pb clean` | Remove disposable caches/temp artifacts |
-| `pb dashboard` | Refresh status dashboard |
+| `pb status` | current stage/blockers |
+| `pb next` | strategic orientation bundle |
+| `pb guide --system <s>` | allowed stage baseline |
+| `pb state show` | workflow state/history |
+| `pb drift` | source-of-truth drift when relevant |
+| `pb validate` | structural/convergence validation |
+| `pb advance --system <s> --dry-run` | preview transition |
+| `pb advance --system <s>` | advance after gate |
+| `pb recommend` | shape/stack guidance |
+| `pb impact <target>` | impact analysis |
+| `pb research` | research/KB operations |
+| `pb create` | standalone project factory |
+| `pb bootstrap` | lower-level bootstrap |
 
 ---
 
-## 11. Authority Model
+## Success Rule
 
-```text
-PROGRAMBUILD_CANONICAL.md
-       │
-       ├── one concern → one canonical owner
-       ├── one real project → one strategic execution spine
-       └── research/audits/work packets do not silently replace authority
+**Narrow while executing. Widen while converging. Preserve one authority chain.**
 
-config/process-registry.json
-       │
-       ├── workflow_state
-       ├── workflow_guidance
-       ├── required/control files
-       └── sync_rules
-
-strategic execution spine
-       │
-       └── CURRENT_WORK_PACKET.md (optional, derived, replaceable)
-```
-
-The core discipline is:
-
-**Narrow while executing. Widen while converging. Preserve one authority chain throughout.**
+If the process makes you read, write, or rerun more than is needed to answer “what matters now and how do we prove it?”, simplify it.

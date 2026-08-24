@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from scripts import programstart_attach as attach
 from scripts import programstart_bootstrap as bootstrap
 
 
@@ -54,3 +55,21 @@ def test_bootstrap_shared_assets_materializes_workflow_template(monkeypatch, tmp
     materialized = destination_root / ".github" / "workflows" / "process-guardrails.yml"
     assert materialized.read_text(encoding="utf-8") == "name: CI Guardrails\n"
     assert not (destination_root / "templates" / "github-workflows" / "process-guardrails.yml").exists()
+
+
+def test_attach_programbuild_assets_materializes_workflow_template(monkeypatch, tmp_path: Path) -> None:
+    template_root = tmp_path / "template"
+    source = template_root / "templates" / "github-workflows" / "docs-pages.yml"
+    source.parent.mkdir(parents=True)
+    source.write_text("name: Docs Build And Deploy\n", encoding="utf-8")
+
+    destination_root = tmp_path / "existing-project"
+    destination_root.mkdir()
+    registry = _registry("templates/github-workflows/docs-pages.yml")
+    monkeypatch.setattr(attach, "workspace_path", lambda _relative: template_root)
+
+    copied = attach._copy_programbuild_bootstrap_assets(destination_root, registry)
+
+    materialized = destination_root / ".github" / "workflows" / "docs-pages.yml"
+    assert materialized.read_text(encoding="utf-8") == "name: Docs Build And Deploy\n"
+    assert copied == [".github/workflows/docs-pages.yml"]

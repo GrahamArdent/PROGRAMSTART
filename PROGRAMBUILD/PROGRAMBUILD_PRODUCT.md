@@ -9,124 +9,148 @@ Authority:
 - `PROGRAMBUILD_CANONICAL.md` defines source-of-truth rules
 - `PROGRAMBUILD_FILE_INDEX.md` is the lookup table for critical files
 - `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` defines planning entry modes, one-spine authority, proportional rigor, task-scoped context loading, and evidence reuse
-- `PROGRAMBUILD_WORK_PACKET.md` defines the derived current execution slice; a filled packet never outranks project authority
-- `PROGRAMBUILD_IDEA_INTAKE.md` runs before Stage 0 — challenge the raw idea, research-backed opportunity, or existing-project delta before filling the inputs block
-- `PROGRAMBUILD_CHALLENGE_GATE.md` runs at every stage transition — all 8 parts required; Part G required at Stages 4+
-- `PROGRAMBUILD_GAMEPLAN.md` defines the execution order with full cross-stage validation
+- `PROGRAMBUILD_WORK_PACKET.md` defines logical current-slice execution context; persisted packets remain derived and never outrank project authority
+- `PROGRAMBUILD_IDEA_INTAKE.md` challenges the raw idea, research-backed opportunity, or existing-project delta before Stage 0
+- `PROGRAMBUILD_CHALLENGE_GATE.md` runs at stage transitions using A/C/F plus the parts relevant to stage/risk; full A–H is required at release/whole-system Product convergence
+- `PROGRAMBUILD_GAMEPLAN.md` defines execution order and cross-stage reconciliation
 
 ---
 
 ## When To Use
 
 Use this file when:
-- the team is 3 to 12 people
-- the product is customer-facing, revenue-affecting, or operationally important
-- multiple feature areas share contracts and infrastructure
-- quality gates matter more than pure speed
+- the product is intended to ship and be maintained reliably
+- several features/components share contracts or infrastructure
+- mistakes have meaningful user/revenue/operational cost
+- quality gates matter, but enterprise ceremony would be excessive
 
-This variant fits both interactive products and non-interactive systems such as APIs, internal services, and background automations that still need real release discipline.
+Team size is a signal, not the deciding rule. A small team can need Product rigor when blast radius is meaningful, and a larger team can still use lighter treatment for a bounded low-risk tool.
 
-If this workflow is being applied to an existing project, identify that project's current strategic execution spine first. PROGRAMBUILD should strengthen that authority or propose explicit deltas to it, not silently create a competing plan.
+This variant fits interactive products and non-interactive systems such as APIs, internal services, and background automations.
+
+For an existing project, identify and preserve its current strategic execution spine first. PROGRAMBUILD should propose explicit deltas rather than create a competing plan.
 
 ---
 
 ## Required Stages
 
-| Stage | Output | Gate |
+| Stage | Output | Gate intent |
 |---|---|---|
-| Feasibility | `FEASIBILITY.md` | go or limited spike |
-| Research | `RESEARCH_SUMMARY.md` | decisions reviewed; findings reconciled as evidence/deltas |
-| Requirements and UX | `REQUIREMENTS.md`, `USER_FLOWS.md` | scope approved |
-| Architecture and risk spikes | `ARCHITECTURE.md`, `RISK_SPIKES.md` | contracts approved |
-| Scaffold and guardrails | repo skeleton and CI | structural tests green |
-| Test strategy | `TEST_STRATEGY.md` | coverage approved |
-| Implementation loop | bounded feature/work packets | feature/slice DoD |
-| Release readiness | `RELEASE_READINESS.md` | go / no-go convergence gate |
-| Audit | `AUDIT_REPORT.md` | critical issues resolved; findings remain evidence until adopted |
-| Post-launch review | `POST_LAUNCH_REVIEW.md` | lessons captured and follow-up owned |
+| Feasibility | `FEASIBILITY.md` | credible go / limited spike / no-go |
+| Research | `RESEARCH_SUMMARY.md` or delta | material uncertainty reduced |
+| Requirements and UX | `REQUIREMENTS.md`, flows where applicable | P0 scope is coherent/testable |
+| Architecture and risk spikes | `ARCHITECTURE.md`, `RISK_SPIKES.md` | contracts/unknowns safe enough to scaffold |
+| Scaffold and guardrails | skeleton + structural verification | dominant boundaries protected |
+| Test strategy | `TEST_STRATEGY.md` | P0 risk surface has credible proof |
+| Implementation | bounded logical slices | slice DoD + targeted evidence |
+| Release readiness | `RELEASE_READINESS.md` | full Product convergence / go-no-go |
+| Audit | `AUDIT_REPORT.md` | critical drift/risk resolved or owned |
+| Post-launch | `POST_LAUNCH_REVIEW.md` | outcomes + systemic lessons captured |
 
 ---
 
-## Required Guardrails
+## Product Guardrails
 
-- one strategic execution spine; no research document, audit, readiness review, checklist, or work packet silently becomes a second master plan
-- contract layer with canonical, deprecated, and planned states for routes, endpoints, commands, jobs, or public APIs
-- auth-aware API client, trusted caller helper, or equivalent boundary adapter
-- auth matrix tests
-- alignment and reverse-alignment tests for the dominant contract surface
-- schema completeness checks
-- no hardcoded contract identifier checks
-- requirements-to-test traceability
-- contract-to-test registry
-- smoke suite for the dominant execution mode on PRs
-- scheduled regression/golden runs where their value justifies cost
-- decision log updates for material changes
-- critical planning files follow the `PROGRAMBUILD_*.md` naming convention
-- non-trivial implementation slices use `PROGRAMBUILD_WORK_PACKET.md` to identify objective, non-goals, exact authority, reusable evidence, invalidation triggers, and targeted verification
-- broad revalidation is reserved for invalidated surfaces and convergence gates rather than repeated automatically after every small change
+Apply guardrails to the actual product shape/risk rather than mechanically installing every pattern:
 
-Attach `USERJOURNEY/` only when the product has real end-user onboarding, consent, activation, or first-run routing behavior to design.
+- one strategic execution spine;
+- explicit dominant contract/trust boundary where relevant;
+- auth/trust tests for protected surfaces;
+- alignment tests where producer/consumer drift is plausible;
+- requirements-to-proof traceability for P0 outcomes;
+- contract-to-test mapping for material public/internal contracts;
+- smoke/purpose verification for the dominant execution mode;
+- decision-log updates for material choices;
+- broad revalidation only when invalidation or a convergence boundary requires it;
+- no scheduled regression/golden job unless its signal is worth its cost.
+
+Attach `USERJOURNEY/` only when onboarding, consent, activation, or first-run behavior actually needs design.
 
 ---
 
-## Suggested Subagents
+## Work-Slice Rule
 
-See `PROGRAMBUILD_SUBAGENTS.md` for full prompts and workspace agent files.
+For each meaningful implementation slice, define the compact work-packet fields from `PROGRAMBUILD_WORK_PACKET.md`:
 
-| Agent | Use for | Output |
-|---|---|---|
-| Discovery & Scoping | domain research, scope, user stories, kill criteria, user flows | research + requirements draft |
-| Architecture & Security | system boundaries, API contracts, auth model, threat model | architecture review + security findings |
-| Quality & Release | test strategy, release readiness, launch gate | test strategy + readiness report |
-| Risk Spike Agent | unknowns rated medium or high impact in RISK_SPIKES.md | spike report |
-| Contract Auditor | route, auth, schema, and contract drift at Stage 9 | audit findings |
+- objective / why now;
+- in/out of scope;
+- exact authority/context;
+- reusable evidence;
+- invalidation triggers;
+- acceptance criteria;
+- targeted verification;
+- durable reconciliation if needed.
+
+Persist `CURRENT_WORK_PACKET.md` only when cross-session/multi-agent coordination, risk, dependency complexity, blockers, or resumability makes persistence useful.
+
+---
+
+## Product Challenge Gates
+
+At each stage transition, run:
+
+- A — kill criteria;
+- C — scope integrity;
+- F — decision reversals;
+- plus B/D/E/G/H when the current stage/change makes those risks material.
+
+Use full A–H for release readiness and other genuinely whole-system Product convergence conditions defined in `PROGRAMBUILD_CHALLENGE_GATE.md`.
+
+No material risk can be skipped because a gate part is conditional. Conditional means **relevance-driven**, not optional safety.
+
+---
+
+## Specialist Agents
+
+Use specialist agents only when they improve decomposition or review quality.
+
+Typical triggers:
+
+| Agent | Trigger |
+|---|---|
+| Discovery & Scoping | material domain/scope ambiguity |
+| Architecture & Security | important system/trust-boundary decision |
+| Quality & Release | testing/release-risk review benefits from separate focus |
+| Risk Spike Agent | material unknown blocks a decision |
+| Contract Auditor | contract/auth/schema drift is plausible or audit is due |
+
+Do not spawn all agents merely because the roles exist. Their outputs remain evidence until canonical authority adopts them.
 
 ---
 
 ## Product Prompt Pattern
 
 ```text
-Create or operate a full product delivery plan for this application.
+Operate this production product with PROGRAMBUILD Product rigor.
 
-Inputs:
-- project inputs block, or
-- existing project execution spine + current authority + proposed change
+First identify live project authority/stage and select the correct entry mode.
+Preserve any existing strategic execution spine.
 
-First select the correct planning entry mode from PROGRAMBUILD_PLANNING_OPERATING_MODEL.md.
-If an existing project already has a master roadmap/game plan, preserve it as the strategic spine unless replacement is explicitly approved.
+Use programstart status/guide to orient, then load only task-relevant authority.
 
-Produce or update only the authoritative artifacts warranted by the current state:
-1. feasibility and kill criteria
-2. decision log entries for each material gate/change
-3. research summary or research delta
-4. requirements and workflows appropriate to the product shape
-5. architecture and risk spikes
-6. scaffold and structural tests
-7. test strategy with risk-appropriate smoke/regression split
-8. implementation loop using bounded work packets for non-trivial slices
-9. release readiness plan
-10. post-build audit plan
-11. post-launch review plan
+For the current slice:
+- define compact work-packet fields;
+- persist CURRENT_WORK_PACKET.md only if persistence adds coordination/resumption value;
+- reuse valid evidence until invalidated;
+- run the smallest verification set that proves changed/at-risk surfaces;
+- use stage/risk-relevant Challenge Gate controls;
+- widen to full Product convergence at release or another whole-system boundary;
+- reconcile material outcomes back into canonical project state.
 
-For each work packet:
-- trace it to the strategic execution spine/current stage
-- name exact authority sections and specialist references required now
-- reuse valid verification evidence until a documented invalidation trigger occurs
-- run the smallest verification set that proves the changed/at-risk surface
-- widen context and verification again at stage/release convergence gates
+Do not create a new planning hierarchy, rerun checks from habit, or spawn specialist agents without a real decomposition/review reason.
 ```
 
 ---
 
 ## Product Definition Of Done
 
-- every dominant contract surface is declared, registered, and covered by the registry
-- auth, trust-boundary, schema, and contract behavior are verified structurally
-- primary execution scenarios have smoke/purpose coverage appropriate to risk
-- release readiness includes rollback, monitoring, and ownership
-- audit finds no unresolved critical issues
-- any completed work packets have been reconciled into canonical authority/state and replaced rather than accumulated as a parallel plan
-- post-launch review records actual outcomes against the success metric
+- P0 outcomes work and have credible proof;
+- material contract/trust/schema behavior is aligned and verified;
+- release readiness includes rollback, observability, and ownership appropriate to operational risk;
+- release/whole-system Product convergence passes;
+- no unresolved critical audit finding remains without explicit ownership/risk acceptance;
+- logical/persisted work packets are closed/reconciled rather than accumulated;
+- post-launch review compares real outcomes to the success metric.
 
 ---
 

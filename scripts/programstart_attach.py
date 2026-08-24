@@ -11,6 +11,7 @@ try:
     from .programstart_bootstrap import (
         bootstrap_programbuild,
         copy_file,
+        generated_repo_bootstrap_asset_pairs_for_mode,
         generated_repo_bootstrap_assets_for_mode,
         generated_repo_prompt_assets_for_mode,
         generated_repo_prompt_authority_for_mode,
@@ -30,6 +31,7 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
     from programstart_bootstrap import (
         bootstrap_programbuild,
         copy_file,
+        generated_repo_bootstrap_asset_pairs_for_mode,
         generated_repo_bootstrap_assets_for_mode,
         generated_repo_prompt_assets_for_mode,
         generated_repo_prompt_authority_for_mode,
@@ -172,18 +174,21 @@ def _copy_programbuild_bootstrap_assets(
 ) -> list[str]:
     template_root = workspace_path(".")
     copied: list[str] = []
-    for relative_path in generated_repo_bootstrap_assets_for_mode(registry, include_userjourney=False):
-        source = template_root / relative_path
-        destination = destination_root / relative_path
-        if destination.exists() and relative_path in PROGRAMBUILD_PRESERVE_EXISTING_FILES and not force:
+    for source_path, destination_path in generated_repo_bootstrap_asset_pairs_for_mode(
+        registry,
+        include_userjourney=False,
+    ):
+        source = template_root / source_path
+        destination = destination_root / destination_path
+        if destination.exists() and destination_path in PROGRAMBUILD_PRESERVE_EXISTING_FILES and not force:
             if dry_run:
                 print(f"PRESERVE {destination}")
-            copied.append(relative_path)
+            copied.append(destination_path)
             continue
         if destination.exists() and not force:
-            raise FileExistsError(f"Destination already has {relative_path}. Use --force to replace it.")
+            raise FileExistsError(f"Destination already has {destination_path}. Use --force to replace it.")
         copy_file(source, destination, dry_run)
-        copied.append(relative_path)
+        copied.append(destination_path)
     return copied
 
 

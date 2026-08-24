@@ -200,9 +200,9 @@ Programmatic log commands:
 - `programstart log --system programbuild` — view full sign-off history
 - `programstart progress --system programbuild` — view checklist completion percentage
 
-| From Stage | To Stage | Date | Kill OK | Assumptions OK | Scope OK | Skipped OK | Decisions OK | Dependencies OK | Proceed? | Notes |
-|---|---|---|---|---|---|---|---|---|---|---|
-| | | | ✅/⚠️/❌ | ✅/⚠️/❌ | ✅/⚠️/❌ | ✅/⚠️/❌ | ✅/⚠️/❌ | ✅/⚠️/n/a | Yes / No / Conditional | |
+| From Stage | To Stage | Date | Kill OK | Assumptions OK | Scope OK | Skipped OK | Decisions OK | Dependencies OK | Architecture OK | Proceed? | Notes |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| | | | ✅/⚠️/❌ | ✅/⚠️/❌ | ✅/⚠️/❌ | ✅/⚠️/❌ | ✅/⚠️/❌ | ✅/⚠️/n/a | ✅/⚠️/n/a | Yes / No / Conditional | |
 
 Status codes: ✅ All clear | ⚠️ Issues found but managed — recorded in DECISION_LOG.md | ❌ Blocking issue — do not proceed
 

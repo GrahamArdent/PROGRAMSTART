@@ -1,7 +1,7 @@
 # PROGRAMSTART
 
 Purpose: A program that builds other programs — a workflow automation toolkit for structured product planning, execution tracking, and intelligent context retrieval.
-Last updated: 2026-04-14
+Last updated: 2026-08-24
 
 ---
 
@@ -12,6 +12,17 @@ PROGRAMSTART is a CLI-driven planning and workflow automation system that guides
 **The core idea:** instead of starting every new project with blank documents and tribal knowledge, PROGRAMSTART gives you a validated scaffold, enforces completion gates, tracks drift from source-of-truth documents, and lets you query your own planning context intelligently.
 
 PROGRAMSTART is the source template and orchestration repo. Product code and project infrastructure belong in separately generated repos, never inside this repository.
+
+PROGRAMBUILD now also separates **strategic project authority** from **active execution context**:
+
+- each real project keeps one strategic execution spine; PROGRAMSTART does not create a competing Master Game Plan for an existing project
+- `PROGRAMBUILD/PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` defines entry modes, proportional rigor, evidence reuse, invalidation triggers, progressive context loading, and research-to-plan delta rules
+- `PROGRAMBUILD/PROGRAMBUILD_WORK_PACKET.md` defines bounded current execution slices; an optional project-level `CURRENT_WORK_PACKET.md` is derived and non-canonical
+- stage guidance establishes the baseline authority surface; individual work packets then narrow the context to the exact requirements, contracts, evidence, non-goals, and verification needed for the current slice
+- verification stays targeted inside a valid work packet and widens again at convergence points such as periodic Stage 7 reviews, stage transitions, release readiness, audits, or evidence invalidation
+- research, audits, and specialist-agent outputs remain evidence or deltas until the project authority adopts them
+
+This policy is recorded in ADR-0023 / DEC-020.
 
 It also now includes a project-factory layer:
 
@@ -34,6 +45,8 @@ The knowledge base is also now more explicit about how it makes decisions:
 - explicit KB relationships show complements, alternatives, and upgrade paths
 - structured comparisons capture version deltas such as Python 3.13 vs 3.14
 - a weekly research cadence plus CI-visible freshness status and issue-based overdue alerts keeps recommendations current without turning the KB into an unbounded note dump
+
+The root README summarizes that KB behavior; `docs/knowledge-ops.md` and `config/knowledge-base.json` remain authoritative for KB maintenance and refresh semantics.
 
 ## How It Works — The Complete Workflow
 
@@ -70,9 +83,11 @@ This creates:
 
 For the faster path, use `programstart init` instead of raw bootstrap. It wraps bootstrap, stamps kickoff inputs, updates metadata owners and dates, and can attach `USERJOURNEY` during setup.
 
-### Phase 2: Stage-Gated Execution
+### Phase 2: Stage-Gated Planning and Bounded Execution
 
-PROGRAMSTART enforces a strict stage order. Each stage has required outputs that must be completed before advancing:
+PROGRAMSTART enforces a strict strategic stage order. Each stage has required outputs that must be completed before advancing. That stage model is the project baseline, not a requirement to reload every stage document for every small task.
+
+During Stage 7, non-trivial work should be derived into a bounded work packet. The packet MUST trace back to the strategic execution spine and authority documents, and MUST NOT become a second roadmap. Targeted verification is appropriate while the packet's evidence and assumptions remain valid. Periodic reviews and Stage 8 deliberately widen the surface again to catch cross-slice drift.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -100,10 +115,10 @@ PROGRAMSTART enforces a strict stage order. Each stage has required outputs that
 │  6. TEST_STRATEGY        → Test model, coverage plan, automation approach   │
 │     └─ Output: TEST_STRATEGY.md                                            │
 │                                                                             │
-│  7. IMPLEMENTATION       → Feature code and tests                           │
-│     └─ Output: working feature set                                         │
+│  7. IMPLEMENTATION       → Bounded work packets, feature code, and tests    │
+│     └─ Output: completed slices reconciled to canonical project state      │
 │                                                                             │
-│  8. RELEASE_READINESS    → Launch gates, operational checks, rollback plan  │
+│  8. RELEASE_READINESS    → Wider convergence, launch gates, rollback plan   │
 │     └─ Output: RELEASE_READINESS.md                                        │
 │                                                                             │
 │  9. AUDIT                → Drift detection, risk findings                   │
@@ -150,9 +165,11 @@ PROGRAMSTART builds a structured context index from all planning documents, know
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### Phase 4: Continuous Validation
+Context retrieval supports progressive disclosure. `programstart guide --system programbuild` establishes the active stage's baseline authority; the current work packet then narrows execution to the exact sections and evidence needed for the slice. Conversation memory is not authority.
 
-PROGRAMSTART continuously validates the planning workspace:
+### Phase 4: Convergence and Validation
+
+PROGRAMSTART validates the planning workspace at the level appropriate to the current boundary. Full validation remains important at stage transitions, release readiness, audits, governance close-out, and other convergence points. Inside an active work packet, targeted tests/checks should cover the changed surface plus declared dependencies unless an invalidation trigger requires the wider gate sooner.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -189,13 +206,15 @@ PROGRAMSTART continuously validates the planning workspace:
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
+`programstart jit-check --system programbuild` is a convergence/authority check: it runs the registry-backed guide, verifies drift baseline, and prints active sync-rule authority. It is not a substitute for the work packet's targeted feature tests, and it does not require broad revalidation after every tiny code edit.
+
 VS Code tasks (`Ctrl+Shift+P` → **Tasks: Run Task**) surface the most common checks:
 
 | Task | What it does |
 |---|---|
 | **PROGRAMSTART: What To Do Next** | `programstart next` — status + guide + drift in one command |
 | **PROGRAMSTART: Drift Check** | `programstart drift` — source-of-truth sync check |
-| **PROGRAMSTART: JIT Check** | Runs drift then guide (sequenced) |
+| **PROGRAMSTART: JIT Check** | `programstart jit-check --system programbuild` — guide + drift + sync-rule summary |
 | **PROGRAMSTART: Safe Gate** | `nox -s lint typecheck tests validate docs` — full quality gate without mutating smoke |
 | **PROGRAMSTART: Validate All** | `programstart validate` — all structural checks |
 
@@ -228,6 +247,8 @@ VS Code tasks (`Ctrl+Shift+P` → **Tasks: Run Task**) surface the most common c
 │     ├─ PROGRAMBUILD_CANONICAL.md  ← authority map (one concern, one owner) │
 │     ├─ PROGRAMBUILD_FILE_INDEX.md ← file inventory and status             │
 │     ├─ PROGRAMBUILD.md            ← stage order and base workflow         │
+│     ├─ PROGRAMBUILD_PLANNING_OPERATING_MODEL.md ← planning/execution policy│
+│     ├─ PROGRAMBUILD_WORK_PACKET.md ← bounded active-execution standard     │
 │     └─ [stage output templates]   ← FEASIBILITY, ARCHITECTURE, etc.       │
 │                                                                             │
 │  USERJOURNEY/ (optional attachment)                                         │
@@ -284,44 +305,54 @@ Starting a new software product typically involves:
 3. Architecture decisions made without recorded rationale
 4. Knowledge trapped in chat history or individual memory
 5. No way to query "what did we decide about X?" after planning is done
+6. Large planning documents repeatedly loaded for small implementation tasks
+7. Research and audits accidentally turning into parallel execution plans
+8. Verified facts repeatedly re-checked even when nothing relevant changed
 
 ### The Solution
 
 PROGRAMSTART solves this by making the planning process itself a validated, queryable, machine-readable system:
 
-1. **Templates with authority rules** — every concern has exactly one canonical owner document
-2. **Stage gates** — you cannot advance to architecture before requirements are signed off
-3. **Drift detection** — if someone changes a downstream doc without updating its authority source, the system flags it
-4. **Context indexing** — all planning artifacts are indexed into a searchable corpus
-5. **RAG retrieval** — ask natural language questions against your planning context and get source-cited answers
-6. **Pydantic validation** — the context index and LLM responses are schema-validated, not loose JSON
-7. **Knowledge base** — 49 verified technology stacks and 15 integration patterns inform stack selection decisions
-8. **Bootstrapping** — scaffold new projects from a single command instead of copying and forgetting files
+1. **One strategic execution spine** — a project has one authoritative roadmap/execution ledger rather than competing master plans
+2. **Templates with authority rules** — every concern has exactly one canonical owner document
+3. **Stage gates** — you cannot advance to architecture before requirements are signed off
+4. **Bounded work packets** — current execution gets only the authority, evidence, non-goals, acceptance criteria, and verification needed for the slice
+5. **Evidence validity rules** — trusted evidence is reused until an explicit invalidation trigger requires re-verification
+6. **Convergence gates** — narrow execution periodically widens back out to catch cross-slice drift
+7. **Drift detection** — if someone changes a downstream doc without updating its authority source, the system flags it
+8. **Context indexing** — all planning artifacts are indexed into a searchable corpus
+9. **RAG retrieval** — ask natural language questions against your planning context and get source-cited answers
+10. **Pydantic validation** — the context index and LLM responses are schema-validated, not loose JSON
+11. **Knowledge base** — verified technology stacks and integration patterns inform stack selection decisions
+12. **Bootstrapping** — scaffold new projects from a single command instead of copying and forgetting files
 
 ## Workflow Automation
 
-This workspace now includes a durable workflow layer so the process is not kept only in chat context.
+This workspace includes a durable workflow layer so the process is not kept only in chat context.
 
 Key assets:
 
 1. `config/process-registry.json` is the machine-readable registry for required files, stage order, metadata rules, source-of-truth sync rules, and optional attachment behavior
-2. `.github/copilot-instructions.md` contains repo-wide Copilot guidance for using PROGRAMBUILD and USERJOURNEY correctly
-3. `.github/instructions/` contains focused instructions for PROGRAMBUILD and USERJOURNEY work
-4. `.github/agents/` contains the core PROGRAMBUILD specialist agents for discovery, architecture/security, and quality/release reviews
-5. `.github/prompts/` contains reusable prompts for kickoff, next-slice planning, drift audit, and next-step summaries
-6. `scripts/` contains helper scripts for bootstrap, status, validation, drift checks, and integrity refresh
+2. `PROGRAMBUILD/PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` defines how ideas, research-backed work, and existing projects enter the system; it also owns one-spine, proportional-rigor, progressive-context, evidence-reuse, and research-delta policy
+3. `PROGRAMBUILD/PROGRAMBUILD_WORK_PACKET.md` defines bounded task-level execution under the strategic spine
+4. `.github/copilot-instructions.md` contains repo-wide Copilot guidance for using PROGRAMBUILD and USERJOURNEY correctly
+5. `.github/instructions/` contains focused instructions for PROGRAMBUILD, USERJOURNEY, and JIT source-of-truth work
+6. `.github/agents/` contains the core PROGRAMBUILD specialist agents for discovery, architecture/security, and quality/release reviews
+7. `.github/prompts/` contains reusable prompts for kickoff, task-scoped JIT, next-slice planning, drift audit, and next-step summaries
+8. `scripts/` contains helper scripts for bootstrap, status, validation, drift checks, and integrity refresh
+9. `docs/decisions/0023-use-one-strategic-execution-spine-with-bounded-work-packets.md` records the durable policy rationale
 
 `USERJOURNEY/` remains optional. It stays in this repository as a reference attachment and should only be attached to projects that truly need onboarding, consent, activation, or first-run routing planning.
 
 ## Quality Gates — Confidence Tiers
 
-Three tiers let you choose the right level of confidence for the situation:
+Three tiers let you choose the right level of confidence for the situation. Work-packet verification may be narrower during active execution; these broader tiers remain the convergence confidence surfaces.
 
 | Tier | Command | What it runs | When to use |
 |---|---|---|---|
 | **Quick** | `nox -s quick` | lint + typecheck | During active editing, fast feedback (~10s) |
-| **Safe Gate** | `nox -s gate_safe` | lint, typecheck, tests, validate, read-only smoke, docs | Before committing. Local pre-merge confidence |
-| **Full CI** | `nox -s ci` | Everything: lint, typecheck, tests, validate, smoke (readonly + isolated), docs, package, security | Before pushing or preparing a release |
+| **Safe Gate** | `nox -s gate_safe` | lint, typecheck, tests, validate, read-only smoke, docs | Before committing or at a meaningful checkpoint |
+| **Full CI** | `nox -s ci` | Everything: lint, typecheck, tests, validate, smoke (readonly + isolated), docs, package, security | Before pushing, merge/release convergence, or high-risk changes |
 
 **Smoke sub-tiers** (available individually):
 
@@ -354,10 +385,10 @@ The repository includes a hardened development and automation stack:
 | uv | Package and environment management |
 | ruff | Linting and formatting (Rust speed) |
 | pyright | Static type checking (basic mode) |
-| pytest | Test framework (287 tests) |
+| pytest | Test framework |
 | hypothesis | Property-based testing for BM25 and tokenization |
 | coverage | Code coverage enforcement (≥80%) |
-| pre-commit | Git hook quality gates (6 repos) |
+| pre-commit | Git hook quality gates |
 | nox | Repeatable CI sessions |
 | bandit | Security scanning |
 | detect-secrets | Secret detection |
@@ -390,7 +421,7 @@ nox -s gate_safe    # safe: lint + typecheck + tests + validate + readonly smoke
 nox -s ci           # full: everything including isolated smoke, package, security
 ```
 
-GitHub Actions mirrors the main repo checks in three layers:
+GitHub Actions mirrors the main repo checks in three layers when workflows are enabled:
 
 1. `CI Guardrails` for PR and `main` validation
 2. `Full CI Gate (Scheduled)` for nightly full-gate verification and manual dispatch
@@ -412,14 +443,17 @@ Unified Python CLI provides the primary entry point:
 # Planning workflow
 uv run programstart init --dest <folder> --project-name <name> --product-shape "CLI tool"
 uv run programstart status                          # current stage, blockers, next actions
-uv run programstart validate                        # required files + metadata check
+uv run programstart next                            # recommended next action
+uv run programstart guide --system programbuild     # stage baseline files, scripts, prompts
+uv run programstart jit-check --system programbuild # guide + drift + sync-rule authority summary
+uv run programstart validate                        # broad structural convergence check
+uv run programstart drift                           # source-of-truth drift detection
 uv run programstart state show                      # inspect current workflow state
 uv run programstart advance --system programbuild   # approve and advance stage
-uv run programstart next                            # recommended next action
+uv run programstart closeout                        # governance close-out for durable checkpoints
 uv run programstart log                             # decision and change history
 uv run programstart progress                        # checklist completion by section
 uv run programstart guide --kickoff                 # files, scripts, prompts for kickoff
-uv run programstart drift                           # source-of-truth drift detection
 uv run programstart clean                           # remove temp artifacts
 uv run programstart dashboard                       # generate STATUS_DASHBOARD.md
 uv run programstart bootstrap --dest <folder> --project-name <name> --variant product
@@ -455,11 +489,15 @@ PowerShell wrapper (`scripts/pb.ps1`) remains as a thin Windows convenience laye
 
 ```powershell
 pb status                          # current stage, blockers, next actions
-pb validate                        # required files + metadata check
+pb next                            # orient to current state
+pb guide --system programbuild     # stage baseline authority
+pb jit-check --system programbuild # convergence-oriented JIT authority check
+pb validate                        # broad structural convergence check
 pb validate --system programbuild  # check only PROGRAMBUILD
 pb state show                      # inspect current stage and phase state
 pb state set --system programbuild --step feasibility --status completed --decision approved
 pb advance --system programbuild   # approve the active stage and move forward
+pb closeout                        # governance close-out for durable checkpoints
 pb progress                        # checklist completion by section
 pb guide --kickoff                 # files, scripts, and prompts for new-project kickoff
 pb guide --system programbuild --stage feasibility
@@ -478,28 +516,32 @@ pb help                            # list all commands
 Installed console script and module forms are also available:
 
 1. `programstart status` — current stage, blockers, and next actions
-2. `programstart validate --check required-files` — validate required planning files and metadata
-3. `programstart state show` — inspect or update the active workflow state
-4. `programstart advance --system programbuild` — approve the active step and advance
-5. `programstart progress` — PROGRAMBUILD checklist completion by section
-6. `programstart guide --kickoff` — authoritative files, scripts, and prompts for a step
-7. `programstart drift` — source-of-truth drift detection and future-stage edit rejection
-8. `programstart bootstrap --dest <folder> --project-name <name> --variant product` — scaffold a project
-9. `programstart clean` — remove temp artifacts
-10. `programstart refresh --date 2026-03-29` — regenerate manifest and verification report
-11. `programstart dashboard` — generate `outputs/STATUS_DASHBOARD.md`
-12. `programstart context build` — generate structured context index
-13. `programstart context query --concern activation` — query concern ownership
-14. `programstart-retrieval search "query"` — BM25 lexical search over context index
-15. `programstart-retrieval search "query" --method hybrid` — hybrid BM25 + vector search
-16. `programstart-retrieval validate` — validate context index against Pydantic schema
-17. `programstart-retrieval ask "question"` — RAG-powered question answering via LiteLLM
-18. `programstart-retrieval ask "question" --structured` — Pydantic-validated structured RAG response via Instructor
-19. `programstart init --dest <folder> --project-name <name> --product-shape <shape>` — bootstrap and stamp a new planning repo
-20. `programstart attach userjourney --source <path>` — attach the optional USERJOURNEY package later
-21. `programstart recommend` — recommend the workflow variant and stack direction from project inputs
-22. `programstart impact <target>` — inspect related documents, concerns, relations, commands, and routes
-23. `programstart prompt-eval --json` — score generated prompts and factory plans against fixed scenarios
+2. `programstart next` — orient using durable state, guide, and drift
+3. `programstart guide --system programbuild` — stage baseline files, scripts, and prompts
+4. `programstart jit-check --system programbuild` — guide + drift + sync-rule authority summary
+5. `programstart validate --check required-files` — validate required planning files and metadata
+6. `programstart drift` — source-of-truth drift detection and future-stage edit rejection
+7. `programstart state show` — inspect or update the active workflow state
+8. `programstart advance --system programbuild` — approve the active step and advance
+9. `programstart closeout` — durable governance close-out checks
+10. `programstart progress` — PROGRAMBUILD checklist completion by section
+11. `programstart guide --kickoff` — authoritative files, scripts, and prompts for kickoff
+12. `programstart bootstrap --dest <folder> --project-name <name> --variant product` — scaffold a project
+13. `programstart clean` — remove temp artifacts
+14. `programstart refresh --date 2026-03-29` — regenerate manifest and verification report
+15. `programstart dashboard` — generate `outputs/STATUS_DASHBOARD.md`
+16. `programstart context build` — generate structured context index
+17. `programstart context query --concern activation` — query concern ownership
+18. `programstart-retrieval search "query"` — BM25 lexical search over context index
+19. `programstart-retrieval search "query" --method hybrid` — hybrid BM25 + vector search
+20. `programstart-retrieval validate` — validate context index against Pydantic schema
+21. `programstart-retrieval ask "question"` — RAG-powered question answering via LiteLLM
+22. `programstart-retrieval ask "question" --structured` — Pydantic-validated structured RAG response via Instructor
+23. `programstart init --dest <folder> --project-name <name> --product-shape <shape>` — bootstrap and stamp a new planning repo
+24. `programstart attach userjourney --source <path>` — attach the optional USERJOURNEY package later
+25. `programstart recommend` — recommend the workflow variant and stack direction from project inputs
+26. `programstart impact <target>` — inspect related documents, concerns, relations, commands, and routes
+27. `programstart prompt-eval --json` — score generated prompts and factory plans against fixed scenarios
 
 VS Code tasks are provided in `.vscode/tasks.json` so the default editor task runner can drive the hardened workflow without remembering commands.
 

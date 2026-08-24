@@ -4,6 +4,8 @@ from pathlib import Path
 
 from scripts import programstart_artifact_profiles as profiles
 
+ROOT = Path(__file__).resolve().parents[1]
+
 
 def _registry() -> dict:
     return {
@@ -44,8 +46,23 @@ def test_lite_exposes_core_and_conditional_outputs() -> None:
     )
 
 
-def test_artifact_has_body_ignores_metadata_only_stub(tmp_path: Path) -> None:
-    path = tmp_path / "stub.md"
+def test_artifact_has_body_uses_explicit_activation_marker(tmp_path: Path) -> None:
+    path = tmp_path / "conditional.md"
+    path.write_text(
+        "Purpose: Test\nActivation: dormant\n---\n\n## Template Heading\n- placeholder\n",
+        encoding="utf-8",
+    )
+    assert not profiles.artifact_has_body(path)
+
+    path.write_text(
+        "Purpose: Test\nActivation: active\n---\n\n## Template Heading\n- placeholder\n",
+        encoding="utf-8",
+    )
+    assert profiles.artifact_has_body(path)
+
+
+def test_artifact_has_body_preserves_legacy_body_fallback(tmp_path: Path) -> None:
+    path = tmp_path / "legacy.md"
     path.write_text("Purpose: Test\nOwner: Dev\n---\n\n", encoding="utf-8")
     assert not profiles.artifact_has_body(path)
 
@@ -53,12 +70,23 @@ def test_artifact_has_body_ignores_metadata_only_stub(tmp_path: Path) -> None:
     assert profiles.artifact_has_body(path)
 
 
+def test_real_conditional_templates_are_dormant() -> None:
+    assert not profiles.artifact_has_body(ROOT / "PROGRAMBUILD" / "RISK_SPIKES.md")
+    assert not profiles.artifact_has_body(ROOT / "PROGRAMBUILD" / "AUDIT_REPORT.md")
+
+
 def test_filter_stage_files_removes_only_dormant_conditional_outputs(tmp_path: Path, monkeypatch) -> None:
     registry = _registry()
     programbuild = tmp_path / "PROGRAMBUILD"
     programbuild.mkdir()
-    (programbuild / "RISK.md").write_text("Purpose: Risk\n---\n\n", encoding="utf-8")
-    (programbuild / "AUDIT.md").write_text("Purpose: Audit\n---\n\n## Findings\nOne finding.\n", encoding="utf-8")
+    (programbuild / "RISK.md").write_text(
+        "Purpose: Risk\nActivation: dormant\n---\n\n## Spike Register\n| Spike | Result |\n|---|---|\n| | |\n",
+        encoding="utf-8",
+    )
+    (programbuild / "AUDIT.md").write_text(
+        "Purpose: Audit\nActivation: active\n---\n\n## Findings\nOne finding.\n",
+        encoding="utf-8",
+    )
     monkeypatch.setattr(profiles, "workspace_path", lambda relative: tmp_path / relative)
 
     filtered = profiles.filter_stage_files(
@@ -70,16 +98,22 @@ def test_filter_stage_files_removes_only_dormant_conditional_outputs(tmp_path: P
     assert filtered == ["PROGRAMBUILD/A.md", "PROGRAMBUILD/AUDIT.md", "CONTROL.md"]
 
 
-def test_conditional_stage_check_wakes_up_when_artifact_has_content(tmp_path: Path, monkeypatch) -> None:
+def test_conditional_stage_check_wakes_up_when_activation_changes(tmp_path: Path, monkeypatch) -> None:
     registry = _registry()
     programbuild = tmp_path / "PROGRAMBUILD"
     programbuild.mkdir()
     risk = programbuild / "RISK.md"
-    risk.write_text("Purpose: Risk\n---\n\n", encoding="utf-8")
+    risk.write_text(
+        "Purpose: Risk\nActivation: dormant\n---\n\n## Spike Register\n| Spike | Result |\n|---|---|\n| | |\n",
+        encoding="utf-8",
+    )
     monkeypatch.setattr(profiles, "workspace_path", lambda relative: tmp_path / relative)
 
     assert not profiles.stage_check_required(registry, "risk-spikes", variant="lite")
     assert profiles.stage_check_required(registry, "requirements-complete", variant="lite")
 
-    risk.write_text("Purpose: Risk\n---\n\n## Spike Register\nReal spike.\n", encoding="utf-8")
+    risk.write_text(
+        "Purpose: Risk\nActivation: active\n---\n\n## Spike Register\nReal spike.\n",
+        encoding="utf-8",
+    )
     assert profiles.stage_check_required(registry, "risk-spikes", variant="lite")

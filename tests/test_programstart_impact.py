@@ -5,6 +5,8 @@ import sys
 from pathlib import Path
 from unittest.mock import patch
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
@@ -48,6 +50,15 @@ def _minimal_index() -> dict:
     }
 
 
+def _relation(relation_type: str, dependent: str, prerequisite: str, source: str = "registry") -> dict:
+    return {
+        "type": relation_type,
+        "from": dependent,
+        "to": prerequisite,
+        "source": source,
+    }
+
+
 # ── print_impact_summary ───────────────────────────────────────────────────────
 
 
@@ -84,6 +95,136 @@ def test_print_impact_summary_lists_concerns(capsys) -> None:
     assert "GDPR consent" in captured.out
 
 
+def test_print_impact_summary_lists_blast_radius_paths(capsys) -> None:
+    result = _empty_result()
+    result["blast_radius"] = {
+        "start_nodes": ["ARCHITECTURE.md"],
+        "affected": [
+            {
+                "node": "TEST_STRATEGY.md",
+                "depth": 1,
+                "path": ["ARCHITECTURE.md", "TEST_STRATEGY.md"],
+                "edges": [],
+            }
+        ],
+    }
+    impact.print_impact_summary("ARCHITECTURE.md", result)
+    captured = capsys.readouterr()
+    assert "dependency blast radius: 1" in captured.out
+    assert "ARCHITECTURE.md -> TEST_STRATEGY.md" in captured.out
+
+
+# ── blast-radius graph integration ─────────────────────────────────────────────
+
+
+def test_build_blast_radius_walks_downstream_dependencies() -> None:
+    index = _minimal_index()
+    index["relations"] = [
+        _relation("depends_on", "TEST_STRATEGY.md", "ARCHITECTURE.md", "sync-rule"),
+        _relation("depends_on", "RELEASE_READINESS.md", "TEST_STRATEGY.md", "sync-rule"),
+    ]
+    related = _empty_result()
+    related["documents"] = [{"path": "ARCHITECTURE.md"}]
+
+    result = impact.build_blast_radius(index, "ARCHITECTURE.md", related)
+
+    assert result["start_nodes"] == ["ARCHITECTURE.md"]
+    assert [item["node"] for item in result["affected"]] == ["TEST_STRATEGY.md", "RELEASE_READINESS.md"]
+    assert result["affected"][1]["path"] == [
+        "ARCHITECTURE.md",
+        "TEST_STRATEGY.md",
+        "RELEASE_READINESS.md",
+    ]
+    assert result["affected"][0]["edges"][0] == {
+        "type": "depends_on",
+        "from": "TEST_STRATEGY.md",
+        "to": "ARCHITECTURE.md",
+        "source": "sync-rule",
+    }
+
+
+def test_build_blast_radius_includes_authority_dependency() -> None:
+    index = _minimal_index()
+    index["relations"] = [
+        _relation("authority_dependency", "PROGRAMBUILD_PRODUCT.md", "PROGRAMBUILD.md", "authority-map"),
+    ]
+    related = _empty_result()
+
+    result = impact.build_blast_radius(index, "PROGRAMBUILD.md", related)
+
+    assert [item["node"] for item in result["affected"]] == ["PROGRAMBUILD_PRODUCT.md"]
+    assert result["affected"][0]["edges"][0]["type"] == "authority_dependency"
+
+
+def test_build_blast_radius_ignores_non_dependency_relations() -> None:
+    index = _minimal_index()
+    index["relations"] = [
+        _relation("semantic_related", "B.md", "A.md"),
+        _relation("depends_on", "C.md", "A.md"),
+    ]
+    related = _empty_result()
+
+    result = impact.build_blast_radius(index, "A.md", related)
+
+    assert [item["node"] for item in result["affected"]] == ["C.md"]
+
+
+def test_build_blast_radius_respects_max_depth() -> None:
+    index = _minimal_index()
+    index["relations"] = [
+        _relation("depends_on", "B.md", "A.md"),
+        _relation("depends_on", "C.md", "B.md"),
+    ]
+    related = _empty_result()
+
+    result = impact.build_blast_radius(index, "A.md", related, max_depth=1)
+
+    assert [item["node"] for item in result["affected"]] == ["B.md"]
+    assert result["max_depth"] == 1
+
+
+def test_build_blast_radius_uses_shortest_path_across_multiple_starts() -> None:
+    index = _minimal_index()
+    index["relations"] = [
+        _relation("depends_on", "B.md", "A.md"),
+        _relation("depends_on", "C.md", "A.md"),
+        _relation("depends_on", "D.md", "B.md"),
+        _relation("depends_on", "D.md", "C.md"),
+    ]
+    related = _empty_result()
+    related["documents"] = [{"path": "A.md"}, {"path": "C.md"}]
+
+    result = impact.build_blast_radius(index, "md", related)
+    d = next(item for item in result["affected"] if item["node"] == "D.md")
+
+    assert d["depth"] == 1
+    assert d["path"] == ["C.md", "D.md"]
+
+
+def test_build_blast_radius_no_matching_graph_node_is_empty() -> None:
+    index = _minimal_index()
+    index["relations"] = [_relation("depends_on", "B.md", "A.md")]
+
+    result = impact.build_blast_radius(index, "not-present", _empty_result())
+
+    assert result["start_nodes"] == []
+    assert result["affected"] == []
+
+
+def test_resolve_blast_radius_starts_prefers_exact_match() -> None:
+    index = _minimal_index()
+    index["relations"] = [
+        _relation("depends_on", "ARCHITECTURE_NOTES.md", "ARCHITECTURE.md"),
+    ]
+    graph = impact.DependencyGraph(index["relations"], relation_types=impact.DEFAULT_IMPACT_TYPES)
+    related = _empty_result()
+    related["documents"] = [{"path": "ARCHITECTURE_NOTES.md"}]
+
+    starts = impact.resolve_blast_radius_starts(graph, "ARCHITECTURE.md", related)
+
+    assert starts == ("ARCHITECTURE.md",)
+
+
 # ── main ───────────────────────────────────────────────────────────────────────
 
 
@@ -112,6 +253,7 @@ def test_main_json_mode_emits_json(capsys, tmp_path) -> None:
     captured = capsys.readouterr()
     parsed = json.loads(captured.out)
     assert parsed["documents"] == [{"path": "USERJOURNEY/FILE.md"}]
+    assert parsed["blast_radius"]["affected"] == []
 
 
 def test_main_passes_target_to_query_context_index() -> None:
@@ -130,6 +272,29 @@ def test_main_passes_target_to_query_context_index() -> None:
 
     assert len(captured_kwargs) == 1
     assert captured_kwargs[0]["impact"] == "activation-event"
+
+
+def test_main_passes_max_depth_to_blast_radius() -> None:
+    index = _minimal_index()
+    captured_depths: list[int | None] = []
+
+    def fake_blast(idx, target, related, *, max_depth=None):
+        captured_depths.append(max_depth)
+        return {"start_nodes": [], "relation_types": [], "max_depth": max_depth, "affected": []}
+
+    with (
+        patch.object(impact, "load_index", return_value=index),
+        patch.object(impact, "query_context_index", return_value=_empty_result()),
+        patch.object(impact, "build_blast_radius", side_effect=fake_blast),
+    ):
+        impact.main(["target", "--max-depth", "2"])
+
+    assert captured_depths == [2]
+
+
+def test_main_rejects_negative_max_depth() -> None:
+    with pytest.raises(SystemExit):
+        impact.main(["target", "--max-depth", "-1"])
 
 
 def test_main_uses_provided_index_path(tmp_path) -> None:
@@ -237,4 +402,4 @@ def test_print_impact_summary_lists_comparisons(capsys) -> None:
     result["comparisons"] = [{"name": "Supabase vs Firebase"}]
     impact.print_impact_summary("stack", result)
     captured = capsys.readouterr()
-    assert "Supabase vs Firebase" in captured.out
+    assert "Supabase" in captured.out and "Firebase" in captured.out

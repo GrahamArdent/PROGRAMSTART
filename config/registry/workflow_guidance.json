@@ -166,7 +166,7 @@
         ]
       },
       "implementation_loop": {
-        "description": "Build, test, and iterate in bounded work packets. Use stage authority as the baseline, then load and verify only the current slice and any surfaces its changes invalidate.",
+        "description": "Build, test, and iterate in bounded logical work packets. Use stage authority as the baseline, then load and verify only the current slice and any surfaces its changes invalidate.",
         "entry_criteria": [
           "ARCHITECTURE.md is complete and all spikes in RISK_SPIKES.md are resolved or explicitly deferred with a decision.",
           "TEST_STRATEGY.md is complete with a requirements-to-test traceability matrix covering all P0 requirements.",
@@ -174,10 +174,10 @@
           "DECISION_LOG.md is current — no decisions made since the last stage that are not recorded."
         ],
         "first_steps": [
-          "Derive or refresh the next bounded implementation slice using PROGRAMBUILD_WORK_PACKET.md when the work is non-trivial; CURRENT_WORK_PACKET.md must trace to the current execution spine and remain non-canonical.",
+          "Define the next bounded implementation slice using the compact work-packet fields in PROGRAMBUILD_WORK_PACKET.md; persist CURRENT_WORK_PACKET.md only when multi-session/multi-agent coordination, risk, dependency complexity, blockers, or resumability make persistence useful.",
           "Load only the requirement IDs, architecture contracts, flow sections, decisions, and specialist references named by the slice instead of re-reading the entire stage context.",
           "List trusted existing verification evidence and its invalidation triggers before choosing what to rerun.",
-          "Write the slice's purpose test or other outcome proof before feature code; prioritize the highest-risk in-scope behavior in the current packet.",
+          "Write the slice's purpose test or other outcome proof before feature code where appropriate; prioritize the highest-risk in-scope behavior in the current slice.",
           "Commit after each meaningful unit of work so drift and targeted regression checks have a clear baseline.",
           "Run 'programstart status' if you are unsure what to do next — it will surface the strategic stage and blockers; use the work-packet protocol to choose the immediate next slice."
         ],

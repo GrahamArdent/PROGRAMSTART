@@ -2,7 +2,7 @@
 
 Purpose: Running record of material project decisions, reversals, and rationale.
 Owner: Solo operator
-Last updated: 2026-04-18
+Last updated: 2026-08-24
 Depends on: FEASIBILITY.md, RESEARCH_SUMMARY.md, ARCHITECTURE.md
 Authority: Canonical for project decision history
 
@@ -44,6 +44,7 @@ Authority: Canonical for project decision history
 | DEC-017 | 2026-04-18 | inputs_and_mode_selection | `programstart sync --dest <path>` propagates changed PROGRAMSTART files to a downstream repo using a manifest written at attach time; dry-run by default, `--confirm` required for writes; `.programstart-preserve` for downstream customization protection | ACTIVE | — | Solo operator | docs/decisions/0020-downstream-sync-mechanism-with-manifest-tracking.md |
 | DEC-018 | 2026-04-19 | inputs_and_mode_selection | `programstart prompt-build --mode context` generates structured `.prompt.md` from arbitrary `--context key=value` pairs without requiring a bootstrapped PROGRAMBUILD project; required key: `goal`; well-known keys: `project`, `stage`, `stack`, `shape` | ACTIVE | — | Solo operator | docs/decisions/0021-prompt-builder-mode-b-context-driven-generation.md |
 | DEC-019 | 2026-04-19 | inputs_and_mode_selection | `programstart sync --from-template <path>` pull mode: copies changed files from an upstream PROGRAMSTART template into the current (or `--dest`) repo; shares manifest, preserve, and filter logic with push mode; `--dest` defaults to `.` when `--from-template` is used | ACTIVE | — | Solo operator | docs/decisions/0022-sync-pull-mode-with-from-template.md |
+| DEC-020 | 2026-08-24 | inputs_and_mode_selection | Each real project keeps one strategic execution spine; non-trivial active work is narrowed into derived work packets with task-scoped authority, evidence reuse/invalidation triggers, targeted verification, and wider convergence checks | ACTIVE | — | Solo operator | docs/decisions/0023-use-one-strategic-execution-spine-with-bounded-work-packets.md |
 
 ## Decision Details
 
@@ -157,3 +158,12 @@ Authority: Canonical for project decision history
 - Consequences: Operator gameplans get execution prompts by default with machine-enforced pairing. Exempt gameplans must declare their exemption explicitly. The Phase G deadlock pattern is documented and prevented.
 
 ---
+
+### DEC-020
+
+- Context: PROGRAMBUILD already had strong stage-level authority, but active implementation guidance had accumulated broad context reloads and repeated verification around small slices. At the same time, new research, audits, or readiness work could be mistaken for replacement plans when applied to projects that already had a Master Game Plan or equivalent execution ledger.
+- Decision: Keep one strategic execution spine per real project. Use derived, non-canonical work packets for non-trivial active slices; each packet narrows the exact authority sections, evidence, non-goals, acceptance criteria, invalidation triggers, and targeted verification required. Widen context and verification again at periodic reviews, stage boundaries, release readiness, audits, or when evidence is invalidated.
+- Why: This preserves source-of-truth governance while reducing context cost, repeated checks, and plan proliferation. It also lets PROGRAMBUILD improve existing projects without displacing their project-owned execution authority.
+- Alternatives considered: (1) Keep broad stage-centric JIT and validation around every slice. (2) Make work packets the primary authority and weaken stage governance. (3) Layer bounded packets underneath the existing strategic authority and convergence gates.
+- Consequences: Stage 7 becomes task-scoped; Stage 8 and periodic Stage 7 reviews become explicit convergence points. Research and subagent outputs remain evidence/deltas until adopted by project authority. Lite/Product/Enterprise vary ceremony and evidence strength but not the one-spine rule.
+- Related ADR: `docs/decisions/0023-use-one-strategic-execution-spine-with-bounded-work-packets.md`.

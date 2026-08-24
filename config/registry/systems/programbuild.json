@@ -52,11 +52,11 @@
             "PROGRAMBUILD/RISK_SPIKES.md",
             "PROGRAMBUILD/AUDIT_REPORT.md"
           ],
-          "conditional_stage_checks": [
-            "risk-spikes",
-            "risk-spikes-resolved",
-            "audit-complete"
-          ]
+          "conditional_stage_checks": {
+            "risk-spikes": "PROGRAMBUILD/RISK_SPIKES.md",
+            "risk-spikes-resolved": "PROGRAMBUILD/RISK_SPIKES.md",
+            "audit-complete": "PROGRAMBUILD/AUDIT_REPORT.md"
+          }
         }
       },
       "variants": [

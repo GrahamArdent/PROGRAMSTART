@@ -38,7 +38,8 @@ _PROGRAMBUILD_STAGE_CHECKS: dict[str, tuple[str, ...]] = {
 @contextmanager
 def _temporary_argv(arguments: list[str]) -> Iterator[None]:
     original = sys.argv[:]
-    sys.argv = ["programstart state", "advance", *arguments]
+    # Preserve the historical unified-CLI argv shape for downstream consumers/tests.
+    sys.argv = ["programstart advance", "advance", *arguments]
     try:
         yield
     finally:

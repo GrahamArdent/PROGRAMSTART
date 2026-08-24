@@ -105,10 +105,13 @@ def build_blast_radius(
     """
     graph = DependencyGraph(index.get("relations", []), relation_types=DEFAULT_IMPACT_TYPES)
     starts = resolve_blast_radius_starts(graph, target, related_result)
+    start_set = set(starts)
 
     best_by_node: dict[str, GraphPath] = {}
     for start in starts:
         for path in graph.dependent_paths(start, max_depth=max_depth):
+            if path.end in start_set:
+                continue
             current = best_by_node.get(path.end)
             if current is None or (path.depth, path.nodes) < (current.depth, current.nodes):
                 best_by_node[path.end] = path

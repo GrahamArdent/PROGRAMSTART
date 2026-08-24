@@ -9,6 +9,7 @@ from contextlib import contextmanager
 
 try:
     from . import (
+        programstart_advance,
         programstart_attach,
         programstart_backup,
         programstart_bootstrap,
@@ -42,6 +43,7 @@ try:
     from .programstart_common import load_registry, warn_direct_script_invocation
     from .programstart_command_registry import CLI_COMMANDS
 except ImportError:  # pragma: no cover - standalone script execution fallback
+    import programstart_advance
     import programstart_attach
     import programstart_backup
     import programstart_bootstrap
@@ -196,7 +198,7 @@ def dispatch(command: str, arguments: list[str], parser: argparse.ArgumentParser
     if command == "state":
         return run_passthrough(programstart_workflow_state.main, "programstart state", arguments)
     if command == "advance":
-        return run_passthrough(programstart_workflow_state.main, "programstart advance", ["advance", *arguments])
+        return run_passthrough(programstart_advance.main, "programstart advance", arguments)
     if command == "diff":
         return run_passthrough(
             programstart_workflow_state.main,

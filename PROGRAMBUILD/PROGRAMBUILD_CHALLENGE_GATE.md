@@ -2,176 +2,166 @@
 
 # Challenge Gate Protocol
 
-Purpose: Reusable stage-transition and convergence checklist that prevents silent drift, scope creep, assumption rot, duplicate execution authority, and stale verification evidence.
+Purpose: Reusable transition/convergence check that catches meaningful drift without turning every boundary into the same eight-part ceremony.
 Owner: Stage Owner (or Solo Operator)
 Last updated: 2026-08-24
 Depends on: `PROGRAMBUILD.md`, `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`, `FEASIBILITY.md`, `REQUIREMENTS.md`, `DECISION_LOG.md`
-Authority: Canonical for stage transition validation and mid-stage convergence criteria
+Authority: Canonical for stage-transition validation, risk-based gate selection, and mid-stage convergence criteria.
 
 ---
 
-## Why This Exists
+## 1. Operating Principle
 
-Stage completion answers “did we produce the expected output?” The Challenge Gate asks whether the project is still coherent enough to proceed.
+Stage completion asks: **did we produce the expected output?**
 
-It catches eight recurring failure classes:
+The Challenge Gate asks: **is the project coherent and safe enough to proceed?**
 
-1. kill criteria becoming true without anyone noticing;
-2. assumptions weakening while downstream work treats them as settled;
-3. scope drifting outside approved requirements;
-4. deferred work being silently forgotten;
-5. blast radius being underestimated;
-6. decisions being reversed without reconciliation;
-7. dependency/research evidence going stale;
-8. architecture, requirements, implementation, work packets, and verification evidence drifting apart.
+The operating rule is:
 
-The operating rule is: **narrow while executing; widen while converging.** Work packets may narrow daily execution. Challenge Gates deliberately widen the view again.
+> **Narrow while executing; widen while converging; inspect only the risks that can matter at this boundary.**
+
+Eight gate parts exist because they represent eight recurring failure classes. They are a **menu of controls**, not a requirement that every project fill every section at every transition.
+
+No material risk may be omitted merely to save time, but irrelevant sections should not be completed as paperwork.
 
 ---
 
-## When To Run
+## 2. When To Run
 
-Run this gate before starting a new PROGRAMBUILD stage.
+Run a Challenge Gate before each PROGRAMBUILD stage transition.
 
-| Transition | Challenge Gate Required |
-|---|---|
-| Idea Intake → Stage 0 (Inputs) | Yes |
-| Stage 0 → Stage 1 (Feasibility) | Yes |
-| Stage 1 → Stage 2 (Research) | Yes |
-| Stage 2 → Stage 3 (Requirements) | Yes |
-| Stage 3 → Stage 4 (Architecture) | Yes |
-| Stage 4 → Stage 5 (Scaffold) | Yes |
-| Stage 5 → Stage 6 (Test Strategy) | Yes |
-| Stage 6 → Stage 7 (Implementation) | Yes |
-| Stage 7 → Stage 8 (Release Readiness) | Yes |
-| Stage 8 → Stage 9 (Audit) | Yes |
-| Stage 9 → Stage 10 (Post-Launch) | Yes |
+During Stage 7, also run a convergence review when the current narrow execution view may no longer be sufficient, for example when:
 
-During Stage 7, also run a **mid-implementation convergence review when risk indicates that the narrow work-packet view is no longer enough**. Typical triggers include:
-
-- several completed slices now interact across the same contract, state, or dependency boundary;
+- completed slices now interact across a shared contract/state/dependency boundary;
 - architecture, requirements, auth/trust, schema, migration, environment, or dependency assumptions changed;
-- previously trusted evidence was invalidated;
-- scope or decision churn is accumulating;
-- a meaningful milestone or handoff has been reached;
-- the blast radius of the next slice is materially wider than the current packet;
-- the operator or agent can no longer answer quickly what remains authoritative and what evidence is still valid.
+- trusted evidence was invalidated;
+- scope/decision churn is accumulating;
+- a meaningful milestone or handoff is reached;
+- the next slice has materially wider blast radius;
+- the operator/agent can no longer answer quickly what is authoritative and what evidence remains valid.
 
-A team MAY choose a time- or slice-based reminder as a local heuristic, but PROGRAMBUILD does not define a universal feature count or calendar cadence as proof that convergence is due.
+A team MAY configure time/slice reminders, but elapsed time or a fixed feature count is never proof that convergence is required.
 
 ---
 
-# The Eight-Part Checklist
+## 3. Gate-Part Selection
+
+### Lite
+
+Minimum: **A, C, F**.
+
+Add B, D, E, G, or H only when the current transition/change makes that risk relevant.
+
+### Product
+
+Minimum at every stage transition: **A, C, F**.
+
+Add stage/risk-relevant parts:
+
+| Part | Add when |
+|---|---|
+| B — Assumptions / evidence | prior assumptions/evidence materially support the next decision, or an invalidation trigger may have occurred |
+| D — Skipped work | anything was deferred, partial, blocked, TODO, or intentionally omitted |
+| E — Blast radius / verification | architecture, contracts, implementation, config, schema, environment, integration, or release behavior changed or is about to change materially |
+| G — Dependency / KB health | Stage 4+ when a dependency/vendor/platform/research fact is material to the decision |
+| H — Architecture / requirements / implementation alignment | Stage 6+, and earlier whenever implementation already exists or a contract/auth/schema change is being evaluated |
+
+**Full A–H Product convergence is required** when the boundary itself justifies a whole-system view, especially:
+
+- Stage 7 → Stage 8 release readiness;
+- material release candidate / production handoff;
+- major architecture/scope/decision reset;
+- evidence invalidation crosses several control surfaces;
+- the selected parts reveal uncertainty whose blast radius cannot be bounded safely.
+
+### Enterprise
+
+Use all eight parts with retained evidence and approver/sign-off behavior appropriate to the project. Enterprise may still reuse valid evidence; it does not need to rerun unchanged proof without an invalidation reason.
+
+---
+
+# The Eight Gate Parts
 
 ## Part A — Kill Criteria Re-Check
 
-Re-read the actual kill criteria from `FEASIBILITY.md`.
+Re-read the actual applicable kill criteria from `FEASIBILITY.md`.
 
-| Kill Criterion | Still False? | Evidence | Action If True |
-|---|---|---|---|
-| (copy from FEASIBILITY.md) | Yes / No / Trending | | |
-| | | | |
-| | | | |
+Ask:
 
-If any criterion is true or trending materially toward true, stop and record the finding in `DECISION_LOG.md`. Decide whether to kill, pause, reshape, or run a bounded spike.
+- Is any kill criterion now true or materially trending true?
+- Did new evidence make the original go/limited-spike decision invalid?
 
-Do not rely on an old “all clear” result if a relevant assumption, dependency, market condition, regulation, architecture choice, or production signal changed since that result.
+If yes, stop and record whether to kill, pause, reshape, or run a bounded spike.
 
 ---
 
 ## Part B — Assumption Decay And Evidence Validity
 
-List the top assumptions and important retained evidence from prior stages/slices.
+Ask:
 
-| Assumption / Evidence | Source | Current Direction | Invalidation Trigger Occurred? | Action |
-|---|---|---|---|---|
-| | | ↑ Stronger / → Same / ↓ Weaker | Yes / No | |
-| | | | | |
-| | | | | |
+- What relevant assumption/evidence does the next step rely on?
+- What changed since it was verified?
+- Did a documented invalidation trigger occur?
+- What evidence remains reusable?
+- What is the smallest check that re-establishes invalidated confidence?
+
+Age/session change alone is not invalidation unless the underlying fact is genuinely time-sensitive.
+
+---
+
+## Part C — Scope Integrity
+
+Compare current work against the strategic execution spine, requirements, and explicit exclusions.
 
 Ask:
 
-- What changed since the last convergence point?
-- Which assumption or verification artifact could that change invalidate?
-- Which prior evidence remains trustworthy because its scope and invalidation conditions still hold?
-- Which evidence must be re-established now?
+- Was scope added/removed without a decision?
+- Did an out-of-scope item quietly enter the work?
+- Is the success metric still current or explicitly superseded?
+- Has research, an audit, checklist, or work packet begun functioning as a second strategic plan?
 
-If an assumption weakened, name the blast radius. If evidence was invalidated, rerun the smallest check set needed to restore confidence. Do not repeat broad verification when no relevant trigger occurred.
-
----
-
-## Part C — Scope Integrity Check
-
-Compare current work against the inputs block, `REQUIREMENTS.md`, and the strategic execution spine for an existing/in-flight project.
-
-| Question | Answer |
-|---|---|
-| Has anything been added that is not authorized by the inputs/requirements/execution spine? | Yes / No — if yes, list it |
-| Has anything been removed without a recorded decision? | Yes / No — if yes, list it |
-| Has any out-of-scope item quietly moved into scope? | Yes / No — if yes, name it |
-| Is the success metric still the same or explicitly superseded? | Yes / No |
-| Has a research document, audit, readiness review, checklist, or `CURRENT_WORK_PACKET.md` started functioning as a second master plan? | Yes / No — if yes, reconcile it |
-
-If scope changed without a decision entry, record and reconcile it before proceeding.
-
-A work packet may contain the **current slice** only. It must not redefine project strategy, requirements, architecture, or milestone sequence.
+Reconcile unauthorized scope before proceeding.
 
 ---
 
-## Part D — Skipped Work Check
+## Part D — Skipped / Deferred Work
 
-| Question | Answer |
-|---|---|
-| Was anything in the previous stage/slice deferred, partially completed, or marked TODO? | Yes / No — if yes, list it |
-| Is deferred work durably tracked? | Yes / No |
-| Does it block the next stage/convergence decision? | Yes / No |
-| Was anything skipped because it was difficult rather than unnecessary? | Yes / No |
-| Did closing/replacing a work packet strand any unresolved obligation outside canonical tracking? | Yes / No |
+Ask:
 
-If deferred work blocks the next stage, resolve it or record explicit risk acceptance/deferral before proceeding.
+- What was deferred, partial, blocked, TODO, or intentionally skipped?
+- Is it durably tracked?
+- Does it block or materially weaken the next step?
+- Was something skipped because it was hard rather than unnecessary?
+
+Resolve or explicitly accept/track blocking deferred work before proceeding.
 
 ---
 
 ## Part E — Blast Radius And Verification Scope
 
-| Question | Answer |
-|---|---|
-| What changed since the last gate/convergence point? | |
-| Which requirements, contracts, decisions, flows, migrations, environments, or operational behaviors could that change affect? | |
-| What is the most expensive mistake the next stage could make? | |
-| Which existing evidence remains valid? | |
-| Which invalidation triggers occurred? | |
-| What targeted checks are required now? | |
-| What broader convergence checks are required at this boundary? | |
+Ask:
 
-The gate must distinguish **slice verification** from **convergence verification**.
+- What changed since the last trusted convergence point?
+- Which requirements/contracts/decisions/flows/schema/environment/runtime behaviors can it affect?
+- Which prior evidence remains valid?
+- Which evidence was invalidated?
+- What targeted checks restore confidence?
+- Does this boundary also require wider convergence verification?
 
-- Slice verification proves the changed/at-risk surface.
-- Convergence verification checks cross-slice coherence and release/stage-wide assumptions.
-
-Do not use “run everything” as a substitute for blast-radius reasoning. Do not use narrow tests as a substitute for a required convergence gate.
+Do not use “run everything” instead of impact reasoning. Do not use narrow tests instead of a required convergence gate.
 
 ---
 
 ## Part F — Decision Reversal Check
 
-Review `DECISION_LOG.md` for contradicted, overridden, or obsolete decisions.
-
-| Question | Answer |
-|---|---|
-| Are there decisions whose rationale no longer holds? | Yes / No — if yes, list them |
-| Are active decisions contradictory? | Yes / No — if yes, identify both |
-| Has a decision been silently abandoned? | Yes / No — if yes, name it |
-| Did a work packet, audit, or research recommendation introduce a material decision that never reached the decision log/canonical owner? | Yes / No |
-
-### Reversal rule
+Review `DECISION_LOG.md` for contradicted, overridden, obsolete, or silently abandoned decisions.
 
 When a decision is reversed:
 
 - add a new row with status `REVERSED`;
 - reference the original decision in the new row's `Replaces` field;
 - mark the original `SUPERSEDED`;
-- point the original row's `Replaces` field back to the replacing decision, matching the repository's enforced reciprocal-link invariant;
+- point the original row's `Replaces` field back to the replacing decision;
 - keep both historical rows.
 
 Example:
@@ -185,59 +175,50 @@ Two contradictory active decisions are a blocking undefined state.
 
 ---
 
-## Part G — Dependency And KB Health Check
+## Part G — Dependency And KB Health
 
-Run at Stages 4+ for Product; follow the stricter Enterprise requirements where applicable.
+Use when dependency/vendor/platform/research freshness is material.
 
-Use current dependency evidence, the PROGRAMSTART knowledge base, and research delta tooling.
+Ask:
 
-| Question | Answer |
-|---|---|
-| Are relevant research tracks current enough for this decision? | Yes / No — if no, list them |
-| Has a chosen dependency been superseded for new work? | Yes / No — if yes, name it |
-| Has pricing, licensing, API behavior, support status, or ownership materially changed? | Yes / No / Unknown |
-| Is a critical KB coverage domain only seed/partial? | Yes / No |
-| Did a dependency/environment change invalidate previously trusted verification? | Yes / No — if yes, what must be rerun? |
-| For new decisions, what downstream authority is affected? | List or n/a |
+- Has a chosen dependency/platform been superseded or materially changed?
+- Did pricing/licensing/API/support/ownership materially change?
+- Is relevant knowledge current enough for this decision?
+- Did a dependency/environment change invalidate trusted verification?
 
-At Stage 7+, “Unknown” on a material dependency question is not acceptable. Run a current check or research delta proportional to the decision.
-
-If a dependency is deprecated/superseded or materially changed, record the decision to migrate, accept risk, or spike an alternative.
+At implementation/release, “unknown” is unacceptable for a dependency fact that materially controls risk. Run the smallest current check/research delta needed.
 
 ---
 
-## Part H — Architecture, Requirements, Work-Packet, And Implementation Alignment
+## Part H — Architecture / Requirements / Implementation Alignment
 
-Run at Stages 6+. Required during Stage 7 convergence reviews for Product/Enterprise. Lite adds Part H whenever the current change can affect architecture, requirements, auth/trust, contracts, schema, or cross-slice behavior.
+Use when implementation exists or a contract/auth/schema/behavior boundary is material.
 
-| Question | Answer |
-|---|---|
-| Have architecture contracts changed in code without updating `ARCHITECTURE.md`? | Yes / No — if yes, list them |
-| Were new contracts/endpoints/auth rules introduced without architecture authority? | Yes / No — if yes, list them |
-| Does implemented auth/trust behavior match architecture? | Yes / No / Not yet implemented |
-| Are any P0 requirements now impossible or silently changed? | Yes / No — if yes, name them |
-| Has a relevant `USER_FLOWS.md` behavior been silently dropped/changed? | Yes / No / n/a |
-| Is `DECISION_LOG.md` current for material design/scope changes? | Yes / No |
-| Does every active `CURRENT_WORK_PACKET.md` still trace to current strategic authority and exact scope? | Yes / No / n/a |
-| Are completed/replaced packets reconciled into canonical state instead of accumulating as a parallel hierarchy? | Yes / No / n/a |
-| Did any code/config change invalidate retained test/environment/device/migration evidence? | Yes / No — if yes, list required re-verification |
+Ask:
 
-If implementation diverges from architecture prospectively, update architecture authority first before continuing the contradictory design.
+- Did code/config introduce or change a contract without current architecture authority?
+- Does auth/trust behavior match architecture?
+- Did any P0 requirement become impossible or silently change?
+- Did a relevant user/state flow change?
+- Are material decisions current?
+- Does the current logical/persisted work packet still trace to strategic authority?
+- Were completed packets reconciled rather than accumulated as a parallel hierarchy?
+- Did current changes invalidate retained test/environment/device/migration evidence?
 
-If an existing conflict is discovered retroactively, validated behavior may reveal stale documentation; reconcile the canonical documents and decisions before further dependent work.
+Prospective contradiction: update canonical authority before implementing the contradictory design.
 
-If a P0 requirement is impossible, stop and re-run Part A/feasibility reasoning as needed.
+Retroactive discovery: reconcile stale authority to validated reality before further dependent work.
 
 ---
 
 # Recording The Result
 
-After all required parts, record a machine-verifiable outcome before advancing.
+Record one machine-verifiable transition result, not eight pages of duplicated prose.
 
 Preferred:
 
 ```bash
-programstart advance --system programbuild --gate-result <clear|warning|blocked> --gate-notes "..."
+programstart advance --system programbuild --gate-result <clear|warning|blocked> --gate-notes "parts=<A,C,F,...>; ..."
 ```
 
 Compatible fallback: add a row to the Challenge Gate Log, then run `programstart advance --system programbuild`.
@@ -246,94 +227,74 @@ Compatible fallback: add a row to the Challenge Gate Log, then run `programstart
 
 | From Stage | To Stage | Date | Kill Criteria OK | Assumptions OK | Scope OK | Skipped Work OK | Decisions OK | Dependencies OK | Architecture OK | Proceed? | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| | | | ✅/⚠️/❌ | ✅/⚠️/❌ | ✅/⚠️/❌ | ✅/⚠️/❌ | ✅/⚠️/❌ | ✅/⚠️/❌/n/a | ✅/⚠️/❌/n/a | Yes / No / Conditional | |
+| | | | ✅/⚠️/❌ | ✅/⚠️/❌/n/a | ✅/⚠️/❌ | ✅/⚠️/❌/n/a | ✅/⚠️/❌ | ✅/⚠️/❌/n/a | ✅/⚠️/❌/n/a | Yes / No / Conditional | include parts run + material evidence |
 
 Status codes:
-- ✅ All clear
-- ⚠️ Manageable issue recorded in canonical tracking
-- ❌ Blocking issue — do not proceed
+- ✅ clear
+- ⚠️ manageable issue recorded in canonical tracking
+- ❌ blocking — do not proceed
+- n/a = gate part was not relevant at this boundary
 
-`programstart advance` treats missing gate evidence and blocking results as failures unless `--skip-gate-check` is explicitly used. Any bypass is exceptional recovery and MUST be explained in `DECISION_LOG.md`.
+`programstart advance` treats missing required gate evidence and blocking results as failures unless `--skip-gate-check` is explicitly used. Any bypass is exceptional recovery and MUST be explained in `DECISION_LOG.md`.
 
-A **mid-implementation convergence review** does not advance workflow state. Record its findings/evidence in the appropriate canonical owner, decision log, work packet close-out, or project issue tracker.
-
----
-
-# Variant Adjustments
-
-| Variant | Gate Rigor |
-|---|---|
-| Lite | Parts A, C, and F minimum; add B, D, E, G, or H whenever the current risk/change makes them relevant. |
-| Product | Complete all eight parts at stage transitions. Part G required at Stages 4+. Part H required at Stages 6+. Mid-Stage-7 convergence reviews may focus on the parts implicated by the accumulated changes, but cannot omit a material risk merely for brevity. |
-| Enterprise | Complete all eight parts with retained evidence and approver sign-off. Part G required at stages where dependency health is material. Evidence reuse requires provenance, scope, and invalidation conditions. |
+A mid-implementation convergence review does not advance workflow state. Record only durable findings/evidence in the appropriate canonical owner, decision log, issue/task, or persisted packet when one is justified.
 
 ---
 
 # Re-Entry Protocol
 
-Use this instead of the normal gate when a project resumes after a pause or material external change that could have invalidated the prior baseline.
+Use re-entry after a pause/material external change when prior confidence could plausibly have decayed.
 
-Re-entry is triggered by **plausible evidence decay**, not a universal number of days or weeks. Examples include:
+Re-entry is triggered by **plausible invalidation**, not a universal number of days/weeks.
 
-| Condition | Trigger |
-|---|---|
-| Time/pause | long enough relative to project volatility that relevant facts, dependencies, state, or assumptions may have changed |
-| Team/ownership | material ownership or responsibility change |
-| Dependency/platform | relevant version, API, pricing, licensing, support, or ownership change |
-| Research | a relevant research track reports a changed recommendation or stale critical evidence |
-| External environment | market, regulation, vendor, security, deployment, or operating condition affects prior assumptions |
-| Project state | code/config/data/deployment changed outside the prior trusted checkpoint |
+Examples:
 
-A team MAY configure local reminder intervals for its domain, but those are heuristics, not PROGRAMBUILD-wide truth.
+- relevant dependency/platform/API/pricing/licensing changed;
+- team/ownership change altered assumptions or operating responsibility;
+- market/regulation/security/production conditions changed;
+- code/config/data/deployment changed outside the trusted checkpoint;
+- a relevant research track contradicts the old baseline;
+- the pause was long relative to the volatility of facts the resumed work depends on.
 
-### Re-Entry Steps
+Steps:
 
-1. Identify the strategic execution spine and last trusted project checkpoint from durable state, not memory.
-2. Identify the **minimal prior authority/evidence set whose invalidation conditions could plausibly have occurred during the pause**.
-3. Review that set with a risk-based lens:
-   - still valid;
-   - stale;
-   - invalidated;
-   - unknown and requires current check.
-4. Check relevant dependencies/research freshness.
-5. Re-read kill criteria relevant to the resumed work.
-6. Run all eight Challenge Gate parts for the transition back into active work when Product/Enterprise requires the full gate; Lite follows its risk-proportional rule.
-7. Record a re-entry result and update stale authority before proceeding.
-8. If a kill criterion is true, stop rather than resuming on momentum.
+1. identify the strategic execution spine and last trusted checkpoint;
+2. identify only the authority/evidence whose invalidation conditions could plausibly have occurred;
+3. classify it: valid / invalidated / unknown-needs-check;
+4. run the gate parts required by the project's variant and actual resumed risk;
+5. update stale authority/evidence;
+6. stop if a kill criterion is true.
 
-Do not blindly reread every historic file or rerun every historic test merely because time passed. Re-entry should be broad enough to restore confidence, but driven by plausible invalidation and current risk.
+Do not reread every historic file or rerun every historic test merely because time passed.
 
 ---
 
 # Prompt Template
 
 ```text
-Act as a critical reviewer. Run the PROGRAMBUILD Challenge Gate for the current transition or convergence point.
+Run the PROGRAMBUILD Challenge Gate for the current transition/convergence point.
 
 First identify:
-- current strategic execution spine and stage
-- what changed since the last gate/convergence point
-- any current/recent work packet(s)
-- trusted prior evidence and documented invalidation triggers
+- strategic execution spine + current stage
+- what changed since the last trusted convergence point
+- current logical/persisted work packet if any
+- reusable evidence + invalidation triggers
 
-Then run the gate parts required by the selected variant and current risk. Product/Enterprise stage transitions use all eight parts:
-A. Kill Criteria
-B. Assumption Decay + Evidence Validity
-C. Scope Integrity
-D. Skipped Work
-E. Blast Radius + Verification Scope
-F. Decision Reversals
-G. Dependency/KB Health
-H. Architecture/Requirements/Work-Packet/Implementation Alignment
+Select gate parts using PROGRAMBUILD_CHALLENGE_GATE.md:
+- Lite/Product baseline: A, C, F
+- add B/D/E/G/H only when stage/risk makes them relevant
+- Product: use full A–H for release readiness or other whole-system convergence
+- Enterprise: full A–H with appropriate retained evidence/sign-off
 
-Challenge vague answers. Distinguish targeted slice verification from required convergence verification. Do not accept a research/audit/work packet as strategic authority unless the canonical project process adopted it.
+Challenge vague answers. Do not fill irrelevant sections as ceremony.
 
 Return:
+- parts run and why
 - clear / warning / blocked
 - exact blockers/conditions
-- evidence that remains reusable
-- evidence that was invalidated and must be re-established
-- canonical files/decisions that need reconciliation
+- evidence reused
+- evidence invalidated + narrow re-verification required
+- canonical reconciliation required
 - whether stage advance is permitted
 ```
 
@@ -341,20 +302,20 @@ Return:
 
 # Anti-Patterns
 
-| Anti-Pattern | Why It Fails | Better Behavior |
-|---|---|---|
-| Filling the log without reading current kill criteria | ceremony replaces risk detection | read actual current authority |
-| Saying “no scope change” reflexively | hides drift | compare against requirements/spine |
-| Running every test at every gate without blast-radius reasoning | expensive and obscures why evidence matters | identify invalidation, then run targeted + required convergence checks |
-| Keeping verification too narrow at release | slice confidence is not release confidence | widen at convergence |
-| Treating a work packet as a mini-master-plan | creates authority split | derive it from the spine and replace it |
-| Treating newer research as automatically authoritative | recency is not authority | adopt deltas through canonical process |
-| Re-entry by rereading/retesting everything | high cost, low signal | risk/invalidation-based revalidation |
-| Triggering convergence only because a fixed counter/time elapsed | substitutes arbitrary cadence for risk reasoning | use local reminders as heuristics, but gate on accumulated change/risk |
-| Skipping a required gate because of urgency | pushes uncertainty downstream | run the appropriate gate; Lite can be concise |
+| Anti-Pattern | Better behavior |
+|---|---|
+| Filling all sections without risk relevance | select the minimum gate parts that cover material risk |
+| Saying “no scope change” reflexively | compare against current requirements/spine |
+| Running every test at every gate | identify invalidation, then run targeted + required convergence checks |
+| Keeping verification too narrow at release | widen at release/whole-system convergence |
+| Treating a work packet as a mini-master-plan | derive it from the spine and close/reconcile it |
+| Treating newer research as authority | adopt useful deltas through canonical process |
+| Re-entry by rereading/retesting everything | revalidate plausible invalidation only |
+| Triggering convergence from a fixed counter alone | use actual accumulated change/risk; counters are reminders only |
+| Skipping a material risk because its gate part is optional | optional means relevance-driven, not ignorable |
 
 ---
 
 ## Operating Principle
 
-**Rigor means knowing what is authoritative, what changed, what evidence is still valid, and what must be proven now. It does not mean maximizing document reads, test reruns, or fixed process counters.**
+**Rigor means knowing what is authoritative, what changed, what evidence remains valid, and what must be proven now. Rigor is not the number of boxes filled.**

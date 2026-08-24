@@ -78,3 +78,18 @@ def test_main_delegates_mutation_after_profile_aware_preflight(monkeypatch) -> N
 
     assert result == 0
     assert delegated == [["--system", "programbuild", "--gate-result", "clear", "--skip-preflight"]]
+
+
+def test_defer_preserves_state_engine_bypass_without_completion_preflight(monkeypatch) -> None:
+    delegated: list[list[str]] = []
+    monkeypatch.setattr(advance, "_delegate", lambda arguments: delegated.append(arguments) or 0)
+    monkeypatch.setattr(
+        advance,
+        "variant_aware_preflight",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(AssertionError("completion preflight must not run for --defer")),
+    )
+
+    result = advance.main(["--system", "programbuild", "--defer", "--notes", "pause for external input"])
+
+    assert result == 0
+    assert delegated == [["--system", "programbuild", "--defer", "--notes", "pause for external input"]]

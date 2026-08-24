@@ -6,7 +6,7 @@ Purpose: Reusable stage-transition and convergence checklist that prevents silen
 Owner: Stage Owner (or Solo Operator)
 Last updated: 2026-08-24
 Depends on: `PROGRAMBUILD.md`, `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`, `FEASIBILITY.md`, `REQUIREMENTS.md`, `DECISION_LOG.md`
-Authority: Canonical for stage transition validation
+Authority: Canonical for stage transition validation and mid-stage convergence criteria
 
 ---
 
@@ -47,7 +47,17 @@ Run this gate before starting a new PROGRAMBUILD stage.
 | Stage 8 → Stage 9 (Audit) | Yes |
 | Stage 9 → Stage 10 (Post-Launch) | Yes |
 
-During Stage 7, also run a **mid-implementation convergence review** every 3–5 meaningful slices/features, at least weekly during high-change execution, or sooner when blast radius warrants. This is not a stage advance; it is a widened coherence check.
+During Stage 7, also run a **mid-implementation convergence review when risk indicates that the narrow work-packet view is no longer enough**. Typical triggers include:
+
+- several completed slices now interact across the same contract, state, or dependency boundary;
+- architecture, requirements, auth/trust, schema, migration, environment, or dependency assumptions changed;
+- previously trusted evidence was invalidated;
+- scope or decision churn is accumulating;
+- a meaningful milestone or handoff has been reached;
+- the blast radius of the next slice is materially wider than the current packet;
+- the operator or agent can no longer answer quickly what remains authoritative and what evidence is still valid.
+
+A team MAY choose a time- or slice-based reminder as a local heuristic, but PROGRAMBUILD does not define a universal feature count or calendar cadence as proof that convergence is due.
 
 ---
 
@@ -158,17 +168,18 @@ Review `DECISION_LOG.md` for contradicted, overridden, or obsolete decisions.
 
 When a decision is reversed:
 
-- add a new row with status `REVERSED` or the repository’s currently defined reversal status;
-- reference the original decision in `Replaces`;
+- add a new row with status `REVERSED`;
+- reference the original decision in the new row's `Replaces` field;
 - mark the original `SUPERSEDED`;
+- point the original row's `Replaces` field back to the replacing decision, matching the repository's enforced reciprocal-link invariant;
 - keep both historical rows.
 
 Example:
 
 | ID | Date | Decision | Status | Replaces | Rationale |
 |---|---|---|---|---|---|
-| D-005 | 2026-04-01 | Use Postgres instead of SQLite | ACTIVE | D-002 | Concurrency spike invalidated the original assumption |
-| D-002 | 2026-03-15 | Use SQLite for persistence | SUPERSEDED | — | Original decision superseded by D-005 |
+| D-005 | 2026-04-01 | Use Postgres instead of SQLite | REVERSED | D-002 | Concurrency spike invalidated the original assumption |
+| D-002 | 2026-03-15 | Use SQLite for persistence | SUPERSEDED | D-005 | Original decision superseded by D-005 |
 
 Two contradictory active decisions are a blocking undefined state.
 
@@ -182,14 +193,14 @@ Use current dependency evidence, the PROGRAMSTART knowledge base, and research d
 
 | Question | Answer |
 |---|---|
-| Are relevant research tracks current? | Yes / No — if no, list them |
+| Are relevant research tracks current enough for this decision? | Yes / No — if no, list them |
 | Has a chosen dependency been superseded for new work? | Yes / No — if yes, name it |
 | Has pricing, licensing, API behavior, support status, or ownership materially changed? | Yes / No / Unknown |
 | Is a critical KB coverage domain only seed/partial? | Yes / No |
 | Did a dependency/environment change invalidate previously trusted verification? | Yes / No — if yes, what must be rerun? |
 | For new decisions, what downstream authority is affected? | List or n/a |
 
-At Stage 7+, “Unknown” on a material dependency question is not acceptable. Run a quick current check or research delta.
+At Stage 7+, “Unknown” on a material dependency question is not acceptable. Run a current check or research delta proportional to the decision.
 
 If a dependency is deprecated/superseded or materially changed, record the decision to migrate, accept risk, or spike an alternative.
 
@@ -197,7 +208,7 @@ If a dependency is deprecated/superseded or materially changed, record the decis
 
 ## Part H — Architecture, Requirements, Work-Packet, And Implementation Alignment
 
-Run at Stages 6+. Required during Stage 7 convergence reviews for Product/Enterprise.
+Run at Stages 6+. Required during Stage 7 convergence reviews for Product/Enterprise. Lite adds Part H whenever the current change can affect architecture, requirements, auth/trust, contracts, schema, or cross-slice behavior.
 
 | Question | Answer |
 |---|---|
@@ -252,38 +263,41 @@ A **mid-implementation convergence review** does not advance workflow state. Rec
 
 | Variant | Gate Rigor |
 |---|---|
-| Lite | Parts A, C, and F minimum; add B/E/H whenever the slice or risk makes them relevant. Part G optional unless dependency risk is material. |
-| Product | Complete all eight parts at stage transitions. Part G required at Stages 4+. Part H required at Stages 6+. Mid-Stage-7 convergence reviews may focus on A, B, C, E, F, G, H unless D is relevant. |
-| Enterprise | Complete all eight parts with retained evidence and approver sign-off. Part G required at all stages where dependencies exist. Evidence reuse requires provenance, scope, and invalidation conditions. |
+| Lite | Parts A, C, and F minimum; add B, D, E, G, or H whenever the current risk/change makes them relevant. |
+| Product | Complete all eight parts at stage transitions. Part G required at Stages 4+. Part H required at Stages 6+. Mid-Stage-7 convergence reviews may focus on the parts implicated by the accumulated changes, but cannot omit a material risk merely for brevity. |
+| Enterprise | Complete all eight parts with retained evidence and approver sign-off. Part G required at stages where dependency health is material. Evidence reuse requires provenance, scope, and invalidation conditions. |
 
 ---
 
 # Re-Entry Protocol
 
-Use this instead of the normal gate when a project resumes after a significant pause or a major external change invalidates the prior baseline.
+Use this instead of the normal gate when a project resumes after a pause or material external change that could have invalidated the prior baseline.
 
-Run re-entry when any of these applies:
+Re-entry is triggered by **plausible evidence decay**, not a universal number of days or weeks. Examples include:
 
 | Condition | Trigger |
 |---|---|
-| Time since meaningful review | > 4 weeks by default, adjusted for project volatility |
-| Team/ownership changed | material change |
-| Major dependency/platform version/change | any relevant material change |
-| Research track updated with changed outcome | relevant change |
-| External event affects feasibility/compliance/vendor assumptions | any material event |
+| Time/pause | long enough relative to project volatility that relevant facts, dependencies, state, or assumptions may have changed |
+| Team/ownership | material ownership or responsibility change |
+| Dependency/platform | relevant version, API, pricing, licensing, support, or ownership change |
+| Research | a relevant research track reports a changed recommendation or stale critical evidence |
+| External environment | market, regulation, vendor, security, deployment, or operating condition affects prior assumptions |
+| Project state | code/config/data/deployment changed outside the prior trusted checkpoint |
+
+A team MAY configure local reminder intervals for its domain, but those are heuristics, not PROGRAMBUILD-wide truth.
 
 ### Re-Entry Steps
 
-1. Identify the strategic execution spine and last completed stage from durable state, not memory.
+1. Identify the strategic execution spine and last trusted project checkpoint from durable state, not memory.
 2. Identify the **minimal prior authority/evidence set whose invalidation conditions could plausibly have occurred during the pause**.
-3. Review completed stage outputs with a risk-based lens:
+3. Review that set with a risk-based lens:
    - still valid;
    - stale;
    - invalidated;
    - unknown and requires current check.
 4. Check relevant dependencies/research freshness.
-5. Re-read kill criteria.
-6. Run all eight Challenge Gate parts for the transition back into active work.
+5. Re-read kill criteria relevant to the resumed work.
+6. Run all eight Challenge Gate parts for the transition back into active work when Product/Enterprise requires the full gate; Lite follows its risk-proportional rule.
 7. Record a re-entry result and update stale authority before proceeding.
 8. If a kill criterion is true, stop rather than resuming on momentum.
 
@@ -294,7 +308,7 @@ Do not blindly reread every historic file or rerun every historic test merely be
 # Prompt Template
 
 ```text
-Act as a critical reviewer. Run the 8-part PROGRAMBUILD Challenge Gate for the current transition or convergence point.
+Act as a critical reviewer. Run the PROGRAMBUILD Challenge Gate for the current transition or convergence point.
 
 First identify:
 - current strategic execution spine and stage
@@ -302,7 +316,7 @@ First identify:
 - any current/recent work packet(s)
 - trusted prior evidence and documented invalidation triggers
 
-Then run Parts A–H:
+Then run the gate parts required by the selected variant and current risk. Product/Enterprise stage transitions use all eight parts:
 A. Kill Criteria
 B. Assumption Decay + Evidence Validity
 C. Scope Integrity
@@ -336,10 +350,11 @@ Return:
 | Treating a work packet as a mini-master-plan | creates authority split | derive it from the spine and replace it |
 | Treating newer research as automatically authoritative | recency is not authority | adopt deltas through canonical process |
 | Re-entry by rereading/retesting everything | high cost, low signal | risk/invalidation-based revalidation |
-| Skipping a gate because of urgency | pushes uncertainty downstream | run the appropriate gate; Lite can be concise |
+| Triggering convergence only because a fixed counter/time elapsed | substitutes arbitrary cadence for risk reasoning | use local reminders as heuristics, but gate on accumulated change/risk |
+| Skipping a required gate because of urgency | pushes uncertainty downstream | run the appropriate gate; Lite can be concise |
 
 ---
 
 ## Operating Principle
 
-**Rigor means knowing what is authoritative, what changed, what evidence is still valid, and what must be proven now. It does not mean maximizing document reads or test reruns.**
+**Rigor means knowing what is authoritative, what changed, what evidence is still valid, and what must be proven now. It does not mean maximizing document reads, test reruns, or fixed process counters.**

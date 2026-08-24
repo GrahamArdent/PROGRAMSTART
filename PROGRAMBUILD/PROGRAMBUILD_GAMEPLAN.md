@@ -116,7 +116,7 @@ It prevents:
 
 1. Produce or update `FEASIBILITY.md`.
 2. Define observable/falsifiable kill criteria.
-3. Estimate effort/cost at the rigor appropriate to the variant.
+3. Estimate effort/cost at the rigor appropriate to the variant and the precision supported by current evidence.
 4. Record `go`, `limited spike`, or `no-go`.
 5. For an existing project, state whether the proposed change aligns with, weakens, or requires a delta to current strategic authority.
 
@@ -193,7 +193,7 @@ It prevents:
 
 1. Create or update `ARCHITECTURE.md` for the actual PRODUCT_SHAPE.
 2. Create/update `RISK_SPIKES.md` for material unknowns.
-3. Run the smallest spike that can resolve each medium/high-impact blocking unknown.
+3. Run the smallest spike that can resolve each blocking unknown whose impact justifies experimentation.
 4. Record spike evidence and decisions.
 5. Check dependency/KB freshness where relevant.
 
@@ -296,12 +296,16 @@ For every **non-trivial coherent slice**:
 
 For trivial work, state the same objective/non-goal/context/evidence/verification fields inline instead of creating unnecessary packet ceremony.
 
-### Periodic Convergence During Stage 7
+### Convergence During Stage 7
 
-Every 3–5 meaningful slices/features, weekly for active high-change work, or sooner when blast radius warrants:
+Trigger a wider convergence review when the narrow packet view may no longer be sufficient. Use the trigger logic in `PROGRAMBUILD_CHALLENGE_GATE.md`, including accumulated cross-slice interaction, wider blast radius, architecture/scope/decision churn, evidence invalidation, dependency/environment change, or a meaningful milestone/handoff.
 
-- run the applicable Challenge Gate portions, including Parts A, C, F, G, and H for Product/Enterprise as required;
-- re-check kill criteria and assumption decay;
+A project MAY configure local time- or slice-count reminders, but they are heuristics rather than universal PROGRAMBUILD gates.
+
+At a Stage 7 convergence review:
+
+- run the Challenge Gate parts required by the selected variant and the actual risks implicated by accumulated changes;
+- re-check kill criteria and assumption/evidence validity;
 - check cross-slice scope creep;
 - reconcile decision reversals;
 - review dependency health when due or invalidated;
@@ -349,7 +353,7 @@ Stage 8 deliberately widens context and verification after task-scoped Stage 7 e
 - [ ] Monitoring covers defined SLOs/SLIs.
 - [ ] Kill criteria are still false.
 - [ ] Active decisions remain coherent.
-- [ ] Dependency health is current.
+- [ ] Dependency health is current enough for release confidence.
 - [ ] Release-critical evidence is current for the actual release candidate.
 
 **Output:** Release readiness + go/no-go evidence.
@@ -411,7 +415,7 @@ For each systemic lesson, map it to the canonical PROGRAMBUILD owner most capabl
 | Execution sequencing gap | `PROGRAMBUILD_GAMEPLAN.md` |
 | KB/research gap | knowledge-base/research assets |
 
-If the same systemic lesson appears across 3+ projects, a template update is mandatory unless a documented decision explains why not.
+A template change becomes mandatory when repeated evidence shows the lesson is systemic and the reusable methodology is the right prevention point. Teams MAY use a local recurrence count as a reminder, but PROGRAMBUILD does not define a universal number of projects that converts a lesson into truth.
 
 **Output:** Post-launch review + follow-up ownership + template improvement proposals.
 
@@ -439,7 +443,7 @@ If the same systemic lesson appears across 3+ projects, a template update is man
 | Variant | Gameplan rigor |
 |---|---|
 | Lite | Run all stages needed by the project; keep artifacts/packets brief. Challenge Gate minimum follows Lite rules. Reuse evidence aggressively when risk is low and invalidation is clear. |
-| Product | Run all required stages with full cross-stage validation. Complete all **8** Challenge Gate parts as specified; Part G required at Stages 4+, Part H at Stages 6+. Use bounded packets for non-trivial implementation. |
+| Product | Run all required stages with full cross-stage validation. Complete all **8** Challenge Gate parts at stage transitions as specified; Part G applies at Stages 4+ when dependency health is material, and Part H applies at Stages 6+. Use bounded packets for non-trivial implementation. |
 | Enterprise | Full stages, approvals, retained evidence, all **8** Challenge Gate parts, stronger provenance/control traceability, and governed work packets. Evidence reuse requires explicit scope/provenance/invalidation conditions. |
 
 ---

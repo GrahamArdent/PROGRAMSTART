@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 from collections import defaultdict, deque
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from heapq import heapify, heappop, heappush
-from typing import Any, Iterable, Mapping
+from typing import Any
 
 DEFAULT_DEPENDENCY_TYPES = frozenset({"depends_on"})
 DEFAULT_IMPACT_TYPES = frozenset({"depends_on", "authority_dependency"})
@@ -33,7 +34,7 @@ class GraphEdge:
     source: str = ""
 
     @classmethod
-    def from_relation(cls, relation: Mapping[str, Any] | Any) -> GraphEdge:
+    def from_relation(cls, relation: Mapping[str, Any] | object) -> GraphEdge:
         """Create an edge from a context-index relation dict or RelationRecord-like object."""
         if isinstance(relation, Mapping):
             relation_type = str(relation.get("type", ""))
@@ -87,7 +88,7 @@ class DependencyGraph:
 
     def __init__(
         self,
-        relations: Iterable[Mapping[str, Any] | Any] = (),
+        relations: Iterable[Mapping[str, Any] | object] = (),
         *,
         relation_types: Iterable[str] = DEFAULT_DEPENDENCY_TYPES,
     ) -> None:

@@ -71,6 +71,7 @@ programstart-guide = "scripts.programstart_step_guide:main"
 programstart-init = "scripts.programstart_init:main"
 programstart-create = "scripts.programstart_create:main"
 programstart-attach = "scripts.programstart_attach:main"
+programstart-adopt = "scripts.programstart_adopt:main"
 programstart-recommend = "scripts.programstart_recommend:main"
 programstart-impact = "scripts.programstart_impact:main"
 programstart-prompt-eval = "scripts.programstart_prompt_eval:main"
@@ -143,6 +144,7 @@ source = [
   "scripts.programstart_cli",
   "scripts.programstart_advance",
   "scripts.programstart_artifact_profiles",
+  "scripts.programstart_adopt",
   "scripts.programstart_backup",
   "scripts.programstart_context",
   "scripts.programstart_evidence",

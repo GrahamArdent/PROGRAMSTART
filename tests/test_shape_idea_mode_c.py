@@ -26,6 +26,23 @@ def test_shape_idea_tracks_eight_dimension_mode_c_contract() -> None:
         assert fragment not in text
 
 
+def test_mode_c_does_not_promote_legacy_repository_evidence_to_product_intent() -> None:
+    text = (ROOT / ".github" / "prompts" / "shape-idea.prompt.md").read_text(encoding="utf-8")
+
+    required_fragments = (
+        "Repository state is authoritative for **what currently exists and behaves**",
+        "it is not automatically authoritative for **what the product has been decided to become**",
+        "current explicit operator/user decisions",
+        "designated execution spine or canonical strategic authority",
+        "descriptive documentation such as `README.md`",
+        "legacy code, historical frameworks, archived artifacts, and obsolete dependencies",
+        "MUST NOT by itself become a rebuild requirement or strategic direction",
+        "reconcile apparent repository behavior with current product authority",
+    )
+    for fragment in required_fragments:
+        assert fragment in text
+
+
 def test_idea_intake_uses_validator_compatible_stop_signal_fields() -> None:
     text = (ROOT / "PROGRAMBUILD" / "PROGRAMBUILD_IDEA_INTAKE.md").read_text(encoding="utf-8")
 

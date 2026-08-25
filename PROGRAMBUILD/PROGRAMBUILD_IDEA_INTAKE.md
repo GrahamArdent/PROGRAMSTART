@@ -4,7 +4,7 @@
 
 Purpose: Decompose a raw idea, research-backed opportunity, or existing-project change into a structured problem statement before the inputs block is filled or a planning delta is proposed.
 Owner: Product Lead
-Last updated: 2026-08-24
+Last updated: 2026-08-25
 Depends on: `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` for entry-mode, authority, evidence-reuse, and existing-project rules
 Authority: Canonical for idea decomposition and pre-feasibility challenge
 
@@ -144,9 +144,9 @@ Failure pattern this catches: **sunk-cost continuation.** Without pre-committed 
 For an existing project, these may be change-specific stop/escalation conditions rather than reasons to kill the entire product.
 
 ```text
-KILL_OR_STOP_SIGNAL_1:
-KILL_OR_STOP_SIGNAL_2:
-KILL_OR_STOP_SIGNAL_3:
+KILL_SIGNAL_1:
+KILL_SIGNAL_2:
+KILL_SIGNAL_3:
 EVIDENCE_USED:
 ```
 

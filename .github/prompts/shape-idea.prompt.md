@@ -3,7 +3,7 @@ description: "Eight-dimension idea and change decomposition for raw ideas, resea
 name: "Shape Idea"
 argument-hint: "Describe the idea, research finding, or existing-project change to evaluate"
 agent: "agent"
-version: "1.1"
+version: "1.2"
 ---
 
 # Shape Idea — Eight-Dimension Idea And Change Decomposition
@@ -41,6 +41,23 @@ Read only the authority needed for the selected mode:
 3. Mode A/B only: `PROGRAMBUILD/PROGRAMBUILD.md` §7 and `PROGRAMBUILD/PROGRAMBUILD_KICKOFF_PACKET.md`
 4. Mode C only: the existing project's current execution spine and the exact project-specific authority/evidence required for the change
 
+### Mode C Authority Precedence And Legacy-Evidence Guard
+
+Repository state is authoritative for **what currently exists and behaves**, but it is not automatically authoritative for **what the product has been decided to become**.
+
+When Mode C encounters conflicting or historical signals, rank product-intent evidence in this order unless the project explicitly defines a different hierarchy:
+
+1. current explicit operator/user decisions;
+2. the project's designated execution spine or canonical strategic authority;
+3. accepted and persisted product decisions, requirements, architecture, and decision records;
+4. current implementation and tests as evidence of actual behavior;
+5. descriptive documentation such as `README.md`;
+6. legacy code, historical frameworks, archived artifacts, and obsolete dependencies as migration/history evidence.
+
+A README, dependency, framework, prototype UI, old run command, or legacy implementation MUST NOT by itself become a rebuild requirement or strategic direction.
+
+Before selecting or implementing a Mode-C rebuild slice, reconcile apparent repository behavior with current product authority. If they conflict, explicitly identify the conflict and follow the higher-ranked current authority. Treat the lower-ranked artifact as historical or migration evidence unless the project deliberately re-adopts it.
+
 ## Protocol
 
 1. **Select the entry mode.** Use Mode A for a raw idea, Mode B for a research-backed project not yet structured for execution, or Mode C for an existing/in-flight project.
@@ -48,11 +65,11 @@ Read only the authority needed for the selected mode:
 2. **Establish what is already known.**
    - Mode A: ask the eight questions directly.
    - Mode B: prefill from trustworthy research and ask only about gaps, stale evidence, ambiguity, or contradictions.
-   - Mode C: prefill from current project authority, implementation state, and still-valid evidence. Do not ask the operator to restate settled facts without an invalidation reason.
+   - Mode C: prefill from current project authority, implementation state, and still-valid evidence. Do not ask the operator to restate settled facts without an invalidation reason. Reconcile legacy repository evidence against current product authority before inferring rebuild direction.
 
 3. **Challenge all eight dimensions from `PROGRAMBUILD_IDEA_INTAKE.md`.** Do not hardcode substitute questions. The canonical dimensions include the UI need (`NEEDS_UI`) as well as problem, user, current solution, measurable outcome, exclusions, stop signals, and cheapest validation.
 
-4. **Resolve red flags.** Check each answer against the Challenge Review in IDEA_INTAKE. Challenge solution-first framing, phantom users, output-only success metrics, unbounded scope, vague stop criteria, build-first validation, unresolved UI assumptions, unnecessary re-verification, or creation of a competing execution spine.
+4. **Resolve red flags.** Check each answer against the Challenge Review in IDEA_INTAKE. Challenge solution-first framing, phantom users, output-only success metrics, unbounded scope, vague stop criteria, build-first validation, unresolved UI assumptions, unnecessary re-verification, creation of a competing execution spine, or elevation of legacy implementation evidence into current product intent without an explicit project decision.
 
 5. **Capture the canonical fields where a filled intake artifact is appropriate.** The primary gate fields remain:
    - `PROBLEM_RAW`

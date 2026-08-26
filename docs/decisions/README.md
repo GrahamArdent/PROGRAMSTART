@@ -33,6 +33,7 @@ Legacy pre-register ADRs: `0001`-`0003` predate the current `DECISION_LOG.md` li
 | [0021](0021-prompt-builder-mode-b-context-driven-generation.md) | Prompt Builder Mode B — Context-Driven Generation | accepted | 2026-04-19 |
 | [0022](0022-sync-pull-mode-with-from-template.md) | Sync Pull Mode with --from-template | accepted | 2026-04-19 |
 | [0023](0023-use-one-strategic-execution-spine-with-bounded-work-packets.md) | Use One Strategic Execution Spine with Bounded Work Packets | accepted | 2026-08-24 |
+| [0024](0024-rank-current-product-authority-over-legacy-repository-evidence.md) | Rank Current Product Authority over Legacy Repository Evidence in Mode C | accepted | 2026-08-25 |
 
 ## Rules
 

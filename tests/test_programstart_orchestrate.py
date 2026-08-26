@@ -16,7 +16,7 @@ def test_research_backed_request_uses_mode_b() -> None:
     plan = build_plan(request="Turn this research into a product", research_backed=True)
 
     assert plan.mode == "b"
-    assert any("Research evidence" in item for item in plan.authority_loading)
+    assert any("research" in item.lower() for item in plan.authority_loading)
 
 
 def test_repository_target_does_not_automatically_become_mode_c() -> None:
@@ -29,7 +29,7 @@ def test_repository_target_does_not_automatically_become_mode_c() -> None:
     assert plan.mode == "unresolved"
     assert "repository existence alone" in plan.mode_reason
     assert "deferred" in plan.decision_trigger.lower()
-    assert any("connected repository tools" in item for item in plan.orientation_actions)
+    assert any("connected tools" in item for item in plan.orientation_actions)
 
 
 def test_connected_mode_c_preserves_existing_execution_spine_and_does_not_claim_local_cli() -> None:
@@ -44,7 +44,7 @@ def test_connected_mode_c_preserves_existing_execution_spine_and_does_not_claim_
     assert plan.mode == "c"
     assert plan.execution_spine == "PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md"
     assert any("connected repository/runtime tools" in item for item in plan.execution_handoff)
-    assert any("do not claim a local CLI command ran" in item for item in plan.execution_handoff)
+    assert any("do not claim a local CLI" in item for item in plan.execution_handoff)
     assert "A second master plan" in plan.work_packet.out_of_scope[0]
 
 

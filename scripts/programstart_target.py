@@ -20,22 +20,46 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
     from programstart_bootstrap import copy_file
     from programstart_common import load_registry, warn_direct_script_invocation, workspace_path, write_json
 
+# External control starts deliberately narrow. These commands are either read-only,
+# write only derived prompt/snapshot evidence, or operate entirely on the decision
+# router. Stage mutation and template-runtime convergence stay local until their
+# validators explicitly understand the split runtime/project boundary.
 TARGET_COMMANDS = frozenset(
     {
-        "advance",
-        "closeout",
         "decide",
         "diff",
         "drift",
         "guide",
         "jit-check",
-        "log",
         "next",
         "progress",
         "prompt-build",
         "state",
         "status",
         "validate",
+    }
+)
+
+TARGET_STATE_COMMANDS = frozenset({"show", "snapshot", "snapshots", "diff"})
+TARGET_VALIDATE_CHECKS = frozenset(
+    {
+        "required-files",
+        "metadata",
+        "workflow-state",
+        "placeholder-content",
+        "intake-complete",
+        "feasibility-criteria",
+        "research-complete",
+        "requirements-complete",
+        "architecture-contracts",
+        "risk-spikes",
+        "risk-spikes-resolved",
+        "test-strategy-complete",
+        "scaffold-complete",
+        "implementation-entry",
+        "release-ready",
+        "audit-complete",
+        "post-launch-review",
     }
 )
 
@@ -166,6 +190,43 @@ def prepare_target_control_plane(
     )
 
 
+def _validate_target_command(arguments: list[str]) -> None:
+    if not arguments:
+        raise ValueError("Provide a target command such as `status` or `guide --system programbuild`.")
+
+    command = arguments[0]
+    if command not in TARGET_COMMANDS:
+        allowed = ", ".join(sorted(TARGET_COMMANDS))
+        raise ValueError(
+            f"Command '{command}' is not allowed through the external target control plane. Allowed: {allowed}"
+        )
+
+    if command == "state":
+        if len(arguments) < 2 or arguments[1] not in TARGET_STATE_COMMANDS:
+            allowed = ", ".join(sorted(TARGET_STATE_COMMANDS))
+            raise ValueError(
+                "External target state mutation is intentionally disabled in this slice. "
+                f"Allowed state operations: {allowed}"
+            )
+
+    if command == "validate":
+        if "--check" not in arguments:
+            allowed = ", ".join(sorted(TARGET_VALIDATE_CHECKS))
+            raise ValueError(
+                "Bare `validate` includes template-runtime checks that do not belong in a lean target. "
+                f"Choose a target-local --check. Allowed: {allowed}"
+            )
+        index = arguments.index("--check")
+        if index + 1 >= len(arguments):
+            raise ValueError("`validate --check` requires a check name.")
+        check_name = arguments[index + 1]
+        if check_name not in TARGET_VALIDATE_CHECKS:
+            allowed = ", ".join(sorted(TARGET_VALIDATE_CHECKS))
+            raise ValueError(
+                f"Validation check '{check_name}' is not target-local. Allowed through external control: {allowed}"
+            )
+
+
 def run_target_command(destination_root: Path, arguments: list[str]) -> int:
     """Run central PROGRAMSTART machinery against a linked target checkout."""
     destination_root = destination_root.expanduser().resolve()
@@ -177,15 +238,8 @@ def run_target_command(destination_root: Path, arguments: list[str]) -> int:
             "Target has no control registry. Run `programstart target --repo <path> --prepare` once, "
             "or recreate it with the current methodology-only bootstrap."
         )
-    if not arguments:
-        raise ValueError("Provide a target command such as `status` or `guide --system programbuild`.")
 
-    command = arguments[0]
-    if command not in TARGET_COMMANDS:
-        allowed = ", ".join(sorted(TARGET_COMMANDS))
-        raise ValueError(
-            f"Command '{command}' is not allowed through the external target control plane. Allowed: {allowed}"
-        )
+    _validate_target_command(arguments)
 
     env = os.environ.copy()
     env["PROGRAMSTART_ROOT"] = str(destination_root)

@@ -134,14 +134,38 @@ def test_run_target_command_reexecutes_central_runtime_against_target(
     assert str(Path(target.__file__).resolve().parents[1]) in kwargs["env"]["PYTHONPATH"]
 
 
-def test_run_target_command_rejects_factory_mutation_commands(tmp_path: Path) -> None:
+def test_target_rejects_factory_and_stage_mutation_commands(tmp_path: Path) -> None:
     destination = tmp_path / "repo"
     registry_path = destination / "config" / "process-registry.json"
     registry_path.parent.mkdir(parents=True)
     registry_path.write_text("{}\n", encoding="utf-8")
 
-    with pytest.raises(ValueError, match="not allowed"):
-        target.run_target_command(destination, ["bootstrap"])
+    for arguments in (["bootstrap"], ["advance", "--system", "programbuild"], ["closeout"]):
+        with pytest.raises(ValueError, match="not allowed"):
+            target.run_target_command(destination, list(arguments))
+
+
+def test_target_state_surface_is_read_or_evidence_only(tmp_path: Path) -> None:
+    destination = tmp_path / "repo"
+    registry_path = destination / "config" / "process-registry.json"
+    registry_path.parent.mkdir(parents=True)
+    registry_path.write_text("{}\n", encoding="utf-8")
+
+    target._validate_target_command(["state", "show", "--system", "programbuild"])
+    target._validate_target_command(["state", "snapshot", "--label", "checkpoint"])
+
+    with pytest.raises(ValueError, match="state mutation is intentionally disabled"):
+        target._validate_target_command(["state", "set", "--system", "programbuild"])
+
+
+def test_target_validation_requires_target_local_check() -> None:
+    target._validate_target_command(["validate", "--check", "required-files", "--system", "programbuild"])
+
+    with pytest.raises(ValueError, match="Bare `validate`"):
+        target._validate_target_command(["validate"])
+
+    with pytest.raises(ValueError, match="not target-local"):
+        target._validate_target_command(["validate", "--check", "authority-sync"])
 
 
 def test_target_cli_can_prepare_and_run_in_one_command(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:

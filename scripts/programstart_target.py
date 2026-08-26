@@ -135,7 +135,8 @@ def prepare_target_control_plane(
         raise FileNotFoundError(f"Target repository does not exist: {destination_root}")
     if not dry_run and not (destination_root / "PROGRAMBUILD").is_dir():
         raise FileNotFoundError(
-            "Target repository has no PROGRAMBUILD directory. Bootstrap/adopt PROGRAMBUILD before linking the external control plane."
+            "Target repository has no PROGRAMBUILD directory. Bootstrap/adopt PROGRAMBUILD "
+            "before linking the external control plane."
         )
 
     registry_path = destination_root / "config" / "process-registry.json"
@@ -146,7 +147,8 @@ def prepare_target_control_plane(
     manifest_path = destination_root / MANIFEST_FILENAME
     if manifest_path.exists():
         raise FileExistsError(
-            f"{MANIFEST_FILENAME} exists but config/process-registry.json is missing; repair that inconsistent link before preparing."
+            f"{MANIFEST_FILENAME} exists but config/process-registry.json is missing; "
+            "repair that inconsistent link before preparing."
         )
 
     registry = load_registry()
@@ -223,7 +225,8 @@ def _validate_target_command(arguments: list[str]) -> None:
         if check_name not in TARGET_VALIDATE_CHECKS:
             allowed = ", ".join(sorted(TARGET_VALIDATE_CHECKS))
             raise ValueError(
-                f"Validation check '{check_name}' is not target-local. Allowed through external control: {allowed}"
+                f"Validation check '{check_name}' is not target-local. "
+                f"Allowed through external control: {allowed}"
             )
 
 
@@ -248,7 +251,7 @@ def run_target_command(destination_root: Path, arguments: list[str]) -> int:
     env["PYTHONPATH"] = os.pathsep.join(part for part in (package_root, existing_pythonpath) if part)
 
     completed = subprocess.run(
-        [sys.executable, "-m", "scripts.programstart_cli", *arguments],
+        [sys.executable, "-P", "-m", "scripts.programstart_cli", *arguments],
         cwd=destination_root,
         env=env,
         check=False,
@@ -267,7 +270,11 @@ def main(argv: list[str] | None = None) -> int:
         help="Add the lightweight registry/prompts/manifest control surface before running the command.",
     )
     parser.add_argument("--project-name", help="Project name to stamp when --prepare is used.")
-    parser.add_argument("--variant", choices=["lite", "product", "enterprise"], help="Variant override for --prepare.")
+    parser.add_argument(
+        "--variant",
+        choices=["lite", "product", "enterprise"],
+        help="Variant override for --prepare.",
+    )
     parser.add_argument("--dry-run", action="store_true", help="Preview --prepare without writing files.")
     args, command_arguments = parser.parse_known_args(argv)
     destination_root = Path(args.repo)

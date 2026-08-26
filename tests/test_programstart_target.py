@@ -127,8 +127,8 @@ def test_run_target_command_reexecutes_central_runtime_against_target(
 
     command = run.call_args.args[0]
     kwargs = run.call_args.kwargs
-    assert command[:3] == [target.sys.executable, "-m", "scripts.programstart_cli"]
-    assert command[3:] == ["guide", "--system", "programbuild"]
+    assert command[:4] == [target.sys.executable, "-P", "-m", "scripts.programstart_cli"]
+    assert command[4:] == ["guide", "--system", "programbuild"]
     assert kwargs["cwd"] == destination.resolve()
     assert kwargs["env"]["PROGRAMSTART_ROOT"] == str(destination.resolve())
     assert str(Path(target.__file__).resolve().parents[1]) in kwargs["env"]["PYTHONPATH"]

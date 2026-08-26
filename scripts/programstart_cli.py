@@ -37,6 +37,7 @@ try:
         programstart_status,
         programstart_step_guide,
         programstart_sync,
+        programstart_target,
         programstart_validate,
         programstart_workflow_state,
         programstart_health_probe,
@@ -73,6 +74,7 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
     import programstart_status
     import programstart_step_guide
     import programstart_sync
+    import programstart_target
     import programstart_validate
     import programstart_workflow_state
     import programstart_health_probe
@@ -242,6 +244,8 @@ def dispatch(command: str, arguments: list[str], parser: argparse.ArgumentParser
         return run_passthrough(programstart_mutation_loop.main, "programstart mutation-loop", arguments)
     if command == "sync":
         return run_passthrough(programstart_sync.main, "programstart sync", arguments)
+    if command == "target":
+        return run_passthrough(programstart_target.main, "programstart target", arguments)
     if command == "jit-check":
         return run_jit_check(arguments)
     if command == "help":
@@ -258,4 +262,3 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":  # pragma: no cover
     warn_direct_script_invocation("'uv run programstart <command>' or 'pb <command>'")
-    raise SystemExit(main())

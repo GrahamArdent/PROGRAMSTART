@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Extended `programstart impact` with deterministic dependency blast-radius paths over `depends_on` and `authority_dependency`, including start-node resolution, path provenance, machine-readable output, and optional `--max-depth` traversal bounds while preserving existing related-record discovery.
 - Added `programstart-adopt` for non-destructive Mode-C adoption of PROGRAMBUILD into an existing repository. Adoption preserves the host engineering toolchain, adds only PROGRAMBUILD management/output surfaces plus workflow prompts and a project registry, and tracks only reusable methodology files in the sync manifest so project state and project outputs are never overwritten by template sync.
 - Added `programstart target --repo <path> ...` so the central PROGRAMSTART runtime can operate status, guide, adaptive decision routing, JIT/drift, progress, prompt generation, state inspection/snapshots, and target-local validation against a lightweight external project checkout without vendoring PROGRAMSTART's scripts/dashboard/tests into that project.
+- Added `programstart orchestrate` and an environment-aware orchestration prompt that convert a plain-language request into a bounded PROGRAMSTART execution contract for either local target control or connected repository/runtime tools without creating a second execution spine.
 
 ### Changed
 
@@ -23,7 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Made status staleness and cross-system distance warnings explicitly non-authoritative heuristics; elapsed time or ordinal distance alone no longer implies that evidence is invalid or that re-entry is required.
 - Simplified PROGRAMBUILD execution surfaces around navigator-first startup (`status` / `guide`), compact logical work packets by default, stage/risk-aware Product Challenge Gates, on-demand specialist agents, and targeted verification driven by invalidation rather than ritual.
 - Reduced duplicated operational prose across the Gameplan, Checklist, Quick Start, JIT instructions, Product variant, and algorithm launcher so detailed methodology remains in its canonical owner instead of being reloaded or recopied everywhere.
-- Changed generated-project `full-ci-gate.yml` to manual-only by default; projects may add automatic triggers when their own operating needs justify the cost.
+- Changed generated-project `full-ci-gate.yml` to manual-only by default; projects may add automatic triggers when their own operating needs justify the cost/noise.
 - Added a machine-readable Lite artifact profile so `RISK_SPIKES.md` and `AUDIT_REPORT.md` remain reusable compatibility stubs without becoming mandatory operator work; JIT guidance, status, and the preferred `programstart advance` path now use explicit conditional-artifact activation while preserving legacy body-content fallback for older repos.
 - Changed methodology-only greenfield bootstrap to include only the lightweight control surface required by the external PROGRAMSTART runtime: a flat project registry, managed workflow prompts, and sync manifest. The PROGRAMSTART executable runtime, dashboard, development tests/toolchain, and template workflows remain centralized and are still not vendored.
 

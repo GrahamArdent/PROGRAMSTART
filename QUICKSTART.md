@@ -49,7 +49,7 @@ Rules:
 
 - PROGRAMBUILD owns reusable methodology, not every project's live plan.
 - Existing projects keep their current Master Game Plan/roadmap unless explicitly replaced.
-- Research, audits, checklists, and packets are evidence/derived aids.
+- Research, audits, checklists, adaptive-router outputs, and packets are evidence/derived aids.
 - A newer document does not automatically outrank established authority.
 
 ---
@@ -63,6 +63,32 @@ Use `PROGRAMBUILD/PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` when entry-mode deci
 - **Existing / in-flight** — code/plans/state already exist; produce deltas to current authority instead of another master plan.
 
 Run Idea Intake using existing evidence to prefill settled questions.
+
+### Adaptive decision routing
+
+Do not research merely because more knowledge might be useful.
+
+If current evidence already makes a low-risk, reversible decision safe, execute it. When missing knowledge could materially change the next important decision, route that decision to the smallest justified scrutiny:
+
+```powershell
+.\scripts\pb.ps1 decide `
+  --decision "Choose the provider integration contract" `
+  --mode c `
+  --impact medium `
+  --uncertainty high `
+  --reversibility costly `
+  --evidence partial `
+  --concern contract `
+  --concern runtime
+```
+
+Research depth is qualitative:
+
+- `none` — current evidence is sufficient;
+- `targeted` — fill/refresh a bounded decision-relevant gap;
+- `deep` — reserve for high-impact, high-uncertainty decisions where evidence is absent/conflicting and focused checking cannot safely bound the decision.
+
+`decide` is advisory. It does not create a new lifecycle or execution spine. In Mode C, resolve any bounded evidence gap and return to the existing project's next executable slice.
 
 ---
 
@@ -151,6 +177,8 @@ Use `PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md` at stage transitions.
 - Product: A/C/F baseline + stage/risk-relevant B/D/E/G/H.
 - Product full A–H: release readiness and other genuinely whole-system convergence.
 - Enterprise: full A–H with retained evidence/sign-off appropriate to risk.
+
+Do not rerun adaptive-router analysis at a Challenge Gate if its evidence is still current; reuse it and run only the gate parts that the transition/convergence actually requires.
 
 Preview stage advancement:
 
@@ -254,6 +282,7 @@ uv run --extra dev pyright
 | `pb advance --system <s>` | advance after gate |
 | `pb recommend` | shape/stack guidance |
 | `pb impact <target>` | impact analysis |
+| `pb decide --decision <d>` | minimum justified decision scrutiny/research depth |
 | `pb research` | research/KB operations |
 | `pb create` | standalone project factory |
 | `pb bootstrap` | lower-level bootstrap |
@@ -262,6 +291,6 @@ uv run --extra dev pyright
 
 ## Success Rule
 
-**Narrow while executing. Widen while converging. Preserve one authority chain.**
+**Narrow while executing. Widen while converging. Investigate only uncertainty that can change a decision. Preserve one authority chain.**
 
-If the process makes you read, write, or rerun more than is needed to answer “what matters now and how do we prove it?”, simplify it.
+If the process makes you read, write, research, or rerun more than is needed to answer “what matters now and how do we prove it?”, simplify it.

@@ -13,7 +13,7 @@ If a file is missing from this index, it is not a recognized PROGRAMBUILD contro
 |---|---|---|---|---|
 | `PROGRAMBUILD_CANONICAL.md` | control | active | authority map and naming rules | document authority |
 | `PROGRAMBUILD_FILE_INDEX.md` | control | active | inventory of critical files | file inventory |
-| `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` | control | active | separates reusable methodology, project authority, active work, JIT context, and evidence reuse | planning-to-execution operating model |
+| `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` | control | active | separates reusable methodology, project authority, active work, JIT context, adaptive decision/evidence routing, and evidence reuse | planning-to-execution operating model |
 | `PROGRAMBUILD_WORK_PACKET.md` | template/protocol | active | compact logical work-packet semantics plus optional persisted format | logical work-packet semantics |
 | `PROGRAMBUILD_ADR_TEMPLATE.md` | template | active | MADR 4.0 format, status lifecycle, decision-log linkage, and supersession hygiene | ADR structure |
 | `PROGRAMBUILD_CHANGELOG.md` | control | active | system-level change history | PROGRAMBUILD change history |
@@ -62,6 +62,7 @@ The logical work packet normally lives in current task/issue/PR/session state. P
 
 | File | Type | Purpose |
 |---|---|---|
+| `scripts/programstart_decision.py` | advisory tooling | routes a material decision to the minimum justified evidence/check/research depth; never a separate authority layer |
 | `scripts/check_commit_msg.py` | enforcement | validates Conventional Commits |
 | `.github/instructions/conventional-commits.instructions.md` | instruction | commit message rules |
 | `.gitlint` | spec-reference | commit-message enforcement spec |
@@ -80,7 +81,7 @@ Prompts live in `.github/prompts/`, are registered in the process registry, and 
 
 | File | Stage | Purpose |
 |---|---|---|
-| `shape-idea.prompt.md` | 0 | idea/delta decomposition |
+| `shape-idea.prompt.md` | 0 | idea/delta decomposition plus conditional adaptive evidence routing |
 | `shape-feasibility.prompt.md` | 1 | kill criteria and viability |
 | `shape-research.prompt.md` | 2 | evidence gathering |
 | `shape-requirements.prompt.md` | 3 | requirements/flows |
@@ -97,6 +98,7 @@ Prompts live in `.github/prompts/`, are registered in the process registry, and 
 - Add new **critical PROGRAMBUILD control files** here when created.
 - Mark files as active/deprecated/replaced/derived as applicable.
 - Do not create synonyms for the same purpose.
+- Advisory tooling may be indexed for discoverability without becoming a new canonical concern.
 - Use `DECISION_LOG.md` for ongoing material project decisions.
 - Use ADRs only when durable architecture/policy rationale warrants them under current policy.
 - Filled project outputs never become canonical examples in PROGRAMSTART.
@@ -105,4 +107,4 @@ Prompts live in `.github/prompts/`, are registered in the process registry, and 
 
 ---
 
-Last updated: 2026-08-24
+Last updated: 2026-08-26

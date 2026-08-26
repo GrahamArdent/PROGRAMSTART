@@ -30,6 +30,7 @@ def test_cli_commands_contains_expected_public_commands() -> None:
         "backup",
         "recommend",
         "impact",
+        "decide",
         "research",
         "status",
         "validate",
@@ -80,6 +81,12 @@ def test_dashboard_allowed_commands_routes_workflow_actions_through_cli() -> Non
     assert commands["status"] == ["python", "-m", "scripts.programstart_cli", "status"]
     assert commands["recommend"] == ["python", "-m", "scripts.programstart_cli", "recommend"]
     assert commands["context.summary"] == ["python", "-m", "scripts.programstart_cli", "context", "query"]
+    assert commands["decide.example"][:4] == [
+        "python",
+        "-m",
+        "scripts.programstart_cli",
+        "decide",
+    ]
     assert commands["research.python-runtime"] == [
         "python",
         "-m",
@@ -115,7 +122,6 @@ def test_vscode_tasks_reference_valid_commands() -> None:
         if idx + 1 >= len(args):
             continue
         subcommand = args[idx + 1]
-        # Skip flags (e.g. --dry-run) that aren't subcommands
         if subcommand.startswith("-"):
             continue
         assert subcommand in CLI_COMMANDS, f"Task {task['label']!r} uses unknown subcommand {subcommand!r}; valid: {CLI_COMMANDS}"

@@ -4,7 +4,7 @@
 
 Purpose: Reusable transition/convergence check that catches meaningful drift without turning every boundary into the same eight-part ceremony.
 Owner: Stage Owner (or Solo Operator)
-Last updated: 2026-08-24
+Last updated: 2026-08-26
 Depends on: `PROGRAMBUILD.md`, `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`, `FEASIBILITY.md`, `REQUIREMENTS.md`, `DECISION_LOG.md`
 Authority: Canonical for stage-transition validation, risk-based gate selection, and mid-stage convergence criteria.
 
@@ -23,6 +23,27 @@ The operating rule is:
 Eight gate parts exist because they represent eight recurring failure classes. They are a **menu of controls**, not a requirement that every project fill every section at every transition.
 
 No material risk may be omitted merely to save time, but irrelevant sections should not be completed as paperwork.
+
+### Adaptive Router Boundary
+
+`PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` owns adaptive **decision-time** routing: whether a material decision can execute now, needs focused checks, or needs targeted/deep evidence before it should proceed.
+
+This file owns **stage-transition and convergence** controls. The adaptive router does not replace a Challenge Gate where the lifecycle requires one, and a router result does not create a stage transition or convergence event by itself.
+
+Reuse the same evidence instead of duplicating analysis. Typical correspondence is:
+
+| Adaptive check family | Existing Challenge Gate parts commonly relevant later |
+|---|---|
+| evidence | B / G |
+| consequence | A / E / F as applicable |
+| boundary | E / G / H |
+| proof | E / H |
+| simplicity | C / E / H |
+| Mode-C delta | B / C / F / H as applicable |
+
+The table is a reuse map, not a requirement to run every listed part. If the adaptive router already produced current evidence that remains valid at a later Challenge Gate, cite/reuse it rather than rediscovering it.
+
+If an adaptive investigation delays a protected decision, it should identify the decision being protected, missing evidence, risk of proceeding, minimum evidence required to continue, and stop condition. Do not keep a decision blocked merely because additional analysis might be interesting.
 
 ---
 
@@ -118,7 +139,7 @@ Ask:
 - Was scope added/removed without a decision?
 - Did an out-of-scope item quietly enter the work?
 - Is the success metric still current or explicitly superseded?
-- Has research, an audit, checklist, or work packet begun functioning as a second strategic plan?
+- Has research, an audit, checklist, adaptive-router output, or work packet begun functioning as a second strategic plan?
 
 Reconcile unauthorized scope before proceeding.
 
@@ -286,6 +307,7 @@ Select gate parts using PROGRAMBUILD_CHALLENGE_GATE.md:
 - Product: use full A–H for release readiness or other whole-system convergence
 - Enterprise: full A–H with appropriate retained evidence/sign-off
 
+Reuse current adaptive-router/research evidence when it remains valid. Do not rerun analysis solely because this is a transition.
 Challenge vague answers. Do not fill irrelevant sections as ceremony.
 
 Return:
@@ -305,6 +327,7 @@ Return:
 | Anti-Pattern | Better behavior |
 |---|---|
 | Filling all sections without risk relevance | select the minimum gate parts that cover material risk |
+| Running the adaptive router and Challenge Gate as duplicate checklists | use the router for decision-time selection, then reuse its evidence at required transition/convergence gates |
 | Saying “no scope change” reflexively | compare against current requirements/spine |
 | Running every test at every gate | identify invalidation, then run targeted + required convergence checks |
 | Keeping verification too narrow at release | widen at release/whole-system convergence |

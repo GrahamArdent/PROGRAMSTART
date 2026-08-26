@@ -22,6 +22,7 @@ try:
         programstart_prompt_build,
         programstart_context,
         programstart_dashboard,
+        programstart_decision,
         programstart_impact,
         programstart_init,
         programstart_log,
@@ -57,6 +58,7 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
     import programstart_prompt_build
     import programstart_context
     import programstart_dashboard
+    import programstart_decision
     import programstart_impact
     import programstart_init
     import programstart_log
@@ -114,16 +116,13 @@ def run_jit_check(arguments: list[str]) -> int:
     print("  JIT Source-of-Truth Check")
     print()
 
-    # Step 1: Guide — derive the minimal file set
     guide_result = run_passthrough(programstart_step_guide.main, "programstart guide", ["--system", args.system])
     if guide_result != 0:
         print(f"\n  Guide failed (exit {guide_result}).")
         return 2
 
-    # Step 2: Drift — verify baseline
     drift_result = run_passthrough(programstart_drift_check.main, "programstart drift", ["--system", args.system])
 
-    # Step 3: Print sync rule summary
     registry = load_registry()
     rules = [rule for rule in registry.get("sync_rules", []) if rule.get("system", "") in (args.system, "cross", "")]
     if rules:
@@ -183,6 +182,8 @@ def dispatch(command: str, arguments: list[str], parser: argparse.ArgumentParser
         return run_passthrough(programstart_recommend.main, "programstart recommend", arguments)
     if command == "impact":
         return run_passthrough(programstart_impact.main, "programstart impact", arguments)
+    if command == "decide":
+        return run_passthrough(programstart_decision.main, "programstart decide", arguments)
     if command == "research":
         return run_passthrough(programstart_research_delta.main, "programstart research", arguments)
     if command == "status":

@@ -76,6 +76,7 @@
       "scripts/programstart_create_core.py",
       "scripts/programstart_create_output.py",
       "scripts/programstart_context.py",
+      "scripts/programstart_decision.py",
       "scripts/programstart_evidence.py",
       "scripts/programstart_graph.py",
       "scripts/programstart_cli_smoke.py",
@@ -133,6 +134,7 @@
       "tests/test_programstart_command_registry.py",
       "tests/test_programstart_common.py",
       "tests/test_programstart_context.py",
+      "tests/test_programstart_decision.py",
       "tests/test_programstart_evidence.py",
       "tests/test_programstart_graph.py",
       "tests/test_programstart_dashboard.py",
@@ -273,6 +275,7 @@
       "docs/decisions/0021-prompt-builder-mode-b-context-driven-generation.md",
       "docs/decisions/0022-sync-pull-mode-with-from-template.md",
       "docs/decisions/0023-use-one-strategic-execution-spine-with-bounded-work-packets.md",
+      "docs/decisions/0024-rank-current-product-authority-over-legacy-repository-evidence.md",
       ".vscode/tasks.json"
     ],
     "userjourney_bootstrap_assets": [
@@ -298,7 +301,7 @@
       {
         "path": "PROGRAMBUILD/PROGRAMBUILD.md",
         "must_contain": [
-          "repo-boundary consent rule for AI-assisted work: do not inspect, edit, stage, commit, or push another repository unless the user explicitly names it and asks for that action",
+          "repo-boundary consent rule for AI-assisted work: do not inspect, edit, stage, commit, or push another repository unless the user explicitly names another repo and asks for that action",
           "Repository scope is explicit in AI-assisted workflows: keep work inside the current repo unless the user explicitly names another repo and asks for that action."
         ]
       },

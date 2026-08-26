@@ -31,6 +31,7 @@ def test_cli_commands_contains_expected_public_commands() -> None:
         "recommend",
         "impact",
         "decide",
+        "orchestrate",
         "research",
         "status",
         "validate",

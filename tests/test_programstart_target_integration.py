@@ -29,6 +29,10 @@ def test_lean_greenfield_repo_is_operable_from_central_runtime(tmp_path: Path) -
     assert run_target_command(destination, ["guide", "--system", "programbuild"]) == 0
     assert run_target_command(
         destination,
+        ["validate", "--check", "required-files", "--system", "programbuild"],
+    ) == 0
+    assert run_target_command(
+        destination,
         [
             "decide",
             "--decision",

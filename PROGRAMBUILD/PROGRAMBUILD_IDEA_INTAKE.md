@@ -4,8 +4,8 @@
 
 Purpose: Decompose a raw idea, research-backed opportunity, or existing-project change into a structured problem statement before the inputs block is filled or a planning delta is proposed.
 Owner: Product Lead
-Last updated: 2026-08-25
-Depends on: `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` for entry-mode, authority, evidence-reuse, and existing-project rules
+Last updated: 2026-08-26
+Depends on: `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` for entry-mode, authority, adaptive decision/evidence routing, evidence-reuse, and existing-project rules
 Authority: Canonical for idea decomposition and pre-feasibility challenge
 
 This protocol normally runs before Stage 0 (Inputs). Its job is to force clarity about the problem before anyone names a solution, picks a stack, or writes an inputs block. For an existing project, it can instead run as a delta-oriented challenge against the project's current authority.
@@ -54,9 +54,13 @@ Before running the challenge:
 2. inspect the current state needed to evaluate the proposed change;
 3. reuse still-valid research and verification evidence;
 4. apply the 8 questions as a **delta audit** against the proposed change;
-5. produce recommendations for the existing plan rather than creating a competing master plan.
+5. route only genuinely unresolved decision-relevant uncertainty through additional scrutiny;
+6. produce recommendations for the existing plan rather than creating a competing master plan;
+7. return to the existing project's next executable slice once the delta is resolved.
 
 If the project already has a clear problem statement, target user, success metric, scope boundary, and kill/stop criteria, do not ask the operator to restate them unless new evidence creates a conflict.
+
+Mode C does not restart at Stage 0 merely because this intake or a research delta was run.
 
 ---
 
@@ -158,6 +162,8 @@ Failure pattern this catches: **building before validating.** The most expensive
 
 For Mode C, first ask whether valid evidence already proves this. If yes, reuse it unless an invalidation trigger exists.
 
+If the remaining uncertainty could materially change the next decision, apply the adaptive decision/evidence routing rules from `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`. Research is `none`, `targeted`, or `deep`; do not broaden research until the protected decision, missing evidence, consequence, minimum evidence, and stop condition are clear.
+
 ```text
 CHEAPEST_VALIDATION:
 EXPECTED_SIGNAL:
@@ -195,6 +201,7 @@ After completing or validating the interview dimensions, review the answers agai
 | Cheapest validation is "build it and see" | You have skipped the cheapest learning. Find a smaller experiment. |
 | UI need is "undecided" but product shape implies users interact directly | Clarify before architecture. Late UI discovery causes rework. |
 | Existing evidence is being re-collected without an invalidation trigger | You are spending verification effort without reducing uncertainty. Reuse the evidence or state why it is stale. |
+| Research is broad but the decision it protects or stop condition is undefined | Bound the research around the next decision before gathering more knowledge. |
 | Existing project already has an execution spine but this intake creates a new master plan | Convert the result into delta recommendations for the existing authority instead. |
 
 ---
@@ -210,7 +217,7 @@ Produce:
 3. A candidate `SUCCESS_METRIC` for the inputs block.
 4. A candidate `OUT_OF_SCOPE` list for the inputs block.
 5. Kill criteria ready for `FEASIBILITY.md`.
-6. A validation experiment recommendation, noting any reusable existing evidence.
+6. A validation experiment recommendation, noting any reusable existing evidence and research depth if further evidence is actually warranted.
 7. A go / investigate / stop recommendation.
 
 Then run `programstart recommend` to get KB-backed variant and stack guidance:
@@ -227,7 +234,7 @@ The tool maps your product shape and stated needs against the KB (80+ stacks, 11
 
 Use the output to validate or challenge your variant choice and stack assumptions before filling the inputs block. If the tool's variant recommendation disagrees with your initial assumption, treat that as a signal worth investigating — not a mechanical override.
 
-If the recommendation is "go" or "investigate," proceed to Stage 0 (Inputs) and Stage 1 (Feasibility).
+If the recommendation is "go" or "investigate," proceed through the current lifecycle only as far as the evidence warrants; use the adaptive routing rules before opening broad research.
 If the recommendation is "stop," record why in `DECISION_LOG.md` and do not start the inputs block.
 
 ### Mode C output
@@ -239,9 +246,10 @@ Produce:
 3. Existing evidence reused and any invalidation triggers found.
 4. The proposed change or research finding being evaluated.
 5. Confirmed alignment with the existing problem, user, success metric, and scope — or explicit conflicts.
-6. Specific decision deltas, risks, and verification implications.
+6. Specific decision deltas, risks, verification implications, and adaptive check families actually activated.
 7. Specific recommended edits to the existing execution spine or canonical project artifacts.
 8. A proceed / investigate / stop-or-escalate recommendation for the proposed change.
+9. The existing project's next executable slice to return to after any bounded investigation.
 
 Do **not** create a new master game plan as the default Mode C output.
 
@@ -276,11 +284,13 @@ For every mode:
 - Do not accept "users" as a target, features as success metrics, or "build it and see" as validation.
 - If an answer has a red flag, name the red flag and resolve it.
 - Distinguish evidence from execution authority.
+- If material uncertainty could change the next decision, route it to no/targeted/deep research using the adaptive decision rules; do not research for completeness.
 - If Mode C already has a master plan or other execution spine, produce delta recommendations and proposed edits to that authority rather than creating a competing plan.
+- If Mode C investigates a delta, return to the existing execution spine rather than restarting Stage 0.
 
 After all 8 dimensions are satisfactory, produce the output defined for the selected mode.
 
-Do not be polite at the expense of accuracy. A killed idea at this stage costs little; an unnecessary re-verification cycle also costs real time.
+Do not be polite at the expense of accuracy. A killed idea at this stage costs little; an unnecessary research or re-verification cycle also costs real time.
 ```
 
 ---

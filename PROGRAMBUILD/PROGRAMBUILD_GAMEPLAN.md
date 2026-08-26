@@ -4,7 +4,7 @@
 
 Purpose: Define PROGRAMBUILD's canonical stage sequence, transition conditions, and cross-stage reconciliation without duplicating the detailed stage content in `PROGRAMBUILD.md`.
 Owner: Solo Operator or Project Lead
-Last updated: 2026-08-24
+Last updated: 2026-08-26
 Depends on: `PROGRAMBUILD.md`, `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`, `PROGRAMBUILD_IDEA_INTAKE.md`, `PROGRAMBUILD_CHALLENGE_GATE.md`, `PROGRAMBUILD_WORK_PACKET.md`
 Authority: Canonical for execution sequencing and cross-stage validation.
 
@@ -15,12 +15,13 @@ Authority: Canonical for execution sequencing and cross-stage validation.
 1. Orient from live state/registry guidance instead of chat memory.
 2. Select entry mode: raw idea, research-backed, or existing/in-flight.
 3. Preserve an existing project's strategic execution spine unless its authority process explicitly replaces it.
-4. Use `PROGRAMBUILD.md` for detailed stage deliverables and `PROGRAMBUILD_CHALLENGE_GATE.md` for stage/risk-aware gate selection.
+4. Use `PROGRAMBUILD.md` for detailed stage deliverables, `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` for adaptive decision/evidence routing, and `PROGRAMBUILD_CHALLENGE_GATE.md` for stage/risk-aware gate selection.
 5. Run the appropriate Challenge Gate before each stage transition; `programstart advance` records/blocks the transition according to current gate policy.
 6. During implementation, use one bounded **logical work packet** per coherent slice. Persist `CURRENT_WORK_PACKET.md` only when persistence materially improves coordination, risk control, or resumability.
 7. Load only task-relevant authority/evidence.
 8. Reuse trustworthy evidence until invalidated; verify the changed/at-risk surface and widen at meaningful convergence boundaries.
-9. When a check fails, fix the authoritative cause first and rerun only what is needed to restore confidence.
+9. Use `programstart decide` only when a meaningful decision has uncertainty/consequence that could change the next action; do not route trivial work through extra ceremony.
+10. When a check fails, fix the authoritative cause first and rerun only what is needed to restore confidence.
 
 ---
 
@@ -35,9 +36,10 @@ Authority: Canonical for execution sequencing and cross-stage validation.
 - identify existing execution authority when applicable;
 - run the 8 Idea Intake dimensions using current evidence rather than re-asking settled facts;
 - identify problem/change, success target, scope/exclusions, stop criteria, cheapest useful validation, and go/investigate/stop recommendation;
+- when a material decision is uncertain, route it through the adaptive decision/evidence rules instead of automatically starting broad research;
 - for existing projects, produce deltas to current authority rather than a replacement plan.
 
-**Exit:** `go`, `investigate`, or `stop` is explicit.
+**Exit:** `go`, `investigate`, or `stop` is explicit. A Mode-C `investigate` result returns to the existing execution spine after the bounded evidence gap is resolved; it does not create a Stage-0 restart.
 
 ---
 
@@ -70,21 +72,23 @@ Authority: Canonical for execution sequencing and cross-stage validation.
 
 ---
 
-## Stage 2 — Research
+## Stage 2 — Research (When Earned)
 
-**Challenge Gate:** Stage 1 → 2.
+**Challenge Gate:** Stage 1 → 2 when the lifecycle actually requires a research stage.
 
-**Do:** gather only evidence needed to reduce material uncertainty; reuse current internal research; produce a research summary or scoped delta; assign confidence; map findings to existing authority where applicable.
+Stage 2 is a reusable research workspace, not proof that every project or every decision requires research. A project MAY pass through it as part of its normal lifecycle, while a Mode-C project or later-stage decision MAY instead run a bounded targeted/deep research delta in place and return to its existing execution spine.
 
-**Cross-stage check:** research that weakens feasibility/constraints triggers re-evaluation rather than being buried downstream.
+**Do:** gather only evidence needed to reduce material decision-relevant uncertainty; reuse current internal research; produce a research summary or scoped delta; assign confidence; map findings to existing authority where applicable; stop when the declared evidence-sufficiency condition is met.
 
-**Exit:** material uncertainty is reduced enough to define scope, or a bounded spike/decision is explicitly required.
+**Cross-stage check:** research that weakens feasibility/constraints triggers re-evaluation rather than being buried downstream; research output remains evidence and does not become a second plan.
+
+**Exit:** material uncertainty is reduced enough to define scope/continue the protected decision, or a bounded spike/decision is explicitly required. Do not continue researching for completeness.
 
 ---
 
 ## Stage 3 — Requirements And UX
 
-**Challenge Gate:** Stage 2 → 3.
+**Challenge Gate:** Stage 2 → 3 when Stage 2 was used; otherwise use the current applicable transition policy.
 
 **Do:** define/update requirement IDs, measurable acceptance criteria, and only the flows relevant to the product shape; update only affected authority in an existing project.
 
@@ -98,9 +102,9 @@ Authority: Canonical for execution sequencing and cross-stage validation.
 
 **Challenge Gate:** Stage 3 → 4. Product normally adds dependency/evidence controls when relevant; use the full gate only if the boundary needs whole-system convergence.
 
-**Do:** define architecture for the actual PRODUCT_SHAPE, identify material unknowns, run the smallest useful spikes, and record architecture/technology decisions.
+**Do:** define architecture for the actual PRODUCT_SHAPE, identify material unknowns, route decision-relevant uncertainty to the smallest sufficient evidence/research depth, run the smallest useful spikes, challenge unnecessary extraction/build-vs-buy complexity, and record architecture/technology decisions.
 
-**Cross-stage check:** material boundaries/contracts trace to requirements; auth/trust/data assumptions are explicit; unresolved high-impact uncertainty is not disguised as architecture.
+**Cross-stage check:** material boundaries/contracts trace to requirements; auth/trust/data/runtime assumptions are explicit; unresolved high-impact uncertainty is not disguised as architecture.
 
 **Exit:** architecture is sufficient to scaffold safely and blocking unknowns are resolved or explicitly accepted.
 
@@ -144,13 +148,14 @@ For each coherent slice:
 4. state one objective + non-goals + expected changed surfaces;
 5. load only relevant authority/evidence;
 6. list reusable evidence + invalidation conditions;
-7. choose the smallest sufficient verification set;
-8. implement without prospectively contradicting authority;
-9. update governed registries/contracts only if their surface changed;
-10. run targeted verification plus broader checks triggered by invalidation or convergence;
-11. record evidence once;
-12. reconcile material decisions/scope/architecture/status into canonical state;
-13. close/replace the packet and derive the next slice from current state.
+7. if a material decision has unresolved uncertainty/consequence, use the adaptive router to select only the relevant evidence/consequence/boundary/proof/simplicity/Mode-C checks;
+8. choose the smallest sufficient verification set;
+9. implement without prospectively contradicting authority;
+10. update governed registries/contracts only if their surface changed;
+11. run targeted verification plus broader checks triggered by invalidation or convergence;
+12. record evidence once;
+13. reconcile material decisions/scope/architecture/status into canonical state;
+14. close/replace the packet and derive the next slice from current state.
 
 ### Mid-Stage-7 convergence
 
@@ -208,7 +213,7 @@ Map a systemic lesson to the canonical PROGRAMBUILD owner most capable of preven
 |---|---|
 | Intake failure | `PROGRAMBUILD_IDEA_INTAKE.md` |
 | Gate/risk gap | `PROGRAMBUILD_CHALLENGE_GATE.md` |
-| Planning/context/evidence gap | `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` / `PROGRAMBUILD_WORK_PACKET.md` |
+| Planning/context/evidence/routing gap | `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` / `PROGRAMBUILD_WORK_PACKET.md` |
 | Feasibility gap | `FEASIBILITY.md` template |
 | Test/evidence gap | `TEST_STRATEGY.md` |
 | Architecture/spike gap | `PROGRAMBUILD.md` Stage 4 guidance |
@@ -226,9 +231,9 @@ A template change is warranted when the evidence shows the lesson is systemic an
 | Stage | Main contradiction being caught |
 |---|---|
 | 1 | problem / feasibility drift |
-| 2 | evidence contradicts viability or constraints |
+| 2 | evidence contradicts viability or constraints, or research continues after sufficiency |
 | 3 | scope / success-metric drift |
-| 4 | orphan contracts, trust gaps, unsupported technology assumptions |
+| 4 | orphan contracts, trust gaps, unsupported technology/runtime assumptions, unnecessary extraction |
 | 5 | scaffold contradicts architecture or contains premature product behavior |
 | 6 | P0 outcomes/contracts lack credible proof |
 | 7 | slice drift, stale context/evidence, duplicated authority, unnecessary/broken verification |
@@ -242,14 +247,14 @@ A template change is warranted when the evidence shows the lesson is systemic an
 
 | Variant | Gameplan rigor |
 |---|---|
-| Lite | Keep stage outputs and gates brief; A/C/F minimum plus risk-relevant parts; reuse evidence aggressively when invalidation is clear. |
-| Product | Run required stages with explicit cross-stage validation; A/C/F baseline plus stage/risk-relevant parts; full A–H at release/whole-system convergence; compact logical packets by default. |
-| Enterprise | Full stages, A–H controls, retained provenance/evidence and approvals appropriate to risk; persisted packets only when useful for governed coordination/resumption. |
+| Lite | Keep stage outputs and gates brief; A/C/F minimum plus risk-relevant parts; reuse evidence aggressively when invalidation is clear; skip research that cannot change the next decision. |
+| Product | Run required stages with explicit cross-stage validation; A/C/F baseline plus stage/risk-relevant parts; full A–H at release/whole-system convergence; compact logical packets by default; route research depth from actual uncertainty. |
+| Enterprise | Full stages, A–H controls, retained provenance/evidence and approvals appropriate to risk; persisted packets only when useful for governed coordination/resumption; high rigor still does not justify redundant research or proof. |
 
 ---
 
 # Operating Principle
 
-**Narrow while executing; widen while converging; do not duplicate detail whose canonical owner already exists.**
+**Narrow while executing; widen while converging; investigate only uncertainty that can change a decision; do not duplicate detail whose canonical owner already exists.**
 
-A work packet should make the current slice easier to reason about. A gate should inspect the risks that matter at the boundary. A validation suite should run because confidence needs restoring—not because a counter, calendar, or session changed.
+A work packet should make the current slice easier to reason about. A gate should inspect the risks that matter at the boundary. Research should stop when the protected decision has enough evidence. A validation suite should run because confidence needs restoring—not because a counter, calendar, or session changed.

@@ -190,7 +190,9 @@ def _activated_checks(context: DecisionContext, depth: ResearchDepth) -> tuple[A
         checks.append(
             ActivatedCheck(
                 "simplicity",
-                "Challenge unnecessary architecture or resource cost before adding complexity: " + ", ".join(simplicity) + ".",
+                "Challenge unnecessary architecture or resource cost before adding complexity: "
+                + ", ".join(simplicity)
+                + ".",
             )
         )
 
@@ -198,7 +200,8 @@ def _activated_checks(context: DecisionContext, depth: ResearchDepth) -> tuple[A
         checks.append(
             ActivatedCheck(
                 "mode-c-delta",
-                "Reuse the existing execution spine, authority, contracts, and valid evidence; evaluate only the new delta.",
+                "Reuse the existing execution spine, authority, contracts, and valid evidence; "
+                "evaluate only the new delta.",
             )
         )
 
@@ -228,10 +231,12 @@ def _research_brief(context: DecisionContext, depth: ResearchDepth) -> ResearchB
         "The implementation, provider/architecture choice, boundary contract, or decision to proceed could change."
     )
     minimum = context.minimum_evidence.strip() or (
-        "Enough current, credible evidence to resolve each named material unknown to the point that no remaining unknown is likely to change the next decision."
+        "Enough current, credible evidence to resolve each named material unknown to the point that no remaining "
+        "unknown is likely to change the next decision."
     )
     stop = context.stop_condition.strip() or (
-        "Stop researching when the minimum evidence is met and additional research is unlikely to change the protected decision; record residual uncertainty instead of continuing for completeness."
+        "Stop researching when the minimum evidence is met and additional research is unlikely to change the "
+        "protected decision; record residual uncertainty instead of continuing for completeness."
     )
     why = (
         "Proceeding without this evidence could lock in avoidable rework or risk."
@@ -273,7 +278,10 @@ def route_decision(context: DecisionContext) -> DecisionRoute:
     if context.evidence_state == "stale":
         reasons.append("Stale/time-sensitive evidence triggers a freshness delta, not automatic deep research.")
     if context.mode == "c":
-        reasons.append("Mode C preserves current project authority and returns to the existing execution spine after the delta is resolved.")
+        reasons.append(
+            "Mode C preserves current project authority and returns to the existing execution spine after the "
+            "delta is resolved."
+        )
     if context.reversibility == "easy" and context.impact == "low":
         reasons.append("Cheap reversibility lowers the amount of rigor the decision must earn.")
 

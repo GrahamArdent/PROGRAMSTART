@@ -147,6 +147,7 @@ source = [
   "scripts.programstart_adopt",
   "scripts.programstart_backup",
   "scripts.programstart_context",
+  "scripts.programstart_decision",
   "scripts.programstart_evidence",
   "scripts.programstart_graph",
   "scripts.programstart_clean",

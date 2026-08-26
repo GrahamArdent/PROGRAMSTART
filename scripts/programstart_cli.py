@@ -37,7 +37,6 @@ try:
         programstart_status,
         programstart_step_guide,
         programstart_sync,
-        programstart_target,
         programstart_validate,
         programstart_workflow_state,
         programstart_health_probe,
@@ -74,7 +73,6 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
     import programstart_status
     import programstart_step_guide
     import programstart_sync
-    import programstart_target
     import programstart_validate
     import programstart_workflow_state
     import programstart_health_probe
@@ -107,6 +105,21 @@ def _translate_diff_arguments(arguments: list[str]) -> list[str]:
     for argument in arguments:
         translated.append(replacements.get(argument, argument))
     return translated
+
+
+def _run_target(arguments: list[str]) -> int:
+    """Load the external-target launcher only from the central PROGRAMSTART runtime."""
+    try:
+        from . import programstart_target
+    except ImportError:
+        try:
+            import programstart_target  # type: ignore[no-redef]
+        except ImportError as exc:
+            raise SystemExit(
+                "`programstart target` is a central PROGRAMSTART control-plane command. "
+                "Run it from the PROGRAMSTART installation/template runtime, not from a vendored project runtime."
+            ) from exc
+    return run_passthrough(programstart_target.main, "programstart target", arguments)
 
 
 def run_jit_check(arguments: list[str]) -> int:
@@ -245,7 +258,7 @@ def dispatch(command: str, arguments: list[str], parser: argparse.ArgumentParser
     if command == "sync":
         return run_passthrough(programstart_sync.main, "programstart sync", arguments)
     if command == "target":
-        return run_passthrough(programstart_target.main, "programstart target", arguments)
+        return _run_target(arguments)
     if command == "jit-check":
         return run_jit_check(arguments)
     if command == "help":

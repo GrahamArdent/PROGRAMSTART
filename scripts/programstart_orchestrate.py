@@ -75,23 +75,36 @@ def _environment(environment: EnvironmentInput, repo: str, repository: str) -> E
     if environment == "auto":
         return "connected-tools" if repository else "local"
     if environment == "local" and repository:
-        raise ValueError("--repository requires connected-tools; use --repo for a local checkout.")
+        raise ValueError(
+            "--repository requires connected-tools; use --repo for a local checkout."
+        )
     if environment == "connected-tools" and repo:
-        raise ValueError("--repo is a local checkout path; use --repository with connected-tools orchestration.")
+        raise ValueError(
+            "--repo is a local checkout path; use --repository with connected-tools orchestration."
+        )
     return environment
 
 
-def _mode(mode: ModeInput, *, has_target: bool, research_backed: bool) -> tuple[Mode, str]:
+def _mode(
+    mode: ModeInput,
+    *,
+    has_target: bool,
+    research_backed: bool,
+) -> tuple[Mode, str]:
     if research_backed and mode not in {"auto", "b"}:
         raise ValueError("--research-backed is compatible only with --mode auto or b.")
     if mode != "auto":
         return mode, "Entry mode was supplied explicitly by the operator."
     if research_backed:
-        return "b", "Prior research exists and should be converted into decisions/scope before execution."
+        return (
+            "b",
+            "Prior research exists and should be converted into decisions/scope before execution.",
+        )
     if has_target:
         return (
             "unresolved",
-            "A repository target exists, but repository existence alone does not distinguish greenfield from in-flight work.",
+            "A repository target exists, but repository existence alone does not distinguish "
+            "greenfield from in-flight work.",
         )
     return "a", "No existing target or research-backed evidence was supplied."
 
@@ -123,7 +136,12 @@ def _authority(mode: Mode, spine: str) -> tuple[str, ...]:
     )
 
 
-def _orientation(environment: Environment, mode: Mode, target: str, spine: str) -> tuple[str, ...]:
+def _orientation(
+    environment: Environment,
+    mode: Mode,
+    target: str,
+    spine: str,
+) -> tuple[str, ...]:
     if mode == "unresolved":
         prefix = "connected tools" if environment == "connected-tools" else "the local checkout"
         return (
@@ -211,11 +229,21 @@ def _packet(request: str, mode: Mode, spine: str) -> WorkPacket:
         )
         authority = "Existing project authority; PROGRAMBUILD remains methodology."
     elif mode == "b":
-        required = ("Research evidence/provenance", "PROGRAMBUILD intake", "Only unresolved gaps")
-        evidence = ("Trustworthy research that already answers intake/feasibility questions",)
+        required = (
+            "Research evidence/provenance",
+            "PROGRAMBUILD intake",
+            "Only unresolved gaps",
+        )
+        evidence = (
+            "Trustworthy research that already answers intake/feasibility questions",
+        )
         authority = "Convert research into decisions/scope before establishing execution authority."
     elif mode == "a":
-        required = ("PROGRAMBUILD intake", "Problem/outcome/constraints", "Cheapest validation evidence")
+        required = (
+            "PROGRAMBUILD intake",
+            "Problem/outcome/constraints",
+            "Cheapest validation evidence",
+        )
         evidence = ("Trustworthy facts supplied with the request",)
         authority = "PROGRAMBUILD entry process until project-specific authority is established."
     else:
@@ -226,14 +254,35 @@ def _packet(request: str, mode: Mode, spine: str) -> WorkPacket:
     return WorkPacket(
         objective=request,
         authority=authority,
-        in_scope=("Smallest coherent slice needed to advance the request", "Only rigor the decision actually earns"),
-        out_of_scope=("A second execution spine", "Unrelated refactors/research", "Unsupported remote workflow mutation"),
+        in_scope=(
+            "Smallest coherent slice needed to advance the request",
+            "Only rigor the decision actually earns",
+        ),
+        out_of_scope=(
+            "A second execution spine",
+            "Unrelated refactors/research",
+            "Unsupported remote workflow mutation",
+        ),
         required_context=required,
         reusable_evidence=evidence,
-        invalidation_triggers=("Changed authority/contracts/runtime/dependencies", "Material evidence conflict or staleness"),
-        acceptance_criteria=("Bounded outcome is explicit/testable", "One authority chain is preserved", "Material uncertainty is resolved or recorded"),
-        targeted_verification=("Verify changed/invalidated surfaces", "Reuse unaffected evidence", "Widen only at a real convergence boundary"),
-        durable_updates=("Update existing authority only for accepted deltas", "Record material decisions in the existing decision mechanism"),
+        invalidation_triggers=(
+            "Changed authority/contracts/runtime/dependencies",
+            "Material evidence conflict or staleness",
+        ),
+        acceptance_criteria=(
+            "Bounded outcome is explicit/testable",
+            "One authority chain is preserved",
+            "Material uncertainty is resolved or recorded",
+        ),
+        targeted_verification=(
+            "Verify changed/invalidated surfaces",
+            "Reuse unaffected evidence",
+            "Widen only at a real convergence boundary",
+        ),
+        durable_updates=(
+            "Update existing authority only for accepted deltas",
+            "Record material decisions in the existing decision mechanism",
+        ),
     )
 
 
@@ -248,10 +297,13 @@ def _handoff(environment: Environment, mode: Mode, target: str) -> tuple[str, ..
         )
     if mode == "c":
         return (
-            f"Use the central PROGRAMSTART target control plane against {target} for supported external operations.",
+            f"Use the central PROGRAMSTART target control plane against {target} "
+            "for supported external operations.",
             "Keep remote advance/closeout/state mutation/full template validation blocked.",
         )
-    return ("Use the normal PROGRAMSTART kickoff/factory path after the current gate is satisfied.",)
+    return (
+        "Use the normal PROGRAMSTART kickoff/factory path after the current gate is satisfied.",
+    )
 
 
 def build_plan(
@@ -281,13 +333,21 @@ def build_plan(
         raise ValueError("request must not be empty")
 
     resolved_environment = _environment(environment, repo, repository)
-    resolved_mode, mode_reason = _mode(mode, has_target=bool(repo or repository), research_backed=research_backed)
+    resolved_mode, mode_reason = _mode(
+        mode,
+        has_target=bool(repo or repository),
+        research_backed=research_backed,
+    )
     if resolved_mode == "c" and not (repo or repository):
-        raise ValueError("Mode C requires --repo or --repository so live project authority can be inspected.")
+        raise ValueError(
+            "Mode C requires --repo or --repository so live project authority can be inspected."
+        )
 
     target = repo or repository or "new-project-not-yet-created"
     spine = execution_spine or (
-        "preserve/discover existing spine" if resolved_mode in {"c", "unresolved"} else "PROGRAMBUILD default until project authority is established"
+        "preserve/discover existing spine"
+        if resolved_mode in {"c", "unresolved"}
+        else "PROGRAMBUILD default until project authority is established"
     )
     route = _decision_route(
         request,
@@ -308,7 +368,9 @@ def build_plan(
     if resolved_mode == "unresolved":
         trigger = "Decision routing is deferred until live orientation resolves Mode A/B/C."
     elif route is None:
-        trigger = "Do not invoke adaptive routing as ceremony; activate it only for a material decision gap."
+        trigger = (
+            "Do not invoke adaptive routing as ceremony; activate it only for a material decision gap."
+        )
     else:
         trigger = "Adaptive routing was activated from supplied decision-relevant signals."
 
@@ -320,7 +382,12 @@ def build_plan(
         target=target,
         execution_spine=spine,
         authority_loading=_authority(resolved_mode, execution_spine),
-        orientation_actions=_orientation(resolved_environment, resolved_mode, target, execution_spine),
+        orientation_actions=_orientation(
+            resolved_environment,
+            resolved_mode,
+            target,
+            execution_spine,
+        ),
         decision_route=route,
         decision_trigger=trigger,
         work_packet=_packet(request, resolved_mode, execution_spine),
@@ -335,7 +402,11 @@ def build_plan(
 
 def render_text(plan: OrchestrationPlan) -> str:
     route = plan.decision_route
-    route_text = "not activated" if route is None else f"{route.route} / research={route.research_depth}"
+    route_text = (
+        "not activated"
+        if route is None
+        else f"{route.route} / research={route.research_depth}"
+    )
     return "\n".join(
         [
             "PROGRAMSTART Orchestration Contract",
@@ -358,20 +429,38 @@ def render_text(plan: OrchestrationPlan) -> str:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Build an environment-aware PROGRAMSTART execution contract.")
+    parser = argparse.ArgumentParser(
+        description="Build an environment-aware PROGRAMSTART execution contract."
+    )
     parser.add_argument("--request", required=True)
     parser.add_argument("--repo", default="")
     parser.add_argument("--repository", default="")
-    parser.add_argument("--environment", choices=["auto", "local", "connected-tools"], default="auto")
+    parser.add_argument(
+        "--environment",
+        choices=["auto", "local", "connected-tools"],
+        default="auto",
+    )
     parser.add_argument("--mode", choices=["auto", "a", "b", "c"], default="auto")
     parser.add_argument("--research-backed", action="store_true")
     parser.add_argument("--execution-spine", default="")
     parser.add_argument("--decision", default="")
     parser.add_argument("--impact", choices=["low", "medium", "high"], default="medium")
     parser.add_argument("--uncertainty", choices=["low", "medium", "high"])
-    parser.add_argument("--reversibility", choices=["easy", "costly", "hard"], default="costly")
-    parser.add_argument("--evidence", dest="evidence_state", choices=["sufficient", "partial", "stale", "absent", "conflicting"])
-    parser.add_argument("--volatility", choices=["stable", "changing", "fast"], default="stable")
+    parser.add_argument(
+        "--reversibility",
+        choices=["easy", "costly", "hard"],
+        default="costly",
+    )
+    parser.add_argument(
+        "--evidence",
+        dest="evidence_state",
+        choices=["sufficient", "partial", "stale", "absent", "conflicting"],
+    )
+    parser.add_argument(
+        "--volatility",
+        choices=["stable", "changing", "fast"],
+        default="stable",
+    )
     parser.add_argument("--risk", action="append", default=[], choices=sorted(RISK_FLAGS))
     parser.add_argument("--concern", action="append", default=[], choices=sorted(CONCERNS))
     parser.add_argument("--missing-evidence", action="append", default=[])

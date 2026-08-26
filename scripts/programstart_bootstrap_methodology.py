@@ -19,6 +19,7 @@ try:
         write_file,
     )
     from .programstart_common import load_registry, warn_direct_script_invocation
+    from .programstart_target import prepare_target_control_plane
 except ImportError:  # pragma: no cover - standalone script execution fallback
     from programstart_bootstrap import (
         bootstrap_programbuild,
@@ -27,6 +28,7 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
         write_file,
     )
     from programstart_common import load_registry, warn_direct_script_invocation
+    from programstart_target import prepare_target_control_plane
 
 
 def write_methodology_readme(destination_root: Path, project_name: str, variant: str, dry_run: bool) -> None:
@@ -37,15 +39,17 @@ def write_methodology_readme(destination_root: Path, project_name: str, variant:
         "Included system:\n\n"
         f"- PROGRAMBUILD variant: {variant}\n"
         "- PROGRAMBUILD control documents, workflow state, and blank project-output stubs\n"
+        "- lightweight process registry, managed workflow prompts, and sync manifest for external PROGRAMSTART control\n"
         "- USERJOURNEY: not attached; add it only if onboarding, consent, or activation work requires it\n"
         "\n"
         "Deliberately not vendored:\n\n"
         "- PROGRAMSTART dashboard and factory implementation\n"
-        "- PROGRAMSTART's own test suite and development toolchain\n"
+        "- PROGRAMSTART's own scripts, test suite, and development toolchain\n"
         "- template CI/research workflows\n"
         "\n"
         "The project owns its application stack, tests, CI, security configuration, and deployment choices. "
-        "Keep one project execution spine and load PROGRAMBUILD context just in time.\n"
+        "PROGRAMSTART can operate on this checkout from its central runtime with "
+        "`programstart target --repo <path> <command>`. Keep one project execution spine and load PROGRAMBUILD context just in time.\n"
     )
     write_file(destination_root / "README.md", readme_content, dry_run)
 
@@ -65,6 +69,13 @@ def bootstrap_methodology_repository(
 
     write_methodology_readme(destination_root, project_name, variant, dry_run)
     bootstrap_programbuild(destination_root, registry, variant, dry_run)
+    prepare_target_control_plane(
+        destination_root,
+        project_name=project_name,
+        variant=variant,
+        mode="methodology_only_greenfield",
+        dry_run=dry_run,
+    )
     initialize_git_repository(destination_root, dry_run)
 
 

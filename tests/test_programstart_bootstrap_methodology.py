@@ -21,6 +21,7 @@ def test_methodology_bootstrap_reuses_programbuild_without_factory_assets(tmp_pa
         patch.object(methodology, "load_registry", return_value=registry),
         patch.object(methodology, "ensure_external_project_repo"),
         patch.object(methodology, "bootstrap_programbuild") as bootstrap_programbuild,
+        patch.object(methodology, "prepare_target_control_plane") as prepare_target_control_plane,
         patch.object(methodology, "initialize_git_repository") as initialize_git_repository,
     ):
         methodology.bootstrap_methodology_repository(
@@ -32,8 +33,17 @@ def test_methodology_bootstrap_reuses_programbuild_without_factory_assets(tmp_pa
     readme = (destination / "README.md").read_text(encoding="utf-8")
     assert "CalendarBridge" in readme
     assert "PROGRAMBUILD variant: product" in readme
-    assert "PROGRAMSTART's own test suite" in readme
+    assert "PROGRAMSTART's own scripts, test suite" in readme
+    assert "external PROGRAMSTART control" in readme
+    assert "programstart target --repo <path> <command>" in readme
     bootstrap_programbuild.assert_called_once_with(destination, registry, "product", False)
+    prepare_target_control_plane.assert_called_once_with(
+        destination,
+        project_name="CalendarBridge",
+        variant="product",
+        mode="methodology_only_greenfield",
+        dry_run=False,
+    )
     initialize_git_repository.assert_called_once_with(destination, False)
 
 

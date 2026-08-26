@@ -107,6 +107,21 @@ def _translate_diff_arguments(arguments: list[str]) -> list[str]:
     return translated
 
 
+def _run_target(arguments: list[str]) -> int:
+    """Load the external-target launcher only from the central PROGRAMSTART runtime."""
+    try:
+        from . import programstart_target
+    except ImportError:
+        try:
+            import programstart_target  # type: ignore[no-redef]
+        except ImportError as exc:
+            raise SystemExit(
+                "`programstart target` is a central PROGRAMSTART control-plane command. "
+                "Run it from the PROGRAMSTART installation/template runtime, not from a vendored project runtime."
+            ) from exc
+    return run_passthrough(programstart_target.main, "programstart target", arguments)
+
+
 def run_jit_check(arguments: list[str]) -> int:
     parser = argparse.ArgumentParser(prog="programstart jit-check", description="Run the JIT source-of-truth protocol.")
     parser.add_argument("--system", choices=["programbuild", "userjourney"], required=True, help="Workflow system to check.")
@@ -242,6 +257,8 @@ def dispatch(command: str, arguments: list[str], parser: argparse.ArgumentParser
         return run_passthrough(programstart_mutation_loop.main, "programstart mutation-loop", arguments)
     if command == "sync":
         return run_passthrough(programstart_sync.main, "programstart sync", arguments)
+    if command == "target":
+        return _run_target(arguments)
     if command == "jit-check":
         return run_jit_check(arguments)
     if command == "help":

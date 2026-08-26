@@ -224,7 +224,7 @@ programstart create `
   --owner "Your Name"
 ```
 
-Lower-level bootstrap:
+Lower-level full bootstrap:
 
 ```powershell
 .\scripts\pb.ps1 bootstrap `
@@ -232,6 +232,24 @@ Lower-level bootstrap:
   --project-name "MyNewApp" `
   --variant product
 ```
+
+For a project that needs PROGRAMBUILD governance but **not** PROGRAMSTART's dashboard/scripts/tests/toolchain, use the methodology-only bootstrap. It now creates a lightweight external-control surface: PROGRAMBUILD files, a flat project registry, managed workflow prompts, and a sync manifest. The executable PROGRAMSTART runtime stays in this repository.
+
+Once the target checkout exists, operate it from the central runtime:
+
+```powershell
+uv run programstart target --repo "C:\Projects\MyNewApp" status
+uv run programstart target --repo "C:\Projects\MyNewApp" guide --system programbuild
+uv run programstart target --repo "C:\Projects\MyNewApp" decide --decision "Choose the next slice" --mode c --evidence sufficient --uncertainty low
+```
+
+A methodology-only repo created before this control surface existed can be linked without replacing its PROGRAMBUILD state or project files:
+
+```powershell
+uv run programstart target --repo "C:\Projects\ExistingLeanRepo" --prepare
+```
+
+`--prepare` adds only the process registry, managed workflow prompts, and sync manifest. It refuses conflicting project-owned prompt files and does not copy PROGRAMSTART's runtime, dashboard, tests, CI, or development toolchain.
 
 Variants:
 
@@ -253,6 +271,12 @@ Do **not** bootstrap a second planning hierarchy.
 4. Convert new research/audits into explicit deltas.
 5. Adopt accepted deltas through existing project authority.
 6. Execute bounded logical packets derived from that spine.
+
+`programstart-adopt` remains the non-destructive first-time overlay for an established repository that has no PROGRAMBUILD surface yet. After adoption, the same central target command can drive it without requiring the project to own a copy of PROGRAMSTART's runtime:
+
+```powershell
+uv run programstart target --repo "C:\Projects\ExistingApp" next
+```
 
 ---
 
@@ -283,9 +307,10 @@ uv run --extra dev pyright
 | `pb recommend` | shape/stack guidance |
 | `pb impact <target>` | impact analysis |
 | `pb decide --decision <d>` | minimum justified decision scrutiny/research depth |
+| `pb target --repo <path> <command>` | run central PROGRAMSTART machinery against a lean/external project checkout |
 | `pb research` | research/KB operations |
 | `pb create` | standalone project factory |
-| `pb bootstrap` | lower-level bootstrap |
+| `pb bootstrap` | lower-level full bootstrap |
 
 ---
 

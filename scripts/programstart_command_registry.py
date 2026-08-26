@@ -37,6 +37,7 @@ CLI_COMMANDS: tuple[str, ...] = (
     "mutation-edit-hook",
     "mutation-loop",
     "sync",
+    "target",
     "jit-check",
 )
 

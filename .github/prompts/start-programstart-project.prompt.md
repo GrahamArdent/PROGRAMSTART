@@ -20,6 +20,17 @@ This prompt follows `PROGRAMBUILD/PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`, inc
 
 `programstart orchestrate` is the executable contract generator when the current environment has the central PROGRAMSTART runtime. Its output is derived guidance, not a new execution spine.
 
+## Pre-flight
+
+Before substantive edits:
+
+1. Determine whether the current environment has the central PROGRAMSTART runtime, connected repository/runtime tools, or both.
+2. Resolve the target repository/workspace if one exists.
+3. If the operation changes PROGRAMBUILD or project planning authority and a local PROGRAMSTART runtime is available, run `uv run programstart drift` before the authority edit and resolve existing drift before stacking a new authority change.
+4. If only connected tools are available, inspect the live authority chain and repository/runtime state and use the project's available equivalent checks. Do not claim `programstart drift` ran when it did not.
+5. For read-only orientation or bounded code-only work, do not require broad drift or validation solely as ceremony.
+6. Resolve Mode A/B/C before implementation. Repository existence alone is not sufficient evidence for Mode C.
+
 ## Environment Boundary
 
 Determine the execution environment before choosing commands.

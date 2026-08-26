@@ -18,10 +18,11 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY in this section are in
 5. If a file is deprecated or replaced, the file index and this file MUST be updated in the same change.
 6. PROGRAMSTART is a template repository. Filled project outputs belong in the real project repository, not here.
 7. `USERJOURNEY/` is an optional project attachment, not a mandatory PROGRAMBUILD subsystem.
-8. A project MUST have one primary strategic execution spine. Research, audits, readiness reviews, checklists, and work packets MUST NOT silently become competing master plans.
+8. A project MUST have one primary strategic execution spine. Research, audits, readiness reviews, checklists, adaptive-router outputs, and work packets MUST NOT silently become competing master plans.
 9. A work packet is a **logical derived execution contract**. It MAY be persisted as `CURRENT_WORK_PACKET.md` when persistence adds coordination/risk/resumption value; whether persisted or not, it MUST defer to the strategic spine, requirements, architecture, decisions, and validated implementation state.
 10. Challenge Gate parts A–H are canonical risk controls, but the Product variant MUST select them by stage/risk. Full A–H is required only where `PROGRAMBUILD_CHALLENGE_GATE.md` defines whole-system Product convergence; Enterprise keeps its full-gate requirements.
-11. No universal feature count, calendar cadence, file count, project count, or agent count becomes PROGRAMBUILD policy unless evidence and the canonical owner explicitly justify that threshold.
+11. No universal feature count, calendar cadence, file count, project count, agent count, or numeric rigor score becomes PROGRAMBUILD policy unless evidence and the canonical owner explicitly justify that threshold.
+12. Adaptive decision routing MUST select additional scrutiny from actual decision-relevant uncertainty/consequence; it MUST NOT create a second lifecycle, execution spine, or mandatory all-gates sequence.
 
 ---
 
@@ -79,7 +80,7 @@ Optional persisted execution aid:
 | enterprise process | `PROGRAMBUILD_ENTERPRISE.md` |
 | document authority and naming rules | `PROGRAMBUILD_CANONICAL.md` |
 | critical file inventory and status | `PROGRAMBUILD_FILE_INDEX.md` |
-| planning-to-execution separation, proportional rigor, context loading, and evidence reuse | `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` |
+| planning-to-execution separation, proportional rigor, adaptive decision/evidence routing, context loading, and evidence reuse | `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` |
 | logical work-packet semantics and optional persisted packet format | `PROGRAMBUILD_WORK_PACKET.md` |
 | ADR structure, decision-log linkage, and supersession hygiene | `PROGRAMBUILD_ADR_TEMPLATE.md` |
 | architecture decision records index | `docs/decisions/README.md` |
@@ -123,6 +124,8 @@ If a conflict is found:
 
 A logical or persisted work packet never outranks its source authority. Correct/regenerate the packet rather than changing authority merely to match derived task state.
 
+An adaptive-router result is advisory derived reasoning. It never outranks the project's execution spine, accepted decisions, requirements, architecture, or validated implementation state.
+
 ---
 
 ## 5. Canonical Maintenance Rules
@@ -135,8 +138,8 @@ A logical or persisted work packet never outranks its source authority. Correct/
 - Material decisions go in `DECISION_LOG.md`; promote durable architecture/policy rationale to an ADR when the repository's current ADR policy warrants it, not because an arbitrary numeric threshold was crossed.
 - The template repository keeps project outputs reusable; do not store filled project-specific feasibility, requirements, architecture, release, packet, or portfolio state here.
 - Research that affects an existing project should become explicit delta recommendations adopted through that project's authority process.
-- Specialist agents, extra documents, broader gates, and recurring automation are mechanisms, not goals. Use them only when they reduce real uncertainty/risk/coordination cost.
+- Specialist agents, extra documents, broader gates, recurring automation, and adaptive routing are mechanisms, not goals. Use them only when they reduce real uncertainty/risk/coordination cost.
 
 ---
 
-Last updated: 2026-08-24
+Last updated: 2026-08-26

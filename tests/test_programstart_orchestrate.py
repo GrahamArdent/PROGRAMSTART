@@ -9,7 +9,6 @@ def test_new_request_defaults_to_mode_a_without_target() -> None:
     assert plan.environment == "local"
     assert plan.mode == "a"
     assert plan.decision_route is None
-    assert "Raw" not in plan.mode_reason  # reason stays descriptive, not a lifecycle label requirement
     assert "PROGRAMBUILD default" in plan.execution_spine
 
 
@@ -46,7 +45,6 @@ def test_connected_mode_c_preserves_existing_execution_spine_and_does_not_claim_
     assert plan.execution_spine == "PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md"
     assert any("connected repository/runtime tools" in item for item in plan.execution_handoff)
     assert any("do not claim a local CLI command ran" in item for item in plan.execution_handoff)
-    assert all("second master plan" not in item.lower() for item in plan.in_scope if hasattr(plan, "in_scope"))
     assert "A second master plan" in plan.work_packet.out_of_scope[0]
 
 

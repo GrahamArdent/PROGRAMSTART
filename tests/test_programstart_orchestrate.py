@@ -1,6 +1,10 @@
 from __future__ import annotations
 
-from scripts.programstart_orchestrate import build_plan
+import json
+
+import pytest
+
+from scripts.programstart_orchestrate import build_plan, main, render_text
 
 
 def test_new_request_defaults_to_mode_a_without_target() -> None:
@@ -44,8 +48,8 @@ def test_connected_mode_c_preserves_existing_execution_spine_and_does_not_claim_
     assert plan.mode == "c"
     assert plan.execution_spine == "PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md"
     assert any("connected repository/runtime tools" in item for item in plan.execution_handoff)
-    assert any("do not claim a local CLI" in item for item in plan.execution_handoff)
-    assert "A second master plan" in plan.work_packet.out_of_scope[0]
+    assert any("do not claim local PROGRAMSTART" in item for item in plan.execution_handoff)
+    assert "A second execution spine" in plan.work_packet.out_of_scope[0]
 
 
 def test_material_uncertainty_routes_through_existing_adaptive_router() -> None:
@@ -81,13 +85,33 @@ def test_no_router_ceremony_when_no_material_signal_is_supplied() -> None:
 
 
 def test_environment_target_mismatch_is_rejected() -> None:
-    try:
+    with pytest.raises(ValueError, match="--repo is a local checkout path"):
         build_plan(
             request="Do work",
             repo="./project",
             environment="connected-tools",
         )
-    except ValueError as exc:
-        assert "--repo is a local checkout path" in str(exc)
-    else:  # pragma: no cover
-        raise AssertionError("expected environment/target mismatch to fail")
+
+
+def test_mode_c_requires_a_target() -> None:
+    with pytest.raises(ValueError, match="Mode C requires"):
+        build_plan(request="Change the product", mode="c")
+
+
+def test_render_text_names_environment_mode_and_handoff() -> None:
+    plan = build_plan(request="Build a small API")
+    rendered = render_text(plan)
+
+    assert "PROGRAMSTART Orchestration Contract" in rendered
+    assert "environment: local" in rendered
+    assert "mode: a" in rendered
+    assert "handoff:" in rendered
+
+
+def test_cli_json_output_is_machine_readable(capsys: pytest.CaptureFixture[str]) -> None:
+    assert main(["--request", "Build a small API", "--json"]) == 0
+
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["request"] == "Build a small API"
+    assert payload["environment"] == "local"
+    assert payload["mode"] == "a"

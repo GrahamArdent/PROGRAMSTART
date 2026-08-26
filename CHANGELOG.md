@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added a PROGRAMSTART-only `workflow_dispatch` manual convergence gate so full `nox -s ci` validation is available on demand without restoring push, PR, cron, or nightly CI noise.
 - Extended `programstart impact` with deterministic dependency blast-radius paths over `depends_on` and `authority_dependency`, including start-node resolution, path provenance, machine-readable output, and optional `--max-depth` traversal bounds while preserving existing related-record discovery.
 - Added `programstart-adopt` for non-destructive Mode-C adoption of PROGRAMBUILD into an existing repository. Adoption preserves the host engineering toolchain, adds only PROGRAMBUILD management/output surfaces plus workflow prompts and a project registry, and tracks only reusable methodology files in the sync manifest so project state and project outputs are never overwritten by template sync.
-- Added `programstart target --repo <path> ...` so the central PROGRAMSTART runtime can operate status, guide, decision routing, workflow state/advance, drift, validation, prompt-build, and close-out machinery against a lightweight external project checkout without vendoring PROGRAMSTART's scripts/dashboard/tests into that project.
+- Added `programstart target --repo <path> ...` so the central PROGRAMSTART runtime can operate status, guide, adaptive decision routing, JIT/drift, progress, prompt generation, state inspection/snapshots, and target-local validation against a lightweight external project checkout without vendoring PROGRAMSTART's scripts/dashboard/tests into that project.
 
 ### Changed
 
@@ -48,7 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Features
 
-- `programstart jit-check` command: wraps `guide` + `drift` + sync-rule summary into a single CLI command; exit 0 = clean, 1 = drift, 2 = guide failure (ADR-0017).
+- `programstart jit-check` command: wraps `guide` + `drift` + sync-rule summary into a single JIT source-of-truth protocol entry point (ADR-0017).
 - `programstart advance --defer` flag: marks the active step as intentionally paused without advancing; staleness detection uses the deferred date (ADR-0018).
 - `programstart prompt-build` command: generates a stage-specific `.prompt.md` file from the process registry (`--stage`, `--output`, `--eject`, `--list-stages`, `--json` flags).
 - `programstart doctor` command: environment health checks for PATH, Python version, uv, and key dependencies.

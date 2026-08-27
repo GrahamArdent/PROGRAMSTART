@@ -74,7 +74,7 @@ Instead:
 2. resolve Mode A/B/C from actual maturity/authority;
 3. identify the project's one execution spine if one exists;
 4. load only authority/evidence needed for the current decision/slice;
-5. resolve bounded related-repository dependencies only when real;
+5. resolve bounded related-repository dependencies only when real and only after Mode C is established;
 6. scope blockers and scan safe execution lanes before treating work as stopped;
 7. derive a coordinated Mode-C lane view only when project authority proves multiple relevant current lanes exist;
 8. invoke adaptive decision/research reasoning only when uncertainty/consequence could materially change the action;
@@ -106,6 +106,8 @@ A repository target alone is insufficient to choose Mode C.
 
 For Mode C, preserve the existing execution spine and return to its actual next executable slice. Never restart the project at Stage 0 merely because PROGRAMSTART was invoked.
 
+The current related-repository orchestration surface remains **Mode-C-only**. Do not use a related repository to turn Mode A/B work into a multi-project plan.
+
 Cross-repository dependency reasoning and coordinated work-lane reasoning are derived execution lenses, not entry modes.
 
 An operator/manual gate is a bounded handoff, not an entry mode.
@@ -116,7 +118,7 @@ An operator/manual gate is a bounded handoff, not an entry mode.
 2. **Orient from live authority.** Inspect target repository/runtime before substantive decisions when tools permit; locate stable instructions, canonical indexes, current execution spine, and only affected authority/evidence.
 3. **Resolve Mode A/B/C.** Reuse valid evidence and inspect only enough additional context to resolve ambiguity.
 4. **Resolve primary authority.** In Mode C, name/preserve the existing execution spine. Do not create a competing master/game plan.
-5. **Resolve a real companion dependency only when needed.** Derive a small task-scoped relationship graph with repository, relationship type, authority owner, dependency state (`unknown | unsatisfied | partial | satisfied`), evidence, invalidation, manual boundary, and closure control. The graph is canonical for nothing.
+5. **Resolve a real companion dependency only when needed.** In Mode C only, derive a small task-scoped relationship graph with repository, relationship type, authority owner, dependency state (`unknown | unsatisfied | partial | satisfied`), evidence, invalidation, manual boundary, and closure control. The graph is canonical for nothing.
 6. **Preserve repository independence.** Cross-repository reads/evidence do not authorize advancing, closing, merging, or mutating multiple projects as one transaction.
 7. **Classify blockers before stopping.** Identify the exact blocked action and narrowest truthful scope (`ROW_ONLY | MERGE_GATE | MUTATION_GATE | MILESTONE | RELEASE | UNRESOLVED`). Scan Lane A read-only/analysis, Lane B reversible preparation, and Lane C consequential/live work under project authority. A blocker label never grants Lane-C permission.
 8. **Coordinate Mode-C work lanes only when evidence earns it.** Derive `COORDINATED_MODE_C_LANES`, `SELECTED_LANE`, `LANE_INDEPENDENCE_EVIDENCE`, `LANE_CONFLICTS`, and `LANE_CONVERGENCE`. Keep actual closure-control explicit, select one bounded current packet, and leave other lanes as context until separately selected.
@@ -195,6 +197,7 @@ Learning rules:
 
 - Automate selection/routing of rigor, not manufacture of rigor.
 - Do not infer Mode C from repository existence alone.
+- Do not use related-repository orchestration outside Mode C.
 - Do not deep-research by default without evidence/uncertainty conditions.
 - Do not manufacture coordinated lanes when one meaningful packet exists.
 - Do not turn lanes into a parallel backlog, scheduler, multi-agent swarm, or second sequencing authority.
@@ -223,7 +226,7 @@ Before declaring the orchestration slice complete, confirm:
 3. any coordinated lane view came from that spine, retained actual closure control, and selected one packet;
 4. lane independence/conflict/convergence claims are evidence-backed;
 5. non-closure completion did not silently advance closure sequencing;
-6. any related repository was loaded only for a real dependency and both spines remain independent;
+6. any related repository was loaded only for a real Mode-C dependency and both spines remain independent;
 7. dependency state/evidence/invalidation are truthful, including partial state;
 8. blocker scope is narrow and consequential Lane C was not inferred from blocker/lane visibility;
 9. provider/resource historical evidence is separate from current visibility where relevant;

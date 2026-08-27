@@ -334,7 +334,6 @@ def _related_repository(
         or dependency_state != "unknown"
         or dependency_evidence
         or dependency_invalidation
-        or manual_boundary
     )
     if not related_repository:
         if has_metadata:
@@ -416,6 +415,7 @@ def _work_packet(
     blocker_scope: BlockerScope,
     safe_lane_policy: tuple[str, ...],
     related: RelatedRepository | None,
+    manual_boundary: str,
 ) -> WorkPacket:
     if mode == "c":
         required_context = (
@@ -464,7 +464,7 @@ def _work_packet(
         "Preserve verified historical resource evidence when current visibility changes",
     )
     cross_repository_dependencies: tuple[str, ...] = ()
-    manual_boundaries: tuple[str, ...] = ()
+    manual_boundaries: tuple[str, ...] = (manual_boundary,) if manual_boundary else ()
 
     if related is not None:
         required_context = (
@@ -494,8 +494,6 @@ def _work_packet(
         cross_repository_dependencies = (
             f"{related.repository} [{related.relationship_type}] state={related.dependency_state}: {related.authority_owner}",
         )
-        if related.manual_boundary:
-            manual_boundaries = (related.manual_boundary,)
 
     return WorkPacket(
         objective=request,
@@ -590,6 +588,7 @@ def build_plan(
         if resolved_mode in {"c", "unresolved"}
         else "PROGRAMBUILD default until project authority is established"
     )
+    resolved_manual_boundary = manual_boundary.strip()
     related = _related_repository(
         target=target,
         mode=resolved_mode,
@@ -600,7 +599,7 @@ def build_plan(
         dependency_state=dependency_state,
         dependency_evidence=dependency_evidence,
         dependency_invalidation=dependency_invalidation,
-        manual_boundary=manual_boundary.strip(),
+        manual_boundary=resolved_manual_boundary,
     )
     safe_lane_policy = _safe_lane_policy(blocker_scope)
     route = _route_material_decision(
@@ -626,7 +625,9 @@ def build_plan(
     else:
         decision_trigger = "Adaptive routing was activated from supplied decision-relevant signals."
 
-    resolved_closure_control = closure_control.strip() or (resolved_spine if related is not None else "")
+    resolved_closure_control = closure_control.strip() or (
+        resolved_spine if related is not None or resolved_manual_boundary else ""
+    )
     return OrchestrationPlan(
         request=request,
         environment=resolved_environment,
@@ -645,7 +646,15 @@ def build_plan(
         authority_graph_policy=_authority_graph_policy(target, related),
         cross_repository_guidance=_cross_repository_guidance(target, related),
         closure_control=resolved_closure_control,
-        work_packet=_work_packet(request, resolved_mode, execution_spine, blocker_scope, safe_lane_policy, related),
+        work_packet=_work_packet(
+            request,
+            resolved_mode,
+            execution_spine,
+            blocker_scope,
+            safe_lane_policy,
+            related,
+            resolved_manual_boundary,
+        ),
         execution_handoff=_execution_handoff(resolved_environment, resolved_mode, target, related),
         verification_policy=(
             "Narrow while executing; widen while converging.",

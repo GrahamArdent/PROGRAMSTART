@@ -18,7 +18,9 @@
         "PROGRAMBUILD/PROGRAMBUILD_CHECKLIST.md",
         "PROGRAMBUILD/PROGRAMBUILD_IDEA_INTAKE.md",
         "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
-        "PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md"
+        "PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md",
+        "PROGRAMBUILD/PROGRAMBUILD_PLANNING_OPERATING_MODEL.md",
+        "PROGRAMBUILD/PROGRAMBUILD_WORK_PACKET.md"
       ],
       "require_authority_when_dependents_change": true,
       "require_dependents_when_authority_changes": true,

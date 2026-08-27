@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `programstart target --repo <path> ...` so the central PROGRAMSTART runtime can operate status, guide, adaptive decision routing, JIT/drift, progress, prompt generation, state inspection/snapshots, and target-local validation against a lightweight external project checkout without vendoring PROGRAMSTART's scripts/dashboard/tests into that project.
 - Added `programstart orchestrate` and an environment-aware orchestration prompt that convert a plain-language request into a bounded PROGRAMSTART execution contract for either local target control or connected repository/runtime tools without creating a second execution spine.
 - Extended `programstart orchestrate` with a deliberately narrow Mode-C cross-repository dependency contract: one task-scoped companion relationship can declare authority ownership, partial/satisfied dependency evidence, invalidation conditions, closure control, and a manual boundary without creating a portfolio Master or multi-repository mutation authority.
+- Added structured operator/manual-gate handoff semantics to the existing Work Packet/orchestration contract so unavailable provider, credential, physical-device, approval, or human-review actions can return a secret-safe action/evidence/resume contract without becoming another lifecycle or project authority.
 
 ### Changed
 

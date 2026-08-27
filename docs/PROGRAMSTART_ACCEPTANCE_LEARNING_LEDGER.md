@@ -49,7 +49,9 @@ Allowed lesson states:
 
 **Lesson:** cross-repository dependencies need first-class, task-scoped orchestration that can distinguish product/contract authority, implementation mechanics, partial dependency satisfaction, reusable companion evidence, repository convergence, and external/manual gates without creating a multi-project Master.
 
-**State:** candidate → current implementation acceptance target.
+**Change produced:** PROGRAMSTART PR #56, `feat(programstart): orchestrate cross-repository dependencies`.
+
+**Result:** validated at the connected-tool orchestration/protocol level against the live Dedication + Calendar Bridge relationship. The executable CLI regression coverage is present in PR #56, but local pytest/full convergence is not claimed in the connected-only environment.
 
 ### Dedication Email Bridge
 
@@ -171,9 +173,12 @@ This session did **not** re-verify enough live lifecycle evidence across the pre
 
 These labels are maturity signals only. They are **not** a numbered roadmap and do not authorize work in any product repository.
 
+### Implemented / validated
+
+- **Cross-repository dependency orchestration** — PR #56 implements the narrow task-scoped model and the live Dedication + Calendar Bridge relationship validates the authority split, partial-satisfaction state, evidence reuse/invalidation, closure control, and external/manual boundary behavior at the connected-tool orchestration level.
+
 ### Strong / ready for implementation
 
-- **Cross-repository dependency orchestration** — repeated Calendar/Email companion-repository evidence; current acceptance target is Dedication + Dedication-Calendar-Bridge.
 - **Concurrent Mode-C lane coordination** — Dedication/GCRM evidence shows multiple bounded safe streams can coexist under one spine without creating parallel Masters.
 - **Operator/manual gate handoff** — Calendar and Email both end at real credential/operator/runtime gates that need a clean exact handoff contract.
 
@@ -188,17 +193,32 @@ These labels are maturity signals only. They are **not** a numbered roadmap and 
 - **Selective PROGRAMSTART methodology propagation** — useful for existing adopters; LinkedIn Generator PR #19 is a positive example.
 - **Richer acceptance reporting/matrix** — only warranted if this ledger/checklist proves too weak during repeated real use.
 
-## Current acceptance experiment — cross-repository orchestration
+## Acceptance result — cross-repository orchestration
 
 **Protected authority rule:** Dedication remains product/contract/runtime authority for its integration boundary. Dedication-Calendar-Bridge remains implementation authority for Google-specific bridge mechanics and its own PROGRAMBUILD execution state. PROGRAMSTART may derive a task-scoped relationship graph but may not create a shared Master, advance both projects, close both projects, or merge companion PRs merely because a dependency exists.
 
-**Live starting evidence (2026-08-27):**
+**Live acceptance evidence (2026-08-27):**
 
-- Dedication PR #46: open, mergeable, relevant Supabase verification green; PR evidence says the companion contract is deployed to hosted Dedication runtime.
-- Dedication-Calendar-Bridge PR #5: open, mergeable, `Verify Bridge` green; PR body says the bridge remains at the B5 credential gate until the Dedication contract is merged/deployed and a real Google initial + restart/incremental smoke succeeds.
+- Dedication PR #46 remained open and mergeable at acceptance review; head `a06eb375c95b6ff1562cdad009db108b5da1ae0a` had `Verify Supabase Migrations` successful, and the PR evidence records the companion Calendar contract as deployed to the hosted Dedication runtime.
+- Dedication-Calendar-Bridge PR #5 remained open and mergeable; head `9cb6dc36ba7013b2224e0833bf7e67107e4bc2ad` had `Verify Bridge` successful and the PR still retains the B5 credential gate until companion convergence plus real Google initial and restart/incremental smoke.
 
-**Dependency interpretation:** partially satisfied. Hosted runtime contract evidence is reusable, but repository convergence is still open and the external Google credential/live-smoke boundary is not satisfied.
+**Derived authority/dependency result:**
 
-**Current PROGRAMSTART change:** pending this session's focused PR. Update this section after the implementation/acceptance result is reviewed.
+- product/contract/runtime meaning: Dedication;
+- Google-specific implementation mechanics: Dedication-Calendar-Bridge;
+- dependency state: `partial`;
+- reusable evidence: hosted Dedication Calendar contract plus the relevant successful companion repository checks;
+- invalidation: companion PR/head/contract/runtime evidence changes or directly conflicting evidence;
+- closure control: Calendar Bridge B5 credential gate;
+- remaining external/manual boundary: Google OAuth credentials and the real initial + restart/incremental Calendar smoke;
+- safe behavior: neither repository is automatically advanced, closed, merged, or edited as a cross-project transaction.
 
-**New systemic lessons found during this acceptance:** none recorded yet; add only if the real test exposes a reusable defect rather than a project-local condition.
+**PROGRAMSTART change:** PR #56 extends the existing `programstart orchestrate` / work-packet contract with one bounded related repository, relationship/authority ownership, `unknown | unsatisfied | partial | satisfied` dependency state, evidence/invalidation, closure control, and manual boundary. It does not create another lifecycle or portfolio planner.
+
+**Verification actually performed:** complete PR file list and file-by-file patch review; source/test static review including correction of incidental single-repository behavior drift and newly introduced Ruff line-length issues; live PR/head/workflow evidence checks for both acceptance repositories. PROGRAMSTART has no automatic PR status checks on this branch by design, the connected surface cannot dispatch the repository's manual-only convergence workflow, and no local pytest, Ruff/Pyright, `programstart drift`, or `nox -s ci` result is claimed.
+
+**Acceptance result:** validated for the connected-tool orchestration behavior. The change correctly represented a multi-plane partial dependency without becoming cross-project authority and returned the exact closure-control/manual boundary.
+
+**New systemic lesson:** dependency satisfaction is multi-plane rather than boolean. Repository convergence, hosted runtime availability, provider readiness, and human/operator acceptance may differ at the same moment. The next reusable gap is therefore not a richer portfolio graph; it is a small operator/manual-gate handoff contract that says exactly what action is required, what evidence must come back, what would invalidate it, and where PROGRAMSTART resumes afterward.
+
+**Next evidence-earned candidate:** operator/manual gate handoff. Concurrent Mode-C lane coordination remains strong, but it is not part of PR #56.

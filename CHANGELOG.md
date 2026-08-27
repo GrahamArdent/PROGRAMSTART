@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Made Mode-C orchestration blocker-aware: narrowly scoped row/merge/mutation blockers now trigger a safe-lane scan before work is treated as stopped, while consequential Lane C actions remain dependency-gated. Provider/resource evidence also preserves verified historical existence separately from current visibility or accessibility.
 - Preserved the six intentionally inactive GitHub Actions definitions as dormant `templates/github-workflows/` sources. Bootstrap and PROGRAMBUILD attach materialize them into `.github/workflows/` in standalone project repositories, and downstream sync resolves those canonical project paths back to the dormant template sources. This restores bootstrap-asset validation without re-enabling recurring Actions in the PROGRAMSTART template repository.
 - Corrected stale broad-JIT prompt-standard rules, Lite Challenge Gate minimums, decision-reversal examples, Product JIT verification-section structure, checklist gate columns, and several rigid numeric/calendar rules that conflicted with proportional-risk planning.
 - Removed remaining universal feature/file/project/time/agent-count heuristics from active PROGRAMBUILD guidance where they had started acting like policy rather than optional local reminders.
@@ -129,4 +130,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bootstrap script for generating new planning packages.
 - HTTP dashboard server with API and browser smoke tests.
 - CI pipeline with Windows/Linux matrix.
-- Drift detection for authority/dependent file synchronization.

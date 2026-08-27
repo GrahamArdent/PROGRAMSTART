@@ -229,10 +229,7 @@ def test_mode_c_requires_a_target() -> None:
 
 
 def test_render_text_exposes_authority_blocker_evidence_handoff_and_completion() -> None:
-    plan = build_plan(
-        request="Build a small API",
-        blocker_scope="unresolved",
-    )
+    plan = build_plan(request="Build a small API", blocker_scope="unresolved")
     rendered = render_text(plan)
 
     assert "PROGRAMSTART Orchestration Contract" in rendered
@@ -251,26 +248,26 @@ def test_cli_json_output_is_machine_readable(capsys: pytest.CaptureFixture[str])
     assert main(
         [
             "--request",
-            "Continue the project",
+            "Continue safe preparation",
             "--repository",
             "owner/project",
             "--mode",
             "c",
             "--blocker-scope",
-            "merge_gate",
+            "mutation_gate",
             "--json",
         ]
     ) == 0
 
     payload = json.loads(capsys.readouterr().out)
-    assert payload["request"] == "Continue the project"
+    assert payload["request"] == "Continue safe preparation"
     assert payload["environment"] == "connected-tools"
     assert payload["mode"] == "c"
-    assert payload["blocker_scope"] == "merge_gate"
+    assert payload["blocker_scope"] == "mutation_gate"
     assert payload["safe_lane_policy"]
     assert payload["evidence_continuity_policy"]
     assert payload["authority_loading"]
-    assert payload["work_packet"]["blocker_scope"] == "merge_gate"
+    assert payload["work_packet"]["blocker_scope"] == "mutation_gate"
     assert payload["work_packet"]["reusable_evidence"]
     assert payload["completion_rule"]
 

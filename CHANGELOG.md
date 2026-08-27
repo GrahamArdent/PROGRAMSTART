@@ -56,7 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `programstart prompt-build` command: generates a stage-specific `.prompt.md` file from the process registry (`--stage`, `--output`, `--eject`, `--list-stages`, `--json` flags).
 - `programstart doctor` command: environment health checks for PATH, Python version, uv, and key dependencies.
 - Typed Pydantic models for all 16 process-registry sections via `load_validated_registry()` alongside existing dict API (ADR-0019).
-- Split `programstart_validate.py` (1710 lines) into `programstart_validate_core.py` (check implementations and facade (CLI dispatch).
+- Split `programstart_validate.py` (1710 lines) into `programstart_validate_core.py` (check implementations) and facade (CLI dispatch).
 - Composed process registry from manifest + fragments (`config/registry/`) with stable merged `load_registry()` contract (ADR-0014).
 - Separate workflow, operator, and internal prompt architecture with class-aware validation (ADR-0011).
 - `lint-prompts` validation check: enforces PROMPT_STANDARD.md compliance rows against all `.prompt.md` files.

@@ -14,7 +14,7 @@ If a file is missing from this index, it is not a recognized PROGRAMBUILD contro
 | `PROGRAMBUILD_CANONICAL.md` | control | active | authority map and naming rules | document authority |
 | `PROGRAMBUILD_FILE_INDEX.md` | control | active | inventory of critical files | file inventory |
 | `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` | control | active | separates reusable methodology, project authority, active work, JIT context, blocker scope/safe-lane reasoning, adaptive decision/evidence routing, external-resource evidence continuity, and evidence reuse | planning-to-execution operating model |
-| `PROGRAMBUILD_WORK_PACKET.md` | template/protocol | active | compact logical work-packet semantics, blocker/safe-lane fields, task-scoped cross-repository dependency/authority evidence, operator/manual-gate handoff semantics, plus optional persisted format | logical work-packet semantics |
+| `PROGRAMBUILD_WORK_PACKET.md` | template/protocol | active | compact logical work-packet semantics, blocker/safe-lane fields, coordinated Mode-C lane selection, task-scoped cross-repository dependency/authority evidence, operator/manual-gate handoff semantics, plus optional persisted format | logical work-packet semantics |
 | `PROGRAMBUILD_ADR_TEMPLATE.md` | template | active | MADR 4.0 format, status lifecycle, decision-log linkage, and supersession hygiene | ADR structure |
 | `PROGRAMBUILD_CHANGELOG.md` | control | active | system-level change history | PROGRAMBUILD change history |
 | `PROGRAMBUILD.md` | playbook | active | balanced default stage deliverables and operating practices | stage deliverables/base workflow |
@@ -106,6 +106,7 @@ Prompts live in `.github/prompts/`, are registered in the process registry, and 
 - A persisted `CURRENT_WORK_PACKET.md` is optional and derived; close/replace it rather than accumulating packet history as a second plan.
 - A task-scoped cross-repository dependency graph is derived evidence, not a control file or project execution spine.
 - An operator/manual-gate handoff is derived execution context, not a credential store, project authority, or independent lifecycle.
+- A coordinated Mode-C lane view is derived execution context under one project spine, not a backlog, scheduler, or second sequencing authority.
 - Tooling may appear here for operator discoverability without becoming a PROGRAMBUILD authority concern.
 
 ---

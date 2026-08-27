@@ -67,17 +67,16 @@ class OrchestrationPlan:
     work_packet: WorkPacket
     execution_handoff: tuple[str, ...]
     verification_policy: tuple[str, ...]
+    completion_rule: str
 
 
-def _environment(environment: EnvironmentInput, repo: str, repository: str) -> Environment:
+def _resolve_environment(environment: EnvironmentInput, repo: str, repository: str) -> Environment:
     if repo and repository:
         raise ValueError("Choose either --repo or --repository, not both.")
     if environment == "auto":
         return "connected-tools" if repository else "local"
     if environment == "local" and repository:
-        raise ValueError(
-            "--repository requires connected-tools; use --repo for a local checkout."
-        )
+        raise ValueError("--repository requires connected-tools; use --repo for a local checkout.")
     if environment == "connected-tools" and repo:
         raise ValueError(
             "--repo is a local checkout path; use --repository with connected-tools orchestration."
@@ -85,12 +84,7 @@ def _environment(environment: EnvironmentInput, repo: str, repository: str) -> E
     return environment
 
 
-def _mode(
-    mode: ModeInput,
-    *,
-    has_target: bool,
-    research_backed: bool,
-) -> tuple[Mode, str]:
+def _resolve_mode(mode: ModeInput, *, has_target: bool, research_backed: bool) -> tuple[Mode, str]:
     if research_backed and mode not in {"auto", "b"}:
         raise ValueError("--research-backed is compatible only with --mode auto or b.")
     if mode != "auto":
@@ -98,7 +92,7 @@ def _mode(
     if research_backed:
         return (
             "b",
-            "Prior research exists and should be converted into decisions/scope before execution.",
+            "Prior research exists and should be converted into decisions and scope before execution.",
         )
     if has_target:
         return (
@@ -109,20 +103,20 @@ def _mode(
     return "a", "No existing target or research-backed evidence was supplied."
 
 
-def _authority(mode: Mode, spine: str) -> tuple[str, ...]:
+def _authority_loading(mode: Mode, execution_spine: str) -> tuple[str, ...]:
     if mode == "c":
         return (
-            "Stable target repository instructions/authority index, if present",
-            spine or "Target project's designated execution spine",
+            "Stable target repository instructions or authority index, if present",
+            execution_spine or "Target project's designated execution spine",
             "Only affected requirements, architecture, contracts, and decisions",
-            "Current implementation/tests/runtime evidence needed for the delta",
+            "Current implementation, tests, or runtime evidence needed for the delta",
             "PROGRAMBUILD planning operating model as methodology, not replacement authority",
         )
     if mode == "b":
         return (
             "PROGRAMBUILD planning operating model and idea intake when shaping is needed",
             "Existing research evidence, provenance, and freshness",
-            "Only unresolved feasibility/requirements evidence",
+            "Only unresolved feasibility or requirements evidence",
         )
     if mode == "a":
         return (
@@ -131,7 +125,7 @@ def _authority(mode: Mode, spine: str) -> tuple[str, ...]:
             "PROGRAMBUILD Stage 0 baseline and kickoff packet",
         )
     return (
-        "Live target authority sufficient to resolve Mode A/B/C",
+        "Live target authority sufficient to resolve Mode A, B, or C",
         "No broader context until project maturity and authority are known",
     )
 
@@ -140,34 +134,35 @@ def _orientation(
     environment: Environment,
     mode: Mode,
     target: str,
-    spine: str,
+    execution_spine: str,
 ) -> tuple[str, ...]:
     if mode == "unresolved":
-        prefix = "connected tools" if environment == "connected-tools" else "the local checkout"
+        surface = "connected tools" if environment == "connected-tools" else "the local checkout"
         return (
-            f"Inspect {target} with {prefix} before substantive decisions.",
-            "Resolve Mode A/B/C from actual authority and project maturity.",
+            f"Inspect {target} with {surface} before substantive decisions.",
+            "Resolve Mode A, B, or C from actual authority and project maturity.",
             "Repository existence alone is not evidence for Mode C.",
         )
     if environment == "connected-tools" and mode == "c":
         return (
             f"Inspect live repository {target} before changing it.",
-            f"Locate {spine or 'the designated execution spine'} and its actual next incomplete slice.",
-            "Load only authority/evidence required for that slice.",
+            f"Locate {execution_spine or 'the designated execution spine'} and its next incomplete slice.",
+            "Load only authority and evidence required for that slice.",
         )
     if environment == "local" and mode == "c":
+        quoted = json.dumps(target)
         return (
-            f"Use `programstart target --repo {json.dumps(target)} status` when the target is linked.",
-            f"Use `programstart target --repo {json.dumps(target)} guide --system programbuild`.",
-            "Locate the existing execution spine and actual next incomplete slice before editing.",
+            f"Use `programstart target --repo {quoted} status` when the target is linked.",
+            f"Use `programstart target --repo {quoted} guide --system programbuild`.",
+            "Locate the existing execution spine and next incomplete slice before editing.",
         )
     return (
-        "Load only the PROGRAMBUILD entry-mode/intake authority needed for this request.",
-        "Reuse trustworthy supplied/research evidence rather than re-asking settled questions.",
+        "Load only the PROGRAMBUILD entry-mode and intake authority needed for this request.",
+        "Reuse trustworthy supplied or research evidence rather than re-asking settled questions.",
     )
 
 
-def _decision_route(
+def _route_material_decision(
     request: str,
     mode: Mode,
     *,
@@ -197,6 +192,7 @@ def _decision_route(
     )
     if not has_signal or mode == "unresolved":
         return None
+
     return route_decision(
         DecisionContext(
             decision=decision or request,
@@ -216,40 +212,40 @@ def _decision_route(
     )
 
 
-def _packet(request: str, mode: Mode, spine: str) -> WorkPacket:
+def _work_packet(request: str, mode: Mode, execution_spine: str) -> WorkPacket:
     if mode == "c":
-        required = (
-            spine or "Existing project execution spine",
-            "Exact affected requirements/architecture/contracts/decisions",
-            "Current implementation/runtime evidence for the delta",
+        required_context = (
+            execution_spine or "Existing project execution spine",
+            "Exact affected requirements, architecture, contracts, or decisions",
+            "Current implementation or runtime evidence for the delta",
         )
-        evidence = (
+        reusable_evidence = (
             "Still-valid project decisions, tests, audits, and runtime evidence",
             "Prior research whose assumptions have not been invalidated",
         )
         authority = "Existing project authority; PROGRAMBUILD remains methodology."
     elif mode == "b":
-        required = (
-            "Research evidence/provenance",
+        required_context = (
+            "Research evidence and provenance",
             "PROGRAMBUILD intake",
             "Only unresolved gaps",
         )
-        evidence = (
-            "Trustworthy research that already answers intake/feasibility questions",
+        reusable_evidence = (
+            "Trustworthy research that already answers intake or feasibility questions",
         )
-        authority = "Convert research into decisions/scope before establishing execution authority."
+        authority = "Convert research into decisions and scope before establishing execution authority."
     elif mode == "a":
-        required = (
+        required_context = (
             "PROGRAMBUILD intake",
-            "Problem/outcome/constraints",
+            "Problem, outcome, and constraints",
             "Cheapest validation evidence",
         )
-        evidence = ("Trustworthy facts supplied with the request",)
+        reusable_evidence = ("Trustworthy facts supplied with the request",)
         authority = "PROGRAMBUILD entry process until project-specific authority is established."
     else:
-        required = ("Live target authority sufficient to resolve entry mode",)
-        evidence = ("Still-valid repository evidence after authority reconciliation",)
-        authority = "Do not implement until Mode A/B/C and the authority chain are resolved."
+        required_context = ("Live target authority sufficient to resolve entry mode",)
+        reusable_evidence = ("Still-valid repository evidence after authority reconciliation",)
+        authority = "Do not implement until entry mode and the authority chain are resolved."
 
     return WorkPacket(
         objective=request,
@@ -260,22 +256,22 @@ def _packet(request: str, mode: Mode, spine: str) -> WorkPacket:
         ),
         out_of_scope=(
             "A second execution spine",
-            "Unrelated refactors/research",
+            "Unrelated refactors or research",
             "Unsupported remote workflow mutation",
         ),
-        required_context=required,
-        reusable_evidence=evidence,
+        required_context=required_context,
+        reusable_evidence=reusable_evidence,
         invalidation_triggers=(
-            "Changed authority/contracts/runtime/dependencies",
+            "Changed authority, contracts, runtime behavior, or dependencies",
             "Material evidence conflict or staleness",
         ),
         acceptance_criteria=(
-            "Bounded outcome is explicit/testable",
+            "Bounded outcome is explicit and testable",
             "One authority chain is preserved",
             "Material uncertainty is resolved or recorded",
         ),
         targeted_verification=(
-            "Verify changed/invalidated surfaces",
+            "Verify changed or invalidated surfaces",
             "Reuse unaffected evidence",
             "Widen only at a real convergence boundary",
         ),
@@ -286,24 +282,21 @@ def _packet(request: str, mode: Mode, spine: str) -> WorkPacket:
     )
 
 
-def _handoff(environment: Environment, mode: Mode, target: str) -> tuple[str, ...]:
+def _execution_handoff(environment: Environment, mode: Mode, target: str) -> tuple[str, ...]:
     if mode == "unresolved":
         return ("Resolve entry mode from live evidence before implementation.",)
     if environment == "connected-tools":
         return (
-            "Use connected repository/runtime tools directly for the bounded slice.",
+            "Use connected repository or runtime tools directly for the bounded slice.",
             "Do not claim local PROGRAMSTART commands ran when they did not.",
-            "Verify narrowly and reconcile durable project authority/state afterward.",
+            "Verify narrowly and reconcile durable project authority or state afterward.",
         )
     if mode == "c":
         return (
-            f"Use the central PROGRAMSTART target control plane against {target} "
-            "for supported external operations.",
-            "Keep remote advance/closeout/state mutation/full template validation blocked.",
+            f"Use the central PROGRAMSTART target control plane against {target} for supported operations.",
+            "Keep remote advance, closeout, state mutation, and full template validation blocked.",
         )
-    return (
-        "Use the normal PROGRAMSTART kickoff/factory path after the current gate is satisfied.",
-    )
+    return ("Use the normal PROGRAMSTART kickoff or factory path after the current gate is satisfied.",)
 
 
 def build_plan(
@@ -332,24 +325,22 @@ def build_plan(
     if not request:
         raise ValueError("request must not be empty")
 
-    resolved_environment = _environment(environment, repo, repository)
-    resolved_mode, mode_reason = _mode(
+    resolved_environment = _resolve_environment(environment, repo, repository)
+    resolved_mode, mode_reason = _resolve_mode(
         mode,
         has_target=bool(repo or repository),
         research_backed=research_backed,
     )
     if resolved_mode == "c" and not (repo or repository):
-        raise ValueError(
-            "Mode C requires --repo or --repository so live project authority can be inspected."
-        )
+        raise ValueError("Mode C requires --repo or --repository so live project authority can be inspected.")
 
     target = repo or repository or "new-project-not-yet-created"
-    spine = execution_spine or (
+    resolved_spine = execution_spine or (
         "preserve/discover existing spine"
         if resolved_mode in {"c", "unresolved"}
         else "PROGRAMBUILD default until project authority is established"
     )
-    route = _decision_route(
+    route = _route_material_decision(
         request,
         resolved_mode,
         decision=decision,
@@ -366,13 +357,13 @@ def build_plan(
         stop_condition=stop_condition,
     )
     if resolved_mode == "unresolved":
-        trigger = "Decision routing is deferred until live orientation resolves Mode A/B/C."
+        decision_trigger = "Decision routing is deferred until live orientation resolves Mode A, B, or C."
     elif route is None:
-        trigger = (
+        decision_trigger = (
             "Do not invoke adaptive routing as ceremony; activate it only for a material decision gap."
         )
     else:
-        trigger = "Adaptive routing was activated from supplied decision-relevant signals."
+        decision_trigger = "Adaptive routing was activated from supplied decision-relevant signals."
 
     return OrchestrationPlan(
         request=request,
@@ -380,8 +371,8 @@ def build_plan(
         mode=resolved_mode,
         mode_reason=mode_reason,
         target=target,
-        execution_spine=spine,
-        authority_loading=_authority(resolved_mode, execution_spine),
+        execution_spine=resolved_spine,
+        authority_loading=_authority_loading(resolved_mode, execution_spine),
         orientation_actions=_orientation(
             resolved_environment,
             resolved_mode,
@@ -389,46 +380,56 @@ def build_plan(
             execution_spine,
         ),
         decision_route=route,
-        decision_trigger=trigger,
-        work_packet=_packet(request, resolved_mode, execution_spine),
-        execution_handoff=_handoff(resolved_environment, resolved_mode, target),
+        decision_trigger=decision_trigger,
+        work_packet=_work_packet(request, resolved_mode, execution_spine),
+        execution_handoff=_execution_handoff(resolved_environment, resolved_mode, target),
         verification_policy=(
             "Narrow while executing; widen while converging.",
             "Do not claim checks or tools that did not actually run.",
             "Re-verify only invalidated surfaces unless a real convergence boundary requires more.",
+        ),
+        completion_rule=(
+            "Complete when the bounded outcome has sufficient acceptance evidence, durable authority or state "
+            "is reconciled where needed, and the next executable slice or blocker is explicit."
         ),
     )
 
 
 def render_text(plan: OrchestrationPlan) -> str:
     route = plan.decision_route
-    route_text = (
-        "not activated"
-        if route is None
-        else f"{route.route} / research={route.research_depth}"
+    route_text = "not activated" if route is None else f"{route.route} / research={route.research_depth}"
+    packet = plan.work_packet
+    fields = (
+        ("authority loading", plan.authority_loading),
+        ("orientation", plan.orientation_actions),
+        ("required context", packet.required_context),
+        ("reusable evidence", packet.reusable_evidence),
+        ("in scope", packet.in_scope),
+        ("out of scope", packet.out_of_scope),
+        ("invalidation triggers", packet.invalidation_triggers),
+        ("acceptance", packet.acceptance_criteria),
+        ("targeted verification", packet.targeted_verification),
+        ("durable updates", packet.durable_updates),
+        ("handoff", plan.execution_handoff),
+        ("verification policy", plan.verification_policy),
     )
-    return "\n".join(
-        [
-            "PROGRAMSTART Orchestration Contract",
-            f"- request: {plan.request}",
-            f"- environment: {plan.environment}",
-            f"- mode: {plan.mode} ({plan.mode_reason})",
-            f"- target: {plan.target}",
-            f"- execution spine: {plan.execution_spine}",
-            f"- decision route: {route_text}",
-            f"- decision trigger: {plan.decision_trigger}",
-            "- orientation: " + " | ".join(plan.orientation_actions),
-            "- required context: " + " | ".join(plan.work_packet.required_context),
-            "- in scope: " + " | ".join(plan.work_packet.in_scope),
-            "- out of scope: " + " | ".join(plan.work_packet.out_of_scope),
-            "- acceptance: " + " | ".join(plan.work_packet.acceptance_criteria),
-            "- verification: " + " | ".join(plan.verification_policy),
-            "- handoff: " + " | ".join(plan.execution_handoff),
-        ]
-    )
+    lines = [
+        "PROGRAMSTART Orchestration Contract",
+        f"- request: {plan.request}",
+        f"- environment: {plan.environment}",
+        f"- mode: {plan.mode} ({plan.mode_reason})",
+        f"- target: {plan.target}",
+        f"- execution spine: {plan.execution_spine}",
+        f"- work-packet authority: {packet.authority}",
+        f"- decision route: {route_text}",
+        f"- decision trigger: {plan.decision_trigger}",
+    ]
+    lines.extend(f"- {label}: " + " | ".join(values) for label, values in fields)
+    lines.append(f"- completion rule: {plan.completion_rule}")
+    return "\n".join(lines)
 
 
-def main(argv: list[str] | None = None) -> int:
+def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Build an environment-aware PROGRAMSTART execution contract."
     )
@@ -446,21 +447,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--decision", default="")
     parser.add_argument("--impact", choices=["low", "medium", "high"], default="medium")
     parser.add_argument("--uncertainty", choices=["low", "medium", "high"])
-    parser.add_argument(
-        "--reversibility",
-        choices=["easy", "costly", "hard"],
-        default="costly",
-    )
+    parser.add_argument("--reversibility", choices=["easy", "costly", "hard"], default="costly")
     parser.add_argument(
         "--evidence",
         dest="evidence_state",
         choices=["sufficient", "partial", "stale", "absent", "conflicting"],
     )
-    parser.add_argument(
-        "--volatility",
-        choices=["stable", "changing", "fast"],
-        default="stable",
-    )
+    parser.add_argument("--volatility", choices=["stable", "changing", "fast"], default="stable")
     parser.add_argument("--risk", action="append", default=[], choices=sorted(RISK_FLAGS))
     parser.add_argument("--concern", action="append", default=[], choices=sorted(CONCERNS))
     parser.add_argument("--missing-evidence", action="append", default=[])
@@ -468,8 +461,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--minimum-evidence", default="")
     parser.add_argument("--stop-condition", default="")
     parser.add_argument("--json", action="store_true")
-    args = parser.parse_args(argv)
+    return parser
 
+
+def main(argv: list[str] | None = None) -> int:
+    parser = _build_parser()
+    args = parser.parse_args(argv)
     try:
         plan = build_plan(
             request=args.request,

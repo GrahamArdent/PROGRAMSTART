@@ -24,7 +24,7 @@ PR #60 implements a conditional Learning Gate and separates append-only observat
 - Pre-loop detailed ledger blob `1f81c091d0c81561c65ca0212cec324945b9c70b` is preserved unchanged at `docs/acceptance/PROGRAMSTART_ACCEPTANCE_HISTORY_THROUGH_2026-08-27.md`.
 - Resume Creator V6 previously added real acceptance evidence through PROGRAMSTART PR #58, proving cross-project learning was already useful even before the formal loop.
 - GCRM/PROGRAMSTART PR #59 produced the first observation under `docs/acceptance/observations/`, proving the evidence/rollup split is usable.
-- PR #60 adds `docs/PROGRAMSTART_LEARNING_LOOP.md`, the observation template, orchestration prompt v2.5 Learning Gate behavior, checklist updates, authority/index registration, compact maturity ledger, and root changelog reconciliation.
+- PR #60 adds `docs/PROGRAMSTART_LEARNING_LOOP.md`, the observation template, orchestration prompt v2.5 Learning Gate behavior, checklist updates, authority/index registration, compact maturity ledger, and root + PROGRAMBUILD changelog reconciliation.
 - No product repository was mutated to implement the learning mechanism.
 - No local pytest/Ruff/Pyright/`programstart drift`/`nox -s ci` result is claimed in this connected-only environment.
 

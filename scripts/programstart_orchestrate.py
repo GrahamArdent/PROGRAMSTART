@@ -383,7 +383,8 @@ def _cross_repository_guidance(target: str, related: RelatedRepository | None) -
     ]
     if related.dependency_state == "unknown":
         guidance.append(
-            f"Inspect only enough {related.repository} evidence to determine whether the dependency is satisfied before dependent closure."
+            f"Inspect only enough {related.repository} evidence to determine whether the dependency is satisfied "
+            "before dependent closure."
         )
     elif related.dependency_state == "unsatisfied":
         guidance.append(
@@ -400,7 +401,8 @@ def _cross_repository_guidance(target: str, related: RelatedRepository | None) -
             "The declared dependency is satisfied by current evidence; reuse it until an invalidation condition occurs."
         )
     guidance.append(
-        "Independent safe work may proceed only when the primary project's own authority proves it does not assume the unsatisfied dependency."
+        "Independent safe work may proceed only when the primary project's own authority proves it does not "
+        "assume the unsatisfied dependency."
     )
     if related.manual_boundary:
         guidance.append(f"External/manual boundary: {related.manual_boundary}")

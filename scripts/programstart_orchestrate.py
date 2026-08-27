@@ -362,7 +362,10 @@ def _authority_graph_policy(target: str, related: RelatedRepository | None) -> t
     return (
         f"Graph scope: derived and task-scoped for {target} ↔ {related.repository}; canonical for nothing.",
         "Each repository retains its own execution spine, decisions, state, and closure authority.",
-        "A dependency relationship permits read/orient/classify/plan/verify reasoning; it does not grant multi-repository mutation authority.",
+        (
+            "A dependency relationship permits read/orient/classify/plan/verify reasoning; "
+            "it does not grant multi-repository mutation authority."
+        ),
         "Do not advance, close, merge, or edit both projects as one transaction merely because the graph contains a dependency.",
     )
 
@@ -371,7 +374,10 @@ def _cross_repository_guidance(target: str, related: RelatedRepository | None) -
     if related is None:
         return ()
     guidance = [
-        f"Primary repository {target} owns implementation mechanics for the requested slice unless its own authority says otherwise.",
+        (
+            f"Primary repository {target} owns implementation mechanics for the requested slice "
+            "unless its own authority says otherwise."
+        ),
         f"Related repository {related.repository} owns: {related.authority_owner}",
         f"Relationship type: {related.relationship_type}; dependency state: {related.dependency_state}.",
     ]
@@ -381,11 +387,13 @@ def _cross_repository_guidance(target: str, related: RelatedRepository | None) -
         )
     elif related.dependency_state == "unsatisfied":
         guidance.append(
-            f"{related.repository} remains a convergence prerequisite; do not claim the dependent closure until that dependency is satisfied."
+            f"{related.repository} remains a convergence prerequisite; "
+            "do not claim the dependent closure until that dependency is satisfied."
         )
     elif related.dependency_state == "partial":
         guidance.append(
-            "Reuse the proven part of the dependency, but keep the unsatisfied repository/runtime/manual remainder explicit before dependent closure."
+            "Reuse the proven part of the dependency, but keep the unsatisfied repository/runtime/manual remainder "
+            "explicit before dependent closure."
         )
     else:
         guidance.append(
@@ -521,7 +529,8 @@ def _execution_handoff(
         ]
         if related is not None:
             handoff.append(
-                "Treat related repositories as independent authority surfaces; cross-repository reads do not authorize coordinated mutation."
+                "Treat related repositories as independent authority surfaces; "
+                "cross-repository reads do not authorize coordinated mutation."
             )
         return tuple(handoff)
     if mode == "c":

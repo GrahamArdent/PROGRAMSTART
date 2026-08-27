@@ -14,7 +14,7 @@ If a file is missing from this index, it is not a recognized PROGRAMBUILD contro
 | `PROGRAMBUILD_CANONICAL.md` | control | active | authority map and naming rules | document authority |
 | `PROGRAMBUILD_FILE_INDEX.md` | control | active | inventory of critical files | file inventory |
 | `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` | control | active | separates reusable methodology, project authority, active work, JIT context, blocker scope/safe-lane reasoning, adaptive decision/evidence routing, external-resource evidence continuity, and evidence reuse | planning-to-execution operating model |
-| `PROGRAMBUILD_WORK_PACKET.md` | template/protocol | active | compact logical work-packet semantics, blocker/safe-lane fields, plus optional persisted format | logical work-packet semantics |
+| `PROGRAMBUILD_WORK_PACKET.md` | template/protocol | active | compact logical work-packet semantics, blocker/safe-lane fields, task-scoped cross-repository dependency/authority evidence, manual boundaries, plus optional persisted format | logical work-packet semantics |
 | `PROGRAMBUILD_ADR_TEMPLATE.md` | template | active | MADR 4.0 format, status lifecycle, decision-log linkage, and supersession hygiene | ADR structure |
 | `PROGRAMBUILD_CHANGELOG.md` | control | active | system-level change history | PROGRAMBUILD change history |
 | `PROGRAMBUILD.md` | playbook | active | balanced default stage deliverables and operating practices | stage deliverables/base workflow |
@@ -63,7 +63,7 @@ The logical work packet normally lives in current task/issue/PR/session state. P
 | File | Type | Purpose |
 |---|---|---|
 | `scripts/programstart_decision.py` | advisory tooling | routes a material decision to the minimum justified evidence/check/research depth; never a separate authority layer |
-| `scripts/programstart_orchestrate.py` | advisory tooling | derives environment/mode/authority/blocker-aware execution contracts, including safe-lane and evidence-continuity policy; never a separate authority layer |
+| `scripts/programstart_orchestrate.py` | advisory tooling | derives environment/mode/authority/blocker-aware execution contracts, including safe-lane, evidence-continuity, and task-scoped cross-repository dependency/authority policy; never a separate authority layer |
 | `scripts/check_commit_msg.py` | enforcement | validates Conventional Commits |
 | `.github/instructions/conventional-commits.instructions.md` | instruction | commit message rules |
 | `.gitlint` | spec-reference | commit-message enforcement spec |
@@ -104,6 +104,7 @@ Prompts live in `.github/prompts/`, are registered in the process registry, and 
 - Use ADRs only when durable architecture/policy rationale warrants them under current policy.
 - Filled project outputs never become canonical examples in PROGRAMSTART.
 - A persisted `CURRENT_WORK_PACKET.md` is optional and derived; close/replace it rather than accumulating packet history as a second plan.
+- A task-scoped cross-repository dependency graph is derived evidence, not a control file or project execution spine.
 - Tooling may appear here for operator discoverability without becoming a PROGRAMBUILD authority concern.
 
 ---

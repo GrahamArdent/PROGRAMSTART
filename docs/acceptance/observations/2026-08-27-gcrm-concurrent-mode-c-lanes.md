@@ -6,7 +6,7 @@ Status: **subordinate / non-canonical evidence**.
 
 - **Date:** 2026-08-27
 - **Project / repository:** `GrahamArdent/GCRM`
-- **PROGRAMSTART lesson ID:** `PSL-004`
+- **PROGRAMSTART lesson ID:** `PSL-008`
 - **Checkpoint / acceptance surface:** GCRM R4 blocked closure-control + independently authorized preparation; PROGRAMSTART PR #59
 - **Classification:** systemic / real retest
 

@@ -158,17 +158,52 @@ Allowed lesson states:
 
 **State:** lightweight/high-velocity Mode C remains observe; selective methodology propagation is a later/supporting capability with one positive real example.
 
+### Resume Creator V6
+
+**What it tested**
+
+- mature, nearly complete Mode C rather than bootstrap or rebuild;
+- deliberate re-entry after a project pause;
+- stale execution/readiness documents versus substantially later implementation evidence;
+- recognition that open dependency-maintenance PRs are not automatically unfinished product work;
+- proportional verification after CI was deliberately removed during the pause;
+- external-resource evidence continuity across Supabase, Vercel, and Render;
+- PR #57 operator/manual-gate handoff semantics in a single-repository task with no companion dependency;
+- whether PROGRAMSTART can decide that optional UX expansion should remain optional and that closure is a valid near-term outcome.
+
+**Observed evidence**
+
+- Resume Creator `main` was at `16a813295c3a5ce8e006d7d75b27ad9fbed6992a`, explicitly removing GitHub Actions while the project was paused.
+- Repository history after the old March readiness plans contains broad April real-integration/security/test hardening and June JD/rewrite/reliability work, including a simplified `Finish Resume` path. This invalidated old plan-status assumptions without invalidating the historical proof itself.
+- The current Supabase project `hfvrcwaoesairitwteyt` / `GrahamsProjects` was live-observed as `INACTIVE`; this blocks current live persistence proof but not safe repository preparation.
+- GitHub produced a Vercel status context for the Resume re-entry branch while the connected Vercel account could not resolve the `resume-creator-v6` project by slug. PROGRAMSTART preserved historical existence/current visibility as separate facts rather than inventing a deletion conclusion.
+- Current Render state could not be verified through an installed/connected provider tool, so the missing observation was classified as an environment/connector limit rather than a product fact.
+- Resume Creator PR #16, `chore: rebaseline Resume V6 finish-line verification`, reconciles the existing production-readiness authority in place, restores a focused deterministic CI surface, and explicitly avoids product feature expansion.
+- GitHub reported zero Actions runs for the re-entry branch even after the workflow was restored. PR #16 therefore uses the PR #57 compact operator-gate contract: `merge_gate`, GitHub Actions gate owner, exact action, no-secret handling, run/job return evidence, acceptance criteria, invalidation, `RESUME_AT` R1, and safe Lane-B work while waiting.
+
+**Lesson classification:** primarily confirmation / no new methodology gap.
+
+**PROGRAMSTART owner:** existing Mode-C authority precedence, evidence reuse/invalidation, blocker/safe-lane reasoning, external-resource continuity, proportional verification, closure judgment, and PR #57 operator-gate handoff.
+
+**Result:** PROGRAMSTART correctly identified a Class-C project (validation/hardening/deployment remaining), reduced the apparent backlog instead of expanding it, preserved one existing execution spine, and derived a small repository-only verification slice before any live runtime mutation. No Stage-0 restart, deep research, portfolio plan, or speculative feature roadmap was needed.
+
+**Paused/re-entry lesson:** this real re-entry case weakens the case for a new active/paused/inactive/retired lifecycle state machine. Existing Mode-C orientation plus evidence invalidation, safe lanes, and operator-gate handoff were sufficient to reason about the pause. Keep the dedicated lifecycle-model idea at observe unless future re-entry cases show friction these existing primitives cannot solve.
+
+**Operator-gate retest:** PR #57 is now independently protocol-retested on a single-repository GitHub Actions boundary. The exact operator action → returned evidence → resumed execution cycle is still open because the required Actions run has not yet been returned. Do not overclaim end-to-end validation.
+
+**PROGRAMSTART change produced by Resume Creator:** none. The needed operator-gate capability was already live on `main` before the Resume gate was derived, and the acceptance test did not expose a missing reusable rule that justified more machinery.
+
 ### Paused / inactive / retired repositories
 
 Prior operations have included repositories that were paused, disabled, superseded, or otherwise not continuously active. That pattern suggests a future re-entry problem: dormant repositories should not be treated as if their execution state were continuously current.
 
-This session did **not** re-verify enough live lifecycle evidence across the previously discussed inactive repositories to promote a concrete lifecycle model.
+Resume Creator V6 now provides one concrete live re-entry case. In that case, existing Mode-C orientation, evidence invalidation, safe-lane reasoning, external-resource continuity, and the operator-gate handoff were sufficient; a separate lifecycle state machine was not needed.
 
-**Lesson classification:** possible systemic future concern.
+**Lesson classification:** possible systemic future concern, but dedicated new machinery is not currently earned.
 
-**Likely lesson:** PROGRAMSTART may eventually need active / paused / inactive / retired awareness plus focused re-entry orientation.
+**Likely lesson:** preserve explicit pause/re-entry evidence and revalidate only what the pause or runtime changes could invalidate before inventing lifecycle states.
 
-**State:** observe. Do not implement from this ledger entry alone.
+**State:** observe. Resume Creator is evidence against premature implementation of a dedicated lifecycle model; revisit only if future real projects expose a reusable gap the existing primitives cannot express.
 
 ## Evidence-maturity view
 
@@ -177,7 +212,7 @@ These labels are maturity signals only. They are **not** a numbered roadmap and 
 ### Implemented / validated
 
 - **Cross-repository dependency orchestration** — PR #56 implements the narrow task-scoped model and the live Dedication + Calendar Bridge relationship validates the authority split, partial-satisfaction state, evidence reuse/invalidation, closure control, and external/manual boundary behavior at the connected-tool orchestration level.
-- **Operator/manual gate handoff** — PR #57 implements the bounded handoff contract in the existing Work Packet/orchestration surface and fixes single-repository manual-boundary compatibility. Email Bridge PR #2 plus Calendar Bridge PR #5 validate the need and the handoff structure. The first real returned-evidence/resumption cycle remains an observe item rather than being falsely claimed here.
+- **Operator/manual gate handoff** — PR #57 implements the bounded handoff contract in the existing Work Packet/orchestration surface and fixes single-repository manual-boundary compatibility. Email Bridge PR #2 plus Calendar Bridge PR #5 validate the need and the handoff structure; Resume Creator PR #16 independently protocol-retests the single-repository form. The first real returned-evidence/resumption cycle remains an observe item rather than being falsely claimed here.
 
 ### Strong / ready for implementation
 
@@ -187,8 +222,8 @@ These labels are maturity signals only. They are **not** a numbered roadmap and 
 
 - **Verification evidence source/type** — distinguish repository CI, hosted runtime, provider, physical device, and human acceptance without building an evidence bureaucracy.
 - **High-velocity/lightweight Mode C** — LinkedIn Generator shows the need for very low ceremony, but the smallest durable methodology change is not yet proven.
-- **Paused/inactive/re-entry lifecycle** — plausible but not sufficiently revalidated in this session.
-- **Operator-gate returned-evidence resumption** — confirm on the first real credential/device/reviewer gate that returned evidence is sufficient to resume at the declared point without repeating broad orientation or verification.
+- **Paused/inactive/re-entry lifecycle** — Resume Creator shows current primitives can handle at least one real re-entry without a new lifecycle state machine; keep observing rather than implementing.
+- **Operator-gate returned-evidence resumption** — confirm on the first real credential/device/reviewer/CI gate that returned evidence is sufficient to resume at the declared point without repeating broad orientation or verification.
 
 ### Later / supporting capability
 
@@ -250,4 +285,29 @@ These labels are maturity signals only. They are **not** a numbered roadmap and 
 
 **Acceptance result:** protocol-validated. The handoff is now specific enough to cross an unavailable operator boundary without asking for raw secrets, inventing a companion repository, treating action completion as acceptance, or losing the resume point. End-to-end validation remains intentionally open until a real operator returns evidence and PROGRAMSTART resumes from it.
 
-**Next evidence-earned candidate:** concurrent Mode-C lane coordination remains the strongest next systemic improvement after PR #57 is fully reviewed and accepted. Do not implement it in PR #57.
+## Acceptance result — Resume Creator late-stage re-entry
+
+**Protected authority rule:** Resume Creator owns product intent, remaining-work sequencing, and release/closure decisions. PROGRAMSTART may reconcile stale evidence, derive a bounded packet, and expose a precise operator gate, but it must not create a parallel finish plan or keep the project alive through optional feature expansion.
+
+**Live acceptance evidence (2026-08-27):**
+
+- Resume Creator PR #16 is open and mergeable at head `6c72cef9fe796c43c9e39519ab3fb5da51b23f9e`.
+- PR #16 changes only the existing readiness authority/index/instructions/branch-check documentation plus a focused deterministic CI workflow; no product feature code is changed.
+- GitHub reports zero Actions workflow runs for the re-entry branch at the current acceptance checkpoint, so deterministic green proof is not claimed.
+- GitHub still reports a `Vercel` status context for the branch while the connected Vercel lookup cannot resolve the project; the conflict remains explicit rather than being collapsed into deletion or success.
+- Supabase project `hfvrcwaoesairitwteyt` remains inactive and is treated as a later runtime/operator gate rather than a reason to mutate production during repository rebaseline.
+
+**PROGRAMSTART behavior under test:**
+
+- Mode C preserved the existing production-readiness file and reconciled it in place instead of creating another Master;
+- old planned/partial items were checked against later implementation evidence and optional UX expansion was demoted from MUST work where no current correctness/safety need justified it;
+- deterministic repository proof was chosen before provider reactivation;
+- the lack of Actions execution was classified narrowly as a merge gate, not a whole-project blocker;
+- PR #57's single-repository operator handoff contract captured exact action, non-secret return evidence, acceptance, invalidation, resume point, and safe Lane-B work;
+- no deep research or new methodology layer was triggered.
+
+**Acceptance result:** successful late-stage protocol retest. PROGRAMSTART made the nearly finished project smaller and more explicit rather than more elaborate. The first returned-evidence/resumption cycle remains open pending actual Actions evidence.
+
+**Methodology decision:** no PROGRAMSTART feature change is justified by Resume Creator at this checkpoint. The session confirms existing Mode-C/evidence/safe-lane/operator-gate machinery and provides evidence against prematurely adding a dedicated paused/inactive lifecycle state machine.
+
+**Next evidence-earned candidate:** concurrent Mode-C lane coordination remains the strongest next systemic improvement after PR #57. Resume Creator did not produce stronger evidence for a different new feature; its most useful contribution is validation of late-stage reduction, operator-gate use, and the decision not to add lifecycle machinery.

@@ -130,3 +130,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bootstrap script for generating new planning packages.
 - HTTP dashboard server with API and browser smoke tests.
 - CI pipeline with Windows/Linux matrix.
+- Drift detection for authority/dependent file synchronization.

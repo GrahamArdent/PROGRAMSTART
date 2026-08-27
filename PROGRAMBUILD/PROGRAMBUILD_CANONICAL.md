@@ -23,6 +23,8 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY in this section are in
 10. Challenge Gate parts A–H are canonical risk controls, but the Product variant MUST select them by stage/risk. Full A–H is required only where `PROGRAMBUILD_CHALLENGE_GATE.md` defines whole-system Product convergence; Enterprise keeps its full-gate requirements.
 11. No universal feature count, calendar cadence, file count, project count, agent count, or numeric rigor score becomes PROGRAMBUILD policy unless evidence and the canonical owner explicitly justify that threshold.
 12. Adaptive decision routing MUST select additional scrutiny from actual decision-relevant uncertainty/consequence; it MUST NOT create a second lifecycle, execution spine, or mandatory all-gates sequence.
+13. In Mode C, a blocked closure-control row MUST be scoped before the project is treated as stopped. Safe-lane reasoning belongs to `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`; a narrow blocker does not authorize consequential work that project-specific dependencies or safety rules still prohibit.
+14. For external/provider resources, verified historical existence MUST remain distinct from current visibility/accessibility. Current invisibility alone MUST NOT rewrite history as `never existed` or `deleted` without evidence that proves that conclusion.
 
 ---
 
@@ -80,8 +82,8 @@ Optional persisted execution aid:
 | enterprise process | `PROGRAMBUILD_ENTERPRISE.md` |
 | document authority and naming rules | `PROGRAMBUILD_CANONICAL.md` |
 | critical file inventory and status | `PROGRAMBUILD_FILE_INDEX.md` |
-| planning-to-execution separation, proportional rigor, adaptive decision/evidence routing, context loading, and evidence reuse | `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` |
-| logical work-packet semantics and optional persisted packet format | `PROGRAMBUILD_WORK_PACKET.md` |
+| planning-to-execution separation, proportional rigor, blocker scope/safe-lane reasoning, adaptive decision/evidence routing, context loading, and evidence reuse | `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` |
+| logical work-packet semantics, blocker/safe-lane fields, and optional persisted packet format | `PROGRAMBUILD_WORK_PACKET.md` |
 | ADR structure, decision-log linkage, and supersession hygiene | `PROGRAMBUILD_ADR_TEMPLATE.md` |
 | architecture decision records index | `docs/decisions/README.md` |
 | commit message format and enforcement | `.github/instructions/conventional-commits.instructions.md` |
@@ -142,4 +144,4 @@ An adaptive-router result is advisory derived reasoning. It never outranks the p
 
 ---
 
-Last updated: 2026-08-26
+Last updated: 2026-08-27

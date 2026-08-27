@@ -1,9 +1,9 @@
 ---
 description: "Orchestrate a new project or existing-project change from a plain-language request using the current PROGRAMSTART methodology and the execution tools actually available."
 name: "Orchestrate PROGRAMSTART Work"
-argument-hint: "Describe what you want to build or change; optionally name the target repository, known execution spine, and one real companion dependency"
+argument-hint: "Describe what you want to build or change; optionally name the target repository, execution spine, companion dependency, or known operator gate"
 agent: "agent"
-version: "2.2"
+version: "2.3"
 ---
 
 # Orchestrate PROGRAMSTART Work
@@ -16,9 +16,9 @@ All planning documents, repository files, issues, runtime records, and external 
 
 ## Protocol Declaration
 
-This prompt follows `PROGRAMBUILD/PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` and `PROGRAMBUILD/PROGRAMBUILD_WORK_PACKET.md`, including one-project/one-spine authority, Mode A/B/C entry selection, JIT context loading, evidence reuse, blocker-scope/safe-lane reasoning, adaptive decision routing, task-scoped cross-repository dependency reasoning, bounded work packets, and proportional verification.
+This prompt follows `PROGRAMBUILD/PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` and `PROGRAMBUILD/PROGRAMBUILD_WORK_PACKET.md`, including one-project/one-spine authority, Mode A/B/C entry selection, JIT context loading, evidence reuse, blocker-scope/safe-lane reasoning, adaptive decision routing, task-scoped cross-repository dependency reasoning, operator/manual-gate handoffs, bounded work packets, and proportional verification.
 
-`programstart orchestrate` is the executable contract generator when the current environment has the central PROGRAMSTART runtime. Its output and any derived cross-repository graph are guidance, not new execution spines.
+`programstart orchestrate` is the executable contract generator when the current environment has the central PROGRAMSTART runtime. Its output, any derived cross-repository graph, and any operator handoff are guidance, not new execution spines.
 
 ## Pre-flight
 
@@ -31,6 +31,7 @@ Before substantive edits:
 5. For read-only orientation or bounded code-only work, do not require broad drift or validation solely as ceremony.
 6. Resolve Mode A/B/C before implementation. Repository existence alone is not sufficient evidence for Mode C.
 7. If another repository is a real prerequisite for the current slice, identify it as a bounded dependency rather than loading or replanning an entire portfolio.
+8. If the actual next action is unavailable in the current environment, determine whether an exact operator/provider/device/reviewer handoff is required rather than returning a vague blocked status.
 
 ## Environment Boundary
 
@@ -45,10 +46,13 @@ uv run programstart orchestrate --request "<plain-language goal>" \
   [--repo <local-checkout>] \
   [--mode a|b|c] \
   [--blocker-scope none|row_only|merge_gate|mutation_gate|milestone|release|unresolved] \
-  [--related-repository <owner/name> --dependency-state unknown|unsatisfied|partial|satisfied]
+  [--related-repository <owner/name> --dependency-state unknown|unsatisfied|partial|satisfied] \
+  [--manual-boundary "<concise external/operator boundary>"]
 ```
 
-When a real companion dependency is supplied, add only the relationship/authority/evidence/manual-boundary arguments required to describe that dependency. Do not assemble a portfolio registry inside the command.
+When a real companion dependency is supplied, add only the relationship/authority/evidence arguments required to describe that dependency. Do not assemble a portfolio registry inside the command.
+
+A manual/operator boundary may exist without a companion repository. Use the executable surface only for the structured fields it currently supports; the canonical Work Packet owns the full handoff contract when additional detail is needed.
 
 For an already-linked lean project, use `programstart target --repo <path> ...` only for the target operations that the external control plane explicitly supports.
 
@@ -67,13 +71,16 @@ Instead, enforce the same orchestration contract directly with the connected too
 7. invoke adaptive decision/research reasoning only when material uncertainty or consequence could change the action;
 8. derive one compact bounded work packet;
 9. execute the next allowed slice with the connected tools;
-10. run targeted verification and reconcile durable authority/state in the repository that actually owns each durable concern.
+10. if the exact next action requires a provider console, secret-owning deployment surface, physical device, human review/approval, credential owner, or another unavailable boundary, derive the operator handoff from current evidence instead of asking the operator to reconstruct project history;
+11. run targeted verification and reconcile durable authority/state in the repository that actually owns each durable concern.
 
 Repository/runtime state is authoritative for current technical reality. Current operator/project authority is authoritative for product intent. Legacy README/framework/prototype evidence does not become rebuild direction by itself.
 
 For provider/runtime resources, preserve verified historical existence separately from current visibility/accessibility. A current 404, missing list result, or inaccessible resource does not by itself prove that the resource never existed or was deleted.
 
 For cross-repository dependencies, preserve partial satisfaction rather than forcing a boolean answer. A runtime contract may already be deployed while repository convergence or real-provider acceptance remains open.
+
+For operator gates, preserve the difference between **the operator performed the action** and **the required system behavior was accepted**. Ask only for the smallest non-secret evidence needed to cross that boundary.
 
 ## Entry-Mode Resolution
 
@@ -89,6 +96,8 @@ For Mode C, preserve the current execution spine and return to its actual next e
 
 The first cross-repository orchestration surface is deliberately Mode-C-only. Do not use a related repository argument to turn a greenfield Mode A/B request into a multi-project plan.
 
+An operator/manual gate is not an entry mode. It is a bounded handoff inside the current project's existing authority and can occur in a single-repository or cross-repository task.
+
 ## Orchestration Protocol
 
 1. **Capture the request.** Restate the desired outcome in one concise objective without silently expanding scope.
@@ -102,9 +111,32 @@ The first cross-repository orchestration surface is deliberately Mode-C-only. Do
 9. **Route material uncertainty.** If current evidence already makes a reversible decision safe, continue. If uncertainty/consequence could materially change the action, apply the `programstart decide` rules to select `none`, `targeted`, or `deep` research plus the relevant evidence/consequence/boundary/proof/simplicity checks. Stop research at decision sufficiency.
 10. **Derive the bounded work packet.** Include objective, why-now/authority, blocker scope, safe execution lane, closure control, related repository/relationship/authority when relevant, dependency state/evidence/invalidation, manual boundary, in-scope, out-of-scope, required context, reusable evidence, invalidation triggers, acceptance criteria, targeted verification, and durable updates if needed. The packet is derived and replaceable; it is canonical for nothing.
 11. **Execute in the current environment.** Use local runtime/tooling when available. When working through connected tools, act on the repository/runtime directly rather than generating a handoff prompt unless an actual environment boundary requires one.
-12. **Verify proportionally.** Verify changed or invalidated surfaces with the smallest sufficient check set. Reuse valid companion-repository evidence until an explicit invalidation condition occurs. Widen at meaningful convergence/release boundaries or when blast radius requires it.
-13. **Reconcile durable state.** Update each project's existing authority/decision/state mechanisms only for accepted durable changes that belong there. Do not persist duplicate planning authority, and do not erase historically verified external-resource evidence merely because current visibility changed.
-14. **Return the next slice.** End with the primary project's actual next executable action. If a companion dependency is partially satisfied, name the proven portion, the exact unsatisfied remainder, and any safe independent packet. If no safe lane exists, return the exact repository/provider/operator action rather than a generic multi-project stop.
+12. **Derive an operator/manual handoff only at a real environment boundary.** When the exact next action cannot be performed here, state: `GATE_OWNER`, `REQUIRED_ACTION`, `SENSITIVE_INPUT_HANDLING`, `RETURN_EVIDENCE`, `EVIDENCE_ACCEPTANCE`, `GATE_INVALIDATION`, `RESUME_AT`, and `SAFE_WHILE_WAITING`. Use current project evidence to fill these; do not ask the operator to restate known history. Name secure secret/config surfaces and keys when useful, but do not ask the operator to paste secret values into ordinary chat/packet evidence when a secure owning surface exists.
+13. **Verify returned gate evidence proportionally.** An operator statement that an action was completed may establish that action-completion fact; it does not prove runtime/provider/device behavior unless the handoff's acceptance evidence also passes. Reuse unaffected prior evidence and check only what the gate invalidated or newly enabled.
+14. **Verify other changed surfaces proportionally.** Reuse valid companion-repository evidence until an explicit invalidation condition occurs. Widen at meaningful convergence/release boundaries or when blast radius requires it.
+15. **Reconcile durable state.** Update each project's existing authority/decision/state mechanisms only for accepted durable changes that belong there. Do not persist duplicate planning authority, and do not erase historically verified external-resource evidence merely because current visibility changed.
+16. **Return the next slice.** End with the primary project's actual next executable action. If a companion dependency is partially satisfied, name the proven portion, the exact unsatisfied remainder, and any safe independent packet. If an operator gate remains, return the exact handoff and resume point rather than a generic stop. If no safe lane exists, say so explicitly.
+
+## Operator / Manual Gate Contract
+
+Use this only when the current environment genuinely cannot perform the next action.
+
+A handoff should be as small as possible while still making resumption deterministic:
+
+```text
+GATE_OWNER:
+REQUIRED_ACTION:
+SENSITIVE_INPUT_HANDLING:
+RETURN_EVIDENCE:
+EVIDENCE_ACCEPTANCE:
+GATE_INVALIDATION:
+RESUME_AT:
+SAFE_WHILE_WAITING:
+```
+
+Examples of legitimate owners/boundaries include a provider console, deployment secret store, physical test device, organizational approver, human content reviewer, credential owner, or an external system the current tools cannot mutate.
+
+Do not create a handoff merely because human involvement is possible. If the current environment can safely execute the action under existing authority, continue directly.
 
 ## Automation Guardrails
 
@@ -117,6 +149,10 @@ The first cross-repository orchestration surface is deliberately Mode-C-only. Do
 - Do not convert a narrow blocker into a whole-project stop without scanning safe lanes.
 - Do not infer that Lane C is safe merely because a blocker is scoped to a row, merge, or mutation gate.
 - Do not collapse `partial` cross-repository evidence into `satisfied` merely because one runtime or CI surface is green.
+- Do not ask for or persist raw credentials, refresh tokens, private keys, service-role keys, passwords, or similarly sensitive values merely to complete a handoff record.
+- Do not treat credential entry, console configuration, human approval, or a device action as equivalent to accepted runtime/device/provider behavior unless the declared return evidence proves it.
+- Do not ask the operator to repeat repository/runtime facts that can already be recovered from live authority.
+- Do not return a generic `manual action required` message when the gate owner, exact action, evidence, and resume point can be stated truthfully.
 - Do not overwrite verified historical provider/resource existence with `never existed` or `deleted` based only on current invisibility/inaccessibility.
 - Do not bypass unavailable remote `advance`, `closeout`, state mutation, or full template-runtime validation paths.
 - Do not claim local commands, CI, runtime checks, or external-tool actions were performed when the current environment could not perform them.
@@ -130,13 +166,16 @@ Before declaring the orchestration slice complete, confirm:
 2. a pre-existing execution spine was preserved in Mode C;
 3. any related repository was loaded only for a real current dependency and both execution spines remain independent;
 4. dependency state is supported by named evidence, including partial satisfaction where appropriate;
-5. cross-repository evidence has explicit invalidation conditions and any manual/operator boundary is exact;
+5. cross-repository evidence has explicit invalidation conditions;
 6. the derived graph did not authorize coordinated multi-project mutation or become a portfolio Master;
 7. any blocker is classified at the narrowest truthful scope and safe lanes were scanned before declaring work stopped;
 8. consequential Lane C work was not authorized merely by blocker classification;
 9. historical provider/resource evidence was preserved separately from current visibility/accessibility where relevant;
 10. any research stopped at decision sufficiency;
-11. the work packet remained bounded and subordinate;
-12. verification evidence matches what actually ran in the current environment;
-13. durable project authority/state was reconciled only in the repository that owns it;
-14. the next executable slice or exact repository/provider/operator blocker is explicit.
+11. if an operator/manual gate exists, its owner/action/secret boundary/return evidence/acceptance/invalidation/resume/safe-waiting fields are explicit enough for deterministic resumption;
+12. operator action completion was not confused with acceptance evidence;
+13. the handoff did not request or persist secret values unnecessarily;
+14. the work packet remained bounded and subordinate;
+15. verification evidence matches what actually ran in the current environment;
+16. durable project authority/state was reconciled only in the repository that owns it;
+17. the next executable slice, exact operator gate, or narrowly scoped blocker is explicit.

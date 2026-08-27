@@ -82,6 +82,32 @@ def test_single_repository_packet_preserves_existing_defaults() -> None:
     assert "closure control:" not in render_text(plan)
 
 
+def test_single_repository_manual_boundary_preserves_project_authority() -> None:
+    plan = build_plan(
+        request="Activate the production Gmail runtime after operator provisioning",
+        repository="GrahamArdent/Dedication-Email-Bridge",
+        environment="connected-tools",
+        mode="c",
+        execution_spine="PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md",
+        blocker_scope="release",
+        manual_boundary=(
+            "Provision Google OAuth/deployment secrets securely, then return the controlled live mailbox smoke result."
+        ),
+    )
+
+    assert plan.related_repositories == ()
+    assert plan.authority_graph_policy == ()
+    assert plan.cross_repository_guidance == ()
+    assert plan.closure_control == "PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md"
+    assert plan.work_packet.cross_repository_dependencies == ()
+    assert plan.work_packet.manual_boundaries == (
+        "Provision Google OAuth/deployment secrets securely, then return the controlled live mailbox smoke result.",
+    )
+    rendered = render_text(plan)
+    assert "manual boundaries:" in rendered
+    assert "closure control: PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md" in rendered
+
+
 def test_mutation_gate_keeps_live_action_blocked_but_surfaces_safe_lane_scan() -> None:
     plan = build_plan(
         request="Continue useful R4 work while Vercel mutation is blocked",
@@ -270,6 +296,36 @@ def test_cli_json_output_is_machine_readable(capsys: pytest.CaptureFixture[str])
     assert payload["work_packet"]["blocker_scope"] == "mutation_gate"
     assert payload["work_packet"]["reusable_evidence"]
     assert payload["completion_rule"]
+
+
+def test_single_repository_manual_boundary_cli_json_is_machine_readable(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    assert main(
+        [
+            "--request",
+            "Activate Gmail after operator provisioning",
+            "--repository",
+            "GrahamArdent/Dedication-Email-Bridge",
+            "--mode",
+            "c",
+            "--execution-spine",
+            "PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md",
+            "--blocker-scope",
+            "release",
+            "--manual-boundary",
+            "Secure Google/deployment provisioning and controlled live mailbox smoke.",
+            "--json",
+        ]
+    ) == 0
+
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["related_repositories"] == []
+    assert payload["closure_control"] == "PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md"
+    assert payload["work_packet"]["cross_repository_dependencies"] == []
+    assert payload["work_packet"]["manual_boundaries"] == [
+        "Secure Google/deployment provisioning and controlled live mailbox smoke."
+    ]
 
 
 def test_cross_repository_cli_json_output_is_machine_readable(capsys: pytest.CaptureFixture[str]) -> None:

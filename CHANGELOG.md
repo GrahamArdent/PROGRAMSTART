@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Extended `programstart impact` with deterministic dependency blast-radius paths over `depends_on` and `authority_dependency`, including start-node resolution, path provenance, machine-readable output, and optional `--max-depth` traversal bounds while preserving existing related-record discovery.
 - Added `programstart-adopt` for non-destructive Mode-C adoption of PROGRAMBUILD into an existing repository. Adoption preserves the host engineering toolchain, adds only PROGRAMBUILD management/output surfaces plus workflow prompts and a project registry, and tracks only reusable methodology files in the sync manifest so project state and project outputs are never overwritten by template sync.
 - Added `programstart target --repo <path> ...` so the central PROGRAMSTART runtime can operate status, guide, adaptive decision routing, JIT/drift, progress, prompt generation, state inspection/snapshots, and target-local validation against a lightweight external project checkout without vendoring PROGRAMSTART's scripts/dashboard/tests into that project.
+- Added `programstart orchestrate` and an environment-aware orchestration prompt that convert a plain-language request into a bounded PROGRAMSTART execution contract for either local target control or connected repository/runtime tools without creating a second execution spine.
 
 ### Changed
 

@@ -10,6 +10,7 @@ CLI_COMMANDS: tuple[str, ...] = (
     "recommend",
     "impact",
     "decide",
+    "orchestrate",
     "research",
     "status",
     "validate",

@@ -122,6 +122,21 @@ def _run_target(arguments: list[str]) -> int:
     return run_passthrough(programstart_target.main, "programstart target", arguments)
 
 
+def _run_orchestrate(arguments: list[str]) -> int:
+    """Load the environment-aware orchestration bridge on demand."""
+    try:
+        from . import programstart_orchestrate
+    except ImportError:
+        try:
+            import programstart_orchestrate  # type: ignore[no-redef]
+        except ImportError as exc:
+            raise SystemExit(
+                "`programstart orchestrate` requires the current PROGRAMSTART runtime. "
+                "Run it from the central PROGRAMSTART installation or sync the current runtime first."
+            ) from exc
+    return run_passthrough(programstart_orchestrate.main, "programstart orchestrate", arguments)
+
+
 def run_jit_check(arguments: list[str]) -> int:
     parser = argparse.ArgumentParser(prog="programstart jit-check", description="Run the JIT source-of-truth protocol.")
     parser.add_argument("--system", choices=["programbuild", "userjourney"], required=True, help="Workflow system to check.")
@@ -199,6 +214,8 @@ def dispatch(command: str, arguments: list[str], parser: argparse.ArgumentParser
         return run_passthrough(programstart_impact.main, "programstart impact", arguments)
     if command == "decide":
         return run_passthrough(programstart_decision.main, "programstart decide", arguments)
+    if command == "orchestrate":
+        return _run_orchestrate(arguments)
     if command == "research":
         return run_passthrough(programstart_research_delta.main, "programstart research", arguments)
     if command == "status":

@@ -47,7 +47,7 @@ def test_connected_mode_c_preserves_existing_execution_spine_and_does_not_claim_
 
     assert plan.mode == "c"
     assert plan.execution_spine == "PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md"
-    assert any("connected repository/runtime tools" in item for item in plan.execution_handoff)
+    assert any("connected repository" in item for item in plan.execution_handoff)
     assert any("do not claim local PROGRAMSTART" in item for item in plan.execution_handoff)
     assert "A second execution spine" in plan.work_packet.out_of_scope[0]
 
@@ -98,14 +98,17 @@ def test_mode_c_requires_a_target() -> None:
         build_plan(request="Change the product", mode="c")
 
 
-def test_render_text_names_environment_mode_and_handoff() -> None:
+def test_render_text_exposes_authority_evidence_handoff_and_completion() -> None:
     plan = build_plan(request="Build a small API")
     rendered = render_text(plan)
 
     assert "PROGRAMSTART Orchestration Contract" in rendered
     assert "environment: local" in rendered
     assert "mode: a" in rendered
+    assert "authority loading:" in rendered
+    assert "reusable evidence:" in rendered
     assert "handoff:" in rendered
+    assert "completion rule:" in rendered
 
 
 def test_cli_json_output_is_machine_readable(capsys: pytest.CaptureFixture[str]) -> None:
@@ -115,3 +118,6 @@ def test_cli_json_output_is_machine_readable(capsys: pytest.CaptureFixture[str])
     assert payload["request"] == "Build a small API"
     assert payload["environment"] == "local"
     assert payload["mode"] == "a"
+    assert payload["authority_loading"]
+    assert payload["work_packet"]["reusable_evidence"]
+    assert payload["completion_rule"]

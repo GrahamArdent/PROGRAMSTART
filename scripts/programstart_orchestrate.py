@@ -37,6 +37,8 @@ EnvironmentInput = Literal["auto", "local", "connected-tools"]
 Mode = Literal["a", "b", "c", "unresolved"]
 ModeInput = Literal["auto", "a", "b", "c"]
 BlockerScope = Literal["none", "row_only", "merge_gate", "mutation_gate", "milestone", "release", "unresolved"]
+DependencyState = Literal["unknown", "unsatisfied", "partial", "satisfied"]
+RelationshipType = Literal["product_contract", "runtime_contract", "companion", "other"]
 BLOCKER_SCOPES: tuple[BlockerScope, ...] = (
     "none",
     "row_only",
@@ -46,6 +48,25 @@ BLOCKER_SCOPES: tuple[BlockerScope, ...] = (
     "release",
     "unresolved",
 )
+DEPENDENCY_STATES: tuple[DependencyState, ...] = ("unknown", "unsatisfied", "partial", "satisfied")
+RELATIONSHIP_TYPES: tuple[RelationshipType, ...] = (
+    "product_contract",
+    "runtime_contract",
+    "companion",
+    "other",
+)
+
+
+@dataclass(frozen=True, slots=True)
+class RelatedRepository:
+    repository: str
+    relationship_type: RelationshipType
+    authority_owner: str
+    execution_spine: str
+    dependency_state: DependencyState
+    dependency_evidence: tuple[str, ...]
+    invalidation_conditions: tuple[str, ...]
+    manual_boundary: str
 
 
 @dataclass(frozen=True, slots=True)
@@ -54,6 +75,8 @@ class WorkPacket:
     authority: str
     blocker_scope: BlockerScope
     safe_lane_policy: tuple[str, ...]
+    cross_repository_dependencies: tuple[str, ...]
+    manual_boundaries: tuple[str, ...]
     in_scope: tuple[str, ...]
     out_of_scope: tuple[str, ...]
     required_context: tuple[str, ...]
@@ -79,6 +102,10 @@ class OrchestrationPlan:
     blocker_scope: BlockerScope
     safe_lane_policy: tuple[str, ...]
     evidence_continuity_policy: tuple[str, ...]
+    related_repositories: tuple[RelatedRepository, ...]
+    authority_graph_policy: tuple[str, ...]
+    cross_repository_guidance: tuple[str, ...]
+    closure_control: str
     work_packet: WorkPacket
     execution_handoff: tuple[str, ...]
     verification_policy: tuple[str, ...]
@@ -112,15 +139,23 @@ def _resolve_mode(mode: ModeInput, *, has_target: bool, research_backed: bool) -
     return "a", "No existing target or research-backed evidence was supplied."
 
 
-def _authority_loading(mode: Mode, execution_spine: str) -> tuple[str, ...]:
+def _authority_loading(mode: Mode, execution_spine: str, related: RelatedRepository | None) -> tuple[str, ...]:
     if mode == "c":
-        return (
+        loading = [
             "Stable target repository instructions or authority index, if present",
             execution_spine or "Target project's designated execution spine",
             "Only affected requirements, architecture, contracts, and decisions",
             "Current implementation, tests, or runtime evidence needed for the delta",
             "PROGRAMBUILD planning operating model as methodology, not replacement authority",
-        )
+        ]
+        if related is not None:
+            loading.extend(
+                [
+                    f"Related repository authority only for the dependency: {related.repository}",
+                    related.execution_spine or f"{related.repository} designated execution spine, if one exists",
+                ]
+            )
+        return tuple(loading)
     if mode == "b":
         return (
             "PROGRAMBUILD planning operating model and idea intake when shaping is needed",
@@ -139,7 +174,13 @@ def _authority_loading(mode: Mode, execution_spine: str) -> tuple[str, ...]:
     )
 
 
-def _orientation(environment: Environment, mode: Mode, target: str, execution_spine: str) -> tuple[str, ...]:
+def _orientation(
+    environment: Environment,
+    mode: Mode,
+    target: str,
+    execution_spine: str,
+    related: RelatedRepository | None,
+) -> tuple[str, ...]:
     if mode == "unresolved":
         surface = "connected tools" if environment == "connected-tools" else "the local checkout"
         return (
@@ -148,20 +189,33 @@ def _orientation(environment: Environment, mode: Mode, target: str, execution_sp
             "Repository existence alone is not evidence for Mode C.",
         )
     if environment == "connected-tools" and mode == "c":
-        return (
+        actions = [
             f"Inspect live repository {target} before changing it.",
             f"Locate {execution_spine or 'the designated execution spine'} and its next incomplete slice.",
             "Load only authority and evidence required for that slice.",
             "If the closure-control slice is blocked, classify its scope and scan safe execution lanes before stopping.",
-        )
+        ]
+        if related is not None:
+            actions.extend(
+                [
+                    f"Inspect {related.repository} only enough to resolve the declared dependency and authority split.",
+                    "Keep each repository's execution spine separate; derive only a task-scoped dependency graph.",
+                ]
+            )
+        return tuple(actions)
     if environment == "local" and mode == "c":
         quoted = json.dumps(target)
-        return (
+        actions = [
             f"Use `programstart target --repo {quoted} status` when the target is linked.",
             f"Use `programstart target --repo {quoted} guide --system programbuild`.",
             "Locate the existing execution spine and next incomplete slice before editing.",
             "If that slice is blocked, classify its scope and scan safe execution lanes before stopping.",
-        )
+        ]
+        if related is not None:
+            actions.append(
+                f"Inspect related repository {related.repository} independently; do not treat a local target command as multi-repo authority."
+            )
+        return tuple(actions)
     return (
         "Load only the PROGRAMBUILD entry-mode and intake authority needed for this request.",
         "Reuse trustworthy supplied or research evidence rather than re-asking settled questions.",
@@ -261,79 +315,200 @@ def _evidence_continuity_policy() -> tuple[str, ...]:
     )
 
 
+def _related_repository(
+    *,
+    target: str,
+    mode: Mode,
+    related_repository: str,
+    relationship_type: RelationshipType,
+    related_authority: str,
+    related_execution_spine: str,
+    dependency_state: DependencyState,
+    dependency_evidence: tuple[str, ...],
+    dependency_invalidation: tuple[str, ...],
+    manual_boundary: str,
+) -> RelatedRepository | None:
+    has_metadata = bool(
+        related_authority
+        or related_execution_spine
+        or dependency_state != "unknown"
+        or dependency_evidence
+        or dependency_invalidation
+        or manual_boundary
+    )
+    if not related_repository:
+        if has_metadata:
+            raise ValueError("Cross-repository dependency metadata requires --related-repository.")
+        return None
+    if mode != "c":
+        raise ValueError("--related-repository is currently supported only for Mode C orchestration.")
+    if related_repository == target:
+        raise ValueError("--related-repository must name a repository different from the primary target.")
+    return RelatedRepository(
+        repository=related_repository,
+        relationship_type=relationship_type,
+        authority_owner=related_authority or "Declared dependency authority; verify the exact owner from live project evidence.",
+        execution_spine=related_execution_spine,
+        dependency_state=dependency_state,
+        dependency_evidence=dependency_evidence,
+        invalidation_conditions=dependency_invalidation,
+        manual_boundary=manual_boundary,
+    )
+
+
+def _authority_graph_policy(target: str, related: RelatedRepository | None) -> tuple[str, ...]:
+    if related is None:
+        return ("No cross-repository relationship was supplied for this task.",)
+    return (
+        f"Graph scope: derived and task-scoped for {target} ↔ {related.repository}; canonical for nothing.",
+        "Each repository retains its own execution spine, decisions, state, and closure authority.",
+        "A dependency relationship permits read/orient/classify/plan/verify reasoning; it does not grant multi-repository mutation authority.",
+        "Do not advance, close, merge, or edit both projects as one transaction merely because the graph contains a dependency.",
+    )
+
+
+def _cross_repository_guidance(target: str, related: RelatedRepository | None) -> tuple[str, ...]:
+    if related is None:
+        return ()
+    guidance = [
+        f"Primary repository {target} owns implementation mechanics for the requested slice unless its own authority says otherwise.",
+        f"Related repository {related.repository} owns: {related.authority_owner}",
+        f"Relationship type: {related.relationship_type}; dependency state: {related.dependency_state}.",
+    ]
+    if related.dependency_state == "unknown":
+        guidance.append(
+            f"Inspect only enough {related.repository} evidence to determine whether the dependency is satisfied before dependent closure."
+        )
+    elif related.dependency_state == "unsatisfied":
+        guidance.append(
+            f"{related.repository} remains a convergence prerequisite; do not claim the dependent closure until that dependency is satisfied."
+        )
+    elif related.dependency_state == "partial":
+        guidance.append(
+            "Reuse the proven part of the dependency, but keep the unsatisfied repository/runtime/manual remainder explicit before dependent closure."
+        )
+    else:
+        guidance.append(
+            "The declared dependency is satisfied by current evidence; reuse it until an invalidation condition occurs."
+        )
+    guidance.append(
+        "Independent safe work may proceed only when the primary project's own authority proves it does not assume the unsatisfied dependency."
+    )
+    if related.manual_boundary:
+        guidance.append(f"External/manual boundary: {related.manual_boundary}")
+    return tuple(guidance)
+
+
 def _work_packet(
     request: str,
     mode: Mode,
     execution_spine: str,
     blocker_scope: BlockerScope,
     safe_lane_policy: tuple[str, ...],
+    related: RelatedRepository | None,
 ) -> WorkPacket:
     if mode == "c":
-        required_context = (
+        required_context = [
             execution_spine or "Existing project execution spine",
             "Exact affected requirements, architecture, contracts, or decisions",
             "Current implementation or runtime evidence for the delta",
-        )
-        reusable_evidence = (
+        ]
+        reusable_evidence = [
             "Still-valid project decisions, tests, audits, and runtime evidence",
             "Prior research whose assumptions have not been invalidated",
-        )
+        ]
+        invalidation_triggers = [
+            "Changed authority, contracts, runtime behavior, or dependencies",
+            "Material evidence conflict or staleness",
+            "A blocked external resource becoming newly visible, inaccessible, deleted, or otherwise materially changed",
+        ]
         authority = "Existing project authority; PROGRAMBUILD remains methodology."
     elif mode == "b":
-        required_context = ("Research evidence and provenance", "PROGRAMBUILD intake", "Only unresolved gaps")
-        reusable_evidence = ("Trustworthy research that already answers intake or feasibility questions",)
+        required_context = ["Research evidence and provenance", "PROGRAMBUILD intake", "Only unresolved gaps"]
+        reusable_evidence = ["Trustworthy research that already answers intake or feasibility questions"]
+        invalidation_triggers = ["Changed decision assumptions", "Material evidence conflict or staleness"]
         authority = "Convert research into decisions and scope before establishing execution authority."
     elif mode == "a":
-        required_context = ("PROGRAMBUILD intake", "Problem, outcome, and constraints", "Cheapest validation evidence")
-        reusable_evidence = ("Trustworthy facts supplied with the request",)
+        required_context = ["PROGRAMBUILD intake", "Problem, outcome, and constraints", "Cheapest validation evidence"]
+        reusable_evidence = ["Trustworthy facts supplied with the request"]
+        invalidation_triggers = ["Changed problem, outcome, constraints, or validation evidence"]
         authority = "PROGRAMBUILD entry process until project-specific authority is established."
     else:
-        required_context = ("Live target authority sufficient to resolve entry mode",)
-        reusable_evidence = ("Still-valid repository evidence after authority reconciliation",)
+        required_context = ["Live target authority sufficient to resolve entry mode"]
+        reusable_evidence = ["Still-valid repository evidence after authority reconciliation"]
+        invalidation_triggers = ["New authority evidence that changes entry-mode classification"]
         authority = "Do not implement until entry mode and the authority chain are resolved."
+
+    cross_repository_dependencies: tuple[str, ...] = ()
+    manual_boundaries: tuple[str, ...] = ()
+    if related is not None:
+        required_context.append(
+            related.execution_spine or f"{related.repository} authority only for the declared dependency"
+        )
+        reusable_evidence.extend(related.dependency_evidence)
+        invalidation_triggers.extend(related.invalidation_conditions)
+        cross_repository_dependencies = (
+            f"{related.repository} [{related.relationship_type}] state={related.dependency_state}: {related.authority_owner}",
+        )
+        if related.manual_boundary:
+            manual_boundaries = (related.manual_boundary,)
 
     return WorkPacket(
         objective=request,
         authority=authority,
         blocker_scope=blocker_scope,
         safe_lane_policy=safe_lane_policy,
+        cross_repository_dependencies=cross_repository_dependencies,
+        manual_boundaries=manual_boundaries,
         in_scope=("Smallest coherent slice needed to advance the request", "Only rigor the decision actually earns"),
-        out_of_scope=("A second execution spine", "Unrelated refactors or research", "Unsupported remote workflow mutation"),
-        required_context=required_context,
-        reusable_evidence=reusable_evidence,
-        invalidation_triggers=(
-            "Changed authority, contracts, runtime behavior, or dependencies",
-            "Material evidence conflict or staleness",
-            "A blocked external resource becoming newly visible, inaccessible, deleted, or otherwise materially changed",
+        out_of_scope=(
+            "A second execution spine",
+            "A cross-project Master or portfolio transaction",
+            "Unrelated refactors or research",
+            "Unsupported remote workflow mutation",
         ),
+        required_context=tuple(required_context),
+        reusable_evidence=tuple(reusable_evidence),
+        invalidation_triggers=tuple(invalidation_triggers),
         acceptance_criteria=(
             "Bounded outcome is explicit and testable",
-            "One authority chain is preserved",
+            "Each repository's authority chain is preserved",
             "Material uncertainty is resolved or recorded",
             "Any blocker is scoped narrowly enough that safe executable work is not hidden",
+            "Cross-repository dependency state is not overstated beyond current evidence",
         ),
         targeted_verification=(
             "Verify changed or invalidated surfaces",
-            "Reuse unaffected evidence",
+            "Reuse unaffected evidence, including valid companion-repository evidence",
             "Widen only at a real convergence boundary",
         ),
         durable_updates=(
-            "Update existing authority only for accepted deltas",
+            "Update each repository's existing authority only for accepted deltas that belong there",
             "Record material decisions in the existing decision mechanism",
             "Preserve verified historical resource evidence when current visibility changes",
         ),
     )
 
 
-def _execution_handoff(environment: Environment, mode: Mode, target: str) -> tuple[str, ...]:
+def _execution_handoff(
+    environment: Environment,
+    mode: Mode,
+    target: str,
+    related: RelatedRepository | None,
+) -> tuple[str, ...]:
     if mode == "unresolved":
         return ("Resolve entry mode from live evidence before implementation.",)
     if environment == "connected-tools":
-        return (
+        handoff = [
             "Use connected repository or runtime tools directly for the bounded slice.",
             "Do not claim local PROGRAMSTART commands ran when they did not.",
             "Verify narrowly and reconcile durable project authority or state afterward.",
-        )
+        ]
+        if related is not None:
+            handoff.append(
+                "Treat related repositories as independent authority surfaces; cross-repository reads do not authorize coordinated mutation."
+            )
+        return tuple(handoff)
     if mode == "c":
         return (
             f"Use the central PROGRAMSTART target control plane against {target} for supported operations.",
@@ -352,6 +527,15 @@ def build_plan(
     research_backed: bool = False,
     execution_spine: str = "",
     blocker_scope: BlockerScope = "none",
+    related_repository: str = "",
+    relationship_type: RelationshipType = "product_contract",
+    related_authority: str = "",
+    related_execution_spine: str = "",
+    dependency_state: DependencyState = "unknown",
+    dependency_evidence: tuple[str, ...] = (),
+    dependency_invalidation: tuple[str, ...] = (),
+    manual_boundary: str = "",
+    closure_control: str = "",
     decision: str = "",
     impact: Level = "medium",
     uncertainty: Level | None = None,
@@ -380,6 +564,18 @@ def build_plan(
         if resolved_mode in {"c", "unresolved"}
         else "PROGRAMBUILD default until project authority is established"
     )
+    related = _related_repository(
+        target=target,
+        mode=resolved_mode,
+        related_repository=related_repository.strip(),
+        relationship_type=relationship_type,
+        related_authority=related_authority.strip(),
+        related_execution_spine=related_execution_spine.strip(),
+        dependency_state=dependency_state,
+        dependency_evidence=dependency_evidence,
+        dependency_invalidation=dependency_invalidation,
+        manual_boundary=manual_boundary.strip(),
+    )
     safe_lane_policy = _safe_lane_policy(blocker_scope)
     route = _route_material_decision(
         request,
@@ -404,6 +600,7 @@ def build_plan(
     else:
         decision_trigger = "Adaptive routing was activated from supplied decision-relevant signals."
 
+    resolved_closure_control = closure_control.strip() or resolved_spine
     return OrchestrationPlan(
         request=request,
         environment=resolved_environment,
@@ -411,15 +608,19 @@ def build_plan(
         mode_reason=mode_reason,
         target=target,
         execution_spine=resolved_spine,
-        authority_loading=_authority_loading(resolved_mode, execution_spine),
-        orientation_actions=_orientation(resolved_environment, resolved_mode, target, execution_spine),
+        authority_loading=_authority_loading(resolved_mode, execution_spine, related),
+        orientation_actions=_orientation(resolved_environment, resolved_mode, target, execution_spine, related),
         decision_route=route,
         decision_trigger=decision_trigger,
         blocker_scope=blocker_scope,
         safe_lane_policy=safe_lane_policy,
         evidence_continuity_policy=_evidence_continuity_policy(),
-        work_packet=_work_packet(request, resolved_mode, execution_spine, blocker_scope, safe_lane_policy),
-        execution_handoff=_execution_handoff(resolved_environment, resolved_mode, target),
+        related_repositories=() if related is None else (related,),
+        authority_graph_policy=_authority_graph_policy(target, related),
+        cross_repository_guidance=_cross_repository_guidance(target, related),
+        closure_control=resolved_closure_control,
+        work_packet=_work_packet(request, resolved_mode, execution_spine, blocker_scope, safe_lane_policy, related),
+        execution_handoff=_execution_handoff(resolved_environment, resolved_mode, target, related),
         verification_policy=(
             "Narrow while executing; widen while converging.",
             "Do not claim checks or tools that did not actually run.",
@@ -441,6 +642,10 @@ def render_text(plan: OrchestrationPlan) -> str:
         ("orientation", plan.orientation_actions),
         ("safe-lane policy", plan.safe_lane_policy),
         ("evidence continuity", plan.evidence_continuity_policy),
+        ("authority graph policy", plan.authority_graph_policy),
+        ("cross-repository guidance", plan.cross_repository_guidance),
+        ("cross-repository dependencies", packet.cross_repository_dependencies),
+        ("manual boundaries", packet.manual_boundaries),
         ("required context", packet.required_context),
         ("reusable evidence", packet.reusable_evidence),
         ("in scope", packet.in_scope),
@@ -459,12 +664,13 @@ def render_text(plan: OrchestrationPlan) -> str:
         f"- mode: {plan.mode} ({plan.mode_reason})",
         f"- target: {plan.target}",
         f"- execution spine: {plan.execution_spine}",
+        f"- closure control: {plan.closure_control}",
         f"- work-packet authority: {packet.authority}",
         f"- blocker scope: {plan.blocker_scope}",
         f"- decision route: {route_text}",
         f"- decision trigger: {plan.decision_trigger}",
     ]
-    lines.extend(f"- {label}: " + " | ".join(values) for label, values in fields)
+    lines.extend(f"- {label}: " + " | ".join(values) for label, values in fields if values)
     lines.append(f"- completion rule: {plan.completion_rule}")
     return "\n".join(lines)
 
@@ -479,6 +685,15 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--research-backed", action="store_true")
     parser.add_argument("--execution-spine", default="")
     parser.add_argument("--blocker-scope", choices=BLOCKER_SCOPES, default="none")
+    parser.add_argument("--related-repository", default="")
+    parser.add_argument("--relationship-type", choices=RELATIONSHIP_TYPES, default="product_contract")
+    parser.add_argument("--related-authority", default="")
+    parser.add_argument("--related-execution-spine", default="")
+    parser.add_argument("--dependency-state", choices=DEPENDENCY_STATES, default="unknown")
+    parser.add_argument("--dependency-evidence", action="append", default=[])
+    parser.add_argument("--dependency-invalidation", action="append", default=[])
+    parser.add_argument("--manual-boundary", default="")
+    parser.add_argument("--closure-control", default="")
     parser.add_argument("--decision", default="")
     parser.add_argument("--impact", choices=["low", "medium", "high"], default="medium")
     parser.add_argument("--uncertainty", choices=["low", "medium", "high"])
@@ -512,6 +727,15 @@ def main(argv: list[str] | None = None) -> int:
             research_backed=args.research_backed,
             execution_spine=args.execution_spine,
             blocker_scope=args.blocker_scope,
+            related_repository=args.related_repository,
+            relationship_type=args.relationship_type,
+            related_authority=args.related_authority,
+            related_execution_spine=args.related_execution_spine,
+            dependency_state=args.dependency_state,
+            dependency_evidence=tuple(args.dependency_evidence),
+            dependency_invalidation=tuple(args.dependency_invalidation),
+            manual_boundary=args.manual_boundary,
+            closure_control=args.closure_control,
             decision=args.decision,
             impact=args.impact,
             uncertainty=args.uncertainty,

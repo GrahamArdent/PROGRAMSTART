@@ -54,6 +54,34 @@ def test_connected_mode_c_preserves_existing_execution_spine_and_does_not_claim_
     assert "A second execution spine" in plan.work_packet.out_of_scope[0]
 
 
+def test_single_repository_packet_preserves_existing_defaults() -> None:
+    plan = build_plan(
+        request="Continue the already-decided bounded slice",
+        repository="owner/project",
+        environment="connected-tools",
+        mode="c",
+    )
+
+    assert plan.related_repositories == ()
+    assert plan.authority_graph_policy == ()
+    assert plan.cross_repository_guidance == ()
+    assert plan.closure_control == ""
+    assert plan.work_packet.cross_repository_dependencies == ()
+    assert plan.work_packet.manual_boundaries == ()
+    assert plan.work_packet.out_of_scope == (
+        "A second execution spine",
+        "Unrelated refactors or research",
+        "Unsupported remote workflow mutation",
+    )
+    assert plan.work_packet.invalidation_triggers == (
+        "Changed authority, contracts, runtime behavior, or dependencies",
+        "Material evidence conflict or staleness",
+        "A blocked external resource becoming newly visible, inaccessible, deleted, or otherwise materially changed",
+    )
+    assert "authority graph policy:" not in render_text(plan)
+    assert "closure control:" not in render_text(plan)
+
+
 def test_mutation_gate_keeps_live_action_blocked_but_surfaces_safe_lane_scan() -> None:
     plan = build_plan(
         request="Continue useful R4 work while Vercel mutation is blocked",
@@ -200,7 +228,7 @@ def test_mode_c_requires_a_target() -> None:
         build_plan(request="Change the product", mode="c")
 
 
-def test_render_text_exposes_authority_blocker_dependency_evidence_handoff_and_completion() -> None:
+def test_render_text_exposes_authority_blocker_evidence_handoff_and_completion() -> None:
     plan = build_plan(
         request="Build a small API",
         blocker_scope="unresolved",
@@ -214,13 +242,40 @@ def test_render_text_exposes_authority_blocker_dependency_evidence_handoff_and_c
     assert "blocker scope: unresolved" in rendered
     assert "safe-lane policy:" in rendered
     assert "evidence continuity:" in rendered
-    assert "authority graph policy:" in rendered
     assert "reusable evidence:" in rendered
     assert "handoff:" in rendered
     assert "completion rule:" in rendered
 
 
 def test_cli_json_output_is_machine_readable(capsys: pytest.CaptureFixture[str]) -> None:
+    assert main(
+        [
+            "--request",
+            "Continue the project",
+            "--repository",
+            "owner/project",
+            "--mode",
+            "c",
+            "--blocker-scope",
+            "merge_gate",
+            "--json",
+        ]
+    ) == 0
+
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["request"] == "Continue the project"
+    assert payload["environment"] == "connected-tools"
+    assert payload["mode"] == "c"
+    assert payload["blocker_scope"] == "merge_gate"
+    assert payload["safe_lane_policy"]
+    assert payload["evidence_continuity_policy"]
+    assert payload["authority_loading"]
+    assert payload["work_packet"]["blocker_scope"] == "merge_gate"
+    assert payload["work_packet"]["reusable_evidence"]
+    assert payload["completion_rule"]
+
+
+def test_cross_repository_cli_json_output_is_machine_readable(capsys: pytest.CaptureFixture[str]) -> None:
     assert main(
         [
             "--request",
@@ -261,11 +316,5 @@ def test_cli_json_output_is_machine_readable(capsys: pytest.CaptureFixture[str])
     assert payload["related_repositories"][0]["dependency_state"] == "partial"
     assert payload["authority_graph_policy"]
     assert payload["cross_repository_guidance"]
-    assert payload["safe_lane_policy"]
-    assert payload["evidence_continuity_policy"]
-    assert payload["authority_loading"]
-    assert payload["work_packet"]["blocker_scope"] == "milestone"
     assert payload["work_packet"]["cross_repository_dependencies"]
     assert payload["work_packet"]["manual_boundaries"]
-    assert payload["work_packet"]["reusable_evidence"]
-    assert payload["completion_rule"]

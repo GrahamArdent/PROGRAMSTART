@@ -6,6 +6,37 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 
 ---
 
+## 2026-08-27 (Acceptance Learning Loop)
+
+- added `docs/PROGRAMSTART_LEARNING_LOOP.md` as the evidence-driven protocol for meaningful-checkpoint Learning Gate evaluation, conditional observation persistence, lesson maturity, and future-retest routing
+- evolved the existing PROGRAMSTART orchestration prompt to v2.5 so real project checkpoints automatically evaluate learning while `no reusable lesson` remains a valid result
+- separated detailed acceptance evidence from the concise maturity rollup: new observations live under `docs/acceptance/observations/`, while `PROGRAMSTART_ACCEPTANCE_LEARNING_LEDGER.md` now tracks stable lesson IDs, maturity, strongest evidence, and next retest conditions
+- preserved the complete pre-loop detailed learning ledger byte-for-byte at `docs/acceptance/PROGRAMSTART_ACCEPTANCE_HISTORY_THROUGH_2026-08-27.md`
+- made product completion independent from PROGRAMSTART learning-repository write access and kept learning observations subordinate to every real project's own authority
+- recorded the Learning Loop itself as `PSL-013` in `implemented` state pending the first normal future product checkpoint that exercises the gate end-to-end
+
+---
+
+## 2026-08-27 (Coordinated Mode-C Lanes)
+
+- extended the Work Packet and orchestration prompt with a derived Mode-C lane view for projects whose existing execution spine legitimately exposes multiple current work streams
+- added `COORDINATED_MODE_C_LANES`, `SELECTED_LANE`, `LANE_INDEPENDENCE_EVIDENCE`, `LANE_CONFLICTS`, and `LANE_CONVERGENCE`
+- preserved one project spine and one closure-control truth while selecting exactly one bounded executable packet per invocation
+- kept named work lanes distinct from the existing Lane A/B/C safety classification and explicitly rejected a parallel backlog, automatic scheduler, multi-agent swarm, or inferred simultaneous consequential mutations
+- validated the model against live GCRM R4 evidence where R4-02 remains closure-control while reversible R4-04 preparation may proceed independently; PROGRAMSTART PR #59 merged the methodology change
+
+---
+
+## 2026-08-27 (Operator / Manual Gate Handoff)
+
+- added a bounded operator/manual-gate handoff contract to the existing Work Packet/orchestration model with gate owner, exact action, sensitive-input boundary, return evidence, acceptance/invalidation, resume point, and safe work while waiting
+- made the handoff explicitly secret-safe and separated operator action completion from accepted runtime/provider/device behavior
+- decoupled `--manual-boundary` from related-repository metadata so a single Mode-C repository can carry an external/operator gate without manufacturing a companion repository
+- preserved the existing project spine as closure control when a manual boundary is active and kept the handoff canonical for nothing
+- protocol-validated the model against Email/Calendar integration boundaries and later Resume Creator single-repository CI-gate evidence; PROGRAMSTART PR #57 merged the change
+
+---
+
 ## 2026-08-27 (Cross-Repository Dependency Orchestration)
 
 - extended the existing Mode-C orchestration/work-packet model with one bounded related-repository dependency rather than creating a portfolio planning layer

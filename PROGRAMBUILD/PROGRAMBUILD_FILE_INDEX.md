@@ -2,8 +2,7 @@
 
 # Program Build File Index
 
-This is the official index for critical Program Build files.
-If a file is missing from this index, it is not a recognized PROGRAMBUILD control file.
+This is the official index for critical Program Build files and key PROGRAMSTART methodology-support surfaces referenced by the orchestration protocol.
 
 ---
 
@@ -58,12 +57,18 @@ The logical work packet normally lives in current task/issue/PR/session state. P
 
 ---
 
-## 3. Tooling and Enforcement Files
+## 3. Tooling, Enforcement, and PROGRAMSTART Support Files
 
 | File | Type | Purpose |
 |---|---|---|
 | `scripts/programstart_decision.py` | advisory tooling | routes a material decision to the minimum justified evidence/check/research depth; never a separate authority layer |
 | `scripts/programstart_orchestrate.py` | advisory tooling | derives environment/mode/authority/blocker-aware execution contracts, including safe-lane, evidence-continuity, task-scoped cross-repository dependency/authority, and operator/manual-boundary guidance; never a separate authority layer |
+| `docs/PROGRAMSTART_LEARNING_LOOP.md` | protocol | owns PROGRAMSTART acceptance-learning triggers, observation/rollup semantics, maturity rules, conditional persistence, and future-retest routing |
+| `docs/PROGRAMSTART_ACCEPTANCE_LEARNING_LEDGER.md` | derived rollup | concise lesson maturity/index view; not an activity log or project authority |
+| `docs/PROGRAMSTART_REAL_WORLD_ACCEPTANCE_CHECKLIST.md` | checklist | real-project acceptance and Learning Gate closure checklist |
+| `docs/acceptance/LEARNING_OBSERVATION_TEMPLATE.md` | evidence template | append-only meaningful PROGRAMSTART learning observation structure |
+| `docs/acceptance/observations/*.md` | derived evidence | individual real-project/system observations used to mature or challenge lessons |
+| `docs/acceptance/PROGRAMSTART_ACCEPTANCE_HISTORY_THROUGH_2026-08-27.md` | historical snapshot | byte-preserved detailed pre-learning-loop ledger history |
 | `scripts/check_commit_msg.py` | enforcement | validates Conventional Commits |
 | `.github/instructions/conventional-commits.instructions.md` | instruction | commit message rules |
 | `.gitlint` | spec-reference | commit-message enforcement spec |
@@ -97,6 +102,7 @@ Prompts live in `.github/prompts/`, are registered in the process registry, and 
 ## 5. Index Rules
 
 - Add new **critical PROGRAMBUILD control files** here when created.
+- Index PROGRAMSTART support protocols/artifacts here when the orchestration system depends on them for discoverability/authority routing.
 - Mark files as active/deprecated/replaced/derived as applicable.
 - Do not create synonyms for the same purpose.
 - Advisory tooling may be indexed for discoverability without becoming a new canonical concern.
@@ -107,7 +113,8 @@ Prompts live in `.github/prompts/`, are registered in the process registry, and 
 - A task-scoped cross-repository dependency graph is derived evidence, not a control file or project execution spine.
 - An operator/manual-gate handoff is derived execution context, not a credential store, project authority, or independent lifecycle.
 - A coordinated Mode-C lane view is derived execution context under one project spine, not a backlog, scheduler, or second sequencing authority.
-- Tooling may appear here for operator discoverability without becoming a PROGRAMBUILD authority concern.
+- A learning observation is derived methodology evidence; the learning ledger is a maturity rollup, not an activity log or roadmap.
+- Tooling/support files may appear here for operator discoverability without becoming product-project authority.
 
 ---
 

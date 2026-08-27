@@ -87,6 +87,73 @@ def test_external_resource_history_is_not_overwritten_by_current_invisibility() 
     assert "deleted" in policy
 
 
+def test_calendar_companion_dependency_is_derived_without_becoming_cross_project_authority() -> None:
+    plan = build_plan(
+        request="Continue Calendar B5 convergence without crossing the credential gate",
+        repository="GrahamArdent/Dedication-Calendar-Bridge",
+        environment="connected-tools",
+        mode="c",
+        execution_spine="PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md",
+        blocker_scope="milestone",
+        related_repository="GrahamArdent/Dedication",
+        relationship_type="product_contract",
+        related_authority=(
+            "product meaning, Integration Gateway contract/runtime, connection/user mapping, and normalized evidence persistence"
+        ),
+        related_execution_spine="ops/gameplans/DEDICATION_REMAINING_ISSUES_GAMEPLAN_2026-08-20.md",
+        dependency_state="partial",
+        dependency_evidence=(
+            "Dedication PR #46 is open; hosted Calendar contract is deployed and Supabase verification is green.",
+            "Calendar Bridge PR #5 is open and Verify Bridge is green.",
+        ),
+        dependency_invalidation=(
+            "Dedication PR #46 changes, merges, closes, or the hosted Calendar contract changes.",
+        ),
+        manual_boundary="Google OAuth credentials plus real initial and restart/incremental Calendar smoke.",
+        closure_control="Calendar Bridge B5 credential gate",
+    )
+
+    assert plan.closure_control == "Calendar Bridge B5 credential gate"
+    assert len(plan.related_repositories) == 1
+    relation = plan.related_repositories[0]
+    assert relation.repository == "GrahamArdent/Dedication"
+    assert relation.dependency_state == "partial"
+    graph = " ".join(plan.authority_graph_policy).lower()
+    assert "derived and task-scoped" in graph
+    assert "canonical for nothing" in graph
+    assert "does not grant multi-repository mutation authority" in graph
+    guidance = " ".join(plan.cross_repository_guidance)
+    assert "Reuse the proven part" in guidance
+    assert "External/manual boundary" in guidance
+    assert any("Dedication PR #46" in item for item in plan.work_packet.reusable_evidence)
+    assert any("hosted Calendar contract changes" in item for item in plan.work_packet.invalidation_triggers)
+    assert plan.work_packet.manual_boundaries == (
+        "Google OAuth credentials plus real initial and restart/incremental Calendar smoke.",
+    )
+    assert "A cross-project Master or portfolio transaction" in plan.work_packet.out_of_scope
+
+
+def test_cross_repository_metadata_requires_a_related_repository() -> None:
+    with pytest.raises(ValueError, match="requires --related-repository"):
+        build_plan(
+            request="Continue dependency work",
+            repository="owner/project",
+            environment="connected-tools",
+            mode="c",
+            dependency_state="partial",
+        )
+
+
+def test_related_repository_is_mode_c_only() -> None:
+    with pytest.raises(ValueError, match="only for Mode C"):
+        build_plan(
+            request="Build a new companion",
+            repo="./new-project",
+            mode="a",
+            related_repository="owner/product",
+        )
+
+
 def test_material_uncertainty_routes_through_existing_adaptive_router() -> None:
     plan = build_plan(
         request="Choose an external provider contract",
@@ -133,8 +200,11 @@ def test_mode_c_requires_a_target() -> None:
         build_plan(request="Change the product", mode="c")
 
 
-def test_render_text_exposes_authority_blocker_evidence_handoff_and_completion() -> None:
-    plan = build_plan(request="Build a small API", blocker_scope="unresolved")
+def test_render_text_exposes_authority_blocker_dependency_evidence_handoff_and_completion() -> None:
+    plan = build_plan(
+        request="Build a small API",
+        blocker_scope="unresolved",
+    )
     rendered = render_text(plan)
 
     assert "PROGRAMSTART Orchestration Contract" in rendered
@@ -144,6 +214,7 @@ def test_render_text_exposes_authority_blocker_evidence_handoff_and_completion()
     assert "blocker scope: unresolved" in rendered
     assert "safe-lane policy:" in rendered
     assert "evidence continuity:" in rendered
+    assert "authority graph policy:" in rendered
     assert "reusable evidence:" in rendered
     assert "handoff:" in rendered
     assert "completion rule:" in rendered
@@ -153,25 +224,48 @@ def test_cli_json_output_is_machine_readable(capsys: pytest.CaptureFixture[str])
     assert main(
         [
             "--request",
-            "Continue safe preparation",
+            "Continue Calendar convergence",
             "--repository",
-            "owner/project",
+            "GrahamArdent/Dedication-Calendar-Bridge",
             "--mode",
             "c",
             "--blocker-scope",
-            "mutation_gate",
+            "milestone",
+            "--related-repository",
+            "GrahamArdent/Dedication",
+            "--relationship-type",
+            "product_contract",
+            "--related-authority",
+            "product contract/runtime authority",
+            "--dependency-state",
+            "partial",
+            "--dependency-evidence",
+            "Dedication contract deployed; companion PR still open.",
+            "--dependency-invalidation",
+            "Companion PR or hosted contract changes.",
+            "--manual-boundary",
+            "Google credentials and live smoke.",
+            "--closure-control",
+            "Calendar B5 credential gate",
             "--json",
         ]
     ) == 0
 
     payload = json.loads(capsys.readouterr().out)
-    assert payload["request"] == "Continue safe preparation"
+    assert payload["request"] == "Continue Calendar convergence"
     assert payload["environment"] == "connected-tools"
     assert payload["mode"] == "c"
-    assert payload["blocker_scope"] == "mutation_gate"
+    assert payload["blocker_scope"] == "milestone"
+    assert payload["closure_control"] == "Calendar B5 credential gate"
+    assert payload["related_repositories"][0]["repository"] == "GrahamArdent/Dedication"
+    assert payload["related_repositories"][0]["dependency_state"] == "partial"
+    assert payload["authority_graph_policy"]
+    assert payload["cross_repository_guidance"]
     assert payload["safe_lane_policy"]
     assert payload["evidence_continuity_policy"]
     assert payload["authority_loading"]
-    assert payload["work_packet"]["blocker_scope"] == "mutation_gate"
+    assert payload["work_packet"]["blocker_scope"] == "milestone"
+    assert payload["work_packet"]["cross_repository_dependencies"]
+    assert payload["work_packet"]["manual_boundaries"]
     assert payload["work_packet"]["reusable_evidence"]
     assert payload["completion_rule"]

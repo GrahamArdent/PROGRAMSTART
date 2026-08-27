@@ -72,14 +72,15 @@ Allowed lesson states:
 - Dedication-Email-Bridge PR #1 merged the credential-free deterministic foundation.
 - Dedication-Email-Bridge PR #2 explicitly records that live PROGRAMSTART orientation prevented skipping ahead: the deterministic foundation first had to converge and merge before Gmail OAuth/runtime activation became the actual next slice.
 - PR #2 keeps production Gmail activation separate from implementation and retains Google credential/consent, host/scheduler, revoke/re-auth, live mailbox smoke, rollback, and release convergence as later/manual boundaries.
+- At operator-handoff acceptance review, PR #2 remained open/mergeable at head `c8a3054ada5ac9dbb1eaea5d1c31a6bd62806f28` and its `Test` workflow was successful.
 
 **Lesson classification:** systemic.
 
-**PROGRAMSTART owner:** Mode-C live-authority orientation, environment-aware orchestration, and manual-boundary handoff semantics.
+**PROGRAMSTART owner:** Mode-C live-authority orientation, environment-aware orchestration, and operator/manual-gate handoff semantics.
 
-**Changes already produced:** PROGRAMSTART PRs #53 and #54.
+**Changes produced:** PROGRAMSTART PRs #53 and #54; PR #57 implements the evidence-earned operator/manual-gate handoff contract and decouples a manual boundary from cross-repository metadata.
 
-**Result:** validated for live-authority-over-handoff behavior; manual/operator gate handoff remains a strong reusable candidate.
+**Result:** live-authority-over-handoff behavior is validated. PR #57 is protocol-validated against the real Email release boundary: PROGRAMSTART can derive a specific secret-safe action/evidence/resume handoff without inventing a companion repository or asking for project history already present in live authority. The actual operator-action → returned-evidence → resume cycle has not been executed in this acceptance session and remains a future real-use validation point.
 
 ### GCRM
 
@@ -176,17 +177,18 @@ These labels are maturity signals only. They are **not** a numbered roadmap and 
 ### Implemented / validated
 
 - **Cross-repository dependency orchestration** — PR #56 implements the narrow task-scoped model and the live Dedication + Calendar Bridge relationship validates the authority split, partial-satisfaction state, evidence reuse/invalidation, closure control, and external/manual boundary behavior at the connected-tool orchestration level.
+- **Operator/manual gate handoff** — PR #57 implements the bounded handoff contract in the existing Work Packet/orchestration surface and fixes single-repository manual-boundary compatibility. Email Bridge PR #2 plus Calendar Bridge PR #5 validate the need and the handoff structure. The first real returned-evidence/resumption cycle remains an observe item rather than being falsely claimed here.
 
 ### Strong / ready for implementation
 
 - **Concurrent Mode-C lane coordination** — Dedication/GCRM evidence shows multiple bounded safe streams can coexist under one spine without creating parallel Masters.
-- **Operator/manual gate handoff** — Calendar and Email both end at real credential/operator/runtime gates that need a clean exact handoff contract.
 
 ### Observe / test more
 
 - **Verification evidence source/type** — distinguish repository CI, hosted runtime, provider, physical device, and human acceptance without building an evidence bureaucracy.
 - **High-velocity/lightweight Mode C** — LinkedIn Generator shows the need for very low ceremony, but the smallest durable methodology change is not yet proven.
 - **Paused/inactive/re-entry lifecycle** — plausible but not sufficiently revalidated in this session.
+- **Operator-gate returned-evidence resumption** — confirm on the first real credential/device/reviewer gate that returned evidence is sufficient to resume at the declared point without repeating broad orientation or verification.
 
 ### Later / supporting capability
 
@@ -221,4 +223,31 @@ These labels are maturity signals only. They are **not** a numbered roadmap and 
 
 **New systemic lesson:** dependency satisfaction is multi-plane rather than boolean. Repository convergence, hosted runtime availability, provider readiness, and human/operator acceptance may differ at the same moment. The next reusable gap is therefore not a richer portfolio graph; it is a small operator/manual-gate handoff contract that says exactly what action is required, what evidence must come back, what would invalidate it, and where PROGRAMSTART resumes afterward.
 
-**Next evidence-earned candidate:** operator/manual gate handoff. Concurrent Mode-C lane coordination remains strong, but it is not part of PR #56.
+## Acceptance result — operator/manual gate handoff
+
+**Protected authority rule:** a handoff is derived execution context. The project keeps its existing spine and release/runtime authority. PROGRAMSTART may identify the unavailable action and define the evidence needed to resume, but it does not become the credential owner, provider authority, device operator, approver, or acceptance authority.
+
+**Live acceptance evidence (2026-08-27):**
+
+- Dedication-Email-Bridge PR #2 remained open/mergeable at head `c8a3054ada5ac9dbb1eaea5d1c31a6bd62806f28`; its `Test` workflow succeeded.
+- PR #2 explicitly separates implemented Gmail OAuth/runtime composition from production activation. Remaining operator/release boundaries include Google OAuth client/consent provisioning, secure refresh-token and Supabase service-role provisioning, host/scheduler ownership, disconnect/revoke/re-auth operations, privacy-safe observability, controlled live-mailbox smoke, rollback/disable proof, and Stage 7 → 8 release convergence.
+- Calendar Bridge PR #5 independently confirms the same class of boundary with Google credentials plus real initial and restart/incremental smoke.
+
+**Derived Email handoff example:**
+
+- `GATE_OWNER`: the deployment/operator boundary that owns the Google Cloud OAuth configuration and chosen server runtime/secret store;
+- `REQUIRED_ACTION`: after repository code convergence, provision/confirm the Google OAuth client/consent configuration and required server-side configuration on the chosen runtime, then run the project-authorized controlled test-mailbox one-shot sync;
+- `SENSITIVE_INPUT_HANDLING`: keep `GOOGLE_CLIENT_SECRET`, `GMAIL_REFRESH_TOKEN`, `SUPABASE_SERVICE_ROLE_KEY`, and other secret values only in the owning Google/deployment secret surface; PROGRAMSTART may name required configuration keys but must not request their values as handoff evidence;
+- `RETURN_EVIDENCE`: non-secret runtime/deployment reference plus the sanitized controlled `sync:once` outcome and any narrow project-authorized provider/runtime status needed to show the read-only path actually executed;
+- `EVIDENCE_ACCEPTANCE`: the controlled live sync uses the approved read-only Gmail boundary, succeeds through the existing Dedication evidence path, returns sanitized output, and satisfies the exact live-smoke acceptance owned by Email Bridge release authority; this does not automatically prove unrelated release-readiness items;
+- `GATE_INVALIDATION`: Email Bridge head/runtime composition, OAuth scope/client configuration, secret/runtime host configuration, Dedication integration contract, or directly conflicting live evidence changes;
+- `RESUME_AT`: the existing Email Bridge Stage 7/release-readiness convergence point that owns live activation evidence, not a new PROGRAMSTART stage;
+- `SAFE_WHILE_WAITING`: only repository review/convergence or other independently authorized Lane A/B preparation; no claim that production Gmail activation is complete.
+
+**PROGRAMSTART change:** PR #57 adds the full handoff semantics to `PROGRAMBUILD_WORK_PACKET.md` and orchestration prompt v2.3, makes the handoff explicitly secret-safe/subordinate in canonical authority, and minimally corrects `programstart orchestrate` so `--manual-boundary` works without `--related-repository` and preserves the existing project spine as closure-control.
+
+**Verification actually performed so far:** live Email/Calendar PR and workflow evidence review; branch-vs-main diff review; exact executable commit diff review showing only the intended manual-boundary decoupling; additive focused test coverage added without deleting existing tests. No product repository mutation was performed for acceptance. Local pytest/Ruff/Pyright/`programstart drift`/`nox -s ci` is not claimed in the connected-only environment.
+
+**Acceptance result:** protocol-validated. The handoff is now specific enough to cross an unavailable operator boundary without asking for raw secrets, inventing a companion repository, treating action completion as acceptance, or losing the resume point. End-to-end validation remains intentionally open until a real operator returns evidence and PROGRAMSTART resumes from it.
+
+**Next evidence-earned candidate:** concurrent Mode-C lane coordination remains the strongest next systemic improvement after PR #57 is fully reviewed and accepted. Do not implement it in PR #57.

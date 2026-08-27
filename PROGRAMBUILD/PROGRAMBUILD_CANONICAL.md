@@ -27,6 +27,7 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY in this section are in
 14. For external/provider resources, verified historical existence MUST remain distinct from current visibility/accessibility. Current invisibility alone MUST NOT rewrite history as `never existed` or `deleted` without evidence that proves that conclusion.
 15. Cross-repository dependency reasoning MUST remain derived and task-scoped. Each repository MUST retain its own execution spine, decisions, state, and closure authority. A dependency/authority graph MAY support read/orient/classify/plan/verify work, but MUST NOT silently create a portfolio Master or grant authority to advance, close, merge, or mutate multiple projects as one transaction.
 16. Operator/manual gate handoffs MUST remain derived and subordinate. When the current environment cannot perform the exact next action, the handoff MUST identify the gate owner, required action, secret-safe input boundary, non-secret return evidence, acceptance/invalidation conditions, safe work while waiting, and exact resume point when those facts are knowable. Operator action completion MUST NOT be treated as system acceptance without the required evidence, and a handoff MUST NOT request or persist secret values merely to make the gate durable.
+17. Concurrent Mode-C lane coordination MUST remain a derived view of one project's existing execution spine. It MAY expose multiple relevant current lanes only when project authority proves they can coexist, but each invocation MUST select one bounded current work packet. A lane view MUST NOT create a parallel backlog, second sequencing authority, automatic multi-agent scheduler, or permission to run consequential mutations concurrently.
 
 ---
 
@@ -85,7 +86,7 @@ Optional persisted execution aid:
 | document authority and naming rules | `PROGRAMBUILD_CANONICAL.md` |
 | critical file inventory and status | `PROGRAMBUILD_FILE_INDEX.md` |
 | planning-to-execution separation, proportional rigor, blocker scope/safe-lane reasoning, adaptive decision/evidence routing, context loading, and evidence reuse | `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` |
-| logical work-packet semantics, blocker/safe-lane fields, cross-repository dependency/authority fields, operator/manual-gate handoff semantics, and optional persisted packet format | `PROGRAMBUILD_WORK_PACKET.md` |
+| logical work-packet semantics, blocker/safe-lane fields, coordinated Mode-C lane view, cross-repository dependency/authority fields, operator/manual-gate handoff semantics, and optional persisted packet format | `PROGRAMBUILD_WORK_PACKET.md` |
 | ADR structure, decision-log linkage, and supersession hygiene | `PROGRAMBUILD_ADR_TEMPLATE.md` |
 | architecture decision records index | `docs/decisions/README.md` |
 | commit message format and enforcement | `.github/instructions/conventional-commits.instructions.md` |
@@ -134,6 +135,8 @@ A derived cross-repository graph never outranks either repository's authority. C
 
 An operator/manual handoff never outranks project authority and never proves the gated outcome merely because the requested human/provider/device action occurred. Reconcile returned evidence against the declared acceptance condition, then resume the existing spine at the declared point.
 
+A coordinated Mode-C lane view never outranks the project's execution spine or dependency order. Correct/regenerate the lane view when live project authority changes rather than preserving stale lane priority as derived state.
+
 ---
 
 ## 5. Canonical Maintenance Rules
@@ -148,6 +151,7 @@ An operator/manual handoff never outranks project authority and never proves the
 - Research that affects an existing project should become explicit delta recommendations adopted through that project's authority process.
 - Cross-repository orchestration may retain only the task-scoped relationship/evidence needed to derive the current packet. A live portfolio registry or cross-project Master belongs outside PROGRAMSTART unless a future explicit authority decision creates one.
 - Operator/manual handoffs should retain only the task-scoped action/evidence/resume contract needed to cross the gate. Do not turn them into a parallel ticketing system, credential store, or independent execution ledger.
+- Concurrent Mode-C lane coordination may retain only enough derived lane state to select the current packet and preserve closure-control/dependency truth. Do not persist a parallel lane backlog when the project spine already owns sequencing.
 - Specialist agents, extra documents, broader gates, recurring automation, and adaptive routing are mechanisms, not goals. Use them only when they reduce real uncertainty/risk/coordination cost.
 
 ---

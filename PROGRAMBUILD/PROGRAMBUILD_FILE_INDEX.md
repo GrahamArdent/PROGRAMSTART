@@ -3,6 +3,7 @@
 # Program Build File Index
 
 This is the official index for critical Program Build files and key PROGRAMSTART methodology-support surfaces referenced by the orchestration protocol.
+A PROGRAMBUILD critical control file missing from this index is not recognized. PROGRAMSTART support surfaces may be indexed for routing/discoverability without becoming PROGRAMBUILD control files.
 
 ---
 

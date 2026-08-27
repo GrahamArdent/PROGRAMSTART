@@ -6,6 +6,18 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 
 ---
 
+## 2026-08-27 (Cross-Repository Dependency Orchestration)
+
+- extended the existing Mode-C orchestration/work-packet model with one bounded related-repository dependency rather than creating a portfolio planning layer
+- made the derived authority graph explicitly task-scoped and canonical for nothing; every repository retains its own execution spine, decisions, state, and closure authority
+- added relationship type, authority owner, dependency state (`unknown`, `unsatisfied`, `partial`, `satisfied`), dependency evidence, invalidation conditions, closure control, and external/manual boundary to the bounded contract
+- made `partial` dependency satisfaction first-class so hosted runtime evidence can be reused without falsely claiming repository convergence or real-provider acceptance is complete
+- constrained the first version to read/orient/classify/plan/verify reasoning and evidence reuse; a relationship does not grant authority to advance, close, merge, or mutate multiple projects as one transaction
+- evolved the existing orchestration prompt in place to v2.2 and added focused Calendar Bridge ↔ Dedication regression coverage
+- added subordinate real-world acceptance ledger/checklist artifacts to retain evidence-earned methodology lessons without creating another lifecycle, backlog, or project authority
+
+---
+
 ## 2026-08-24 (Execution Friction Cleanup)
 
 - made forward velocity an explicit design concern: process should earn its cost by reducing risk, uncertainty, rework, or coordination burden
@@ -253,4 +265,4 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 
 ---
 
-Last updated: 2026-08-24
+Last updated: 2026-08-27

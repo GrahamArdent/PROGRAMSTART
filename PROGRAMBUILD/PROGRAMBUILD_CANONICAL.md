@@ -25,6 +25,7 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY in this section are in
 12. Adaptive decision routing MUST select additional scrutiny from actual decision-relevant uncertainty/consequence; it MUST NOT create a second lifecycle, execution spine, or mandatory all-gates sequence.
 13. In Mode C, a blocked closure-control row MUST be scoped before the project is treated as stopped. Safe-lane reasoning belongs to `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`; a narrow blocker does not authorize consequential work that project-specific dependencies or safety rules still prohibit.
 14. For external/provider resources, verified historical existence MUST remain distinct from current visibility/accessibility. Current invisibility alone MUST NOT rewrite history as `never existed` or `deleted` without evidence that proves that conclusion.
+15. Cross-repository dependency reasoning MUST remain derived and task-scoped. Each repository MUST retain its own execution spine, decisions, state, and closure authority. A dependency/authority graph MAY support read/orient/classify/plan/verify work, but MUST NOT silently create a portfolio Master or grant authority to advance, close, merge, or mutate multiple projects as one transaction.
 
 ---
 
@@ -83,7 +84,7 @@ Optional persisted execution aid:
 | document authority and naming rules | `PROGRAMBUILD_CANONICAL.md` |
 | critical file inventory and status | `PROGRAMBUILD_FILE_INDEX.md` |
 | planning-to-execution separation, proportional rigor, blocker scope/safe-lane reasoning, adaptive decision/evidence routing, context loading, and evidence reuse | `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` |
-| logical work-packet semantics, blocker/safe-lane fields, and optional persisted packet format | `PROGRAMBUILD_WORK_PACKET.md` |
+| logical work-packet semantics, blocker/safe-lane fields, cross-repository dependency/authority fields, manual boundaries, and optional persisted packet format | `PROGRAMBUILD_WORK_PACKET.md` |
 | ADR structure, decision-log linkage, and supersession hygiene | `PROGRAMBUILD_ADR_TEMPLATE.md` |
 | architecture decision records index | `docs/decisions/README.md` |
 | commit message format and enforcement | `.github/instructions/conventional-commits.instructions.md` |
@@ -128,6 +129,8 @@ A logical or persisted work packet never outranks its source authority. Correct/
 
 An adaptive-router result is advisory derived reasoning. It never outranks the project's execution spine, accepted decisions, requirements, architecture, or validated implementation state.
 
+A derived cross-repository graph never outranks either repository's authority. Correct the dependency facts or regenerate the graph rather than using it to rewrite either project's execution spine.
+
 ---
 
 ## 5. Canonical Maintenance Rules
@@ -140,6 +143,7 @@ An adaptive-router result is advisory derived reasoning. It never outranks the p
 - Material decisions go in `DECISION_LOG.md`; promote durable architecture/policy rationale to an ADR when the repository's current ADR policy warrants it, not because an arbitrary numeric threshold was crossed.
 - The template repository keeps project outputs reusable; do not store filled project-specific feasibility, requirements, architecture, release, packet, or portfolio state here.
 - Research that affects an existing project should become explicit delta recommendations adopted through that project's authority process.
+- Cross-repository orchestration may retain only the task-scoped relationship/evidence needed to derive the current packet. A live portfolio registry or cross-project Master belongs outside PROGRAMSTART unless a future explicit authority decision creates one.
 - Specialist agents, extra documents, broader gates, recurring automation, and adaptive routing are mechanisms, not goals. Use them only when they reduce real uncertainty/risk/coordination cost.
 
 ---

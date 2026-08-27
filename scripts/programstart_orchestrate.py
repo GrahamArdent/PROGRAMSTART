@@ -358,7 +358,7 @@ def _related_repository(
 
 def _authority_graph_policy(target: str, related: RelatedRepository | None) -> tuple[str, ...]:
     if related is None:
-        return ("No cross-repository relationship was supplied for this task.",)
+        return ()
     return (
         f"Graph scope: derived and task-scoped for {target} ↔ {related.repository}; canonical for nothing.",
         "Each repository retains its own execution spine, decisions, state, and closure authority.",
@@ -408,45 +408,79 @@ def _work_packet(
     related: RelatedRepository | None,
 ) -> WorkPacket:
     if mode == "c":
-        required_context = [
+        required_context = (
             execution_spine or "Existing project execution spine",
             "Exact affected requirements, architecture, contracts, or decisions",
             "Current implementation or runtime evidence for the delta",
-        ]
-        reusable_evidence = [
+        )
+        reusable_evidence = (
             "Still-valid project decisions, tests, audits, and runtime evidence",
             "Prior research whose assumptions have not been invalidated",
-        ]
-        invalidation_triggers = [
-            "Changed authority, contracts, runtime behavior, or dependencies",
-            "Material evidence conflict or staleness",
-            "A blocked external resource becoming newly visible, inaccessible, deleted, or otherwise materially changed",
-        ]
+        )
         authority = "Existing project authority; PROGRAMBUILD remains methodology."
     elif mode == "b":
-        required_context = ["Research evidence and provenance", "PROGRAMBUILD intake", "Only unresolved gaps"]
-        reusable_evidence = ["Trustworthy research that already answers intake or feasibility questions"]
-        invalidation_triggers = ["Changed decision assumptions", "Material evidence conflict or staleness"]
+        required_context = ("Research evidence and provenance", "PROGRAMBUILD intake", "Only unresolved gaps")
+        reusable_evidence = ("Trustworthy research that already answers intake or feasibility questions",)
         authority = "Convert research into decisions and scope before establishing execution authority."
     elif mode == "a":
-        required_context = ["PROGRAMBUILD intake", "Problem, outcome, and constraints", "Cheapest validation evidence"]
-        reusable_evidence = ["Trustworthy facts supplied with the request"]
-        invalidation_triggers = ["Changed problem, outcome, constraints, or validation evidence"]
+        required_context = ("PROGRAMBUILD intake", "Problem, outcome, and constraints", "Cheapest validation evidence")
+        reusable_evidence = ("Trustworthy facts supplied with the request",)
         authority = "PROGRAMBUILD entry process until project-specific authority is established."
     else:
-        required_context = ["Live target authority sufficient to resolve entry mode"]
-        reusable_evidence = ["Still-valid repository evidence after authority reconciliation"]
-        invalidation_triggers = ["New authority evidence that changes entry-mode classification"]
+        required_context = ("Live target authority sufficient to resolve entry mode",)
+        reusable_evidence = ("Still-valid repository evidence after authority reconciliation",)
         authority = "Do not implement until entry mode and the authority chain are resolved."
 
+    invalidation_triggers = (
+        "Changed authority, contracts, runtime behavior, or dependencies",
+        "Material evidence conflict or staleness",
+        "A blocked external resource becoming newly visible, inaccessible, deleted, or otherwise materially changed",
+    )
+    out_of_scope = ("A second execution spine", "Unrelated refactors or research", "Unsupported remote workflow mutation")
+    acceptance_criteria = (
+        "Bounded outcome is explicit and testable",
+        "One authority chain is preserved",
+        "Material uncertainty is resolved or recorded",
+        "Any blocker is scoped narrowly enough that safe executable work is not hidden",
+    )
+    targeted_verification = (
+        "Verify changed or invalidated surfaces",
+        "Reuse unaffected evidence",
+        "Widen only at a real convergence boundary",
+    )
+    durable_updates = (
+        "Update existing authority only for accepted deltas",
+        "Record material decisions in the existing decision mechanism",
+        "Preserve verified historical resource evidence when current visibility changes",
+    )
     cross_repository_dependencies: tuple[str, ...] = ()
     manual_boundaries: tuple[str, ...] = ()
+
     if related is not None:
-        required_context.append(
-            related.execution_spine or f"{related.repository} authority only for the declared dependency"
+        required_context = (
+            *required_context,
+            related.execution_spine or f"{related.repository} authority only for the declared dependency",
         )
-        reusable_evidence.extend(related.dependency_evidence)
-        invalidation_triggers.extend(related.invalidation_conditions)
+        reusable_evidence = (*reusable_evidence, *related.dependency_evidence)
+        invalidation_triggers = (*invalidation_triggers, *related.invalidation_conditions)
+        out_of_scope = (*out_of_scope, "A cross-project Master or portfolio transaction")
+        acceptance_criteria = (
+            "Bounded outcome is explicit and testable",
+            "Each repository's authority chain is preserved",
+            "Material uncertainty is resolved or recorded",
+            "Any blocker is scoped narrowly enough that safe executable work is not hidden",
+            "Cross-repository dependency state is not overstated beyond current evidence",
+        )
+        targeted_verification = (
+            "Verify changed or invalidated surfaces",
+            "Reuse unaffected evidence, including valid companion-repository evidence",
+            "Widen only at a real convergence boundary",
+        )
+        durable_updates = (
+            "Update each repository's existing authority only for accepted deltas that belong there",
+            "Record material decisions in the existing decision mechanism",
+            "Preserve verified historical resource evidence when current visibility changes",
+        )
         cross_repository_dependencies = (
             f"{related.repository} [{related.relationship_type}] state={related.dependency_state}: {related.authority_owner}",
         )
@@ -461,32 +495,13 @@ def _work_packet(
         cross_repository_dependencies=cross_repository_dependencies,
         manual_boundaries=manual_boundaries,
         in_scope=("Smallest coherent slice needed to advance the request", "Only rigor the decision actually earns"),
-        out_of_scope=(
-            "A second execution spine",
-            "A cross-project Master or portfolio transaction",
-            "Unrelated refactors or research",
-            "Unsupported remote workflow mutation",
-        ),
-        required_context=tuple(required_context),
-        reusable_evidence=tuple(reusable_evidence),
-        invalidation_triggers=tuple(invalidation_triggers),
-        acceptance_criteria=(
-            "Bounded outcome is explicit and testable",
-            "Each repository's authority chain is preserved",
-            "Material uncertainty is resolved or recorded",
-            "Any blocker is scoped narrowly enough that safe executable work is not hidden",
-            "Cross-repository dependency state is not overstated beyond current evidence",
-        ),
-        targeted_verification=(
-            "Verify changed or invalidated surfaces",
-            "Reuse unaffected evidence, including valid companion-repository evidence",
-            "Widen only at a real convergence boundary",
-        ),
-        durable_updates=(
-            "Update each repository's existing authority only for accepted deltas that belong there",
-            "Record material decisions in the existing decision mechanism",
-            "Preserve verified historical resource evidence when current visibility changes",
-        ),
+        out_of_scope=out_of_scope,
+        required_context=required_context,
+        reusable_evidence=reusable_evidence,
+        invalidation_triggers=invalidation_triggers,
+        acceptance_criteria=acceptance_criteria,
+        targeted_verification=targeted_verification,
+        durable_updates=durable_updates,
     )
 
 
@@ -600,7 +615,7 @@ def build_plan(
     else:
         decision_trigger = "Adaptive routing was activated from supplied decision-relevant signals."
 
-    resolved_closure_control = closure_control.strip() or resolved_spine
+    resolved_closure_control = closure_control.strip() or (resolved_spine if related is not None else "")
     return OrchestrationPlan(
         request=request,
         environment=resolved_environment,
@@ -664,12 +679,17 @@ def render_text(plan: OrchestrationPlan) -> str:
         f"- mode: {plan.mode} ({plan.mode_reason})",
         f"- target: {plan.target}",
         f"- execution spine: {plan.execution_spine}",
-        f"- closure control: {plan.closure_control}",
-        f"- work-packet authority: {packet.authority}",
-        f"- blocker scope: {plan.blocker_scope}",
-        f"- decision route: {route_text}",
-        f"- decision trigger: {plan.decision_trigger}",
     ]
+    if plan.closure_control:
+        lines.append(f"- closure control: {plan.closure_control}")
+    lines.extend(
+        [
+            f"- work-packet authority: {packet.authority}",
+            f"- blocker scope: {plan.blocker_scope}",
+            f"- decision route: {route_text}",
+            f"- decision trigger: {plan.decision_trigger}",
+        ]
+    )
     lines.extend(f"- {label}: " + " | ".join(values) for label, values in fields if values)
     lines.append(f"- completion rule: {plan.completion_rule}")
     return "\n".join(lines)

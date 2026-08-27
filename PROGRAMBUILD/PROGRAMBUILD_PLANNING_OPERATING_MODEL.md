@@ -2,11 +2,11 @@
 
 # Program Build Planning Operating Model
 
-Purpose: Define how planning, research, execution authority, active work, context loading, adaptive decision routing, and verification fit together without creating competing plans or unnecessary process overhead.
+Purpose: Define how planning, research, execution authority, active work, context loading, adaptive decision routing, blocker scope, safe-lane execution, and verification fit together without creating competing plans or unnecessary process overhead.
 Owner: Project Lead / Operator
-Last updated: 2026-08-26
+Last updated: 2026-08-27
 Depends on: `PROGRAMBUILD_CANONICAL.md`, `PROGRAMBUILD_FILE_INDEX.md`, `PROGRAMBUILD_GAMEPLAN.md`, `DECISION_LOG.md`
-Authority: Canonical for planning-to-execution separation, proportional rigor, progressive disclosure, adaptive decision routing, evidence sufficiency, and evidence-reuse rules.
+Authority: Canonical for planning-to-execution separation, proportional rigor, progressive disclosure, adaptive decision routing, blocker/safe-lane handling, evidence sufficiency, and evidence-reuse rules.
 
 ---
 
@@ -39,6 +39,7 @@ Research exists to retire decision-relevant uncertainty, not to maximize knowled
 - reusable lifecycle and stage guidance
 - proportional-rigor rules
 - adaptive decision-routing and evidence-sufficiency rules
+- blocker-scope and safe-lane reasoning rules
 - intake and challenge protocols
 - work-packet structure
 - context-loading rules
@@ -123,7 +124,8 @@ Before proposing new structure:
 5. convert new research or audits into delta recommendations rather than a new game plan;
 6. reuse prior valid evidence rather than re-running checks without an invalidation reason;
 7. route only the genuinely new decision/delta through additional scrutiny;
-8. return to the existing project's next executable slice after the delta is resolved.
+8. if the closure-control slice is blocked, classify the blocker scope and scan safe execution lanes before concluding no useful work remains;
+9. return to the existing project's next executable slice after the delta is resolved.
 
 For an existing project, PROGRAMBUILD is advisory methodology unless that project has explicitly adopted PROGRAMBUILD as its canonical process.
 
@@ -211,6 +213,24 @@ Use `PROGRAMBUILD_WORK_PACKET.md` to create the active packet.
 
 A work packet MUST be derived from project authority. It MUST NOT redefine project strategy.
 
+### 6.1 Blocker scope and safe execution lanes
+
+A blocked closure row does not automatically mean the whole project must stop.
+
+Before returning **blocked** in an existing/in-flight project:
+
+1. identify the exact action that cannot proceed;
+2. classify the narrowest truthful blocker scope: `ROW_ONLY`, `MERGE_GATE`, `MUTATION_GATE`, `MILESTONE`, or `RELEASE`; use `UNRESOLVED` only while evidence is insufficient to classify it;
+3. distinguish closure sequencing from executable preparation sequencing;
+4. scan the following candidate lanes under the project's own authority and dependency rules:
+   - **Lane A — read-only / analysis:** inspection, diagnosis, targeted research, design, evidence reconciliation;
+   - **Lane B — reversible repository / preparation:** branch-only code, tests, documentation, deployment preparation, migrations not yet applied;
+   - **Lane C — live / irreversible / externally consequential:** production mutations, secrets, paid infrastructure, destructive changes, consequential external writes;
+5. derive the next bounded packet from a safe lane when project authority proves it independent enough to proceed;
+6. if no safe lane remains, state the exact blocker/manual action rather than a generic project-wide stop.
+
+A blocker label is a constraint, not a permission. PROGRAMBUILD MUST NOT infer that Lane C is safe merely because the blocker was classified narrowly. Project-specific safety and dependency authority still governs consequential work.
+
 ---
 
 ## 7. Progressive Context Loading
@@ -287,6 +307,19 @@ For each work packet:
 A previous verified result is not permanent truth, but neither is it disposable merely because the context window changed.
 
 Age alone does not make stable evidence stale. Freshness matters when the underlying fact is volatile, a defined freshness window has expired, or a plausible invalidation signal exists.
+
+### 8.1 External-resource evidence continuity
+
+For provider/runtime resources, preserve these as separate facts:
+
+- **historical existence** — whether trustworthy evidence proved the resource existed at a prior point;
+- **current visibility/accessibility** — whether the current tool/account can see or access it now;
+- **current operational state** — whether it is running/healthy/failed/deleted when that state is actually observable;
+- **cause of discrepancy** — deletion, authorization scope, account/team mismatch, provider outage, or unknown.
+
+Current `not visible`, `404`, or `inaccessible` evidence MUST NOT silently rewrite a verified historical resource to `never existed` or `deleted` unless the evidence actually proves deletion.
+
+When the cause is unresolved, preserve the historical fact and state the current visibility/access problem plus the unresolved alternatives. This prevents volatile provider access from corrupting durable project history.
 
 ---
 
@@ -378,6 +411,7 @@ For Mode C, the router MUST:
 - reuse valid evidence;
 - activate only checks relevant to the delta;
 - never create a fresh Stage-0 lifecycle merely because investigation occurred;
+- classify blocker scope and scan safe execution lanes before treating an active-row blocker as a whole-project stop;
 - return to the existing project's actual next executable slice after the delta is resolved.
 
 ---
@@ -409,12 +443,13 @@ A work packet represents one coherent execution slice.
 Typical lifecycle:
 
 1. **Derive** — generate from the strategic plan/current stage and only the relevant supporting context.
-2. **Validate** — confirm scope, authority, known state, and acceptance criteria.
-3. **Execute** — perform the work without widening scope silently.
-4. **Verify** — run the targeted verification defined in the packet.
-5. **Reconcile** — update decisions, project state, and the strategic execution spine where required.
-6. **Close** — mark the packet complete or blocked; do not keep completed packets as competing plans.
-7. **Generate next** — derive the next packet from the newly current project state.
+2. **Classify blockers / safe lanes when relevant** — distinguish the blocked closure action from safe independent preparation before deciding execution must stop.
+3. **Validate** — confirm scope, authority, known state, and acceptance criteria.
+4. **Execute** — perform the work without widening scope silently.
+5. **Verify** — run the targeted verification defined in the packet.
+6. **Reconcile** — update decisions, project state, and the strategic execution spine where required.
+7. **Close** — mark the packet complete or blocked; do not keep completed packets as competing plans.
+8. **Generate next** — derive the next packet from the newly current project state.
 
 For long-running work, a repository MAY keep a `CURRENT_WORK_PACKET.md` as a derived, replaceable artifact. It is never canonical over the strategic plan, requirements, architecture, or decision log.
 
@@ -428,6 +463,7 @@ When work resumes after a pause:
 - inspect changes since the last trusted checkpoint
 - reuse still-valid evidence
 - route only genuinely uncertain/changed decisions through additional scrutiny
+- classify any newly observed blocker at its narrowest truthful scope and scan safe lanes
 - run only the re-entry checks needed to detect drift
 - regenerate the active work packet from current state
 - do not reconstruct the entire project from chat memory
@@ -454,6 +490,8 @@ Avoid:
 - numeric rigor scores that imply unsupported precision
 - treating security importance as automatic justification for deep research
 - treating evidence age alone as proof of staleness
+- treating a narrow row/merge/mutation blocker as an automatic whole-project stop
+- treating current provider invisibility as proof that a historically verified resource never existed
 - restarting Mode C from Stage 0 after a research or analysis delta
 
 ---
@@ -467,11 +505,12 @@ When applying this operating model to an existing repository:
 3. identify supporting research/audit documents;
 4. identify duplicate or competing planning artifacts;
 5. define what should be loaded always versus just in time;
-6. define evidence-reuse and invalidation rules;
+6. define evidence-reuse and invalidation rules, including provider/resource continuity where relevant;
 7. introduce work packets as a derived execution aid if useful;
 8. use adaptive routing only for decisions whose delta actually earns it;
-9. recommend edits to the existing master plan rather than replacing it;
-10. record any material process change through the repository's decision mechanism.
+9. classify blockers narrowly and scan safe lanes before stopping useful independent work;
+10. recommend edits to the existing master plan rather than replacing it;
+11. record any material process change through the repository's decision mechanism.
 
 The goal is less planning friction with stronger control, not more documentation.
 
@@ -485,6 +524,8 @@ This operating model is working when an operator or agent can answer these quick
 - What are we doing now?
 - Which documents actually matter for this slice?
 - What has already been proven?
+- If the closure row is blocked, what exact action is blocked and what safe lane remains?
+- For external resources, what is verified historically versus currently visible/accessibile?
 - Do we know enough to make the next important decision?
 - If not, what exact evidence is missing and what could it change?
 - Is targeted research enough, or is deep research genuinely justified?

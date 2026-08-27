@@ -48,7 +48,7 @@ def test_connected_mode_c_preserves_existing_execution_spine_and_does_not_claim_
     assert plan.mode == "c"
     assert plan.execution_spine == "PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md"
     assert any("connected repository" in item for item in plan.execution_handoff)
-    assert any("do not claim local PROGRAMSTART" in item for item in plan.execution_handoff)
+    assert any("do not claim local programstart" in item.lower() for item in plan.execution_handoff)
     assert "A second execution spine" in plan.work_packet.out_of_scope[0]
 
 

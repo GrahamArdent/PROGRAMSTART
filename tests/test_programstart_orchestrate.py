@@ -13,6 +13,7 @@ def test_new_request_defaults_to_mode_a_without_target() -> None:
     assert plan.environment == "local"
     assert plan.mode == "a"
     assert plan.decision_route is None
+    assert plan.blocker_scope == "none"
     assert "PROGRAMBUILD default" in plan.execution_spine
 
 
@@ -49,7 +50,41 @@ def test_connected_mode_c_preserves_existing_execution_spine_and_does_not_claim_
     assert plan.execution_spine == "PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md"
     assert any("connected repository" in item for item in plan.execution_handoff)
     assert any("do not claim local programstart" in item.lower() for item in plan.execution_handoff)
+    assert any("classify its scope" in item for item in plan.orientation_actions)
     assert "A second execution spine" in plan.work_packet.out_of_scope[0]
+
+
+def test_mutation_gate_keeps_live_action_blocked_but_surfaces_safe_lane_scan() -> None:
+    plan = build_plan(
+        request="Continue useful R4 work while Vercel mutation is blocked",
+        repository="GrahamArdent/GCRM",
+        environment="connected-tools",
+        mode="c",
+        execution_spine="ops/gameplans/GCRM_MASTER_GAMEPLAN_2026-08-22.md",
+        blocker_scope="mutation_gate",
+    )
+
+    assert plan.blocker_scope == "mutation_gate"
+    assert plan.work_packet.blocker_scope == "mutation_gate"
+    assert any("Lane A" in item for item in plan.safe_lane_policy)
+    assert any("Lane B" in item for item in plan.safe_lane_policy)
+    assert any("blocked Lane C mutation" in item for item in plan.safe_lane_policy)
+    assert plan.work_packet.safe_lane_policy == plan.safe_lane_policy
+
+
+def test_external_resource_history_is_not_overwritten_by_current_invisibility() -> None:
+    plan = build_plan(
+        request="Reconcile a provider resource that is no longer visible",
+        repository="owner/project",
+        environment="connected-tools",
+        mode="c",
+    )
+
+    policy = " ".join(plan.evidence_continuity_policy).lower()
+    assert "historical existence" in policy
+    assert "current visibility" in policy
+    assert "does not prove" in policy
+    assert "deleted" in policy
 
 
 def test_material_uncertainty_routes_through_existing_adaptive_router() -> None:
@@ -98,26 +133,45 @@ def test_mode_c_requires_a_target() -> None:
         build_plan(request="Change the product", mode="c")
 
 
-def test_render_text_exposes_authority_evidence_handoff_and_completion() -> None:
-    plan = build_plan(request="Build a small API")
+def test_render_text_exposes_authority_blocker_evidence_handoff_and_completion() -> None:
+    plan = build_plan(request="Build a small API", blocker_scope="unresolved")
     rendered = render_text(plan)
 
     assert "PROGRAMSTART Orchestration Contract" in rendered
     assert "environment: local" in rendered
     assert "mode: a" in rendered
     assert "authority loading:" in rendered
+    assert "blocker scope: unresolved" in rendered
+    assert "safe-lane policy:" in rendered
+    assert "evidence continuity:" in rendered
     assert "reusable evidence:" in rendered
     assert "handoff:" in rendered
     assert "completion rule:" in rendered
 
 
 def test_cli_json_output_is_machine_readable(capsys: pytest.CaptureFixture[str]) -> None:
-    assert main(["--request", "Build a small API", "--json"]) == 0
+    assert main(
+        [
+            "--request",
+            "Continue safe preparation",
+            "--repository",
+            "owner/project",
+            "--mode",
+            "c",
+            "--blocker-scope",
+            "mutation_gate",
+            "--json",
+        ]
+    ) == 0
 
     payload = json.loads(capsys.readouterr().out)
-    assert payload["request"] == "Build a small API"
-    assert payload["environment"] == "local"
-    assert payload["mode"] == "a"
+    assert payload["request"] == "Continue safe preparation"
+    assert payload["environment"] == "connected-tools"
+    assert payload["mode"] == "c"
+    assert payload["blocker_scope"] == "mutation_gate"
+    assert payload["safe_lane_policy"]
+    assert payload["evidence_continuity_policy"]
     assert payload["authority_loading"]
+    assert payload["work_packet"]["blocker_scope"] == "mutation_gate"
     assert payload["work_packet"]["reusable_evidence"]
     assert payload["completion_rule"]

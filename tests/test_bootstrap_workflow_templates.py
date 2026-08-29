@@ -41,6 +41,19 @@ def test_generated_repo_bootstrap_assets_expose_canonical_workflow_paths() -> No
     assert "README.md" in assets
 
 
+def test_orchestration_support_protocols_propagate_with_generated_workflow_prompt() -> None:
+    registry = bootstrap.load_registry()
+
+    prompt_assets = bootstrap.generated_repo_prompt_assets(registry)
+    bootstrap_assets = set(bootstrap.generated_repo_bootstrap_assets(registry))
+
+    assert ".github/prompts/start-programstart-project.prompt.md" in prompt_assets
+    assert "docs/PROGRAMSTART_LEARNING_LOOP.md" in prompt_assets
+    assert "docs/PROGRAMSTART_COST_GOVERNANCE.md" in prompt_assets
+    assert "docs/PROGRAMSTART_LEARNING_LOOP.md" in bootstrap_assets
+    assert "docs/PROGRAMSTART_COST_GOVERNANCE.md" in bootstrap_assets
+
+
 def test_bootstrap_shared_assets_materializes_workflow_template(monkeypatch, tmp_path: Path) -> None:
     template_root = tmp_path / "template"
     source = template_root / "templates" / "github-workflows" / "process-guardrails.yml"

@@ -10,7 +10,9 @@
         "workflow"
       ],
       "support_files": [
-        ".github/prompts/PROMPT_STANDARD.md"
+        ".github/prompts/PROMPT_STANDARD.md",
+        "docs/PROGRAMSTART_LEARNING_LOOP.md",
+        "docs/PROGRAMSTART_COST_GOVERNANCE.md"
       ]
     },
     "bootstrap_assets": [
@@ -55,6 +57,8 @@
       "docs/toolchain.md",
       "docs/verification.md",
       "docs/workflow-model.md",
+      "docs/PROGRAMSTART_LEARNING_LOOP.md",
+      "docs/PROGRAMSTART_COST_GOVERNANCE.md",
       "dashboard/index.html",
       "dashboard/app.js",
       "dashboard/style.css",

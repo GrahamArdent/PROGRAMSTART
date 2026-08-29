@@ -22,25 +22,25 @@ The architecture and overall slice remained sound. The new evidence was a post-i
 
 ## Evidence
 
-- repository / PR / commit / run / provider / runtime evidence: `GrahamArdent/repo-watchtower` PR #1, head `22a01f508520754f0cc05a5f4df876f6af362c6f`; CI run `33226463294` passed.
-- exact current state relevant to the observation: PR #1 verifies GitHub webhook HMAC from raw bytes and adds an in-memory replay guard; the reviewed implementation records the delivery ID after JSON parsing but before `store.upsert(...)` for incident-producing events.
-- verification actually performed: live PR metadata, CI result, PR patch, `src/app.ts`, `src/security/github-webhook.ts`, and `src/security/delivery-replay-guard.ts` were independently inspected.
-- checks not performed / unavailable: no production runtime or real webhook delivery was exercised as part of this methodology observation; the issue was identified by code-path/counterexample analysis.
+- repository / PR / commit / run / provider / runtime evidence: `GrahamArdent/repo-watchtower` PR #1, head `22a01f508520754f0cc05a5f4df876f6af362c6f`; CI run `33226463294` passed; PROGRAMSTART implementation PR #63.
+- exact current state relevant to the observation: Watchtower PR #1 verifies GitHub webhook HMAC from raw bytes and adds an in-memory replay guard; the reviewed implementation records the delivery ID after JSON parsing but before `store.upsert(...)` for incident-producing events.
+- verification actually performed: live Watchtower PR metadata, CI result, PR patch, `src/app.ts`, `src/security/github-webhook.ts`, and `src/security/delivery-replay-guard.ts` were independently inspected. PROGRAMSTART PR #63 received a focused post-implementation self-review that found and corrected a low-risk-ceremony documentation mismatch plus two regression-test assertion mismatches before merge.
+- checks not performed / unavailable: no Watchtower production runtime or real webhook delivery was exercised as part of this methodology observation. PROGRAMSTART currently has no automatic PR workflow/status on PR #63; no pytest/Ruff/Pyright/nox run is claimed for the methodology implementation.
 
 ## PROGRAMSTART behavior
 
 - **What PROGRAMSTART did:** correctly used Mode C, preserved Watchtower authority, bounded the work packet, strengthened the trust boundary, added tests/CI, and deliberately kept remediation/autonomy out of V0.2.
 - **What helped:** proportional rigor, existing Challenge Gate concepts, evidence-earned complexity, and the Learning Gate all pointed toward conservative execution.
 - **What created friction or uncertainty:** the completed high-risk implementation could be declared merge-ready without an explicit adversarial review of the actual diff. Existing verification focused on intended behavior and current tests rather than requiring a realistic counterexample/failure-sequence challenge.
-- **Was existing methodology sufficient?** partially. The existing Challenge Gate already owns blast-radius and architecture/implementation alignment, so a new lifecycle/stage is not warranted. The closure invocation/enforcement is the gap.
+- **Was existing methodology sufficient?** partially. The existing Challenge Gate already owns blast-radius and architecture/implementation alignment, so a new lifecycle/stage is not warranted. The closure invocation/enforcement was the gap.
 
 ## Learning decision
 
 - **Existing lesson match:** none. This is distinct from evidence-source typing (`PSL-009`) and adaptive decision routing (`PSL-003`): the missing behavior occurs after implementation exists and before high-risk work is accepted/merge-ready.
 - **Maturity before:** none
-- **Maturity after:** candidate
-- **Why the evidence changes or does not change maturity:** this is one materially strong real-project case at an Internet-facing trust boundary, and the required correction is bounded: extend the existing Challenge Gate/verification closure rather than add a new stage, agent, or artifact. The lesson remains `candidate` until the focused PROGRAMSTART methodology change is merged; after merge it should become `implemented` pending a real retest.
-- **PROGRAMSTART change required now:** add a risk-triggered post-implementation adversarial closure pass to the existing Challenge Gate and orchestration contract. It must review the completed implementation, assume current tests may miss a defect, construct realistic failure sequences, and require targeted correction/tests when a counterexample violates an important invariant.
+- **Maturity after:** implemented
+- **Why the evidence changes or does not change maturity:** this is one materially strong real-project case at an Internet-facing trust boundary, and the correction is bounded: PROGRAMSTART PR #63 extends the existing Challenge Gate, Work Packet, orchestration contract, and verification closure rather than adding a stage, reviewer role, or artifact. Real validation remains open until a later product closure exercises the behavior naturally.
+- **PROGRAMSTART change required now:** implemented by PROGRAMSTART PR #63: risk-triggered post-implementation adversarial closure reviews must inspect the completed implementation, assume current tests may miss a defect, construct realistic failure sequences, and require targeted correction/tests when a counterexample violates an important invariant.
 
 ## Retest
 

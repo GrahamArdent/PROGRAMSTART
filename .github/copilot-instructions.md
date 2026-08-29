@@ -16,6 +16,19 @@ Do not read the documentation tree up front.
 4. load only the exact authority sections/evidence needed for the current task;
 5. use `.github/instructions/source-of-truth.instructions.md` for detailed JIT behavior.
 
+## Portfolio Attention Checkpoints
+
+`PROGRAMBUILD/PROGRAMBUILD_PORTFOLIO_CONTROL.md` defines optional cross-project attention routing. Portfolio attention is derived operator context, never project execution authority.
+
+- Do **not** read, rebuild, or refresh a live portfolio workspace on every project turn.
+- At startup inside a specific project, project authority remains primary. Portfolio state is relevant only when the operator asks a portfolio-level question or when a meaningful project checkpoint can invalidate the current portfolio row.
+- A meaningful portfolio checkpoint includes a milestone/packet merge or closure, blocker/operator-gate change, dependency change, explicit pause/resume, or provider/runtime evidence that materially changes the project's next executable action or attention class.
+- At such a checkpoint, if an already-authorized live external portfolio workspace is available and writable, reconcile only the current project's row and meaningful attention history after project truth has been reconciled in its owning repository.
+- If the external workspace is unavailable, unwritable, or would require crossing an unapproved repository boundary, do not block truthful project closure. Report portfolio reconciliation as pending rather than inventing or silently persisting state elsewhere.
+- When the operator asks "what should we work on?", "where should my attention go?", or equivalent across projects, use the live portfolio workspace first when available, refresh only evidence that could change the decision, and apply the bounded `OPERATOR_GATE` + `PRIMARY_BUILD` + `SECONDARY_READY` model from Portfolio Attention Control.
+- Staleness is never urgency. Paused/parked work must not rise in priority merely because time passed.
+- Portfolio state can never close a project milestone, approve a release, change project scope, or override newer repository/runtime/provider truth.
+
 ## Authority Rules
 
 - Preserve one strategic execution spine per real project.

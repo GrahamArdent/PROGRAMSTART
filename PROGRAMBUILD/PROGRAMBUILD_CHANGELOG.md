@@ -173,11 +173,9 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 - added Data Grounding Rule to 5 prompts that read user-authored planning docs (T2)
 - capped signoff_history at 100 entries with FIFO trim in save_workflow_signoff and advance_workflow_with_signoff (T3)
 - replaced `.parents` path traversal check with `is_relative_to()` in get_doc_preview (T7)
-- added opt-in reverse drift enforcement for selected sync rules so authority-only changes can hard-fail instead of landing as notes
 - added `agent: "agent"` frontmatter to product-jit-check.prompt.md (T8)
 - pinned all GitHub Actions to commit SHAs across 6 workflow files (T13)
 - recorded signoff history cap policy decision as DEC-002 in DECISION_LOG
-- created `.github/prompts/implement-gameplan-phase1.prompt.md` execution prompt
 
 ---
 
@@ -193,6 +191,7 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 - updated QUICKSTART.md nox command reference to reflect new session structure
 - fixed `validate_bootstrap_assets` — userjourney test files are now skipped when USERJOURNEY is absent (fixes `test_bootstrap_repo_stays_programbuild_only`)
 - created `.github/prompts/implement-gameplan-phase4.prompt.md` execution prompt
+- smoke diagnostic output reviewed — both readonly and CLI smoke already produce actionable `[PASS]/[FAIL]` output per check with URLs, status codes, and stderr excerpts
 
 ---
 
@@ -245,7 +244,7 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 - added Drift Check, JIT Check, and Safe Gate tasks to `.vscode/tasks.json`
 - added `.tmp_factory_smoke` and `.tmp_nox_factory_smoke` cleanup targets to `noxfile.py` clean session
 - recorded smoke safety policy as DEC-001 in DECISION_LOG.md
-- created `.github/prompts/implement-gameplan-phase1.prompt.md` execution prompt
+- created `.github/prompts/implement-gameplan-phase1.prompt.md` implementation prompt
 - updated QUICKSTART.md day-to-day loop to include drift before and after editing
 - added VS Code tasks reference table to README.md validation section
 

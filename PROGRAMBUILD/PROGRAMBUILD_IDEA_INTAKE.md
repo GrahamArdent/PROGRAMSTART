@@ -2,13 +2,15 @@
 
 # Idea Intake Protocol
 
-Purpose: Decompose a raw idea, research-backed opportunity, or existing-project change into a structured problem statement before the inputs block is filled or a planning delta is proposed.
+Purpose: Decompose a raw idea, research-backed opportunity, captured/shelved idea, or existing-project change into a structured problem statement before the inputs block is filled or a planning delta is proposed.
 Owner: Product Lead
-Last updated: 2026-08-26
-Depends on: `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` for entry-mode, authority, adaptive decision/evidence routing, evidence-reuse, and existing-project rules
+Last updated: 2026-08-29
+Depends on: `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` for entry-mode, authority, idea-preservation/promotion semantics, adaptive decision/evidence routing, evidence-reuse, and existing-project rules
 Authority: Canonical for idea decomposition and pre-feasibility challenge
 
 This protocol normally runs before Stage 0 (Inputs). Its job is to force clarity about the problem before anyone names a solution, picks a stack, or writes an inputs block. For an existing project, it can instead run as a delta-oriented challenge against the project's current authority.
+
+It is **not** required merely to preserve a worthwhile idea. PROGRAMBUILD deliberately separates cheap capture from later promotion/evaluation.
 
 ---
 
@@ -18,7 +20,30 @@ Most failed products were not killed by bad engineering. They were killed by bui
 
 The inputs block in `PROGRAMBUILD.md` asks *what* you are building. This protocol asks *whether you should*.
 
-It must also avoid a different failure: re-asking questions that have already been answered by trustworthy research or an existing project's canonical state. The goal is disciplined challenge, not repetitive ceremony.
+It must also avoid two different failures:
+
+1. re-asking questions that have already been answered by trustworthy research or an existing project's canonical state; and
+2. losing useful ideas because they were not ready for full evaluation when first discussed.
+
+The goal is disciplined challenge at promotion time, not repetitive ceremony at capture time.
+
+---
+
+## Captured Idea Input
+
+A captured idea may arrive from `IDEA_LEDGER.md` or any equivalent durable project/workspace idea surface.
+
+A record status such as `CAPTURED`, `CANDIDATE`, `INVESTIGATING`, or `SHELVED` does **not** mean the idea is approved, prioritized, or executable. Use the current evidence and the correct entry mode to decide what, if anything, should be promoted.
+
+When an Idea Record exists:
+
+1. reuse its description, rationale, origin/evidence, related ideas, and revisit trigger;
+2. do not ask the operator to restate information already preserved accurately;
+3. update the record's status/rationale only when the evaluation materially changes it;
+4. if the idea is accepted, reconcile the actual authority that owns scope/architecture/sequencing/decision/acceptance truth and point the record to that owner;
+5. if the idea is shelved/rejected/superseded, preserve enough rationale to avoid repeating the same analysis later.
+
+The Idea Record remains provenance/reference evidence. It never becomes the execution spine.
 
 ---
 
@@ -52,7 +77,7 @@ Before running the challenge:
 
 1. identify the project's current canonical authority or execution spine;
 2. inspect the current state needed to evaluate the proposed change;
-3. reuse still-valid research and verification evidence;
+3. reuse still-valid research, verification evidence, and relevant captured-idea context;
 4. apply the 8 questions as a **delta audit** against the proposed change;
 5. route only genuinely unresolved decision-relevant uncertainty through additional scrutiny;
 6. produce recommendations for the existing plan rather than creating a competing master plan;
@@ -66,12 +91,14 @@ Mode C does not restart at Stage 0 merely because this intake or a research delt
 
 ## When To Use
 
-- Every genuinely new idea, before filling the inputs block.
+- Every genuinely new idea **when it is being evaluated for promotion**, before filling the inputs block.
 - When someone says "I want to build X" and X is a solution, not a problem.
 - When the motivation is a technology ("I want to use Y") rather than a user pain.
-- When revisiting a shelved idea to decide if conditions have changed.
+- When revisiting a captured or shelved idea to decide if conditions have changed.
 - When a research document needs to be converted into an executable project structure.
 - When new research or a proposed enhancement needs to be evaluated against an existing project's current plan.
+
+Do **not** require this protocol just to save an interesting idea. Capture it cheaply first using the Planning Operating Model / `IDEA_LEDGER.md` semantics.
 
 ---
 
@@ -203,6 +230,7 @@ After completing or validating the interview dimensions, review the answers agai
 | Existing evidence is being re-collected without an invalidation trigger | You are spending verification effort without reducing uncertainty. Reuse the evidence or state why it is stale. |
 | Research is broad but the decision it protects or stop condition is undefined | Bound the research around the next decision before gathering more knowledge. |
 | Existing project already has an execution spine but this intake creates a new master plan | Convert the result into delta recommendations for the existing authority instead. |
+| A captured/shelved idea is being treated as approved scope merely because it was preserved | Capture is not promotion. Evaluate the idea and reconcile the owning authority only if adoption is earned. |
 
 ---
 
@@ -219,6 +247,7 @@ Produce:
 5. Kill criteria ready for `FEASIBILITY.md`.
 6. A validation experiment recommendation, noting any reusable existing evidence and research depth if further evidence is actually warranted.
 7. A go / investigate / stop recommendation.
+8. If an Idea Record exists, the resulting idea status (`CANDIDATE`, `INVESTIGATING`, `SHELVED`, `ACCEPTED`, `REJECTED`, or `SUPERSEDED`) plus any changed rationale/revisit trigger/promotion pointer.
 
 Then run `programstart recommend` to get KB-backed variant and stack guidance:
 
@@ -235,7 +264,7 @@ The tool maps your product shape and stated needs against the KB (80+ stacks, 11
 Use the output to validate or challenge your variant choice and stack assumptions before filling the inputs block. If the tool's variant recommendation disagrees with your initial assumption, treat that as a signal worth investigating — not a mechanical override.
 
 If the recommendation is "go" or "investigate," proceed through the current lifecycle only as far as the evidence warrants; use the adaptive routing rules before opening broad research.
-If the recommendation is "stop," record why in `DECISION_LOG.md` and do not start the inputs block.
+If the recommendation is "stop," preserve the idea as `REJECTED` or `SHELVED` with rationale/revisit evidence when the reasoning is worth retaining. Use `DECISION_LOG.md` as well only when the stop/rejection is a material project decision, not merely because an Idea Record exists.
 
 ### Mode C output
 
@@ -250,6 +279,7 @@ Produce:
 7. Specific recommended edits to the existing execution spine or canonical project artifacts.
 8. A proceed / investigate / stop-or-escalate recommendation for the proposed change.
 9. The existing project's next executable slice to return to after any bounded investigation.
+10. If an Idea Record exists, its resulting status/rationale and, when accepted, `PROMOTED_TO` pointer to the reconciled project authority.
 
 Do **not** create a new master game plan as the default Mode C output.
 
@@ -260,12 +290,14 @@ Do **not** create a new master game plan as the default Mode C output.
 Use this prompt when running the Idea Intake Protocol with an AI agent:
 
 ```text
-Act as a critical product advisor. Your job is to stress-test this idea, research-backed project, or existing-project change before execution planning proceeds.
+Act as a critical product advisor. Your job is to stress-test this idea, research-backed project, captured/shelved idea, or existing-project change before execution planning proceeds.
 
 Read PROGRAMBUILD_PLANNING_OPERATING_MODEL.md and select the correct entry mode:
 - Mode A: raw idea
 - Mode B: research-backed project
 - Mode C: existing/in-flight project
+
+If a durable Idea Record already exists, reuse it. Remember that CAPTURED/CANDIDATE/SHELVED means preserved, not approved or prioritized.
 
 Run the 8 challenge dimensions from PROGRAMBUILD_IDEA_INTAKE.md.
 
@@ -275,7 +307,7 @@ For Mode A:
 3. Challenge weak, vague, or solution-first answers explicitly.
 
 For Modes B and C:
-1. First use trustworthy existing research and project authority to prefill any dimensions already answered.
+1. First use trustworthy existing research, relevant Idea Record context, and project authority to prefill any dimensions already answered.
 2. Do not ask the operator to repeat valid information without an invalidation reason.
 3. Ask only about gaps, stale evidence, ambiguity, or contradictions.
 4. Still challenge all 8 dimensions before concluding.
@@ -283,14 +315,16 @@ For Modes B and C:
 For every mode:
 - Do not accept "users" as a target, features as success metrics, or "build it and see" as validation.
 - If an answer has a red flag, name the red flag and resolve it.
-- Distinguish evidence from execution authority.
+- Distinguish idea preservation/evidence from execution authority.
 - If material uncertainty could change the next decision, route it to no/targeted/deep research using the adaptive decision rules; do not research for completeness.
 - If Mode C already has a master plan or other execution spine, produce delta recommendations and proposed edits to that authority rather than creating a competing plan.
 - If Mode C investigates a delta, return to the existing execution spine rather than restarting Stage 0.
+- If the idea is accepted, reconcile the existing owning authority and point the Idea Record to it; do not execute from the Idea Record itself.
+- If the idea is shelved/rejected/superseded and its reasoning may matter later, preserve that reasoning rather than deleting the record.
 
 After all 8 dimensions are satisfactory, produce the output defined for the selected mode.
 
-Do not be polite at the expense of accuracy. A killed idea at this stage costs little; an unnecessary research or re-verification cycle also costs real time.
+Do not be polite at the expense of accuracy. A killed idea at this stage costs little; an unnecessary research or re-verification cycle also costs real time. A captured idea may remain valuable even when the correct current decision is not to build it.
 ```
 
 ---

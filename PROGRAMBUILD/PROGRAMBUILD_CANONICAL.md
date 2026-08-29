@@ -18,7 +18,7 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY in this section are in
 5. If a file is deprecated or replaced, the file index and this file MUST be updated in the same change.
 6. PROGRAMSTART is a template repository. Filled project outputs belong in the real project repository, not here.
 7. `USERJOURNEY/` is an optional project attachment, not a mandatory PROGRAMBUILD subsystem.
-8. A project MUST have one primary strategic execution spine. Research, audits, readiness reviews, checklists, adaptive-router outputs, accepted-recommendation resolutions, and work packets MUST NOT silently become competing master plans.
+8. A project MUST have one primary strategic execution spine. Research, audits, readiness reviews, checklists, adaptive-router outputs, accepted-recommendation resolutions, idea ledgers/records, and work packets MUST NOT silently become competing master plans.
 9. A work packet is a **logical derived execution contract**. It MAY be persisted as `CURRENT_WORK_PACKET.md` when persistence adds coordination/risk/resumption value; whether persisted or not, it MUST defer to the strategic spine, requirements, architecture, decisions, and validated implementation state.
 10. Challenge Gate parts A–H are canonical risk controls, but the Product variant MUST select them by stage/risk. Full A–H is required only where `PROGRAMBUILD_CHALLENGE_GATE.md` defines whole-system Product convergence; Enterprise keeps its full-gate requirements.
 11. No universal feature count, calendar cadence, file count, project count, agent count, or numeric rigor score becomes PROGRAMBUILD policy unless evidence and the canonical owner explicitly justify that threshold.
@@ -32,6 +32,7 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY in this section are in
 19. PROGRAMSTART cost governance MUST remain decision-scoped and subordinate to project budget, architecture, security, and release authority. A Cost Envelope MAY structure material paid/metered/quota decisions, but it MUST NOT become a central vendor-price registry, procurement authority, portfolio budget, or second execution spine. Volatile pricing/limit evidence MUST be refreshed only when its staleness can materially change the current decision.
 20. Generic operator acceptance of a concrete recommendation MUST be resolved against current project authority before execution. `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` owns the disposition rules. Generic acceptance MUST NOT silently resequence future work, churn strategic authority for ordinary implementation detail, or satisfy a stronger explicit approval/operator/consequence gate merely because the operator said `proceed`.
 21. Checklists MUST remain derived completeness/verification surfaces. They MAY be activated when omission risk or an applicable durable checklist warrants them, but MUST NOT create scope, sequencing, a second Master, or mandatory ceremony for trivial work. When a checklist is active for a slice, applicable required items MUST be reconciled before truthful closure according to `PROGRAMBUILD_WORK_PACKET.md` and `PROGRAMBUILD_CHECKLIST.md`.
+22. Worthwhile ideas SHOULD be durably preserved without being silently promoted. `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` owns capture/promotion semantics. A captured, candidate, investigating, shelved, rejected, or superseded Idea Record is evidence/reference material only; recording it MUST NOT imply priority, scope, sequencing, budget, architecture, or permission to execute. An accepted idea MUST reconcile into the existing project authority that owns the changed truth before dependent execution. A live cross-project idea portfolio MUST NOT be stored in PROGRAMSTART itself.
 
 ---
 
@@ -74,7 +75,8 @@ Project execution outputs:
 - `AUDIT_REPORT.md`
 - `POST_LAUNCH_REVIEW.md`
 
-Optional persisted execution aid:
+Optional preservation / execution aids:
+- `IDEA_LEDGER.md` — optional non-authoritative idea/opportunity preservation surface; may be replaced by an existing equivalent project/workspace system
 - `CURRENT_WORK_PACKET.md` — replaceable persisted view of the current logical packet; never canonical and not required when compact task/session state is sufficient
 
 ---
@@ -89,7 +91,7 @@ Optional persisted execution aid:
 | enterprise process | `PROGRAMBUILD_ENTERPRISE.md` |
 | document authority and naming rules | `PROGRAMBUILD_CANONICAL.md` |
 | critical file inventory and status | `PROGRAMBUILD_FILE_INDEX.md` |
-| planning-to-execution separation, proportional rigor, blocker scope/safe-lane reasoning, adaptive decision/evidence routing, accepted-recommendation resolution, checklist activation rules, context loading, and evidence reuse | `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` |
+| planning-to-execution separation, idea capture/promotion semantics, proportional rigor, blocker scope/safe-lane reasoning, adaptive decision/evidence routing, accepted-recommendation resolution, checklist activation rules, context loading, and evidence reuse | `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` |
 | logical work-packet semantics, accepted-recommendation disposition evidence, checklist completeness/closure, blocker/safe-lane fields, coordinated Mode-C lane view, cross-repository dependency/authority fields, operator/manual-gate handoff semantics, and optional persisted packet format | `PROGRAMBUILD_WORK_PACKET.md` |
 | PROGRAMSTART decision-scoped cost governance, Cost Envelope semantics, cost-evidence freshness, cap/reuse/pay-when rules, and anti-registry boundary | `docs/PROGRAMSTART_COST_GOVERNANCE.md` |
 | PROGRAMSTART acceptance-learning triggers, observation/rollup semantics, maturity rules, and future-retest routing | `docs/PROGRAMSTART_LEARNING_LOOP.md` |
@@ -117,6 +119,8 @@ Optional persisted execution aid:
 | automation gate definitions and nox session composition | `./noxfile.py` |
 | editor task surface and operator workflow shortcuts | `.vscode/tasks.json` |
 
+`IDEA_LEDGER.md` is an optional storage template, not a canonical authority surface. Its lifecycle meaning comes from `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`.
+
 ---
 
 ## 4. Conflict Resolution
@@ -138,6 +142,8 @@ A logical or persisted work packet never outranks its source authority. Correct/
 An adaptive-router result is advisory derived reasoning. It never outranks the project's execution spine, accepted decisions, requirements, architecture, or validated implementation state.
 
 An accepted-recommendation resolution is derived from current authority. It never makes a deferred recommendation current merely because the operator accepted it, and it never makes contradicted assumptions authoritative merely because they were previously recommended.
+
+An Idea Record or Idea Ledger never outranks project authority. Capturing, shelving, rejecting, or investigating an idea does not make it current work. When an idea is accepted for promotion, reconcile the owning project artifact and point the record to that authority rather than using the idea surface as a substitute roadmap.
 
 A checklist never outranks the requirement/decision/gate/acceptance source from which its items were derived. Correct the checklist when authority changes rather than preserving stale checklist scope.
 
@@ -161,8 +167,9 @@ A PROGRAMSTART learning observation or ledger entry never outranks the real proj
 - Derived summaries must point back to the canonical owner.
 - `PROGRAMBUILD_CHANGELOG.md` records system-level changes but does not redefine authority.
 - Material decisions go in `DECISION_LOG.md`; promote durable architecture/policy rationale to an ADR when the repository's current ADR policy warrants it, not because an arbitrary numeric threshold was crossed.
-- The template repository keeps project outputs reusable; do not store filled project-specific feasibility, requirements, architecture, release, packet, or portfolio state here.
+- The template repository keeps project outputs reusable; do not store filled project-specific feasibility, requirements, architecture, release, packet, idea-portfolio, or portfolio state here.
 - Research that affects an existing project should become explicit delta recommendations adopted through that project's authority process.
+- Preserve worthwhile future ideas in the owning project/workspace's existing idea/reference system, or use the optional `IDEA_LEDGER.md` template when no compatible surface exists. Do not require full intake merely to capture, do not delete useful rejected/shelved rationale by default, and do not turn the ledger into a shadow backlog.
 - Accepted recommendation resolution should retain only enough context to identify the recommendation, disposition, authority reconciliation need, and stronger gate. Do not turn accepted recommendations into a new durable registry or hidden backlog.
 - Checklists should retain only the obligations needed to avoid meaningful omission and should reference current authority where practical. Close/discard derived slice checklists with the work packet; do not turn them into shadow strategy.
 - Cross-repository orchestration may retain only the task-scoped relationship/evidence needed to derive the current packet. A live portfolio registry or cross-project Master belongs outside PROGRAMSTART unless a future explicit authority decision creates one.
@@ -170,8 +177,8 @@ A PROGRAMSTART learning observation or ledger entry never outranks the real proj
 - Concurrent Mode-C lane coordination may retain only enough derived lane state to select the current packet and preserve closure-control/dependency truth. Do not persist a parallel lane backlog when the project spine already owns sequencing.
 - Cost governance may retain current decision evidence and invalidation conditions where a project needs durable rationale, but PROGRAMSTART must not maintain a central vendor-price/free-tier catalogue whose volatility would turn stale evidence into false authority.
 - PROGRAMSTART learning should retain detailed evidence in append-only observation records and keep the main learning ledger as a concise maturity rollup. Do not load or rewrite detailed history by default during normal product work.
-- Specialist agents, extra documents, broader gates, recurring automation, checklists, and adaptive routing are mechanisms, not goals. Use them only when they reduce real uncertainty/risk/coordination/omission cost.
+- Specialist agents, extra documents, broader gates, recurring automation, checklists, idea ledgers, and adaptive routing are mechanisms, not goals. Use them only when they reduce real uncertainty/risk/coordination/omission/reconstruction cost.
 
 ---
 
-Last updated: 2026-08-28
+Last updated: 2026-08-29

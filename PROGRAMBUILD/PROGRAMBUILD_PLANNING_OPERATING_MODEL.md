@@ -2,11 +2,11 @@
 
 # Program Build Planning Operating Model
 
-Purpose: Define how planning, research, execution authority, active work, context loading, adaptive decision routing, blocker scope, safe-lane execution, accepted recommendations, checklist completeness, and verification fit together without creating competing plans or unnecessary process overhead.
+Purpose: Define how planning, idea preservation, research, execution authority, active work, context loading, adaptive decision routing, blocker scope, safe-lane execution, accepted recommendations, checklist completeness, and verification fit together without creating competing plans or unnecessary process overhead.
 Owner: Project Lead / Operator
-Last updated: 2026-08-28
+Last updated: 2026-08-29
 Depends on: `PROGRAMBUILD_CANONICAL.md`, `PROGRAMBUILD_FILE_INDEX.md`, `PROGRAMBUILD_GAMEPLAN.md`, `DECISION_LOG.md`
-Authority: Canonical for planning-to-execution separation, proportional rigor, progressive disclosure, adaptive decision routing, blocker/safe-lane handling, accepted-recommendation resolution, evidence sufficiency, and evidence-reuse rules.
+Authority: Canonical for planning-to-execution separation, idea capture/promotion semantics, proportional rigor, progressive disclosure, adaptive decision routing, blocker/safe-lane handling, accepted-recommendation resolution, evidence sufficiency, and evidence-reuse rules.
 
 ---
 
@@ -19,7 +19,7 @@ The operating model has four distinct layers:
 1. **Reusable methodology** — PROGRAMBUILD explains how projects should be planned and executed.
 2. **Project authority** — each real project owns its own current execution spine, decisions, requirements, architecture, and state.
 3. **Active work packet** — the current coherent unit of work is derived from project authority and relevant evidence; it is not a second game plan.
-4. **Evidence and reference material** — research, audits, prior verification, external guidance, specialist documents, and derived checklists support decisions but do not silently become execution authority.
+4. **Evidence and reference material** — research, audits, prior verification, external guidance, specialist documents, captured ideas, and derived checklists support decisions but do not silently become execution authority.
 
 The layers MUST remain distinct.
 
@@ -28,6 +28,10 @@ The governing rigor principle is:
 > **Use exactly as much rigor as the decision warrants.**
 
 Research exists to retire decision-relevant uncertainty, not to maximize knowledge.
+
+For idea preservation, use the equally important rule:
+
+> **Capture broadly. Promote deliberately. Execute only from authority.**
 
 ---
 
@@ -38,6 +42,7 @@ Research exists to retire decision-relevant uncertainty, not to maximize knowled
 - reusable project-planning methodology
 - reusable lifecycle and stage guidance
 - proportional-rigor rules
+- idea-preservation and promotion semantics
 - adaptive decision-routing and evidence-sufficiency rules
 - blocker-scope and safe-lane reasoning rules
 - accepted-recommendation resolution rules
@@ -62,7 +67,67 @@ Research exists to retire decision-relevant uncertainty, not to maximize knowled
 - project-specific execution state that belongs in another repository
 - duplicate copies of another project's master plan presented as authority
 
-A registry **schema or template** MAY live here. A live portfolio registry SHOULD live in the operator's planning workspace or another dedicated portfolio system.
+A registry **schema or template** MAY live here. A live portfolio registry or cross-project idea collection SHOULD live in the operator's planning workspace or another dedicated portfolio system.
+
+### 2.1 Idea Preservation Versus Promotion
+
+A worthwhile idea does not need to be current work in order to deserve durable preservation.
+
+PROGRAMBUILD distinguishes three separate acts:
+
+1. **Capture** — preserve an idea because it is worth remembering.
+2. **Promote** — deliberately evaluate/adopt the idea into the owning project's real scope, architecture, sequencing, milestone, decision, or acceptance authority.
+3. **Execute** — perform work only after current authority permits it.
+
+Capture is deliberately cheap. Do not require full Idea Intake, feasibility work, research, prioritization, or roadmap placement merely to remember something useful.
+
+When capture cost is low, an operator/agent SHOULD preserve an idea when:
+
+- the operator explicitly says it is interesting, useful, worth remembering, or should be saved;
+- it could plausibly affect a current or future project;
+- it is a meaningful alternative whose value may change with future evidence;
+- rejected/shelved reasoning would be expensive to reconstruct later;
+- research or implementation reveals a future opportunity outside current scope;
+- losing the idea would likely require non-trivial reasoning to be repeated.
+
+When uncertain whether a non-trivial idea will matter later, prefer capture over relying on chat/session memory.
+
+Use an existing project/workspace idea, issue, note, or discovery surface when it already fits. Otherwise `IDEA_LEDGER.md` is the optional reusable preservation template. A portfolio-wide ledger belongs outside PROGRAMSTART in the operator's planning workspace or another dedicated portfolio system.
+
+Use the following status vocabulary when a durable Idea Record is helpful:
+
+- **`CAPTURED`** — worth remembering; no priority implied.
+- **`CANDIDATE`** — worth deliberate future evaluation.
+- **`INVESTIGATING`** — a bounded validation/research step is active.
+- **`SHELVED`** — deliberately not current; preserve a revisit trigger when knowable.
+- **`ACCEPTED`** — accepted for promotion; point to the owning authority after reconciliation.
+- **`REJECTED`** — deliberately not adopted under current evidence; preserve rationale/reconsideration evidence.
+- **`SUPERSEDED`** — replaced by another idea/decision; link the replacement when practical.
+
+Status is descriptive, not priority or sequencing.
+
+A minimal Idea Record may contain only:
+
+```text
+TITLE:
+STATUS:
+OWNER_OR_CONTEXT:
+IDEA:
+WHY_INTERESTING:
+ORIGIN_OR_EVIDENCE:
+RELATED:
+PROMOTION_OR_REVISIT_TRIGGER:
+DECISION_OR_RATIONALE:
+PROMOTED_TO:
+```
+
+Fill only fields that improve retrieval, future evaluation, deduplication, or safe resumption.
+
+A captured/shelved/rejected idea MUST NOT become project scope, backlog priority, sequencing, architecture, budget, or execution authority merely because it was recorded. When an idea is promoted, reconcile the existing artifact that owns the resulting durable truth and execute from that authority. The Idea Record remains provenance/reference evidence.
+
+Rejected and superseded ideas SHOULD normally be preserved when their rationale could prevent repeated analysis later.
+
+Do not load or review an entire idea collection on every project turn. Retrieve relevant records only when the current request, a stated revisit trigger, or related project evidence makes them decision-relevant.
 
 ---
 
@@ -77,7 +142,7 @@ Examples include:
 - a release/remediation ledger
 - the default `PROGRAMBUILD_GAMEPLAN.md` sequence for a newly bootstrapped project
 
-Research reports, audits, readiness reviews, implementation checklists, adaptive-router outputs, recommendation-resolution results, and work packets MUST NOT become competing strategic plans.
+Research reports, idea ledgers/records, audits, readiness reviews, implementation checklists, adaptive-router outputs, recommendation-resolution results, and work packets MUST NOT become competing strategic plans.
 
 When new research suggests changes to an existing execution spine:
 
@@ -266,6 +331,7 @@ Load only the authoritative artifacts needed for the current slice, such as:
 Load only when triggered by the task:
 
 - targeted or deep research
+- relevant captured/shelved idea records
 - security review
 - legal/compliance guidance
 - vendor documentation
@@ -405,7 +471,7 @@ Classify decision-relevant evidence as:
 - **absent** — collect only evidence needed by the protected decision;
 - **conflicting** — resolve the decision-relevant conflict before widening research.
 
-Do not build a research knowledge-management platform merely to support this classification. Existing repository evidence, the dependency/evidence helpers, research ledger, and normal authority documents remain the sources.
+Do not build a research knowledge-management platform merely to support this classification. Existing repository evidence, the dependency/evidence helpers, research ledger, idea records, and normal authority documents remain the sources.
 
 ### 9.5 Mode-C protection
 
@@ -437,7 +503,8 @@ Use exactly one primary disposition:
    - then derive the executable packet from the reconciled authority;
    - do not let code/runtime intentionally move ahead of knowingly stale authority.
 3. **`defer_without_resequencing`** — the operator accepts the recommendation as useful direction, but current authority/dependency order says it is not the next executable work.
-   - preserve it only in an existing appropriate decision/future/backlog/reference surface when durable retention is actually warranted;
+   - preserve the idea in an existing appropriate durable idea/future/decision/reference surface; when no compatible surface exists and the idea is worth remembering, use the optional `IDEA_LEDGER.md` pattern rather than relying on session memory;
+   - mark it `CAPTURED`, `CANDIDATE`, or `SHELVED` according to the evidence; capture status does not imply priority;
    - do not create a hidden PROGRAMSTART backlog or a second Master;
    - do not reorder the active spine merely because the operator liked the idea;
    - return to the current project's actual next executable slice.
@@ -475,6 +542,8 @@ Usually normal execution detail:
 - small tests/fixtures;
 - temporary investigation notes;
 - reversible tactics that do not change durable project truth.
+
+**Not authority-worthy does not mean not worth remembering.** If a thought/change/opportunity has future reuse value but does not belong in current authority, preserve it as an Idea Record or other appropriate non-authoritative evidence instead of forcing it into the Master or discarding it.
 
 When evidence discovered during execution disproves the accepted recommendation's premise, **do not force the accepted recommendation through**. Stop at the smallest safe point, reconcile the new evidence/authority that actually changed, and derive the next slice from current truth. Operator acceptance authorizes a direction under stated/current assumptions; it does not make disproved assumptions true.
 
@@ -552,6 +621,7 @@ When work resumes after a pause:
 - locate the current execution authority
 - inspect changes since the last trusted checkpoint
 - reuse still-valid evidence
+- retrieve only captured/shelved ideas whose stated trigger or current decision makes them relevant; do not scan the whole idea collection by default
 - route only genuinely uncertain/changed decisions through additional scrutiny
 - classify any newly observed blocker at its narrowest truthful scope and scan safe lanes
 - run only the re-entry checks needed to detect drift
@@ -569,6 +639,8 @@ Avoid:
 
 - multiple documents each claiming to be the master plan
 - research reports promoted to execution authority without a decision
+- idea ledgers/records treated as backlog priority, accepted scope, or sequencing authority
+- discarding worthwhile ideas solely because they are not current work
 - giant prompts containing the entire repository documentation set
 - re-running unchanged checks every session
 - implementation checklists that quietly redefine strategy
@@ -600,16 +672,17 @@ When applying this operating model to an existing repository:
 1. identify the repository's current authority hierarchy;
 2. name the existing execution spine;
 3. identify supporting research/audit documents;
-4. identify duplicate or competing planning artifacts;
-5. define what should be loaded always versus just in time;
-6. define evidence-reuse and invalidation rules, including provider/resource continuity where relevant;
-7. introduce work packets as a derived execution aid if useful;
-8. use adaptive routing only for decisions whose delta actually earns it;
-9. classify blockers narrowly and scan safe lanes before stopping useful independent work;
-10. resolve accepted recommendations against current authority rather than treating generic acceptance as unbounded permission;
-11. discover and reuse existing applicable checklists when omission risk makes them useful;
-12. recommend edits to the existing master plan rather than replacing it;
-13. record any material process change through the repository's decision mechanism.
+4. identify the existing idea/opportunity preservation surface and reuse it; if none exists, introduce `IDEA_LEDGER.md` only when there are worthwhile ideas to preserve;
+5. identify duplicate or competing planning artifacts;
+6. define what should be loaded always versus just in time;
+7. define evidence-reuse and invalidation rules, including provider/resource continuity where relevant;
+8. introduce work packets as a derived execution aid if useful;
+9. use adaptive routing only for decisions whose delta actually earns it;
+10. classify blockers narrowly and scan safe lanes before stopping useful independent work;
+11. resolve accepted recommendations against current authority rather than treating generic acceptance as unbounded permission;
+12. discover and reuse existing applicable checklists when omission risk makes them useful;
+13. recommend edits to the existing master plan rather than replacing it;
+14. record any material process change through the repository's decision mechanism.
 
 The goal is less planning friction with stronger control, not more documentation.
 
@@ -623,6 +696,7 @@ This operating model is working when an operator or agent can answer these quick
 - What are we doing now?
 - Which documents actually matter for this slice?
 - What has already been proven?
+- Which worthwhile ideas are merely captured/shelved versus actually promoted into authority?
 - If the closure row is blocked, what exact action is blocked and what safe lane remains?
 - For external resources, what is verified historically versus currently visible/accessibile?
 - Do we know enough to make the next important decision?
@@ -636,4 +710,4 @@ This operating model is working when an operator or agent can answer these quick
 - What proves this slice is complete?
 - Where will any durable decision be recorded?
 
-If answering those questions requires loading the whole repository, invoking every gate, interpreting several competing plans, or asking the operator to restate already-derivable methodology, the planning system needs simplification.
+If answering those questions requires loading the whole repository, scanning every stored idea, invoking every gate, interpreting several competing plans, or asking the operator to restate already-derivable methodology, the planning system needs simplification.

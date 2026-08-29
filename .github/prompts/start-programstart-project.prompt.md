@@ -3,7 +3,7 @@ description: "Orchestrate a new project or existing-project change from a plain-
 name: "Orchestrate PROGRAMSTART Work"
 argument-hint: "Describe what you want to build or change; optionally name the target repository, execution spine, companion dependency, known operator gate, blocked closure-control slice, or material cost/provider decision"
 agent: "agent"
-version: "2.6"
+version: "2.7"
 ---
 
 # Orchestrate PROGRAMSTART Work
@@ -20,12 +20,13 @@ This prompt follows:
 
 - `PROGRAMBUILD/PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`;
 - `PROGRAMBUILD/PROGRAMBUILD_WORK_PACKET.md`;
+- `PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md`;
 - `docs/PROGRAMSTART_COST_GOVERNANCE.md`;
 - `docs/PROGRAMSTART_LEARNING_LOOP.md`.
 
-It preserves one-project/one-spine authority, Mode A/B/C entry selection, JIT context loading, evidence reuse, blocker-scope/safe-lane reasoning, coordinated Mode-C lane selection, adaptive decision routing, task-scoped cross-repository dependency reasoning, operator/manual-gate handoffs, decision-scoped cost governance, bounded work packets, proportional verification, and the PROGRAMSTART Learning Gate.
+It preserves one-project/one-spine authority, Mode A/B/C entry selection, JIT context loading, evidence reuse, blocker-scope/safe-lane reasoning, coordinated Mode-C lane selection, adaptive decision routing, task-scoped cross-repository dependency reasoning, operator/manual-gate handoffs, decision-scoped cost governance, bounded work packets, proportional verification, risk-triggered post-implementation adversarial closure review, and the PROGRAMSTART Learning Gate.
 
-`programstart orchestrate` is the executable contract generator when the central runtime is available. Its output, any coordinated lane view, derived cross-repository graph, operator handoff, Cost Envelope, and learning observation are guidance/evidence, not new project execution spines or purchasing authority.
+`programstart orchestrate` is the executable contract generator when the central runtime is available. Its output, any coordinated lane view, derived cross-repository graph, operator handoff, Cost Envelope, adversarial-closure routing, and learning observation are guidance/evidence, not new project execution spines or purchasing authority.
 
 ## Pre-flight
 
@@ -86,8 +87,10 @@ Instead:
 10. derive one compact bounded work packet;
 11. execute one selected allowed slice with connected tools;
 12. derive an exact operator/manual handoff when the real next action is outside the current environment;
-13. verify proportionally and reconcile durable state in the repository that owns it;
-14. at a meaningful acceptance checkpoint, run the Learning Gate from `docs/PROGRAMSTART_LEARNING_LOOP.md`.
+13. verify proportionally against the actual completed change;
+14. before merge-ready/accepted/complete status, inspect the actual changed surface and run the existing Challenge Gate's post-implementation adversarial closure review when material trust/security, persistence/idempotency/retry/concurrency, schema/migration, destructive/external-side-effect, production runtime/deployment, or other high-impact/hard-to-reverse behavior was changed;
+15. reconcile durable state in the repository that owns it;
+16. at a meaningful acceptance checkpoint, run the Learning Gate from `docs/PROGRAMSTART_LEARNING_LOOP.md`.
 
 Repository/runtime/provider state is authoritative for current technical reality. Current operator/project authority is authoritative for product intent. Legacy framework/prototype evidence does not become rebuild direction by itself.
 
@@ -134,15 +137,16 @@ A Cost Envelope is a bounded decision lens, not an entry mode, budget authority,
 9. **Preserve external-resource evidence continuity.** Keep historical existence, current visibility/accessibility, operational state, and discrepancy cause distinct.
 10. **Route material uncertainty.** Use adaptive decision rules to select `none`, `targeted`, or `deep` research and applicable checks. Stop at decision sufficiency.
 11. **Govern material cost exposure.** If a current decision can materially change fixed/metered spend or free-tier/quota architecture, follow `docs/PROGRAMSTART_COST_GOVERNANCE.md` and derive the smallest decision-scoped Cost Envelope. Prefer reuse/included capacity when sufficient; require intentional caps for metered exposure where possible; name the evidence that earns payment; never weaken security/reliability merely to remain free.
-12. **Derive the bounded work packet.** Include only fields relevant to the current slice; it is derived/replaceable and canonical for nothing. Cost-envelope evidence may be referenced by the packet without becoming a separate execution spine.
+12. **Derive the bounded work packet.** Include only fields relevant to the current slice; it is derived/replaceable and canonical for nothing. Cost-envelope evidence may be referenced by the packet without becoming a separate execution spine. When supplied risk/consequence signals already justify adversarial closure, include that requirement in the packet; otherwise closure still re-checks the actual changed surface.
 13. **Execute one selected packet.** Use current tools directly. Do not auto-launch all visible lanes or coordinated multi-repository mutation.
 14. **Derive an operator/manual handoff only at a real environment boundary.** State `GATE_OWNER`, `REQUIRED_ACTION`, `SENSITIVE_INPUT_HANDLING`, `RETURN_EVIDENCE`, `EVIDENCE_ACCEPTANCE`, `GATE_INVALIDATION`, `RESUME_AT`, and `SAFE_WHILE_WAITING`. Do not request secret values when a secure owning surface exists.
 15. **Verify returned gate evidence proportionally.** Action completion is not runtime/provider/device acceptance unless declared evidence passes.
 16. **Verify other changed surfaces proportionally.** Reuse unaffected evidence; widen only at real convergence/release/blast-radius boundaries.
-17. **Reconcile durable state.** Update only the owning project's existing authority/decision/state mechanisms for accepted durable changes. Record cost decisions only when material and where the owning project needs them; do not create a central vendor-price registry.
-18. **Run the Learning Gate when triggered.** Evaluate whether the real project taught PROGRAMSTART something reusable. `No reusable lesson` is a valid result. Do not manufacture a methodology change.
-19. **Persist learning conditionally.** If a meaningful observation exists and `GrahamArdent/PROGRAMSTART` is writable, create/update a focused PROGRAMSTART learning branch/PR: append an observation record, update the maturity ledger only when maturity/summary/retest state changes, and keep product completion independent of the PROGRAMSTART write. If PROGRAMSTART is not writable, return a structured learning handoff instead.
-20. **Return the next slice.** End with the product project's actual next executable action, selected lane, exact operator gate, cost decision needing approval/investigation, or narrowly scoped blocker. Learning work must not replace the product's next-step authority.
+17. **Run risk-triggered post-implementation adversarial closure when required.** Before declaring a work packet/PR merge-ready, accepted, or complete, inspect the actual completed diff/config/runtime behavior. If the changed surface materially affects trust/security, persistence/transactions/idempotency/retries/concurrency/ordering, schema/migrations, destructive/external side effects, production runtime/deployment, or another high-impact/hard-to-reverse invariant, use `PROGRAMBUILD_CHALLENGE_GATE.md` Part E and relevant companion parts. Assume current tests may miss a defect; construct at least one realistic failure sequence against a material invariant using only relevant lenses. If it exposes a plausible violation, add targeted proof/test + fix (or block/reshape) and re-review before closure. Do not invoke this as generic ceremony for trivial low-risk changes.
+18. **Reconcile durable state.** Update only the owning project's existing authority/decision/state mechanisms for accepted durable changes. Record cost decisions only when material and where the owning project needs them; do not create a central vendor-price registry.
+19. **Run the Learning Gate when triggered.** Evaluate whether the real project taught PROGRAMSTART something reusable. `No reusable lesson` is a valid result. Do not manufacture a methodology change.
+20. **Persist learning conditionally.** If a meaningful observation exists and `GrahamArdent/PROGRAMSTART` is writable, create/update a focused PROGRAMSTART learning branch/PR: append an observation record, update the maturity ledger only when maturity/summary/retest state changes, and keep product completion independent of the PROGRAMSTART write. If PROGRAMSTART is not writable, return a structured learning handoff instead.
+21. **Return the next slice.** End with the product project's actual next executable action, selected lane, exact operator gate, cost decision needing approval/investigation, or narrowly scoped blocker. Learning work must not replace the product's next-step authority.
 
 ## Coordinated Mode-C Lane Contract
 
@@ -250,6 +254,8 @@ Learning rules:
 - Do not treat console/device/human action as accepted system behavior without required evidence.
 - Do not overwrite verified provider/resource history from current invisibility alone.
 - Do not claim local commands, CI, runtime checks, or external actions that did not run.
+- Do not declare risk-triggered work merge-ready/accepted/complete solely because intended behavior and current CI are green; challenge the actual completed implementation through the existing Challenge Gate first.
+- Do not turn adversarial closure into a generic checklist for every PR; activate it from actual risk/blast radius and use only failure lenses that can matter.
 - Do not create a learning observation merely because PROGRAMSTART was mentioned or used.
 - Do not turn the learning ledger into an activity log, product backlog, or methodology roadmap.
 - Do not automatically modify PROGRAMSTART methodology from one local inconvenience.
@@ -273,8 +279,10 @@ Before declaring the orchestration slice complete, confirm:
 12. any operator gate is exact, secret-safe, and distinguishes action from acceptance;
 13. work packet remained bounded/subordinate;
 14. verification claims match what actually ran;
-15. durable product authority/state was reconciled only where owned;
-16. if a Learning Gate triggered, classification is supported by real evidence and no unnecessary learning write/change was manufactured;
-17. detailed learning evidence, when warranted, lives in an observation record while the main ledger remains a concise maturity rollup;
-18. product completion/next action remains independent from whether PROGRAMSTART learning persistence was possible;
-19. the next executable product slice, selected lane, exact operator gate, cost decision, or narrowly scoped blocker is explicit.
+15. the actual completed change was inspected for whether the post-implementation adversarial closure trigger applies, rather than relying only on the packet's original risk classification;
+16. when adversarial closure was triggered, the completed implementation was challenged with at least one realistic failure sequence against a material invariant and any discovered violation received targeted proof/test + correction or a truthful block before merge-ready/closure;
+17. durable product authority/state was reconciled only where owned;
+18. if a Learning Gate triggered, classification is supported by real evidence and no unnecessary learning write/change was manufactured;
+19. detailed learning evidence, when warranted, lives in an observation record while the main ledger remains a concise maturity rollup;
+20. product completion/next action remains independent from whether PROGRAMSTART learning persistence was possible;
+21. the next executable product slice, selected lane, exact operator gate, cost decision, or narrowly scoped blocker is explicit.

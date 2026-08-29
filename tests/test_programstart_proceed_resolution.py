@@ -143,6 +143,16 @@ def test_agent_orchestration_handles_natural_language_without_new_cli_state_mach
     )
 
 
+def test_accepted_gate_return_evidence_resumes_without_redundant_proceed() -> None:
+    packet = _read(WORK_PACKET)
+    prompt = _read(ORCHESTRATION_PROMPT)
+
+    assert "that accepted evidence is itself the resume signal" in packet
+    assert "unless the handoff explicitly declares a separate post-evidence approval" in packet
+    assert "without asking for a redundant `proceed`" in prompt
+    assert "resume automatically at `RESUME_AT`" in prompt
+
+
 def test_checklist_remains_derived_and_cannot_create_scope() -> None:
     checklist = _read(CHECKLIST)
     packet = _read(WORK_PACKET)

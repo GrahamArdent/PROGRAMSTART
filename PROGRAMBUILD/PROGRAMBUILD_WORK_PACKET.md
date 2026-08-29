@@ -249,9 +249,10 @@ Handoff rules:
 3. Distinguish **operator action completed** from **system acceptance verified**. A console click or credential entry is not itself proof that the dependent runtime behavior works.
 4. Request the smallest non-secret return evidence that can close the uncertainty. Do not demand broad screenshots/log dumps when a resource ID, status/result, or narrow smoke outcome is enough.
 5. When evidence returns, reuse prior valid evidence and re-check only surfaces invalidated by the operator action. Do not restart the project or repeat broad research by default.
-6. Resume at the declared `RESUME_AT` point. A handoff does not silently advance or close the project's execution spine.
-7. If the operator action changes a cross-repository dependency, reconcile each repository independently under its own authority rather than treating the handoff as a multi-project transaction.
-8. Generic acceptance of the recommendation that led to the gate does not automatically satisfy the gate itself. Preserve the exact action/evidence boundary until it is actually crossed.
+6. If returned evidence satisfies `EVIDENCE_ACCEPTANCE`, that accepted evidence is itself the resume signal unless the handoff explicitly declares a separate post-evidence approval. Do not require a redundant `proceed`, `go ahead`, or equivalent acknowledgement merely to continue already-authorized work.
+7. Resume at the declared `RESUME_AT` point. A handoff does not silently advance or close the project's execution spine.
+8. If the operator action changes a cross-repository dependency, reconcile each repository independently under its own authority rather than treating the handoff as a multi-project transaction.
+9. Generic acceptance of the recommendation that led to the gate does not automatically satisfy the gate itself. Preserve the exact action/evidence boundary until it is actually crossed.
 
 A generic statement such as `manual action required` is insufficient when the next action can be specified truthfully.
 

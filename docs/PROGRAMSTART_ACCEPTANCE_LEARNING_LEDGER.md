@@ -57,6 +57,7 @@ Lesson IDs are stable organizational references, not priority or roadmap numbers
 | `PSL-015` | High-risk completed implementations need a risk-triggered post-implementation adversarial Challenge Gate before merge-ready/closure; inspect the actual implementation and construct a realistic failure sequence rather than relying only on intended design + green current tests | **validated** | `PROGRAMBUILD_CHALLENGE_GATE.md` + Work Packet + orchestration verification | Watchtower V0.2 PR #2 retest: adversarial closure found and corrected a defect after 19 green tests, then reached 22 green tests; `docs/acceptance/observations/2026-08-29-watchtower-challenge-gate-retest.md` | future high-risk closures should continue to challenge actual completed implementations; record counterevidence if activation becomes too broad or fails to protect material invariants |
 | `PSL-016` | Generic operator acceptance of a concrete recommendation must resolve deterministically to execution inside current authority, durable-authority reconciliation then execution, or deferral without resequencing; stronger gates remain independent, actual contradictory evidence wins, and applicable checklist obligations must be actively reconciled without turning checklists into scope/strategy | **validated** | Planning Operating Model + Work Packet + orchestration prompt + execution checklist | PR #65 implementation → natural Planning Projects acceptance “I agree. You may go ahead.” correctly resolved as `reconcile_authority_then_execute` for the idea-preservation methodology change; `docs/acceptance/observations/2026-08-29-idea-preservation-correction.md` | future generic acceptances with a different disposition, contradicted premise, or stronger gate should remain available as counterevidence/revalidation opportunities |
 | `PSL-017` | Worthwhile ideas need cheap durable non-authoritative preservation separate from promotion/execution: capture broadly, promote deliberately, execute only from authority; shelved/rejected/superseded rationale may remain useful evidence, while a live cross-project idea portfolio stays outside PROGRAMSTART | **implemented** | Planning Operating Model + Idea Intake + optional `IDEA_LEDGER.md` + orchestration prompt | Planning Projects capture-audit correction + PROGRAMSTART PR #68; `docs/acceptance/observations/2026-08-29-idea-preservation-correction.md` | next natural project/workspace idea that is worth preserving but not current work: capture it, later retrieve/revisit it when relevant, and prove it can be promoted/rejected/shelved without silently resequencing active authority |
+| `PSL-018` | Operators managing many independent repositories need a lightweight derived portfolio-attention layer that separates short operator gates from one primary build, keeps live filled state outside PROGRAMSTART, treats staleness as verification debt rather than urgency, and hands execution back to each project's authority | **implemented** | `PROGRAMBUILD_PORTFOLIO_CONTROL.md` + external-workspace templates | natural multi-repository organization problem + PROGRAMSTART PR #69 self-hosting sweep; `docs/acceptance/observations/2026-08-29-portfolio-attention-control-self-hosting.md` | next natural “what should we work on?” request after material project-state changes: refresh retained rows cheaply, correct stale assumptions from project authority, keep paused work non-urgent, separate one operator gate from one primary build, and hand the selected project back to Mode C without portfolio authority drift |
 
 ## Open retest queue
 
@@ -67,6 +68,7 @@ This is **not a roadmap**. These are conditions that can be recognized opportuni
 3. `PSL-010` — identify a specific repeated overhead defect in another high-velocity Mode-C project before changing methodology.
 4. `PSL-011` — use another real paused/re-entry project to determine whether dedicated lifecycle states remain unnecessary.
 5. `PSL-017` — capture the next naturally occurring worthwhile non-current idea in a durable non-authoritative surface, then later retrieve/revisit it when a real trigger makes it relevant; verify preservation does not become priority/resequencing authority.
+6. `PSL-018` — use the external portfolio view on the next natural cross-project priority decision after state changes and verify that bounded WIP, staleness handling, operator-gate separation, and Mode-C handoff reduce coordination burden without creating a shadow roadmap.
 
 ## Recent methodology changes
 
@@ -85,6 +87,7 @@ This is **not a roadmap**. These are conditions that can be recognized opportuni
 - PR #63 — risk-triggered post-implementation adversarial Challenge Gate; validated by the Watchtower V0.2 Slice 2 PR #2 retest, which found and corrected a defect after green CI.
 - PR #65 — accepted-recommendation resolution + conditional checklist completeness; validated by the natural idea-preservation recommendation → “I agree. You may go ahead.” flow recorded in the 2026-08-29 observation.
 - PR #68 — lightweight durable idea preservation / promotion lifecycle (**PSL-017 implemented; real-project retest remains open**).
+- PR #69 — lightweight external portfolio-attention control (**PSL-018 implemented; real cross-project refresh/reselection retest remains open**).
 
 ## Recording rules
 
@@ -100,6 +103,6 @@ This is **not a roadmap**. These are conditions that can be recognized opportuni
 
 ## Historical evidence preservation
 
-The detailed ledger that existed before the Learning Gate organization change is preserved unchanged at `docs/acceptance/PROGRAMSTART_ACCEPTANCE_HISTORY_THROUGH_2026-08-27.md`. It contains the full Calendar Bridge, Email Bridge, GCRM, Dedication, LinkedIn Generator, Resume Creator, cross-repository, operator-gate, and re-entry narratives accumulated before this rollup was compacted.
+The detailed ledger that existed before the Learning Gate organization change is preserved unchanged at `docs/acceptance/PROGRAMSTART_ACCEPTANCE_HISTORY_THROUGH_2026-08-27.md`. It contains the full Calendar/Email/GCRM/Dedication/LinkedIn Generator/Resume Creator/cross-repository/operator-gate/re-entry narratives accumulated before this rollup was compacted.
 
 Do not duplicate that history back into this file. Add new evidence as observations and update only the maturity rollup above.

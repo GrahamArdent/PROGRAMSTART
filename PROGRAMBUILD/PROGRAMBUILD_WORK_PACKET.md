@@ -70,10 +70,6 @@ Required fields:
 ```text
 OBJECTIVE:
 WHY_NOW / AUTHORITY:
-ACCEPTED_RECOMMENDATION: [none | concise recommendation being accepted]
-RECOMMENDATION_DISPOSITION: [none | execute_current_authority | reconcile_authority_then_execute | defer_without_resequencing]
-AUTHORITY_RECONCILIATION_BEFORE_EXECUTION: [none | exact owning artifact/decision change]
-STRONGER_GATE_OVERLAY: [none | preserved + owner/condition]
 BLOCKER_SCOPE: [none | row_only | merge_gate | mutation_gate | milestone | release | unresolved]
 SAFE_EXECUTION_LANE: [A | B | C | none] + why it is actually allowed
 CLOSURE_CONTROL:
@@ -103,9 +99,23 @@ REUSABLE_EVIDENCE:
 INVALIDATION_TRIGGERS:
 ACCEPTANCE_CRITERIA:
 TARGETED_VERIFICATION:
-COMPLETENESS_CHECKLIST: [not_needed | inline | referenced] + source/reason
-CHECKLIST_RECONCILIATION: [pending | complete | blocked] + unresolved items if any
 DURABLE_UPDATES_IF_NEEDED:
+```
+
+Conditional accepted-recommendation fields — include only when the current invocation actually follows generic acceptance of a concrete prior recommendation:
+
+```text
+ACCEPTED_RECOMMENDATION:
+RECOMMENDATION_DISPOSITION: [execute_current_authority | reconcile_authority_then_execute | defer_without_resequencing]
+AUTHORITY_RECONCILIATION_BEFORE_EXECUTION: [none | exact owning artifact/decision change]
+STRONGER_GATE_OVERLAY: [none | preserved + owner/condition]
+```
+
+Conditional checklist fields — include only when checklist completeness is actually activated by omission risk or an applicable durable checklist:
+
+```text
+COMPLETENESS_CHECKLIST: [inline | referenced] + source/reason
+CHECKLIST_RECONCILIATION: [pending | complete | blocked] + unresolved items if any
 ```
 
 Conditional closure field — include only when risk is already known to trigger it:
@@ -116,7 +126,7 @@ ADVERSARIAL_CLOSURE: required + trigger reason
 
 Do not add `ADVERSARIAL_CLOSURE: not_triggered` as routine paperwork. Even when the field was absent at packet creation, closure must still inspect the **actual completed change** and apply the trigger in `PROGRAMBUILD_CHALLENGE_GATE.md`.
 
-`ACCEPTED_RECOMMENDATION` and related fields may be `none` when the slice was directly requested or already selected by current authority rather than following a generic acceptance phrase. Do not manufacture a recommendation-resolution event for every task.
+When the slice was directly requested or already selected by current authority, omit the accepted-recommendation fields entirely. Do not manufacture a recommendation-resolution event or record `none` fields for every task.
 
 When generic operator acceptance follows a prior recommendation, resolve exactly one `RECOMMENDATION_DISPOSITION` under `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`:
 
@@ -134,7 +144,7 @@ Cross-repository fields may be `none` when the packet has no real companion depe
 
 Operator-gate fields may be `none` when the current slice can proceed in the available environment. A manual gate does **not** require a cross-repository dependency; credentials, provider-console actions, physical-device checks, human review, approvals, or other operator-only actions can be single-project gates.
 
-`COMPLETENESS_CHECKLIST` is `not_needed` for trivial work when omission risk is low and no applicable durable checklist exists. Use `inline` or `referenced` when omission risk is meaningful or an existing checklist already governs the boundary. Checklist items must come from current authority/acceptance/risk obligations and cannot silently create scope.
+When checklist completeness is not active, omit the checklist fields entirely rather than recording `not_needed`. When it is active, use `inline` or `referenced`; checklist items must come from current authority/acceptance/risk obligations and cannot silently create scope.
 
 If implementation introduces a material trust/security, persistence/idempotency/retry/concurrency, schema/migration, destructive/external-side-effect, production runtime/deployment, or other high-impact/hard-to-reverse boundary, activate the conditional field and run the existing Challenge Gate before declaring merge-ready/complete.
 
@@ -170,7 +180,7 @@ A project MAY keep at most one active replaceable `CURRENT_WORK_PACKET.md` unles
 9. **Narrow** to one coherent objective with explicit non-goals. If disposition is `defer_without_resequencing`, the accepted future recommendation is not the execution objective; derive the real current slice instead.
 10. **Reference** only the exact authority sections/evidence needed now.
 11. **Reuse** trustworthy evidence whose invalidation conditions have not occurred, including valid evidence from a companion repository or prior operator action.
-12. **Activate checklist completeness when useful** — use an inline/referenced checklist when omission risk is meaningful or an applicable durable checklist exists; skip large checklist ceremony for trivial work.
+12. **Activate checklist completeness when useful** — use an inline/referenced checklist when omission risk is meaningful or an applicable durable checklist exists; omit checklist fields entirely for trivial work rather than adding `not_needed` ceremony.
 13. **Execute** only the selected packet without silently widening scope or treating recommendation acceptance, a dependency graph, coordinated-lane view, checklist, or handoff as broader mutation authority.
 14. **Verify** the changed/at-risk surface with the smallest sufficient check set.
 15. **Challenge closure when the actual risk surface requires it** — before merge-ready/accepted/complete status, inspect the completed implementation/config/runtime behavior and run the existing `PROGRAMBUILD_CHALLENGE_GATE.md` post-implementation adversarial review when triggered. Do not use green current tests as a substitute for constructing a realistic failure sequence against a material invariant.
@@ -303,7 +313,7 @@ Do not create a universal persisted checklist registry. Do not convert checklist
 
 ## 4. Extended `CURRENT_WORK_PACKET.md` Template
 
-Use this only when persistence is justified.
+Use this only when persistence is justified. Omit conditional sections that do not apply; a persisted packet is not a reason to fill `none`/`not_needed` ceremony.
 
 ```markdown
 # CURRENT_WORK_PACKET.md
@@ -315,9 +325,9 @@ CURRENT_STAGE_OR_MILESTONE:
 AUTHORITY_SPINE:
 AUTHORITY_VERSION_OR_COMMIT:
 
-## Accepted Recommendation Resolution
-ACCEPTED_RECOMMENDATION: [none | concise accepted recommendation]
-RECOMMENDATION_DISPOSITION: [none | execute_current_authority | reconcile_authority_then_execute | defer_without_resequencing]
+## Accepted Recommendation Resolution — omit unless this packet follows generic acceptance
+ACCEPTED_RECOMMENDATION:
+RECOMMENDATION_DISPOSITION: [execute_current_authority | reconcile_authority_then_execute | defer_without_resequencing]
 AUTHORITY_RECONCILIATION_BEFORE_EXECUTION:
 STRONGER_GATE_OVERLAY:
 
@@ -392,8 +402,8 @@ For operator-returned evidence, retain non-secret provenance and the exact accep
 ## Acceptance Criteria
 - [ ] criterion
 
-## Completeness Checklist
-MODE: [not_needed | inline | referenced]
+## Completeness Checklist — omit unless activated
+MODE: [inline | referenced]
 SOURCE_OR_REASON:
 - [ ] already-authorized obligation → source reference
 
@@ -538,7 +548,7 @@ A packet is complete when:
 - acceptance criteria are resolved;
 - required targeted verification is complete;
 - if a checklist was active, every applicable required item is resolved as satisfied / not applicable with reason / blocked with exact gate / authority-permitted deferred;
-- a checklist that was not needed did not become ceremony solely because a template exists;
+- checklist fields were omitted when checklist completeness was not active rather than adding `not_needed` ceremony;
 - any post-implementation adversarial Challenge Gate required by the actual changed risk surface is `clear` or the packet remains truthfully blocked/warning rather than being declared merge-ready/complete;
 - material durable decisions/state are reconciled;
 - remaining blockers are durably tracked with their narrowest truthful scope;

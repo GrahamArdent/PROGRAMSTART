@@ -14,6 +14,7 @@ A PROGRAMBUILD critical control file missing from this index is not recognized. 
 | `PROGRAMBUILD_CANONICAL.md` | control | active | authority map and naming rules | document authority |
 | `PROGRAMBUILD_FILE_INDEX.md` | control | active | inventory of critical files | file inventory |
 | `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` | control | active | separates reusable methodology, project authority, non-authoritative idea preservation/promotion, active work, JIT context, blocker scope/safe-lane reasoning, adaptive decision/evidence routing, accepted-recommendation resolution, checklist activation, external-resource evidence continuity, and evidence reuse | planning-to-execution operating model |
+| `PROGRAMBUILD_PORTFOLIO_CONTROL.md` | protocol | active | lightweight cross-project operator attention routing with external live-workspace boundary, bounded WIP, evidence freshness, and handoff back to project authority | reusable portfolio-attention semantics only — canonical for no project's state, scope, sequencing, or completion |
 | `PROGRAMBUILD_WORK_PACKET.md` | template/protocol | active | compact logical work-packet semantics, accepted-recommendation disposition/gate evidence, checklist completeness/closure, blocker/safe-lane fields, coordinated Mode-C lane selection, task-scoped cross-repository dependency/authority evidence, operator/manual-gate handoff semantics, plus optional persisted format | logical work-packet semantics |
 | `PROGRAMBUILD_ADR_TEMPLATE.md` | template | active | MADR 4.0 format, status lifecycle, decision-log linkage, and supersession hygiene | ADR structure |
 | `PROGRAMBUILD_CHANGELOG.md` | control | active | system-level change history | PROGRAMBUILD change history |
@@ -74,6 +75,9 @@ A portfolio-wide `IDEA_LEDGER.md` instance belongs in the operator's planning wo
 | `docs/acceptance/LEARNING_OBSERVATION_TEMPLATE.md` | evidence template | append-only meaningful PROGRAMSTART learning observation structure |
 | `docs/acceptance/observations/*.md` | derived evidence | individual real-project/system observations used to mature or challenge lessons |
 | `docs/acceptance/PROGRAMSTART_ACCEPTANCE_HISTORY_THROUGH_2026-08-27.md` | historical snapshot | byte-preserved detailed pre-learning-loop ledger history |
+| `templates/portfolio/PROJECT_REGISTRY.yaml` | workspace template | reusable external live-registry schema; filled project state belongs outside PROGRAMSTART |
+| `templates/portfolio/PORTFOLIO_STATUS.md` | workspace template | concise operator attention/status view with one primary build plus optional operator gate/fallback |
+| `templates/portfolio/PORTFOLIO_HISTORY.md` | workspace template | meaningful attention transitions only; does not mirror repository history |
 | `scripts/check_commit_msg.py` | enforcement | validates Conventional Commits |
 | `.github/instructions/conventional-commits.instructions.md` | instruction | commit message rules |
 | `.gitlint` | spec-reference | commit-message enforcement spec |
@@ -122,6 +126,7 @@ Prompts live in `.github/prompts/`, are registered in the process registry, and 
 - An operator/manual-gate handoff is derived execution context, not a credential store, project authority, or independent lifecycle.
 - A coordinated Mode-C lane view is derived execution context under one project spine, not a backlog, scheduler, or second sequencing authority.
 - A decision-scoped Cost Envelope is derived execution/decision evidence, not a purchasing authority, vendor-price registry, portfolio budget, or second execution spine.
+- A portfolio-attention view is derived operator routing context; live filled state belongs outside PROGRAMSTART and cannot override any project's execution authority.
 - A learning observation is derived methodology evidence; the learning ledger is a maturity rollup, not an activity log or roadmap.
 - Tooling/support files may appear here for operator discoverability without becoming product-project authority.
 

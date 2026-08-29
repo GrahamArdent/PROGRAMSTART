@@ -38,8 +38,8 @@ The architecture and overall slice remained sound. The new evidence was a post-i
 
 - **Existing lesson match:** none. This is distinct from evidence-source typing (`PSL-009`) and adaptive decision routing (`PSL-003`): the missing behavior occurs after implementation exists and before high-risk work is accepted/merge-ready.
 - **Maturity before:** none
-- **Maturity after:** implemented
-- **Why the evidence changes or does not change maturity:** this is one materially strong real-project case at an Internet-facing trust boundary, and the required correction is bounded: extend the existing Challenge Gate/verification closure rather than add a new stage, agent, or artifact.
+- **Maturity after:** candidate
+- **Why the evidence changes or does not change maturity:** this is one materially strong real-project case at an Internet-facing trust boundary, and the required correction is bounded: extend the existing Challenge Gate/verification closure rather than add a new stage, agent, or artifact. The lesson remains `candidate` until the focused PROGRAMSTART methodology change is merged; after merge it should become `implemented` pending a real retest.
 - **PROGRAMSTART change required now:** add a risk-triggered post-implementation adversarial closure pass to the existing Challenge Gate and orchestration contract. It must review the completed implementation, assume current tests may miss a defect, construct realistic failure sequences, and require targeted correction/tests when a counterexample violates an important invariant.
 
 ## Retest

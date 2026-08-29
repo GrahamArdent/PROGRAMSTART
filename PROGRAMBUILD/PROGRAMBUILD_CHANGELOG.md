@@ -6,6 +6,20 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 
 ---
 
+## 2026-08-28 (Accepted Recommendation Resolution + Checklist Discipline)
+
+- defined deterministic generic-acceptance semantics for `proceed`, `go ahead`, `proceed with your recommendation`, and equivalent responses when a concrete prior recommendation is available
+- challenged the initial four-peer-category design and implemented the smaller three-disposition model: `execute_current_authority`, `reconcile_authority_then_execute`, and `defer_without_resequencing`
+- kept security/destructive/credential/provider/financial/production/privacy/legal/release/operator approvals as an independent stronger-gate overlay rather than a fourth recommendation state; generic acceptance cannot silently erase a genuinely additional required action/approval/evidence boundary
+- added the authority-worthiness test so normal implementation details do not churn the Master, while durable scope/sequencing/architecture/dependency/milestone/acceptance/decision changes reconcile their existing owning authority before or atomically with dependent implementation
+- made contradictory execution/runtime evidence supersede the accepted recommendation premise rather than forcing a recommendation through after its assumptions are disproved
+- made checklists conditional derived completeness/verification surfaces: use them when omission risk or an existing applicable durable checklist warrants it, source items from current authority/acceptance/risk obligations, reuse existing checklists, and reconcile every applicable item before truthful closure
+- explicitly rejected a recommendation registry, hidden future-work backlog, separate approval state machine, universal checklist registry, and new `programstart approve`/keyword-parsing CLI surface as unnecessary complexity
+- evolved the existing agent-facing orchestration prompt to v2.8 and added focused static-contract regression coverage for ordinary execution, authority deltas, deferral, stronger gates, contradicted recommendations, Mode-C preservation, checklist completeness, and checklist anti-bloat
+- recorded the real GCRM / Dedication / PROGRAMSTART workflow evidence as `PSL-016` in `implemented` state; validation remains the next natural real-project generic `proceed` turn
+
+---
+
 ## 2026-08-28 (Decision-Scoped Cost Governance)
 
 - added `docs/PROGRAMSTART_COST_GOVERNANCE.md` as the conditional protocol for material paid, metered, quota-limited, or independently operated external-service decisions
@@ -159,9 +173,11 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 - added Data Grounding Rule to 5 prompts that read user-authored planning docs (T2)
 - capped signoff_history at 100 entries with FIFO trim in save_workflow_signoff and advance_workflow_with_signoff (T3)
 - replaced `.parents` path traversal check with `is_relative_to()` in get_doc_preview (T7)
+- added opt-in reverse drift enforcement for selected sync rules so authority-only changes can hard-fail instead of landing as notes
 - added `agent: "agent"` frontmatter to product-jit-check.prompt.md (T8)
 - pinned all GitHub Actions to commit SHAs across 6 workflow files (T13)
 - recorded signoff history cap policy decision as DEC-002 in DECISION_LOG
+- created `.github/prompts/implement-gameplan-phase1.prompt.md` execution prompt
 
 ---
 
@@ -177,7 +193,6 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 - updated QUICKSTART.md nox command reference to reflect new session structure
 - fixed `validate_bootstrap_assets` — userjourney test files are now skipped when USERJOURNEY is absent (fixes `test_bootstrap_repo_stays_programbuild_only`)
 - created `.github/prompts/implement-gameplan-phase4.prompt.md` execution prompt
-- smoke diagnostic output reviewed — both readonly and CLI smoke already produce actionable `[PASS]/[FAIL]` output per check with URLs, status codes, and stderr excerpts
 
 ---
 
@@ -230,7 +245,7 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 - added Drift Check, JIT Check, and Safe Gate tasks to `.vscode/tasks.json`
 - added `.tmp_factory_smoke` and `.tmp_nox_factory_smoke` cleanup targets to `noxfile.py` clean session
 - recorded smoke safety policy as DEC-001 in DECISION_LOG.md
-- created `.github/prompts/implement-gameplan-phase1.prompt.md` implementation prompt
+- created `.github/prompts/implement-gameplan-phase1.prompt.md` execution prompt
 - updated QUICKSTART.md day-to-day loop to include drift before and after editing
 - added VS Code tasks reference table to README.md validation section
 

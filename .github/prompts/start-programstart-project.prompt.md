@@ -193,10 +193,10 @@ If execution/runtime evidence disproves the recommendation's premise after accep
 
 ## Checklist Completeness Contract
 
-Use a checklist when omission risk is meaningful or an applicable durable checklist already governs the current boundary. Otherwise keep trivial work lightweight.
+Use this section only when omission risk is meaningful or an applicable durable checklist already governs the current boundary. Otherwise omit checklist fields entirely and keep trivial work lightweight.
 
 ```text
-COMPLETENESS_CHECKLIST: [not_needed | inline | referenced]
+COMPLETENESS_CHECKLIST: [inline | referenced]
 SOURCE_OR_REASON:
 CHECKLIST_RECONCILIATION: [pending | complete | blocked]
 ```
@@ -209,6 +209,7 @@ Rules:
 - discover/reuse an existing applicable durable checklist instead of inventing another;
 - at closure, every applicable item is `satisfied`, `not applicable` with reason, `blocked` with exact gate, or `deferred` only when current authority permits;
 - an unresolved/forgotten required item prevents truthful completion;
+- omit checklist fields when checklist completeness is not active; do not emit `not_needed` bookkeeping for trivial work;
 - do not create a checklist registry, second Master, or large persisted checklist for a trivial one-step slice.
 
 ## Orchestration Protocol
@@ -227,7 +228,7 @@ Rules:
 12. **Route material uncertainty.** Use adaptive decision rules to select `none`, `targeted`, or `deep` research and applicable checks. Stop at decision sufficiency.
 13. **Govern material cost exposure.** If a current decision can materially change fixed/metered spend or free-tier/quota architecture, follow `docs/PROGRAMSTART_COST_GOVERNANCE.md` and derive the smallest decision-scoped Cost Envelope. Prefer reuse/included capacity when sufficient; require intentional caps for metered exposure where possible; name the evidence that earns payment; never weaken security/reliability merely to remain free.
 14. **Derive the bounded work packet.** Include only fields relevant to the current slice; it is derived/replaceable and canonical for nothing. Include recommendation-disposition evidence only when this slice follows generic acceptance. Cost-envelope evidence may be referenced by the packet without becoming a separate execution spine. When supplied risk/consequence signals already justify adversarial closure, include that requirement in the packet; otherwise closure still re-checks the actual changed surface.
-15. **Activate checklist completeness conditionally.** Use inline/referenced checklist form only when omission risk or an applicable durable checklist warrants it. Do not add checklist ceremony merely because a template exists.
+15. **Activate checklist completeness conditionally.** Use inline/referenced checklist form only when omission risk or an applicable durable checklist warrants it. Omit checklist fields when inactive; do not add `not_needed` checklist ceremony merely because a template exists.
 16. **Execute one selected packet.** Use current tools directly. Do not auto-launch all visible lanes or coordinated multi-repository mutation.
 17. **Derive an operator/manual handoff only at a real environment boundary.** State `GATE_OWNER`, `REQUIRED_ACTION`, `SENSITIVE_INPUT_HANDLING`, `RETURN_EVIDENCE`, `EVIDENCE_ACCEPTANCE`, `GATE_INVALIDATION`, `RESUME_AT`, and `SAFE_WHILE_WAITING`. Do not request secret values when a secure owning surface exists.
 18. **Verify returned gate evidence proportionally.** Action completion is not runtime/provider/device acceptance unless declared evidence passes.
@@ -353,6 +354,7 @@ Learning rules:
 - Do not claim local commands, CI, runtime checks, or external actions that did not run.
 - Do not create a checklist solely because a template exists; activate it from meaningful omission risk or an applicable durable checklist.
 - Do not let checklist items create new scope or become a second Master.
+- Do not emit `not_needed` checklist fields or a large checklist artifact for trivial work when checklist completeness is inactive.
 - Do not ignore an applicable checklist at closure after choosing to use it; reconcile every required item against evidence.
 - Do not declare risk-triggered work merge-ready/accepted/complete solely because intended behavior and current CI are green; challenge the actual completed implementation through the existing Challenge Gate first.
 - Do not turn adversarial closure into a generic checklist for every PR; activate it from actual risk/blast radius and use only failure lenses that can matter.
@@ -383,7 +385,7 @@ Before declaring the orchestration slice complete, confirm:
 16. any material cost decision has a current-enough Cost Envelope, with charge trigger/cap/reuse/pay-when semantics truthful and no stale central price authority created;
 17. any operator gate is exact, secret-safe, and distinguishes action from acceptance;
 18. work packet remained bounded/subordinate;
-19. checklist form was activated only when useful or already applicable, and did not create scope;
+19. checklist form was activated only when useful or already applicable, omitted entirely when inactive, and did not create scope;
 20. when a checklist was active, every applicable required item was reconciled as satisfied / not applicable with reason / blocked with exact gate / authority-permitted deferred;
 21. verification claims match what actually ran;
 22. the actual completed change was inspected for whether the post-implementation adversarial closure trigger applies, rather than relying only on the packet's original risk classification;

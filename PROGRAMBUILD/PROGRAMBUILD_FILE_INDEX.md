@@ -13,7 +13,7 @@ A PROGRAMBUILD critical control file missing from this index is not recognized. 
 |---|---|---|---|---|
 | `PROGRAMBUILD_CANONICAL.md` | control | active | authority map and naming rules | document authority |
 | `PROGRAMBUILD_FILE_INDEX.md` | control | active | inventory of critical files | file inventory |
-| `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` | control | active | separates reusable methodology, project authority, active work, JIT context, blocker scope/safe-lane reasoning, adaptive decision/evidence routing, accepted-recommendation resolution, checklist activation, external-resource evidence continuity, and evidence reuse | planning-to-execution operating model |
+| `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` | control | active | separates reusable methodology, project authority, non-authoritative idea preservation/promotion, active work, JIT context, blocker scope/safe-lane reasoning, adaptive decision/evidence routing, accepted-recommendation resolution, checklist activation, external-resource evidence continuity, and evidence reuse | planning-to-execution operating model |
 | `PROGRAMBUILD_WORK_PACKET.md` | template/protocol | active | compact logical work-packet semantics, accepted-recommendation disposition/gate evidence, checklist completeness/closure, blocker/safe-lane fields, coordinated Mode-C lane selection, task-scoped cross-repository dependency/authority evidence, operator/manual-gate handoff semantics, plus optional persisted format | logical work-packet semantics |
 | `PROGRAMBUILD_ADR_TEMPLATE.md` | template | active | MADR 4.0 format, status lifecycle, decision-log linkage, and supersession hygiene | ADR structure |
 | `PROGRAMBUILD_CHANGELOG.md` | control | active | system-level change history | PROGRAMBUILD change history |
@@ -24,7 +24,7 @@ A PROGRAMBUILD critical control file missing from this index is not recognized. 
 | `PROGRAMBUILD_KICKOFF_PACKET.md` | template | active | starter document pack and inputs | kickoff structure |
 | `PROGRAMBUILD_SUBAGENTS.md` | catalog | active | optional specialist roles/prompts | subagent guidance |
 | `PROGRAMBUILD_CHECKLIST.md` | checklist | active | reusable execution checklist plus derived checklist activation/source/status/closure discipline | execution tracking |
-| `PROGRAMBUILD_IDEA_INTAKE.md` | protocol | active | 8-dimension idea/project-delta challenge | idea intake |
+| `PROGRAMBUILD_IDEA_INTAKE.md` | protocol | active | 8-dimension idea/project-delta challenge; consumes captured/shelved idea evidence without treating capture as approval | idea intake |
 | `PROGRAMBUILD_CHALLENGE_GATE.md` | protocol | active | A–H risk controls plus variant/stage/risk-based gate-part selection | stage/convergence gates |
 | `PROGRAMBUILD_GAMEPLAN.md` | playbook | active | canonical stage sequence and cross-stage validation without duplicating stage detail | execution sequencing |
 
@@ -48,13 +48,16 @@ These are standard project artifacts. In PROGRAMSTART they remain reusable templ
 | `AUDIT_REPORT.md` | output | standard | drift and risk findings | audit findings |
 | `POST_LAUNCH_REVIEW.md` | output | standard | outcomes, lessons, follow-up | post-launch learning |
 
-### Optional Persisted Execution Aid
+### Optional Persisted Preservation / Execution Aids
 
-The logical work packet normally lives in current task/issue/PR/session state. Persist a file only when that improves coordination/risk/resumption.
+These artifacts are optional. Use an existing compatible project/workspace surface instead when one already exists.
 
 | File | Type | Status | Purpose | Canonical for |
 |---|---|---|---|---|
+| `IDEA_LEDGER.md` | derived/reference output | optional | preserve worthwhile captured/candidate/investigating/shelved/accepted/rejected/superseded ideas without implying scope, priority, or execution | none — lifecycle semantics come from Planning Operating Model |
 | `CURRENT_WORK_PACKET.md` | derived output | optional | replaceable persisted view of the current logical packet | none — must defer to source authority |
+
+A portfolio-wide `IDEA_LEDGER.md` instance belongs in the operator's planning workspace or another dedicated portfolio system, not in PROGRAMSTART's reusable template repository.
 
 ---
 
@@ -111,6 +114,7 @@ Prompts live in `.github/prompts/`, are registered in the process registry, and 
 - Use `DECISION_LOG.md` for ongoing material project decisions.
 - Use ADRs only when durable architecture/policy rationale warrants them under current policy.
 - Filled project outputs never become canonical examples in PROGRAMSTART.
+- An Idea Record or `IDEA_LEDGER.md` is optional non-authoritative preservation evidence. Capture may be broad; promotion must reconcile into the existing owning authority. Do not turn captured ideas into a shadow roadmap/backlog or require the ledger to exist when an equivalent durable surface already does the job.
 - A persisted `CURRENT_WORK_PACKET.md` is optional and derived; close/replace it rather than accumulating packet history as a second plan.
 - Accepted-recommendation resolution is derived from the current recommendation plus project authority; it is not a durable recommendation registry, approval state machine, or backlog.
 - An active checklist is derived from current authority/acceptance/risk obligations; it is not scope authority and should be closed/discarded with the packet unless an existing durable checklist already owns the boundary.
@@ -123,4 +127,4 @@ Prompts live in `.github/prompts/`, are registered in the process registry, and 
 
 ---
 
-Last updated: 2026-08-28
+Last updated: 2026-08-29

@@ -64,6 +64,7 @@ The logical work packet normally lives in current task/issue/PR/session state. P
 |---|---|---|
 | `scripts/programstart_decision.py` | advisory tooling | routes a material decision to the minimum justified evidence/check/research depth; never a separate authority layer |
 | `scripts/programstart_orchestrate.py` | advisory tooling | derives environment/mode/authority/blocker-aware execution contracts, including safe-lane, evidence-continuity, task-scoped cross-repository dependency/authority, and operator/manual-boundary guidance; never a separate authority layer |
+| `docs/PROGRAMSTART_COST_GOVERNANCE.md` | protocol | owns the conditional decision-scoped Cost Envelope for paid/metered/quota-limited dependencies, cost-evidence freshness, cap/reuse/pay-when semantics, and the anti-registry guardrail; subordinate to project budget/architecture authority |
 | `docs/PROGRAMSTART_LEARNING_LOOP.md` | protocol | owns PROGRAMSTART acceptance-learning triggers, observation/rollup semantics, maturity rules, conditional persistence, and future-retest routing |
 | `docs/PROGRAMSTART_ACCEPTANCE_LEARNING_LEDGER.md` | derived rollup | concise lesson maturity/index view; not an activity log or project authority |
 | `docs/PROGRAMSTART_REAL_WORLD_ACCEPTANCE_CHECKLIST.md` | checklist | real-project acceptance and Learning Gate closure checklist |
@@ -114,9 +115,10 @@ Prompts live in `.github/prompts/`, are registered in the process registry, and 
 - A task-scoped cross-repository dependency graph is derived evidence, not a control file or project execution spine.
 - An operator/manual-gate handoff is derived execution context, not a credential store, project authority, or independent lifecycle.
 - A coordinated Mode-C lane view is derived execution context under one project spine, not a backlog, scheduler, or second sequencing authority.
+- A decision-scoped Cost Envelope is derived execution/decision evidence, not a purchasing authority, vendor-price registry, portfolio budget, or second execution spine.
 - A learning observation is derived methodology evidence; the learning ledger is a maturity rollup, not an activity log or roadmap.
 - Tooling/support files may appear here for operator discoverability without becoming product-project authority.
 
 ---
 
-Last updated: 2026-08-27
+Last updated: 2026-08-28

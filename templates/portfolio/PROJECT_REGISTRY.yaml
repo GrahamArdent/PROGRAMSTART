@@ -1,0 +1,41 @@
+# PROJECT_REGISTRY.yaml
+#
+# Reusable schema/example only.
+# Instantiate outside PROGRAMSTART in the operator's planning workspace or
+# another dedicated portfolio system.
+#
+# Portfolio records are derived attention metadata. They are canonical for no
+# project's scope, sequencing, status, release, or implementation truth.
+
+portfolio:
+  schema_version: 1
+  last_sweep_at: null
+  primary_build_project_id: null
+  operator_gate_project_id: null
+  secondary_ready_project_id: null
+
+projects:
+  - project_id: example-project
+    repository: owner/example-project
+    purpose: "Short distinguishing purpose"
+    observed_project_state: "unassessed"
+    authority_ref: null
+    strategic_state: null
+    immediate_next: null
+    blocker_or_gate: null
+    dependency_or_leverage: null
+    attention_class: UNASSESSED
+    last_verified_at: null
+    evidence_ref: null
+    invalidation_trigger: "Any new project authority or verified implementation/runtime evidence"
+    notes: null
+
+# ATTENTION_CLASS vocabulary:
+# - PRIMARY_BUILD   : exactly one current substantive build target
+# - OPERATOR_GATE   : at most one short human/device/provider/manual action worth doing now
+# - SECONDARY_READY : at most one prominent fallback/safe lane
+# - WATCH           : state matters, but no intervention is justified now
+# - PARKED          : deliberately excluded from current attention
+# - UNASSESSED      : known project without enough current evidence to prioritize
+#
+# These are attention-routing labels, not project lifecycle states.

@@ -25,6 +25,8 @@ A live portfolio-level audit was requested after secrets-management research rai
 
 The repeated issue is not one expensive vendor. It is the absence of a reusable decision contract that asks when free/included capacity is sufficient, what specifically starts billing, whether exposure is capped, whether current infrastructure can be reused safely, and what evidence would justify paying.
 
+During implementation convergence, the self-hosting experiment also found a separate propagation defect: `start-programstart-project.prompt.md` is a generated/adopted workflow prompt, but its v2.5 Learning Loop protocol dependency was not registered as a generated-repository support file. The new Cost Governance protocol would have repeated the same broken-relative-authority pattern. The branch therefore registers both protocols as prompt support/bootstrap assets and adds a focused regression test. This is treated as a bounded implementation defect in existing prompt-propagation machinery, not as another new methodology lesson.
+
 ## Evidence
 
 - repository / PR / commit / run / provider / runtime evidence:
@@ -35,42 +37,47 @@ The repeated issue is not one expensive vendor. It is the absence of a reusable 
   - `GrahamArdent/LinkedInGenV2` `.env.example` — stale Ayrshare free-tier statement;
   - connected Supabase organization evidence on 2026-08-28 — Free plan, GCRM + Dedication active, one older inactive project, low current database sizes;
   - connected Vercel evidence on 2026-08-28 — Hobby team, no projects visible in the connected team;
-  - current official provider pricing/limit research performed on 2026-08-28 for relevant infrastructure/API services.
+  - current official provider pricing/limit research performed on 2026-08-28 for relevant infrastructure/API services;
+  - `config/registry/workspace.json`, `scripts/programstart_bootstrap.py`, and `scripts/programstart_adopt.py` — generated/adopted prompt-support propagation behavior;
+  - `tests/test_bootstrap_workflow_templates.py` — focused regression assertion that the Learning Loop and Cost Governance protocols propagate with the orchestration workflow prompt.
 - exact current state relevant to the observation:
   - current portfolio development can remain mostly on free/included infrastructure;
   - small fixed costs can be rational when they buy an actual always-on/reliability requirement;
   - metered AI/API surfaces need explicit normal budgets and provider-side caps where possible;
-  - copying vendor price/free-tier claims into long-lived project docs without freshness/invalidation semantics creates drift.
+  - copying vendor price/free-tier claims into long-lived project docs without freshness/invalidation semantics creates drift;
+  - generated/adopted orchestration prompts must receive the protocol support files they directly reference.
 - verification actually performed:
   - live GitHub repository inspection across the named projects;
   - live Supabase organization/project inspection and bounded database-size/user/cron checks;
   - live Vercel team/project inspection;
   - current provider-pricing research for the cost audit;
-  - current PROGRAMSTART v2.5 orchestration, adaptive decision router, Work Packet, Learning Loop, and lesson ledger reviewed before proposing a methodology change.
+  - current PROGRAMSTART v2.5 orchestration, adaptive decision router, Work Packet, Learning Loop, learning ledger, bootstrap/adoption propagation code, and registry policy reviewed before and during the methodology change;
+  - branch-vs-main/PR patch review and mergeability inspection through connected GitHub tooling.
 - checks not performed / unavailable:
   - no private invoices/credit-card statements or unavailable provider billing dashboards were accessed;
-  - no local PROGRAMSTART runtime, pytest/Ruff/Pyright/full convergence workflow execution is claimed in the connected-tools environment;
+  - no local PROGRAMSTART pytest/Ruff/Pyright/full convergence run is claimed; an attempted branch clone in the available container could not resolve `github.com`, so the targeted regression test could not be executed there;
+  - no automatic PR workflow/status run exists on the current head under PROGRAMSTART's current manual-only convergence posture;
   - no product repository was mutated to manufacture this acceptance case.
 
 ## PROGRAMSTART behavior
 
-- **What PROGRAMSTART did:** Current v2.5 correctly routed the session as Mode C against PROGRAMSTART itself, preserved live repository authority, reused current evidence, and exposed the existing `cost-resource`/`build-vs-buy` simplicity concern in the adaptive decision router.
-- **What helped:** Existing proportional-rigor, research-stop, Mode-C delta, Learning Gate, and anti-portfolio-master rules prevented the audit from becoming a new project lifecycle or blanket migration exercise.
-- **What created friction or uncertainty:** `cost-resource` currently activates only a generic simplicity challenge. PROGRAMSTART has no structured answer for included/free capacity, charge trigger, cap behavior, reuse alternatives, `PAY_WHEN` evidence, or price invalidation. The previously suggested idea of a central portfolio cost registry would also conflict with evidence-freshness and one-spine principles because volatile provider pricing would become stale central authority.
+- **What PROGRAMSTART did:** Current v2.5 correctly routed the session as Mode C against PROGRAMSTART itself, preserved live repository authority, reused current evidence, exposed the existing `cost-resource`/`build-vs-buy` simplicity concern in the adaptive decision router, and triggered the Learning Gate because the operator explicitly declared this a PROGRAMSTART experiment.
+- **What helped:** Existing proportional-rigor, research-stop, Mode-C delta, Learning Gate, one-spine, and anti-portfolio-master rules prevented the audit from becoming a new project lifecycle or blanket migration exercise. The convergence pass also forced the new protocol through existing propagation/authority boundaries instead of assuming the prompt was self-contained.
+- **What created friction or uncertainty:** `cost-resource` currently activates only a generic simplicity challenge. PROGRAMSTART had no structured answer for included/free capacity, charge trigger, cap behavior, reuse alternatives, `PAY_WHEN` evidence, or price invalidation. The previously suggested idea of a central portfolio cost registry would also conflict with evidence-freshness and one-spine principles because volatile provider pricing would become stale central authority. Separately, prompt-support propagation did not ensure that an orchestration prompt's referenced PROGRAMSTART protocols were copied with that prompt.
 - **Was existing methodology sufficient?** partially
 
 ## Learning decision
 
-- **Existing lesson match:** `PSL-003` covers proportional decision/research routing but not the cost-specific decision contract. `PSL-005` and `PSL-006` cover blockers/dependencies rather than economic exposure. This is a materially different owner/surface.
+- **Existing lesson match:** `PSL-003` covers proportional decision/research routing but not the cost-specific decision contract. `PSL-005` and `PSL-006` cover blockers/dependencies rather than economic exposure. This is a materially different owner/surface. The prompt-support propagation bug is a bounded defect in existing bootstrap/adoption machinery and does not justify another lesson ID by itself.
 - **Maturity before:** none
 - **Maturity after:** implemented
 - **Why the evidence changes or does not change maturity:** Multiple real projects independently expose fixed, metered, free-tier, stale-pricing, and reuse-vs-new-service decisions. The repeated evidence is strong enough for one bounded extension, but not for a global price database, procurement system, or automated provider migration layer.
-- **PROGRAMSTART change required now:** bounded change — add a decision-scoped Cost Envelope protocol and integrate it into the existing orchestration path only when a cost-bearing decision is material.
+- **PROGRAMSTART change required now:** bounded change — add a decision-scoped Cost Envelope protocol, integrate it into the existing orchestration path only when a cost-bearing decision is material, and ensure the orchestration prompt's protocol dependencies propagate with generated/adopted prompt assets.
 
 ## Retest
 
 - **Next real condition that could strengthen/challenge this lesson:** the next normal PROGRAMSTART-assisted project slice that proposes a new paid/metered provider, an upgrade from included capacity, or another independently billed runtime.
-- **What evidence would be sufficient:** PROGRAMSTART should automatically activate the Cost Gate only because the decision is materially cost-bearing, derive a current Cost Envelope, reuse/refresh pricing evidence proportionally, compare existing/cheaper options where warranted, produce a truthful `stay_free | reuse_existing | pay | defer | investigate` conclusion, and avoid creating a central vendor catalogue or unnecessary process for ordinary $0 work.
+- **What evidence would be sufficient:** PROGRAMSTART should automatically activate the Cost Gate only because the decision is materially cost-bearing, derive a current Cost Envelope, reuse/refresh pricing evidence proportionally, compare existing/cheaper options where warranted, produce a truthful `stay_free | reuse_existing | pay | defer | investigate` conclusion, and avoid creating a central vendor catalogue or unnecessary process for ordinary $0 work. A future generated/adopted project should also be able to resolve the referenced Cost Governance/Learning Loop protocol files without manual repair.
 
 ## Safety / authority check
 

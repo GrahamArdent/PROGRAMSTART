@@ -102,7 +102,7 @@ def test_agent_orchestration_handles_natural_language_without_new_cli_state_mach
     prompt = _read(ORCHESTRATION_PROMPT)
 
     assert 'version: "2.8"' in prompt
-    assert "generic acceptance is a valid orchestration input" in prompt.lower()
+    assert "is a valid orchestration input when the prior concrete recommendation is available" in prompt
     assert "MUST NOT be replaced with brittle keyword parsing or a new operator-maintained recommendation state machine" in prompt
 
 

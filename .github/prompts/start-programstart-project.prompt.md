@@ -97,11 +97,12 @@ Instead:
 12. activate an inline/referenced completion checklist only when omission risk or an existing applicable checklist warrants it;
 13. execute one selected allowed slice with connected tools;
 14. derive an exact operator/manual handoff when the real next action is outside the current environment;
-15. verify proportionally against the actual completed change;
-16. reconcile any active checklist against actual evidence; unresolved required items prevent truthful closure;
-17. before merge-ready/accepted/complete status, inspect the actual changed surface and run the existing Challenge Gate's post-implementation adversarial closure review when material trust/security, persistence/idempotency/retry/concurrency, schema/migration, destructive/external-side-effect, production runtime/deployment, or other high-impact/hard-to-reverse behavior was changed;
-18. reconcile durable state in the repository that owns it;
-19. at a meaningful acceptance checkpoint, run the Learning Gate from `docs/PROGRAMSTART_LEARNING_LOOP.md`.
+15. verify returned gate evidence when it comes back and, if it satisfies the declared `EVIDENCE_ACCEPTANCE`, resume at `RESUME_AT` without requiring a redundant second `proceed` unless the handoff explicitly requires a separate post-evidence approval;
+16. verify proportionally against the actual completed change;
+17. reconcile any active checklist against actual evidence; unresolved required items prevent truthful closure;
+18. before merge-ready/accepted/complete status, inspect the actual changed surface and run the existing Challenge Gate's post-implementation adversarial closure review when material trust/security, persistence/idempotency/retry/concurrency, schema/migration, destructive/external-side-effect, production runtime/deployment, or other high-impact/hard-to-reverse behavior was changed;
+19. reconcile durable state in the repository that owns it;
+20. at a meaningful acceptance checkpoint, run the Learning Gate from `docs/PROGRAMSTART_LEARNING_LOOP.md`.
 
 Repository/runtime/provider state is authoritative for current technical reality. Current operator/project authority is authoritative for product intent. Legacy framework/prototype evidence does not become rebuild direction by itself.
 
@@ -111,7 +112,7 @@ For cost evidence, preserve the evidence date/source and refresh only when prici
 
 For cross-repository dependencies, preserve partial satisfaction rather than forcing a boolean answer.
 
-For operator gates, preserve the difference between **operator action completed** and **required system behavior accepted**.
+For operator gates, preserve the difference between **operator action completed** and **required system behavior accepted**. Once returned evidence satisfies the declared acceptance condition, that evidence is the resume signal unless the handoff explicitly reserved a distinct follow-up approval.
 
 For coordinated Mode-C lanes, preserve the difference between **closure-control lane**, **other visible current lanes**, and **the one packet selected for this invocation**.
 
@@ -231,7 +232,7 @@ Rules:
 15. **Activate checklist completeness conditionally.** Use inline/referenced checklist form only when omission risk or an applicable durable checklist warrants it. Omit checklist fields when inactive; do not add `not_needed` checklist ceremony merely because a template exists.
 16. **Execute one selected packet.** Use current tools directly. Do not auto-launch all visible lanes or coordinated multi-repository mutation.
 17. **Derive an operator/manual handoff only at a real environment boundary.** State `GATE_OWNER`, `REQUIRED_ACTION`, `SENSITIVE_INPUT_HANDLING`, `RETURN_EVIDENCE`, `EVIDENCE_ACCEPTANCE`, `GATE_INVALIDATION`, `RESUME_AT`, and `SAFE_WHILE_WAITING`. Do not request secret values when a secure owning surface exists.
-18. **Verify returned gate evidence proportionally.** Action completion is not runtime/provider/device acceptance unless declared evidence passes.
+18. **Verify returned gate evidence proportionally and resume when accepted.** Action completion is not runtime/provider/device acceptance unless declared evidence passes. Once `EVIDENCE_ACCEPTANCE` is satisfied, treat that accepted return evidence as the resume signal and continue at `RESUME_AT` without asking for a redundant `proceed`, unless the handoff explicitly requires a separate post-evidence approval.
 19. **Verify other changed surfaces proportionally.** Reuse unaffected evidence; widen only at real convergence/release/blast-radius boundaries.
 20. **Reconcile an active checklist.** Every applicable required item must resolve against actual evidence; do not declare completion while an item is merely forgotten.
 21. **Run risk-triggered post-implementation adversarial closure when required.** Before declaring a work packet/PR merge-ready, accepted, or complete, inspect the actual completed diff/config/runtime behavior. If the changed surface materially affects trust/security, persistence/transactions/idempotency/retries/concurrency/ordering, schema/migrations, destructive/external side effects, production runtime/deployment, or another high-impact/hard-to-reverse invariant, use `PROGRAMBUILD_CHALLENGE_GATE.md` Part E and relevant companion parts. Assume current tests may miss a defect; construct at least one realistic failure sequence against a material invariant using only relevant lenses. If it exposes a plausible violation, add targeted proof/test + fix (or block/reshape) and re-review before closure. Do not invoke this as generic ceremony for trivial low-risk changes.
@@ -270,6 +271,8 @@ SAFE_WHILE_WAITING:
 ```
 
 Do not create a handoff merely because human involvement is possible. Continue directly when the current environment can safely execute under existing authority.
+
+When returned evidence satisfies `EVIDENCE_ACCEPTANCE`, resume automatically at `RESUME_AT` unless this handoff explicitly declares a distinct post-evidence approval. Do not ask the operator for a second generic acknowledgement solely to continue work that was already authorized before the gate.
 
 ## Cost Gate Contract
 
@@ -332,6 +335,7 @@ Learning rules:
 - Do not let an accepted future idea silently resequence current work or become a hidden PROGRAMSTART backlog.
 - Do not let generic acceptance erase an existing stronger security/destructive/credential/provider/financial/production/privacy/legal/release/operator gate.
 - Do not force an accepted recommendation through after new evidence disproves its premise.
+- Do not require a redundant `proceed` after returned gate evidence has already satisfied `EVIDENCE_ACCEPTANCE`; resume from the declared point unless a distinct follow-up approval was explicitly required.
 - Do not use related-repository orchestration outside Mode C.
 - Do not deep-research by default without evidence/uncertainty conditions.
 - Do not activate Cost Gate ceremony when still-valid included/free capacity already resolves a routine slice and no material cost decision exists.
@@ -374,24 +378,25 @@ Before declaring the orchestration slice complete, confirm:
 5. `reconcile_authority_then_execute` reconciled the owning durable authority before or atomically with dependent implementation;
 6. `defer_without_resequencing` did not silently reorder/execute future work;
 7. any stronger gate overlay remained unsatisfied until its actual required action/evidence occurred;
-8. any coordinated lane view came from that spine, retained actual closure control, and selected one packet;
-9. lane independence/conflict/convergence claims are evidence-backed;
-10. non-closure completion did not silently advance closure sequencing;
-11. any related repository was loaded only for a real Mode-C dependency and both spines remain independent;
-12. dependency state/evidence/invalidation are truthful, including partial state;
-13. blocker scope is narrow and consequential Lane C was not inferred from blocker/lane visibility;
-14. provider/resource historical evidence is separate from current visibility where relevant;
-15. research stopped at decision sufficiency;
-16. any material cost decision has a current-enough Cost Envelope, with charge trigger/cap/reuse/pay-when semantics truthful and no stale central price authority created;
-17. any operator gate is exact, secret-safe, and distinguishes action from acceptance;
-18. work packet remained bounded/subordinate;
-19. checklist form was activated only when useful or already applicable, omitted entirely when inactive, and did not create scope;
-20. when a checklist was active, every applicable required item was reconciled as satisfied / not applicable with reason / blocked with exact gate / authority-permitted deferred;
-21. verification claims match what actually ran;
-22. the actual completed change was inspected for whether the post-implementation adversarial closure trigger applies, rather than relying only on the packet's original risk classification;
-23. when adversarial closure was triggered, the completed implementation was challenged with at least one realistic failure sequence against a material invariant and any discovered violation received targeted proof/test + correction or a truthful block before merge-ready/closure;
-24. durable product authority/state was reconciled only where owned and actual evidence superseded any disproved recommendation assumption;
-25. if a Learning Gate triggered, classification is supported by real evidence and no unnecessary learning write/change was manufactured;
-26. detailed learning evidence, when warranted, lives in an observation record while the main ledger remains a concise maturity rollup;
-27. product completion/next action remains independent from whether PROGRAMSTART learning persistence was possible;
-28. the next executable product slice, selected lane, exact operator gate, cost decision, or narrowly scoped blocker is explicit.
+8. any accepted operator-gate return evidence resumed from the declared `RESUME_AT` point without requiring a redundant generic acknowledgement, unless a distinct follow-up approval was explicitly part of the gate;
+9. any coordinated lane view came from that spine, retained actual closure control, and selected one packet;
+10. lane independence/conflict/convergence claims are evidence-backed;
+11. non-closure completion did not silently advance closure sequencing;
+12. any related repository was loaded only for a real Mode-C dependency and both spines remain independent;
+13. dependency state/evidence/invalidation are truthful, including partial state;
+14. blocker scope is narrow and consequential Lane C was not inferred from blocker/lane visibility;
+15. provider/resource historical evidence is separate from current visibility where relevant;
+16. research stopped at decision sufficiency;
+17. any material cost decision has a current-enough Cost Envelope, with charge trigger/cap/reuse/pay-when semantics truthful and no stale central price authority created;
+18. any operator gate is exact, secret-safe, and distinguishes action from acceptance;
+19. work packet remained bounded/subordinate;
+20. checklist form was activated only when useful or already applicable, omitted entirely when inactive, and did not create scope;
+21. when a checklist was active, every applicable required item was reconciled as satisfied / not applicable with reason / blocked with exact gate / authority-permitted deferred;
+22. verification claims match what actually ran;
+23. the actual completed change was inspected for whether the post-implementation adversarial closure trigger applies, rather than relying only on the packet's original risk classification;
+24. when adversarial closure was triggered, the completed implementation was challenged with at least one realistic failure sequence against a material invariant and any discovered violation received targeted proof/test + correction or a truthful block before merge-ready/closure;
+25. durable product authority/state was reconciled only where owned and actual evidence superseded any disproved recommendation assumption;
+26. if a Learning Gate triggered, classification is supported by real evidence and no unnecessary learning write/change was manufactured;
+27. detailed learning evidence, when warranted, lives in an observation record while the main ledger remains a concise maturity rollup;
+28. product completion/next action remains independent from whether PROGRAMSTART learning persistence was possible;
+29. the next executable product slice, selected lane, exact operator gate, cost decision, or narrowly scoped blocker is explicit.

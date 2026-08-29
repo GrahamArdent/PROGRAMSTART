@@ -92,9 +92,16 @@ REUSABLE_EVIDENCE:
 INVALIDATION_TRIGGERS:
 ACCEPTANCE_CRITERIA:
 TARGETED_VERIFICATION:
-ADVERSARIAL_CLOSURE: [not_triggered | required] + trigger reason when known
 DURABLE_UPDATES_IF_NEEDED:
 ```
+
+Conditional closure field — include only when risk is already known to trigger it:
+
+```text
+ADVERSARIAL_CLOSURE: required + trigger reason
+```
+
+Do not add `ADVERSARIAL_CLOSURE: not_triggered` as routine paperwork. Even when the field was absent at packet creation, closure must still inspect the **actual completed change** and apply the trigger in `PROGRAMBUILD_CHALLENGE_GATE.md`.
 
 `SAFE_EXECUTION_LANE` is the A/B/C **safety class** for the selected packet. It is not the same thing as a named coordinated Mode-C lane and is not an automatic permission. It must be supported by the project's own authority, dependency state, and safety rules.
 
@@ -104,7 +111,7 @@ Cross-repository fields may be `none` when the packet has no real companion depe
 
 Operator-gate fields may be `none` when the current slice can proceed in the available environment. A manual gate does **not** require a cross-repository dependency; credentials, provider-console actions, physical-device checks, human review, approvals, or other operator-only actions can be single-project gates.
 
-`ADVERSARIAL_CLOSURE` may start as `not_triggered` for low-risk work, but it is not frozen at packet creation. Before closure, inspect the **actual completed change** and apply the trigger in `PROGRAMBUILD_CHALLENGE_GATE.md`. If implementation introduced a material trust/security, persistence/idempotency/retry/concurrency, schema/migration, destructive/external-side-effect, production runtime/deployment, or other high-impact/hard-to-reverse boundary, change it to `required` and run the existing Challenge Gate before declaring merge-ready/complete.
+If implementation introduces a material trust/security, persistence/idempotency/retry/concurrency, schema/migration, destructive/external-side-effect, production runtime/deployment, or other high-impact/hard-to-reverse boundary, activate the conditional field and run the existing Challenge Gate before declaring merge-ready/complete.
 
 ### Extended persisted packet — only when useful
 

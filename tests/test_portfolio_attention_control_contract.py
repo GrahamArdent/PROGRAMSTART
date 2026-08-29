@@ -75,7 +75,7 @@ def test_startup_instructions_reconcile_only_meaningful_portfolio_checkpoints() 
     assert "meaningful portfolio checkpoint" in text
     assert "already-authorized live external portfolio workspace" in text
     assert "reconcile only the current project's row" in text
-    assert "report portfolio reconciliation as pending" in text
+    assert "Report portfolio reconciliation as pending" in text
     assert "Staleness is never urgency" in text
 
 

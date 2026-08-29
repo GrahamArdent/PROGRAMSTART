@@ -6,6 +6,17 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 
 ---
 
+## 2026-08-28 (Decision-Scoped Cost Governance)
+
+- added `docs/PROGRAMSTART_COST_GOVERNANCE.md` as the conditional protocol for material paid, metered, quota-limited, or independently operated external-service decisions
+- added the decision-scoped Cost Envelope covering current cost evidence, included/free capacity and limitations, charge trigger, budget/cap behavior, existing-infrastructure reuse, credible lower-cost alternatives, `PAY_WHEN` evidence, approval ownership, invalidation, and the bounded current cost decision
+- evolved the existing PROGRAMSTART orchestration prompt to v2.6 so the Cost Gate activates only when provider economics can materially change the current slice; ordinary work already inside still-valid included capacity does not acquire cost ceremony
+- made volatile provider pricing/free-tier evidence freshness-aware and explicitly rejected a canonical central vendor-price registry, procurement system, or portfolio budget as unearned/stale authority
+- required high-variance metered services to use intentional provider/application caps where available and product requirements permit, while preventing cost savings from weakening secret, database, tenant, reliability, or security boundaries
+- recorded the cross-project infrastructure/API audit as `PSL-014` in `implemented` state pending the next normal paid/metered provider decision as a real retest
+
+---
+
 ## 2026-08-27 (Acceptance Learning Loop)
 
 - added `docs/PROGRAMSTART_LEARNING_LOOP.md` as the evidence-driven protocol for meaningful-checkpoint Learning Gate evaluation, conditional observation persistence, lesson maturity, and future-retest routing
@@ -180,7 +191,7 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 - added 6 ADR coverage tests in `tests/test_programstart_validate.py`
 - added P8 re-entry staleness detection to `programstart status` — warns when last signoff date is >28 days old, escalates at >56 days; suppressed by `--skip-staleness-check` or `PROGRAMSTART_SKIP_STALENESS=1`
 - added 6 staleness tests in `tests/test_programstart_status.py`
-- created `.github/prompts/implement-gameplan-phase3.prompt.md` execution prompt
+- created `.github/prompts/implement-gameplan-phase3.prompt.md` implementation prompt
 
 ---
 
@@ -296,4 +307,4 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 
 ---
 
-Last updated: 2026-08-27
+Last updated: 2026-08-28

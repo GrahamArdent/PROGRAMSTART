@@ -6,7 +6,7 @@ Purpose: Define the smallest useful current-slice planning structure without cre
 Owner: Project Lead / Operator
 Last updated: 2026-08-28
 Depends on: `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`, `PROGRAMBUILD_CHALLENGE_GATE.md`, the project's strategic execution spine, relevant requirements/architecture/decisions
-Authority: Canonical for work-packet semantics. A filled packet is derived execution context and is never canonical over project authority.
+Authority: Canonical for work-packet semantics, including accepted-recommendation resolution evidence and checklist completeness. A filled packet is derived execution context and is never canonical over project authority.
 
 ---
 
@@ -18,6 +18,9 @@ It answers:
 
 - what are we doing now?
 - why is it authorized/next?
+- if this follows an accepted recommendation, what did generic acceptance actually authorize under current project authority?
+- does the accepted recommendation execute inside current authority, require authority reconciliation before/with execution, or remain deferred without resequencing?
+- does a stronger approval/manual/security/cost/privacy/legal/release gate remain unsatisfied despite generic acceptance?
 - what exact action is blocked, if any, and how narrowly is that blocker scoped?
 - what safe execution lane remains available, if any?
 - when one Mode-C spine legitimately exposes more than one current lane, which lanes matter now and which single packet is selected for this invocation?
@@ -30,6 +33,8 @@ It answers:
 - what evidence can be reused?
 - what could invalidate that evidence?
 - what proves completion?
+- is omission risk high enough, or is there an applicable durable checklist, such that checklist completeness should be active?
+- if a checklist is active, which already-authorized obligations remain satisfied / not applicable / blocked / authority-permitted deferred?
 - does the actual completed change trigger PROGRAMBUILD's post-implementation adversarial Challenge Gate before merge-ready/closure?
 - what durable project state must be reconciled afterward?
 
@@ -42,6 +47,8 @@ A work packet is **not**:
 - a running diary;
 - a place to copy the whole repository;
 - a credential/secret store;
+- a recommendation registry or hidden future-work queue;
+- a checklist that can invent scope;
 - mandatory paperwork for trivial or single-step work.
 
 ---
@@ -95,6 +102,22 @@ TARGETED_VERIFICATION:
 DURABLE_UPDATES_IF_NEEDED:
 ```
 
+Conditional accepted-recommendation fields — include only when the current invocation actually follows generic acceptance of a concrete prior recommendation:
+
+```text
+ACCEPTED_RECOMMENDATION:
+RECOMMENDATION_DISPOSITION: [execute_current_authority | reconcile_authority_then_execute | defer_without_resequencing]
+AUTHORITY_RECONCILIATION_BEFORE_EXECUTION: [none | exact owning artifact/decision change]
+STRONGER_GATE_OVERLAY: [none | preserved + owner/condition]
+```
+
+Conditional checklist fields — include only when checklist completeness is actually activated by omission risk or an applicable durable checklist:
+
+```text
+COMPLETENESS_CHECKLIST: [inline | referenced] + source/reason
+CHECKLIST_RECONCILIATION: [pending | complete | blocked] + unresolved items if any
+```
+
 Conditional closure field — include only when risk is already known to trigger it:
 
 ```text
@@ -103,6 +126,16 @@ ADVERSARIAL_CLOSURE: required + trigger reason
 
 Do not add `ADVERSARIAL_CLOSURE: not_triggered` as routine paperwork. Even when the field was absent at packet creation, closure must still inspect the **actual completed change** and apply the trigger in `PROGRAMBUILD_CHALLENGE_GATE.md`.
 
+When the slice was directly requested or already selected by current authority, omit the accepted-recommendation fields entirely. Do not manufacture a recommendation-resolution event or record `none` fields for every task.
+
+When generic operator acceptance follows a prior recommendation, resolve exactly one `RECOMMENDATION_DISPOSITION` under `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`:
+
+- `execute_current_authority` — execute the bounded work without strategic-plan churn;
+- `reconcile_authority_then_execute` — update the existing owning authority/decision before or atomically with dependent implementation;
+- `defer_without_resequencing` — preserve the future direction only where warranted, do not execute it now, and return to the actual current slice.
+
+`STRONGER_GATE_OVERLAY` is independent of disposition. Generic `proceed` does not erase an explicit security/destructive/financial/credential/production/privacy/legal/release/operator gate. Conversely, do not invent a stronger gate when current project authority does not require one.
+
 `SAFE_EXECUTION_LANE` is the A/B/C **safety class** for the selected packet. It is not the same thing as a named coordinated Mode-C lane and is not an automatic permission. It must be supported by the project's own authority, dependency state, and safety rules.
 
 `COORDINATED_MODE_C_LANES` may be `none`. Populate it only when the current project authority genuinely exposes two or more relevant current lanes, such as one blocked closure-control row plus an independent reversible preparation row. Visibility does not authorize execution of every listed lane.
@@ -110,6 +143,8 @@ Do not add `ADVERSARIAL_CLOSURE: not_triggered` as routine paperwork. Even when 
 Cross-repository fields may be `none` when the packet has no real companion dependency. Do not manufacture a relationship merely because two repositories are related historically or organizationally.
 
 Operator-gate fields may be `none` when the current slice can proceed in the available environment. A manual gate does **not** require a cross-repository dependency; credentials, provider-console actions, physical-device checks, human review, approvals, or other operator-only actions can be single-project gates.
+
+When checklist completeness is not active, omit the checklist fields entirely rather than recording `not_needed`. When it is active, use `inline` or `referenced`; checklist items must come from current authority/acceptance/risk obligations and cannot silently create scope.
 
 If implementation introduces a material trust/security, persistence/idempotency/retry/concurrency, schema/migration, destructive/external-side-effect, production runtime/deployment, or other high-impact/hard-to-reverse boundary, activate the conditional field and run the existing Challenge Gate before declaring merge-ready/complete.
 
@@ -135,19 +170,23 @@ A project MAY keep at most one active replaceable `CURRENT_WORK_PACKET.md` unles
 ## 3. Compact Packet Lifecycle
 
 1. **Derive** from the current strategic execution spine/stage and live project state.
-2. **Resolve bounded cross-repository dependencies when relevant** — identify the companion repository, relationship type, authority owner, dependency state/evidence, invalidation conditions, and manual boundary. Keep each repository's execution spine separate.
-3. **Classify blockers** — if the closure-control row is blocked, identify the exact blocked action and classify the narrowest truthful scope before treating work as stopped.
-4. **Scan safe lanes** — consider Lane A read-only/analysis, Lane B reversible repository/preparation work, and Lane C live/irreversible/external work under the project's own dependency and safety rules. A blocker label never automatically authorizes Lane C.
-5. **Coordinate Mode-C lanes when the spine exposes more than one current lane** — keep closure-control unchanged, list only the current lanes needed for the decision, record independence/conflict/convergence evidence, and select exactly one current executable packet for this invocation.
-6. **Resolve an operator/manual gate when needed** — if the actual next action cannot be performed in the current environment, return one exact handoff instead of a generic "manual action required" stop.
-7. **Narrow** to one coherent objective with explicit non-goals.
-8. **Reference** only the exact authority sections/evidence needed now.
-9. **Reuse** trustworthy evidence whose invalidation conditions have not occurred, including valid evidence from a companion repository or prior operator action.
-10. **Execute** only the selected packet without silently widening scope or treating a dependency graph, coordinated-lane view, or handoff as broader mutation authority.
-11. **Verify** the changed/at-risk surface with the smallest sufficient check set.
-12. **Challenge closure when the actual risk surface requires it** — before merge-ready/accepted/complete status, inspect the completed implementation/config/runtime behavior and run the existing `PROGRAMBUILD_CHALLENGE_GATE.md` post-implementation adversarial review when triggered. Do not use green current tests as a substitute for constructing a realistic failure sequence against a material invariant.
-13. **Reconcile** material decisions/scope/architecture/status into the repository that actually owns each durable concern.
-14. **Close or hand off** the packet and derive the next slice from the newly current state.
+2. **Resolve accepted recommendation when relevant** — if the operator generically accepted a prior recommendation, derive `execute_current_authority`, `reconcile_authority_then_execute`, or `defer_without_resequencing`; preserve any stronger gate overlay. Do not ask the operator to restate this classification when current authority is sufficient to derive it.
+3. **Reconcile authority before dependent execution when required** — for `reconcile_authority_then_execute`, update the existing owner of durable scope/sequencing/architecture/decision/acceptance truth before or atomically with implementation. Do not intentionally leave authority describing the superseded design.
+4. **Resolve bounded cross-repository dependencies when relevant** — identify the companion repository, relationship type, authority owner, dependency state/evidence, invalidation conditions, and manual boundary. Keep each repository's execution spine separate.
+5. **Classify blockers** — if the closure-control row is blocked, identify the exact blocked action and classify the narrowest truthful scope before treating work as stopped.
+6. **Scan safe lanes** — consider Lane A read-only/analysis, Lane B reversible repository/preparation work, and Lane C live/irreversible/external work under the project's own dependency and safety rules. A blocker label never automatically authorizes Lane C.
+7. **Coordinate Mode-C lanes when the spine exposes more than one current lane** — keep closure-control unchanged, list only the current lanes needed for the decision, record independence/conflict/convergence evidence, and select exactly one current executable packet for this invocation.
+8. **Resolve an operator/manual gate when needed** — if the actual next action cannot be performed in the current environment, return one exact handoff instead of a generic "manual action required" stop.
+9. **Narrow** to one coherent objective with explicit non-goals. If disposition is `defer_without_resequencing`, the accepted future recommendation is not the execution objective; derive the real current slice instead.
+10. **Reference** only the exact authority sections/evidence needed now.
+11. **Reuse** trustworthy evidence whose invalidation conditions have not occurred, including valid evidence from a companion repository or prior operator action.
+12. **Activate checklist completeness when useful** — use an inline/referenced checklist when omission risk is meaningful or an applicable durable checklist exists; omit checklist fields entirely for trivial work rather than adding `not_needed` ceremony.
+13. **Execute** only the selected packet without silently widening scope or treating recommendation acceptance, a dependency graph, coordinated-lane view, checklist, or handoff as broader mutation authority.
+14. **Verify** the changed/at-risk surface with the smallest sufficient check set.
+15. **Challenge closure when the actual risk surface requires it** — before merge-ready/accepted/complete status, inspect the completed implementation/config/runtime behavior and run the existing `PROGRAMBUILD_CHALLENGE_GATE.md` post-implementation adversarial review when triggered. Do not use green current tests as a substitute for constructing a realistic failure sequence against a material invariant.
+16. **Reconcile checklist completeness when active** — every applicable item must be satisfied, not applicable with reason, blocked with exact gate, or deferred only when authority permits. A forgotten/unresolved required item prevents truthful closure.
+17. **Reconcile durable state** — material decisions/scope/architecture/status belong in the repository that owns each concern. If execution disproved the accepted recommendation's premise, reconcile actual evidence rather than forcing the original recommendation through.
+18. **Close or hand off** the packet and derive the next slice from the newly current state.
 
 If the packet needs its own backlog, milestones, or independent sequencing, it is too large. Split it.
 
@@ -210,8 +249,10 @@ Handoff rules:
 3. Distinguish **operator action completed** from **system acceptance verified**. A console click or credential entry is not itself proof that the dependent runtime behavior works.
 4. Request the smallest non-secret return evidence that can close the uncertainty. Do not demand broad screenshots/log dumps when a resource ID, status/result, or narrow smoke outcome is enough.
 5. When evidence returns, reuse prior valid evidence and re-check only surfaces invalidated by the operator action. Do not restart the project or repeat broad research by default.
-6. Resume at the declared `RESUME_AT` point. A handoff does not silently advance or close the project's execution spine.
-7. If the operator action changes a cross-repository dependency, reconcile each repository independently under its own authority rather than treating the handoff as a multi-project transaction.
+6. If returned evidence satisfies `EVIDENCE_ACCEPTANCE`, that accepted evidence is itself the resume signal unless the handoff explicitly declares a separate post-evidence approval. Do not require a redundant `proceed`, `go ahead`, or equivalent acknowledgement merely to continue already-authorized work.
+7. Resume at the declared `RESUME_AT` point. A handoff does not silently advance or close the project's execution spine.
+8. If the operator action changes a cross-repository dependency, reconcile each repository independently under its own authority rather than treating the handoff as a multi-project transaction.
+9. Generic acceptance of the recommendation that led to the gate does not automatically satisfy the gate itself. Preserve the exact action/evidence boundary until it is actually crossed.
 
 A generic statement such as `manual action required` is insufficient when the next action can be specified truthfully.
 
@@ -245,11 +286,35 @@ Coordination rules:
 
 **Reference acceptance shape:** GCRM R4 keeps R4-02 as closure-control while its Master explicitly permits independent reversible R4-04 inventory/procedure preparation. Selecting R4-04 does not advance or close R4-02 and does not authorize live credential/provider mutation.
 
+### 3.4 Checklist completeness rule
+
+A checklist is a **derived completion inventory**, not a source of scope or sequencing.
+
+Use checklist form when omission risk is meaningful or an applicable durable checklist already exists for the current boundary. Prefer the smallest useful surface:
+
+- inline in the active session/work packet;
+- PR/task/issue description;
+- referenced existing durable checklist;
+- persisted file only when multi-session/multi-person/resumption value justifies it.
+
+For material checklist items, record or retain enough source context to show which authority/acceptance/risk obligation produced the item.
+
+Closure statuses:
+
+- **satisfied** — evidence proves the obligation is met;
+- **not applicable** — current authority/risk proves the item does not apply; state why when non-obvious;
+- **blocked** — exact gate/action/owner is known and closure remains truthful;
+- **deferred** — only when the project's current authority explicitly permits deferral without invalidating closure.
+
+An unchecked/forgotten required item is not equivalent to `not applicable` or `deferred`.
+
+Do not create a universal persisted checklist registry. Do not convert checklists into a second Master. Reuse existing checklists when applicable and discard/close derived slice checklists with the packet.
+
 ---
 
 ## 4. Extended `CURRENT_WORK_PACKET.md` Template
 
-Use this only when persistence is justified.
+Use this only when persistence is justified. Omit conditional sections that do not apply; a persisted packet is not a reason to fill `none`/`not_needed` ceremony.
 
 ```markdown
 # CURRENT_WORK_PACKET.md
@@ -260,6 +325,13 @@ PROJECT:
 CURRENT_STAGE_OR_MILESTONE:
 AUTHORITY_SPINE:
 AUTHORITY_VERSION_OR_COMMIT:
+
+## Accepted Recommendation Resolution — omit unless this packet follows generic acceptance
+ACCEPTED_RECOMMENDATION:
+RECOMMENDATION_DISPOSITION: [execute_current_authority | reconcile_authority_then_execute | defer_without_resequencing]
+AUTHORITY_RECONCILIATION_BEFORE_EXECUTION:
+STRONGER_GATE_OVERLAY:
+
 BLOCKER_SCOPE: [none | row_only | merge_gate | mutation_gate | milestone | release | unresolved]
 SAFE_EXECUTION_LANE: [A | B | C | none]
 BLOCKED_ACTION:
@@ -297,7 +369,7 @@ SAFE_WHILE_WAITING:
 One concrete outcome.
 
 ## Why This Is Next
-Trace to the execution spine, dependency order, blocker resolution, coordinated-lane selection, safe-lane preparation, operator gate, or current stage.
+Trace to the execution spine, accepted-recommendation disposition, dependency order, blocker resolution, coordinated-lane selection, safe-lane preparation, operator gate, or current stage.
 
 ## Scope
 ### In
@@ -331,6 +403,13 @@ For operator-returned evidence, retain non-secret provenance and the exact accep
 ## Acceptance Criteria
 - [ ] criterion
 
+## Completeness Checklist — omit unless activated
+MODE: [inline | referenced]
+SOURCE_OR_REASON:
+- [ ] already-authorized obligation → source reference
+
+At closure, resolve every applicable item as satisfied / not applicable with reason / blocked with exact gate / authority-permitted deferred.
+
 ## Verification
 | Changed / at-risk surface | Check | Result |
 |---|---|---|
@@ -360,6 +439,7 @@ Use `PROGRAMBUILD_CHALLENGE_GATE.md`; do not invent a second review protocol her
 ## Close-Out
 OUTCOME:
 VERIFICATION_SUMMARY:
+CHECKLIST_RECONCILIATION:
 ADVERSARIAL_CLOSURE_RESULT:
 EVIDENCE_INVALIDATED_OR_REUSED:
 AUTHORITY_RECONCILED:
@@ -382,6 +462,10 @@ Decision DEC-021
 ```
 
 Do not paste pages of authoritative text into a packet unless the task genuinely needs that text inline.
+
+For accepted recommendations, reference the prior recommendation and only the authority needed to determine its disposition. Do not copy an entire conversation into the packet.
+
+For checklist items, reference the owning requirement/gate/acceptance source rather than copying broad documents. The checklist should reduce omission risk without increasing context unnecessarily.
 
 For coordinated Mode-C lanes, load only the source rows/constraints and shared surfaces needed to prove independence/conflict/convergence. Do not load the whole future milestone map just to list candidate lanes.
 
@@ -421,6 +505,8 @@ For cross-repository dependencies, evidence remains reusable only while its decl
 
 For operator gates, record the returned **outcome/evidence**, not the secret material used to produce it. An operator's statement that an action was performed may satisfy an action-completion fact, but runtime/device/provider acceptance still requires the evidence defined by `EVIDENCE_ACCEPTANCE`.
 
+For accepted recommendations, current execution/runtime evidence can invalidate the recommendation's premise. Generic operator acceptance does not override contradictory evidence discovered during implementation; reconcile actual truth and derive a new slice instead of forcing the original recommendation through.
+
 A green current test suite is reusable evidence, but it is not by itself evidence that an activated post-implementation adversarial closure review occurred. When `PROGRAMBUILD_CHALLENGE_GATE.md` is triggered, challenge the actual completed implementation using the smallest relevant failure-sequence lens and retain only the resulting bounded evidence.
 
 ---
@@ -433,16 +519,21 @@ For an existing repository:
 - use the packet only as the current execution lens;
 - keep research/audits as evidence;
 - convert useful findings into explicit deltas to current authority;
+- when a generic operator acceptance follows a recommendation, derive the recommendation disposition from current authority before executing;
+- do not rewrite the Master for normal implementation detail;
+- do not let an accepted future idea resequence current work;
+- preserve stronger explicit approval/operator gates independently from generic acceptance;
 - if another repository is a real prerequisite, inspect only enough of its authority/evidence to classify the dependency while preserving both execution spines;
 - if the active closure row is blocked, classify blocker scope and scan safe lanes before concluding the project must wait;
 - when several current lanes legitimately coexist under the one spine, keep closure-control explicit and select one independently authorized packet for the current invocation;
 - if the next action is operator-only, return the exact handoff and resume point rather than a generic blocked status;
 - when operator evidence returns, reorient only enough to confirm acceptance/invalidation and resume the existing spine;
+- use an applicable checklist when omission risk warrants it, and reconcile its required items before closure;
 - inspect the actual completed change for a risk-triggered post-implementation Challenge Gate before merge-ready/closure;
 - reconcile accepted changes back into the repository that owns the relevant canonical artifact;
 - close/replace the packet after the slice.
 
-A newer packet, coordinated-lane view, research report, cross-repository graph, operator handoff, or adversarial-review result never outranks established project authority merely because it is newer.
+A newer packet, recommendation-resolution result, coordinated-lane view, checklist, research report, cross-repository graph, operator handoff, or adversarial-review result never outranks established project authority merely because it is newer.
 
 ---
 
@@ -451,8 +542,14 @@ A newer packet, coordinated-lane view, research report, cross-repository graph, 
 A packet is complete when:
 
 - the scoped outcome is done or explicitly stopped;
+- any accepted-recommendation disposition was honored without over-authorizing generic acceptance;
+- `reconcile_authority_then_execute` work has its durable authority/decision truth reconciled rather than leaving known stale authority behind;
+- `defer_without_resequencing` did not silently execute/reorder the deferred recommendation and the real current slice remains truthful;
+- any stronger gate overlay remains preserved until its actual action/evidence requirement is satisfied;
 - acceptance criteria are resolved;
 - required targeted verification is complete;
+- if a checklist was active, every applicable required item is resolved as satisfied / not applicable with reason / blocked with exact gate / authority-permitted deferred;
+- checklist fields were omitted when checklist completeness was not active rather than adding `not_needed` ceremony;
 - any post-implementation adversarial Challenge Gate required by the actual changed risk surface is `clear` or the packet remains truthfully blocked/warning rather than being declared merge-ready/complete;
 - material durable decisions/state are reconciled;
 - remaining blockers are durably tracked with their narrowest truthful scope;
@@ -460,6 +557,6 @@ A packet is complete when:
 - any cross-repository dependency state is supported by current evidence and does not overstate partial satisfaction;
 - any remaining external/manual boundary is exact;
 - if stopped at an operator gate, the handoff, safe-while-waiting rule, and exact resume point are explicit and project closure is not falsely claimed;
-- the next executable safe slice, or the exact reason no safe slice exists, can be derived from current project state without relying on the old packet as authority.
+- the next executable safe slice, or the exact reason no safe slice exists, can be derived from current project state without relying on the old packet/checklist as authority.
 
-**Success test:** the packet reduced execution ambiguity more than it increased documentation work.
+**Success test:** the packet reduced execution ambiguity and omission risk more than it increased documentation work.

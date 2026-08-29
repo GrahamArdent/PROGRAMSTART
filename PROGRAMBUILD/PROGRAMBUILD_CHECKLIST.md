@@ -4,6 +4,24 @@
 
 Use this when checklist form is useful. Do not complete boxes that are irrelevant solely for ceremony; follow the authority/risk rules in `PROGRAMBUILD_CANONICAL.md`, `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`, `PROGRAMBUILD_CHALLENGE_GATE.md`, and `PROGRAMBUILD_WORK_PACKET.md`.
 
+A checklist is a **derived completeness / verification surface**. It does not own strategy, scope, sequencing, architecture, or project state.
+
+- Authority answers **what matters**.
+- The active work packet answers **what is being done now**.
+- An applicable checklist answers **which already-authorized obligations must be accounted for before truthful closure**.
+
+Use a checklist when omission risk is meaningful or when an existing applicable checklist already governs the current boundary. Do not create a large persisted checklist for a trivial, low-risk, single-step change merely because a checklist template exists.
+
+When a checklist is used:
+
+1. derive items from current authority, acceptance criteria, risk/gate obligations, declared handoffs, and other existing requirements;
+2. cross-reference the source of material obligations when practical;
+3. never let a checklist item silently create new project scope or sequencing;
+4. reconcile each applicable item at closure as **satisfied**, **not applicable with reason**, **blocked with exact gate**, or **deferred only when current authority permits**;
+5. prefer an inline checklist in the work packet, PR, issue/task, or current session unless persistence materially improves coordination/resumption;
+6. discover and reuse an existing applicable durable checklist instead of inventing another one;
+7. do not declare work complete while an applicable required item is merely forgotten or left unresolved.
+
 ---
 
 ## 1. Setup / Entry
@@ -90,16 +108,21 @@ For each coherent slice:
 
 - [ ] run relevant Stage 6 → 7 gate controls before entering implementation
 - [ ] define the compact logical work-packet fields from `PROGRAMBUILD_WORK_PACKET.md`
+- [ ] if the slice follows an accepted recommendation, resolve the recommendation's effect under `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` before treating generic acceptance as execution authority
+- [ ] preserve any stronger security/destructive/financial/credential/production/privacy/legal/release/operator gate; generic acceptance does not satisfy it automatically
 - [ ] persist `CURRENT_WORK_PACKET.md` only if persistence materially improves coordination/risk/resumption
 - [ ] trace the slice to current authority and exact relevant requirements/contracts
 - [ ] load only task-relevant authority/specialist context
 - [ ] list reusable evidence + invalidation triggers
 - [ ] define acceptance criteria + smallest sufficient verification set
+- [ ] decide whether omission risk or an existing applicable durable checklist warrants an active checklist for this slice
+- [ ] when a checklist is active, source its material items from current authority/acceptance/risk obligations and keep it subordinate
 - [ ] implement without prospectively contradicting canonical authority
 - [ ] update governed registries/contracts only when their surface changes
 - [ ] run targeted verification plus broader checks triggered by invalidation/convergence
 - [ ] record evidence once
 - [ ] reconcile material decisions/scope/architecture/status
+- [ ] when a checklist is active, reconcile every applicable item as satisfied / n/a-with-reason / blocked-with-exact-gate / authority-permitted-deferred
 - [ ] close/replace the packet; do not accumulate a parallel plan
 - [ ] widen to a mid-implementation Challenge Gate when accumulated change/risk makes the narrow slice view insufficient
 
@@ -114,6 +137,7 @@ For each coherent slice:
 - [ ] verify required observability/support ownership
 - [ ] verify critical smoke/purpose outcomes
 - [ ] re-establish release-critical evidence that was invalidated
+- [ ] reconcile every applicable release-readiness checklist obligation before go/no-go
 - [ ] record go / no-go
 
 ---
@@ -144,6 +168,9 @@ For each coherent slice:
 - [ ] one strategic execution spine exists
 - [ ] authority ownership is clear
 - [ ] no research/audit/checklist/packet is acting as a second master plan
+- [ ] applicable checklist items came from authority/acceptance/risk obligations rather than silently creating scope
+- [ ] an existing applicable durable checklist was reused rather than duplicated
+- [ ] trivial work was not burdened with a large checklist merely for ceremony
 - [ ] persisted `CURRENT_WORK_PACKET.md`, if present, is actually helping coordination/resumption
 - [ ] evidence is reused until a relevant invalidation trigger occurs
 - [ ] broad verification runs only for a real convergence reason
@@ -168,4 +195,4 @@ Do not duplicate the full gate prose in this checklist.
 
 ---
 
-Last updated: 2026-08-24
+Last updated: 2026-08-28

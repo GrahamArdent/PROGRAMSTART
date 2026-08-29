@@ -6,6 +6,20 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 
 ---
 
+## 2026-08-28 (Accepted Recommendation Resolution + Checklist Discipline)
+
+- defined deterministic generic-acceptance semantics for `proceed`, `go ahead`, `proceed with your recommendation`, and equivalent responses when a concrete prior recommendation is available
+- challenged the initial four-peer-category design and implemented the smaller three-disposition model: `execute_current_authority`, `reconcile_authority_then_execute`, and `defer_without_resequencing`
+- kept security/destructive/credential/provider/financial/production/privacy/legal/release/operator approvals as an independent stronger-gate overlay rather than a fourth recommendation state; generic acceptance cannot silently erase a genuinely additional required action/approval/evidence boundary
+- added the authority-worthiness test so normal implementation details do not churn the Master, while durable scope/sequencing/architecture/dependency/milestone/acceptance/decision changes reconcile their existing owning authority before or atomically with dependent implementation
+- made contradictory execution/runtime evidence supersede the accepted recommendation premise rather than forcing a recommendation through after its assumptions are disproved
+- made checklists conditional derived completeness/verification surfaces: use them when omission risk or an existing applicable durable checklist warrants it, source items from current authority/acceptance/risk obligations, reuse existing checklists, and reconcile every applicable item before truthful closure
+- explicitly rejected a recommendation registry, hidden future-work backlog, separate approval state machine, universal checklist registry, and new `programstart approve`/keyword-parsing CLI surface as unnecessary complexity
+- evolved the existing agent-facing orchestration prompt to v2.8 and added focused static-contract regression coverage for ordinary execution, authority deltas, deferral, stronger gates, contradicted recommendations, Mode-C preservation, checklist completeness, and checklist anti-bloat
+- recorded the real GCRM / Dedication / PROGRAMSTART workflow evidence as `PSL-016` in `implemented` state; validation remains the next natural real-project generic `proceed` turn
+
+---
+
 ## 2026-08-28 (Decision-Scoped Cost Governance)
 
 - added `docs/PROGRAMSTART_COST_GOVERNANCE.md` as the conditional protocol for material paid, metered, quota-limited, or independently operated external-service decisions

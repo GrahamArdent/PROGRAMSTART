@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added coordinated Mode-C lane semantics so one project spine can keep a blocked closure-control lane visible while selecting one independently authorized bounded packet, without creating a parallel backlog, scheduler, or automatic multi-agent execution engine.
 - Added the PROGRAMSTART acceptance Learning Gate: meaningful project checkpoints can conditionally create append-only observations, mature/reject existing lessons, and route future real retests while `no reusable lesson` remains a valid result.
 - Added decision-scoped cost governance for material paid, metered, quota-limited, or independently operated external dependencies. The Cost Envelope captures current/freshness-aware cost evidence, included capacity, charge triggers, caps and cap behavior, existing-infrastructure reuse, credible alternatives, `PAY_WHEN` evidence, approval ownership, and invalidation without creating a central vendor-price registry or purchasing authority.
+- Added accepted-recommendation resolution for natural operator responses such as `proceed`: orchestration now derives current-authority execution, durable-authority reconciliation then execution, or deferral without resequencing, while preserving genuinely additional approval/operator gates and allowing contradictory runtime evidence to supersede the recommendation premise.
+- Added conditional checklist-completeness discipline: applicable checklists are derived from current authority/acceptance/risk obligations, reused instead of duplicated, reconciled at closure, and skipped for trivial work when omission risk is low.
 
 ### Changed
 
@@ -32,8 +34,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Changed generated-project `full-ci-gate.yml` to manual-only by default; projects may add automatic triggers when their own operating needs justify the cost.
 - Added a machine-readable Lite artifact profile so `RISK_SPIKES.md` and `AUDIT_REPORT.md` remain reusable compatibility stubs without becoming mandatory operator work; JIT guidance, status, and the preferred `programstart advance` path now use explicit conditional-artifact activation while preserving legacy body-content fallback for older repos.
 - Changed methodology-only greenfield bootstrap to include only the lightweight control surface required by the external PROGRAMSTART runtime: a flat project registry, managed workflow prompts, and sync manifest. The PROGRAMSTART executable runtime, dashboard, development tests/toolchain, and template workflows remain centralized and are still not vendored.
-- Evolved the main PROGRAMSTART orchestration prompt through v2.4 coordinated Mode-C lanes, v2.5 Learning Gate behavior, and v2.6 conditional Cost Gate behavior without creating another lifecycle, price catalogue, or execution spine.
+- Evolved the main PROGRAMSTART orchestration prompt through v2.4 coordinated Mode-C lanes, v2.5 Learning Gate behavior, v2.6 conditional Cost Gate behavior, v2.7 risk-triggered post-implementation adversarial closure, and v2.8 accepted-recommendation resolution plus conditional checklist completeness without creating another lifecycle, approval state machine, checklist registry, price catalogue, or execution spine.
 - Reorganized acceptance learning so the main ledger is a concise lesson-maturity rollup, detailed new evidence is append-only under `docs/acceptance/observations/`, and the complete pre-loop narrative ledger is preserved unchanged as a historical snapshot.
+- Made existing PROGRAMBUILD and real-world acceptance checklists active completeness aids when applicable: material items must trace to existing authority/acceptance/risk obligations and resolve as satisfied, not applicable with reason, blocked with an exact gate, or authority-permitted deferred before truthful closure.
 
 ### Fixed
 

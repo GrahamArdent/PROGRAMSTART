@@ -2,11 +2,11 @@
 
 # Program Build Planning Operating Model
 
-Purpose: Define how planning, research, execution authority, active work, context loading, adaptive decision routing, blocker scope, safe-lane execution, and verification fit together without creating competing plans or unnecessary process overhead.
+Purpose: Define how planning, research, execution authority, active work, context loading, adaptive decision routing, blocker scope, safe-lane execution, accepted recommendations, checklist completeness, and verification fit together without creating competing plans or unnecessary process overhead.
 Owner: Project Lead / Operator
-Last updated: 2026-08-27
+Last updated: 2026-08-28
 Depends on: `PROGRAMBUILD_CANONICAL.md`, `PROGRAMBUILD_FILE_INDEX.md`, `PROGRAMBUILD_GAMEPLAN.md`, `DECISION_LOG.md`
-Authority: Canonical for planning-to-execution separation, proportional rigor, progressive disclosure, adaptive decision routing, blocker/safe-lane handling, evidence sufficiency, and evidence-reuse rules.
+Authority: Canonical for planning-to-execution separation, proportional rigor, progressive disclosure, adaptive decision routing, blocker/safe-lane handling, accepted-recommendation resolution, evidence sufficiency, and evidence-reuse rules.
 
 ---
 
@@ -19,7 +19,7 @@ The operating model has four distinct layers:
 1. **Reusable methodology** — PROGRAMBUILD explains how projects should be planned and executed.
 2. **Project authority** — each real project owns its own current execution spine, decisions, requirements, architecture, and state.
 3. **Active work packet** — the current coherent unit of work is derived from project authority and relevant evidence; it is not a second game plan.
-4. **Evidence and reference material** — research, audits, prior verification, external guidance, and specialist documents support decisions but do not silently become execution authority.
+4. **Evidence and reference material** — research, audits, prior verification, external guidance, specialist documents, and derived checklists support decisions but do not silently become execution authority.
 
 The layers MUST remain distinct.
 
@@ -40,6 +40,7 @@ Research exists to retire decision-relevant uncertainty, not to maximize knowled
 - proportional-rigor rules
 - adaptive decision-routing and evidence-sufficiency rules
 - blocker-scope and safe-lane reasoning rules
+- accepted-recommendation resolution rules
 - intake and challenge protocols
 - work-packet structure
 - context-loading rules
@@ -76,7 +77,7 @@ Examples include:
 - a release/remediation ledger
 - the default `PROGRAMBUILD_GAMEPLAN.md` sequence for a newly bootstrapped project
 
-Research reports, audits, readiness reviews, implementation checklists, adaptive-router outputs, and work packets MUST NOT become competing strategic plans.
+Research reports, audits, readiness reviews, implementation checklists, adaptive-router outputs, recommendation-resolution results, and work packets MUST NOT become competing strategic plans.
 
 When new research suggests changes to an existing execution spine:
 
@@ -154,6 +155,7 @@ Expected behavior:
 - narrow verification
 - one concise work packet when useful
 - no research when current evidence is sufficient
+- no persisted checklist when omission risk is trivial and no applicable durable checklist exists
 
 ### Standard-rigor work
 
@@ -169,6 +171,7 @@ Expected behavior:
 - work packets for coherent execution slices
 - targeted cross-stage verification
 - targeted research only for material unknowns
+- active checklist use when omission risk or an existing applicable checklist materially helps closure
 
 ### High-rigor work
 
@@ -186,6 +189,7 @@ Expected behavior:
 - higher verification depth
 - ADRs where durable architecture/policy decisions warrant them
 - deeper research only when high-impact uncertainty cannot be bounded cheaply
+- explicit reconciliation of applicable checklist/gate obligations before closure
 
 More documents do not automatically mean more rigor. Rigor is the quality of decisions, evidence, boundaries, and verification.
 
@@ -414,6 +418,91 @@ For Mode C, the router MUST:
 - classify blocker scope and scan safe execution lanes before treating an active-row blocker as a whole-project stop;
 - return to the existing project's actual next executable slice after the delta is resolved.
 
+### 9.6 Accepted Recommendation / Generic “Proceed” Resolution
+
+The adaptive router answers whether a recommendation is sufficiently supported. It does **not** by itself define what a later generic operator acceptance authorizes.
+
+When an agent has made a concrete recommendation and the operator later responds with a generic acceptance such as `proceed`, `go ahead`, `proceed with your recommendation`, `do what you recommend`, or an equivalent phrase, resolve the acceptance against **current project authority and the recommendation's actual effect** before executing.
+
+Do not ask the operator to restate methodology that can be derived from current authority.
+
+Use exactly one primary disposition:
+
+1. **`execute_current_authority`** — the accepted recommendation fits inside the current authorized slice/strategy and does not change durable project truth.
+   - derive/continue the bounded work packet and execute it;
+   - do not rewrite the Master/strategic spine merely because an implementation detail, local fix, file choice, test, or tactic changed;
+   - reconcile normal status/evidence at closure.
+2. **`reconcile_authority_then_execute`** — the accepted recommendation changes durable project truth, for example strategic scope/sequencing, architecture, durable dependency, milestone/definition-of-done, acceptance criteria, or a material prior decision.
+   - record the accepted delta in the artifact that already owns that concern **before or atomically with dependent implementation**;
+   - then derive the executable packet from the reconciled authority;
+   - do not let code/runtime intentionally move ahead of knowingly stale authority.
+3. **`defer_without_resequencing`** — the operator accepts the recommendation as useful direction, but current authority/dependency order says it is not the next executable work.
+   - preserve it only in an existing appropriate decision/future/backlog/reference surface when durable retention is actually warranted;
+   - do not create a hidden PROGRAMSTART backlog or a second Master;
+   - do not reorder the active spine merely because the operator liked the idea;
+   - return to the current project's actual next executable slice.
+
+A stronger approval/manual/consequence requirement is an **independent gate overlay**, not a fourth recommendation disposition. Examples include security-sensitive or destructive mutations, credential/provider actions, explicit financial commitments, production/release actions, privacy/legal approvals, or other project-defined gates.
+
+Rules for the gate overlay:
+
+- generic acceptance MAY approve the recommendation's direction;
+- generic acceptance MUST NOT silently satisfy a stronger gate whose authority requires a more specific action/approval/evidence boundary;
+- preserve the gate owner, action, acceptance evidence, and resume point using the existing operator/manual-gate or project-specific mechanism;
+- when no stronger gate exists, do not invent one merely because the operator used a generic phrase.
+
+### 9.7 Authority-worthiness test
+
+Before changing a Master, strategic spine, decision record, architecture, or another durable authority surface, ask:
+
+> **Would leaving the current authority unchanged make it materially false, misleading, contradictory, or unsafe for the next dependent work?**
+
+Usually authority-worthy:
+
+- durable scope addition/removal;
+- changed strategic sequencing or closure control;
+- milestone advancement/definition change;
+- architecture, trust, contract, or durable dependency change;
+- changed acceptance criteria or definition of done;
+- material decision reversal/supersession;
+- newly durable blocker/constraint that changes what can proceed.
+
+Usually normal execution detail:
+
+- local implementation mechanics already within scope;
+- filenames/module organization that do not alter architecture/contract authority;
+- ordinary bug fixes already required by the current slice;
+- small tests/fixtures;
+- temporary investigation notes;
+- reversible tactics that do not change durable project truth.
+
+When evidence discovered during execution disproves the accepted recommendation's premise, **do not force the accepted recommendation through**. Stop at the smallest safe point, reconcile the new evidence/authority that actually changed, and derive the next slice from current truth. Operator acceptance authorizes a direction under stated/current assumptions; it does not make disproved assumptions true.
+
+### 9.8 Checklist completeness discipline
+
+Checklists are derived completeness aids, not strategy.
+
+Activate a checklist when:
+
+- omission risk is meaningful;
+- the slice has several independent acceptance/risk/handoff obligations that are easy to forget;
+- a stage/release/security/acceptance boundary already has an applicable durable checklist;
+- multi-session or multi-person work benefits from an explicit completion inventory.
+
+Do not create a large checklist artifact for trivial low-risk single-step work when no applicable durable checklist exists.
+
+When active:
+
+1. derive material items from current authority, acceptance criteria, risk/gate obligations, and declared handoffs;
+2. cross-reference the owning source when practical;
+3. do not let checklist items silently create new scope;
+4. reuse an existing applicable durable checklist instead of creating a duplicate;
+5. before closure, reconcile every applicable item as `satisfied`, `not_applicable` with reason, `blocked` with exact gate, or `deferred` only when current authority permits;
+6. unresolved required items prevent truthful `complete`/`merge-ready` status;
+7. keep the checklist in the smallest useful surface: session/work-packet/PR/task by default, persisted file only when persistence earns its cost.
+
+`PROGRAMBUILD_CHECKLIST.md` provides the reusable checklist form. The Work Packet owns how checklist completeness participates in current-slice closure.
+
 ---
 
 ## 10. Research Integration Rule
@@ -443,13 +532,14 @@ A work packet represents one coherent execution slice.
 Typical lifecycle:
 
 1. **Derive** — generate from the strategic plan/current stage and only the relevant supporting context.
-2. **Classify blockers / safe lanes when relevant** — distinguish the blocked closure action from safe independent preparation before deciding execution must stop.
-3. **Validate** — confirm scope, authority, known state, and acceptance criteria.
-4. **Execute** — perform the work without widening scope silently.
-5. **Verify** — run the targeted verification defined in the packet.
-6. **Reconcile** — update decisions, project state, and the strategic execution spine where required.
-7. **Close** — mark the packet complete or blocked; do not keep completed packets as competing plans.
-8. **Generate next** — derive the next packet from the newly current project state.
+2. **Resolve accepted recommendation when relevant** — if this invocation follows generic operator acceptance of a prior recommendation, derive the correct disposition under §9.6 and preserve any stronger gate before treating the acceptance as execution authority.
+3. **Classify blockers / safe lanes when relevant** — distinguish the blocked closure action from safe independent preparation before deciding execution must stop.
+4. **Validate** — confirm scope, authority, known state, acceptance criteria, and whether checklist completeness should be active.
+5. **Execute** — perform the work without widening scope silently.
+6. **Verify** — run the targeted verification defined in the packet.
+7. **Reconcile** — update decisions, project state, and the strategic execution spine where required; reconcile any active checklist against actual evidence.
+8. **Close** — mark the packet complete or blocked; do not keep completed packets or checklists as competing plans.
+9. **Generate next** — derive the next packet from the newly current project state.
 
 For long-running work, a repository MAY keep a `CURRENT_WORK_PACKET.md` as a derived, replaceable artifact. It is never canonical over the strategic plan, requirements, architecture, or decision log.
 
@@ -466,6 +556,7 @@ When work resumes after a pause:
 - classify any newly observed blocker at its narrowest truthful scope and scan safe lanes
 - run only the re-entry checks needed to detect drift
 - regenerate the active work packet from current state
+- discover/reuse an applicable durable checklist when its obligations still govern the resumed boundary
 - do not reconstruct the entire project from chat memory
 
 For PROGRAMBUILD-managed projects, also use the Re-Entry Protocol in `PROGRAMBUILD_CHALLENGE_GATE.md` where applicable.
@@ -481,6 +572,12 @@ Avoid:
 - giant prompts containing the entire repository documentation set
 - re-running unchanged checks every session
 - implementation checklists that quietly redefine strategy
+- checklists created and then ignored at closure
+- duplicating an applicable durable checklist instead of reusing it
+- making generic `proceed` either a universal permission slip or a reason to ask the operator to restate already-derivable methodology
+- rewriting the strategic Master for ordinary implementation detail
+- accepted future ideas silently resequencing active work
+- stronger approval gates being erased by generic acceptance
 - project-specific state stored in the reusable template repository
 - forcing small projects through enterprise ceremony
 - treating a large document count as evidence of planning quality
@@ -509,8 +606,10 @@ When applying this operating model to an existing repository:
 7. introduce work packets as a derived execution aid if useful;
 8. use adaptive routing only for decisions whose delta actually earns it;
 9. classify blockers narrowly and scan safe lanes before stopping useful independent work;
-10. recommend edits to the existing master plan rather than replacing it;
-11. record any material process change through the repository's decision mechanism.
+10. resolve accepted recommendations against current authority rather than treating generic acceptance as unbounded permission;
+11. discover and reuse existing applicable checklists when omission risk makes them useful;
+12. recommend edits to the existing master plan rather than replacing it;
+13. record any material process change through the repository's decision mechanism.
 
 The goal is less planning friction with stronger control, not more documentation.
 
@@ -530,8 +629,11 @@ This operating model is working when an operator or agent can answer these quick
 - If not, what exact evidence is missing and what could it change?
 - Is targeted research enough, or is deep research genuinely justified?
 - What is the stop condition?
+- If the operator just accepted a recommendation, does that mean execute now, reconcile durable authority then execute, or defer without resequencing?
+- Is there a stronger gate that generic acceptance cannot satisfy?
+- Does an applicable checklist need to be active, and are all required items accounted for before closure?
 - What changed enough to require re-verification?
 - What proves this slice is complete?
 - Where will any durable decision be recorded?
 
-If answering those questions requires loading the whole repository, invoking every gate, or interpreting several competing plans, the planning system needs simplification.
+If answering those questions requires loading the whole repository, invoking every gate, interpreting several competing plans, or asking the operator to restate already-derivable methodology, the planning system needs simplification.

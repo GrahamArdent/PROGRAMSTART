@@ -29,6 +29,7 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY in this section are in
 16. Operator/manual gate handoffs MUST remain derived and subordinate. When the current environment cannot perform the exact next action, the handoff MUST identify the gate owner, required action, secret-safe input boundary, non-secret return evidence, acceptance/invalidation conditions, safe work while waiting, and exact resume point when those facts are knowable. Operator action completion MUST NOT be treated as system acceptance without the required evidence, and a handoff MUST NOT request or persist secret values merely to make the gate durable.
 17. Concurrent Mode-C lane coordination MUST remain a derived view of one project's existing execution spine. It MAY expose multiple relevant current lanes only when project authority proves they can coexist, but each invocation MUST select one bounded current work packet. A lane view MUST NOT create a parallel backlog, second sequencing authority, automatic multi-agent scheduler, or permission to run consequential mutations concurrently.
 18. PROGRAMSTART acceptance learning MUST remain evidence-driven and subordinate to product execution. Meaningful checkpoints MAY produce learning observations and maturity updates, but ordinary PROGRAMSTART usage MUST NOT automatically create ledger noise or authorize methodology changes. Product completion MUST NOT depend on the ability to mutate the PROGRAMSTART repository, and the learning ledger MUST NOT become a product backlog, portfolio Master, or execution authority.
+19. PROGRAMSTART cost governance MUST remain decision-scoped and subordinate to project budget, architecture, security, and release authority. A Cost Envelope MAY structure material paid/metered/quota decisions, but it MUST NOT become a central vendor-price registry, procurement authority, portfolio budget, or second execution spine. Volatile pricing/limit evidence MUST be refreshed only when its staleness can materially change the current decision.
 
 ---
 
@@ -88,6 +89,7 @@ Optional persisted execution aid:
 | critical file inventory and status | `PROGRAMBUILD_FILE_INDEX.md` |
 | planning-to-execution separation, proportional rigor, blocker scope/safe-lane reasoning, adaptive decision/evidence routing, context loading, and evidence reuse | `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` |
 | logical work-packet semantics, blocker/safe-lane fields, coordinated Mode-C lane view, cross-repository dependency/authority fields, operator/manual-gate handoff semantics, and optional persisted packet format | `PROGRAMBUILD_WORK_PACKET.md` |
+| PROGRAMSTART decision-scoped cost governance, Cost Envelope semantics, cost-evidence freshness, cap/reuse/pay-when rules, and anti-registry boundary | `docs/PROGRAMSTART_COST_GOVERNANCE.md` |
 | PROGRAMSTART acceptance-learning triggers, observation/rollup semantics, maturity rules, and future-retest routing | `docs/PROGRAMSTART_LEARNING_LOOP.md` |
 | ADR structure, decision-log linkage, and supersession hygiene | `PROGRAMBUILD_ADR_TEMPLATE.md` |
 | architecture decision records index | `docs/decisions/README.md` |
@@ -139,6 +141,8 @@ An operator/manual handoff never outranks project authority and never proves the
 
 A coordinated Mode-C lane view never outranks the project's execution spine or dependency order. Correct/regenerate the lane view when live project authority changes rather than preserving stale lane priority as derived state.
 
+A decision-scoped Cost Envelope never outranks project budget, architecture, security, operational, or release authority. Correct/refresh the cost evidence when pricing, limits, usage, or requirements change rather than preserving stale provider economics as methodology truth.
+
 A PROGRAMSTART learning observation or ledger entry never outranks the real project's authority and never proves a methodology change is required merely because friction was observed. Correct the learning classification/maturity from evidence rather than using the ledger to rewrite product state.
 
 ---
@@ -156,9 +160,10 @@ A PROGRAMSTART learning observation or ledger entry never outranks the real proj
 - Cross-repository orchestration may retain only the task-scoped relationship/evidence needed to derive the current packet. A live portfolio registry or cross-project Master belongs outside PROGRAMSTART unless a future explicit authority decision creates one.
 - Operator/manual handoffs should retain only the task-scoped action/evidence/resume contract needed to cross the gate. Do not turn them into a parallel ticketing system, credential store, or independent execution ledger.
 - Concurrent Mode-C lane coordination may retain only enough derived lane state to select the current packet and preserve closure-control/dependency truth. Do not persist a parallel lane backlog when the project spine already owns sequencing.
+- Cost governance may retain current decision evidence and invalidation conditions where a project needs durable rationale, but PROGRAMSTART must not maintain a central vendor-price/free-tier catalogue whose volatility would turn stale evidence into false authority.
 - PROGRAMSTART learning should retain detailed evidence in append-only observation records and keep the main learning ledger as a concise maturity rollup. Do not load or rewrite detailed history by default during normal product work.
 - Specialist agents, extra documents, broader gates, recurring automation, and adaptive routing are mechanisms, not goals. Use them only when they reduce real uncertainty/risk/coordination cost.
 
 ---
 
-Last updated: 2026-08-27
+Last updated: 2026-08-28

@@ -19,7 +19,7 @@ def test_high_risk_packet_activates_post_implementation_adversarial_closure() ->
     assert "actual completed implementation" in review
     assert "failure sequence" in review
     assert "retry/idempotency" in review
-    assert "before closure" in review
+    assert "before merge-ready/accepted/complete status" in review
     assert "adversarial closure review:" in render_text(plan).lower()
 
 
@@ -54,4 +54,4 @@ def test_closure_always_rechecks_actual_changed_surface_for_risk_escalation() ->
     assert "persistence" in verification
     assert "idempotency" in verification
     assert "adversarial challenge gate" in verification
-    assert "risk-triggered post-implementation adversarial closure review" in completion
+    assert "adversarial closure review required by the actual changed risk surface" in completion

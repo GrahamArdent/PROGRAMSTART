@@ -6,6 +6,21 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 
 ---
 
+## 2026-08-29 (Idea Preservation Without Backlog Promotion)
+
+- added the principle **Capture broadly. Promote deliberately. Execute only from authority.** so worthwhile ideas are not lost merely because they are not current work
+- separated cheap idea capture from later Idea Intake/promotion and from execution authority; capture does not imply scope, priority, sequencing, budget, architecture, or permission to execute
+- added optional `IDEA_LEDGER.md` with `CAPTURED`, `CANDIDATE`, `INVESTIGATING`, `SHELVED`, `ACCEPTED`, `REJECTED`, and `SUPERSEDED` states plus a compact reusable Idea Record
+- preserved useful shelved/rejected/superseded rationale and revisit triggers so later work does not need to reconstruct the same reasoning from chat/session memory
+- required accepted ideas to reconcile into the existing project artifact that owns the changed truth before dependent execution; the Idea Record remains provenance/reference only
+- kept a live cross-project idea portfolio outside PROGRAMSTART itself and deliberately did not add `IDEA_LEDGER.md` to generated-project output files, avoiding another mandatory artifact in every repository
+- evolved Idea Intake so full challenge/research occurs when an idea is evaluated for promotion, not merely because it was worth saving
+- evolved the agent-facing orchestration prompt to v2.9 and added static contract regression coverage for capture/promotion/authority, optionality, portfolio-boundary, and rejected/shelved reasoning
+- recorded the Planning Projects correction as `PSL-017` in `implemented` state with a real future capture→retrieve/revisit retest condition
+- validated `PSL-016` on the natural operator acceptance “I agree. You may go ahead.”, correctly resolving the methodology recommendation as `reconcile_authority_then_execute` without asking the operator to restate PROGRAMSTART mechanics
+
+---
+
 ## 2026-08-28 (Accepted Recommendation Resolution + Checklist Discipline)
 
 - defined deterministic generic-acceptance semantics for `proceed`, `go ahead`, `proceed with your recommendation`, and equivalent responses when a concrete prior recommendation is available
@@ -321,4 +336,4 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 
 ---
 
-Last updated: 2026-08-28
+Last updated: 2026-08-29

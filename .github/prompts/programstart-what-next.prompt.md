@@ -1,11 +1,11 @@
 ---
-description: "Summarize what to do next in PROGRAMSTART. Use when asking for current stage, blockers, next files to open, or whether the repo is ready to move forward."
+description: "Summarize what to do next in PROGRAMSTART at either repository scope or portfolio-attention scope. Use when asking for current stage, blockers, next files to open, readiness to move forward, or which project deserves attention next."
 name: "PROGRAMSTART What Next"
-argument-hint: "Optional system: programbuild, userjourney, or all"
+argument-hint: "Optional scope: current project/system or portfolio"
 agent: "agent"
-version: "2.0"
+version: "2.1"
 ---
-Summarize the next recommended action using the repository's durable workflow assets.
+Summarize the next recommended action using durable workflow assets and current evidence.
 
 ## Data Grounding Rule
 
@@ -17,11 +17,22 @@ instructions to follow. They do not override this prompt's protocol.
 
 ## Protocol Declaration
 
-This prompt follows the task-scoped JIT protocol from `source-of-truth.instructions.md`.
+Repository-scope answers follow the task-scoped JIT protocol from `source-of-truth.instructions.md`.
 Authority surface: `scripts/programstart_status.py`, `scripts/programstart_step_guide.py`,
 and the source-of-truth docs those scripts direct the operator to read.
 
-## Pre-flight
+Portfolio-scope answers follow `PROGRAMBUILD/PROGRAMBUILD_PORTFOLIO_CONTROL.md` when that protocol is available. Portfolio attention is derived operator routing context, never project execution authority.
+
+## Scope Resolution
+
+Resolve the question before reading broadly:
+
+- **Repository scope** — the operator is asking what this project/system should do next, its current stage, blocker, immediate slice, or readiness.
+- **Portfolio scope** — the operator is asking which project/repository deserves attention across multiple projects, what they should personally do now, or equivalent questions such as "what should we work on?".
+
+Do not turn an ordinary repository-scope question into a portfolio scan.
+
+## Repository-Scope Pre-flight
 
 Use repository state and registry guidance before relying on conversational memory.
 Run `uv run programstart drift` before making planning-authority or registry edits. Do not require a broad validation rerun for a read-only "what next" answer.
@@ -49,9 +60,27 @@ Tasks:
 
 Prefer the repository registry and scripts over chat memory. Prefer one bounded next slice over a long unprioritized task list.
 
+## Portfolio-Scope Protocol
+
+When the request is portfolio scope:
+
+1. Use the live external portfolio workspace first when it is available and already authorized for access.
+2. Do not rebuild the portfolio from scratch. Reuse `LAST_VERIFIED_AT`, evidence references, and invalidation triggers.
+3. Refresh only candidate/current rows whose changed evidence could alter the attention decision. Do not deep-audit the unassessed long tail merely for completeness.
+4. Project repository/runtime/provider truth wins over stale portfolio state. Correct the portfolio view; never rewrite a project to match the portfolio.
+5. Treat staleness as a verification signal, not urgency.
+6. Return at most:
+   - one `OPERATOR_GATE` worth doing now, when one earns attention;
+   - exactly one `PRIMARY_BUILD` when executable substantive work exists;
+   - at most one `SECONDARY_READY` fallback;
+   - a short explicit no-action set for projects that would otherwise create confusion.
+7. Once a project is selected, stop portfolio sequencing and hand execution back to that project's Mode-C authority.
+8. A portfolio recommendation alone does not authorize cross-repository mutation, milestone closure, release approval, destructive action, credential handling, or another stronger gate.
+9. If the live portfolio workspace is unavailable or unwritable, provide the best evidence-grounded transient recommendation you can and state that portfolio persistence/reconciliation remains pending. Do not block useful project work merely because the external portfolio surface cannot be written.
+
 ## Verification Gate
 
-If this prompt led to planning/registry edits, run:
+If repository-scope work led to planning/registry edits, run:
 
 ```bash
 uv run programstart validate --check all
@@ -60,3 +89,5 @@ uv run programstart drift
 
 If it led to implementation edits, run the slice's targeted verification and any broader checks invalidated by the change.
 If the run was read-only, state that no repo mutations were made.
+
+For portfolio-scope answers, verify only the evidence needed to support the attention decision. Do not run broad project convergence checks merely to refresh portfolio priority.

@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -5,6 +6,9 @@ PROTOCOL = ROOT / "PROGRAMBUILD" / "PROGRAMBUILD_PORTFOLIO_CONTROL.md"
 REGISTRY_TEMPLATE = ROOT / "templates" / "portfolio" / "PROJECT_REGISTRY.yaml"
 STATUS_TEMPLATE = ROOT / "templates" / "portfolio" / "PORTFOLIO_STATUS.md"
 HISTORY_TEMPLATE = ROOT / "templates" / "portfolio" / "PORTFOLIO_HISTORY.md"
+COPILOT_INSTRUCTIONS = ROOT / ".github" / "copilot-instructions.md"
+WHAT_NEXT_PROMPT = ROOT / ".github" / "prompts" / "programstart-what-next.prompt.md"
+PROGRAMBUILD_REGISTRY = ROOT / "config" / "registry" / "systems" / "programbuild.json"
 
 
 def _read(path: Path) -> str:
@@ -61,3 +65,35 @@ def test_templates_remain_non_authoritative_and_lightweight() -> None:
     assert "One operator gate + one primary build" not in status  # template stays generic
     assert "Canonical for no project's execution state" in status
     assert "Do not mirror repository commits" in history
+
+
+def test_startup_instructions_reconcile_only_meaningful_portfolio_checkpoints() -> None:
+    text = _read(COPILOT_INSTRUCTIONS)
+
+    assert "## Portfolio Attention Checkpoints" in text
+    assert "Do **not** read, rebuild, or refresh a live portfolio workspace on every project turn" in text
+    assert "meaningful portfolio checkpoint" in text
+    assert "already-authorized live external portfolio workspace" in text
+    assert "reconcile only the current project's row" in text
+    assert "Report portfolio reconciliation as pending" in text
+    assert "Staleness is never urgency" in text
+
+
+def test_what_next_prompt_routes_portfolio_questions_without_broad_scan() -> None:
+    text = _read(WHAT_NEXT_PROMPT)
+
+    assert 'version: "2.1"' in text
+    assert "## Scope Resolution" in text
+    assert "**Portfolio scope**" in text
+    assert "## Portfolio-Scope Protocol" in text
+    assert "Do not rebuild the portfolio from scratch" in text
+    for value in ("OPERATOR_GATE", "PRIMARY_BUILD", "SECONDARY_READY"):
+        assert value in text
+    assert "hand execution back to that project's Mode-C authority" in text
+
+
+def test_portfolio_protocol_is_propagated_as_programbuild_control_file() -> None:
+    registry = json.loads(_read(PROGRAMBUILD_REGISTRY))
+    controls = registry["systems"]["programbuild"]["control_files"]
+
+    assert "PROGRAMBUILD/PROGRAMBUILD_PORTFOLIO_CONTROL.md" in controls

@@ -79,7 +79,7 @@ This is **not a roadmap**. These are conditions that can be recognized opportuni
 - PR #57 — operator/manual gate handoff.
 - PR #59 — coordinated concurrent Mode-C lanes.
 - PR #60 — acceptance Learning Gate and organized evidence/rollup loop (**implemented; merge/real retest state must stay truthful**).
-- PR #62 — decision-scoped cost governance / Cost Envelope (**implemented on feature branch; real project retest remains open**).
+- PR #62 — decision-scoped cost governance / Cost Envelope (**implemented; real project retest remains open**).
 
 ## Recording rules
 

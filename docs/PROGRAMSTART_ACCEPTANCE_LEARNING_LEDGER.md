@@ -54,6 +54,7 @@ Lesson IDs are stable organizational references, not priority or roadmap numbers
 | `PSL-012` | Selective PROGRAMSTART methodology propagation can update managed controls without becoming a strategic replan | **observe / supporting** | adopt/sync surface | LinkedIn Generator PR #19 | another adopted existing repo needing selective methodology sync with project authority preserved |
 | `PSL-013` | PROGRAMSTART needs a built-in evidence-driven Learning Gate so real project use conditionally produces observation/maturity updates and later retests, without turning the ledger into an activity log | **validated** | `docs/PROGRAMSTART_LEARNING_LOOP.md` + orchestration prompt | PR #60 implementation → real Secrets & Credential Architecture Audit checkpoint; `docs/acceptance/observations/2026-08-28-secrets-cost-gate-retest.md` | another normal checkpoint where the correct result is `no reusable lesson`, counterevidence, or a different maturity delta rather than unconditional methodology work |
 | `PSL-014` | Material paid/metered dependency decisions need a decision-scoped Cost Envelope covering current evidence, included capacity, charge trigger, caps, reuse/alternatives, and the evidence that earns payment; volatile vendor prices must not become a central registry | **validated** | `docs/PROGRAMSTART_COST_GOVERNANCE.md` + orchestration prompt | PR #62 implementation → real Secrets & Credential Architecture Audit; `docs/acceptance/observations/2026-08-28-secrets-cost-gate-retest.md` | a future metered API or infrastructure decision with a different cost shape, especially one that actually crosses a `PAY_WHEN` threshold |
+| `PSL-015` | High-risk completed implementations need a risk-triggered post-implementation adversarial Challenge Gate before merge-ready/closure; inspect the actual implementation and construct a realistic failure sequence rather than relying only on intended design + green current tests | **implemented** | `PROGRAMBUILD_CHALLENGE_GATE.md` + Work Packet + orchestration verification | Watchtower V0.2 PR #1 independent review → PROGRAMSTART PR #63; `docs/acceptance/observations/2026-08-28-watchtower-post-implementation-adversarial-closure.md` | next material trust/security, persistence/idempotency/concurrency, migration, external-side-effect, or other high-impact/hard-to-reverse work packet that reaches PR/closure and should trigger the review without burdening low-risk work |
 
 ## Open retest queue
 
@@ -63,6 +64,7 @@ This is **not a roadmap**. These are conditions that can be recognized opportuni
 2. `PSL-009` — obtain a second cross-project case proving that evidence-source/type distinctions materially improve correctness.
 3. `PSL-010` — identify a specific repeated overhead defect in another high-velocity Mode-C project before changing methodology.
 4. `PSL-011` — use another real paused/re-entry project to determine whether dedicated lifecycle states remain unnecessary.
+5. `PSL-015` — let the next real high-risk implementation closure automatically challenge the actual completed change with a relevant failure sequence and either catch/correct a defect or clear it with targeted evidence without adding broad ceremony.
 
 ## Recent methodology changes
 
@@ -78,6 +80,7 @@ This is **not a roadmap**. These are conditions that can be recognized opportuni
 - PR #59 — coordinated concurrent Mode-C lanes.
 - PR #60 — acceptance Learning Gate and organized evidence/rollup loop; later validated by the real Secrets & Credential Architecture Audit checkpoint.
 - PR #62 — decision-scoped cost governance / Cost Envelope; later validated by the real Secrets & Credential Architecture Audit provider decision.
+- PR #63 — risk-triggered post-implementation adversarial Challenge Gate (**implemented; real product retest remains open**).
 
 ## Recording rules
 

@@ -4,8 +4,8 @@
 
 Purpose: Define the smallest useful current-slice planning structure without creating a competing game plan or unnecessary documentation ceremony.
 Owner: Project Lead / Operator
-Last updated: 2026-08-27
-Depends on: `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`, the project's strategic execution spine, relevant requirements/architecture/decisions
+Last updated: 2026-08-28
+Depends on: `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`, `PROGRAMBUILD_CHALLENGE_GATE.md`, the project's strategic execution spine, relevant requirements/architecture/decisions
 Authority: Canonical for work-packet semantics. A filled packet is derived execution context and is never canonical over project authority.
 
 ---
@@ -30,6 +30,7 @@ It answers:
 - what evidence can be reused?
 - what could invalidate that evidence?
 - what proves completion?
+- does the actual completed change trigger PROGRAMBUILD's post-implementation adversarial Challenge Gate before merge-ready/closure?
 - what durable project state must be reconciled afterward?
 
 A work packet is **not**:
@@ -94,6 +95,14 @@ TARGETED_VERIFICATION:
 DURABLE_UPDATES_IF_NEEDED:
 ```
 
+Conditional closure field — include only when risk is already known to trigger it:
+
+```text
+ADVERSARIAL_CLOSURE: required + trigger reason
+```
+
+Do not add `ADVERSARIAL_CLOSURE: not_triggered` as routine paperwork. Even when the field was absent at packet creation, closure must still inspect the **actual completed change** and apply the trigger in `PROGRAMBUILD_CHALLENGE_GATE.md`.
+
 `SAFE_EXECUTION_LANE` is the A/B/C **safety class** for the selected packet. It is not the same thing as a named coordinated Mode-C lane and is not an automatic permission. It must be supported by the project's own authority, dependency state, and safety rules.
 
 `COORDINATED_MODE_C_LANES` may be `none`. Populate it only when the current project authority genuinely exposes two or more relevant current lanes, such as one blocked closure-control row plus an independent reversible preparation row. Visibility does not authorize execution of every listed lane.
@@ -101,6 +110,8 @@ DURABLE_UPDATES_IF_NEEDED:
 Cross-repository fields may be `none` when the packet has no real companion dependency. Do not manufacture a relationship merely because two repositories are related historically or organizationally.
 
 Operator-gate fields may be `none` when the current slice can proceed in the available environment. A manual gate does **not** require a cross-repository dependency; credentials, provider-console actions, physical-device checks, human review, approvals, or other operator-only actions can be single-project gates.
+
+If implementation introduces a material trust/security, persistence/idempotency/retry/concurrency, schema/migration, destructive/external-side-effect, production runtime/deployment, or other high-impact/hard-to-reverse boundary, activate the conditional field and run the existing Challenge Gate before declaring merge-ready/complete.
 
 ### Extended persisted packet — only when useful
 
@@ -134,8 +145,9 @@ A project MAY keep at most one active replaceable `CURRENT_WORK_PACKET.md` unles
 9. **Reuse** trustworthy evidence whose invalidation conditions have not occurred, including valid evidence from a companion repository or prior operator action.
 10. **Execute** only the selected packet without silently widening scope or treating a dependency graph, coordinated-lane view, or handoff as broader mutation authority.
 11. **Verify** the changed/at-risk surface with the smallest sufficient check set.
-12. **Reconcile** material decisions/scope/architecture/status into the repository that actually owns each durable concern.
-13. **Close or hand off** the packet and derive the next slice from the newly current state.
+12. **Challenge closure when the actual risk surface requires it** — before merge-ready/accepted/complete status, inspect the completed implementation/config/runtime behavior and run the existing `PROGRAMBUILD_CHALLENGE_GATE.md` post-implementation adversarial review when triggered. Do not use green current tests as a substitute for constructing a realistic failure sequence against a material invariant.
+13. **Reconcile** material decisions/scope/architecture/status into the repository that actually owns each durable concern.
+14. **Close or hand off** the packet and derive the next slice from the newly current state.
 
 If the packet needs its own backlog, milestones, or independent sequencing, it is too large. Split it.
 
@@ -324,6 +336,15 @@ For operator-returned evidence, retain non-secret provenance and the exact accep
 |---|---|---|
 | | | pending |
 
+## Post-Implementation Adversarial Closure
+TRIGGER: [not_triggered | required] + actual changed-surface reason
+CHALLENGED_INVARIANT:
+FAILURE_SEQUENCE:
+RESULT: [clear | warning | blocked]
+TARGETED_PROOF_OR_FIX:
+
+Use `PROGRAMBUILD_CHALLENGE_GATE.md`; do not invent a second review protocol here.
+
 ## Stop / Escalation Conditions
 - condition
 
@@ -339,6 +360,7 @@ For operator-returned evidence, retain non-secret provenance and the exact accep
 ## Close-Out
 OUTCOME:
 VERIFICATION_SUMMARY:
+ADVERSARIAL_CLOSURE_RESULT:
 EVIDENCE_INVALIDATED_OR_REUSED:
 AUTHORITY_RECONCILED:
 REMAINING_BLOCKERS:
@@ -399,6 +421,8 @@ For cross-repository dependencies, evidence remains reusable only while its decl
 
 For operator gates, record the returned **outcome/evidence**, not the secret material used to produce it. An operator's statement that an action was performed may satisfy an action-completion fact, but runtime/device/provider acceptance still requires the evidence defined by `EVIDENCE_ACCEPTANCE`.
 
+A green current test suite is reusable evidence, but it is not by itself evidence that an activated post-implementation adversarial closure review occurred. When `PROGRAMBUILD_CHALLENGE_GATE.md` is triggered, challenge the actual completed implementation using the smallest relevant failure-sequence lens and retain only the resulting bounded evidence.
+
 ---
 
 ## 7. Existing-Project / Research Rule
@@ -414,10 +438,11 @@ For an existing repository:
 - when several current lanes legitimately coexist under the one spine, keep closure-control explicit and select one independently authorized packet for the current invocation;
 - if the next action is operator-only, return the exact handoff and resume point rather than a generic blocked status;
 - when operator evidence returns, reorient only enough to confirm acceptance/invalidation and resume the existing spine;
+- inspect the actual completed change for a risk-triggered post-implementation Challenge Gate before merge-ready/closure;
 - reconcile accepted changes back into the repository that owns the relevant canonical artifact;
 - close/replace the packet after the slice.
 
-A newer packet, coordinated-lane view, research report, cross-repository graph, or operator handoff never outranks established project authority merely because it is newer.
+A newer packet, coordinated-lane view, research report, cross-repository graph, operator handoff, or adversarial-review result never outranks established project authority merely because it is newer.
 
 ---
 
@@ -428,6 +453,7 @@ A packet is complete when:
 - the scoped outcome is done or explicitly stopped;
 - acceptance criteria are resolved;
 - required targeted verification is complete;
+- any post-implementation adversarial Challenge Gate required by the actual changed risk surface is `clear` or the packet remains truthfully blocked/warning rather than being declared merge-ready/complete;
 - material durable decisions/state are reconciled;
 - remaining blockers are durably tracked with their narrowest truthful scope;
 - if coordinated Mode-C lanes are present, closure-control stayed unchanged, one packet was selected for this invocation, independence/conflict evidence stayed valid, and the convergence point remains explicit;

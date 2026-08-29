@@ -84,6 +84,7 @@ class WorkPacket:
     invalidation_triggers: tuple[str, ...]
     acceptance_criteria: tuple[str, ...]
     targeted_verification: tuple[str, ...]
+    adversarial_closure_review: tuple[str, ...]
     durable_updates: tuple[str, ...]
 
 
@@ -315,6 +316,38 @@ def _evidence_continuity_policy() -> tuple[str, ...]:
     )
 
 
+def _adversarial_closure_review(
+    impact: Level,
+    reversibility: Reversibility,
+    risks: tuple[str, ...],
+    concerns: tuple[str, ...],
+) -> tuple[str, ...]:
+    explicit_high_risk = bool(risks) or impact == "high" or reversibility == "hard"
+    material_runtime_boundary = "runtime" in concerns and impact != "low"
+    if not explicit_high_risk and not material_runtime_boundary:
+        return ()
+
+    trigger_detail = ", ".join(sorted(set(risks))) or (
+        f"impact={impact}, reversibility={reversibility}, concerns={','.join(sorted(set(concerns))) or 'none'}"
+    )
+    return (
+        f"Activated from supplied consequence/boundary signals ({trigger_detail}).",
+        (
+            "Before merge-ready/accepted/complete status, run the existing PROGRAMBUILD Challenge Gate against the "
+            "actual completed implementation, not only the intended design."
+        ),
+        (
+            "Assume current tests may miss a defect and construct at least one realistic failure sequence against a "
+            "material invariant using only relevant lenses such as ordering, partial failure, retry/idempotency, "
+            "concurrency, restart/state loss, provider failure, trust boundary, recovery, false success, or false suppression."
+        ),
+        (
+            "If a plausible invariant violation appears, add targeted proof or a regression test, correct/block the "
+            "implementation, and rerun affected verification before closure."
+        ),
+    )
+
+
 def _related_repository(
     *,
     target: str,
@@ -416,6 +449,10 @@ def _work_packet(
     safe_lane_policy: tuple[str, ...],
     related: RelatedRepository | None,
     manual_boundary: str,
+    impact: Level,
+    reversibility: Reversibility,
+    risks: tuple[str, ...],
+    concerns: tuple[str, ...],
 ) -> WorkPacket:
     if mode == "c":
         required_context = (
@@ -458,6 +495,7 @@ def _work_packet(
         "Reuse unaffected evidence",
         "Widen only at a real convergence boundary",
     )
+    adversarial_closure_review = _adversarial_closure_review(impact, reversibility, risks, concerns)
     durable_updates = (
         "Update existing authority only for accepted deltas",
         "Record material decisions in the existing decision mechanism",
@@ -509,6 +547,7 @@ def _work_packet(
         invalidation_triggers=invalidation_triggers,
         acceptance_criteria=acceptance_criteria,
         targeted_verification=targeted_verification,
+        adversarial_closure_review=adversarial_closure_review,
         durable_updates=durable_updates,
     )
 
@@ -628,6 +667,19 @@ def build_plan(
     resolved_closure_control = closure_control.strip() or (
         resolved_spine if related is not None or resolved_manual_boundary else ""
     )
+    work_packet = _work_packet(
+        request,
+        resolved_mode,
+        execution_spine,
+        blocker_scope,
+        safe_lane_policy,
+        related,
+        resolved_manual_boundary,
+        impact,
+        reversibility,
+        risks,
+        concerns,
+    )
     return OrchestrationPlan(
         request=request,
         environment=resolved_environment,
@@ -646,24 +698,23 @@ def build_plan(
         authority_graph_policy=_authority_graph_policy(target, related),
         cross_repository_guidance=_cross_repository_guidance(target, related),
         closure_control=resolved_closure_control,
-        work_packet=_work_packet(
-            request,
-            resolved_mode,
-            execution_spine,
-            blocker_scope,
-            safe_lane_policy,
-            related,
-            resolved_manual_boundary,
-        ),
+        work_packet=work_packet,
         execution_handoff=_execution_handoff(resolved_environment, resolved_mode, target, related),
         verification_policy=(
             "Narrow while executing; widen while converging.",
             "Do not claim checks or tools that did not actually run.",
             "Re-verify only invalidated surfaces unless a real convergence boundary requires more.",
+            (
+                "At closure, inspect the actual changed surface. If it materially touches trust/security, persistence, "
+                "idempotency/retry/concurrency, schema/migration, destructive/external-side-effect, or production "
+                "runtime/deployment boundaries, run PROGRAMBUILD's post-implementation adversarial Challenge Gate "
+                "before merge-ready/accepted/complete status."
+            ),
         ),
         completion_rule=(
             "Complete when the bounded outcome has sufficient acceptance evidence, durable authority or state is reconciled "
-            "where needed, and the next executable slice or narrowly scoped blocker is explicit."
+            "where needed, any adversarial closure review required by the actual changed risk surface has cleared, and the "
+            "next executable slice or narrowly scoped blocker is explicit."
         ),
     )
 
@@ -688,6 +739,7 @@ def render_text(plan: OrchestrationPlan) -> str:
         ("invalidation triggers", packet.invalidation_triggers),
         ("acceptance", packet.acceptance_criteria),
         ("targeted verification", packet.targeted_verification),
+        ("adversarial closure review", packet.adversarial_closure_review),
         ("durable updates", packet.durable_updates),
         ("handoff", plan.execution_handoff),
         ("verification policy", plan.verification_policy),

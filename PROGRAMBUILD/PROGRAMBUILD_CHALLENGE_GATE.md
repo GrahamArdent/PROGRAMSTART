@@ -4,9 +4,9 @@
 
 Purpose: Reusable transition/convergence check that catches meaningful drift without turning every boundary into the same eight-part ceremony.
 Owner: Stage Owner (or Solo Operator)
-Last updated: 2026-08-26
+Last updated: 2026-08-28
 Depends on: `PROGRAMBUILD.md`, `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`, `FEASIBILITY.md`, `REQUIREMENTS.md`, `DECISION_LOG.md`
-Authority: Canonical for stage-transition validation, risk-based gate selection, and mid-stage convergence criteria.
+Authority: Canonical for stage-transition validation, risk-based gate selection, post-implementation adversarial closure review, and mid-stage convergence criteria.
 
 ---
 
@@ -28,7 +28,7 @@ No material risk may be omitted merely to save time, but irrelevant sections sho
 
 `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` owns adaptive **decision-time** routing: whether a material decision can execute now, needs focused checks, or needs targeted/deep evidence before it should proceed.
 
-This file owns **stage-transition and convergence** controls. The adaptive router does not replace a Challenge Gate where the lifecycle requires one, and a router result does not create a stage transition or convergence event by itself.
+This file owns **stage-transition, post-implementation closure, and convergence** controls. The adaptive router does not replace a Challenge Gate where the lifecycle or actual changed surface requires one, and a router result does not create a stage transition or convergence event by itself.
 
 Reuse the same evidence instead of duplicating analysis. Typical correspondence is:
 
@@ -61,6 +61,21 @@ During Stage 7, also run a convergence review when the current narrow execution 
 - the next slice has materially wider blast radius;
 - the operator/agent can no longer answer quickly what is authoritative and what evidence remains valid.
 
+### 2.1 Post-Implementation Adversarial Closure Trigger
+
+Before a completed work packet, implementation PR, or equivalent code/config change is declared **ready to merge**, **accepted**, or **complete**, run a focused post-implementation Challenge Gate when the **actual changed surface** materially affects one or more of:
+
+- authentication, authorization, permissions, secrets, trust boundaries, security, compliance, or sensitive data;
+- persistence, transactionality, delivery semantics, idempotency, retries, concurrency, ordering, or durable state;
+- schema or migration behavior;
+- destructive operations, payments, or consequential external side effects;
+- production runtime, deployment, infrastructure, provider, or availability boundaries;
+- another high-impact or hard-to-reverse invariant where a subtle implementation defect could survive ordinary happy-path tests.
+
+This is a **risk-triggered use of the existing Challenge Gate**, not a new lifecycle stage, document, agent, or mandatory ceremony for every PR.
+
+The trigger is based on what the implementation actually changed, not merely what the work packet expected to change. A supposedly low-risk packet that reveals a material trust/persistence/side-effect boundary during implementation must activate the review before closure.
+
 A team MAY configure time/slice reminders, but elapsed time or a fixed feature count is never proof that convergence is required.
 
 ---
@@ -83,9 +98,9 @@ Add stage/risk-relevant parts:
 |---|---|
 | B — Assumptions / evidence | prior assumptions/evidence materially support the next decision, or an invalidation trigger may have occurred |
 | D — Skipped work | anything was deferred, partial, blocked, TODO, or intentionally omitted |
-| E — Blast radius / verification | architecture, contracts, implementation, config, schema, environment, integration, or release behavior changed or is about to change materially |
+| E — Blast radius / verification | architecture, contracts, implementation, config, schema, environment, integration, or release behavior changed or is about to change materially; **required for a triggered post-implementation adversarial closure review** |
 | G — Dependency / KB health | Stage 4+ when a dependency/vendor/platform/research fact is material to the decision |
-| H — Architecture / requirements / implementation alignment | Stage 6+, and earlier whenever implementation already exists or a contract/auth/schema change is being evaluated |
+| H — Architecture / requirements / implementation alignment | Stage 6+, and earlier whenever implementation already exists or a contract/auth/schema change is being evaluated; **required when the triggered closure review concerns trust/contract/schema/behavior alignment** |
 
 **Full A–H Product convergence is required** when the boundary itself justifies a whole-system view, especially:
 
@@ -94,6 +109,8 @@ Add stage/risk-relevant parts:
 - major architecture/scope/decision reset;
 - evidence invalidation crosses several control surfaces;
 - the selected parts reveal uncertainty whose blast radius cannot be bounded safely.
+
+A post-implementation adversarial closure review does **not** automatically require full A–H. Select the minimum gate parts that cover the changed risk surface; Part E is the normal owner, with H and other parts added only when relevant.
 
 ### Enterprise
 
@@ -171,6 +188,40 @@ Ask:
 
 Do not use “run everything” instead of impact reasoning. Do not use narrow tests instead of a required convergence gate.
 
+### Post-Implementation Adversarial Closure Review
+
+When the trigger in §2.1 applies, Part E must challenge the **completed implementation**, not just confirm the intended design or rerun the tests the builder already chose.
+
+Use this rule:
+
+> **Assume the implementation may contain a hidden defect despite green current tests. Construct at least one realistic failure sequence against an important invariant on the changed risk surface.**
+
+Select only the lenses relevant to the actual change. Common lenses are:
+
+- **ordering** — what if operations complete in a different order than the happy path assumes?
+- **partial failure** — what if a later step fails after earlier state has already changed?
+- **retry / idempotency** — what if the same legitimate operation or provider delivery occurs twice?
+- **concurrency** — what if two valid executions overlap?
+- **restart / state loss** — what if the process, worker, device, or container dies at the worst boundary?
+- **dependency/provider failure** — what if the database, API, queue, storage layer, or provider fails halfway through?
+- **trust boundary** — can unauthenticated, unauthorized, replayed, malformed, stale, or cross-tenant input reach a privileged path?
+- **rollback / recovery** — after failure, can the system retry/recover without corrupting or losing required state?
+- **false success** — can the system report success before the required durable/observable outcome exists?
+- **false suppression** — can unfinished or failed work be mistaken for already-completed work and suppressed?
+
+The reviewer should prefer the smallest counterexample set that covers the material invariants. One strong realistic sequence is better than ten generic hypotheticals.
+
+If a counterexample exposes a plausible invariant violation:
+
+1. do not declare the packet/PR merge-ready or complete;
+2. add the smallest targeted regression test or equivalent proof that reproduces/protects the failure mode when practical;
+3. correct the implementation or explicitly block/reshape the slice if the issue cannot be bounded safely;
+4. rerun the affected verification and the adversarial closure review against the corrected state.
+
+If no material counterexample survives current evidence, record the challenged invariant/failure sequence and the proof that cleared it. Do not claim “adversarial review passed” merely because existing CI was green.
+
+A separate model/agent/reviewer MAY improve independence when available, but PROGRAMBUILD does not require a new reviewer role or tool. The required property is a fresh opposition framing against the actual completed implementation.
+
 ---
 
 ## Part F — Decision Reversal Check
@@ -239,10 +290,12 @@ Record one machine-verifiable transition result, not eight pages of duplicated p
 Preferred:
 
 ```bash
-programstart advance --system programbuild --gate-result <clear|warning|blocked> --gate-notes "parts=<A,C,F,...>; ..."
+programstart advance --system programbuild --gate-result <clear|warning|blocked> --gate-notes "parts=<A,C,F,...>; adversarial=<not-triggered|clear|warning|blocked>; ..."
 ```
 
 Compatible fallback: add a row to the Challenge Gate Log, then run `programstart advance --system programbuild`.
+
+For a triggered post-implementation adversarial closure review that does not advance a lifecycle stage, retain the smallest useful result in the PR/work packet/owning project evidence surface: trigger reason, challenged invariant/failure sequence, result, and targeted proof/fix if any.
 
 ### Challenge Gate Log
 
@@ -258,7 +311,7 @@ Status codes:
 
 `programstart advance` treats missing required gate evidence and blocking results as failures unless `--skip-gate-check` is explicitly used. Any bypass is exceptional recovery and MUST be explained in `DECISION_LOG.md`.
 
-A mid-implementation convergence review does not advance workflow state. Record only durable findings/evidence in the appropriate canonical owner, decision log, issue/task, or persisted packet when one is justified.
+A mid-implementation or post-implementation convergence review does not advance workflow state by itself. Record only durable findings/evidence in the appropriate canonical owner, decision log, issue/task/PR, or persisted packet when one is justified.
 
 ---
 
@@ -293,31 +346,41 @@ Do not reread every historic file or rerun every historic test merely because ti
 # Prompt Template
 
 ```text
-Run the PROGRAMBUILD Challenge Gate for the current transition/convergence point.
+Run the PROGRAMBUILD Challenge Gate for the current transition/convergence/closure point.
 
 First identify:
 - strategic execution spine + current stage
 - what changed since the last trusted convergence point
 - current logical/persisted work packet if any
 - reusable evidence + invalidation triggers
+- the actual completed implementation/config/runtime surface when closure or merge-readiness is being evaluated
 
 Select gate parts using PROGRAMBUILD_CHALLENGE_GATE.md:
 - Lite/Product baseline: A, C, F
 - add B/D/E/G/H only when stage/risk makes them relevant
 - Product: use full A–H for release readiness or other whole-system convergence
 - Enterprise: full A–H with appropriate retained evidence/sign-off
+- if §2.1 is triggered, run Part E's post-implementation adversarial closure review and add H/other parts only when the changed risk surface requires them
+
+For a triggered adversarial closure review:
+- do not merely confirm the intended design or rerun existing happy-path tests
+- assume a hidden defect may remain
+- construct at least one realistic failure sequence against a material invariant using only relevant lenses such as ordering, partial failure, retry/idempotency, concurrency, restart, provider failure, trust boundary, recovery, false success, or false suppression
+- if a plausible invariant violation appears, add targeted proof/test + fix and re-review before merge-ready/complete status
 
 Reuse current adaptive-router/research evidence when it remains valid. Do not rerun analysis solely because this is a transition.
 Challenge vague answers. Do not fill irrelevant sections as ceremony.
 
 Return:
 - parts run and why
+- adversarial closure: not-triggered / clear / warning / blocked
+- challenged invariant/failure sequence when triggered
 - clear / warning / blocked
 - exact blockers/conditions
 - evidence reused
 - evidence invalidated + narrow re-verification required
 - canonical reconciliation required
-- whether stage advance is permitted
+- whether stage advance / merge-ready / closure is permitted
 ```
 
 ---
@@ -331,6 +394,8 @@ Return:
 | Saying “no scope change” reflexively | compare against current requirements/spine |
 | Running every test at every gate | identify invalidation, then run targeted + required convergence checks |
 | Keeping verification too narrow at release | widen at release/whole-system convergence |
+| Declaring a high-risk implementation merge-ready because intended behavior and current CI are green | challenge the actual completed implementation with at least one relevant counterexample/failure sequence before closure |
+| Turning adversarial review into a mandatory generic checklist for every PR | trigger it from actual risk/blast radius and use only the lenses that can matter |
 | Treating a work packet as a mini-master-plan | derive it from the spine and close/reconcile it |
 | Treating newer research as authority | adopt useful deltas through canonical process |
 | Re-entry by rereading/retesting everything | revalidate plausible invalidation only |
@@ -341,4 +406,4 @@ Return:
 
 ## Operating Principle
 
-**Rigor means knowing what is authoritative, what changed, what evidence remains valid, and what must be proven now. Rigor is not the number of boxes filled.**
+**Rigor means knowing what is authoritative, what changed, what evidence remains valid, what could still fail despite current proof, and what must be proven now. Rigor is not the number of boxes filled.**

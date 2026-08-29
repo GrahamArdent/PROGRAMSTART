@@ -132,7 +132,7 @@ def test_trivial_work_omits_checklist_bookkeeping() -> None:
 def test_agent_orchestration_handles_natural_language_without_new_cli_state_machine() -> None:
     prompt = _read(ORCHESTRATION_PROMPT)
 
-    assert 'version: "2.8"' in prompt
+    assert 'version: "2.9"' in prompt
     assert (
         "is a valid orchestration input when the prior concrete recommendation is available"
         in prompt

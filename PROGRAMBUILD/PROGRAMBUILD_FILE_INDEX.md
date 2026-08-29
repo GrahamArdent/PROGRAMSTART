@@ -13,8 +13,8 @@ A PROGRAMBUILD critical control file missing from this index is not recognized. 
 |---|---|---|---|---|
 | `PROGRAMBUILD_CANONICAL.md` | control | active | authority map and naming rules | document authority |
 | `PROGRAMBUILD_FILE_INDEX.md` | control | active | inventory of critical files | file inventory |
-| `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` | control | active | separates reusable methodology, project authority, active work, JIT context, blocker scope/safe-lane reasoning, adaptive decision/evidence routing, external-resource evidence continuity, and evidence reuse | planning-to-execution operating model |
-| `PROGRAMBUILD_WORK_PACKET.md` | template/protocol | active | compact logical work-packet semantics, blocker/safe-lane fields, coordinated Mode-C lane selection, task-scoped cross-repository dependency/authority evidence, operator/manual-gate handoff semantics, plus optional persisted format | logical work-packet semantics |
+| `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` | control | active | separates reusable methodology, project authority, active work, JIT context, blocker scope/safe-lane reasoning, adaptive decision/evidence routing, accepted-recommendation resolution, checklist activation, external-resource evidence continuity, and evidence reuse | planning-to-execution operating model |
+| `PROGRAMBUILD_WORK_PACKET.md` | template/protocol | active | compact logical work-packet semantics, accepted-recommendation disposition/gate evidence, checklist completeness/closure, blocker/safe-lane fields, coordinated Mode-C lane selection, task-scoped cross-repository dependency/authority evidence, operator/manual-gate handoff semantics, plus optional persisted format | logical work-packet semantics |
 | `PROGRAMBUILD_ADR_TEMPLATE.md` | template | active | MADR 4.0 format, status lifecycle, decision-log linkage, and supersession hygiene | ADR structure |
 | `PROGRAMBUILD_CHANGELOG.md` | control | active | system-level change history | PROGRAMBUILD change history |
 | `PROGRAMBUILD.md` | playbook | active | balanced default stage deliverables and operating practices | stage deliverables/base workflow |
@@ -23,7 +23,7 @@ A PROGRAMBUILD critical control file missing from this index is not recognized. 
 | `PROGRAMBUILD_ENTERPRISE.md` | variant | active | high-consequence/audit-heavy workflow | enterprise execution model |
 | `PROGRAMBUILD_KICKOFF_PACKET.md` | template | active | starter document pack and inputs | kickoff structure |
 | `PROGRAMBUILD_SUBAGENTS.md` | catalog | active | optional specialist roles/prompts | subagent guidance |
-| `PROGRAMBUILD_CHECKLIST.md` | checklist | active | concise execution checklist | execution tracking |
+| `PROGRAMBUILD_CHECKLIST.md` | checklist | active | reusable execution checklist plus derived checklist activation/source/status/closure discipline | execution tracking |
 | `PROGRAMBUILD_IDEA_INTAKE.md` | protocol | active | 8-dimension idea/project-delta challenge | idea intake |
 | `PROGRAMBUILD_CHALLENGE_GATE.md` | protocol | active | A–H risk controls plus variant/stage/risk-based gate-part selection | stage/convergence gates |
 | `PROGRAMBUILD_GAMEPLAN.md` | playbook | active | canonical stage sequence and cross-stage validation without duplicating stage detail | execution sequencing |
@@ -63,7 +63,7 @@ The logical work packet normally lives in current task/issue/PR/session state. P
 | File | Type | Purpose |
 |---|---|---|
 | `scripts/programstart_decision.py` | advisory tooling | routes a material decision to the minimum justified evidence/check/research depth; never a separate authority layer |
-| `scripts/programstart_orchestrate.py` | advisory tooling | derives environment/mode/authority/blocker-aware execution contracts, including safe-lane, evidence-continuity, task-scoped cross-repository dependency/authority, and operator/manual-boundary guidance; never a separate authority layer |
+| `scripts/programstart_orchestrate.py` | advisory tooling | derives environment/mode/authority/blocker-aware execution contracts, including safe-lane, evidence-continuity, task-scoped cross-repository dependency/authority, and operator/manual-boundary guidance; free-form recommendation acceptance remains authority-derived in the agent protocol rather than brittle CLI keyword parsing |
 | `docs/PROGRAMSTART_COST_GOVERNANCE.md` | protocol | owns the conditional decision-scoped Cost Envelope for paid/metered/quota-limited dependencies, cost-evidence freshness, cap/reuse/pay-when semantics, and the anti-registry guardrail; subordinate to project budget/architecture authority |
 | `docs/PROGRAMSTART_LEARNING_LOOP.md` | protocol | owns PROGRAMSTART acceptance-learning triggers, observation/rollup semantics, maturity rules, conditional persistence, and future-retest routing |
 | `docs/PROGRAMSTART_ACCEPTANCE_LEARNING_LEDGER.md` | derived rollup | concise lesson maturity/index view; not an activity log or project authority |
@@ -112,6 +112,8 @@ Prompts live in `.github/prompts/`, are registered in the process registry, and 
 - Use ADRs only when durable architecture/policy rationale warrants them under current policy.
 - Filled project outputs never become canonical examples in PROGRAMSTART.
 - A persisted `CURRENT_WORK_PACKET.md` is optional and derived; close/replace it rather than accumulating packet history as a second plan.
+- Accepted-recommendation resolution is derived from the current recommendation plus project authority; it is not a durable recommendation registry, approval state machine, or backlog.
+- An active checklist is derived from current authority/acceptance/risk obligations; it is not scope authority and should be closed/discarded with the packet unless an existing durable checklist already owns the boundary.
 - A task-scoped cross-repository dependency graph is derived evidence, not a control file or project execution spine.
 - An operator/manual-gate handoff is derived execution context, not a credential store, project authority, or independent lifecycle.
 - A coordinated Mode-C lane view is derived execution context under one project spine, not a backlog, scheduler, or second sequencing authority.

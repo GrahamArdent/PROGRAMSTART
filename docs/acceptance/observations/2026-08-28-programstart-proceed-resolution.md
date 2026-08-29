@@ -35,9 +35,12 @@ The same session exposed a related completeness concern. PROGRAMSTART already ha
   - orchestration prompt v2.8 handles natural-language generic acceptance from current context while deliberately avoiding a new CLI command/state machine or brittle keyword parser.
   - execution and real-world acceptance checklists now define active derived checklist semantics and closure reconciliation.
   - focused static-contract tests cover ordinary execution, authority delta, future deferral, stronger gate preservation, disproved recommendation, Mode-C preservation, checklist completeness, checklist anti-bloat, and no new CLI state machine.
+  - self-hosting adversarial review caught an anti-bloat defect in the first implementation: recommendation/checklist fields had been added to every compact packet as required `none/not_needed` paperwork. The final Work Packet/prompt make both surfaces conditional and omit them entirely when irrelevant.
+  - checklist/diff reconciliation also caught accidental edits to historical `PROGRAMBUILD_CHANGELOG.md` lines introduced while prepending the new entry; those unrelated history changes were removed before closure review.
 - verification actually performed:
   - live `main` inspection of canonical authority, Planning Operating Model, Work Packet, Challenge Gate, execution checklist, checklist progress helper/tests, real-world acceptance checklist, Learning Loop, learning ledger, orchestration prompt, orchestration implementation, orchestration tests, bootstrap propagation, and recent merged PRs #63/#64;
-  - connected-tool branch/PR review and focused regression-test code inspection.
+  - connected-tool branch/PR review, per-file patch review, sync-rule/propagation review, mergeability/status review, and focused regression-test code inspection;
+  - explicit adversarial review of over-authorization, Master churn, shadow backlog, gate bypass, contradicted recommendations, checklist scope creep, checklist-as-second-Master, and low-risk ceremony.
 - checks not performed / unavailable:
   - no local PROGRAMSTART CLI, pytest, Ruff, Pyright, nox, or manual convergence workflow run is claimed from this connected-tools environment unless later PR evidence explicitly records such a run.
 
@@ -69,6 +72,8 @@ Implemented smaller model:
 A stronger consequential approval/manual/security/cost/privacy/legal/release requirement is an **independent gate overlay**, not a fourth peer disposition. Generic acceptance can approve the recommendation direction while leaving a genuinely additional gate unsatisfied.
 
 Checklist behavior extends existing Work Packet/checklist closure rather than creating a new checklist registry or execution spine. A separate checklist PSL was not created because current evidence supports checklist discipline as part of this acceptance-to-closure gap; future independent evidence can split it only if warranted.
+
+The adversarial pass further narrowed the implementation: recommendation-resolution and checklist fields are conditional rather than mandatory packet fields. This preserves the existing proportional-rigor rule for trivial work.
 
 ## Retest
 

@@ -107,20 +107,26 @@ def test_active_checklist_requires_every_applicable_item_to_be_reconciled() -> N
     )
 
 
-def test_trivial_work_does_not_require_large_persistent_checklist() -> None:
+def test_trivial_work_omits_checklist_bookkeeping() -> None:
     planning = _read(PLANNING)
     packet = _read(WORK_PACKET)
     checklist = _read(CHECKLIST)
+    prompt = _read(ORCHESTRATION_PROMPT)
 
     assert (
         "Do not create a large checklist artifact for trivial low-risk single-step work"
         in planning
     )
-    assert "`COMPLETENESS_CHECKLIST` is `not_needed` for trivial work" in packet
+    assert (
+        "When checklist completeness is not active, omit the checklist fields entirely rather than recording `not_needed`"
+        in packet
+    )
     assert (
         "Do not create a large persisted checklist for a trivial, low-risk, single-step change"
         in checklist
     )
+    assert "COMPLETENESS_CHECKLIST: [inline | referenced]" in prompt
+    assert "COMPLETENESS_CHECKLIST: [not_needed | inline | referenced]" not in prompt
 
 
 def test_agent_orchestration_handles_natural_language_without_new_cli_state_machine() -> None:

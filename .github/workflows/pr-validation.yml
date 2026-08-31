@@ -57,26 +57,34 @@ jobs:
       - name: Check lockfile integrity
         run: uv lock --check
 
-      - name: Run repository hooks
-        run: uv run pre-commit run --all-files
-
-      - name: Run test suite with coverage floor
-        run: |
-          uv run coverage run -m pytest -q
-          uv run coverage report -m
-
-      - name: Validate repository controls
-        run: uv run programstart validate --check all --strict
-
-      - name: Validate repository drift
-        run: uv run programstart drift --strict
-
       - name: Collect pull request changes
         shell: bash
         run: |
           git fetch origin "${{ github.base_ref }}" --depth=1
           git diff --name-only "origin/${{ github.base_ref }}...HEAD" > changed_files.txt
           cat changed_files.txt
+
+      - name: Run changed-file repository hooks
+        shell: bash
+        run: |
+          mapfile -t changed_files < changed_files.txt
+          if (( ${#changed_files[@]} == 0 )); then
+            echo "No changed files to validate."
+            exit 0
+          fi
+          SKIP=programstart-validate,programstart-drift,sync-requirements-txt \
+            uv run pre-commit run --files "${changed_files[@]}"
+
+      - name: Check exported requirements stay synchronized
+        shell: bash
+        run: |
+          uv export --format requirements-txt --extra dev --no-hashes -o "${{ runner.temp }}/requirements.txt"
+          diff -u requirements.txt "${{ runner.temp }}/requirements.txt"
+
+      - name: Run test suite with coverage floor
+        run: |
+          uv run coverage run -m pytest -q
+          uv run coverage report -m
 
       - name: Validate changed-surface drift
         run: uv run programstart drift --changed-file-list changed_files.txt

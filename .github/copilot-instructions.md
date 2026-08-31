@@ -29,6 +29,19 @@ Do not read the documentation tree up front.
 - Staleness is never urgency. Paused/parked work must not rise in priority merely because time passed.
 - Portfolio state can never close a project milestone, approve a release, change project scope, or override newer repository/runtime/provider truth.
 
+## External Change Maintenance
+
+`docs/PROGRAMSTART_EXTERNAL_CHANGE_MAINTENANCE.md` defines the bounded maintenance response when a verified provider/tool/platform/model/API/runtime/plan change may invalidate PROGRAMSTART or a managed project's current assumptions.
+
+- Do not terminate at notification when the correct response is safely deterministic. Classify the verified change as `no_effect`, `evidence_refresh`, `deterministic_maintenance`, `bounded_behavioral_maintenance`, `material_decision`, or `automation_failed`.
+- Use official/current evidence plus live repository/project authority before claiming impact. External news is evidence, not architecture or project authority.
+- For authorized `deterministic_maintenance`, prepare the smallest focused branch/PR and run the smallest sufficient truthful validation without asking the operator to relay routine maintenance steps.
+- Auto-merge is a stronger trust level than automatic PR creation. It is allowed only when target-repository policy explicitly permits the playbook and required enforced validation is actually green; otherwise remain PR-only.
+- Architecture, security/privacy/legal, billing/spending, migrations/data, destructive actions, release authority, project scope/sequencing, secrets, and other hard-to-reverse decisions retain their stronger project/operator gates.
+- If multiple projects are affected, route each through its own current authority/Mode-C delta and repository PR boundary. Never turn one provider change into an implicit portfolio-wide mutation transaction.
+- Watchtower may supply authenticated/deduplicated incident evidence and may later execute policy-scoped maintenance when Watchtower's own authority permits it; observe-only Watchtower deployments remain sensor/evidence sources only.
+- Successful routine maintenance should be quiet or digestible. Notify the operator when a decision/action is required, evidence is ambiguous, cost/security exposure changes, validation fails, or automation cannot safely continue.
+
 ## Authority Rules
 
 - Preserve one strategic execution spine per real project.

@@ -69,6 +69,7 @@ A portfolio-wide `IDEA_LEDGER.md` instance belongs in the operator's planning wo
 | `scripts/programstart_decision.py` | advisory tooling | routes a material decision to the minimum justified evidence/check/research depth; never a separate authority layer |
 | `scripts/programstart_orchestrate.py` | advisory tooling | derives environment/mode/authority/blocker-aware execution contracts, including safe-lane, evidence-continuity, task-scoped cross-repository dependency/authority, and operator/manual-boundary guidance; free-form recommendation acceptance remains authority-derived in the agent protocol rather than brittle CLI keyword parsing |
 | `docs/PROGRAMSTART_COST_GOVERNANCE.md` | protocol | owns the conditional decision-scoped Cost Envelope for paid/metered/quota-limited dependencies, cost-evidence freshness, cap/reuse/pay-when semantics, and the anti-registry guardrail; subordinate to project budget/architecture authority |
+| `docs/PROGRAMSTART_EXTERNAL_CHANGE_MAINTENANCE.md` | operational protocol | classifies verified external ecosystem changes and routes them to no-op/evidence refresh/deterministic or bounded maintenance/material decision/failure behavior, including PR-vs-auto-merge gates and the optional Watchtower sensor/execution-plane boundary; subordinate to project authority and existing Cost/Challenge/Learning controls |
 | `docs/PROGRAMSTART_LEARNING_LOOP.md` | protocol | owns PROGRAMSTART acceptance-learning triggers, observation/rollup semantics, maturity rules, conditional persistence, and future-retest routing |
 | `docs/PROGRAMSTART_ACCEPTANCE_LEARNING_LEDGER.md` | derived rollup | concise lesson maturity/index view; not an activity log or project authority |
 | `docs/PROGRAMSTART_REAL_WORLD_ACCEPTANCE_CHECKLIST.md` | checklist | real-project acceptance and Learning Gate closure checklist |
@@ -126,10 +127,11 @@ Prompts live in `.github/prompts/`, are registered in the process registry, and 
 - An operator/manual-gate handoff is derived execution context, not a credential store, project authority, or independent lifecycle.
 - A coordinated Mode-C lane view is derived execution context under one project spine, not a backlog, scheduler, or second sequencing authority.
 - A decision-scoped Cost Envelope is derived execution/decision evidence, not a purchasing authority, vendor-price registry, portfolio budget, or second execution spine.
+- An external-change maintenance classification/event is derived operational evidence; it may trigger a bounded project-specific maintenance PR but never becomes architecture, budget, release, portfolio, or project authority by itself.
 - A portfolio-attention view is derived operator routing context; live filled state belongs outside PROGRAMSTART and cannot override any project's execution authority.
 - A learning observation is derived methodology evidence; the learning ledger is a maturity rollup, not an activity log or roadmap.
 - Tooling/support files may appear here for operator discoverability without becoming product-project authority.
 
 ---
 
-Last updated: 2026-08-29
+Last updated: 2026-08-31

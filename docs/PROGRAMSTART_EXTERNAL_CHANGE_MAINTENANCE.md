@@ -221,6 +221,21 @@ If the repository lacks an explicit auto-merge policy or an enforceable required
 
 Do not weaken branch protection, validation, or repository policy merely to make external maintenance more automatic.
 
+### PROGRAMSTART repository policy — deterministic external maintenance
+
+For `GrahamArdent/PROGRAMSTART`, `deterministic_maintenance` is explicitly authorized for auto-merge only when **all** Section 7 conditions are satisfied and GitHub live state proves that `main` is protected by the enforced `Required PR Gate`, strict/up-to-date status checking is active, and repository auto-merge capability remains enabled.
+
+This permission is intentionally narrow:
+
+- `bounded_behavioral_maintenance` remains **PR-only** unless a later evidence-backed playbook explicitly earns auto-merge authority;
+- architecture, security/privacy/legal, billing/spending, secrets, migration/data, destructive, release, project-authority/scope/sequencing, ambiguous/conflicting-evidence, or similarly consequential changes are never covered by this deterministic auto-merge permission;
+- a maintenance PR that introduces a new test failure, fails changed-surface hooks/drift/docs validation, expands beyond predicted scope, or cannot prove the applicable gate is green must not auto-merge;
+- inherited full-convergence debt does not authorize new debt. The required PR gate's base-relative ratchet may temporarily tolerate only failures already present on the actual protected base; as those failures are repaired, they lose that tolerance automatically;
+- the manual full-convergence surface remains required whenever the changed surface or risk/release boundary earns it; auto-merge permission does not redefine full convergence as unnecessary;
+- any regression, provider guidance reversal, branch-protection drift, required-check drift, auto-merge capability loss, or failure of a trusted maintenance playbook immediately downgrades the affected class to **PR-only** until revalidated.
+
+Repository auto-merge capability is only an execution mechanism. This policy is the repository authorization layer, and the classification/evidence/gate checks above remain mandatory for every candidate PR.
+
 ---
 
 ## 8. Operator Notification Policy

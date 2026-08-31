@@ -84,19 +84,23 @@ def test_programstart_has_a_stable_automatic_required_pr_gate() -> None:
     assert "pull_request:" in text
     assert "name: Required PR Gate" in text
     assert "uv lock --check" in text
-    assert "pre-commit run --all-files" in text
+    assert "git diff --name-only" in text
+    assert "uv run pre-commit run --files" in text
+    assert "SKIP=programstart-validate,programstart-drift,sync-requirements-txt" in text
+    assert "uv export --format requirements-txt" in text
     assert "coverage run -m pytest -q" in text
     assert "coverage report -m" in text
-    assert "programstart validate --check all --strict" in text
-    assert "programstart drift --strict" in text
     assert "programstart drift --changed-file-list changed_files.txt" in text
     assert "mkdocs build --strict" in text
 
 
-def test_required_pr_gate_stays_cheaper_than_full_convergence() -> None:
+def test_required_pr_gate_is_a_no_new_debt_gate_not_full_convergence() -> None:
     pr_gate = _read(PR_VALIDATION).lower()
     full_gate = _read(MANUAL_CONVERGENCE)
 
+    assert "pre-commit run --all-files" not in pr_gate
+    assert "programstart validate --check all --strict" not in pr_gate
+    assert "programstart drift --strict" not in pr_gate
     assert "playwright" not in pr_gate
     assert "nox -s ci" not in pr_gate
     assert "workflow_dispatch:" in full_gate

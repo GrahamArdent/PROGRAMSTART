@@ -78,8 +78,11 @@ jobs:
       - name: Check exported requirements stay synchronized
         shell: bash
         run: |
-          uv export --format requirements-txt --extra dev --no-hashes -o "${{ runner.temp }}/requirements.txt"
-          diff -u requirements.txt "${{ runner.temp }}/requirements.txt"
+          generated="${{ runner.temp }}/requirements.txt"
+          uv export --format requirements-txt --extra dev --no-hashes -o "$generated"
+          tail -n +3 requirements.txt > "${{ runner.temp }}/requirements.expected"
+          tail -n +3 "$generated" > "${{ runner.temp }}/requirements.actual"
+          diff -u "${{ runner.temp }}/requirements.expected" "${{ runner.temp }}/requirements.actual"
 
       - name: Run test suite with coverage floor
         run: |

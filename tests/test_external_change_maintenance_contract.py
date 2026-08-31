@@ -94,6 +94,17 @@ def test_programstart_has_a_stable_automatic_required_pr_gate() -> None:
     assert "mkdocs build --strict" in text
 
 
+def test_required_pr_gate_ratchets_tests_against_the_actual_base() -> None:
+    text = _read(PR_VALIDATION)
+
+    assert "git worktree add --detach" in text
+    assert "base-tests.xml" in text
+    assert "head-tests.xml" in text
+    assert "failed_tests" in text
+    assert "head - base" in text
+    assert "this PR introduces no new test failures relative to its base" in text
+
+
 def test_required_pr_gate_is_a_no_new_debt_gate_not_full_convergence() -> None:
     pr_gate = _read(PR_VALIDATION).lower()
     full_gate = _read(MANUAL_CONVERGENCE)
@@ -101,7 +112,7 @@ def test_required_pr_gate_is_a_no_new_debt_gate_not_full_convergence() -> None:
     assert "pre-commit run --all-files" not in pr_gate
     assert "programstart validate --check all --strict" not in pr_gate
     assert "programstart drift --strict" not in pr_gate
-    assert "playwright" not in pr_gate
+    assert "playwright install" not in pr_gate
     assert "nox -s ci" not in pr_gate
     assert "workflow_dispatch:" in full_gate
     assert "uv run nox -s ci" in full_gate

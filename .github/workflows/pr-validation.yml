@@ -1,0 +1,165 @@
+name: PR Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-validation-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  UV_CACHE_DIR: .cache/uv
+  PRE_COMMIT_HOME: .cache/pre-commit
+
+jobs:
+  required-pr-gate:
+    name: Required PR Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6
+        with:
+          python-version: '3.12'
+
+      - name: Install uv
+        run: python -m pip install uv
+
+      - name: Cache uv packages
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7  # v5
+        with:
+          path: ${{ env.UV_CACHE_DIR }}
+          key: uv-pr-validation-${{ runner.os }}-${{ hashFiles('uv.lock') }}
+          restore-keys: uv-pr-validation-${{ runner.os }}-
+
+      - name: Cache pre-commit hooks
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7  # v5
+        with:
+          path: ${{ env.PRE_COMMIT_HOME }}
+          key: pre-commit-pr-validation-${{ runner.os }}-${{ hashFiles('.pre-commit-config.yaml') }}
+          restore-keys: pre-commit-pr-validation-${{ runner.os }}-
+
+      - name: Sync development environment
+        run: uv sync --extra dev
+
+      - name: Check lockfile integrity
+        run: uv lock --check
+
+      - name: Collect pull request changes
+        shell: bash
+        run: |
+          git fetch origin "${{ github.base_ref }}" --depth=1
+          git diff --name-only "origin/${{ github.base_ref }}...HEAD" > changed_files.txt
+          cat changed_files.txt
+
+      - name: Run changed-file repository hooks
+        shell: bash
+        run: |
+          mapfile -t changed_files < changed_files.txt
+          if (( ${#changed_files[@]} == 0 )); then
+            echo "No changed files to validate."
+            exit 0
+          fi
+          SKIP=programstart-validate,programstart-drift,sync-requirements-txt \
+            uv run pre-commit run --files "${changed_files[@]}"
+
+      - name: Check exported requirements stay synchronized
+        shell: bash
+        run: |
+          generated="${{ runner.temp }}/requirements.txt"
+          uv export --format requirements-txt --extra dev --no-hashes -o "$generated"
+          tail -n +3 requirements.txt > "${{ runner.temp }}/requirements.expected"
+          tail -n +3 "$generated" > "${{ runner.temp }}/requirements.actual"
+          diff -u "${{ runner.temp }}/requirements.expected" "${{ runner.temp }}/requirements.actual"
+
+      - name: Establish base test failure set
+        shell: bash
+        run: |
+          base_dir="${{ runner.temp }}/programstart-base"
+          git worktree add --detach "$base_dir" "origin/${{ github.base_ref }}"
+          (
+            cd "$base_dir"
+            uv sync --extra dev
+            set +e
+            uv run pytest -q --junitxml="${{ runner.temp }}/base-tests.xml"
+            status=$?
+            set -e
+            if (( status > 1 )); then
+              echo "Base test run could not complete cleanly (pytest exit $status)."
+              exit "$status"
+            fi
+            echo "$status" > "${{ runner.temp }}/base-pytest-status"
+          )
+
+      - name: Run head tests and reject new failures
+        shell: bash
+        run: |
+          set +e
+          uv run coverage run -m pytest -q --junitxml="${{ runner.temp }}/head-tests.xml"
+          head_status=$?
+          set -e
+          if (( head_status > 1 )); then
+            echo "Head test run could not complete cleanly (pytest exit $head_status)."
+            exit "$head_status"
+          fi
+
+          uv run coverage report -m
+
+          python - <<'PY'
+          import os
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+
+          root = Path(os.environ["RUNNER_TEMP"])
+
+          def failed_tests(path: Path) -> set[str]:
+              tree = ET.parse(path)
+              failed: set[str] = set()
+              for case in tree.getroot().iter("testcase"):
+                  if case.find("failure") is None and case.find("error") is None:
+                      continue
+                  classname = case.attrib.get("classname", "")
+                  name = case.attrib.get("name", "")
+                  failed.add(f"{classname}::{name}")
+              return failed
+
+          base = failed_tests(root / "base-tests.xml")
+          head = failed_tests(root / "head-tests.xml")
+          introduced = sorted(head - base)
+          resolved = sorted(base - head)
+
+          print(f"Base failing tests: {len(base)}")
+          print(f"Head failing tests: {len(head)}")
+          if resolved:
+              print(f"Resolved inherited failures: {len(resolved)}")
+              for test in resolved:
+                  print(f"  FIXED {test}")
+          if introduced:
+              print(f"New failing tests introduced by this PR: {len(introduced)}")
+              for test in introduced:
+                  print(f"  NEW {test}")
+              raise SystemExit(1)
+
+          print("PASS: this PR introduces no new test failures relative to its base.")
+          PY
+
+      - name: Restore tracked files after tests
+        run: git reset --hard HEAD
+
+      - name: Validate changed-surface drift
+        run: uv run programstart drift --changed-file-list changed_files.txt
+
+      - name: Build documentation strictly
+        run: uv run mkdocs build --strict

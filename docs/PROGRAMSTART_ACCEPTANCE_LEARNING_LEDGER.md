@@ -47,7 +47,7 @@ Lesson IDs are stable organizational references, not priority or roadmap numbers
 | `PSL-005` | A narrow Mode-C blocker must keep truthful closure control while safe independent work remains discoverable; provider history and current visibility are separate facts | **validated** | blocker scope / safe-lane / evidence continuity | GCRM → PROGRAMSTART PR #55 and later R4 work | another provider/manual blocker with safe preparation outside the blocked dependency |
 | `PSL-006` | Cross-repository dependencies need a task-scoped authority graph with partial satisfaction, evidence reuse/invalidation, and independent project spines | **validated** | Work Packet + orchestration | Dedication ↔ Calendar Bridge → PROGRAMSTART PR #56 | another companion integration where repository/runtime/provider planes disagree |
 | `PSL-007` | Operator/manual gates need a secret-safe exact action/evidence/resume contract and must distinguish action completion from system acceptance | **validated** | Work Packet + orchestration | PROGRAMSTART PR #57 → Execution Node EN-01 operator/admin install → returned GitHub/runtime evidence → correction/reverification → resumed closure; `docs/acceptance/observations/2026-08-31-execution-node-operator-gate-retest.md` | future operator/manual gate where returned evidence contradicts prior assumptions or tempts broad reorientation instead of declared-point resumption |
-| `PSL-008` | Multiple legitimate current Mode-C work streams can coexist under one spine, but one invocation selects one packet and closure control stays truthful | **validated** | Work Packet + orchestration | GCRM R4 + PROGRAMSTART PR #59; `docs/acceptance/observations/2026-08-27-gcrm-concurrent-mode-c-lanes.md` | another mature project where sibling lanes share a real mutable/conflict surface |
+| `PSL-008` | Multiple legitimate current Mode-C work streams can coexist under one spine, but one invocation selects one packet; when sibling lanes share one consequential mutable external/runtime/provider/device/deployment resource, exactly one explicit mutation owner must serialize that resource across invocations while proven non-mutating sibling work may continue; closure control stays truthful | **implemented** | Work Packet + orchestration | GCRM R4 + PROGRAMSTART PR #59; Execution Node Stage 4 repeated installed-release provenance collisions and exact-SHA recovery; `docs/acceptance/observations/2026-08-31-execution-node-shared-mutation-ownership.md` | another Mode-C project with sibling lanes sharing one consequential mutable provider/runtime/device/deployment resource: prove the second lane honors the active owner or performs explicit release/transfer without stale-runtime collision or unnecessary deadlock |
 | `PSL-009` | Verification evidence may need source/type distinctions so repository CI, hosted runtime, provider, physical device, and human acceptance are not collapsed into one generic green state | **observe** | verification policy — smallest owner not yet earned | Dedication Android physical acceptance vs emulator/CI + Execution Node repository/CI vs installed runtime/physical host; `docs/acceptance/observations/2026-08-31-execution-node-operator-gate-retest.md` | another project where current Work Packet/operator-gate semantics fail to preserve source-specific claims or create repeated material overhead; only then consider a bounded formal verification-source/type policy |
 | `PSL-010` | High-velocity Mode C must stay lightweight; small safe slices should not trigger broad planning/research ceremony | **observe** | proportional planning / orchestration | LinkedIn Generator narrow PR sequence | another rapid mature-project sequence showing a specific recurring overhead gap |
 | `PSL-011` | Dedicated active/paused/inactive/retired lifecycle machinery is not currently earned; focused Mode-C re-entry + invalidation may be sufficient | **observe / narrowed** | Mode-C re-entry | Resume Creator V6 acceptance → PR #58 | another paused/dormant project where existing primitives either succeed cleanly or expose a concrete missing state |
@@ -64,10 +64,11 @@ Lesson IDs are stable organizational references, not priority or roadmap numbers
 
 This is **not a roadmap**. These are conditions that can be recognized opportunistically when real product work naturally reaches them.
 
-1. `PSL-009` — find another project where current Work Packet/operator-gate semantics fail to keep repository/runtime/provider/device/human evidence claims distinct or create repeated material overhead before adding formal verification-source/type machinery.
-2. `PSL-010` — identify a specific repeated overhead defect in another high-velocity Mode-C project before changing methodology.
-3. `PSL-011` — use another paused/dormant project where existing primitives either succeed cleanly or expose a concrete missing state.
-4. `PSL-019` — use the next verified upstream change with one unambiguous required replacement to prove PROGRAMSTART can detect, verify, map impact, and prepare a focused maintenance PR without operator relay while preserving PR-only behavior until explicit enforced auto-merge policy exists.
+1. `PSL-008` — use another Mode-C project where sibling lanes share one consequential mutable provider/runtime/device/deployment resource; prove an active mutation owner prevents cross-invocation collision without creating unnecessary deadlock or ceremony.
+2. `PSL-009` — find another project where current Work Packet/operator-gate semantics fail to keep repository/runtime/provider/device/human evidence claims distinct or create repeated material overhead before adding formal verification-source/type machinery.
+3. `PSL-010` — identify a specific repeated overhead defect in another high-velocity Mode-C project before changing methodology.
+4. `PSL-011` — use another paused/dormant project where existing primitives either succeed cleanly or expose a concrete missing state.
+5. `PSL-019` — use the next verified upstream change with one unambiguous required replacement to prove PROGRAMSTART can detect, verify, map impact, and prepare a focused maintenance PR without operator relay while preserving PR-only behavior until explicit enforced auto-merge policy exists.
 
 ## Recent methodology changes
 
@@ -88,6 +89,7 @@ This is **not a roadmap**. These are conditions that can be recognized opportuni
 - PR #68 — lightweight durable idea preservation / promotion lifecycle (**PSL-017 now validated by the external Portfolio Operations capture → later trigger-based retrieval → deliberate Dependency Intelligence/automation promotion retest recorded on 2026-08-31**).
 - PR #69 — lightweight external portfolio-attention control (**PSL-018 validated by the external live portfolio refresh/reselection retest recorded on 2026-08-31**).
 - External change maintenance loop — bounded upstream-change classification with automatic safe PR preparation, Watchtower sensor/evidence composition, and an explicit PR-vs-auto-merge trust boundary (**PSL-019 implemented; real autonomous maintenance retest remains open**).
+- PSL-008 shared-mutation ownership strengthening — Work Packet + startup instruction extension from the Execution Node Stage 4 cross-invocation installed-release race (**implemented; next independent real retest open**).
 
 ## Recording rules
 
@@ -103,6 +105,8 @@ This is **not a roadmap**. These are conditions that can be recognized opportuni
 
 ## Historical evidence preservation
 
-The detailed ledger that existed before the Learning Gate organization change is preserved unchanged at `docs/acceptance/PROGRAMSTART_ACCEPTANCE_HISTORY_THROUGH_2026-08-27.md`. It contains the full Calendar/Email/GCRM/Dedication/LinkedIn Generator/Resume Creator/cross-repository/operator-gate/re-entry narratives accumulated before this rollup was compacted.
+The detailed ledger that existed before the Learning Gate organization change is preserved unchanged at:
+
+`docs/acceptance/PROGRAMSTART_ACCEPTANCE_HISTORY_THROUGH_2026-08-27.md`
 
 Do not duplicate that history back into this file. Add new evidence as observations and update only the maturity rollup above.

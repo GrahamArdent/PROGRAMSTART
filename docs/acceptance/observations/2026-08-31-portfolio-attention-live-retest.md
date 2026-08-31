@@ -1,8 +1,8 @@
 # Learning Observation — Portfolio Attention Control Live Retest
 
-**Date:** 2026-08-31  
-**System:** external `GrahamArdent/portfolio-operations` workspace + live multi-repository refresh  
-**Classification:** systemic / validation evidence  
+**Date:** 2026-08-31
+**System:** external `GrahamArdent/portfolio-operations` workspace + live multi-repository refresh
+**Classification:** systemic / validation evidence
 **Existing lesson:** `PSL-018`
 
 ## Trigger

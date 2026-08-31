@@ -84,10 +84,79 @@ jobs:
           tail -n +3 "$generated" > "${{ runner.temp }}/requirements.actual"
           diff -u "${{ runner.temp }}/requirements.expected" "${{ runner.temp }}/requirements.actual"
 
-      - name: Run test suite with coverage floor
+      - name: Establish base test failure set
+        shell: bash
         run: |
-          uv run coverage run -m pytest -q
+          base_dir="${{ runner.temp }}/programstart-base"
+          git worktree add --detach "$base_dir" "origin/${{ github.base_ref }}"
+          (
+            cd "$base_dir"
+            uv sync --extra dev
+            set +e
+            uv run pytest -q --junitxml="${{ runner.temp }}/base-tests.xml"
+            status=$?
+            set -e
+            if (( status > 1 )); then
+              echo "Base test run could not complete cleanly (pytest exit $status)."
+              exit "$status"
+            fi
+            echo "$status" > "${{ runner.temp }}/base-pytest-status"
+          )
+
+      - name: Run head tests and reject new failures
+        shell: bash
+        run: |
+          set +e
+          uv run coverage run -m pytest -q --junitxml="${{ runner.temp }}/head-tests.xml"
+          head_status=$?
+          set -e
+          if (( head_status > 1 )); then
+            echo "Head test run could not complete cleanly (pytest exit $head_status)."
+            exit "$head_status"
+          fi
+
           uv run coverage report -m
+
+          python - <<'PY'
+          import os
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+
+          root = Path(os.environ["RUNNER_TEMP"])
+
+          def failed_tests(path: Path) -> set[str]:
+              tree = ET.parse(path)
+              failed: set[str] = set()
+              for case in tree.getroot().iter("testcase"):
+                  if case.find("failure") is None and case.find("error") is None:
+                      continue
+                  classname = case.attrib.get("classname", "")
+                  name = case.attrib.get("name", "")
+                  failed.add(f"{classname}::{name}")
+              return failed
+
+          base = failed_tests(root / "base-tests.xml")
+          head = failed_tests(root / "head-tests.xml")
+          introduced = sorted(head - base)
+          resolved = sorted(base - head)
+
+          print(f"Base failing tests: {len(base)}")
+          print(f"Head failing tests: {len(head)}")
+          if resolved:
+              print(f"Resolved inherited failures: {len(resolved)}")
+              for test in resolved:
+                  print(f"  FIXED {test}")
+          if introduced:
+              print(f"New failing tests introduced by this PR: {len(introduced)}")
+              for test in introduced:
+                  print(f"  NEW {test}")
+              raise SystemExit(1)
+
+          print("PASS: this PR introduces no new test failures relative to its base.")
+          PY
+
+      - name: Restore tracked files after tests
+        run: git reset --hard HEAD
 
       - name: Validate changed-surface drift
         run: uv run programstart drift --changed-file-list changed_files.txt

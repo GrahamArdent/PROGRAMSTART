@@ -4,6 +4,8 @@ ROOT = Path(__file__).resolve().parents[1]
 PROTOCOL = ROOT / "docs" / "PROGRAMSTART_EXTERNAL_CHANGE_MAINTENANCE.md"
 COPILOT_INSTRUCTIONS = ROOT / ".github" / "copilot-instructions.md"
 FILE_INDEX = ROOT / "PROGRAMBUILD" / "PROGRAMBUILD_FILE_INDEX.md"
+PR_VALIDATION = ROOT / ".github" / "workflows" / "pr-validation.yml"
+MANUAL_CONVERGENCE = ROOT / ".github" / "workflows" / "manual-convergence.yml"
 
 
 def _read(path: Path) -> str:
@@ -73,3 +75,29 @@ def test_file_index_registers_support_protocol_without_project_authority() -> No
     assert "subordinate to project authority" in text
     assert "external-change maintenance classification/event is derived operational evidence" in text
     assert "never becomes architecture, budget, release, portfolio, or project authority by itself" in text
+
+
+def test_programstart_has_a_stable_automatic_required_pr_gate() -> None:
+    text = _read(PR_VALIDATION)
+
+    assert "name: PR Validation" in text
+    assert "pull_request:" in text
+    assert "name: Required PR Gate" in text
+    assert "uv lock --check" in text
+    assert "pre-commit run --all-files" in text
+    assert "coverage run -m pytest -q" in text
+    assert "coverage report -m" in text
+    assert "programstart validate --check all --strict" in text
+    assert "programstart drift --strict" in text
+    assert "programstart drift --changed-file-list changed_files.txt" in text
+    assert "mkdocs build --strict" in text
+
+
+def test_required_pr_gate_stays_cheaper_than_full_convergence() -> None:
+    pr_gate = _read(PR_VALIDATION).lower()
+    full_gate = _read(MANUAL_CONVERGENCE)
+
+    assert "playwright" not in pr_gate
+    assert "nox -s ci" not in pr_gate
+    assert "workflow_dispatch:" in full_gate
+    assert "uv run nox -s ci" in full_gate

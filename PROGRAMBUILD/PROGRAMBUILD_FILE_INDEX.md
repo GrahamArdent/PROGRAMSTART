@@ -71,6 +71,7 @@ A portfolio-wide `IDEA_LEDGER.md` instance belongs in the operator's planning wo
 | `docs/PROGRAMSTART_COST_GOVERNANCE.md` | protocol | owns the conditional decision-scoped Cost Envelope for paid/metered/quota-limited dependencies, cost-evidence freshness, cap/reuse/pay-when semantics, and the anti-registry guardrail; subordinate to project budget/architecture authority |
 | `docs/PROGRAMSTART_EXTERNAL_CHANGE_MAINTENANCE.md` | operational protocol | classifies verified external ecosystem changes and routes them to no-op/evidence refresh/deterministic or bounded maintenance/material decision/failure behavior, including PR-vs-auto-merge gates and the optional Watchtower sensor/execution-plane boundary; subordinate to project authority and existing Cost/Challenge/Learning controls |
 | `docs/PROGRAMSTART_LEARNING_LOOP.md` | protocol | owns PROGRAMSTART acceptance-learning triggers, observation/rollup semantics, maturity rules, conditional persistence, and future-retest routing |
+| `docs/PROGRAMSTART_LEARNING_ARCHITECTURE.md` | protocol | owns the conditional Learning Architecture Gate for learning-capable software, owner-routed operational learning, learning-data boundaries, evaluation/promotion/rollback discipline, and the prohibition on learned authority expansion |
 | `docs/PROGRAMSTART_ACCEPTANCE_LEARNING_LEDGER.md` | derived rollup | concise lesson maturity/index view; not an activity log or project authority |
 | `docs/PROGRAMSTART_REAL_WORLD_ACCEPTANCE_CHECKLIST.md` | checklist | real-project acceptance and Learning Gate closure checklist |
 | `docs/acceptance/LEARNING_OBSERVATION_TEMPLATE.md` | evidence template | append-only meaningful PROGRAMSTART learning observation structure |
@@ -129,7 +130,8 @@ Prompts live in `.github/prompts/`, are registered in the process registry, and 
 - A decision-scoped Cost Envelope is derived execution/decision evidence, not a purchasing authority, vendor-price registry, portfolio budget, or second execution spine.
 - An external-change maintenance classification/event is derived operational evidence; it may trigger a bounded project-specific maintenance PR but never becomes architecture, budget, release, portfolio, or project authority by itself.
 - A portfolio-attention view is derived operator routing context; live filled state belongs outside PROGRAMSTART and cannot override any project's execution authority.
-- A learning observation is derived methodology evidence; the learning ledger is a maturity rollup, not an activity log or roadmap.
+- A learning observation is derived PROGRAMSTART methodology evidence; the PROGRAMSTART learning ledger is a maturity rollup, not an activity log or roadmap.
+- Product/system operational learning must be routed to the owner of the behavior under `docs/PROGRAMSTART_LEARNING_ARCHITECTURE.md`; it reuses existing project authority surfaces by default and must not become a mandatory learning ledger, shadow backlog, or autonomous authority.
 - Tooling/support files may appear here for operator discoverability without becoming product-project authority.
 
 ---

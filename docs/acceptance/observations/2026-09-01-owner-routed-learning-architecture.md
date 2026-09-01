@@ -1,7 +1,7 @@
 # PROGRAMSTART Learning Observation — Owner-Routed Learning Architecture
 
-Date: 2026-09-01  
-Status: meaningful methodology observation  
+Date: 2026-09-01
+Status: meaningful methodology observation
 Proposed lesson: `PSL-020`
 
 ## What happened

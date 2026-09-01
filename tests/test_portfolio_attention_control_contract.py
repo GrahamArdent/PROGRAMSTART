@@ -49,7 +49,10 @@ def test_default_wip_is_bounded() -> None:
 
 def test_project_authority_takes_over_and_safe_execution_converges_after_selection() -> None:
     text = _read(PROTOCOL)
-    assert "Portfolio control does not become project execution authority when a project is selected" in text
+    assert (
+        "Portfolio control does not become project execution authority when a project is selected"
+        in text
+    )
     assert "Selection is nevertheless the start of execution" in text
     assert "enter PROGRAMSTART Mode C" in text
     assert "open branches/PRs" in text
@@ -57,7 +60,10 @@ def test_project_authority_takes_over_and_safe_execution_converges_after_selecti
     for value in ("`AUTO`", "`PR_ONLY`", "`HUMAN_GATE`", "`BLOCKED`"):
         assert value in text
     assert "actually attempt the bounded action" in text
-    assert "A portfolio/status-file refresh does **not** count as successful progression" in text
+    assert (
+        "A portfolio/status-file refresh does **not** count as successful progression"
+        in text
+    )
     assert "A green CI/check result is evidence, not convergence" in text
     assert "reconcile the owning project inside its own repository first" in text
     assert "The portfolio never closes a project milestone" in text

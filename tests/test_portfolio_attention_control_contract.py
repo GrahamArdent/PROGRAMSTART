@@ -8,9 +8,7 @@ STATUS_TEMPLATE = ROOT / "templates" / "portfolio" / "PORTFOLIO_STATUS.md"
 HISTORY_TEMPLATE = ROOT / "templates" / "portfolio" / "PORTFOLIO_HISTORY.md"
 COPILOT_INSTRUCTIONS = ROOT / ".github" / "copilot-instructions.md"
 WHAT_NEXT_PROMPT = ROOT / ".github" / "prompts" / "programstart-what-next.prompt.md"
-PROGRAMBUILD_REGISTRY = (
-    ROOT / "config" / "registry" / "systems" / "programbuild.json"
-)
+PROGRAMBUILD_REGISTRY = ROOT / "config" / "registry" / "systems" / "programbuild.json"
 
 
 def _read(path: Path) -> str:

@@ -44,9 +44,9 @@ def test_attention_classes_are_not_project_lifecycle_states() -> None:
 
 def test_default_wip_is_bounded() -> None:
     text = _read(PROTOCOL)
-    assert 'maximum **one `PRIMARY_BUILD`**' in text
-    assert 'maximum **one `OPERATOR_GATE`**' in text
-    assert 'maximum **one `SECONDARY_READY`**' in text
+    assert "maximum **one `PRIMARY_BUILD`**" in text
+    assert "maximum **one `OPERATOR_GATE`**" in text
+    assert "maximum **one `SECONDARY_READY`**" in text
     needle = "not permission to run a second consequential build in parallel"
     assert needle in text
 

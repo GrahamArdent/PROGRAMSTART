@@ -15,7 +15,7 @@ A PROGRAMBUILD critical control file missing from this index is not recognized. 
 | `PROGRAMBUILD_FILE_INDEX.md` | control | active | inventory of critical files | file inventory |
 | `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` | control | active | separates reusable methodology, project authority, non-authoritative idea preservation/promotion, active work, JIT context, blocker scope/safe-lane reasoning, adaptive decision/evidence routing, accepted-recommendation resolution, checklist activation, external-resource evidence continuity, and evidence reuse | planning-to-execution operating model |
 | `PROGRAMBUILD_PORTFOLIO_CONTROL.md` | protocol | active | lightweight cross-project operator attention routing with external live-workspace boundary, bounded WIP, evidence freshness, and handoff back to project authority | reusable portfolio-attention semantics only — canonical for no project's state, scope, sequencing, or completion |
-| `PROGRAMBUILD_WORK_PACKET.md` | template/protocol | active | compact logical work-packet semantics, accepted-recommendation disposition/gate evidence, checklist completeness/closure, blocker/safe-lane fields, coordinated Mode-C lane selection, task-scoped cross-repository dependency/authority evidence, operator/manual-gate handoff semantics, plus optional persisted format | logical work-packet semantics |
+| `PROGRAMBUILD_WORK_PACKET.md` | template/protocol | active | compact logical work-packet semantics, accepted-recommendation disposition/gate evidence, checklist completeness/closure, blocker/safe-lane fields, coordinated Mode-C lane selection with exclusive shared-mutation ownership when consequential resources overlap, task-scoped cross-repository dependency/authority evidence, operator/manual-gate handoff semantics, plus optional persisted format | logical work-packet semantics |
 | `PROGRAMBUILD_ADR_TEMPLATE.md` | template | active | MADR 4.0 format, status lifecycle, decision-log linkage, and supersession hygiene | ADR structure |
 | `PROGRAMBUILD_CHANGELOG.md` | control | active | system-level change history | PROGRAMBUILD change history |
 | `PROGRAMBUILD.md` | playbook | active | balanced default stage deliverables and operating practices | stage deliverables/base workflow |
@@ -125,7 +125,7 @@ Prompts live in `.github/prompts/`, are registered in the process registry, and 
 - An active checklist is derived from current authority/acceptance/risk obligations; it is not scope authority and should be closed/discarded with the packet unless an existing durable checklist already owns the boundary.
 - A task-scoped cross-repository dependency graph is derived evidence, not a control file or project execution spine.
 - An operator/manual-gate handoff is derived execution context, not a credential store, project authority, or independent lifecycle.
-- A coordinated Mode-C lane view is derived execution context under one project spine, not a backlog, scheduler, or second sequencing authority.
+- A coordinated Mode-C lane view is derived execution context under one project spine, not a backlog, scheduler, or second sequencing authority; if sibling lanes can mutate one consequential external/runtime/provider/device/deployment resource, exactly one active mutation owner and explicit release/transfer condition must serialize that resource while proven non-mutating sibling work may continue.
 - A decision-scoped Cost Envelope is derived execution/decision evidence, not a purchasing authority, vendor-price registry, portfolio budget, or second execution spine.
 - An external-change maintenance classification/event is derived operational evidence; it may trigger a bounded project-specific maintenance PR but never becomes architecture, budget, release, portfolio, or project authority by itself.
 - A portfolio-attention view is derived operator routing context; live filled state belongs outside PROGRAMSTART and cannot override any project's execution authority.
@@ -134,4 +134,4 @@ Prompts live in `.github/prompts/`, are registered in the process registry, and 
 
 ---
 
-Last updated: 2026-08-31
+Last updated: 2026-09-01

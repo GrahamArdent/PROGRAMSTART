@@ -33,6 +33,7 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY in this section are in
 20. Generic operator acceptance of a concrete recommendation MUST be resolved against current project authority before execution. `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` owns the disposition rules. Generic acceptance MUST NOT silently resequence future work, churn strategic authority for ordinary implementation detail, or satisfy a stronger explicit approval/operator/consequence gate merely because the operator said `proceed`.
 21. Checklists MUST remain derived completeness/verification surfaces. They MAY be activated when omission risk or an applicable durable checklist warrants them, but MUST NOT create scope, sequencing, a second Master, or mandatory ceremony for trivial work. When a checklist is active for a slice, applicable required items MUST be reconciled before truthful closure according to `PROGRAMBUILD_WORK_PACKET.md` and `PROGRAMBUILD_CHECKLIST.md`.
 22. Worthwhile ideas SHOULD be durably preserved without being silently promoted. `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` owns capture/promotion semantics. A captured, candidate, investigating, shelved, rejected, or superseded Idea Record is evidence/reference material only; recording it MUST NOT imply priority, scope, sequencing, budget, architecture, or permission to execute. An accepted idea MUST reconcile into the existing project authority that owns the changed truth before dependent execution. A live cross-project idea portfolio MUST NOT be stored in PROGRAMSTART itself.
+23. Learning-capable software MUST use owner-routed learning when real operational evidence can materially improve behavior. `docs/PROGRAMSTART_LEARNING_ARCHITECTURE.md` owns the conditional Learning Architecture Gate, owner-classification, evaluation/promotion/rollback discipline, and the rule that learned behavior MUST NOT silently broaden authority. Learning capability MUST NOT create a mandatory project artifact, shadow backlog, autonomous policy authority, or uncontrolled self-modification mechanism merely because telemetry or AI is present.
 
 ---
 
@@ -95,6 +96,7 @@ Optional preservation / execution aids:
 | logical work-packet semantics, accepted-recommendation disposition evidence, checklist completeness/closure, blocker/safe-lane fields, coordinated Mode-C lane view and shared-mutation ownership, cross-repository dependency/authority fields, operator/manual-gate handoff semantics, and optional persisted packet format | `PROGRAMBUILD_WORK_PACKET.md` |
 | PROGRAMSTART decision-scoped cost governance, Cost Envelope semantics, cost-evidence freshness, cap/reuse/pay-when rules, and anti-registry boundary | `docs/PROGRAMSTART_COST_GOVERNANCE.md` |
 | PROGRAMSTART acceptance-learning triggers, observation/rollup semantics, maturity rules, and future-retest routing | `docs/PROGRAMSTART_LEARNING_LOOP.md` |
+| conditional product/system Learning Architecture Gate, owner-routed operational learning, learning-data boundaries, evaluation/promotion/rollback discipline, and authority-safe adaptive improvement | `docs/PROGRAMSTART_LEARNING_ARCHITECTURE.md` |
 | ADR structure, decision-log linkage, and supersession hygiene | `PROGRAMBUILD_ADR_TEMPLATE.md` |
 | architecture decision records index | `docs/decisions/README.md` |
 | commit message format and enforcement | `.github/instructions/conventional-commits.instructions.md` |
@@ -157,6 +159,8 @@ A decision-scoped Cost Envelope never outranks project budget, architecture, sec
 
 A PROGRAMSTART learning observation or ledger entry never outranks the real project's authority and never proves a methodology change is required merely because friction was observed. Correct the learning classification/maturity from evidence rather than using the ledger to rewrite product state.
 
+A product/system learning observation, adaptive recommendation, experiment result, or learned policy never outranks the owning project's requirements, architecture, decisions, security, budget, release, or execution authority. Route the evidence to the owner and promote changes only through that owner's normal authority path; learned success never grants broader authority by itself.
+
 ---
 
 ## 5. Canonical Maintenance Rules
@@ -177,7 +181,8 @@ A PROGRAMSTART learning observation or ledger entry never outranks the real proj
 - Concurrent Mode-C lane coordination may retain only enough derived lane state to select the current packet, preserve closure-control/dependency truth, and serialize any proven shared consequential mutation resource through one explicit owner plus a release/transfer condition. Do not persist a parallel lane backlog or global lock system when the project spine already owns sequencing.
 - Cost governance may retain current decision evidence and invalidation conditions where a project needs durable rationale, but PROGRAMSTART must not maintain a central vendor-price/free-tier catalogue whose volatility would turn stale evidence into false authority.
 - PROGRAMSTART learning should retain detailed evidence in append-only observation records and keep the main learning ledger as a concise maturity rollup. Do not load or rewrite detailed history by default during normal product work.
-- Specialist agents, extra documents, broader gates, recurring automation, checklists, idea ledgers, and adaptive routing are mechanisms, not goals. Use them only when they reduce real uncertainty/risk/coordination/omission/reconstruction cost.
+- Product/system learning should reuse existing requirements, architecture, test, decision, execution-spine, Work Packet, and post-launch authority surfaces by default. Create a dedicated learning ledger only when retained learning state genuinely earns one, and keep it subordinate to the owning system rather than turning it into a shadow backlog or autonomous authority.
+- Specialist agents, extra documents, broader gates, recurring automation, checklists, idea ledgers, learning ledgers, and adaptive routing are mechanisms, not goals. Use them only when they reduce real uncertainty/risk/coordination/omission/reconstruction cost or measurably improve outcomes.
 
 ---
 

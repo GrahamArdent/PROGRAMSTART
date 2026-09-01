@@ -4,7 +4,7 @@ Purpose: make real-project usage improve PROGRAMSTART without turning product pr
 
 Status: **PROGRAMSTART operational protocol / subordinate to product-project authority**.
 
-This protocol owns how PROGRAMSTART evaluates, records, matures, and retests reusable methodology lessons. It does **not** own any product project's scope, execution spine, lifecycle, release decision, or backlog.
+This protocol owns how PROGRAMSTART evaluates, records, matures, and retests reusable methodology lessons. It does **not** own any product project's scope, execution spine, lifecycle, release decision, backlog, or product/system operational-learning policy. When real operation reveals a potential improvement to the software/system itself, route that observation through `docs/PROGRAMSTART_LEARNING_ARCHITECTURE.md` to the owner of the behavior.
 
 ## 1. Core Loop
 
@@ -44,10 +44,10 @@ At a trigger, answer in order:
 1. **What happened in the real project?** Use repository/runtime/provider/acceptance evidence, not conversational impression alone.
 2. **Did PROGRAMSTART materially help, hinder, or fail?** Name the exact behavior.
 3. **Is the observation local or systemic?**
-   - `local` — belongs only in the product project's own evidence/authority;
-   - `systemic` — plausibly reusable across projects;
+   - `local` — belongs only in the product/system owner's evidence/authority; if it implies reusable operational improvement to that system, route it through `docs/PROGRAMSTART_LEARNING_ARCHITECTURE.md` rather than forcing it into the PROGRAMSTART ledger;
+   - `systemic` — plausibly reusable across projects as PROGRAMSTART methodology;
    - `confirmation` — retests an existing PROGRAMSTART rule without exposing a new gap;
-   - `counterevidence` — weakens, rejects, or narrows an existing lesson.
+   - `counterevidence` — weakens, rejects, or narrows an existing PROGRAMSTART lesson.
 4. **Does an existing lesson already cover it?** Search the maturity ledger before creating a new lesson.
 5. **What changed in evidence maturity?** `none`, `observe`, `candidate`, `implemented`, `validated`, or `rejected`.
 6. **Does PROGRAMSTART need to change now?** Complexity must be earned by repeated/material evidence. A new feature is not the default result.
@@ -199,12 +199,26 @@ The durable learning surfaces are intentionally small:
 
 Do not create a PROGRAMSTART portfolio Master, central product backlog, or mandatory project registry from this mechanism.
 
-## 12. Success Test
+## 12. Relationship to Learning-Capable Software
+
+PROGRAMSTART methodology learning and product/system operational learning are separate concerns.
+
+At a meaningful checkpoint, classify the observation before persisting it:
+
+- if PROGRAMSTART methodology caused or prevented the behavior, use this Learning Loop;
+- if the product/system itself can improve from the evidence, route the observation to the owner through `docs/PROGRAMSTART_LEARNING_ARCHITECTURE.md`;
+- if both are true, retain separate owner-specific evidence and changes;
+- if the limitation belongs to an external provider, record only the evidence needed by the owning project's decision/handling path.
+
+PROGRAMSTART owns the routing discipline, not every resulting lesson.
+
+## 13. Success Test
 
 The learning loop is working when:
 
 - real projects keep their own authority;
 - PROGRAMSTART notices methodology friction/confirmation at meaningful checkpoints;
+- product/system lessons are routed to their actual owners rather than bloating the PROGRAMSTART ledger;
 - useful evidence is retained without flooding the ledger;
 - repeated lessons become easier to recognize across projects;
 - methodology changes are smaller and evidence-earned;

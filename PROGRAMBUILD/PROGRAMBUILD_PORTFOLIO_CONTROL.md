@@ -4,9 +4,9 @@
 
 Purpose: Define a lightweight cross-project attention-control protocol for operators managing many independently governed repositories without creating a portfolio master plan, shadow backlog, or global execution authority.
 Owner: Project Lead / Operator
-Last updated: 2026-08-29
+Last updated: 2026-08-31
 Depends on: `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`, `PROGRAMBUILD_WORK_PACKET.md`, `PROGRAMBUILD_FILE_INDEX.md`, `docs/PROGRAMSTART_LEARNING_LOOP.md`
-Authority: Canonical only for reusable portfolio-attention semantics, storage boundaries, refresh discipline, attention lanes, WIP limits, and handoff back to project authority. It is canonical for **no project's product state, scope, sequencing, or completion status**.
+Authority: Canonical only for reusable portfolio-attention semantics, storage boundaries, refresh discipline, attention lanes, WIP limits, execution-convergence handoff, and handoff back to project authority. It is canonical for **no project's product state, scope, sequencing, or completion status**.
 
 ---
 
@@ -24,7 +24,9 @@ When many repositories coexist, several failure modes become likely:
 - a blocked project consumes attention even when another project has a clear executable slice;
 - recent activity is mistaken for priority;
 - a cross-project dashboard silently becomes a second roadmap;
-- the operator repeatedly reconstructs current state from chat memory.
+- the operator repeatedly reconstructs current state from chat memory;
+- a correct portfolio selection is mistaken for progress even though the selected project's safe executable frontier remains untouched;
+- retained portfolio text describes work as future work even though a current branch/PR has already advanced beyond it.
 
 Portfolio Attention Control exists to reduce that cognitive and coordination burden while preserving every project's independent authority.
 
@@ -36,7 +38,7 @@ PROGRAMSTART / PROGRAMBUILD may own:
 
 - the reusable portfolio-attention method;
 - schemas/templates for an operator portfolio workspace;
-- rules for evidence freshness, prioritization, WIP, and project handoff;
+- rules for evidence freshness, prioritization, WIP, execution convergence, and project handoff;
 - guidance for producing a concise attention recommendation.
 
 PROGRAMSTART / PROGRAMBUILD MUST NOT own:
@@ -225,14 +227,18 @@ A portfolio sweep should be cheap by default.
 
 Read the live portfolio workspace first. Do not re-audit every repository from scratch.
 
-### 9.2 Verify only what can change the attention decision
+### 9.2 Verify only what can change the attention decision or execution frontier
 
 For candidate/current projects, prefer a narrow sequence such as:
 
 1. repository/default-branch existence and recent meaningful commits/PR state;
 2. the exact current project execution authority / status section;
-3. blocker or manual-gate evidence;
-4. provider/runtime/device state only when it can change the attention decision.
+3. existing current branches/PRs that may already represent the named immediate action;
+4. exact candidate head plus current-head CI/check/review/Challenge evidence when such a candidate exists;
+5. blocker or manual-gate evidence;
+6. provider/runtime/device state only when it can change the attention decision or current project frontier.
+
+Before describing an action as future work or creating a new lane, inspect whether a current branch/PR already owns that work. If it does, resume from that candidate's actual frontier rather than duplicating planning or implementation.
 
 Do not run broad deployment, database, security, or provider audits merely to refresh a dashboard row.
 
@@ -243,7 +249,7 @@ Keep `LAST_VERIFIED_AT`, `EVIDENCE_REF`, and `INVALIDATION_TRIGGER` so unchanged
 Typical invalidation triggers include:
 
 - execution-spine update;
-- merge/closure of the named packet;
+- merge/closure or material advancement of the named packet/PR;
 - new provider/runtime evidence;
 - changed dependency state;
 - operator-gate completion;
@@ -308,21 +314,35 @@ Do not return a long unprioritized list merely because many projects exist.
 
 ---
 
-## 11. Handoff Back To Project Authority
+## 11. Handoff Back To Project Authority And Execution Convergence
 
-Portfolio control ends when a project is selected.
+Portfolio control does not become project execution authority when a project is selected. **Selection is nevertheless the start of execution, not a successful terminal portfolio result, when the current environment can safely continue.**
 
 For an existing repository:
 
 1. enter PROGRAMSTART Mode C;
 2. read the owning project's current execution spine and only the concern-specific authority needed for the selected slice;
-3. verify the portfolio row has not become stale;
-4. derive one logical Work Packet when useful;
-5. execute from project authority;
-6. reconcile the project inside its own repository;
-7. refresh the external portfolio row only after project truth changes.
+3. inspect current project work before creating or recommending anything new: open branches/PRs, exact candidate heads, current-head checks, unresolved review/Challenge evidence, and relevant returned runtime/provider/device evidence;
+4. verify the portfolio row has not become stale; if existing project work is farther ahead, resume the actual project frontier;
+5. derive one logical Work Packet when useful;
+6. classify the immediate owning-project step using current project authority as one of:
+   - **`AUTO`** — unattended-safe and executable with current connected tools;
+   - **`PR_ONLY`** — repository work may proceed, but merge/activation remains gated;
+   - **`HUMAN_GATE`** — requires operator/provider/device/security/cost/product/architecture action or approval;
+   - **`BLOCKED`** — cannot safely advance from current evidence/tooling;
+7. for `AUTO` or `PR_ONLY`, actually attempt the bounded action when current connected tools permit it; do not treat the attention recommendation itself as progress;
+8. continue through consecutive unattended-safe convergence steps — implementation, targeted tests, exact-candidate CI/check verification, applicable Challenge Gate, bounded remediation/rechallenge, focused PR creation/update, and project-authority reconciliation — until a genuine gate, unavailable tool boundary, contradictory evidence, or truthful packet completion is reached;
+9. reconcile the owning project inside its own repository first;
+10. refresh the external portfolio row only after project truth changes;
+11. if the project completes or yields at a real gate, recompute attention; when WIP policy permits and another unattended-safe primary build is earned, hand off again rather than stopping merely because the first project yielded.
 
-The portfolio never closes a project milestone, approves a release, changes project scope, or authorizes a mutation by itself.
+### 11.1 Convergence rules
+
+- A portfolio/status-file refresh does **not** count as successful progression while executable owning-project work remains.
+- A green CI/check result is evidence, not convergence, when the run does not prove the exact candidate or when an applicable Challenge Gate, reconciliation step, or other already-required owning-project gate remains.
+- Never create a duplicate branch/PR merely because retained portfolio text has not caught up with existing work.
+- Do not cross a stronger human/provider/device/security/cost/product/architecture boundary merely to keep the loop moving.
+- The portfolio never closes a project milestone, approves a release, changes project scope, or authorizes a mutation by itself; every step derives permission from current owning-project authority.
 
 ---
 
@@ -346,7 +366,7 @@ Keep idea preservation separate. An idea can be worth remembering without becomi
 
 ### Learning Loop
 
-A repeated portfolio-control defect may become PROGRAMSTART learning evidence. Ordinary queue refreshes should not create methodology churn.
+A repeated or material portfolio-control defect may become PROGRAMSTART learning evidence. Ordinary queue refreshes should not create methodology churn.
 
 ---
 
@@ -355,7 +375,7 @@ A repeated portfolio-control defect may become PROGRAMSTART learning evidence. O
 Do not add, absent repeated evidence:
 
 - a portfolio project-management application;
-- autonomous multi-repository mutation scheduling;
+- autonomous multi-repository mutation scheduling or a cross-repository transaction engine;
 - a universal numeric priority formula;
 - a duplicate global issue tracker;
 - another Master Game Plan;
@@ -364,15 +384,17 @@ Do not add, absent repeated evidence:
 - automatic promotion from `UNASSESSED` / `WATCH` into active work based on age;
 - a requirement that every repository use PROGRAMSTART before it can appear in the registry.
 
+Execution convergence under Section 11 is **not** global mutation authority. It preserves one-primary-build WIP and repeatedly hands control to the selected owning project's existing authority.
+
 Start with a durable registry, a concise status view, meaningful history, one operator gate, and one primary build.
 
-Automation should be added only when repeated manual portfolio refresh work proves the value of the specific automation.
+Automation should be added only when repeated manual portfolio refresh/work-resumption evidence proves the value of the specific automation.
 
 ---
 
-## 14. Initial Acceptance Criteria
+## 14. Acceptance Criteria
 
-The first Portfolio Attention Control implementation is acceptable when it can demonstrate that:
+Portfolio Attention Control is acceptable when it can demonstrate that:
 
 - PROGRAMSTART retains only reusable protocol/templates, not the operator's filled live portfolio;
 - the live workspace points to project authority rather than copying/replacing it;
@@ -382,6 +404,12 @@ The first Portfolio Attention Control implementation is acceptable when it can d
 - exactly one primary build is recommended with a bounded immediate next action;
 - unassessed repositories remain visible without forcing broad audits;
 - a selected project hands back to Mode C and its own execution spine;
+- before describing/creating a next action, an existing current candidate is discovered and resumed when it already owns that work;
+- an unattended-safe selected step is actually attempted rather than ending at portfolio selection/status refresh;
+- exact-candidate evidence is distinguished from nearby/synthetic CI evidence when the project requires exact-head proof;
+- required safe convergence continues through applicable Challenge/remediation/reconciliation steps until a real gate or packet completion;
+- a genuine stronger gate stops automatic progression without fabricating further work;
+- owning-project truth is reconciled before the derived portfolio view;
 - meaningful attention changes can be recorded without duplicating repository history.
 
 ---

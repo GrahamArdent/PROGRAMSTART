@@ -47,11 +47,19 @@ def test_default_wip_is_bounded() -> None:
     assert "not permission to run a second consequential build in parallel" in text
 
 
-def test_project_authority_takes_over_after_selection() -> None:
+def test_project_authority_takes_over_and_safe_execution_converges_after_selection() -> None:
     text = _read(PROTOCOL)
-    assert "Portfolio control ends when a project is selected" in text
+    assert "Portfolio control does not become project execution authority when a project is selected" in text
+    assert "Selection is nevertheless the start of execution" in text
     assert "enter PROGRAMSTART Mode C" in text
-    assert "project’s own execution spine" in text or "project's current execution spine" in text
+    assert "open branches/PRs" in text
+    assert "resume the actual project frontier" in text
+    for value in ("`AUTO`", "`PR_ONLY`", "`HUMAN_GATE`", "`BLOCKED`"):
+        assert value in text
+    assert "actually attempt the bounded action" in text
+    assert "A portfolio/status-file refresh does **not** count as successful progression" in text
+    assert "A green CI/check result is evidence, not convergence" in text
+    assert "reconcile the owning project inside its own repository first" in text
     assert "The portfolio never closes a project milestone" in text
 
 

@@ -57,10 +57,6 @@ Do not read the documentation tree up front.
 
 Use the compact logical packet by default. Persist `CURRENT_WORK_PACKET.md` only when multi-session/multi-agent coordination, risk, dependencies/blockers, or resumability makes persistence useful. A packet never becomes strategic authority.
 
-When coordinated Mode-C lanes can mutate the same consequential external/runtime/provider/device/deployment resource, use the Work Packet's shared-mutation ownership rule: identify the exact resource, exactly one active mutation owner, and its release/transfer condition. Sibling lanes may remain active only with work proven unable to mutate that resource. Re-check current owner and resource state immediately before consequential mutation; a later invocation MUST NOT silently seize an active shared-mutation lease.
-
-This is conflict control, not a scheduler, priority system, portfolio registry, or broad mutation permission. Omit the ownership fields when there is no real consequential shared mutable resource.
-
 ## Verification Economy
 
 - Reuse trustworthy verification until a relevant invalidation trigger occurs.

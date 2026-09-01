@@ -76,6 +76,7 @@ When a checklist is used:
 - [ ] identify only material unknowns
 - [ ] run the smallest useful spikes for blocking uncertainty
 - [ ] check dependency/vendor/research freshness when material
+- [ ] if real operational evidence could materially improve system behavior, apply the conditional Learning Architecture Gate from `docs/PROGRAMSTART_LEARNING_ARCHITECTURE.md` and route learning to the owner of the behavior
 - [ ] record durable decisions; use ADR only when the current ADR policy warrants it
 
 ---
@@ -99,6 +100,7 @@ When a checklist is used:
 - [ ] map material contracts to tests where drift risk warrants it
 - [ ] define smoke/regression/golden/E2E only where they add signal
 - [ ] define evidence reuse + invalidation for expensive/stateful checks
+- [ ] when the Learning Architecture Gate is active, define evidence-based evaluation, promotion, regression/counterevidence, and rollback before learned behavior becomes trusted
 
 ---
 
@@ -158,7 +160,8 @@ For each coherent slice:
 - [ ] capture incidents/support/adoption gaps
 - [ ] record decision reversals/confirmations
 - [ ] assign meaningful follow-up ownership
-- [ ] propose PROGRAMBUILD changes only for systemic/reusable prevention opportunities
+- [ ] route reusable product/system operational learning to the behavior owner under `docs/PROGRAMSTART_LEARNING_ARCHITECTURE.md`
+- [ ] propose PROGRAMBUILD changes only for systemic/reusable PROGRAMSTART prevention opportunities
 - [ ] do not convert a fixed project-count threshold into methodology truth
 
 ---
@@ -175,6 +178,7 @@ For each coherent slice:
 - [ ] evidence is reused until a relevant invalidation trigger occurs
 - [ ] broad verification runs only for a real convergence reason
 - [ ] specialist agents are used only when decomposition/review value justifies them
+- [ ] learning-capable behavior, when activated, remains subordinate to deterministic permission/safety/budget/gate authority and cannot self-expand authority
 - [ ] no universal numeric/time threshold is being substituted for risk judgment
 - [ ] project-specific state is not stored in reusable PROGRAMSTART methodology
 
@@ -195,4 +199,4 @@ Do not duplicate the full gate prose in this checklist.
 
 ---
 
-Last updated: 2026-08-28
+Last updated: 2026-09-01

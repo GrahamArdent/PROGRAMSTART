@@ -139,7 +139,6 @@ def _expected_overlay_registry(
             current = {}
         if isinstance(current, dict):
             current_workspace = current.get("workspace") if isinstance(current.get("workspace"), dict) else {}
-            # Project identity/description are project-owned presentation metadata.
             for key in ("name", "description"):
                 if current_workspace.get(key):
                     workspace[key] = current_workspace[key]
@@ -308,7 +307,7 @@ def sync(
     blockers = [
         (path, reason)
         for path, reason in changes
-        if reason in {"new-managed-conflict", "removed-from-template"}
+        if reason == "new-managed-conflict" or (lean_overlay and reason == "removed-from-template")
     ]
     if blockers:
         print()
@@ -323,7 +322,12 @@ def sync(
         return 0
 
     copied = 0
+    skipped = 0
     for relative_path, reason in changes:
+        if reason == "removed-from-template":
+            print(f"  SKIP {relative_path} (removed from template — delete manually if desired)")
+            skipped += 1
+            continue
         if reason in {"changed", "missing-in-dest", "new-managed"}:
             source = _template_source_path(template_root, relative_path)
             destination = destination_root / relative_path
@@ -346,7 +350,7 @@ def sync(
         print(f"  SYNC {MANIFEST_FILENAME} (managed set/provenance)")
 
     print()
-    print(f"  Synced {copied} managed file(s).")
+    print(f"  Synced {copied} managed file(s), skipped {skipped}.")
     return 0
 
 

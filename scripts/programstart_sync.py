@@ -18,7 +18,12 @@ try:
         WORKFLOW_TEMPLATE_PREFIX,
         copy_file,
     )
-    from .programstart_common import load_registry_from_path, warn_direct_script_invocation, workspace_path, write_json
+    from .programstart_common import (
+        load_registry_from_path,
+        warn_direct_script_invocation,
+        workspace_path,
+        write_json,
+    )
 except ImportError:  # pragma: no cover - standalone script execution fallback
     from programstart_adopt import _adopted_registry, _managed_prompt_assets
     from programstart_attach import MANIFEST_FILENAME, PROGRAMBUILD_PRESERVE_EXISTING_FILES
@@ -27,7 +32,12 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
         WORKFLOW_TEMPLATE_PREFIX,
         copy_file,
     )
-    from programstart_common import load_registry_from_path, warn_direct_script_invocation, workspace_path, write_json
+    from programstart_common import (
+        load_registry_from_path,
+        warn_direct_script_invocation,
+        workspace_path,
+        write_json,
+    )
 
 SYNC_DESCRIPTION = (
     "Propagate changed PROGRAMSTART files to/from a downstream repo.\n\n"
@@ -45,8 +55,14 @@ def _load_manifest(destination_root: Path) -> dict[str, Any]:
     manifest_path = destination_root / MANIFEST_FILENAME
     if not manifest_path.exists():
         print(f"ERROR: No manifest found at {manifest_path}", file=sys.stderr)
-        print("  The destination may not have been attached with a manifest-aware version.", file=sys.stderr)
-        print("  Re-attach/adopt with a current manifest-aware PROGRAMSTART version.", file=sys.stderr)
+        print(
+            "  The destination may not have been attached with a manifest-aware version.",
+            file=sys.stderr,
+        )
+        print(
+            "  Re-attach/adopt with a current manifest-aware PROGRAMSTART version.",
+            file=sys.stderr,
+        )
         raise SystemExit(1)
     payload = json.loads(manifest_path.read_text(encoding="utf-8"))
     if not isinstance(payload, dict):
@@ -107,11 +123,14 @@ def _current_overlay_context(
     template_root: Path,
     manifest: dict[str, Any],
 ) -> tuple[dict[str, Any], tuple[str, ...], list[str]]:
+    del manifest  # reserved for future mode-specific managed-set distinctions
     registry = load_registry_from_path(template_root / "config" / "process-registry.json")
     prompt_assets = _managed_prompt_assets(registry)
     state_file = registry["workflow_state"]["programbuild"]["state_file"]
     control_files = [
-        path for path in registry["systems"]["programbuild"]["control_files"] if path != state_file
+        path
+        for path in registry["systems"]["programbuild"]["control_files"]
+        if path != state_file
     ]
     managed_files = sorted(set([*control_files, *prompt_assets]))
     return registry, prompt_assets, managed_files
@@ -138,14 +157,19 @@ def _expected_overlay_registry(
         except (OSError, json.JSONDecodeError):
             current = {}
         if isinstance(current, dict):
-            current_workspace = current.get("workspace") if isinstance(current.get("workspace"), dict) else {}
+            current_workspace_value = current.get("workspace")
+            current_workspace = (
+                current_workspace_value if isinstance(current_workspace_value, dict) else {}
+            )
             for key in ("name", "description"):
                 if current_workspace.get(key):
                     workspace[key] = current_workspace[key]
 
-    if manifest.get("control_plane") == "external_programstart_runtime" or str(
-        manifest.get("mode") or ""
-    ).startswith("external_control"):
+    mode = str(manifest.get("mode") or "")
+    if (
+        manifest.get("control_plane") == "external_programstart_runtime"
+        or mode.startswith("external_control")
+    ):
         workspace.update(
             {
                 "repo_role": "managed_project_repo",
@@ -191,9 +215,8 @@ def _files_needing_sync(
             results.append((relative_path, "removed-from-template"))
             continue
         if not destination.exists():
-            results.append(
-                (relative_path, "new-managed" if relative_path in newly_managed else "missing-in-dest")
-            )
+            reason = "new-managed" if relative_path in newly_managed else "missing-in-dest"
+            results.append((relative_path, reason))
             continue
         if not filecmp.cmp(source, destination, shallow=False):
             reason = "new-managed-conflict" if relative_path in newly_managed else "changed"
@@ -208,7 +231,9 @@ def _manifest_needs_refresh(
 ) -> bool:
     if sorted(set(manifest.get("files", []))) != current_files:
         return True
-    return bool(template_commit and str(manifest.get("source_commit") or "") != template_commit)
+    return bool(
+        template_commit and str(manifest.get("source_commit") or "") != template_commit
+    )
 
 
 def _refresh_manifest(
@@ -253,7 +278,10 @@ def sync(
     registry_refresh_needed = False
 
     if lean_overlay:
-        template_registry, prompt_assets, managed_files = _current_overlay_context(template_root, manifest)
+        template_registry, prompt_assets, managed_files = _current_overlay_context(
+            template_root,
+            manifest,
+        )
         newly_managed = set(managed_files) - set(original_files)
         retired_files = sorted(set(original_files) - set(managed_files))
         if file_filter is None:
@@ -263,7 +291,10 @@ def sync(
                 prompt_assets,
                 destination_root,
             )
-            registry_refresh_needed = _registry_needs_refresh(destination_root, expected_registry)
+            registry_refresh_needed = _registry_needs_refresh(
+                destination_root,
+                expected_registry,
+            )
     else:
         managed_files = original_files
         newly_managed = set()
@@ -277,7 +308,9 @@ def sync(
         file_filter,
         newly_managed,
     )
-    template_commit = _template_head_hash(template_root) if lean_overlay and file_filter is None else ""
+    template_commit = (
+        _template_head_hash(template_root) if lean_overlay and file_filter is None else ""
+    )
     manifest_refresh_needed = (
         lean_overlay
         and file_filter is None
@@ -294,7 +327,10 @@ def sync(
             marker = "!" if reason in {"removed-from-template", "new-managed-conflict"} else "+"
             print(f"    [{marker}] {relative_path}  ({reason})")
     if retired_files:
-        print(f"  {len(retired_files)} file(s) retired from the current managed set (preserved in destination):")
+        print(
+            f"  {len(retired_files)} file(s) retired from the current managed set "
+            "(preserved in destination):"
+        )
         for relative_path in retired_files:
             print(f"    [~] {relative_path}  (retired-from-managed-set)")
     if registry_refresh_needed:
@@ -311,7 +347,10 @@ def sync(
     ]
     if blockers:
         print()
-        print("  ERROR: Managed-set reconciliation has conflicts/template gaps; no full provenance refresh is safe.")
+        print(
+            "  ERROR: Managed-set reconciliation has conflicts/template gaps; "
+            "no full provenance refresh is safe."
+        )
         for path, reason in blockers:
             print(f"    {path}: {reason}")
         return 2 if confirm else 0
@@ -325,7 +364,10 @@ def sync(
     skipped = 0
     for relative_path, reason in changes:
         if reason == "removed-from-template":
-            print(f"  SKIP {relative_path} (removed from template — delete manually if desired)")
+            print(
+                f"  SKIP {relative_path} "
+                "(removed from template — delete manually if desired)"
+            )
             skipped += 1
             continue
         if reason in {"changed", "missing-in-dest", "new-managed"}:
@@ -335,7 +377,12 @@ def sync(
             copied += 1
             print(f"  SYNC {relative_path} ({reason})")
 
-    if lean_overlay and file_filter is None and expected_registry is not None and registry_refresh_needed:
+    if (
+        lean_overlay
+        and file_filter is None
+        and expected_registry is not None
+        and registry_refresh_needed
+    ):
         write_json(destination_root / "config" / "process-registry.json", expected_registry)
         print("  SYNC config/process-registry.json (derived registry)")
 
@@ -359,14 +406,28 @@ def main(argv: list[str] | None = None) -> int:
         prog="programstart sync",
         description=SYNC_DESCRIPTION,
     )
-    parser.add_argument("--dest", help="Destination repository root (default: current directory with --from-template).")
+    parser.add_argument(
+        "--dest",
+        help="Destination repository root (default: current directory with --from-template).",
+    )
     parser.add_argument(
         "--from-template",
         metavar="PATH",
-        help="Pull mode: path to the upstream PROGRAMSTART template root. Copies changed files into --dest (or .).",
+        help=(
+            "Pull mode: path to the upstream PROGRAMSTART template root. "
+            "Copies changed files into --dest (or .)."
+        ),
     )
-    parser.add_argument("--confirm", action="store_true", help="Apply changes (default is dry-run).")
-    parser.add_argument("--files", dest="file_filter", help="Only sync files matching this glob pattern.")
+    parser.add_argument(
+        "--confirm",
+        action="store_true",
+        help="Apply changes (default is dry-run).",
+    )
+    parser.add_argument(
+        "--files",
+        dest="file_filter",
+        help="Only sync files matching this glob pattern.",
+    )
     args = parser.parse_args(argv)
 
     if not args.dest and not args.from_template:

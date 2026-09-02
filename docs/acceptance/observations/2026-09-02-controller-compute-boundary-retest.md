@@ -1,8 +1,8 @@
 # PROGRAMSTART Acceptance Observation — Controller / Compute Spine Boundary Retest
 
-Date: 2026-09-02  
-Status: **confirmation / explicit acceptance retest; no new methodology change earned**  
-Relevant existing lessons: `PSL-006`, `PSL-015`, `PSL-018`  
+Date: 2026-09-02
+Status: **confirmation / explicit acceptance retest; no new methodology change earned**
+Relevant existing lessons: `PSL-006`, `PSL-015`, `PSL-018`
 `PSL-020` result: **not a qualifying validation retest**
 
 ## Why this observation exists

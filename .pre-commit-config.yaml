@@ -14,7 +14,6 @@ repos:
       - id: ruff-check
         args: [--fix]
       - id: ruff-format
-        args: [--diff]
 
   - repo: https://github.com/PyCQA/bandit
     rev: 1.8.3

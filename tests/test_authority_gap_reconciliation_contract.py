@@ -1,15 +1,12 @@
-from pathlib import Path
+PROTOCOL = "docs/PROGRAMSTART_AUTHORITY_GAP_RECONCILIATION.md"
+CHECKLIST = "PROGRAMBUILD/PROGRAMBUILD_CHECKLIST.md"
+PLANNING = "PROGRAMBUILD/PROGRAMBUILD_PLANNING_OPERATING_MODEL.md"
+LEARNING = "docs/PROGRAMSTART_LEARNING_LOOP.md"
 
 
-ROOT = Path(__file__).resolve().parents[1]
-PROTOCOL = ROOT / "docs" / "PROGRAMSTART_AUTHORITY_GAP_RECONCILIATION.md"
-CHECKLIST = ROOT / "PROGRAMBUILD" / "PROGRAMBUILD_CHECKLIST.md"
-PLANNING = ROOT / "PROGRAMBUILD" / "PROGRAMBUILD_PLANNING_OPERATING_MODEL.md"
-LEARNING = ROOT / "docs" / "PROGRAMSTART_LEARNING_LOOP.md"
-
-
-def _read(path: Path) -> str:
-    return path.read_text(encoding="utf-8")
+def _read(path: str) -> str:
+    with open(path, encoding="utf-8") as handle:
+        return handle.read()
 
 
 def test_derived_finding_never_becomes_execution_authority() -> None:

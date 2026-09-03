@@ -1,8 +1,8 @@
 # Downstream Methodology Distribution Miss — LinkedIn Generator
 
-Date: 2026-09-01  
-Project evidence source: `GrahamArdent/LinkedIn_Generator`  
-PROGRAMSTART owner surface: adoption/sync + external target control  
+Date: 2026-09-01
+Project evidence source: `GrahamArdent/LinkedIn_Generator`
+PROGRAMSTART owner surface: adoption/sync + external target control
 Learning classification: systemic / strengthens `PSL-012`; also exercises the operator-relay failure mode described by `PSL-019`
 
 ## Observation

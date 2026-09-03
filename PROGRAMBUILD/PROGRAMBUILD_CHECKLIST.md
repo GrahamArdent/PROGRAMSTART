@@ -111,6 +111,7 @@ For each coherent slice:
 - [ ] run relevant Stage 6 → 7 gate controls before entering implementation
 - [ ] define the compact logical work-packet fields from `PROGRAMBUILD_WORK_PACKET.md`
 - [ ] if the slice follows an accepted recommendation, resolve the recommendation's effect under `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` before treating generic acceptance as execution authority
+- [ ] if a derived checklist/audit/portfolio finding is material but not represented in current owning authority, apply `docs/PROGRAMSTART_AUTHORITY_GAP_RECONCILIATION.md`; the derived finding may route/reconcile work but must not execute as authority
 - [ ] preserve any stronger security/destructive/financial/credential/production/privacy/legal/release/operator gate; generic acceptance does not satisfy it automatically
 - [ ] when autonomous execution is available, resolve the exact action under `docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md`; new Controller/Compute/worker capability may automate only an already-authorized consequence class and must not create new permission
 - [ ] persist `CURRENT_WORK_PACKET.md` only if persistence materially improves coordination/risk/resumption
@@ -173,6 +174,8 @@ For each coherent slice:
 - [ ] authority ownership is clear
 - [ ] no research/audit/checklist/packet is acting as a second master plan
 - [ ] applicable checklist items came from authority/acceptance/risk obligations rather than silently creating scope
+- [ ] a material derived finding missing from owning authority was reconciled through the existing owner or explicitly left non-authoritative; no checklist/audit silently became authority
+- [ ] the Authority-Gap path, when used, returned to the originating execution flow and routed reusable methodology learning through the existing Learning Gate rather than creating a parallel backlog/lifecycle
 - [ ] an existing applicable durable checklist was reused rather than duplicated
 - [ ] trivial work was not burdened with a large checklist merely for ceremony
 - [ ] persisted `CURRENT_WORK_PACKET.md`, if present, is actually helping coordination/resumption

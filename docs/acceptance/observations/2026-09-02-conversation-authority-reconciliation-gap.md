@@ -1,9 +1,9 @@
 # Learning Observation — Conversation-to-Authority Reconciliation Gap
 
-**Date:** 2026-09-02  
-**System:** Portfolio Operations / PROGRAMSTART conversation-capture plumbing  
-**Classification:** systemic counterevidence / composition gap  
-**Related lessons:** `PSL-016`, `PSL-017`, `PSL-018`  
+**Date:** 2026-09-02
+**System:** Portfolio Operations / PROGRAMSTART conversation-capture plumbing
+**Classification:** systemic counterevidence / composition gap
+**Related lessons:** `PSL-016`, `PSL-017`, `PSL-018`
 **Status:** subordinate / non-canonical evidence
 
 ## Trigger

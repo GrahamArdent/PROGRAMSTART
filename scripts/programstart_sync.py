@@ -112,9 +112,7 @@ def _current_overlay_context(
     registry = load_registry_from_path(template_root / "config" / "process-registry.json")
     prompt_assets = _managed_prompt_assets(registry)
     state_file = registry["workflow_state"]["programbuild"]["state_file"]
-    control_files = [
-        path for path in registry["systems"]["programbuild"]["control_files"] if path != state_file
-    ]
+    control_files = [path for path in registry["systems"]["programbuild"]["control_files"] if path != state_file]
     managed_files = sorted(set([*control_files, *prompt_assets]))
     return registry, prompt_assets, managed_files
 

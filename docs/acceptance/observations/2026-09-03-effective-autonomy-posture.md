@@ -1,9 +1,9 @@
 # Learning Observation — Effective Autonomy Posture
 
-**Date:** 2026-09-03  
-**System:** PROGRAMSTART / Autonomous Controller / Compute Spine / Portfolio Operations  
-**Classification:** systemic methodology improvement / implemented, real retest pending  
-**Candidate lesson:** `PSL-021`  
+**Date:** 2026-09-03
+**System:** PROGRAMSTART / Autonomous Controller / Compute Spine / Portfolio Operations
+**Classification:** systemic methodology improvement / implemented, real retest pending
+**Candidate lesson:** `PSL-021`
 **Status:** subordinate acceptance evidence; do not treat as validation
 
 ## Trigger

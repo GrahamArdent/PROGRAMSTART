@@ -278,9 +278,7 @@ def sync(
     )
     template_commit = _template_head_hash(template_root) if lean_overlay and file_filter is None else ""
     manifest_refresh_needed = (
-        lean_overlay
-        and file_filter is None
-        and _manifest_needs_refresh(manifest, managed_files, template_commit)
+        lean_overlay and file_filter is None and _manifest_needs_refresh(manifest, managed_files, template_commit)
     )
 
     if not changes and not retired_files and not registry_refresh_needed and not manifest_refresh_needed:

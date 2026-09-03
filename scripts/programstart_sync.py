@@ -12,7 +12,10 @@ from typing import Any
 
 try:
     from .programstart_adopt import _adopted_registry, _managed_prompt_assets
-    from .programstart_attach import MANIFEST_FILENAME, PROGRAMBUILD_PRESERVE_EXISTING_FILES
+    from .programstart_attach import (
+        MANIFEST_FILENAME,
+        PROGRAMBUILD_PRESERVE_EXISTING_FILES,
+    )
     from .programstart_bootstrap import (
         WORKFLOW_DESTINATION_PREFIX,
         WORKFLOW_TEMPLATE_PREFIX,
@@ -26,7 +29,10 @@ try:
     )
 except ImportError:  # pragma: no cover - standalone script execution fallback
     from programstart_adopt import _adopted_registry, _managed_prompt_assets
-    from programstart_attach import MANIFEST_FILENAME, PROGRAMBUILD_PRESERVE_EXISTING_FILES
+    from programstart_attach import (
+        MANIFEST_FILENAME,
+        PROGRAMBUILD_PRESERVE_EXISTING_FILES,
+    )
     from programstart_bootstrap import (
         WORKFLOW_DESTINATION_PREFIX,
         WORKFLOW_TEMPLATE_PREFIX,
@@ -124,7 +130,9 @@ def _current_overlay_context(
     manifest: dict[str, Any],
 ) -> tuple[dict[str, Any], tuple[str, ...], list[str]]:
     del manifest  # reserved for future mode-specific managed-set distinctions
-    registry = load_registry_from_path(template_root / "config" / "process-registry.json")
+    registry = load_registry_from_path(
+        template_root / "config" / "process-registry.json"
+    )
     prompt_assets = _managed_prompt_assets(registry)
     state_file = registry["workflow_state"]["programbuild"]["state_file"]
     control_files = [
@@ -159,7 +167,9 @@ def _expected_overlay_registry(
         if isinstance(current, dict):
             current_workspace_value = current.get("workspace")
             current_workspace = (
-                current_workspace_value if isinstance(current_workspace_value, dict) else {}
+                current_workspace_value
+                if isinstance(current_workspace_value, dict)
+                else {}
             )
             for key in ("name", "description"):
                 if current_workspace.get(key):
@@ -215,11 +225,17 @@ def _files_needing_sync(
             results.append((relative_path, "removed-from-template"))
             continue
         if not destination.exists():
-            reason = "new-managed" if relative_path in newly_managed else "missing-in-dest"
+            reason = (
+                "new-managed" if relative_path in newly_managed else "missing-in-dest"
+            )
             results.append((relative_path, reason))
             continue
         if not filecmp.cmp(source, destination, shallow=False):
-            reason = "new-managed-conflict" if relative_path in newly_managed else "changed"
+            reason = (
+                "new-managed-conflict"
+                if relative_path in newly_managed
+                else "changed"
+            )
             results.append((relative_path, reason))
     return results
 
@@ -270,7 +286,7 @@ def sync(
     template_root = template_root.resolve()
     preserve = _preserve_path(destination_root)
 
-    original_files = sorted(set(str(path) for path in manifest.get("files", [])))
+    original_files = sorted({str(path) for path in manifest.get("files", [])})
     lean_overlay = _is_lean_managed_overlay(manifest)
     template_registry: dict[str, Any] | None = None
     prompt_assets: tuple[str, ...] = ()
@@ -317,14 +333,23 @@ def sync(
         and _manifest_needs_refresh(manifest, managed_files, template_commit)
     )
 
-    if not changes and not retired_files and not registry_refresh_needed and not manifest_refresh_needed:
+    if (
+        not changes
+        and not retired_files
+        and not registry_refresh_needed
+        and not manifest_refresh_needed
+    ):
         print("  All manifest files are up to date. Nothing to sync.")
         return 0
 
     if changes:
         print(f"  {len(changes)} managed file(s) need attention:")
         for relative_path, reason in changes:
-            marker = "!" if reason in {"removed-from-template", "new-managed-conflict"} else "+"
+            marker = (
+                "!"
+                if reason in {"removed-from-template", "new-managed-conflict"}
+                else "+"
+            )
             print(f"    [{marker}] {relative_path}  ({reason})")
     if retired_files:
         print(
@@ -338,12 +363,15 @@ def sync(
     if manifest_refresh_needed:
         print(f"    [+] {MANIFEST_FILENAME}  (managed-set/provenance-refresh)")
     if lean_overlay and file_filter is not None:
-        print("  NOTE: filtered sync does not refresh full managed-set/provenance metadata.")
+        print(
+            "  NOTE: filtered sync does not refresh full managed-set/provenance metadata."
+        )
 
     blockers = [
         (path, reason)
         for path, reason in changes
-        if reason == "new-managed-conflict" or (lean_overlay and reason == "removed-from-template")
+        if reason == "new-managed-conflict"
+        or (lean_overlay and reason == "removed-from-template")
     ]
     if blockers:
         print()
@@ -383,7 +411,9 @@ def sync(
         and expected_registry is not None
         and registry_refresh_needed
     ):
-        write_json(destination_root / "config" / "process-registry.json", expected_registry)
+        write_json(
+            destination_root / "config" / "process-registry.json", expected_registry
+        )
         print("  SYNC config/process-registry.json (derived registry)")
 
     if lean_overlay and file_filter is None:

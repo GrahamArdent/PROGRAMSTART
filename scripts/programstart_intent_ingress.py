@@ -7,6 +7,10 @@ raw operator intent -> trusted semantic interpretation -> resolved authority -> 
 
 Missing inputs remain visible instead of being guessed. When both trusted inputs exist,
 the existing deterministic Work Packet compiler is invoked immediately.
+
+Generic acceptance such as ``proceed`` is never interpreted by keyword here. An upstream
+trusted semantic layer may instead attach an ``AcceptedRecommendationContext`` so the
+accepted prior recommendation is bound explicitly before deterministic compilation.
 """
 
 from __future__ import annotations
@@ -21,6 +25,7 @@ from .programstart_intent_compile import (
     IntentInterpretation,
     IntentKind,
     compile_interpreted_work_packet,
+    interpret_intent,
 )
 
 
@@ -30,8 +35,25 @@ class IntentIngressStatus(StrEnum):
     COMPILED = "compiled"
 
 
+class AcceptedRecommendationContext(BaseModel):
+    """Trusted reference to the concrete recommendation accepted by the operator."""
+
+    recommendation_id: str
+    recommendation_text: str
+    source_ref: str = ""
+
+    @model_validator(mode="after")
+    def recommendation_must_be_present(self) -> AcceptedRecommendationContext:
+        if not self.recommendation_id.strip():
+            raise ValueError("recommendation_id must not be empty")
+        if not self.recommendation_text.strip():
+            raise ValueError("recommendation_text must not be empty")
+        return self
+
+
 class IntentIngressRequest(BaseModel):
     raw_intent: str
+    accepted_recommendation: AcceptedRecommendationContext | None = None
 
     @model_validator(mode="after")
     def raw_intent_must_be_present(self) -> IntentIngressRequest:
@@ -52,6 +74,48 @@ def _normalize(value: str) -> str:
     return " ".join(value.strip().split())
 
 
+def bind_accepted_recommendation(
+    request: IntentIngressRequest,
+    *,
+    recommendation: AcceptedRecommendationContext,
+    project_hint: str = "",
+    explicit_constraints: list[str] | None = None,
+) -> IntentInterpretation:
+    """Bind trusted generic acceptance to a concrete prior recommendation.
+
+    This helper performs no phrase matching. The caller must already have established
+    that the current operator turn accepts ``recommendation``. The resulting semantic
+    interpretation preserves the operator's raw utterance while compiling the concrete
+    recommendation objective through the ordinary continuation path.
+    """
+
+    if request.accepted_recommendation != recommendation:
+        raise ValueError("request does not carry the supplied accepted recommendation context")
+
+    return interpret_intent(
+        request.raw_intent,
+        kind=IntentKind.CONTINUATION,
+        interpreted_objective=recommendation.recommendation_text,
+        project_hint=project_hint,
+        explicit_constraints=explicit_constraints,
+    )
+
+
+def _validate_accepted_recommendation_binding(
+    request: IntentIngressRequest,
+    interpretation: IntentInterpretation,
+) -> None:
+    recommendation = request.accepted_recommendation
+    if recommendation is None:
+        return
+
+    if interpretation.kind != IntentKind.CONTINUATION:
+        raise ValueError("accepted recommendation context requires continuation intent")
+
+    if _normalize(interpretation.interpreted_objective) != _normalize(recommendation.recommendation_text):
+        raise ValueError("interpretation objective does not match accepted recommendation context")
+
+
 def advance_intent_ingress(
     request: IntentIngressRequest,
     *,
@@ -69,6 +133,8 @@ def advance_intent_ingress(
 
     if interpretation.normalized_intent != _normalize(request.raw_intent):
         raise ValueError("interpretation does not describe the current raw intent")
+
+    _validate_accepted_recommendation_binding(request, interpretation)
 
     if interpretation.kind == IntentKind.UNKNOWN or interpretation.unresolved_ambiguities:
         return IntentIngressResult(

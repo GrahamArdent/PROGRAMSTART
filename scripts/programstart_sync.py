@@ -276,12 +276,29 @@ def sync(
         file_filter,
         newly_managed,
     )
+    preserved_alignment_issues: list[tuple[str, str]] = []
+    if lean_overlay and file_filter is None and preserve:
+        all_pre_sync_issues = _files_needing_sync(
+            template_root,
+            destination_root,
+            managed_files,
+            preserve=set(),
+            newly_managed=newly_managed,
+        )
+        preserved_alignment_issues = [(path, reason) for path, reason in all_pre_sync_issues if path in preserve]
+
     template_commit = _template_head_hash(template_root) if lean_overlay and file_filter is None else ""
     manifest_refresh_needed = (
         lean_overlay and file_filter is None and _manifest_needs_refresh(manifest, managed_files, template_commit)
     )
 
-    if not changes and not retired_files and not registry_refresh_needed and not manifest_refresh_needed:
+    if (
+        not changes
+        and not retired_files
+        and not registry_refresh_needed
+        and not manifest_refresh_needed
+        and not preserved_alignment_issues
+    ):
         print("  All manifest files are up to date. Nothing to sync.")
         return 0
 
@@ -290,6 +307,10 @@ def sync(
         for relative_path, reason in changes:
             marker = "!" if reason in {"removed-from-template", "new-managed-conflict"} else "+"
             print(f"    [{marker}] {relative_path}  ({reason})")
+    if preserved_alignment_issues:
+        print(f"  {len(preserved_alignment_issues)} preserved managed file(s) prevent exact alignment:")
+        for relative_path, reason in preserved_alignment_issues:
+            print(f"    [!] {relative_path}  (preserved-{reason})")
     if retired_files:
         print(f"  {len(retired_files)} file(s) retired from the current managed set (preserved in destination):")
         for relative_path in retired_files:
@@ -331,6 +352,28 @@ def sync(
             copy_file(source, destination, dry_run=False)
             copied += 1
             print(f"  SYNC {relative_path} ({reason})")
+
+    alignment_issues: list[tuple[str, str]] = []
+    if lean_overlay and file_filter is None:
+        # Preserve policy controls copying, not provenance truth. Re-check the full
+        # current managed set without preserve exclusions after safe copies complete.
+        # Any remaining difference means the target cannot claim exact alignment with
+        # the template commit, even when the difference is intentionally preserved.
+        alignment_issues = _files_needing_sync(
+            template_root,
+            destination_root,
+            managed_files,
+            preserve=set(),
+            newly_managed=set(),
+        )
+
+    if lean_overlay and file_filter is None and alignment_issues:
+        print("  HOLD derived registry and manifest/source provenance: managed files are not fully aligned.")
+        for relative_path, reason in alignment_issues:
+            print(f"    [!] {relative_path}  ({reason})")
+        print()
+        print(f"  Synced {copied} managed file(s), skipped {skipped}; full reconciliation remains blocked.")
+        return 2
 
     if lean_overlay and file_filter is None and expected_registry is not None and registry_refresh_needed:
         write_json(destination_root / "config" / "process-registry.json", expected_registry)

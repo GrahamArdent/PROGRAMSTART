@@ -426,8 +426,8 @@ def main(argv: list[str] | None = None) -> int:
 
     return sync(
         destination_root,
-        confirm=confirm,
-        file_filter=file_filter,
+        confirm=args.confirm,
+        file_filter=args.file_filter,
         template_root=template_root,
     )
 

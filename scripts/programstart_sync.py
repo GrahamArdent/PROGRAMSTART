@@ -285,9 +285,7 @@ def sync(
             preserve=set(),
             newly_managed=newly_managed,
         )
-        preserved_alignment_issues = [
-            (path, reason) for path, reason in all_pre_sync_issues if path in preserve
-        ]
+        preserved_alignment_issues = [(path, reason) for path, reason in all_pre_sync_issues if path in preserve]
 
     template_commit = _template_head_hash(template_root) if lean_overlay and file_filter is None else ""
     manifest_refresh_needed = (

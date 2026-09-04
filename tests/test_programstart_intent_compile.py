@@ -47,7 +47,7 @@ def _authority(name: str) -> AuthoritySnapshot:
 @pytest.mark.parametrize("case", _cases(), ids=lambda case: case["name"])
 def test_real_intent_cases_compile_to_expected_bounded_semantics(case: dict) -> None:
     authority = AuthoritySnapshot.model_validate(case["authority"])
-    packet = compile_work_packet(case["intent"], authority)
+    packet = compile_work_packet(case["intent"], authority, kind=IntentKind(case["expected"]["kind"]))
     expected = case["expected"]
 
     assert packet.intent.kind.value == expected["kind"]
@@ -66,8 +66,9 @@ def test_same_intent_and_authority_are_deterministic_and_idempotent() -> None:
     case = _case("resume_creator_parallel_safe_continuation")
     authority = AuthoritySnapshot.model_validate(case["authority"])
 
-    left = compile_work_packet(case["intent"], authority)
-    right = compile_work_packet(case["intent"], authority)
+    kind = IntentKind(case["expected"]["kind"])
+    left = compile_work_packet(case["intent"], authority, kind=kind)
+    right = compile_work_packet(case["intent"], authority, kind=kind)
 
     assert left.intent_id == right.intent_id
     assert left.specification_id == right.specification_id
@@ -103,6 +104,17 @@ def test_unknown_ambiguous_intent_fails_narrow_without_mutation() -> None:
     assert packet.intent.unresolved_ambiguities
 
 
+def test_natural_language_without_trusted_semantic_kind_fails_narrow() -> None:
+    authority = _authority("resume_creator_parallel_safe_continuation")
+    packet = compile_work_packet("Continue Resume Creator.", authority)
+
+    assert packet.intent.kind == IntentKind.UNKNOWN
+    assert packet.admission_hint == "needs_interpretation"
+    assert packet.dependencies.expected_write_set == []
+    assert packet.scope.allowed_effects == []
+    assert "trusted semantic intent family" in packet.intent.unresolved_ambiguities[0]
+
+
 def test_authority_snapshot_rejects_internal_mutable_read_only_contradiction() -> None:
     authority = _authority("resume_creator_parallel_safe_continuation")
     duplicate = authority.mutable_surfaces[0]
@@ -124,6 +136,7 @@ def test_audit_does_not_silently_become_immediate_rewrite() -> None:
     packet = compile_work_packet(
         "Watchtower seems behind. Audit how it's being used and move it forward.",
         authority,
+        kind=IntentKind.AUDIT,
     )
 
     assert packet.intent.kind == IntentKind.AUDIT
@@ -163,7 +176,7 @@ def test_broad_user_language_cannot_override_spend_or_security_gates() -> None:
 
 def test_temporary_automation_gap_is_not_promoted_to_human_gate() -> None:
     authority = _authority("resume_creator_parallel_safe_continuation")
-    packet = compile_work_packet("Continue Resume Creator.", authority)
+    packet = compile_work_packet("Continue Resume Creator.", authority, kind=IntentKind.CONTINUATION)
     gap = "mechanical GitHub Actions activation/retrigger when already authorized but no actuator is available"
 
     assert gap in packet.autonomy.temporary_automation_gaps
@@ -176,6 +189,7 @@ def test_parallel_repository_protection_overrides_declared_mutability() -> None:
     packet = compile_work_packet(
         "Watchtower seems behind. Audit how it's being used and move it forward.",
         authority,
+        kind=IntentKind.AUDIT,
     )
 
     assert "GrahamArdent/repo-watchtower" not in packet.scope.mutable_identifiers
@@ -202,7 +216,11 @@ def test_parallel_provider_surface_is_protected_by_same_typed_model() -> None:
             "parallel_work": [*authority.parallel_work, protected],
         }
     )
-    packet = compile_work_packet("Implement the admitted repository slice.", authority)
+    packet = compile_work_packet(
+        "Implement the admitted repository slice.",
+        authority,
+        kind=IntentKind.BOUNDED_EXECUTION,
+    )
 
     provider_access = next(surface for surface in packet.scope.surfaces if surface.surface_type == SurfaceType.PROVIDER)
     assert provider_access.access == "read_only"
@@ -212,7 +230,7 @@ def test_parallel_provider_surface_is_protected_by_same_typed_model() -> None:
 
 def test_modified_compiled_spec_fails_integrity_verification() -> None:
     authority = _authority("resume_creator_parallel_safe_continuation")
-    packet = compile_work_packet("Continue Resume Creator.", authority)
+    packet = compile_work_packet("Continue Resume Creator.", authority, kind=IntentKind.CONTINUATION)
     assert verify_integrity(packet)
 
     modified_scope = packet.scope.model_copy(
@@ -232,7 +250,7 @@ def test_modified_compiled_spec_fails_integrity_verification() -> None:
 
 def test_authority_change_requires_recompile() -> None:
     authority = _authority("resume_creator_parallel_safe_continuation")
-    packet = compile_work_packet("Continue Resume Creator.", authority)
+    packet = compile_work_packet("Continue Resume Creator.", authority, kind=IntentKind.CONTINUATION)
 
     same = assess_authority_drift(packet, authority)
     assert same.status == "unchanged"
@@ -248,6 +266,7 @@ def test_chatgpt_renderer_is_derived_and_preserves_critical_semantics() -> None:
     packet = compile_work_packet(
         "Continue Resume Creator, but don't interfere with the infrastructure work happening in parallel.",
         authority,
+        kind=IntentKind.CONTINUATION,
     )
     prompt = render_chatgpt_prompt(packet)
 
@@ -282,7 +301,7 @@ def test_renderer_cannot_add_mutable_surface_absent_from_spec() -> None:
 def test_two_specs_mutating_same_surface_report_write_collision() -> None:
     authority = _authority("resume_creator_parallel_safe_continuation")
     authority = authority.model_copy(update={"parallel_work": [], "read_only_surfaces": []})
-    left = compile_work_packet("Continue Resume Creator.", authority)
+    left = compile_work_packet("Continue Resume Creator.", authority, kind=IntentKind.CONTINUATION)
     right = compile_work_packet(
         "Implement the next Resume Creator slice.",
         authority,
@@ -301,7 +320,7 @@ def test_unrelated_write_sets_do_not_manufacture_global_locking() -> None:
     watchtower_authority = _authority("watchtower_audit_with_parallel_collision").model_copy(
         update={"parallel_work": [], "read_only_surfaces": []}
     )
-    resume = compile_work_packet("Continue Resume Creator.", resume_authority)
+    resume = compile_work_packet("Continue Resume Creator.", resume_authority, kind=IntentKind.CONTINUATION)
     watchtower = compile_work_packet(
         "Implement the next admitted Watchtower repository slice.",
         watchtower_authority,
@@ -337,6 +356,8 @@ def test_cli_compiles_fixture_authority_to_json(
             "Continue Resume Creator.",
             "--authority",
             str(authority_path),
+            "--kind",
+            "continuation",
         ]
     )
     assert rc == 0

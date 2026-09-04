@@ -287,44 +287,6 @@ def authority_fingerprint(authority: AuthoritySnapshot) -> str:
     return _digest(authority.model_dump(mode="json"))
 
 
-def infer_intent_kind(raw_intent: str) -> IntentKind:
-    """Select a small semantic rule family without deriving execution authority."""
-
-    text = _normalize_text(raw_intent).casefold()
-    if not text:
-        return IntentKind.UNKNOWN
-
-    architecture_signals = (
-        "architecture",
-        "orchestrat",
-        "shouldn't have to stay open",
-        "should not have to stay open",
-        "keep working in the backend",
-        "keep working in backend",
-        "do we need",
-    )
-    if any(signal in text for signal in architecture_signals):
-        return IntentKind.ARCHITECTURE_EVALUATION
-
-    audit_signals = ("audit", "seems behind", "assess", "review how", "look into")
-    if any(signal in text for signal in audit_signals):
-        return IntentKind.AUDIT
-
-    continuation_signals = (
-        "continue",
-        "keep working",
-        "keep moving",
-        "move it forward",
-        "move forward",
-    )
-    if any(signal in text for signal in continuation_signals):
-        return IntentKind.CONTINUATION
-
-    if any(signal in text for signal in ("implement", "build", "fix ", "ship ")):
-        return IntentKind.BOUNDED_EXECUTION
-    return IntentKind.UNKNOWN
-
-
 def _explicit_constraints(raw_intent: str) -> list[str]:
     text = _normalize_text(raw_intent).casefold()
     constraints: list[str] = []
@@ -346,10 +308,12 @@ def interpret_intent(
     if not normalized:
         raise ValueError("raw intent must not be empty")
 
-    selected_kind = kind or infer_intent_kind(normalized)
+    selected_kind = kind or IntentKind.UNKNOWN
     unresolved: list[str] = []
     if selected_kind == IntentKind.UNKNOWN:
-        unresolved.append("Intent family is not safely classifiable; mutation authority is withheld pending interpretation.")
+        unresolved.append(
+            "No trusted semantic intent family was supplied; mutation authority is withheld pending interpretation."
+        )
 
     return IntentInterpretation(
         raw_intent=raw_intent,

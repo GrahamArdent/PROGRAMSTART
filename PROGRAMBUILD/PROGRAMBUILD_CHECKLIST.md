@@ -114,6 +114,7 @@ For each coherent slice:
 - [ ] if a derived checklist/audit/portfolio finding is material but not represented in current owning authority, apply `docs/PROGRAMSTART_AUTHORITY_GAP_RECONCILIATION.md`; the derived finding may route/reconcile work but must not execute as authority
 - [ ] preserve any stronger security/destructive/financial/credential/production/privacy/legal/release/operator gate; generic acceptance does not satisfy it automatically
 - [ ] when autonomous execution is available, resolve the exact action under `docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md`; new Controller/Compute/worker capability may automate only an already-authorized consequence class and must not create new permission
+- [ ] before escalating an already-authorized mechanical action to operator transport, classify the boundary origin and run the Effective Autonomy alternative-actuation search across available connected APIs/connectors, provider APIs, CLI tools, accepted runtimes, repository automation, local agents/tasks, machine identities, control queues, and bounded compositions; use the safest viable in-authority mechanism or record why none survives Challenge
 - [ ] persist `CURRENT_WORK_PACKET.md` only if persistence materially improves coordination/risk/resumption
 - [ ] trace the slice to current authority and exact relevant requirements/contracts
 - [ ] load only task-relevant authority/specialist context
@@ -184,6 +185,7 @@ For each coherent slice:
 - [ ] specialist agents are used only when decomposition/review value justifies them
 - [ ] learning-capable behavior, when activated, remains subordinate to deterministic permission/safety/budget/gate authority and cannot self-expand authority
 - [ ] effective autonomy is consequence-scoped; newly available execution capability has not been mistaken for broader project authority or a project-wide `autonomous=true` permission
+- [ ] tool creativity was applied before any operator transport claim for already-authorized mechanical work, while authority remained conservative and stronger gates were not disguised or bypassed
 - [ ] a narrow human/consequence gate is not unnecessarily freezing unrelated safe work, and accepted gate evidence can resume without routine human transport where current runtime capability permits
 - [ ] no universal numeric/time threshold is being substituted for risk judgment
 - [ ] project-specific state is not stored in reusable PROGRAMSTART methodology
@@ -205,4 +207,4 @@ Do not duplicate the full gate prose in this checklist.
 
 ---
 
-Last updated: 2026-09-03
+Last updated: 2026-09-04

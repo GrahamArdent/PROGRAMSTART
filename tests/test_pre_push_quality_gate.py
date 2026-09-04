@@ -12,7 +12,11 @@ ROOT = Path(__file__).resolve().parents[1]
 HOOK = ROOT / "scripts" / "hooks" / "pre-push"
 
 
-def _run_hook(tmp_path: Path, gate_exit_code: int, remote_ref: str = "refs/heads/feature/test") -> tuple[subprocess.CompletedProcess[str], Path]:
+def _run_hook(
+    tmp_path: Path,
+    gate_exit_code: int,
+    remote_ref: str = "refs/heads/feature/test",
+) -> tuple[subprocess.CompletedProcess[str], Path]:
     if os.name == "nt":
         pytest.skip("Shell hook execution is covered on the Linux CI runner")
 

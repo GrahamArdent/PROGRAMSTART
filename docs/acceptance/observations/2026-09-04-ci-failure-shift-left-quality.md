@@ -1,8 +1,8 @@
 # CI failure-pattern audit: shift-left quality publication
 
-**Date:** 2026-09-04  
-**Classification:** systemic methodology improvement / implemented, real retest pending  
-**Candidate lesson:** `PSL-022`  
+**Date:** 2026-09-04
+**Classification:** systemic methodology improvement / implemented, real retest pending
+**Candidate lesson:** `PSL-022`
 **Status:** subordinate acceptance evidence; do not treat as validation
 
 ## Observation

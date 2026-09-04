@@ -376,34 +376,41 @@ def resolve_contextual_intent(request: ContextualIntentRequest) -> ContextualInt
 
     if existing is not None:
         if authority is None:
+            requirement = "resolve current owning-project authority and revalidate the existing Work Packet"
+            if _semantic_gap(harvest):
+                requirement = (
+                    "recover complete current conversation semantics and resolve current owning-project authority before "
+                    "revalidating the existing Work Packet"
+                )
             return ContextualIntentResolution(
                 state=ConversationState.CONVERGED,
                 action=ContextualTransitionAction.REVALIDATE_EXISTING_PACKET,
                 harvest=harvest,
                 packet=existing,
-                next_system_requirement="resolve current owning-project authority and revalidate the existing Work Packet",
+                next_system_requirement=requirement,
                 notes=[
-                    "Existing packet semantics are retained pending currentness revalidation; missing authority is a machine integration "
-                    "boundary, not a reason to replan or declare execution ready."
+                    "Existing packet semantics are retained pending currentness revalidation; unresolved machine context is not a "
+                    "reason to replan or declare execution ready."
                 ],
             )
 
         drift = assess_authority_drift(existing, authority)
         if drift.status == "unchanged":
-            if _semantic_gap(harvest) and _partial_harvest_changes_packet(harvest, existing):
+            if _semantic_gap(harvest):
+                visible_drift = _partial_harvest_changes_packet(harvest, existing)
+                note = "Current conversation semantics are incomplete; recover them before reusing the active Work Packet."
+                if visible_drift:
+                    note = (
+                        "Partial conversation recovery already contains material semantic drift; recover complete semantics before "
+                        "deciding whether the active Work Packet must be replaced."
+                    )
                 return ContextualIntentResolution(
                     state=ConversationState.CONVERGED,
                     action=ContextualTransitionAction.RECOVER_EXECUTION_STATE,
                     harvest=harvest,
                     packet=existing,
-                    next_system_requirement=(
-                        "recover complete current conversation semantics before deciding whether the active Work Packet "
-                        "must be replaced"
-                    ),
-                    notes=[
-                        "Partial conversation recovery already contains material semantic drift; do not silently reuse "
-                        "or recompile from incomplete semantics."
-                    ],
+                    next_system_requirement="recover complete current conversation semantics before active Work Packet reuse",
+                    notes=[note],
                 )
             if _harvest_changes_packet(harvest, existing):
                 return _recompile_current_harvest(

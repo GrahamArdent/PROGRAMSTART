@@ -205,3 +205,37 @@ def test_legacy_manifest_keeps_fixed_file_list_semantics(tmp_path: Path, capsys)
     refreshed = json.loads(manifest_path.read_text(encoding="utf-8"))
     assert refreshed == manifest
     assert "new-managed" not in capsys.readouterr().out
+
+
+def test_preserved_managed_drift_allows_safe_copies_but_holds_full_provenance(tmp_path: Path):
+    template, dest = _setup(tmp_path)
+    original_manifest = (dest / ".programstart-manifest.json").read_text(encoding="utf-8")
+    original_registry = (dest / "config/process-registry.json").read_text(encoding="utf-8")
+
+    _write(template / "PROGRAMBUILD/CURRENT.md", "template-updated-control\n")
+    _write(dest / "PROGRAMBUILD/CURRENT.md", "project-preserved-control\n")
+    _write(dest / ".programstart-preserve", "PROGRAMBUILD/CURRENT.md\n")
+
+    with patch.object(sync, "_template_head_hash", return_value="newsha"):
+        result = sync.sync(dest, confirm=True, template_root=template)
+
+    assert result == 2
+    assert (dest / "PROGRAMBUILD/CURRENT.md").read_text(encoding="utf-8") == "project-preserved-control\n"
+    assert (dest / "docs/NEW_GUIDE.md").read_text(encoding="utf-8") == "new-guide\n"
+    assert (dest / ".programstart-manifest.json").read_text(encoding="utf-8") == original_manifest
+    assert (dest / "config/process-registry.json").read_text(encoding="utf-8") == original_registry
+
+
+def test_referenced_authority_protocols_are_managed_and_bootstrapped() -> None:
+    root = Path(__file__).resolve().parents[1]
+    registry = json.loads((root / "config/registry/workspace.json").read_text(encoding="utf-8"))
+    workspace = registry["workspace"]
+    support_files = set(workspace["generated_repo_prompt_policy"]["support_files"])
+    bootstrap_assets = set(workspace["bootstrap_assets"])
+    required = {
+        "docs/PROGRAMSTART_AUTHORITY_GAP_RECONCILIATION.md",
+        "docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md",
+    }
+
+    assert required <= support_files
+    assert required <= bootstrap_assets

@@ -14,6 +14,8 @@ When PROGRAMSTART attaches or adopts PROGRAMBUILD into a downstream consumer rep
 
 A real LinkedIn Generator retest on 2026-09-01 exposed an important evolution of the original design: a manifest whose `files` list is frozen at attach time cannot discover a file that becomes a managed reusable asset later. Attach-time membership is therefore useful evidence of the previous reconciliation, but it cannot be permanent authority over future managed membership for a lean managed overlay.
 
+A later Controller integration Challenge exposed a second trust boundary: preserve policy and provenance truth are different concerns. A downstream project may explicitly preserve a managed file and keep it divergent, but PROGRAMSTART must not then advance the exact `source_commit` as though the complete managed overlay matched that template commit.
+
 ## Decision Drivers
 
 - Downstream repos need a low-friction way to receive PROGRAMSTART tooling/methodology updates.
@@ -22,6 +24,7 @@ A real LinkedIn Generator retest on 2026-09-01 exposed an important evolution of
 - Existing lean adopted repositories must be able to discover newly managed reusable assets without destructive re-attach.
 - Files that leave the managed set must not be silently deleted from a project.
 - Partial/filtered sync must not falsely claim full PROGRAMSTART provenance/currentness.
+- Explicitly preserved managed divergence must not falsely claim exact PROGRAMSTART provenance/currentness.
 - Project strategy, architecture, implementation, optional project artifacts, and mutable workflow state remain project-owned.
 
 ## Considered Options
@@ -45,9 +48,13 @@ For lean managed overlays such as `existing_project_adoption` and external PROGR
 4. newly managed files may be created when absent, but a different existing downstream file at the same path is a conflict and must not be overwritten automatically;
 5. files retired from the managed set remain in the project and are removed only from managed membership, not from disk;
 6. refresh the downstream derived process registry from current methodology while preserving explicitly project-owned identity/description fields;
-7. after a successful unfiltered reconciliation, refresh manifest membership, source commit/provenance, sync timestamp, and derived-file metadata;
-8. a filtered/partial sync may change the requested files but must not advance full managed-set/provenance state;
-9. sync remains a safe reconciliation primitive, not permission to strategically replan the target repository.
+7. after safe file copies, independently verify the full current managed set without preserve exclusions before refreshing exact provenance;
+8. refresh manifest membership, source commit/provenance, sync timestamp, derived-file metadata, and the derived registry only when the complete current managed set is byte-aligned with the template;
+9. if an explicitly preserved managed path remains missing or divergent, safe unrelated copies may still proceed, but derived-registry/provenance refresh is held and the reconciliation remains incomplete;
+10. a filtered/partial sync may change the requested files but must not advance full managed-set/provenance state;
+11. sync remains a safe reconciliation primitive, not permission to strategically replan the target repository.
+
+Preserve rules therefore govern **copy authority**, while source provenance records **verified alignment**. A project is allowed to preserve a local divergence, but doing so intentionally prevents a newer exact PROGRAMSTART source pin until that divergence is reconciled.
 
 ## Consequences
 
@@ -55,8 +62,9 @@ For lean managed overlays such as `existing_project_adoption` and external PROGR
 - Good: Attach-time manifests become a record of the last safe reconciliation instead of a permanent stale membership definition.
 - Good: Conflicting project-owned paths stop rather than being silently seized by PROGRAMSTART.
 - Good: Retired managed files are preserved, reducing destructive behavior.
-- Good: Derived target control metadata can advance with current methodology.
-- Good: Partial sync can no longer masquerade as full currentness.
+- Good: Derived target control metadata can advance with current methodology only when its managed files actually match.
+- Good: Partial sync and preserved managed divergence can no longer masquerade as full currentness.
+- Good: A narrow preserved-file blocker does not unnecessarily prevent unrelated safe managed-file copies.
 - Neutral: `programstart sync` is still an invocation primitive; automatic portfolio fan-out requires a separate trusted scheduler/controller/maintenance runtime and project-scoped authority.
 - Neutral: Optional artifacts such as project-specific `IDEA_LEDGER.md` are not automatically made managed merely because PROGRAMSTART provides a reusable template.
 - Bad: Reconciliation logic is more mode-aware than the original fixed-list implementation and therefore requires explicit regression coverage.
@@ -65,11 +73,12 @@ For lean managed overlays such as `existing_project_adoption` and external PROGR
 
 Expected checks now include:
 
-- dry-run reports changed, missing, newly managed, retired, registry, and provenance deltas;
+- dry-run reports changed, missing, newly managed, retired, registry, provenance, and preserved-alignment deltas;
 - `--confirm` copies changed/missing/newly managed safe files;
 - newly managed path conflicts are not overwritten or claimed;
 - retired managed files remain on disk but leave refreshed manifest membership;
-- lean-overlay derived registry/provenance refreshes only after a successful unfiltered sync;
+- lean-overlay derived registry/provenance refreshes only after a successful unfiltered sync whose complete current managed set matches the template;
+- explicitly preserved managed divergence may coexist with unrelated safe copies but holds derived-registry/provenance refresh and returns incomplete reconciliation;
 - filtered sync does not advance full provenance;
 - legacy manifests retain their previous fixed-file behavior;
 - a real already-adopted repository (LinkedIn Generator) is used as the downstream retest before this evolution is considered validated.

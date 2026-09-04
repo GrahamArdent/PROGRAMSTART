@@ -108,6 +108,14 @@ jobs:
                   '        "Continue Resume Creator.", resume_authority, kind=IntentKind.CONTINUATION\n'
                   '    )\n',
               ),
+              (
+                  '    packet = compile_work_packet("Implement the admitted repository slice.", authority)\n',
+                  '    packet = compile_work_packet(\n'
+                  '        "Implement the admitted repository slice.",\n'
+                  '        authority,\n'
+                  '        kind=IntentKind.BOUNDED_EXECUTION,\n'
+                  '    )\n',
+              ),
           ]
           for old_text, new_text in replacements:
               test = test.replace(old_text, new_text)

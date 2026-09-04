@@ -186,6 +186,13 @@ Counterexamples requiring a gate/decision:
 
 A mature autonomy posture aims for **zero human transport work**, not zero human judgment.
 
+Before declaring a human gate, classify the boundary origin:
+
+- **`genuine_human_gate`** — the intended authority, safety, or evidence model requires human judgment, authorization, physical action, secret entry, legal/business acceptance, or equivalent human evidence;
+- **`temporary_automation_gap`** — the action is mechanical and already authorized, but the current Controller, Compute Spine, worker, identity, or tool surface lacks a proven actuator or transport path.
+
+**Current-environment inability alone is never evidence of a genuine human gate.** A temporary automation gap may require a short operator relay today, but that relay is removable implementation debt, not permanent project architecture. Route it to the capability owner, continue unaffected safe work, and prefer an existing trusted temporary bridge when its authority explicitly allows that use while a typed replacement is built. Do not weaken a real consequence gate merely to remove toil.
+
 When an action truly requires the operator:
 
 - persist the exact gate and resume point;

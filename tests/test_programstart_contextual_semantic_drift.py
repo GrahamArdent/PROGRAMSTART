@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import pytest
+
 from scripts.programstart_intent_compile import AuthoritySnapshot, IntentKind, SurfaceRef, SurfaceType, compile_work_packet
 from scripts.programstart_intent_ingress import (
     ContextualIntentRequest,
@@ -10,6 +12,7 @@ from scripts.programstart_intent_ingress import (
     ConversationHarvest,
     ConversationState,
     MaterialStatement,
+    render_contextual_handoff,
     resolve_contextual_intent,
 )
 
@@ -111,6 +114,7 @@ def test_new_accepted_constraint_recompiles_even_when_authority_is_unchanged() -
     assert resolution.packet.specification_id != packet.specification_id
     assert resolution.supersedes_specification_id == packet.specification_id
     assert new_constraint.text in resolution.packet.intent.explicit_constraints
+    assert new_constraint.text in render_contextual_handoff(resolution)
 
 
 def test_partial_recovery_with_new_constraint_does_not_silently_reuse_or_recompile() -> None:
@@ -152,3 +156,6 @@ def test_partial_recovery_with_new_constraint_does_not_silently_reuse_or_recompi
     assert resolution.supersedes_specification_id is None
     assert resolution.operator_intervention_required is False
     assert "recover complete current conversation semantics" in (resolution.next_system_requirement or "")
+
+    with pytest.raises(ValueError, match="not sealed"):
+        render_contextual_handoff(resolution)

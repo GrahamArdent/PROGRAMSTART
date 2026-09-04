@@ -40,12 +40,15 @@ def _run_hook(
     fake_uv.chmod(0o755)
 
     env = os.environ.copy()
-    env["PATH"] = f"{fake_bin}{os.pathsep}{env.get("PATH", "")}"
+    current_path = env.get("PATH", "")
+    env["PATH"] = f"{fake_bin}{os.pathsep}{current_path}"
     env["PROGRAMSTART_TEST_GATE_LOG"] = str(gate_log)
 
+    local_oid = "1" * 40
+    remote_oid = "2" * 40
     result = subprocess.run(
         ["/bin/sh", str(HOOK), "origin", "git@example.invalid:repo.git"],
-        input=f"refs/heads/feature/test {"1" * 40} {remote_ref} {"2" * 40}\n",
+        input=f"refs/heads/feature/test {local_oid} {remote_ref} {remote_oid}\n",
         text=True,
         capture_output=True,
         cwd=ROOT,

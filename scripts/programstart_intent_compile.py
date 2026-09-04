@@ -361,6 +361,7 @@ def _build_scope(
     protected = _protected_surface_map(authority)
     mutable_keys = {_surface_key(surface) for surface in authority.mutable_surfaces}
     mutation_enabled = intent.kind != IntentKind.UNKNOWN and not intent.unresolved_ambiguities
+    audit_read_only = intent.kind == IntentKind.AUDIT
     conflicts: list[DependencyConflict] = []
     accesses: list[SurfaceAccess] = []
 
@@ -376,11 +377,13 @@ def _build_scope(
                 )
             )
 
-        mutable = wants_mutation and parallel_owner is None
+        mutable = wants_mutation and parallel_owner is None and not audit_read_only
         if mutable:
             reason = "current owning-project authority"
         elif parallel_owner is not None:
             reason = "active parallel-work protection overrides mutation for this compilation"
+        elif audit_read_only:
+            reason = "audit begins read-only until findings are reconciled"
         elif not mutation_enabled:
             reason = "unresolved intent fails narrow"
         else:

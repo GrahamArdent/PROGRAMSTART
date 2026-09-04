@@ -269,6 +269,17 @@ def _semantic_signature(intent: IntentInterpretation) -> tuple[object, ...]:
     )
 
 
+def _partial_harvest_changes_packet(harvest: ConversationHarvest, existing: CompiledWorkPacket) -> bool:
+    """Detect already-visible material drift without pretending an incomplete harvest is compilable."""
+
+    if harvest.objective is not None and _normalize(harvest.objective.text) != existing.intent.interpreted_objective:
+        return True
+    if harvest.intent_kind != IntentKind.UNKNOWN and harvest.intent_kind != existing.intent.kind:
+        return True
+    existing_constraints = set(existing.intent.explicit_constraints)
+    return any(value not in existing_constraints for value in _execution_constraints(harvest))
+
+
 def _harvest_changes_packet(harvest: ConversationHarvest, existing: CompiledWorkPacket) -> bool:
     """Return true only when a complete current harvest materially changes packet semantics."""
 
@@ -381,6 +392,21 @@ def resolve_contextual_intent(request: ContextualIntentRequest) -> ContextualInt
 
         drift = assess_authority_drift(existing, authority)
         if drift.status == "unchanged":
+            if _semantic_gap(harvest) and _partial_harvest_changes_packet(harvest, existing):
+                return ContextualIntentResolution(
+                    state=ConversationState.CONVERGED,
+                    action=ContextualTransitionAction.RECOVER_EXECUTION_STATE,
+                    harvest=harvest,
+                    packet=existing,
+                    next_system_requirement=(
+                        "recover complete current conversation semantics before deciding whether the active Work Packet "
+                        "must be replaced"
+                    ),
+                    notes=[
+                        "Partial conversation recovery already contains material semantic drift; do not silently reuse "
+                        "or recompile from incomplete semantics."
+                    ],
+                )
             if _harvest_changes_packet(harvest, existing):
                 return _recompile_current_harvest(
                     request,

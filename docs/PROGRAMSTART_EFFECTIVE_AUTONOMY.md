@@ -182,7 +182,7 @@ Counterexamples requiring a gate/decision:
 
 ---
 
-## 9. Human gates, alternative actuation, and notifications
+## 9. Human-gate classification: genuine_human_gate vs temporary_automation_gap, alternative actuation, and notifications
 
 A mature autonomy posture aims for **zero human transport work**, not zero human judgment.
 

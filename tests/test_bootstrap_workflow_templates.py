@@ -46,12 +46,18 @@ def test_orchestration_support_protocols_propagate_with_generated_workflow_promp
 
     prompt_assets = bootstrap.generated_repo_prompt_assets(registry)
     bootstrap_assets = set(bootstrap.generated_repo_bootstrap_assets(registry))
+    support_files = set(registry["workspace"]["generated_repo_prompt_policy"]["support_files"])
 
     assert ".github/prompts/start-programstart-project.prompt.md" in prompt_assets
     assert "docs/PROGRAMSTART_LEARNING_LOOP.md" in prompt_assets
     assert "docs/PROGRAMSTART_COST_GOVERNANCE.md" in prompt_assets
+    assert "docs/PROGRAMSTART_AUTHORITY_GAP_RECONCILIATION.md" in prompt_assets
+    assert "docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md" in prompt_assets
     assert "docs/PROGRAMSTART_LEARNING_LOOP.md" in bootstrap_assets
     assert "docs/PROGRAMSTART_COST_GOVERNANCE.md" in bootstrap_assets
+    assert "docs/PROGRAMSTART_AUTHORITY_GAP_RECONCILIATION.md" in bootstrap_assets
+    assert "docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md" in bootstrap_assets
+    assert support_files.issubset(bootstrap_assets)
 
 
 def test_bootstrap_shared_assets_materializes_workflow_template(monkeypatch, tmp_path: Path) -> None:

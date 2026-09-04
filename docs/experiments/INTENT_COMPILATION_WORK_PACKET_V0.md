@@ -1,6 +1,6 @@
 # Intent Compilation / Intent Ingress — V0.1
 
-Status: **V0.1 repository scaffold behavior accepted; PR merge/owning-state reconciliation pending**
+Status: **COMPLETE / MERGED — integration frontier active**
 
 Owner: **PROGRAMSTART Work Packet semantics**
 
@@ -28,7 +28,7 @@ OBJECTIVE:
 Scaffold the smallest useful Intent Ingress boundary before normal PROGRAMSTART project-mode execution.
 
 WHY_NOW / AUTHORITY:
-ADR 0025 + existing Work Packet semantics + PR #94 implementation evidence.
+ADR 0025 + existing Work Packet semantics + merged PR #94 implementation evidence.
 
 BLOCKER_SCOPE:
 none for repository scaffold; production interpretation/authority resolution remain future integration boundaries.
@@ -37,19 +37,19 @@ SAFE_EXECUTION_LANE:
 Lane B — reversible PROGRAMSTART repository implementation only.
 
 CLOSURE_CONTROL:
-PR #94 exact behavioral-head validation + post-implementation Challenge; merge/owning-state reconciliation remains separate.
+PR #94 merged as 89d36a396532b0afc678f5b9d0994652f1ce6f2e after synchronization with current main and Required PR Gate #116.
 
 COORDINATED_MODE_C_LANES:
-PR #95 formerly owned shift-left/pre-publication quality work and has now merged into main.
+PR #95 formerly owned shift-left/pre-publication quality work and is merged into main.
 
 SELECTED_LANE:
 Intent Ingress semantics only.
 
 LANE_INDEPENDENCE_EVIDENCE:
-PR #94 did not duplicate PR #95 quality-gate implementation; PR #95 has converged into current main.
+PR #94 did not duplicate PR #95 quality-gate implementation; both have converged into current main.
 
 LANE_CONFLICTS:
-none currently detected for the V0.1 repository scaffold.
+none for the completed V0.1 repository scaffold.
 
 IN_SCOPE:
 - deterministic interpretation/authority boundary;
@@ -67,7 +67,7 @@ OUT_OF_SCOPE:
 - Mission-Control/Evidence Spine/Controller implementation changes.
 
 REQUIRED_CONTEXT:
-ADR 0025, PROGRAMBUILD Work Packet semantics, PR #94 code/tests, current main including merged PR #95.
+ADR 0025, PROGRAMBUILD Work Packet semantics, merged PR #94, current main including merged PR #95.
 
 ACCEPTANCE_CRITERIA:
 - compiler performs no keyword/phrase interpretation of English;
@@ -76,7 +76,7 @@ ACCEPTANCE_CRITERIA:
 - resolved inputs compile immediately without another workflow engine;
 - authority and parallel-work protections remain unchanged;
 - audit packets begin genuinely read-only with no expected write set;
-- exact behavioral-head PR gate green;
+- exact synchronized-head PR gate green;
 - final Challenge finds no material authority widening or duplicated owner.
 
 TARGETED_VERIFICATION:
@@ -227,9 +227,9 @@ Current acceptance checklist:
 - [x] no new service/database/queue/orchestrator/operator CLI added;
 - [x] current ADR reconciled;
 - [x] subordinate experiment documentation compressed;
-- [x] behavioral head `f8200a135f50c19fbf86ccf3b2cf2278d1ac0e9e` passed Required PR Gate run #114;
+- [x] synchronized head `858b50c062100a315113999eb1c69bce29b339ea` passed Required PR Gate run #116 against current main;
 - [x] final behavioral patch Challenge clear for the V0.1 repository scaffold;
-- [ ] PR merge / owning-state reconciliation under current repository policy.
+- [x] PR #94 merged as `89d36a396532b0afc678f5b9d0994652f1ce6f2e`; owning-state reconciliation recorded here.
 
 ## 9. Learning disposition
 

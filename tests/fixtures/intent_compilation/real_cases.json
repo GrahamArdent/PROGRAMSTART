@@ -1,0 +1,302 @@
+{
+  "cases": [
+    {
+      "name": "resume_creator_parallel_safe_continuation",
+      "intent": "Continue Resume Creator, but don't interfere with the infrastructure work happening in parallel.",
+      "authority": {
+        "project_name": "Resume Creator V6",
+        "owning_repository": "GrahamArdent/resume-creator-v6",
+        "authority_commit": "d0ab72d",
+        "authority_paths": [
+          "docs/PRODUCTION_READINESS_GAMEPLAN_2026-03-24.md",
+          "PR #16 programstart/finish-line-rebaseline",
+          "PR #17 programstart/job-target-intake-v0-1"
+        ],
+        "methodology_repository": "GrahamArdent/PROGRAMSTART",
+        "methodology_commit": "330aa705",
+        "execution_mode": "Mode C",
+        "current_work_refs": [
+          "PR #16 rebaselines finish-line verification",
+          "PR #17 reconciles the accepted 2026-09-01 streamlined job-target intake delta"
+        ],
+        "mutable_surfaces": [
+          {
+            "surface_type": "repository",
+            "identifier": "GrahamArdent/resume-creator-v6",
+            "consequential": true
+          }
+        ],
+        "read_only_surfaces": [
+          {"surface_type": "repository", "identifier": "GrahamArdent/PROGRAMSTART"},
+          {"surface_type": "repository", "identifier": "GrahamArdent/evidence-spine"},
+          {"surface_type": "repository", "identifier": "GrahamArdent/programstart-autonomous-controller"},
+          {"surface_type": "repository", "identifier": "GrahamArdent/execution-node-control"},
+          {"surface_type": "repository", "identifier": "GrahamArdent/programstart-compute-spine"},
+          {"surface_type": "repository", "identifier": "GrahamArdent/secrets-control-plane"},
+          {"surface_type": "repository", "identifier": "GrahamArdent/repo-watchtower"},
+          {"surface_type": "repository", "identifier": "GrahamArdent/portfolio-operations"},
+          {"surface_type": "repository", "identifier": "GrahamArdent/mission-control"},
+          {"surface_type": "repository", "identifier": "GrahamArdent/Orchestra-Agent"}
+        ],
+        "allowed_effects": [
+          "repository-safe implementation in Resume Creator V6",
+          "tests and exact-head CI",
+          "existing runtime verification already authorized by the owning project"
+        ],
+        "prohibited_effects": [
+          "shared autonomy infrastructure mutation",
+          "automatic job application submission",
+          "new spend",
+          "destructive provider or security consequence"
+        ],
+        "human_gate_conditions": [
+          "job application submission",
+          "new spend",
+          "destructive provider or security consequence"
+        ],
+        "automation_gap_conditions": [
+          "mechanical GitHub Actions activation/retrigger when already authorized but no actuator is available"
+        ],
+        "evidence_requirements": [
+          "active PR #16/#17 authority and exact head",
+          "exact-head CI",
+          "realistic job-intake through tailored-resume acceptance evidence"
+        ],
+        "acceptance_conditions": [
+          "exact-head CI green",
+          "realistic end-to-end product acceptance for the admitted slice",
+          "post-implementation Challenge clear"
+        ],
+        "challenge_required": true,
+        "invalidation_triggers": [
+          "PR #16 or #17 head changes",
+          "PROGRAMSTART methodology commit changes",
+          "parallel infrastructure ownership changes"
+        ],
+        "stop_conditions": [
+          "authority mismatch",
+          "protected shared-surface mutation becomes necessary",
+          "genuine human consequence gate"
+        ],
+        "parallel_work": [
+          {
+            "name": "durable continuation / operator interaction / Evidence Spine infrastructure lane",
+            "owner": "parallel autonomy-infrastructure workstream",
+            "protected_surfaces": [
+              {"surface_type": "repository", "identifier": "GrahamArdent/PROGRAMSTART"},
+              {"surface_type": "repository", "identifier": "GrahamArdent/evidence-spine"},
+              {"surface_type": "repository", "identifier": "GrahamArdent/programstart-autonomous-controller"},
+              {"surface_type": "repository", "identifier": "GrahamArdent/execution-node-control"},
+              {"surface_type": "repository", "identifier": "GrahamArdent/programstart-compute-spine"},
+              {"surface_type": "repository", "identifier": "GrahamArdent/secrets-control-plane"},
+              {"surface_type": "repository", "identifier": "GrahamArdent/repo-watchtower"},
+              {"surface_type": "repository", "identifier": "GrahamArdent/portfolio-operations"},
+              {"surface_type": "repository", "identifier": "GrahamArdent/mission-control"},
+              {"surface_type": "repository", "identifier": "GrahamArdent/Orchestra-Agent"}
+            ],
+            "evidence_ref": "active parallel-work declaration plus current repository heads"
+          }
+        ]
+      },
+      "expected": {
+        "kind": "continuation",
+        "owner": "GrahamArdent/resume-creator-v6",
+        "mutable": ["GrahamArdent/resume-creator-v6"],
+        "read_only_contains": [
+          "GrahamArdent/PROGRAMSTART",
+          "GrahamArdent/evidence-spine",
+          "GrahamArdent/programstart-autonomous-controller"
+        ],
+        "rule": "continuation.current-authority",
+        "challenge_required": true
+      }
+    },
+    {
+      "name": "watchtower_audit_with_parallel_collision",
+      "intent": "Watchtower seems behind. Audit how it's being used and move it forward.",
+      "authority": {
+        "project_name": "Repo Watchtower",
+        "owning_repository": "GrahamArdent/repo-watchtower",
+        "authority_commit": "d86eab90",
+        "authority_paths": ["docs/WATCHTOWER_V0_2_EXECUTION.md"],
+        "methodology_repository": "GrahamArdent/PROGRAMSTART",
+        "methodology_commit": "330aa705",
+        "execution_mode": "Mode C",
+        "current_work_refs": [
+          "V0.2 read-only observability boundary",
+          "Slice 5 provider/ingress contract merged without live activation"
+        ],
+        "mutable_surfaces": [
+          {
+            "surface_type": "repository",
+            "identifier": "GrahamArdent/repo-watchtower",
+            "consequential": true
+          }
+        ],
+        "read_only_surfaces": [
+          {"surface_type": "repository", "identifier": "GrahamArdent/PROGRAMSTART"},
+          {"surface_type": "repository", "identifier": "GrahamArdent/programstart-autonomous-controller"},
+          {"surface_type": "repository", "identifier": "GrahamArdent/evidence-spine"}
+        ],
+        "allowed_effects": [
+          "repository analysis",
+          "repository-safe implementation after audit findings reconcile to current Watchtower authority",
+          "tests and CI"
+        ],
+        "prohibited_effects": [
+          "watched repository mutation",
+          "repair pull requests against watched repositories",
+          "live public ingress activation",
+          "provider permission widening",
+          "new roadmap or replacement Watchtower architecture"
+        ],
+        "human_gate_conditions": [
+          "provider/security consequence not already admitted by Watchtower authority",
+          "public ingress activation when current authority still gates it"
+        ],
+        "automation_gap_conditions": [],
+        "evidence_requirements": [
+          "current Watchtower code/tests",
+          "docs/WATCHTOWER_V0_2_EXECUTION.md",
+          "real pilot/runtime evidence relevant to the current slice"
+        ],
+        "acceptance_conditions": [
+          "intended versus actual Watchtower integration state evidenced",
+          "any implementation remains inside V0.2 observe-only authority",
+          "exact-head CI and required Challenge clear"
+        ],
+        "challenge_required": true,
+        "invalidation_triggers": [
+          "Watchtower authority/head changes",
+          "parallel Watchtower lane releases or transfers mutation ownership",
+          "PROGRAMSTART methodology commit changes"
+        ],
+        "stop_conditions": [
+          "audit finding requires authority expansion",
+          "parallel mutation ownership collision",
+          "provider/public-ingress consequence gate"
+        ],
+        "parallel_work": [
+          {
+            "name": "Watchtower V0.2 live-integration continuation",
+            "owner": "parallel Watchtower workstream",
+            "protected_surfaces": [
+              {
+                "surface_type": "repository",
+                "identifier": "GrahamArdent/repo-watchtower",
+                "consequential": true
+              }
+            ],
+            "evidence_ref": "parallel-work declaration; current Watchtower head d86eab9"
+          }
+        ]
+      },
+      "expected": {
+        "kind": "audit",
+        "owner": "GrahamArdent/repo-watchtower",
+        "mutable": [],
+        "read_only_contains": ["GrahamArdent/repo-watchtower"],
+        "rule": "audit.inspect-first",
+        "challenge_required": true,
+        "conflict_surface": "repository:GrahamArdent/repo-watchtower"
+      }
+    },
+    {
+      "name": "durable_backend_architecture_existing_controller",
+      "intent": "I think ChatGPT shouldn't have to stay open for autonomous work. Make the system keep working in the backend.",
+      "authority": {
+        "project_name": "PROGRAMSTART Autonomous Build Controller",
+        "owning_repository": "GrahamArdent/programstart-autonomous-controller",
+        "authority_commit": "7a168cfd",
+        "authority_paths": ["AUTONOMOUS_CONTROLLER_EXECUTION.md", "README.md"],
+        "methodology_repository": "GrahamArdent/PROGRAMSTART",
+        "methodology_commit": "330aa705",
+        "execution_mode": "Mode C",
+        "current_work_refs": [
+          "Controller owns persistent semantic orchestration for already-authorized Work Packets",
+          "operator interaction plane V0.1 contract merged in Controller"
+        ],
+        "mutable_surfaces": [
+          {
+            "surface_type": "repository",
+            "identifier": "GrahamArdent/programstart-autonomous-controller",
+            "consequential": true
+          }
+        ],
+        "read_only_surfaces": [
+          {"surface_type": "repository", "identifier": "GrahamArdent/PROGRAMSTART"},
+          {"surface_type": "repository", "identifier": "GrahamArdent/evidence-spine"},
+          {"surface_type": "repository", "identifier": "GrahamArdent/mission-control"},
+          {"surface_type": "repository", "identifier": "GrahamArdent/Orchestra-Agent"},
+          {"surface_type": "repository", "identifier": "GrahamArdent/programstart-compute-spine"}
+        ],
+        "allowed_effects": [
+          "architecture analysis",
+          "repository contracts/tests when owned by the active Controller lane"
+        ],
+        "prohibited_effects": [
+          "second orchestration engine",
+          "duplicate Evidence Spine",
+          "duplicate operator-plane implementation",
+          "new paid infrastructure",
+          "permission widening",
+          "public ingress activation"
+        ],
+        "human_gate_conditions": [
+          "new spend",
+          "secret or permission expansion",
+          "destructive provider/security consequence"
+        ],
+        "automation_gap_conditions": [],
+        "evidence_requirements": [
+          "current Controller execution authority",
+          "current Controller/operator-plane boundary",
+          "current Evidence Spine non-authority boundary"
+        ],
+        "acceptance_conditions": [
+          "existing Controller ownership is used rather than duplicated",
+          "operator interaction remains a separate surface above Controller",
+          "integration handoff preserves Controller admission authority"
+        ],
+        "challenge_required": true,
+        "invalidation_triggers": [
+          "Controller authority/head changes",
+          "operator-plane contract changes",
+          "PROGRAMSTART methodology commit changes"
+        ],
+        "stop_conditions": [
+          "implementation would duplicate the active Controller/operator lane",
+          "authority mismatch",
+          "new consequential provider/runtime action is required"
+        ],
+        "parallel_work": [
+          {
+            "name": "durable autonomous continuation and operator interaction lane",
+            "owner": "active Controller/operator-plane workstream",
+            "protected_surfaces": [
+              {
+                "surface_type": "repository",
+                "identifier": "GrahamArdent/programstart-autonomous-controller",
+                "consequential": true
+              },
+              {"surface_type": "repository", "identifier": "GrahamArdent/evidence-spine"},
+              {"surface_type": "repository", "identifier": "GrahamArdent/mission-control"},
+              {"surface_type": "repository", "identifier": "GrahamArdent/Orchestra-Agent"},
+              {"surface_type": "repository", "identifier": "GrahamArdent/programstart-compute-spine"}
+            ],
+            "evidence_ref": "Controller current authority plus active parallel-work declaration"
+          }
+        ]
+      },
+      "expected": {
+        "kind": "architecture_evaluation",
+        "owner": "GrahamArdent/programstart-autonomous-controller",
+        "mutable": [],
+        "read_only_contains": ["GrahamArdent/programstart-autonomous-controller"],
+        "rule": "architecture.existing-owner-first",
+        "challenge_required": true,
+        "conflict_surface": "repository:GrahamArdent/programstart-autonomous-controller"
+      }
+    }
+  ]
+}

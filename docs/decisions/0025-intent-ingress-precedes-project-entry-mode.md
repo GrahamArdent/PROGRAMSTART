@@ -18,7 +18,7 @@ PROGRAMSTART already uses mode terminology for more than one concern:
 
 The Intent Compilation V0.1 work introduces a different concern. The operator may express a goal before the owning project, live execution spine, current work packet, parallel mutation owner, or correct project-entry mode has been resolved.
 
-For example, `Keep Resume Creator moving, but don't interfere with the infrastructure work` is not itself a request to select a new project lifecycle. It is an operator-intent ingress request that must first resolve current authority and active ownership, then preserve the correct normal PROGRAMSTART entry/execution mode.
+For example, `Keep Resume Creator moving, but don't interfere with the infrastructure work` is not itself a request to select a new project lifecycle. It is an operator-intent ingress request that must first obtain a trusted semantic interpretation, resolve current authority and active ownership, then preserve the correct normal PROGRAMSTART entry/execution mode.
 
 A live parallel-work observation reinforced this distinction: while intent-compilation PR #94 was active, PROGRAMSTART PR #95 independently claimed the deterministic pre-publication quality-gate surface. Intent compilation should detect and represent that active ownership rather than create a second quality lane merely because the operator's wording is broad.
 
@@ -27,6 +27,7 @@ A live parallel-work observation reinforced this distinction: while intent-compi
 - Let the operator speak naturally before repository/mode details are known.
 - Preserve existing PROGRAMBUILD entry modes instead of inventing a competing lifecycle.
 - Avoid further overloading `Mode A`, `Mode B`, `Mode C`, or introducing an ambiguous `Mode D`.
+- Separate probabilistic/natural-language interpretation from deterministic authority compilation.
 - Resolve owner, authority, current work, and parallel conflicts before deriving executable scope.
 - Keep Controller admission downstream from interpretation and compilation.
 - Keep long-form prompts as target-specific renderings rather than execution truth.
@@ -44,7 +45,7 @@ Chosen option: **3 — Intent Ingress is an orthogonal pre-entry profile, not a 
 
 The preferred flow is:
 
-`operator intent -> intent ingress -> authority/currentness resolution -> compiled Work Packet -> existing PROGRAMSTART project mode -> Controller admission -> execution`
+`operator intent -> Intent Ingress -> trusted semantic interpretation -> authority/currentness resolution -> compiled Work Packet -> existing PROGRAMSTART project mode -> Controller admission -> execution`
 
 Where the target project is already mature, the resolved project mode will usually remain existing/in-flight Mode C. Intent Ingress does not replace Mode C; it makes reaching the correct Mode-C context low-friction and machine-inspectable.
 
@@ -53,12 +54,15 @@ Where the target project is already mature, the resolved project mode will usual
 Intent Ingress may:
 
 - preserve the operator's raw request;
-- classify the semantic request family conservatively;
+- obtain or consume a trusted semantic request interpretation;
+- expose unresolved material ambiguity instead of guessing;
 - resolve or consume the resolved owning project and current authority;
 - distinguish explicit requirements, inherited defaults, evidence-backed inferences, assumptions, recommendations, and unresolved ambiguity;
 - derive expected mutable/read-only surfaces and parallel-work conflicts;
 - compile the smallest useful sealed Work Packet projection;
 - render target-specific execution briefs after semantic compilation.
+
+The deterministic compiler must not classify natural-language intent by keywords or phrases. It consumes typed interpretation semantics. If no trusted interpretation exists, mutation is withheld.
 
 Intent Ingress must not:
 
@@ -66,9 +70,24 @@ Intent Ingress must not:
 - replace project authority or PROGRAMSTART project-entry semantics;
 - perform Controller admission;
 - own durable orchestration, leases, or fencing;
+- become a persistent queue/state machine merely to represent missing inputs;
 - convert an audit into implementation without authority;
 - convert broad natural language into spend, destructive, credential, provider, or security authority;
 - revive Prompt Builder prompt text as the canonical execution contract.
+
+### Lean scaffold shape
+
+V0.1 uses a deliberately stateless three-result adapter rather than a new service or durable workflow engine:
+
+`needs_interpretation -> needs_authority -> compiled`
+
+These are return states, not persisted lifecycle states.
+
+- `needs_interpretation` means a trusted semantic interpretation is absent, unknown, mismatched to the raw request, or still materially ambiguous.
+- `needs_authority` means semantic intent is sufficiently resolved but a current owning-project authority snapshot has not yet been supplied.
+- `compiled` means both inputs exist and the existing deterministic Work Packet compiler has run immediately.
+
+The scaffold adds no database, queue, background worker, new Controller, new authority resolver, LLM client, top-level operator CLI, or cross-project state store. The interpretation producer and authority/currentness resolver remain explicit integration boundaries until a real consumer proves the smallest implementation they need.
 
 ### Terminology
 
@@ -96,9 +115,12 @@ Keep the standalone compiler entrypoint as a developer/contract harness until th
 - Good: Graham can give short natural-language commands without learning PROGRAMSTART boilerplate.
 - Good: mature-project work still uses normal Mode-C authority and does not restart planning.
 - Good: active parallel ownership can be detected before an execution lane is created.
+- Good: probabilistic language understanding and deterministic authority compilation now have an explicit trust boundary.
 - Good: future operator surfaces can expose the compiled interpretation before Controller admission without becoming another orchestrator.
 - Good: target renderers can change without changing semantic authority.
+- Good: missing interpretation/authority inputs are explicit without introducing persistent workflow state.
 - Bad: a real authority/currentness resolver is still required before fully automatic intent-to-work admission is proven.
+- Bad: a production semantic interpreter contract/provenance model still needs to be selected by a real integration consumer rather than guessed in this scaffold.
 - Bad: PROGRAMSTART documentation should gradually disambiguate overloaded uses of the word `mode` when touched for other reasons.
 - Neutral: existing Prompt Builder Mode B remains useful as a historical renderer precursor but is not the canonical intent compiler.
 - Neutral: the V0.1 standalone compiler CLI remains a test/developer harness rather than the final operator interface.
@@ -108,10 +130,13 @@ Keep the standalone compiler entrypoint as a developer/contract harness until th
 This decision is considered implemented for V0.1 when:
 
 - the compiler emits a sealed Work Packet projection rather than treating a long prompt as canonical;
+- the deterministic compiler performs no keyword/phrase interpretation of the operator's English request;
+- raw intent without a trusted semantic interpretation fails narrow;
+- material unresolved interpretation ambiguity prevents compilation from becoming mutation-ready;
 - real continuation, audit, and architecture examples preserve their existing project-entry semantics;
 - parallel ownership changes compilation output before Controller admission;
-- unresolved intent fails narrow;
 - renderer output cannot widen the canonical packet;
+- the lean ingress adapter represents missing interpretation/authority inputs without persistence or a second orchestration system;
 - the Controller integration consumes the compiled packet and independently performs admission;
 - future operator-facing CLI/product integration prefers an `intent-compile` / intent-ingress operation or subcommand instead of `--mode d` and does not require Graham to hand-author the authority snapshot.
 

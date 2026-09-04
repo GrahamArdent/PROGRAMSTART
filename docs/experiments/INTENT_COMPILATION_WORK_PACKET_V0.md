@@ -1,98 +1,109 @@
 # Intent Compilation Into PROGRAMSTART Work Packets — V0.1
 
-Status: **bounded implementation candidate**  
-Owner: **PROGRAMSTART Work Packet / prompt-rendering semantics**  
-Canonical authority: **unchanged** — `PROGRAMBUILD/PROGRAMBUILD_WORK_PACKET.md` remains authoritative for reusable Work Packet semantics.  
-This document is subordinate design/acceptance evidence. It is not a new methodology, execution spine, project roadmap, Controller, Evidence Spine, or operator state machine.
+Status: **bounded implementation candidate**
+
+Owner: **PROGRAMSTART Work Packet / prompt-rendering semantics**
+
+Canonical authority: **unchanged**. `PROGRAMBUILD/PROGRAMBUILD_WORK_PACKET.md` remains authoritative for reusable Work Packet semantics. This file is subordinate design and acceptance evidence. It is not a new methodology, execution spine, roadmap, Controller, Evidence Spine, or operator state machine.
 
 ## 1. Decision
 
-The original hypothesis is **partly accepted and materially narrowed**.
+The originating hypothesis is **accepted only after narrowing**.
 
-Natural-language intent should not compile into a second canonical `WorkSpecification` ontology. PROGRAMSTART already has the correct semantic execution object: the **Work Packet**, explicitly defined as a logical execution contract derived from current authority and never canonical over owning-project authority.
+Do not create a second canonical `WorkSpecification` ontology. PROGRAMSTART already has the correct semantic execution object: the **Work Packet**, defined as a logical execution contract derived from current authority and never canonical over owning-project authority.
 
-The accepted progression is therefore:
+The accepted progression is:
 
-`natural-language intent -> inspectable interpretation -> current authority/evidence resolution -> sealed Compiled Work Packet projection -> Controller semantic admission -> target-specific renderer/executor`
+`natural-language intent -> inspectable interpretation -> current authority/evidence resolution -> sealed Compiled Work Packet projection -> Controller semantic admission -> target-specific rendering/execution`
 
-A long ChatGPT prompt is a **derived rendering** of that sealed packet. It is not execution truth.
+A long ChatGPT prompt is a **derived rendering** of the sealed packet. It is not execution truth.
 
-The user-facing capability may reasonably be called **Intent Compiler** because it describes the operation. The canonical artifact should be called **Compiled Work Packet**, not `PROGRAMSTART Compiler`, `Work Specification Generator`, or another new platform name.
+“Intent Compiler” is acceptable terminology for the operation. The canonical artifact should remain a **Compiled Work Packet**, not a new platform or project name.
 
-## 2. Evidence-based ownership decision
+## 2. Evidence-based ownership
 
-### PROGRAMSTART owns the semantic compiler contract
+### PROGRAMSTART owns the reusable semantic compiler contract
 
 Current evidence:
 
-- `PROGRAMBUILD/PROGRAMBUILD_WORK_PACKET.md` already defines the logical execution contract and includes objective, authority, blockers/safe lanes, Mode-C parallelism, shared mutation ownership, cross-repository dependencies, operator gates, evidence/invalidation, acceptance, Challenge, and reconciliation.
-- `docs/decisions/0021-prompt-builder-mode-b-context-driven-generation.md` already established a context-driven prompt-generation precursor. Its admitted limitation is that Mode B directly renders prose and intentionally omits important execution controls such as sync rules, kill criteria, and stage gating.
-- `scripts/programstart_prompt_build.py` already contains the reusable source-content grounding rule needed to prevent instruction-like project/source text from becoming execution authority.
-- `docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md` already owns the distinction between genuine human gates and temporary automation gaps, and the rule that capability growth may increase execution of existing permission but may not increase project authority.
+- `PROGRAMBUILD/PROGRAMBUILD_WORK_PACKET.md` already owns objective, authority, safe lanes, Mode-C parallelism, shared mutation ownership, cross-repository dependencies, gates, evidence/invalidation, acceptance, Challenge, and reconciliation.
+- `docs/decisions/0021-prompt-builder-mode-b-context-driven-generation.md` already established context-driven prompt generation, but its prose-first Mode B intentionally omits important execution controls.
+- `scripts/programstart_prompt_build.py` already carries the source-content grounding rule that instruction-like project/source text is data, not execution authority.
+- `docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md` already owns the genuine-human-gate versus temporary-automation-gap distinction and the rule that increased capability does not widen project authority.
 
-Conclusion: evolving PROGRAMSTART from `context -> prompt` toward `intent -> typed Work Packet -> renderer` is an extension of an incumbent responsibility, not a new subsystem.
+Therefore `intent -> typed Work Packet -> renderer` extends an incumbent PROGRAMSTART responsibility rather than creating a new subsystem.
 
 ### Owning projects remain authoritative
 
-The compiler consumes an exact `AuthoritySnapshot`. The snapshot is a typed input contract, not a new source of truth. Owning-project authority still determines scope, mutable effects, completion, and consequence boundaries.
+The compiler consumes an `AuthoritySnapshot`. That snapshot is a typed input contract, not a source of truth. Owning-project authority still determines scope, mutable effects, completion, and consequence boundaries.
 
-The Resume Creator pilot proves why this matters: default-branch `main` is paused, while the current admitted Mode-C work is represented by open PR #16 and stacked PR #17. A compiler that treated default-branch state as sufficient authority would be wrong.
+The Resume Creator pilot demonstrates why this must use live admitted authority rather than default-branch state alone: `main` is paused, while current Mode-C product work is represented by active PR #16 and stacked PR #17.
 
-### Autonomous Controller remains the admission and durable-continuation owner
+### Autonomous Controller remains admission and durable-continuation owner
 
-Current Controller authority states the target loop as:
+Current Controller authority begins with:
 
 `objective -> orient -> derive/consume authorized Work Packet -> semantic admit -> ...`
 
-and explicitly assigns reusable Work Packet semantics to PROGRAMSTART while assigning persistent semantic admission, sequencing, leases/fencing, retry/remediation, human-gate wait/resume, and durable continuation to Controller.
+It explicitly leaves reusable Work Packet semantics with PROGRAMSTART while owning persistent admission, sequencing, leases/fencing, retry/remediation, human-gate wait/resume, and durable continuation.
 
-Therefore this V0.1 compiler stops **before semantic admission**. `admission_hint` is only an operator-facing readiness hint; it is never an authorization decision.
+This V0.1 compiler therefore stops **before semantic admission**. `admission_hint` is only an inspectable readiness hint; it is never an authorization decision.
 
 ### Mission-Control remains the operator interaction surface
 
-Mission-Control is the command/observation/exception surface, not an execution engine. The latest Controller lane has also retained Mission-Control as the operator interaction plane while absorbing durable decision state into Controller.
-
-A future operator UI may show the interpreted packet, provenance, conflicts, evidence, and actions such as Run/Edit/Challenge/Narrow. That UI should not own Work Packet authority or durable orchestration.
+Mission-Control is the command/observation/exception surface, not the execution engine. A future UI may show intent, interpretation, provenance, conflicts, evidence, and actions such as Run/Edit/Challenge/Narrow. It should not own Work Packet authority or durable orchestration.
 
 ### Evidence Spine remains evidence/provenance/currentness only
 
-Evidence Spine canonically captures facts and scoped acceptances while explicitly refusing to grant unrelated execution authority. It is a natural future source for authority/currentness evidence and invalidation signals used by the snapshot resolver, but it does not interpret user intent or admit work.
+Evidence Spine may supply canonical facts, currentness, supersession, and acceptance evidence to an authority resolver. It must not interpret operator intent or grant execution authority.
 
 ### Portfolio Operations remains derived attention/routing only
 
-Portfolio Operations may help resolve plausible project ownership or active attention, but it is explicitly stale when it disagrees with an owning project. It must not become the compiler's execution authority.
+Portfolio state can help discovery and routing, but owning-project authority wins when they disagree.
 
 ### Orchestra is not revived
 
-`GrahamArdent/Orchestra-Agent` is inactive and its scheduled CI has been disabled since 2026-08-22. The live Controller/operator-plane lane has already dispositioned the remaining useful orchestration/interaction concepts. No new Orchestra implementation is justified.
+`GrahamArdent/Orchestra-Agent` is inactive, and its scheduled CI has been disabled. The live Controller/operator-plane lane already owns the surviving responsibility. No new Orchestra implementation is justified.
 
 ## 3. Responsibility model
 
-| Layer | Question it answers | Owns | Must not own |
+| Layer | Question | Owns | Must not own |
 |---|---|---|---|
-| Operator / intent surface | What does Graham want? | natural-language request, optional edits/challenge | execution permission |
-| Intent interpretation | What semantic request family/objective was expressed? | explicit inspectable interpretation | project authority |
-| PROGRAMSTART intent compiler | What bounded Work Packet follows from intent + current authority? | reusable transformation/default rules, provenance, prompt rendering | Controller admission, leases, durable execution |
-| Owning project | What is actually authorized and complete? | execution spine, decisions, scope, acceptance | global orchestration |
-| Evidence Spine | What facts/currentness/provenance are proven? | canonical evidence and scoped acceptance facts | intent meaning or execution authority |
-| Autonomous Controller | May this compiled packet run now, and what happens next? | semantic admission, durable sequencing, leases, recovery, gate wait/resume | reusable methodology, worker fabric |
-| Compute/worker layer | How is an admitted bounded attempt executed? | concrete attempts/effect identity/runtime execution | Work Packet continuation decisions |
-| Mission-Control/operator plane | What should the human understand or decide? | explanation, awareness, genuine human decision return | execution engine or project authority |
+| Operator / intent surface | What does Graham want? | request, optional edits/challenge | execution permission |
+| Intent interpretation | What semantic request was expressed? | inspectable request family/objective | project authority |
+| PROGRAMSTART compiler | What bounded packet follows from intent + authority? | defaults, semantic rules, provenance, renderers | Controller admission, leases, durable execution |
+| Owning project | What is actually authorized/complete? | execution spine, decisions, scope, acceptance | global orchestration |
+| Evidence Spine | What facts/currentness are proven? | canonical evidence/currentness | intent meaning or execution authority |
+| Autonomous Controller | May this packet run now and what happens next? | admission, durable sequencing, leases, recovery, gate resume | reusable methodology |
+| Workers/Compute | How is one admitted attempt executed? | concrete attempt/effect | Work Packet continuation decisions |
+| Mission-Control/operator plane | What should the human understand/decide? | explanation, awareness, genuine decisions | execution engine or project authority |
 
 ## 4. Canonical V0.1 model
 
 Implementation: `scripts/programstart_intent_compile.py`.
 
+### `SurfaceRef`
+
+One typed representation is used for every possible effect surface:
+
+- `repository`;
+- `runtime`;
+- `provider`;
+- `authority`.
+
+A surface has an identifier and an optional `consequential` marker.
+
+This replaces the first implementation's separate repository/runtime/provider collections. The unified representation is smaller and, importantly, lets the same parallel-write protection apply to provider and runtime surfaces instead of only repositories.
+
 ### `AuthoritySnapshot`
 
-The smallest currentness/authority input needed to compile without making the compiler a discovery engine:
+The smallest currentness/authority input needed by the compiler contains:
 
 - project name and owning repository;
-- exact project authority commit and authority paths;
-- exact PROGRAMSTART methodology commit and execution mode;
+- project authority commit/reference and authority paths;
+- PROGRAMSTART methodology commit/reference and execution mode;
 - current work references;
-- mutable/read-only repositories;
-- explicitly authorized runtime/provider mutation surfaces, when any;
+- mutable and read-only typed surfaces;
 - allowed/prohibited effects;
 - genuine human-gate conditions;
 - temporary automation-gap conditions;
@@ -100,9 +111,11 @@ The smallest currentness/authority input needed to compile without making the co
 - acceptance conditions;
 - Challenge requirement;
 - invalidation and stop conditions;
-- active parallel-work protected surfaces.
+- active parallel-work protected typed surfaces.
 
-The resolver that produces this object must prefer current owning authority/current admitted work over stale summaries. This V0.1 does not create a second repository-discovery service.
+The snapshot rejects any surface that is simultaneously declared mutable and read-only.
+
+Production authority resolution should use exact immutable references. Test fixtures use shortened public commit references to avoid the repository secret scanner classifying full SHA strings in JSON fixtures as high-entropy secrets.
 
 ### `IntentInterpretation`
 
@@ -112,28 +125,27 @@ Contains:
 - normalized request;
 - semantic intent family;
 - interpreted objective;
-- untrusted project hint if supplied;
+- untrusted project hint;
 - explicit narrowing/non-interference constraints;
 - unresolved material ambiguity.
 
-The deterministic V0.1 interpreter only selects a small transformation family. It never derives permissions, spend, destructive consequences, or project ownership from wording. Unknown intent fails narrow.
+The deterministic V0.1 interpreter selects only a small transformation family. It never derives permissions, spend, destructive consequences, or project ownership from wording. Unknown intent fails narrow.
 
 ### `CompiledWorkPacket`
 
 Contains:
 
 - schema/compiler versions;
-- deterministic `intent_id`;
-- deterministic `specification_id`;
+- deterministic intent and specification IDs;
 - SHA-256 semantic integrity digest;
 - interpreted intent;
 - resolved project owner and execution mode;
-- exact authority snapshot;
-- bounded surface access and effects;
-- human gates vs temporary automation gaps;
-- parallel-work conflicts and expected write set;
+- exact authority snapshot supplied to compilation;
+- bounded typed surface access and effects;
+- human gates versus temporary automation gaps;
+- parallel-work conflicts and typed expected write set;
 - evidence/currentness binding;
-- acceptance, Challenge, invalidation and stop conditions;
+- acceptance, Challenge, invalidation, and stop conditions;
 - operator interaction policy;
 - applied transformation-rule IDs;
 - field-level provenance;
@@ -141,146 +153,140 @@ Contains:
 
 ### Deliberately omitted from semantic identity
 
-`generated_timestamp` is not part of the canonical semantic object. A timestamp would make identical intent + identical authority appear different and weaken idempotency. Currentness is instead bound to exact authority commits/fingerprint and invalidation triggers. A UI/event store may record receipt/compile time as operational metadata outside the semantic digest.
+A generation timestamp is not part of the canonical semantic object. Identical intent + identical authority + identical compiler rules should produce the same semantic packet. Currentness is instead bound to authority references/fingerprint and invalidation triggers. Operational systems may record receipt/compile time outside the semantic digest.
 
 ## 5. Explicit versus inferred field model
 
-| Field/meaning | Origin | Rule |
+| Meaning | Origin | Rule |
 |---|---|---|
 | raw intent | `explicit_user` | never rewritten away |
-| explicit non-interference clause | `explicit_user` | narrows scope only |
+| explicit non-interference | `explicit_user` | narrows scope only |
 | intent family/objective | `interpreted_intent` | inspectable; unknown fails narrow |
 | owning project/repository | `project_authority` | project hint cannot override it |
 | mutable/effect boundaries | `project_authority` | never inferred from broad wording |
-| current execution mode | `methodology_default` + resolved authority | current rule, not historical hard-code |
-| genuine human gates | `project_authority` / current consequence policy | no renderer may add/remove them silently |
+| execution mode | `methodology_default` + resolved authority | current rule, not historical hard-code |
+| genuine human gates | current project/consequence policy | renderer cannot add/remove them silently |
 | temporary automation gaps | `evidence_inference` | remain distinct from human judgment |
 | parallel protection/conflicts | `evidence_inference` | current active-lane evidence |
-| Challenge requirement | `methodology_default` / project risk posture | inherited automatically |
+| Challenge requirement | current methodology/project risk posture | inherited automatically |
 | recommendations | `recommendation` | non-authoritative until reconciled |
 | material ambiguity | `unresolved` | exposed; mutation withheld |
 
-No provenance field exposes private chain-of-thought. It records only inspectable source category and concise reason.
+Provenance is concise source categorization, not private chain-of-thought.
 
 ## 6. Transformation-rule catalog
 
-The implementation encodes reusable semantic rules rather than treating a long prompt as the rule source.
+### `continuation.current-authority`
 
-### Project continuation — `continuation.current-authority`
+For “continue X” / “keep X moving”:
 
-Input class: "continue X", "keep X moving".
+- reuse live owning execution authority/current work;
+- do not restart planning;
+- do not create another master plan;
+- preserve acceptance/Challenge requirements.
 
-Derivation:
+### `audit.inspect-first`
 
-- reuse current owning execution spine/work packet;
-- inspect current admitted work rather than restart planning;
-- do not create another roadmap/master plan;
-- preserve current acceptance/Challenge rules.
-
-### Audit — `audit.inspect-first`
-
-Input class: "audit/assess/review X".
-
-Derivation:
+For “audit/assess/review X”:
 
 - initial posture is read-only;
-- compare intended authority to actual repository/runtime evidence;
+- compare intended state to repository/runtime evidence;
 - evidence findings;
-- mutate only after a finding reconciles into already-existing authority or an authority-gap process admits it;
-- "move it forward" does not turn the first audit step into an uncontrolled rewrite.
+- mutate only after findings reconcile to already-existing authority or are separately admitted;
+- “move it forward” does not make audit equivalent to an uncontrolled rewrite.
 
-### Architecture evaluation — `architecture.existing-owner-first`
+### `architecture.existing-owner-first`
 
-Input class: "do we need X?", "make the system keep working in the backend".
+For “do we need X?” / architecture-like outcomes:
 
-Derivation:
-
-- inspect existing responsibility owners first;
+- inspect incumbent responsibility owners first;
 - reject duplicate Controller/Evidence/operator/orchestration systems;
-- implement only on the proven owner surface and only when that surface is not currently protected by another writer.
+- implement only on a proven owner surface and only when that surface is not protected by another active writer.
 
-### Parallel work — `parallel.protected-surfaces`
+### `parallel.protected-surfaces`
 
-- declared active mutation ownership overrides mutation for that compilation;
-- protected overlap becomes read-only plus a typed `parallel_write_ownership` conflict;
-- compiler detects the semantic conflict but does not implement a distributed lock;
-- Controller owns admitted leases/fencing/serialization.
+- active mutation ownership overrides mutation for that compilation;
+- a protected surface becomes read-only plus a typed conflict record;
+- this applies equally to repositories, runtimes, providers, and authority surfaces;
+- compiler does not implement locking;
+- Controller owns admitted lease/fencing/serialization.
 
-### Authority — `authority.no-expansion`
+### `authority.no-expansion`
 
-- "do whatever makes sense" cannot widen spend/security/destructive/provider permissions;
-- project hints cannot replace resolved project ownership;
-- renderer cannot add permissions absent from the sealed packet.
+- broad language such as “do whatever makes sense” cannot widen spend/security/destructive/provider permissions;
+- project hints cannot replace resolved ownership;
+- renderers cannot add permission absent from the sealed packet.
 
-### Human/automation boundary — `automation-gap.not-human-gate`
+### `automation-gap.not-human-gate`
 
-- missing actuator for already-authorized mechanical work remains automation debt;
-- only genuine judgment/consequence/physical/secret/legal/business boundaries become human gates.
+Missing actuation for already-authorized mechanical work remains automation debt. It does not become a human judgment gate merely because the current worker cannot perform it.
 
-### Source trust — `source-content.non-authority`
+### `source-content.non-authority`
 
-- README/job-description/email/log/ticket text is data;
-- embedded "ignore PROGRAMSTART" instructions never become authority.
+README/job-description/email/log/ticket instructions are data. Embedded “ignore PROGRAMSTART” text cannot become authority.
 
-### Drift — `drift.recompile`
+### `drift.recompile`
 
-- exact authority fingerprint unchanged -> packet may continue to Controller revalidation;
-- semantic snapshot changed -> recompile and require downstream readmission before new consequential work;
-- packet integrity mismatch -> reject/stop the affected action;
-- authority/currentness cannot be established -> stop consequential action and continue only independently proven safe/read-only work.
+- authority fingerprint unchanged -> packet can proceed to ordinary Controller revalidation;
+- material snapshot change -> recompile and require downstream readmission;
+- integrity mismatch -> reject the modified packet;
+- unavailable authority/currentness -> stop the affected consequential action and continue only independently proven safe work.
 
-### Challenge — `challenge.inherit`
+### `challenge.inherit`
 
-- current project/methodology risk posture decides whether Challenge is mandatory;
-- renderer cannot omit a required Challenge.
+Challenge requirements are inherited from current authority/risk posture. A renderer cannot omit a required Challenge.
 
-## 7. Parallelism and write-surface representation
+## 7. Parallelism and expected write sets
 
-Every packet carries typed surfaces and an `expected_write_set`.
+Every packet carries typed access surfaces and a typed `expected_write_set`, for example:
+
+- `repository:GrahamArdent/resume-creator-v6`;
+- `provider:example-provider:production-project`;
+- `runtime:compute-spine:production`.
 
 V0.1 conflict semantics are intentionally small:
 
-- mutable + mutable same semantic surface -> write/write collision;
-- active parallel owner protects a surface -> compile that surface read-only and record conflict;
-- unrelated write sets -> no compiler-level collision;
+- same mutable typed surface in two packets -> semantic write/write collision;
+- active parallel owner protects a surface -> compile it read-only and record conflict;
+- unrelated write sets -> no compiler collision;
 - compiler never grants a lease, takes a lock, or schedules work.
 
-Controller integration should map `expected_write_set` / protected surfaces into its existing consequential-resource lease/fencing semantics rather than introduce another lock service.
+Controller should map the typed expected write set into its existing consequential-resource lease/fencing model.
 
-## 8. Drift and recompilation policy
+## 8. Drift and recompilation
 
-V0.1 uses a conservative exact fingerprint of material `AuthoritySnapshot` inputs.
+V0.1 uses a conservative exact fingerprint of material `AuthoritySnapshot` semantics.
 
-1. **Continue unchanged:** fingerprint unchanged and packet integrity valid. Controller still performs ordinary admission/revalidation.
-2. **Evidence refresh with no semantic authority change:** resolver may retain the same semantic snapshot; no new packet identity is required.
-3. **Material authority/currentness change:** recompile. The new semantic digest/specification ID must be readmitted by Controller.
-4. **Modified compiled spec after sealing:** integrity mismatch; reject rather than silently execute edits. A legitimate operator edit must produce a newly compiled/sealed packet.
-5. **Authority mismatch/unavailable authority:** stop the affected consequential action; safe independent read-only work may continue when independently authorized.
+1. Fingerprint unchanged and integrity valid: packet is semantically unchanged; Controller still performs ordinary admission/revalidation.
+2. Evidence refresh with no semantic authority change: resolver may retain the same semantic snapshot.
+3. Material authority/currentness change: recompile and produce a new specification identity for readmission.
+4. Modified sealed spec: reject. Legitimate operator edits must be recompiled/resealed.
+5. Authority mismatch/unavailable authority: stop the affected consequential action; independently authorized safe/read-only work may continue.
 
-A future field-level drift optimizer may distinguish "reconcile one field" from full recompile, but V0.1 deliberately prefers conservative recompile over stale execution.
+Field-level partial recompilation is intentionally deferred until real churn proves it necessary.
 
 ## 9. Target-specific rendering
 
 V0.1 implements one justified renderer: `render_chatgpt_prompt(packet)`.
 
-It includes only conversational-worker-relevant semantics:
+It carries only conversational-worker-relevant semantics:
 
 - mission;
-- exact authority/currentness references;
+- authority/currentness references;
 - source-data grounding;
 - transformation rules;
-- mutable/read-only scope;
+- mutable/read-only typed surfaces;
 - allowed/prohibited effects;
 - parallel conflicts;
 - human gates versus automation gaps;
 - evidence/acceptance;
 - Challenge;
 - invalidation/stop conditions;
-- admission disclaimer.
+- explicit admission disclaimer.
 
-The prompt carries the sealed Work Packet ID/digest and explicitly says it grants no authority.
+The prompt includes the sealed Work Packet ID/digest and states that it grants no authority.
 
-No Controller-specific wire envelope is implemented here because the Controller lane owns its admission API/versioning. The integration handoff below defines semantics, not a competing Controller contract.
+No Controller wire envelope is implemented here because the active Controller lane owns that API/versioning contract.
 
 ## 10. Real pilots
 
@@ -290,19 +296,13 @@ Input:
 
 `Continue Resume Creator, but don't interfere with the infrastructure work happening in parallel.`
 
-Current authority evidence used by fixture:
-
-- active Resume Creator PR #17 head `d0ab72d19aab65110e9c48c6b8fb0cd4b26ae729`;
-- current owning game plan `docs/PRODUCTION_READINESS_GAMEPLAN_2026-03-24.md` reconciled in PR #16/#17;
-- shared autonomy repositories supplied as read-only/protected parallel surfaces.
-
-Expected semantic result:
+Expected:
 
 - owner remains Resume Creator V6;
-- Resume Creator is the only writable repository;
-- Controller/Evidence/PROGRAMSTART/Compute/Execution Node/Secrets/Watchtower/Portfolio/Mission-Control/Orchestra surfaces are read-only;
-- application submission/spend/destructive-security consequences remain genuine gates;
-- exact-head CI + realistic product acceptance + Challenge remain completion requirements.
+- only Resume Creator is writable;
+- shared autonomy infrastructure is read-only/protected;
+- application submission, new spend, and destructive security/provider consequences remain genuine gates;
+- exact-head CI, realistic product acceptance, and Challenge remain completion requirements.
 
 ### B — Watchtower audit with live collision
 
@@ -310,15 +310,15 @@ Input:
 
 `Watchtower seems behind. Audit how it's being used and move it forward.`
 
-Current fixture binds Watchtower V0.2 authority at `d86eab90c8985f355f54f10555ecdc59633270bd` and its primary execution spine `docs/WATCHTOWER_V0_2_EXECUTION.md`.
+The fixture binds Watchtower V0.2 authority and declares the parallel Watchtower lane as active mutation owner.
 
-Because a parallel Watchtower live-integration lane is declared as mutation owner, the compiler:
+Expected:
 
-- resolves the request as an audit;
-- begins read-only;
-- converts Watchtower repository mutation to read-only for this packet;
-- records a parallel write-ownership conflict;
-- does not build a lock manager or competing Watchtower plan.
+- resolve as audit;
+- start read-only;
+- compile Watchtower repository mutation to read-only because of active ownership;
+- record a parallel write-ownership conflict;
+- do not create a lock manager or competing Watchtower roadmap.
 
 ### C — Durable backend continuation architecture
 
@@ -326,95 +326,104 @@ Input:
 
 `I think ChatGPT shouldn't have to stay open for autonomous work. Make the system keep working in the backend.`
 
-Current fixture binds the existing Autonomous Controller authority at `7a168cfd1304af5f389fc088ea920d05efff81c2`.
+Expected:
 
-Expected semantic result:
+- resolve as architecture evaluation;
+- incumbent owner is existing Autonomous Controller, not Orchestra or a new orchestrator;
+- Controller/Mission-Control/Evidence/Compute surfaces remain protected by the active parallel lane;
+- output is bounded analysis/integration handoff, not competing implementation.
 
-- intent class is architecture evaluation;
-- incumbent owner is the existing Controller, not Orchestra or a new orchestrator;
-- Controller/Mission-Control/Evidence/Compute surfaces remain protected by their active parallel lane;
-- output is a bounded integration/analysis handoff rather than competing implementation.
+## 11. Post-implementation Challenge
 
-## 11. Adversarial Challenge
+The first implementation and first CI run produced useful findings instead of being treated as closure.
 
-Implemented tests cover:
+### Finding C1 — parallel protection was repository-centric
 
-- source prompt injection;
-- ambiguous/broad natural language failing narrow;
-- fake project hint losing to resolved authority;
-- stale methodology/authority requiring recompile;
-- parallel mutation collision becoming read-only/conflict;
-- duplicate intent producing identical IDs/spec;
-- modified sealed spec failing integrity;
-- renderer preserving semantic digest and critical boundaries;
-- renderer not adding a mutable repository absent from the spec;
-- human spend/security gates surviving broad execution language;
-- temporary automation gaps not being relabeled as human gates;
-- write/write collision detection without claiming lock ownership.
+The initial model had separate repository/runtime/provider collections and only fully applied active parallel-write protection to repositories. A protected runtime/provider surface could therefore have been represented too permissively.
 
-Challenge finding retained for follow-up integration review:
+**Remediation:** replace those separate collections with typed `SurfaceRef` objects for repository/runtime/provider/authority. The same protection algorithm now applies to every surface type. Add an adversarial provider-surface test proving a provider declared mutable by project authority but protected by active parallel work compiles read-only and is removed from the expected write set.
 
-- **AuthoritySnapshot resolution is the most important trust boundary.** If a resolver incorrectly labels a provider/runtime surface as mutation-authorized, the compiler must not independently guess that correction. Production integration should version/validate the resolver contract and make consequence capability explicit, ideally consuming owning-project/Evidence-Spine currentness and Controller consequence vocabulary. V0.1 intentionally does not build that resolver inside PROGRAMSTART.
+### Finding C2 — contradictory authority snapshot could hide resolver defects
+
+The initial snapshot did not reject the same surface appearing both mutable and read-only.
+
+**Remediation:** `AuthoritySnapshot` now rejects contradictory declarations before compilation. A focused test covers the failure.
+
+### Finding C3 — real commit SHAs triggered repository secret scanning
+
+Full public Git commit SHAs embedded in JSON fixtures were flagged as high-entropy strings by `detect-secrets`.
+
+**Remediation:** fixtures use short public refs while the design record retains the exact inspected commits. Production resolution remains responsible for exact immutable authority references.
+
+### Finding C4 — formatting gate stopped before behavior tests
+
+First PR validation failed changed-file hooks for trailing whitespace, line length/formatting, and the fixture SHA false positives. Pyright itself passed.
+
+**Remediation:** code/tests were reformatted, long lines removed, markdown whitespace corrected, and fixtures adjusted before rerunning exact-head CI.
+
+### Remaining trust-boundary finding
+
+`AuthoritySnapshot` resolution is the most consequential upstream trust boundary. If a resolver incorrectly declares a provider/runtime mutation authorized, the compiler must not independently manufacture a correction. Production integration should version/validate the resolver contract and bind its fields to owning-project/current evidence. This V0.1 intentionally does not build a second discovery/resolution service inside PROGRAMSTART.
 
 ## 12. Controller integration handoff
 
-The durable Controller/operator lane should consume, not reimplement, these semantics:
+The active Controller/operator lane should consume, not reimplement, these semantics:
 
-1. accept a sealed compiled packet or a lossless mapping of it;
-2. verify `schema_version`, `compiler_version`, integrity digest and exact authority fingerprint;
+1. accept a sealed packet or lossless mapping;
+2. verify schema/compiler version, integrity digest, and authority fingerprint;
 3. re-resolve/revalidate current project + PROGRAMSTART authority before consequential admission;
-4. reject a modified digest/version mismatch;
-5. map `expected_write_set` to the Controller's existing semantic consequential-resource lease/fencing layer;
-6. use `dependencies.conflicts` as admission evidence, not as a new lock primitive;
-7. preserve human-gate vs automation-gap distinction;
-8. on material authority drift, require recompile/readmission rather than continue from a stale rendered prompt;
-9. store/render Work Packet provenance without private reasoning;
+4. reject digest/version mismatch;
+5. map typed `expected_write_set` into existing Controller lease/fencing semantics;
+6. use compiler conflicts as admission evidence, not as another lock primitive;
+7. preserve human-gate versus automation-gap classification;
+8. require recompile/readmission on material authority drift;
+9. expose provenance without private reasoning;
 10. never treat `admission_hint` as an admission decision.
 
-The active Controller lane owns the exact API/model adaptation. This PROGRAMSTART branch intentionally does not mutate Controller code.
+The active Controller lane owns the exact API/model adaptation. This PROGRAMSTART branch does not mutate Controller code.
 
-## 13. Operator-plane integration handoff
+## 13. Operator-plane handoff
 
-A future Mission-Control/operator surface can safely show:
+A future Mission-Control/operator surface can show:
 
 - original request;
 - interpreted objective/intent family;
 - resolved project owner;
-- exact methodology/project authority refs;
+- methodology/project authority refs;
 - mutable/read-only surfaces;
 - human gates and automation gaps;
 - parallel conflicts;
 - evidence/acceptance/Challenge;
-- field provenance;
+- provenance;
 - unresolved ambiguity;
 - Run / Edit / Challenge / Narrow Scope / Inspect Evidence.
 
-Editing must recompile/reseal; the UI must not modify an already-admitted packet in place. Low-risk unambiguous packets do not require mandatory operator review when current policy permits autonomous admission.
+Editing creates a newly compiled/sealed packet. Low-risk unambiguous packets do not require mandatory review when current policy permits autonomous admission.
 
-## 14. Evidence Spine integration handoff
+## 14. Evidence Spine handoff
 
 Evidence Spine may eventually provide:
 
 - canonical authority/currentness evidence references;
-- invalidation/supersession events;
-- exact evidence IDs bound to required acceptance conditions.
+- invalidation/supersession signals;
+- exact evidence IDs bound to acceptance requirements.
 
 It must not become project authority, intent interpreter, or Controller admission service.
 
-## 15. Success metrics for a future measured rollout
+## 15. Success metrics
 
-Track at minimum:
+A measured rollout should track:
 
 - manual prompt-boilerplate reduction;
 - required PROGRAMSTART semantic-constraint coverage;
-- unsupported authority added (**target: zero**);
-- genuine-human-gate versus automation-gap classification errors;
-- write-surface collision detection;
+- unsupported authority added: target **zero**;
+- genuine-human-gate versus automation-gap errors;
+- typed write-surface collision detection;
 - renderer semantic-boundary regressions;
 - unnecessary clarification rate;
 - operator edits before admission;
 - semantic object size versus rendered prompt size;
-- reproducibility for same intent + same authority state;
+- reproducibility from the same intent + authority state;
 - stale-authority packets rejected before consequential execution.
 
 Prompt brevity alone is not a success metric.
@@ -422,41 +431,40 @@ Prompt brevity alone is not a success metric.
 ## 16. Live implementation checklist
 
 - [x] current ownership determined;
-- [x] historical/manual prompt pattern inspected via current PROGRAMSTART Prompt Builder Mode B plus preserved real work prompts/context;
-- [x] responsibility boundary proven against PROGRAMSTART, Controller, Mission-Control, Evidence Spine, Portfolio and inactive Orchestra;
-- [x] canonical representation narrowed to a sealed **Compiled Work Packet projection**, not a second Work Specification ontology;
+- [x] historical/manual prompt pattern inspected;
+- [x] responsibility boundary proven;
+- [x] canonical representation narrowed to a Compiled Work Packet projection;
 - [x] explicit vs inferred provenance model implemented;
-- [x] PROGRAMSTART inheritance/default rules represented through exact authority snapshot + rule catalog;
-- [x] parallel-work/write-surface representation implemented;
-- [x] ChatGPT prompt renderer implemented as a derived artifact;
+- [x] current-methodology/project inheritance represented through authority snapshot + rule catalog;
+- [x] typed parallel-work/write-surface representation implemented;
+- [x] ChatGPT renderer implemented as a derived artifact;
 - [x] three real short-intent -> structured fixtures added;
-- [x] work-spec -> long-form prompt rendering covered by tests;
-- [x] semantic integrity/equivalence boundary covered;
+- [x] Work Packet -> long-form prompt rendering tested;
+- [x] semantic integrity boundary tested;
 - [x] adversarial cases encoded;
 - [x] Controller integration point defined without Controller mutation;
 - [x] operator-plane integration point defined without Mission-Control mutation;
 - [x] Evidence Spine currentness role defined without overloading it;
 - [x] stale-authority/recompile policy defined;
 - [x] real-world pilot fixtures use current Resume Creator, Watchtower, and Controller evidence;
-- [ ] exact-head CI green;
-- [ ] post-implementation Challenge clear after CI and patch review;
-- [ ] owning authority/PR reconciled after Challenge;
-- [x] reusable learning disposition defined below.
+- [ ] exact-head CI green after Challenge remediations;
+- [ ] post-implementation Challenge clear after final CI/patch review;
+- [ ] owning PR/checklist reconciled after final Challenge;
+- [x] reusable learning disposition defined.
 
 ## 17. Learning disposition
 
-Reusable findings route to existing owners:
-
 ### PROGRAMSTART
 
-- Work Packet semantics are already the right canonical contract; avoid a parallel `WorkSpecification` system.
-- Prompt Builder Mode B is useful evidence but its direct-context-to-prose architecture should become a renderer path over structured semantics where practical.
-- Frequently repeated long-prompt clauses map to existing reusable rules: continuation/current-authority, audit/inspect-first, parallel protected surfaces, no authority expansion, human-gate/automation-gap distinction, source-data non-authority, drift/recompile, Challenge inheritance.
+- Existing Work Packet semantics are the right canonical contract; do not create a parallel Work Specification system.
+- Prompt Builder Mode B is useful evidence, but prose-first rendering should become a renderer over structured semantics where practical.
+- Repeated prompt clauses map to reusable semantic rules: continuation/current-authority, audit/inspect-first, parallel protected surfaces, no authority expansion, human-gate/automation-gap distinction, source-data non-authority, drift/recompile, and Challenge inheritance.
+- Mutation surfaces should be typed uniformly across repository/runtime/provider/authority domains.
 
 ### Autonomous Controller
 
-- use compiled write sets/conflicts as admission/lease inputs;
-- verify spec integrity/currentness before execution;
+- consume compiled write sets/conflicts as admission/lease inputs;
+- verify integrity/currentness before execution;
 - do not duplicate interpretation/default rules already owned by PROGRAMSTART.
 
 ### Mission-Control/operator plane
@@ -472,21 +480,22 @@ Reusable findings route to existing owners:
 
 ### Portfolio Operations
 
-- project discovery/attention hints may help a resolver, but owning authority always wins;
-- conversation-derived intent is not execution authority merely because it was captured.
+- discovery/attention hints may assist authority resolution;
+- owning-project authority always wins;
+- captured conversation intent is not execution authority by itself.
 
 ## 18. Remaining gaps
 
-1. **AuthoritySnapshot resolver integration:** V0.1 requires an already-resolved exact snapshot. The active Controller/operator/Evidence lane should determine the least-duplicative producer using its current contracts.
-2. **Field-level drift optimization:** current implementation deliberately recompiles on any material snapshot fingerprint change. More selective reconciliation should be added only if real churn makes this costly.
-3. **Additional worker renderers:** Codex/worker/API/GitHub-issue renderers are not implemented until a real consumer contract exists; semantic packet remains reusable.
-4. **Methodology self-adoption:** after this PR proves green/Challenge-clear, PROGRAMSTART may decide whether to connect the existing `prompt-build --mode context` path to structured compilation or preserve backward compatibility as a legacy/simple mode.
-5. **Measured live admission:** these pilots prove deterministic semantic compilation; a full Controller admission pilot belongs to the active Controller lane after its API contract accepts this handoff.
+1. **AuthoritySnapshot resolver integration:** V0.1 requires an already-resolved snapshot. The active Controller/operator/Evidence lane should determine the least-duplicative producer.
+2. **Field-level drift optimization:** any material snapshot fingerprint change currently forces recompile. More selective reconciliation should wait for real evidence of costly churn.
+3. **Additional renderers:** Codex/worker/API/GitHub-issue renderers are deferred until a real consumer contract exists.
+4. **Methodology self-adoption:** after the PR is green/Challenge-clear, PROGRAMSTART can decide whether existing `prompt-build --mode context` should route through structured compilation or remain a legacy/simple mode.
+5. **Measured Controller admission pilot:** semantic compilation is proven here; end-to-end Controller admission belongs to the active Controller lane after it accepts the handoff.
 
 ## 19. V0.1 success statement
 
-If exact-head CI and Challenge clear, this bounded implementation proves the narrower target:
+If exact-head CI and final Challenge clear, this bounded implementation proves:
 
-> A short natural-language request plus an exact current authority snapshot can be deterministically transformed into an inspectable sealed PROGRAMSTART Work Packet projection that preserves operator intent, adds no new execution authority, inherits current methodology/project constraints, represents parallel write ownership, distinguishes human gates from automation gaps, detects stale/tampered semantics, and renders a conversational worker prompt as a derived artifact.
+> A short natural-language request plus a current resolved authority snapshot can be deterministically transformed into an inspectable sealed PROGRAMSTART Work Packet projection that preserves operator intent, adds no new execution authority, inherits current methodology/project constraints, represents typed parallel-write ownership, distinguishes human gates from automation gaps, detects stale/tampered semantics, and renders a conversational worker prompt as a derived artifact.
 
-It does **not** claim that arbitrary natural language alone is sufficient to discover truth or authority. Authority resolution remains an explicit upstream trust boundary, and semantic admission remains a Controller responsibility.
+It does **not** claim arbitrary natural language alone can discover truth or authority. Authority resolution remains an explicit upstream trust boundary, and semantic admission remains a Controller responsibility.

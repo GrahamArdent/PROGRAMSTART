@@ -69,7 +69,28 @@ For bounded implementation, use targeted checks plus any broader checks triggere
 
 Do not repeat broad verification just because a session changed.
 
-## 5. Reconcile durable state
+## 5. Prepare a clean candidate before remote publication
+
+GitHub or another remote verifier should normally receive a candidate that has already passed the owning repository's deterministic preparation and publication contract.
+
+Use this semantic sequence while keeping concrete commands repository-owned:
+
+`edit -> deterministic fix -> local validation -> commit -> pre-push validation -> GitHub authoritative verification`
+
+Before a push, pull-request update, or equivalent API/connector publication:
+
+1. run the repository-defined deterministic formatter/fixer and fast validation appropriate to the changed surface;
+2. if deterministic tools modify files, inspect and incorporate the appropriate changes;
+3. rerun the affected preparation gate, with no more than two autonomous deterministic auto-fix passes before stopping for diagnosis;
+4. treat semantic, test, schema, security, build, or other non-formatting failures as real failures rather than suppressing or relabeling them;
+5. run the repository-defined pre-push/publication confidence gate when an executable candidate surface is available;
+6. publish only the prepared candidate, then rely on GitHub Actions or the owning remote verifier as independent authoritative confirmation.
+
+Git hooks are execution-path enforcement, not evidence that every publication path ran them. Direct GitHub/API/connector writes bypass local hooks. When such a path can access an executable candidate workspace, it MUST run the repository's equivalent deterministic preparation and publication validation explicitly before the remote mutation. When no executable candidate-validation surface exists, record that limitation and do not claim local validation; remote CI remains authoritative.
+
+Do not create a universal linter/toolchain merely to satisfy this contract. Python, JavaScript/TypeScript, shell, infrastructure, mobile, and other repositories keep their own concrete formatter/linter/type/test/build/guard commands.
+
+## 6. Reconcile durable state
 
 After the slice:
 
@@ -78,7 +99,7 @@ After the slice:
 - record verification evidence once;
 - close/replace the packet instead of accumulating a second planning hierarchy.
 
-## 6. Never do these
+## 7. Never do these
 
 - assert current authority from memory without reading the relevant current section;
 - update a dependent before its authority;
@@ -86,7 +107,10 @@ After the slice:
 - speculatively load every planning file “just in case”;
 - rerun broad checks without an invalidation/convergence reason;
 - create persistent work-packet paperwork when a compact task/PR representation is sufficient;
-- use a fixed feature count or calendar cadence as proof that convergence is required.
+- use a fixed feature count or calendar cadence as proof that convergence is required;
+- let CI-side source mutation substitute for preparing a clean candidate when the execution path could have done so before publication;
+- suppress a genuine semantic/test/security/build failure merely to obtain a green remote check;
+- claim a Git hook or local gate ran on an API/connector publication path when it did not.
 
 ## Authority quick reference
 

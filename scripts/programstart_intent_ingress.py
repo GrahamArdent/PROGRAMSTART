@@ -389,8 +389,8 @@ def resolve_contextual_intent(request: ContextualIntentRequest) -> ContextualInt
                 packet=existing,
                 next_system_requirement=requirement,
                 notes=[
-                    "Existing packet semantics are retained pending currentness revalidation; unresolved machine context is not a "
-                    "reason to replan or declare execution ready."
+                    "Existing packet semantics are retained pending currentness revalidation; "
+                    "unresolved machine context is not a reason to replan or declare execution ready."
                 ],
             )
 
@@ -401,8 +401,8 @@ def resolve_contextual_intent(request: ContextualIntentRequest) -> ContextualInt
                 note = "Current conversation semantics are incomplete; recover them before reusing the active Work Packet."
                 if visible_drift:
                     note = (
-                        "Partial conversation recovery already contains material semantic drift; recover complete semantics before "
-                        "deciding whether the active Work Packet must be replaced."
+                        "Partial conversation recovery already contains material semantic drift; "
+                        "recover complete semantics before deciding whether the active Work Packet must be replaced."
                     )
                 return ContextualIntentResolution(
                     state=ConversationState.CONVERGED,

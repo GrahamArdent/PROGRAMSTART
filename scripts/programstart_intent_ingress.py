@@ -377,14 +377,14 @@ def resolve_contextual_intent(request: ContextualIntentRequest) -> ContextualInt
     if existing is not None:
         if authority is None:
             return ContextualIntentResolution(
-                state=ConversationState.EXECUTING if harvest.execution_underway else ConversationState.EXECUTION_READY,
+                state=ConversationState.CONVERGED,
                 action=ContextualTransitionAction.REVALIDATE_EXISTING_PACKET,
                 harvest=harvest,
                 packet=existing,
                 next_system_requirement="resolve current owning-project authority and revalidate the existing Work Packet",
                 notes=[
-                    "An existing Work Packet is reused; missing currentness is a machine integration boundary, "
-                    "not a reason to replan."
+                    "Existing packet semantics are retained pending currentness revalidation; missing authority is a machine integration "
+                    "boundary, not a reason to replan or declare execution ready."
                 ],
             )
 

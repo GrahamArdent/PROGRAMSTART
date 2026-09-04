@@ -65,6 +65,17 @@ Use the compact logical packet by default. Persist `CURRENT_WORK_PACKET.md` only
 - Do not rerun broad checks merely because a session changed.
 - Use the manual convergence workflow only when a full-repository gate is actually warranted.
 
+## Publication / Quality Gate
+
+Before publishing a commit, push, PR update, or equivalent remote mutation, follow the clean-candidate contract in `.github/instructions/source-of-truth.instructions.md`.
+
+- Use the owning repository's existing formatter/fixer/lint/type/test/build/guard commands; do not impose a universal toolchain.
+- Run deterministic preparation before publication. If a deterministic tool modifies files, inspect and incorporate the appropriate changes, then rerun the affected gate. Autonomous auto-fix is bounded to two mutation passes before diagnosis.
+- Run the repository-defined pre-push/publication confidence gate when an executable candidate workspace is available.
+- Git CLI hooks are enforcement only for Git paths that actually invoke them. API/connector publication paths bypass Git hooks and MUST run equivalent candidate validation explicitly when an executable candidate surface exists.
+- If an API/connector path cannot execute the repository contract, record that limitation and do not claim local/pre-push validation. GitHub Actions remains the independent authoritative verifier.
+- Never suppress, waive, relabel, or auto-commit around a genuine semantic, test, schema, security, dependency, build, or runtime failure merely to obtain green CI.
+
 ## Preferred Commands / Enforcement
 
 - `scripts/programstart_status.py` / `programstart status` — current strategic orientation

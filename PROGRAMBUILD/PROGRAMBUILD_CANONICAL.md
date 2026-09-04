@@ -34,6 +34,7 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY in this section are in
 21. Checklists MUST remain derived completeness/verification surfaces. They MAY be activated when omission risk or an applicable durable checklist warrants them, but MUST NOT create scope, sequencing, a second Master, or mandatory ceremony for trivial work. When a checklist is active for a slice, applicable required items MUST be reconciled before truthful closure according to `PROGRAMBUILD_WORK_PACKET.md` and `PROGRAMBUILD_CHECKLIST.md`.
 22. Worthwhile ideas SHOULD be durably preserved without being silently promoted. `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` owns capture/promotion semantics. A captured, candidate, investigating, shelved, rejected, or superseded Idea Record is evidence/reference material only; recording it MUST NOT imply priority, scope, sequencing, budget, architecture, or permission to execute. An accepted idea MUST reconcile into the existing project authority that owns the changed truth before dependent execution. A live cross-project idea portfolio MUST NOT be stored in PROGRAMSTART itself.
 23. Learning-capable software MUST use owner-routed learning when real operational evidence can materially improve behavior. `docs/PROGRAMSTART_LEARNING_ARCHITECTURE.md` owns the conditional Learning Architecture Gate, owner-classification, evaluation/promotion/rollback discipline, and the rule that learned behavior MUST NOT silently broaden authority. Learning capability MUST NOT create a mandatory project artifact, shadow backlog, autonomous policy authority, or uncontrolled self-modification mechanism merely because telemetry or AI is present.
+24. A material finding from a derived checklist, audit, portfolio view, conversation outcome, research result, or other non-authoritative evidence MUST NOT execute merely because it was discovered. When the finding is not represented strongly enough in the repository that should own the durable truth, PROGRAMSTART MUST re-verify the premise, identify the real owner, and reconcile any authority-worthy delta through existing Mode-C authority before dependent execution. `docs/PROGRAMSTART_AUTHORITY_GAP_RECONCILIATION.md` owns this Authority-Gap application protocol. `AUTHORITY_GAP` is routing shorthand only; it MUST NOT become a new lifecycle state, recommendation disposition, backlog, or source of permission.
 
 ---
 
@@ -94,6 +95,7 @@ Optional preservation / execution aids:
 | critical file inventory and status | `PROGRAMBUILD_FILE_INDEX.md` |
 | planning-to-execution separation, idea capture/promotion semantics, proportional rigor, blocker scope/safe-lane reasoning, adaptive decision/evidence routing, accepted-recommendation resolution, checklist activation rules, context loading, and evidence reuse | `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` |
 | logical work-packet semantics, accepted-recommendation disposition evidence, checklist completeness/closure, blocker/safe-lane fields, coordinated Mode-C lane view and shared-mutation ownership, cross-repository dependency/authority fields, operator/manual-gate handoff semantics, and optional persisted packet format | `PROGRAMBUILD_WORK_PACKET.md` |
+| derived-finding Authority-Gap detection, owner routing, pre-execution reconciliation, return-to-origin behavior, and reusable-learning handoff | `docs/PROGRAMSTART_AUTHORITY_GAP_RECONCILIATION.md` |
 | PROGRAMSTART decision-scoped cost governance, Cost Envelope semantics, cost-evidence freshness, cap/reuse/pay-when rules, and anti-registry boundary | `docs/PROGRAMSTART_COST_GOVERNANCE.md` |
 | PROGRAMSTART acceptance-learning triggers, observation/rollup semantics, maturity rules, and future-retest routing | `docs/PROGRAMSTART_LEARNING_LOOP.md` |
 | conditional product/system Learning Architecture Gate, owner-routed operational learning, learning-data boundaries, evaluation/promotion/rollback discipline, and authority-safe adaptive improvement | `docs/PROGRAMSTART_LEARNING_ARCHITECTURE.md` |
@@ -149,6 +151,8 @@ An Idea Record or Idea Ledger never outranks project authority. Capturing, shelv
 
 A checklist never outranks the requirement/decision/gate/acceptance source from which its items were derived. Correct the checklist when authority changes rather than preserving stale checklist scope.
 
+An Authority-Gap record or derived finding never outranks project authority and never authorizes dependent implementation by itself. Correct stale findings, resolve the real owner, and reconcile any authority-worthy delta through that owner's current authority before execution; if no legitimate owner exists, keep the finding non-authoritative until normal promotion rules establish one.
+
 A derived cross-repository graph never outranks either repository's authority. Correct the dependency facts or regenerate the graph rather than using it to rewrite either project's execution spine.
 
 An operator/manual handoff never outranks project authority and never proves the gated outcome merely because the requested human/provider/device action occurred. Reconcile returned evidence against the declared acceptance condition, then resume the existing spine at the declared point.
@@ -176,6 +180,7 @@ A product/system learning observation, adaptive recommendation, experiment resul
 - Preserve worthwhile future ideas in the owning project/workspace's existing idea/reference system, or use the optional `IDEA_LEDGER.md` template when no compatible surface exists. Do not require full intake merely to capture, do not delete useful rejected/shelved rationale by default, and do not turn the ledger into a shadow backlog.
 - Accepted recommendation resolution should retain only enough context to identify the recommendation, disposition, authority reconciliation need, and stronger gate. Do not turn accepted recommendations into a new durable registry or hidden backlog.
 - Checklists should retain only the obligations needed to avoid meaningful omission and should reference current authority where practical. Close/discard derived slice checklists with the work packet; do not turn them into shadow strategy.
+- Authority-Gap handling should retain only the source finding, ownership/reconciliation state, exact authority reference when resolved, and return-to-origin evidence needed for safe resumption. Do not create a global Authority-Gap backlog or use the record as permission to execute.
 - Cross-repository orchestration may retain only the task-scoped relationship/evidence needed to derive the current packet. A live portfolio registry or cross-project Master belongs outside PROGRAMSTART unless a future explicit authority decision creates one.
 - Operator/manual handoffs should retain only the task-scoped action/evidence/resume contract needed to cross the gate. Do not turn them into a parallel ticketing system, credential store, or independent execution ledger.
 - Concurrent Mode-C lane coordination may retain only enough derived lane state to select the current packet, preserve closure-control/dependency truth, and serialize any proven shared consequential mutation resource through one explicit owner plus a release/transfer condition. Do not persist a parallel lane backlog or global lock system when the project spine already owns sequencing.
@@ -186,4 +191,4 @@ A product/system learning observation, adaptive recommendation, experiment resul
 
 ---
 
-Last updated: 2026-09-01
+Last updated: 2026-09-03

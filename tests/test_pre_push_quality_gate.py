@@ -32,9 +32,7 @@ def _run_hook(
     gate_log = tmp_path / "gate.log"
     fake_uv = fake_bin / "uv"
     fake_uv.write_text(
-        "#!/bin/sh\n"
-        "printf '%s\\n' \"$*\" > \"$PROGRAMSTART_TEST_GATE_LOG\"\n"
-        f"exit {gate_exit_code}\n",
+        f'#!/bin/sh\nprintf \'%s\\n\' "$*" > "$PROGRAMSTART_TEST_GATE_LOG"\nexit {gate_exit_code}\n',
         encoding="utf-8",
     )
     fake_uv.chmod(0o755)
@@ -97,8 +95,7 @@ def test_worker_instructions_cover_hook_bypassing_publication_paths() -> None:
     quickstart = _read(QUICKSTART)
 
     sequence = (
-        "edit -> deterministic fix -> local validation -> commit -> "
-        "pre-push validation -> GitHub authoritative verification"
+        "edit -> deterministic fix -> local validation -> commit -> pre-push validation -> GitHub authoritative verification"
     )
 
     assert sequence in source_jit

@@ -38,7 +38,7 @@ def _run_hook(
 
     result = subprocess.run(
         ["/bin/sh", str(HOOK), "origin", "git@example.invalid:repo.git"],
-        input=f"refs/heads/feature/test {'1' * 40} {remote_ref} {'2' * 40}\n",
+        input=f"refs/heads/feature/test {"1" * 40} {remote_ref} {"2" * 40}\n",
         text=True,
         capture_output=True,
         cwd=ROOT,

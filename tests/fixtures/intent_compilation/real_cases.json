@@ -6,34 +6,38 @@
       "authority": {
         "project_name": "Resume Creator V6",
         "owning_repository": "GrahamArdent/resume-creator-v6",
-        "authority_commit": "d0ab72d19aab65110e9c48c6b8fb0cd4b26ae729",
+        "authority_commit": "d0ab72d",
         "authority_paths": [
           "docs/PRODUCTION_READINESS_GAMEPLAN_2026-03-24.md",
           "PR #16 programstart/finish-line-rebaseline",
           "PR #17 programstart/job-target-intake-v0-1"
         ],
         "methodology_repository": "GrahamArdent/PROGRAMSTART",
-        "methodology_commit": "330aa70508113c63b3f85f449dd152648fc3681a",
+        "methodology_commit": "330aa705",
         "execution_mode": "Mode C",
         "current_work_refs": [
           "PR #16 rebaselines finish-line verification",
           "PR #17 reconciles the accepted 2026-09-01 streamlined job-target intake delta"
         ],
-        "mutable_repositories": ["GrahamArdent/resume-creator-v6"],
-        "read_only_repositories": [
-          "GrahamArdent/PROGRAMSTART",
-          "GrahamArdent/evidence-spine",
-          "GrahamArdent/programstart-autonomous-controller",
-          "GrahamArdent/execution-node-control",
-          "GrahamArdent/programstart-compute-spine",
-          "GrahamArdent/secrets-control-plane",
-          "GrahamArdent/repo-watchtower",
-          "GrahamArdent/portfolio-operations",
-          "GrahamArdent/mission-control",
-          "GrahamArdent/Orchestra-Agent"
+        "mutable_surfaces": [
+          {
+            "surface_type": "repository",
+            "identifier": "GrahamArdent/resume-creator-v6",
+            "consequential": true
+          }
         ],
-        "runtime_mutation_surfaces": [],
-        "external_provider_surfaces": [],
+        "read_only_surfaces": [
+          {"surface_type": "repository", "identifier": "GrahamArdent/PROGRAMSTART"},
+          {"surface_type": "repository", "identifier": "GrahamArdent/evidence-spine"},
+          {"surface_type": "repository", "identifier": "GrahamArdent/programstart-autonomous-controller"},
+          {"surface_type": "repository", "identifier": "GrahamArdent/execution-node-control"},
+          {"surface_type": "repository", "identifier": "GrahamArdent/programstart-compute-spine"},
+          {"surface_type": "repository", "identifier": "GrahamArdent/secrets-control-plane"},
+          {"surface_type": "repository", "identifier": "GrahamArdent/repo-watchtower"},
+          {"surface_type": "repository", "identifier": "GrahamArdent/portfolio-operations"},
+          {"surface_type": "repository", "identifier": "GrahamArdent/mission-control"},
+          {"surface_type": "repository", "identifier": "GrahamArdent/Orchestra-Agent"}
+        ],
         "allowed_effects": [
           "repository-safe implementation in Resume Creator V6",
           "tests and exact-head CI",
@@ -78,19 +82,18 @@
           {
             "name": "durable continuation / operator interaction / Evidence Spine infrastructure lane",
             "owner": "parallel autonomy-infrastructure workstream",
-            "protected_repositories": [
-              "GrahamArdent/PROGRAMSTART",
-              "GrahamArdent/evidence-spine",
-              "GrahamArdent/programstart-autonomous-controller",
-              "GrahamArdent/execution-node-control",
-              "GrahamArdent/programstart-compute-spine",
-              "GrahamArdent/secrets-control-plane",
-              "GrahamArdent/repo-watchtower",
-              "GrahamArdent/portfolio-operations",
-              "GrahamArdent/mission-control",
-              "GrahamArdent/Orchestra-Agent"
+            "protected_surfaces": [
+              {"surface_type": "repository", "identifier": "GrahamArdent/PROGRAMSTART"},
+              {"surface_type": "repository", "identifier": "GrahamArdent/evidence-spine"},
+              {"surface_type": "repository", "identifier": "GrahamArdent/programstart-autonomous-controller"},
+              {"surface_type": "repository", "identifier": "GrahamArdent/execution-node-control"},
+              {"surface_type": "repository", "identifier": "GrahamArdent/programstart-compute-spine"},
+              {"surface_type": "repository", "identifier": "GrahamArdent/secrets-control-plane"},
+              {"surface_type": "repository", "identifier": "GrahamArdent/repo-watchtower"},
+              {"surface_type": "repository", "identifier": "GrahamArdent/portfolio-operations"},
+              {"surface_type": "repository", "identifier": "GrahamArdent/mission-control"},
+              {"surface_type": "repository", "identifier": "GrahamArdent/Orchestra-Agent"}
             ],
-            "protected_runtime_surfaces": [],
             "evidence_ref": "active parallel-work declaration plus current repository heads"
           }
         ]
@@ -114,23 +117,27 @@
       "authority": {
         "project_name": "Repo Watchtower",
         "owning_repository": "GrahamArdent/repo-watchtower",
-        "authority_commit": "d86eab90c8985f355f54f10555ecdc59633270bd",
+        "authority_commit": "d86eab90",
         "authority_paths": ["docs/WATCHTOWER_V0_2_EXECUTION.md"],
         "methodology_repository": "GrahamArdent/PROGRAMSTART",
-        "methodology_commit": "330aa70508113c63b3f85f449dd152648fc3681a",
+        "methodology_commit": "330aa705",
         "execution_mode": "Mode C",
         "current_work_refs": [
           "V0.2 read-only observability boundary",
           "Slice 5 provider/ingress contract merged without live activation"
         ],
-        "mutable_repositories": ["GrahamArdent/repo-watchtower"],
-        "read_only_repositories": [
-          "GrahamArdent/PROGRAMSTART",
-          "GrahamArdent/programstart-autonomous-controller",
-          "GrahamArdent/evidence-spine"
+        "mutable_surfaces": [
+          {
+            "surface_type": "repository",
+            "identifier": "GrahamArdent/repo-watchtower",
+            "consequential": true
+          }
         ],
-        "runtime_mutation_surfaces": [],
-        "external_provider_surfaces": [],
+        "read_only_surfaces": [
+          {"surface_type": "repository", "identifier": "GrahamArdent/PROGRAMSTART"},
+          {"surface_type": "repository", "identifier": "GrahamArdent/programstart-autonomous-controller"},
+          {"surface_type": "repository", "identifier": "GrahamArdent/evidence-spine"}
+        ],
         "allowed_effects": [
           "repository analysis",
           "repository-safe implementation after audit findings reconcile to current Watchtower authority",
@@ -173,8 +180,13 @@
           {
             "name": "Watchtower V0.2 live-integration continuation",
             "owner": "parallel Watchtower workstream",
-            "protected_repositories": ["GrahamArdent/repo-watchtower"],
-            "protected_runtime_surfaces": [],
+            "protected_surfaces": [
+              {
+                "surface_type": "repository",
+                "identifier": "GrahamArdent/repo-watchtower",
+                "consequential": true
+              }
+            ],
             "evidence_ref": "parallel-work declaration; current Watchtower head d86eab9"
           }
         ]
@@ -186,7 +198,7 @@
         "read_only_contains": ["GrahamArdent/repo-watchtower"],
         "rule": "audit.inspect-first",
         "challenge_required": true,
-        "conflict_surface": "GrahamArdent/repo-watchtower"
+        "conflict_surface": "repository:GrahamArdent/repo-watchtower"
       }
     },
     {
@@ -195,28 +207,29 @@
       "authority": {
         "project_name": "PROGRAMSTART Autonomous Build Controller",
         "owning_repository": "GrahamArdent/programstart-autonomous-controller",
-        "authority_commit": "7a168cfd1304af5f389fc088ea920d05efff81c2",
-        "authority_paths": [
-          "AUTONOMOUS_CONTROLLER_EXECUTION.md",
-          "README.md"
-        ],
+        "authority_commit": "7a168cfd",
+        "authority_paths": ["AUTONOMOUS_CONTROLLER_EXECUTION.md", "README.md"],
         "methodology_repository": "GrahamArdent/PROGRAMSTART",
-        "methodology_commit": "330aa70508113c63b3f85f449dd152648fc3681a",
+        "methodology_commit": "330aa705",
         "execution_mode": "Mode C",
         "current_work_refs": [
           "Controller owns persistent semantic orchestration for already-authorized Work Packets",
           "operator interaction plane V0.1 contract merged in Controller"
         ],
-        "mutable_repositories": ["GrahamArdent/programstart-autonomous-controller"],
-        "read_only_repositories": [
-          "GrahamArdent/PROGRAMSTART",
-          "GrahamArdent/evidence-spine",
-          "GrahamArdent/mission-control",
-          "GrahamArdent/Orchestra-Agent",
-          "GrahamArdent/programstart-compute-spine"
+        "mutable_surfaces": [
+          {
+            "surface_type": "repository",
+            "identifier": "GrahamArdent/programstart-autonomous-controller",
+            "consequential": true
+          }
         ],
-        "runtime_mutation_surfaces": [],
-        "external_provider_surfaces": [],
+        "read_only_surfaces": [
+          {"surface_type": "repository", "identifier": "GrahamArdent/PROGRAMSTART"},
+          {"surface_type": "repository", "identifier": "GrahamArdent/evidence-spine"},
+          {"surface_type": "repository", "identifier": "GrahamArdent/mission-control"},
+          {"surface_type": "repository", "identifier": "GrahamArdent/Orchestra-Agent"},
+          {"surface_type": "repository", "identifier": "GrahamArdent/programstart-compute-spine"}
+        ],
         "allowed_effects": [
           "architecture analysis",
           "repository contracts/tests when owned by the active Controller lane"
@@ -260,15 +273,18 @@
           {
             "name": "durable autonomous continuation and operator interaction lane",
             "owner": "active Controller/operator-plane workstream",
-            "protected_repositories": [
-              "GrahamArdent/programstart-autonomous-controller",
-              "GrahamArdent/evidence-spine",
-              "GrahamArdent/mission-control",
-              "GrahamArdent/Orchestra-Agent",
-              "GrahamArdent/programstart-compute-spine"
+            "protected_surfaces": [
+              {
+                "surface_type": "repository",
+                "identifier": "GrahamArdent/programstart-autonomous-controller",
+                "consequential": true
+              },
+              {"surface_type": "repository", "identifier": "GrahamArdent/evidence-spine"},
+              {"surface_type": "repository", "identifier": "GrahamArdent/mission-control"},
+              {"surface_type": "repository", "identifier": "GrahamArdent/Orchestra-Agent"},
+              {"surface_type": "repository", "identifier": "GrahamArdent/programstart-compute-spine"}
             ],
-            "protected_runtime_surfaces": [],
-            "evidence_ref": "Controller main 7a168cf and parallel-work declaration"
+            "evidence_ref": "Controller current authority plus active parallel-work declaration"
           }
         ]
       },
@@ -279,7 +295,7 @@
         "read_only_contains": ["GrahamArdent/programstart-autonomous-controller"],
         "rule": "architecture.existing-owner-first",
         "challenge_required": true,
-        "conflict_surface": "GrahamArdent/programstart-autonomous-controller"
+        "conflict_surface": "repository:GrahamArdent/programstart-autonomous-controller"
       }
     }
   ]

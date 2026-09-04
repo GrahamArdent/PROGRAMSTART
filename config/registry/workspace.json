@@ -13,7 +13,9 @@
         ".github/prompts/PROMPT_STANDARD.md",
         "docs/PROGRAMSTART_LEARNING_LOOP.md",
         "docs/PROGRAMSTART_LEARNING_ARCHITECTURE.md",
-        "docs/PROGRAMSTART_COST_GOVERNANCE.md"
+        "docs/PROGRAMSTART_COST_GOVERNANCE.md",
+        "docs/PROGRAMSTART_AUTHORITY_GAP_RECONCILIATION.md",
+        "docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md"
       ]
     },
     "bootstrap_assets": [

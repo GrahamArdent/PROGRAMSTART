@@ -107,11 +107,24 @@ Changes:
   - changes `PROGRAMSTART_ALLOW_MAIN_PUSH=1` to bypass branch policy only, not quality validation;
   - invokes the already-existing `uv run nox -s gate_safe` before publication;
   - blocks publication if the local confidence gate fails.
+- `.github/instructions/source-of-truth.instructions.md`
+  - owns the semantic clean-candidate publication sequence;
+  - keeps concrete validation repository-owned;
+  - requires explicit candidate validation for hook-bypassing API/connector paths when an executable surface exists;
+  - requires truthful degraded-mode evidence when it does not.
+- `.github/copilot-instructions.md`
+  - makes the publication rule an always-on worker expectation;
+  - bounds deterministic auto-fix to two mutation passes;
+  - forbids semantic/test/security/build suppression for green-seeking.
+- `QUICKSTART.md`
+  - keeps the JIT dependent surface aligned;
+  - names PROGRAMSTART's existing `pre-commit` and `gate_safe` commands without universalizing them to other repositories.
 - `tests/test_pre_push_quality_gate.py`
   - proves feature publication invokes the repository-owned gate;
   - proves gate failure blocks publication;
   - proves direct-main protection still occurs;
-  - proves the main-policy override does not bypass the quality gate.
+  - proves the main-policy override does not bypass the quality gate;
+  - statically proves the worker/JIT/Quick Start surfaces retain the hook-bypassing publication contract.
 - `CONTRIBUTING.md`
   - makes deterministic pre-commit preparation explicit;
   - defines bounded deterministic auto-fix behavior;
@@ -121,16 +134,23 @@ Changes:
 
 No new linter, CI service, repository, Watchtower execution responsibility, provider, credential or hosted auto-remediation was added.
 
+## Self-hosting Challenge evidence
+
+The implementation path reproduced the exact defect under investigation. This branch was mutated through the GitHub connector, so the new local Git hook could not run. Initial PR validation then found trailing whitespace and Ruff formatting mutations in the candidate. Subsequent connector corrections removed those deterministic mutations before later validation stages could be exercised.
+
+That does **not** validate `PSL-022`; it demonstrates the API-path boundary. It also disproves the idea that adding only a Git hook could be ecosystem closure. The methodology therefore now makes candidate preparation an execution-path responsibility as well as a normal Git-hook responsibility.
+
 ## Challenge before validation
 
 The implementation must be challenged against these failure sequences before promotion:
 
 1. **Expensive-hook escape:** if `gate_safe` is so expensive that workers routinely bypass it, the change has moved friction rather than reduced it. Counterevidence would justify narrowing the pre-push set, but the present sample shows tests/guards account for most deterministic reds, so a formatting-only hook is insufficient.
-2. **API bypass:** direct GitHub/API commits never execute `.git/hooks/pre-push`. The methodology must therefore require explicit candidate validation where an executable environment exists and truthful degraded-mode evidence where it does not. A Git hook alone is not ecosystem closure.
+2. **API bypass:** direct GitHub/API commits never execute `.git/hooks/pre-push`. The JIT and worker instructions now require explicit candidate validation where an executable environment exists and truthful degraded-mode evidence where it does not. This closes the methodology/instruction gap, but a connector with no candidate-execution capability still cannot manufacture a local validation run.
 3. **Green-seeking auto-fix loop:** repeated formatter mutation must not become unbounded retries or suppression. The two-pass bound preserves diagnosis.
 4. **False CI replacement:** a local pass must not be treated as remote acceptance. Branch protection and `Required PR Gate` remain unchanged.
 5. **Wrong universal tools:** Watchtower's pnpm/toolchain evidence proves Ruff cannot be generalized across repositories. Only the semantic contract is shared.
 6. **Direct-main override regression:** an authorized branch-policy override must still execute validation; regression tests explicitly cover this case.
+7. **Instruction-only false enforcement:** worker instructions are necessary but are not evidence that an execution environment actually ran the repository contract. Future autonomous publication evidence must distinguish instruction availability from executable gate evidence.
 
 ## Learning disposition
 

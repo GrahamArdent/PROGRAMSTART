@@ -57,4 +57,6 @@ def test_same_authority_remains_mutable_for_bounded_execution_packet() -> None:
 
     assert packet.scope.initial_posture == "execute_within_authority"
     assert packet.scope.mutable_identifiers == ["GrahamArdent/example-project"]
-    assert packet.dependencies.expected_write_set == ["repository:GrahamArdent/example-project"]
+    assert packet.dependencies.expected_write_set == [
+        "repository:GrahamArdent/example-project"
+    ]

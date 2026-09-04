@@ -33,7 +33,7 @@ def _run_hook(
     fake_uv.chmod(0o755)
 
     env = os.environ.copy()
-    env["PATH"] = f"{fake_bin}{os.pathsep}{env.get('PATH', '')}"
+    env["PATH"] = f"{fake_bin}{os.pathsep}{env.get("PATH", "")}"
     env["PROGRAMSTART_TEST_GATE_LOG"] = str(gate_log)
 
     result = subprocess.run(

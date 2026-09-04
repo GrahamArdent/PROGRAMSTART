@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import filecmp
 import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -12,26 +13,39 @@ try:
         WORKFLOW_DESTINATION_PREFIX,
         WORKFLOW_TEMPLATE_PREFIX,
         copy_file,
+        generated_repo_prompt_assets_for_mode,
     )
-    from .programstart_common import warn_direct_script_invocation, workspace_path
+    from .programstart_common import (
+        load_registry_from_path,
+        warn_direct_script_invocation,
+        workspace_path,
+        write_json,
+    )
 except ImportError:  # pragma: no cover - standalone script execution fallback
     from programstart_attach import MANIFEST_FILENAME, PROGRAMBUILD_PRESERVE_EXISTING_FILES
     from programstart_bootstrap import (
         WORKFLOW_DESTINATION_PREFIX,
         WORKFLOW_TEMPLATE_PREFIX,
         copy_file,
+        generated_repo_prompt_assets_for_mode,
     )
-
-    from programstart_common import warn_direct_script_invocation, workspace_path
+    from programstart_common import (
+        load_registry_from_path,
+        warn_direct_script_invocation,
+        workspace_path,
+        write_json,
+    )
 
 SYNC_DESCRIPTION = (
     "Propagate changed PROGRAMSTART files to/from a downstream repo.\n\n"
     "Push mode (--dest): copies changed files from the PROGRAMSTART template to a\n"
     "downstream repo.  Pull mode (--from-template): copies changed files from an\n"
     "upstream PROGRAMSTART template into the current (or --dest) repo.\n\n"
-    "Reads the .programstart-manifest.json written at attach time and copies only\n"
-    "files that differ between the template and the destination. Without --confirm\n"
-    "the command runs in dry-run mode and shows what would change."
+    "Reads the .programstart-manifest.json written at attach/adopt time and copies\n"
+    "files that differ between the template and the destination. Existing-project\n"
+    "adoption manifests also discover newly managed control/support files from the\n"
+    "current template registry during a full sync. Without --confirm the command\n"
+    "runs in dry-run mode and shows what would change."
 )
 
 
@@ -107,6 +121,69 @@ def _matches_filter(path: str, pattern: str) -> bool:
     return fnmatch(path, pattern)
 
 
+def _template_head_hash(template_root: Path) -> str:
+    try:
+        return subprocess.check_output(
+            ["git", "rev-parse", "HEAD"],
+            cwd=template_root,
+            text=True,
+            stderr=subprocess.DEVNULL,
+        ).strip()
+    except (subprocess.SubprocessError, FileNotFoundError):
+        return ""
+
+
+def _current_adoption_manifest_files(template_root: Path, manifest: dict) -> list[str]:
+    """Return the additively evolved managed file set for an adopted existing repo.
+
+    Legacy attachment manifests remain frozen to their recorded file list. Existing-
+    project adoption manifests are safe to evolve because their managed surface is
+    explicitly defined as PROGRAMBUILD controls (excluding state) plus generated-repo
+    prompt/support assets. Historical entries are retained so removals remain visible
+    as `removed-from-template` rather than becoming implicit deletions.
+    """
+    recorded = list(manifest.get("files", []))
+    if manifest.get("mode") != "existing_project_adoption":
+        return recorded
+
+    registry_path = template_root / "config" / "process-registry.json"
+    if not registry_path.exists():
+        return recorded
+
+    registry = load_registry_from_path(registry_path)
+    state_file = registry["workflow_state"]["programbuild"]["state_file"]
+    managed_controls = {
+        path for path in registry["systems"]["programbuild"]["control_files"] if path != state_file
+    }
+    managed_support = generated_repo_prompt_assets_for_mode(registry, include_userjourney=False)
+    return sorted(set(recorded) | managed_controls | managed_support)
+
+
+def _write_adoption_manifest_if_safe(
+    destination_root: Path,
+    *,
+    manifest: dict,
+    manifest_files: list[str],
+    template_root: Path,
+    removed_from_template: bool,
+) -> bool:
+    """Advance adoption manifest metadata only after a complete, non-destructive sync."""
+    if manifest.get("mode") != "existing_project_adoption" or removed_from_template:
+        return False
+
+    updated = dict(manifest)
+    updated["files"] = sorted(manifest_files)
+    template_commit = _template_head_hash(template_root)
+    if template_commit:
+        updated["source_commit"] = template_commit
+
+    if updated == manifest:
+        return False
+
+    write_json(destination_root / MANIFEST_FILENAME, updated)
+    return True
+
+
 def sync(
     destination_root: Path,
     *,
@@ -115,21 +192,46 @@ def sync(
     template_root: Path | None = None,
 ) -> int:
     manifest = _load_manifest(destination_root)
-    manifest_files: list[str] = manifest.get("files", [])
+    recorded_manifest_files: list[str] = list(manifest.get("files", []))
     if template_root is None:
         template_root = workspace_path(".")
-    preserve = _preserve_path(destination_root)
 
+    # A filtered sync intentionally does not evolve the managed set or source pin:
+    # it cannot prove that every managed file is synchronized to the template commit.
+    manifest_files = (
+        recorded_manifest_files
+        if file_filter
+        else _current_adoption_manifest_files(template_root, manifest)
+    )
+    preserve = _preserve_path(destination_root)
     changes = _files_needing_sync(template_root, destination_root, manifest_files, preserve, file_filter)
 
-    if not changes:
+    newly_managed = sorted(set(manifest_files) - set(recorded_manifest_files))
+    template_commit = _template_head_hash(template_root) if not file_filter else ""
+    source_pin_change = bool(
+        manifest.get("mode") == "existing_project_adoption"
+        and template_commit
+        and manifest.get("source_commit") != template_commit
+    )
+    manifest_evolution = bool(newly_managed or source_pin_change)
+
+    if not changes and not manifest_evolution:
         print("  All manifest files are up to date. Nothing to sync.")
         return 0
 
-    print(f"  {len(changes)} file(s) differ:")
-    for relative_path, reason in changes:
-        marker = "!" if reason == "removed-from-template" else "+"
-        print(f"    [{marker}] {relative_path}  ({reason})")
+    if changes:
+        print(f"  {len(changes)} file(s) differ:")
+        for relative_path, reason in changes:
+            marker = "!" if reason == "removed-from-template" else "+"
+            print(f"    [{marker}] {relative_path}  ({reason})")
+
+    if newly_managed:
+        print(f"  {len(newly_managed)} newly managed adoption file(s) discovered:")
+        for relative_path in newly_managed:
+            print(f"    [+] {relative_path}")
+
+    if source_pin_change:
+        print(f"  Adoption source pin: {manifest.get('source_commit', '')} -> {template_commit}")
 
     if not confirm:
         print()
@@ -138,16 +240,33 @@ def sync(
 
     copied = 0
     skipped = 0
+    removed_from_template = False
     for relative_path, reason in changes:
         if reason == "removed-from-template":
             print(f"  SKIP {relative_path} (removed from template — delete manually if desired)")
             skipped += 1
+            removed_from_template = True
             continue
         source = _template_source_path(template_root, relative_path)
         destination = destination_root / relative_path
         copy_file(source, destination, dry_run=False)
         copied += 1
         print(f"  SYNC {relative_path}")
+
+    manifest_updated = False
+    if not file_filter:
+        manifest_updated = _write_adoption_manifest_if_safe(
+            destination_root,
+            manifest=manifest,
+            manifest_files=manifest_files,
+            template_root=template_root,
+            removed_from_template=removed_from_template,
+        )
+        if removed_from_template and manifest.get("mode") == "existing_project_adoption":
+            print("  HOLD adoption manifest/source pin: a managed file was removed from the template.")
+
+    if manifest_updated:
+        print(f"  SYNC {MANIFEST_FILENAME} (managed set/source pin)")
 
     print()
     print(f"  Synced {copied} file(s), skipped {skipped}.")

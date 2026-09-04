@@ -448,7 +448,7 @@ def _provenance(
         ProvenanceEntry(
             path="intent.kind",
             origin=FieldOrigin.INTERPRETED_INTENT,
-            detail="versioned semantic interpretation; does not grant authority",
+            detail="trusted semantic interpretation; producer/version binding remains an upstream ingress concern",
         ),
         ProvenanceEntry(
             path="owning_repository",

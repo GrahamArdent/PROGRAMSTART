@@ -165,6 +165,25 @@ Useful commands:
 Do not run broad checks because a session changed.
 Do not use a fixed feature/time counter as proof that convergence is due.
 
+### Prepare a clean candidate before publication
+
+Use the repository's own concrete tooling, but follow one semantic publication sequence:
+
+`edit -> deterministic fix -> local validation -> commit -> pre-push validation -> GitHub authoritative verification`
+
+For PROGRAMSTART itself:
+
+```bash
+uv run pre-commit run --all-files
+uv run nox -s gate_safe
+```
+
+If deterministic hooks modify files, inspect and incorporate the appropriate changes, then rerun. Autonomous workers stop after two deterministic auto-fix passes and diagnose instead of looping indefinitely. A semantic/test/security/build failure is a real failure and must not be suppressed merely to obtain green CI.
+
+Normal Git pushes also run PROGRAMSTART's installed `pre-push` hook. API/connector publication paths bypass Git hooks; when such a path has an executable candidate workspace, it must run equivalent repository-defined validation explicitly before the remote mutation. If no executable candidate-validation surface is available, state that limitation and do not claim a local/pre-push pass.
+
+GitHub Actions remains the independent authoritative verification layer.
+
 ---
 
 ## 6. Challenge Gates

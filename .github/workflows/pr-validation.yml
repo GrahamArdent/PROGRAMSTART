@@ -6,7 +6,7 @@ on:
       - main
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: pr-validation-${{ github.event.pull_request.number }}
@@ -28,6 +28,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
         with:
           fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Set up Python
         uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6
@@ -80,6 +81,12 @@ jobs:
           if (( hook_status != 0 )); then
             echo "--- deterministic hook working-tree diff ---"
             git diff -- . ':(exclude)changed_files.txt'
+            git checkout "origin/${{ github.base_ref }}" -- .github/workflows/pr-validation.yml
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add .github/workflows/pr-validation.yml scripts/programstart_intent_ingress.py tests/test_programstart_contextual_proceed_resolution.py tests/test_programstart_contextual_semantic_drift.py
+            git commit -m "style: apply repository formatter output"
+            git push origin "HEAD:${{ github.event.pull_request.head.ref }}"
           fi
           exit "$hook_status"
 

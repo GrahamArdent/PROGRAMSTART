@@ -1,19 +1,14 @@
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+AUTONOMY_PATH = ROOT / "docs" / "PROGRAMSTART_EFFECTIVE_AUTONOMY.md"
+OBSERVATIONS_DIR = ROOT / "docs" / "acceptance" / "observations"
+OBSERVATION_PATH = OBSERVATIONS_DIR / "2026-09-03-manual-boundary-origin-retest.md"
 
 
 def test_manual_boundary_origin_is_explicit():
-    autonomy = (ROOT / "docs" / "PROGRAMSTART_EFFECTIVE_AUTONOMY.md").read_text(
-        encoding="utf-8"
-    )
-    observation_path = ROOT.joinpath(
-        "docs",
-        "acceptance",
-        "observations",
-        "2026-09-03-manual-boundary-origin-retest.md",
-    )
-    observation = observation_path.read_text(encoding="utf-8")
+    autonomy = AUTONOMY_PATH.read_text(encoding="utf-8")
+    observation = OBSERVATION_PATH.read_text(encoding="utf-8")
 
     assert "genuine_human_gate" in autonomy
     assert "temporary_automation_gap" in autonomy

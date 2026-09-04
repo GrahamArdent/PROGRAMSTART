@@ -1,21 +1,31 @@
 #!/bin/sh
-# PROGRAMSTART pre-push hook — blocks direct push to 'main'.
+# PROGRAMSTART pre-push hook — blocks direct push to 'main' and runs the
+# repository-owned local confidence gate before publication.
 #
 # Install via:  uv run python scripts/install_hooks.py
-# Bypass via:   PROGRAMSTART_ALLOW_MAIN_PUSH=1 git push
+# Main override: PROGRAMSTART_ALLOW_MAIN_PUSH=1 git push
+#
+# The main override changes branch policy only. It does not skip validation.
 
-if [ "${PROGRAMSTART_ALLOW_MAIN_PUSH:-}" = "1" ]; then
-    exit 0
-fi
-
+pushes_main=0
 while read -r local_ref _local_oid remote_ref _remote_oid; do
     case "$remote_ref" in
         refs/heads/main)
-            echo "pre-push: direct push to 'main' is blocked." >&2
-            echo "  To push anyway: PROGRAMSTART_ALLOW_MAIN_PUSH=1 git push" >&2
-            exit 1
+            pushes_main=1
             ;;
     esac
 done
+
+if [ "$pushes_main" -eq 1 ] && [ "${PROGRAMSTART_ALLOW_MAIN_PUSH:-}" != "1" ]; then
+    echo "pre-push: direct push to 'main' is blocked." >&2
+    echo "  To push anyway: PROGRAMSTART_ALLOW_MAIN_PUSH=1 git push" >&2
+    exit 1
+fi
+
+echo "pre-push: running PROGRAMSTART local confidence gate (nox -s gate_safe)..." >&2
+if ! uv run nox -s gate_safe; then
+    echo "pre-push: local confidence gate failed; fix the failure before pushing." >&2
+    exit 1
+fi
 
 exit 0

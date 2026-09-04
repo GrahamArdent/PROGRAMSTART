@@ -101,9 +101,7 @@ def test_2_active_implementation_reuses_current_packet_instead_of_recompiling() 
     packet = compile_work_packet("Implement the accepted bounded change.", authority, kind=IntentKind.BOUNDED_EXECUTION)
     harvest = _harvest(execution_underway=True, existing_work_packet_ref=packet.specification_id)
 
-    resolution = resolve_contextual_intent(
-        ContextualIntentRequest(harvest=harvest, authority=authority, existing_packet=packet)
-    )
+    resolution = resolve_contextual_intent(ContextualIntentRequest(harvest=harvest, authority=authority, existing_packet=packet))
 
     assert resolution.state == ConversationState.EXECUTING
     assert resolution.action == ContextualTransitionAction.RESUME_EXISTING_PACKET
@@ -144,9 +142,7 @@ def test_4_generic_proceed_never_clears_a_genuine_human_consequence_gate() -> No
     )
     harvest = _harvest(kind=IntentKind.CONTINUATION, active_human_gate=gate)
 
-    resolution = resolve_contextual_intent(
-        ContextualIntentRequest(harvest=harvest, authority=authority, existing_packet=packet)
-    )
+    resolution = resolve_contextual_intent(ContextualIntentRequest(harvest=harvest, authority=authority, existing_packet=packet))
 
     assert resolution.state == ConversationState.GATED
     assert resolution.action == ContextualTransitionAction.PRESERVE_HUMAN_GATE
@@ -226,9 +222,7 @@ def test_7_safe_reversible_inference_continues_without_an_operator_question() ->
     )
     harvest = _harvest(active_constraints=[inferred])
 
-    resolution = resolve_contextual_intent(
-        ContextualIntentRequest(harvest=harvest, authority=_authority())
-    )
+    resolution = resolve_contextual_intent(ContextualIntentRequest(harvest=harvest, authority=_authority()))
 
     assert resolution.state == ConversationState.EXECUTION_READY
     assert resolution.operator_intervention_required is False
@@ -244,9 +238,7 @@ def test_8_material_ambiguity_is_the_only_kind_that_requests_operator_judgment()
     )
     harvest = _harvest(unresolved_material_ambiguities=[ambiguity])
 
-    resolution = resolve_contextual_intent(
-        ContextualIntentRequest(harvest=harvest, authority=_authority())
-    )
+    resolution = resolve_contextual_intent(ContextualIntentRequest(harvest=harvest, authority=_authority()))
 
     assert resolution.state == ConversationState.EXPLORE
     assert resolution.action == ContextualTransitionAction.REQUEST_MATERIAL_DECISION
@@ -281,9 +273,7 @@ def test_9_handoff_renderer_carries_owner_and_exclusions_without_chat_noise() ->
 def test_10_already_complete_context_does_not_invent_more_work() -> None:
     harvest = _harvest(acceptance_met=True)
 
-    resolution = resolve_contextual_intent(
-        ContextualIntentRequest(harvest=harvest, authority=_authority())
-    )
+    resolution = resolve_contextual_intent(ContextualIntentRequest(harvest=harvest, authority=_authority()))
 
     assert resolution.state == ConversationState.COMPLETE
     assert resolution.action == ContextualTransitionAction.REPORT_COMPLETE
@@ -317,9 +307,7 @@ def test_converged_context_without_authority_routes_machine_resolution_not_opera
 def test_execution_underway_without_local_packet_state_recovers_durable_state_instead_of_duplication() -> None:
     harvest = _harvest(execution_underway=True, existing_work_packet_ref="WPK-existing")
 
-    resolution = resolve_contextual_intent(
-        ContextualIntentRequest(harvest=harvest, authority=_authority())
-    )
+    resolution = resolve_contextual_intent(ContextualIntentRequest(harvest=harvest, authority=_authority()))
 
     assert resolution.state == ConversationState.CONVERGED
     assert resolution.action == ContextualTransitionAction.RECOVER_EXECUTION_STATE

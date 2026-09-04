@@ -305,9 +305,7 @@ def _recompile_current_harvest(
     return ContextualIntentResolution(
         state=ConversationState.HANDOFF_READY if handoff else ConversationState.EXECUTION_READY,
         action=(
-            ContextualTransitionAction.RECOMPILE_OWNER_HANDOFF
-            if handoff
-            else ContextualTransitionAction.RECOMPILE_FOR_ADMISSION
+            ContextualTransitionAction.RECOMPILE_OWNER_HANDOFF if handoff else ContextualTransitionAction.RECOMPILE_FOR_ADMISSION
         ),
         harvest=request.harvest,
         packet=packet,
@@ -468,9 +466,7 @@ def resolve_contextual_intent(request: ContextualIntentRequest) -> ContextualInt
     return ContextualIntentResolution(
         state=ConversationState.HANDOFF_READY if handoff else ConversationState.EXECUTION_READY,
         action=(
-            ContextualTransitionAction.COMPILE_OWNER_HANDOFF
-            if handoff
-            else ContextualTransitionAction.COMPILE_FOR_ADMISSION
+            ContextualTransitionAction.COMPILE_OWNER_HANDOFF if handoff else ContextualTransitionAction.COMPILE_FOR_ADMISSION
         ),
         harvest=harvest,
         packet=packet,
@@ -483,8 +479,7 @@ def _statement_bullets(values: list[MaterialStatement], empty: str = "none") -> 
     if not values:
         return f"- {empty}"
     return "\n".join(
-        f"- {item.text} [source: {item.source.value}{f'; ref: {item.source_ref}' if item.source_ref else ''}]"
-        for item in values
+        f"- {item.text} [source: {item.source.value}{f'; ref: {item.source_ref}' if item.source_ref else ''}]" for item in values
     )
 
 
@@ -502,9 +497,7 @@ def render_contextual_handoff(resolution: ContextualIntentResolution) -> str:
         raise ValueError("compiled Work Packet integrity verification failed")
 
     harvest = resolution.harvest
-    unsealed_constraints = [
-        value for value in _execution_constraints(harvest) if value not in packet.intent.explicit_constraints
-    ]
+    unsealed_constraints = [value for value in _execution_constraints(harvest) if value not in packet.intent.explicit_constraints]
     if unsealed_constraints:
         raise ValueError("contextual accepted semantics are not sealed into the Work Packet")
 

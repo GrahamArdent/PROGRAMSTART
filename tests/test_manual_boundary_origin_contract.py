@@ -4,11 +4,16 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_manual_boundary_origin_is_explicit():
-    autonomy = (ROOT / "docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md").read_text(encoding="utf-8")
-    observation = (
-        ROOT
-        / "docs/acceptance/observations/2026-09-03-manual-boundary-origin-retest.md"
-    ).read_text(encoding="utf-8")
+    autonomy = (ROOT / "docs" / "PROGRAMSTART_EFFECTIVE_AUTONOMY.md").read_text(
+        encoding="utf-8"
+    )
+    observation_path = ROOT.joinpath(
+        "docs",
+        "acceptance",
+        "observations",
+        "2026-09-03-manual-boundary-origin-retest.md",
+    )
+    observation = observation_path.read_text(encoding="utf-8")
 
     assert "genuine_human_gate" in autonomy
     assert "temporary_automation_gap" in autonomy

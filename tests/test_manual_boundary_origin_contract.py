@@ -3,7 +3,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 AUTONOMY_PATH = ROOT / "docs" / "PROGRAMSTART_EFFECTIVE_AUTONOMY.md"
 OBSERVATIONS_DIR = ROOT / "docs" / "acceptance" / "observations"
-OBSERVATION_PATH = OBSERVATIONS_DIR / "2026-09-03-manual-boundary-origin-retest.md"
+OBSERVATION_PATH = (
+    OBSERVATIONS_DIR / "2026-09-03-manual-boundary-origin-retest.md"
+)
 
 
 def test_manual_boundary_origin_is_explicit():

@@ -83,6 +83,14 @@ Do not call Intent Ingress `Mode D`.
 
 Prompt Builder's historical Mode A/Mode B naming remains compatible but should be treated as renderer/generator-local terminology, not as the global PROGRAMSTART project-mode axis.
 
+### Product-surface sequencing
+
+Do not expose Intent Ingress as a polished top-level `programstart intent-compile` operator command merely because the deterministic compiler exists.
+
+V0.1 still requires a pre-resolved `AuthoritySnapshot`. A top-level command that asks the operator to manually construct that snapshot would expose an implementation seam as if the intended ordinary-language product experience were complete.
+
+Keep the standalone compiler entrypoint as a developer/contract harness until the authority/currentness resolver can supply the snapshot from owning-project authority, active admitted work, parallel ownership, and accepted evidence. Once that resolver exists, a first-class intent-ingress command/API becomes appropriate.
+
 ## Consequences
 
 - Good: Graham can give short natural-language commands without learning PROGRAMSTART boilerplate.
@@ -93,6 +101,7 @@ Prompt Builder's historical Mode A/Mode B naming remains compatible but should b
 - Bad: a real authority/currentness resolver is still required before fully automatic intent-to-work admission is proven.
 - Bad: PROGRAMSTART documentation should gradually disambiguate overloaded uses of the word `mode` when touched for other reasons.
 - Neutral: existing Prompt Builder Mode B remains useful as a historical renderer precursor but is not the canonical intent compiler.
+- Neutral: the V0.1 standalone compiler CLI remains a test/developer harness rather than the final operator interface.
 
 ## Confirmation
 
@@ -104,7 +113,7 @@ This decision is considered implemented for V0.1 when:
 - unresolved intent fails narrow;
 - renderer output cannot widen the canonical packet;
 - the Controller integration consumes the compiled packet and independently performs admission;
-- future CLI/product integration prefers an `intent-compile` / intent-ingress operation or subcommand instead of `--mode d`.
+- future operator-facing CLI/product integration prefers an `intent-compile` / intent-ingress operation or subcommand instead of `--mode d` and does not require Graham to hand-author the authority snapshot.
 
 ## Links
 

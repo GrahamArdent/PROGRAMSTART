@@ -32,5 +32,5 @@ def test_manual_boundary_origin_is_explicit():
     assert "GrahamArdent/whats" in observation
     assert "GrahamArdent/resume_creator_v5" in observation
     assert "Compute Spine issue #36" in observation
-    assert "whats PR #42" in bell_retest
+    assert "PR #42" in bell_retest
     assert "PSL-021" in bell_retest

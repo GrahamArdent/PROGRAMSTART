@@ -10,6 +10,13 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 HOOK = ROOT / "scripts" / "hooks" / "pre-push"
+SOURCE_JIT = ROOT / ".github" / "instructions" / "source-of-truth.instructions.md"
+COPILOT_INSTRUCTIONS = ROOT / ".github" / "copilot-instructions.md"
+QUICKSTART = ROOT / "QUICKSTART.md"
+
+
+def _read(path: Path) -> str:
+    return path.read_text(encoding="utf-8")
 
 
 def _run_hook(
@@ -79,3 +86,18 @@ def test_main_override_still_requires_quality_gate(tmp_path: Path, monkeypatch: 
     assert result.returncode == 1
     assert gate_log.read_text(encoding="utf-8").strip() == "run nox -s gate_safe"
     assert "local confidence gate failed" in result.stderr
+
+
+def test_worker_instructions_cover_hook_bypassing_publication_paths() -> None:
+    source_jit = _read(SOURCE_JIT)
+    copilot = _read(COPILOT_INSTRUCTIONS)
+    quickstart = _read(QUICKSTART)
+
+    sequence = "edit -> deterministic fix -> local validation -> commit -> pre-push validation -> GitHub authoritative verification"
+
+    assert sequence in source_jit
+    assert sequence in quickstart
+    assert "Direct GitHub/API/connector writes bypass local hooks" in source_jit
+    assert "API/connector publication paths bypass Git hooks" in copilot
+    assert "Autonomous auto-fix is bounded to two mutation passes" in copilot
+    assert "GitHub Actions remains the independent authoritative verification layer" in quickstart

@@ -16,11 +16,30 @@ python -m playwright install chromium
 
 1. Create a feature branch from `main`.
 2. Make your changes with tests.
-3. Run the full check suite:
+3. Before committing, run the repository hooks explicitly:
    ```bash
-   nox
+   uv run pre-commit run --all-files
    ```
-4. Submit a pull request with a clear description.
+   If deterministic hooks modify files, inspect the changes, stage them, and rerun. Autonomous workers may perform at most two deterministic auto-fix passes before stopping for diagnosis rather than looping indefinitely.
+4. Commit only after the repository hooks are clean.
+5. Before pushing, run the repository-owned local confidence gate:
+   ```bash
+   uv run nox -s gate_safe
+   ```
+   The installed `pre-push` hook runs this same gate again before publication.
+6. Submit a pull request with a clear description. GitHub Actions remains the independent authoritative verifier.
+
+### Autonomous publication contract
+
+PROGRAMSTART uses one semantic publication sequence, while each repository owns the concrete tools behind its gate:
+
+`edit -> deterministic fix -> local validation -> commit -> pre-push validation -> GitHub verification`
+
+For PROGRAMSTART itself, `pre-commit` owns deterministic hygiene and `nox -s gate_safe` owns the pre-push confidence gate. Other repositories may use different repo-defined commands such as ESLint/Prettier, TypeScript, shell or infrastructure validation, or project-specific contract tests. Do not install a universal toolchain merely to satisfy this sequence.
+
+Git hooks are convenience/enforcement on normal Git CLI paths, not proof that validation happened. Mutation paths that bypass hooks, including direct GitHub/API file writes, MUST run the repository's equivalent validation contract on an executable candidate before publication whenever that capability is available. If no executable validation surface is available, record that limitation and do not claim local validation; GitHub CI remains authoritative.
+
+Deterministic auto-fixes must be inspected and incorporated before publication. Never suppress, waive, or rewrite a semantic/test failure merely to make CI green.
 
 ## Code Style
 
@@ -62,12 +81,14 @@ They MAY be deleted after archival.
 | Clean preview  | `uv run programstart clean --dry-run`         |
 | CLI smoke      | `uv run python scripts/programstart_cli_smoke.py --workspace .` |
 | Package smoke  | `nox -s package`                              |
+| Pre-push gate  | `uv run nox -s gate_safe`                     |
 | Full local gate| `nox -s ci`                                   |
 | All (via Nox)  | `nox`                                         |
 
 ## Pull Request Checklist
 
-- [ ] Tests pass locally (`nox`).
+- [ ] Deterministic hooks are clean (`uv run pre-commit run --all-files`).
+- [ ] Pre-push confidence gate passes (`uv run nox -s gate_safe`).
 - [ ] New code has tests.
 - [ ] Documentation updated if behaviour changed.
 - [ ] No unrelated changes included.

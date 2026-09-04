@@ -23,6 +23,10 @@ def test_manual_boundary_origin_is_explicit():
     assert "creative in mechanism and conservative in authority" in autonomy
     assert "connected APIs/connectors" in autonomy
     assert "custom/bounded API composition" in autonomy
+    assert "proportional to the consequence and urgency" in autonomy
+    assert "not a requirement to build new infrastructure for every blocked action" in autonomy
+    assert "request a short operator relay only when no bounded alternative survives" in autonomy
+    assert "must not disguise, bypass, or weaken a stronger gate" in autonomy
     assert "before escalating an already-authorized mechanical action to operator transport" in checklist
     assert "tool creativity was applied before any operator transport claim" in checklist
     assert "GrahamArdent/whats" in observation

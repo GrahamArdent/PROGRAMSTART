@@ -182,7 +182,7 @@ Counterexamples requiring a gate/decision:
 
 ---
 
-## 9. Human gates and notifications
+## 9. Human gates, alternative actuation, and notifications
 
 A mature autonomy posture aims for **zero human transport work**, not zero human judgment.
 
@@ -191,7 +191,23 @@ Before declaring a human gate, classify the boundary origin:
 - **`genuine_human_gate`** — the intended authority, safety, or evidence model requires human judgment, authorization, physical action, secret entry, legal/business acceptance, or equivalent human evidence;
 - **`temporary_automation_gap`** — the action is mechanical and already authorized, but the current Controller, Compute Spine, worker, identity, or tool surface lacks a proven actuator or transport path.
 
-**Current-environment inability alone is never evidence of a genuine human gate.** A temporary automation gap may require a short operator relay today, but that relay is removable implementation debt, not permanent project architecture. Route it to the capability owner, continue unaffected safe work, and prefer an existing trusted temporary bridge when its authority explicitly allows that use while a typed replacement is built. Do not weaken a real consequence gate merely to remove toil.
+**Current-environment inability alone is never evidence of a genuine human gate.** A temporary automation gap is removable implementation debt, not permanent project architecture.
+
+Before requesting operator transport for a `temporary_automation_gap`, PROGRAMSTART MUST perform an **alternative-actuation search** proportional to the consequence and urgency:
+
+1. restate the exact already-authorized consequence and preserve the strongest applicable gate;
+2. inspect the capability graph beyond the first obvious tool surface, including connected APIs/connectors, provider-native APIs, CLI tools, repository automation, accepted runtimes, local agents, scheduled tasks, authenticated machine identities, existing control queues, custom/bounded API composition, and other already-trusted execution mechanisms that are actually available;
+3. generate bounded compositions of those capabilities rather than assuming one tool must perform the whole action end-to-end;
+4. prefer reuse of an existing trusted bridge, exact accepted artifact, fixed target/path, typed arguments, reversible behavior, and independently verifiable result over a new broad actuator;
+5. Challenge candidate mechanisms for authority expansion, secret/identity widening, arbitrary command execution, destructive/external effects, spend, privacy, persistence and recovery risk;
+6. use the safest viable composition that remains inside current authority; route any durable capability debt to its real owner;
+7. request a short operator relay only when no bounded alternative survives the authority/capability/Challenge checks or when the boundary is genuinely human.
+
+This search is a reasoning obligation, not a requirement to build new infrastructure for every blocked action. It should be fast for simple cases and deeper only when the consequence, recurrence or operator burden warrants it.
+
+> **Tool creativity is mandatory before human transport. Be creative in mechanism and conservative in authority.**
+
+Examples of valid creative composition include an existing typed endpoint invoking an exact accepted runtime that safely refreshes its own fixed implementation path, or a connected API plus repository automation replacing a manual copy/paste step. Examples of invalid composition include disguising a broader action as a safer allow-listed action, adding arbitrary shell execution only to avoid an operator relay, broadening credentials without approval, or routing around a real legal/security/production gate.
 
 When an action truly requires the operator:
 
@@ -224,7 +240,8 @@ Examples that may belong to PROGRAMSTART:
 - consequence classes are ambiguous across projects;
 - a global rule causes unnecessary human gates;
 - project posture is routinely mistaken for infrastructure capability;
-- capability adoption repeatedly widens authority accidentally.
+- capability adoption repeatedly widens authority accidentally;
+- an operator relay is declared before existing bounded tools/capabilities are composed and challenged.
 
 Examples that do not automatically belong to PROGRAMSTART:
 
@@ -247,9 +264,10 @@ For each candidate project:
 2. identify current Work Packet/frontier or derive the next bounded packet under PROGRAMSTART;
 3. resolve exact effective autonomy for the proposed action;
 4. execute/verify/reconcile if permitted;
-5. stop at the narrowest real gate;
-6. continue other projects/safe lanes when capacity and authority permit;
-7. surface only meaningful human actions.
+5. if execution appears blocked only by tooling/transport, run the alternative-actuation search before classifying an operator relay;
+6. stop at the narrowest real gate;
+7. continue other projects/safe lanes when capacity and authority permit;
+8. surface only meaningful human actions.
 
 A stale portfolio registry or old chat instruction must never substitute for current project authority.
 
@@ -265,6 +283,7 @@ Where useful, measure:
 - human intervention minutes;
 - intervention reason/owner;
 - avoidable vs required gate rate;
+- temporary automation gaps resolved without operator relay;
 - safe-lane continuation while another lane is gated;
 - first-pass verification success;
 - retry/remediation/recovery outcomes;
@@ -288,6 +307,7 @@ On the next natural orientation/Work-Packet derivation:
 - keep ambiguous consequential classes gated;
 - use current Controller/Compute/worker capability evidence;
 - allow already-authorized safe work to benefit from newly proven execution capabilities;
+- run the alternative-actuation search before escalating a mechanical tooling/transport limitation to the operator;
 - record a project-specific decision only when real ambiguity or consequence warrants it.
 
 The methodology change should reduce manual coordination, not create a new documentation campaign across every repository.
@@ -299,6 +319,9 @@ The methodology change should reduce manual coordination, not create a new docum
 - Capability is not authority.
 - A project-wide `autonomous=true` flag is insufficient for consequential systems.
 - New execution capability may automate existing permission but never create new permission.
+- Tool creativity is mandatory before human transport for an already-authorized mechanical action.
+- Be creative in mechanism and conservative in authority.
+- An alternative-actuation search may compose trusted capabilities but must not disguise, bypass, or weaken a stronger gate.
 - Human-gate notifications are awareness, not acceptance.
 - Learned success never grants broader authority.
 - Project authority remains the source of project scope/sequence/consequence truth.

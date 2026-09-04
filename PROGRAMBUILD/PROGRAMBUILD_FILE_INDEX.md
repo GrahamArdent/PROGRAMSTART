@@ -24,7 +24,7 @@ A PROGRAMBUILD critical control file missing from this index is not recognized. 
 | `PROGRAMBUILD_ENTERPRISE.md` | variant | active | high-consequence/audit-heavy workflow | enterprise execution model |
 | `PROGRAMBUILD_KICKOFF_PACKET.md` | template | active | starter document pack and inputs | kickoff structure |
 | `PROGRAMBUILD_SUBAGENTS.md` | catalog | active | optional specialist roles/prompts | subagent guidance |
-| `PROGRAMBUILD_CHECKLIST.md` | checklist | active | reusable execution checklist plus derived checklist activation/source/status/closure discipline | execution tracking |
+| `PROGRAMBUILD_CHECKLIST.md` | checklist | active | reusable execution checklist plus derived checklist activation/source/status/closure discipline, including Effective Autonomy alternative-actuation checks before operator transport | execution tracking |
 | `PROGRAMBUILD_IDEA_INTAKE.md` | protocol | active | 8-dimension idea/project-delta challenge; consumes captured/shelved idea evidence without treating capture as approval | idea intake |
 | `PROGRAMBUILD_CHALLENGE_GATE.md` | protocol | active | A–H risk controls plus variant/stage/risk-based gate-part selection | stage/convergence gates |
 | `PROGRAMBUILD_GAMEPLAN.md` | playbook | active | canonical stage sequence and cross-stage validation without duplicating stage detail | execution sequencing |
@@ -70,10 +70,10 @@ A portfolio-wide `IDEA_LEDGER.md` instance belongs in the operator's planning wo
 | `scripts/programstart_orchestrate.py` | advisory tooling | derives environment/mode/authority/blocker-aware execution contracts, including safe-lane, evidence-continuity, task-scoped cross-repository dependency/authority, and operator/manual-boundary guidance; free-form recommendation acceptance remains authority-derived in the agent protocol rather than brittle CLI keyword parsing |
 | `docs/PROGRAMSTART_AUTHORITY_GAP_RECONCILIATION.md` | operational protocol | routes material derived findings that are absent from current owning authority through premise re-verification, real-owner selection, existing Mode-C authority reconciliation, return-to-origin behavior, and the existing Learning Gate; never an execution authority or new lifecycle |
 | `docs/PROGRAMSTART_COST_GOVERNANCE.md` | protocol | owns the conditional decision-scoped Cost Envelope for paid/metered/quota-limited dependencies, cost-evidence freshness, cap/reuse/pay-when semantics, and the anti-registry guardrail; subordinate to project budget/architecture authority |
-| `docs/PROGRAMSTART_EXTERNAL_CHANGE_MAINTENANCE.md` | operational protocol | classifies verified external ecosystem changes and routes them to no-op/evidence refresh/deterministic or bounded maintenance/material decision/failure behavior, including PR-vs-auto-merge gates and the optional Watchtower sensor/execution-plane boundary; subordinate to project authority and existing Cost/Challenge/Learning controls |
+| `docs/PROGRAMSTART_EXTERNAL_CHANGE_MAINTENANCE.md` | operational protocol | classifies verified external ecosystem changes and routes them to no-op/evidence refresh/deterministic or bounded maintenance/material decision/failure behavior, including PR-vs-auto-merge gates and the optional Watchtower sensor/execution-plane boundary; subordinate to project authority and existing Cost/Challenge/Learning controls; external-change maintenance classification/event is derived operational evidence, not project authority, and never becomes architecture, budget, release, portfolio, or project authority by itself |
 | `docs/PROGRAMSTART_LEARNING_LOOP.md` | protocol | owns PROGRAMSTART acceptance-learning triggers, observation/rollup semantics, maturity rules, conditional persistence, and future-retest routing |
 | `docs/PROGRAMSTART_LEARNING_ARCHITECTURE.md` | protocol | owns the conditional Learning Architecture Gate for learning-capable software, owner-routed operational learning, learning-data boundaries, evaluation/promotion/rollback discipline, and the prohibition on learned authority expansion |
-| `docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md` | operational protocol | resolves effective autonomy as the intersection of project consequence authority, PROGRAMSTART governance, current Controller/Compute/worker/identity capability and evidence freshness; permits automatic adoption of new execution capability only within already-authorized consequence classes |
+| `docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md` | operational protocol | resolves effective autonomy as the intersection of project consequence authority, PROGRAMSTART governance, current Controller/Compute/worker/identity capability and evidence freshness; requires proportional alternative-actuation search/composition before operator transport for already-authorized mechanical work while preserving stronger gates | consequence-scoped autonomy and manual-boundary resolution |
 | `docs/PROGRAMSTART_ACCEPTANCE_LEARNING_LEDGER.md` | derived rollup | concise lesson maturity/index view; not an activity log or project authority |
 | `docs/PROGRAMSTART_REAL_WORLD_ACCEPTANCE_CHECKLIST.md` | checklist | real-project acceptance and Learning Gate closure checklist |
 | `docs/acceptance/LEARNING_OBSERVATION_TEMPLATE.md` | evidence template | append-only meaningful PROGRAMSTART learning observation structure |
@@ -118,26 +118,3 @@ Prompts live in `.github/prompts/`, are registered in the process registry, and 
 - Index PROGRAMSTART support protocols/artifacts here when the orchestration system depends on them for discoverability/authority routing.
 - Mark files as active/deprecated/replaced/derived as applicable.
 - Do not create synonyms for the same purpose.
-- Advisory tooling may be indexed for discoverability without becoming a new canonical concern.
-- Use `DECISION_LOG.md` for ongoing material project decisions.
-- Use ADRs only when durable architecture/policy rationale warrants them under current policy.
-- Filled project outputs never become canonical examples in PROGRAMSTART.
-- An Idea Record or `IDEA_LEDGER.md` is optional non-authoritative preservation evidence. Capture may be broad; promotion must reconcile into the existing owning authority. Do not turn captured ideas into a shadow roadmap/backlog or require the ledger to exist when an equivalent durable surface already does the job.
-- A persisted `CURRENT_WORK_PACKET.md` is optional and derived; close/replace it rather than accumulating packet history as a second plan.
-- Accepted-recommendation resolution is derived from the current recommendation plus project authority; it is not a durable recommendation registry, approval state machine, or backlog.
-- An active checklist is derived from current authority/acceptance/risk obligations; it is not scope authority and should be closed/discarded with the packet unless an existing durable checklist already owns the boundary.
-- An Authority-Gap record is derived routing evidence only; keep it local to the originating checklist/work packet when persistence materially improves resumption, and never promote it into a global backlog or use it as permission to execute.
-- A task-scoped cross-repository dependency graph is derived evidence, not a control file or project execution spine.
-- An operator/manual-gate handoff is derived execution context, not a credential store, project authority, or independent lifecycle.
-- A coordinated Mode-C lane view is derived execution context under one project spine, not a backlog, scheduler, or second sequencing authority; if sibling lanes can mutate one consequential external/runtime/provider/device/deployment resource, exactly one active mutation owner and explicit release/transfer condition must serialize that resource while proven non-mutating sibling work may continue.
-- A decision-scoped Cost Envelope is derived execution/decision evidence, not a purchasing authority, vendor-price registry, portfolio budget, or second execution spine.
-- An external-change maintenance classification/event is derived operational evidence; it may trigger a bounded project-specific maintenance PR but never becomes architecture, budget, release, portfolio, or project authority by itself.
-- A portfolio-attention view is derived operator routing context; live filled state belongs outside PROGRAMSTART and cannot override any project's execution authority.
-- A learning observation is derived PROGRAMSTART methodology evidence; the PROGRAMSTART learning ledger is a maturity rollup, not an activity log or roadmap.
-- Product/system operational learning must be routed to the owner of the behavior under `docs/PROGRAMSTART_LEARNING_ARCHITECTURE.md`; it reuses existing project authority surfaces by default and must not become a mandatory learning ledger, shadow backlog, or autonomous authority.
-- Effective autonomy must be resolved per exact action/consequence from project authority plus current execution/identity capability and evidence freshness. New capability may automate existing permission but must not create new permission or require a project-wide `autonomous=true` flag.
-- Tooling/support files may appear here for operator discoverability without becoming product-project authority.
-
----
-
-Last updated: 2026-09-03

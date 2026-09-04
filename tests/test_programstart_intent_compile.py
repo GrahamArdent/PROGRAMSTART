@@ -59,10 +59,7 @@ def test_real_intent_cases_compile_to_expected_bounded_semantics(case: dict) -> 
     assert verify_integrity(packet)
 
     if expected.get("conflict_surface"):
-        assert any(
-            conflict.surface == expected["conflict_surface"]
-            for conflict in packet.dependencies.conflicts
-        )
+        assert any(conflict.surface == expected["conflict_surface"] for conflict in packet.dependencies.conflicts)
 
 
 def test_same_intent_and_authority_are_deterministic_and_idempotent() -> None:
@@ -167,10 +164,7 @@ def test_broad_user_language_cannot_override_spend_or_security_gates() -> None:
 def test_temporary_automation_gap_is_not_promoted_to_human_gate() -> None:
     authority = _authority("resume_creator_parallel_safe_continuation")
     packet = compile_work_packet("Continue Resume Creator.", authority)
-    gap = (
-        "mechanical GitHub Actions activation/retrigger when already authorized "
-        "but no actuator is available"
-    )
+    gap = "mechanical GitHub Actions activation/retrigger when already authorized but no actuator is available"
 
     assert gap in packet.autonomy.temporary_automation_gaps
     assert gap not in packet.autonomy.human_gates
@@ -210,17 +204,10 @@ def test_parallel_provider_surface_is_protected_by_same_typed_model() -> None:
     )
     packet = compile_work_packet("Implement the admitted repository slice.", authority)
 
-    provider_access = next(
-        surface
-        for surface in packet.scope.surfaces
-        if surface.surface_type == SurfaceType.PROVIDER
-    )
+    provider_access = next(surface for surface in packet.scope.surfaces if surface.surface_type == SurfaceType.PROVIDER)
     assert provider_access.access == "read_only"
     assert "provider:example-provider:production-project" not in packet.dependencies.expected_write_set
-    assert any(
-        conflict.surface == "provider:example-provider:production-project"
-        for conflict in packet.dependencies.conflicts
-    )
+    assert any(conflict.surface == "provider:example-provider:production-project" for conflict in packet.dependencies.conflicts)
 
 
 def test_modified_compiled_spec_fails_integrity_verification() -> None:

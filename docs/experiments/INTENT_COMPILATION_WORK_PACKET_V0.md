@@ -20,6 +20,8 @@ A long ChatGPT prompt is a **derived rendering** of the sealed packet. It is not
 
 “Intent Compiler” is acceptable terminology for the operation. The canonical artifact should remain a **Compiled Work Packet**, not a new platform or project name.
 
+ADR `0025-intent-ingress-precedes-project-entry-mode.md` further classifies this capability as an **Intent Ingress profile** that precedes normal project-entry mode selection. It is not a new `Mode D`.
+
 ## 2. Evidence-based ownership
 
 ### PROGRAMSTART owns the reusable semantic compiler contract
@@ -253,6 +255,8 @@ V0.1 conflict semantics are intentionally small:
 
 Controller should map the typed expected write set into its existing consequential-resource lease/fencing model.
 
+A live self-hosting observation occurred during PR #94: PR #95 independently claimed PROGRAMSTART's deterministic shift-left/pre-publication quality surface while #94 was active. The correct response was not to duplicate that implementation in #94; it was to treat #95 as the owning parallel lane and keep #94 bounded to intent-ingress semantics. This is direct evidence that conflict/ownership resolution belongs before ordinary execution begins.
+
 ## 8. Drift and recompilation
 
 V0.1 uses a conservative exact fingerprint of material `AuthoritySnapshot` semantics.
@@ -287,6 +291,8 @@ It carries only conversational-worker-relevant semantics:
 The prompt includes the sealed Work Packet ID/digest and states that it grants no authority.
 
 No Controller wire envelope is implemented here because the active Controller lane owns that API/versioning contract.
+
+The standalone compiler CLI remains a developer/contract harness in V0.1. Do not promote it to a polished operator command until a trusted authority/currentness resolver can provide `AuthoritySnapshot` automatically. Requiring the operator to hand-author that snapshot would merely move prompt boilerplate into JSON boilerplate.
 
 ## 10. Real pilots
 
@@ -359,7 +365,19 @@ Full public Git commit SHAs embedded in JSON fixtures were flagged as high-entro
 
 First PR validation failed changed-file hooks for trailing whitespace, line length/formatting, and the fixture SHA false positives. Pyright itself passed.
 
-**Remediation:** code/tests were reformatted, long lines removed, markdown whitespace corrected, and fixtures adjusted before rerunning exact-head CI.
+**Remediation:** code/tests were normalized with the repository's exact Ruff toolchain and the temporary branch-only formatter workflow was removed immediately afterward. No permanent CI-side source auto-commit mechanism remains. The systemic connector/pre-publication quality gap is owned separately by PR #95 and is not duplicated here.
+
+### Finding C5 — mode terminology was overloaded
+
+Project-entry Mode C and Prompt Builder's Mode A/Mode B describe different axes. Adding an `Intent Compiler Mode D` would make the API harder to reason about and would incorrectly imply a new project lifecycle.
+
+**Remediation:** ADR 0025 defines **Intent Ingress** as an orthogonal pre-entry profile. It resolves or consumes current authority first and then hands work into the existing project-entry/execution mode.
+
+### Finding C6 — polished CLI exposure would be premature
+
+The unified `programstart` CLI could technically add an `intent-compile` subcommand now, but V0.1 still requires a resolved authority snapshot.
+
+**Remediation:** keep the standalone module CLI as a developer/contract harness. The operator-facing command/API should be added only when authority/currentness resolution can make ordinary-language ingress real instead of requiring hand-authored authority JSON.
 
 ### Remaining trust-boundary finding
 
@@ -447,6 +465,8 @@ Prompt brevity alone is not a success metric.
 - [x] Evidence Spine currentness role defined without overloading it;
 - [x] stale-authority/recompile policy defined;
 - [x] real-world pilot fixtures use current Resume Creator, Watchtower, and Controller evidence;
+- [x] Intent Ingress vs project-entry mode distinction proven and documented;
+- [x] PR #95 parallel ownership detected and respected rather than duplicated;
 - [ ] exact-head CI green after Challenge remediations;
 - [ ] post-implementation Challenge clear after final CI/patch review;
 - [ ] owning PR/checklist reconciled after final Challenge;
@@ -457,9 +477,12 @@ Prompt brevity alone is not a success metric.
 ### PROGRAMSTART
 
 - Existing Work Packet semantics are the right canonical contract; do not create a parallel Work Specification system.
+- Intent Ingress is an orthogonal pre-entry profile, not Mode D.
 - Prompt Builder Mode B is useful evidence, but prose-first rendering should become a renderer over structured semantics where practical.
 - Repeated prompt clauses map to reusable semantic rules: continuation/current-authority, audit/inspect-first, parallel protected surfaces, no authority expansion, human-gate/automation-gap distinction, source-data non-authority, drift/recompile, and Challenge inheritance.
 - Mutation surfaces should be typed uniformly across repository/runtime/provider/authority domains.
+- Do not expose a polished operator command before authority/currentness resolution can supply its inputs automatically.
+- Connector-only mutation can lack a candidate workspace for deterministic pre-publication formatting; that systemic quality concern belongs to PR #95 rather than this compiler lane.
 
 ### Autonomous Controller
 
@@ -489,8 +512,9 @@ Prompt brevity alone is not a success metric.
 1. **AuthoritySnapshot resolver integration:** V0.1 requires an already-resolved snapshot. The active Controller/operator/Evidence lane should determine the least-duplicative producer.
 2. **Field-level drift optimization:** any material snapshot fingerprint change currently forces recompile. More selective reconciliation should wait for real evidence of costly churn.
 3. **Additional renderers:** Codex/worker/API/GitHub-issue renderers are deferred until a real consumer contract exists.
-4. **Methodology self-adoption:** after the PR is green/Challenge-clear, PROGRAMSTART can decide whether existing `prompt-build --mode context` should route through structured compilation or remain a legacy/simple mode.
-5. **Measured Controller admission pilot:** semantic compilation is proven here; end-to-end Controller admission belongs to the active Controller lane after it accepts the handoff.
+4. **Prompt Builder self-adoption:** after the PR is green/Challenge-clear, PROGRAMSTART can decide whether existing `prompt-build --mode context` should route through structured compilation or remain a legacy/simple renderer. Do not conflate this renderer-local mode with project-entry modes.
+5. **Operator-facing intent command/API:** defer until authority/currentness resolution can eliminate hand-authored `AuthoritySnapshot` input.
+6. **Measured Controller admission pilot:** semantic compilation is proven here; end-to-end Controller admission belongs to the active Controller lane after it accepts the handoff.
 
 ## 19. V0.1 success statement
 

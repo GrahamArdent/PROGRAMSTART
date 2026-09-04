@@ -74,7 +74,8 @@ ADR 0025, Intent Compilation V0.1 acceptance record, canonical Work Packet seman
 
 ACCEPTANCE_CRITERIA:
 - converged discussion compiles from material accepted state;
-- active implementation reuses the current packet only when current authority and recovered executable semantics are unchanged;
+- active implementation reuses the current packet only when current authority and a complete recovered executable semantic harvest are unchanged;
+- incomplete conversation harvest never counts as proof that an existing packet remains semantically current;
 - accepted semantic drift replaces/readmits the packet even when authority is unchanged;
 - partial recovered semantic drift triggers full semantic recovery rather than silent reuse or compilation from incomplete context;
 - existing packet with unresolved current authority remains CONVERGED pending machine revalidation rather than being mislabeled execution-ready;
@@ -105,14 +106,14 @@ this bounded acceptance record + PR evidence; methodology changes only if Challe
 `ConversationState` uses these computed classifications:
 
 - `EXPLORE` — conversation has not converged enough for executable work, or a material semantic decision is still unresolved;
-- `CONVERGED` — semantic direction is adequate but current machine-resolvable context, such as authority or durable active packet state, still needs retrieval;
+- `CONVERGED` — semantic direction is adequate but current machine-resolvable context, such as authority or complete conversation semantics, still needs retrieval;
 - `HANDOFF_READY` — a packet can be compiled/recompiled but current authority resolves implementation to another owner;
 - `EXECUTION_READY` — a current packet is reusable or a new packet can be compiled for normal admission;
 - `EXECUTING` — an already-existing packet is current and durable execution should resume rather than replan;
 - `GATED` — a genuine admitted human consequence gate remains active;
 - `COMPLETE` — current acceptance is already satisfied and no work should be invented.
 
-These values MUST NOT become a second persisted runtime lifecycle. A real integration may recompute them from conversation semantics + durable project/Controller state. In particular, an existing packet whose current authority has not yet been resolved is `CONVERGED`, not `EXECUTION_READY` or `EXECUTING`: the system knows the work identity but has not proven current admission readiness.
+These values MUST NOT become a second persisted runtime lifecycle. A real integration may recompute them from conversation semantics + durable project/Controller state. In particular, an existing packet whose current authority or complete current semantic harvest has not yet been resolved is `CONVERGED`, not `EXECUTION_READY` or `EXECUTING`: the system knows the work identity but has not proven current admission readiness.
 
 ## 4. Contextual continuation semantics
 
@@ -124,13 +125,14 @@ Resolution rules:
 2. **Already complete** — report closure/current state; do not manufacture another packet.
 3. **Material semantic ambiguity** — surface only the exact outcome/consequence-changing decision.
 4. **Execution underway but local packet missing** — recover the durable active Work Packet/Controller state; do not compile duplicate work because chat context was truncated.
-5. **Existing packet without current authority** — retain it as `CONVERGED`, request machine currentness revalidation, and do not ask the operator to reconstruct authority JSON or declare execution-ready state prematurely.
-6. **Existing packet + unchanged authority + unchanged recovered executable semantics** — continue/resume the exact packet.
-7. **Existing packet + changed accepted executable semantics** — recompile from a complete current harvest before Controller readmission even when authority itself is unchanged. If a partial harvest already proves material drift, recover complete semantics before deciding whether to replace the packet.
-8. **Existing packet + authority drift** — recompile from current semantic harvest and current authority before readmission. Current repository/runtime truth supersedes stale chat.
-9. **Exploratory/unconverged conversation** — synthesize the strongest current conclusion; do not fabricate a giant execution project.
-10. **Converged but authority missing** — route authority/currentness retrieval as a system requirement.
-11. **Converged + current authority** — compile to the existing Work Packet contract and either admit locally or hand off to the resolved owning repository.
+5. **Existing packet without current authority** — retain it as `CONVERGED`, request machine currentness revalidation, and do not ask the operator to reconstruct authority JSON or declare execution-ready state prematurely. If the semantic harvest is also incomplete, recover both machine inputs before reuse.
+6. **Existing packet + incomplete semantic harvest** — recover complete current conversation semantics before reuse even when no visible difference has yet been recovered. Absence of visible drift is not proof of semantic equivalence under truncation.
+7. **Existing packet + unchanged authority + unchanged complete recovered executable semantics** — continue/resume the exact packet.
+8. **Existing packet + changed accepted executable semantics** — recompile from a complete current harvest before Controller readmission even when authority itself is unchanged. If a partial harvest already proves material drift, recover complete semantics before deciding whether to replace the packet.
+9. **Existing packet + authority drift** — recompile from current semantic harvest and current authority before readmission. Current repository/runtime truth supersedes stale chat.
+10. **Exploratory/unconverged conversation** — synthesize the strongest current conclusion; do not fabricate a giant execution project.
+11. **Converged but authority missing** — route authority/currentness retrieval as a system requirement.
+12. **Converged + current authority** — compile to the existing Work Packet contract and either admit locally or hand off to the resolved owning repository.
 
 ## 5. Trusted conversation harvest / provenance
 
@@ -167,13 +169,15 @@ The trusted harvester remains an integration boundary. V0.2 does not pretend a d
 
 ## 6. Currentness and packet reuse
 
-An existing sealed packet wins over a repeated generic continuation only when its integrity holds, current authority is unchanged, and any complete recovered executable semantics match the packet. `assess_authority_drift()` is used before reuse when a current `AuthoritySnapshot` is available, and the resolver separately compares executable intent semantics rather than treating authority currentness as sufficient by itself.
+An existing sealed packet wins over a repeated generic continuation only when its integrity holds, current authority is unchanged, and a **complete** recovered executable semantic harvest matches the packet. `assess_authority_drift()` is used before reuse when a current `AuthoritySnapshot` is available, and the resolver separately compares executable intent semantics rather than treating authority currentness as sufficient by itself.
+
+An incomplete harvest is not evidence of semantic equivalence. If the system cannot recover a complete current objective/kind/constraint projection, it returns a machine context-recovery requirement before packet reuse. This remains low-human-interaction behavior: the operator is not asked to reconstruct context that the system should recover.
 
 If current authority has not yet been resolved, the packet is retained but the ingress classification remains `CONVERGED` until machine revalidation completes. Packet existence is not evidence that the packet is current.
 
 If material authority/currentness changed **or** accepted executable semantics changed, the old packet is not silently reused. The replacement records `supersedes_specification_id` and requires normal Controller readmission.
 
-If the available conversation harvest is incomplete but its recovered objective, intent kind, or constraints already prove material semantic drift from the active packet, the resolver requests complete semantic recovery before reuse or replacement. It does not compile from an incomplete harvest merely because some changed facts are visible.
+If the available conversation harvest is incomplete but its recovered objective, intent kind, or constraints already prove material semantic drift from the active packet, the resolver records that stronger reason while still requiring complete semantic recovery before reuse or replacement. It does not compile from an incomplete harvest merely because some changed facts are visible.
 
 If execution is known to be underway but the local conversation no longer carries the active packet, the resolver returns `recover_execution_state` instead of generating a new packet. This is the fail-safe against chat truncation creating duplicate work.
 
@@ -215,7 +219,8 @@ The focused test suite covers the requested cases and additional anti-duplicatio
 16. same accepted semantics + short final wording -> reuse existing packet;
 17. new accepted constraint + unchanged authority -> recompile/readmit;
 18. partial recovered semantic drift -> recover complete current semantics rather than silently reuse/recompile;
-19. accepted executable handoff semantics absent from the packet -> handoff rendering fails closed.
+19. accepted executable handoff semantics absent from the packet -> handoff rendering fails closed;
+20. incomplete harvest with no visible drift -> recover complete semantics rather than treating missing context as proof that the packet is unchanged.
 
 ## 9. Adversarial Challenge findings and fixes
 
@@ -236,6 +241,7 @@ Challenge changed the design before closure:
 13. **Partial conversation recovery could hide a newly recovered material constraint.** Fixed by failing toward complete semantic recovery when an incomplete harvest already proves drift.
 14. **Contextual handoff prose could become an authority side-channel.** Fixed by rejecting handoff rendering when accepted executable constraints are absent from the sealed packet.
 15. **Packet existence could be mistaken for current execution readiness.** Fixed by keeping existing-packet/no-current-authority transitions `CONVERGED` until machine currentness revalidation succeeds.
+16. **No visible drift could be mistaken for proof after conversation truncation.** Fixed by requiring a complete semantic harvest before reuse; incomplete context routes machine recovery even when the recovered fragment does not yet contradict the packet.
 
 Final Challenge must be rerun against the exact PR diff after repository validation.
 
@@ -247,6 +253,7 @@ What V0.2 proves at repository level:
 - conversation-state classification materially improves deterministic continuation handling after semantic harvesting;
 - packet currentness has two independent dimensions that matter at ingress: current durable authority/evidence and current accepted executable conversation semantics;
 - packet existence and packet currentness are distinct; unresolved currentness must not be mislabeled execution-ready;
+- missing semantic evidence is not affirmative evidence that the packet remains unchanged;
 - an existing packet can be reused/revalidated instead of regenerated on every generic continuation;
 - human intervention can be limited to genuine admitted gates and material outcome-changing ambiguity;
 - contextual worker prompts can be compressed to accepted decisions/provenance/currentness rather than whole-chat replay;
@@ -270,6 +277,6 @@ Those remaining integration frontiers are real, not reasons to add more reposito
 
 The strongest reusable lesson remains narrower than “build a prompt compiler”:
 
-> Treat ordinary conversation as a semantic ingress source, preserve accepted/rejected/currentness provenance, revalidate both durable authority and accepted executable semantics before packet reuse, distinguish packet existence from current execution readiness, reuse current sealed Work Packets whenever possible, and resolve continuation from conversation state + current authority. Keep the classification stateless and let the Controller own durable execution.
+> Treat ordinary conversation as a semantic ingress source, preserve accepted/rejected/currentness provenance, revalidate both durable authority and a complete accepted executable semantic harvest before packet reuse, distinguish packet existence from current execution readiness, reuse current sealed Work Packets whenever possible, and resolve continuation from conversation state + current authority. Keep the classification stateless and let the Controller own durable execution.
 
 Do not promote a broader methodology mechanism until a real chat/authority/Controller integration retest demonstrates a gap that these existing primitives cannot cover.

@@ -165,10 +165,15 @@ def _write_adoption_manifest_if_safe(
     manifest: dict,
     manifest_files: list[str],
     template_root: Path,
-    removed_from_template: bool,
+    alignment_issues: list[tuple[str, str]],
 ) -> bool:
-    """Advance adoption manifest metadata only after a complete, non-destructive sync."""
-    if manifest.get("mode") != "existing_project_adoption" or removed_from_template:
+    """Advance adoption metadata only when every managed file matches the template.
+
+    Preserve rules control copying, not truth. A preserved managed file may remain
+    intentionally divergent, but in that case the downstream repository cannot claim
+    exact alignment with the template commit and the source pin must remain unchanged.
+    """
+    if manifest.get("mode") != "existing_project_adoption" or alignment_issues:
         return False
 
     updated = dict(manifest)
@@ -198,11 +203,7 @@ def sync(
 
     # A filtered sync intentionally does not evolve the managed set or source pin:
     # it cannot prove that every managed file is synchronized to the template commit.
-    manifest_files = (
-        recorded_manifest_files
-        if file_filter
-        else _current_adoption_manifest_files(template_root, manifest)
-    )
+    manifest_files = recorded_manifest_files if file_filter else _current_adoption_manifest_files(template_root, manifest)
     preserve = _preserve_path(destination_root)
     changes = _files_needing_sync(template_root, destination_root, manifest_files, preserve, file_filter)
 
@@ -240,12 +241,10 @@ def sync(
 
     copied = 0
     skipped = 0
-    removed_from_template = False
     for relative_path, reason in changes:
         if reason == "removed-from-template":
             print(f"  SKIP {relative_path} (removed from template — delete manually if desired)")
             skipped += 1
-            removed_from_template = True
             continue
         source = _template_source_path(template_root, relative_path)
         destination = destination_root / relative_path
@@ -255,15 +254,27 @@ def sync(
 
     manifest_updated = False
     if not file_filter:
+        # Re-check the full managed surface without preserve exclusions. This makes
+        # source_commit a proven exact-alignment claim rather than a best-effort sync
+        # marker. It also catches missing files, template removals, preserved drift,
+        # or any copy that failed to produce byte-identical content.
+        alignment_issues = _files_needing_sync(
+            template_root,
+            destination_root,
+            manifest_files,
+            preserve=set(),
+        )
         manifest_updated = _write_adoption_manifest_if_safe(
             destination_root,
             manifest=manifest,
             manifest_files=manifest_files,
             template_root=template_root,
-            removed_from_template=removed_from_template,
+            alignment_issues=alignment_issues,
         )
-        if removed_from_template and manifest.get("mode") == "existing_project_adoption":
-            print("  HOLD adoption manifest/source pin: a managed file was removed from the template.")
+        if alignment_issues and manifest.get("mode") == "existing_project_adoption":
+            print("  HOLD adoption manifest/source pin: managed files are not fully aligned with the template.")
+            for relative_path, reason in alignment_issues:
+                print(f"    [!] {relative_path}  ({reason})")
 
     if manifest_updated:
         print(f"  SYNC {MANIFEST_FILENAME} (managed set/source pin)")

@@ -502,6 +502,12 @@ def render_contextual_handoff(resolution: ContextualIntentResolution) -> str:
         raise ValueError("compiled Work Packet integrity verification failed")
 
     harvest = resolution.harvest
+    unsealed_constraints = [
+        value for value in _execution_constraints(harvest) if value not in packet.intent.explicit_constraints
+    ]
+    if unsealed_constraints:
+        raise ValueError("contextual accepted semantics are not sealed into the Work Packet")
+
     correction_lines = [
         (
             f"- conversation: {item.conversation_claim} -> current: {item.current_fact} "

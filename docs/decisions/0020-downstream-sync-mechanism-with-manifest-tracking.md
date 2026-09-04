@@ -48,10 +48,12 @@ Legacy/non-adoption manifests retain their recorded file set until a separately 
 For a full confirmed `existing_project_adoption` sync:
 
 - copy changed/newly managed files subject to the existing preserve policy;
-- if no historical managed path is `removed-from-template`, update the manifest's additive file list;
-- when the template Git HEAD can be resolved, advance `source_commit` to that exact commit only after the full managed sync completes;
-- if a managed file was removed from the template, hold the manifest/source pin rather than claiming complete alignment;
+- after copying, independently re-check the **entire managed adoption surface** without preserve exclusions;
+- update the manifest's additive file list and, when template Git HEAD can be resolved, advance `source_commit` only when every managed path exists in both template and destination and is byte-aligned with the template;
+- if a path is removed from the template, missing from the destination, remains divergent because it is explicitly preserved, or otherwise fails byte-alignment, hold the manifest/source pin rather than claiming complete alignment;
 - if template Git HEAD cannot be resolved, do not invent a source commit.
+
+Preserve policy therefore controls **whether sync may overwrite a project-owned path**, not whether exact alignment may be claimed. A project may intentionally preserve a divergent managed file, but the PROGRAMSTART source pin must remain at the last proven fully aligned commit until that divergence is reconciled.
 
 A filtered sync (`--files`) intentionally **does not evolve the managed file set or source pin**, because it cannot prove that all managed files match one template commit.
 
@@ -62,19 +64,19 @@ Dry-run remains the default and may report newly managed files and a prospective
 - Good: Existing adopted projects can receive newly added managed protocols without destructive re-adoption.
 - Good: Exact PROGRAMSTART pinning remains meaningful instead of becoming a stale decoration.
 - Good: New managed files are registry-driven rather than hand-added independently to every downstream manifest.
-- Good: Historical removals remain explicit and block a false alignment claim.
-- Good: Preserve rules and project-owned files remain protected.
+- Good: Historical removals, missing managed files, and preserved managed drift remain explicit and block a false alignment claim.
+- Good: Preserve rules and project-owned files remain protected without weakening pin truthfulness.
 - Neutral: Legacy attachment manifests remain frozen to preserve backward compatibility until separately evaluated.
 - Neutral: The adoption registry must correctly classify reusable support protocols that downstream projects need; registry omissions remain a validation concern.
 
 ## Confirmation
 
 - `programstart sync --dest <path>` shows current-file differences, newly managed adoption files, and any prospective source-pin transition without `--confirm`.
-- `programstart sync --dest <path> --confirm` copies the full managed adoption surface and updates the adoption manifest only when safe.
+- `programstart sync --dest <path> --confirm` copies the full managed adoption surface and updates the adoption manifest only when every managed path is fully aligned.
 - `programstart sync ... --files <glob>` may update the selected files but does not claim whole-template alignment.
-- Existing preserve rules remain active.
+- Existing preserve rules remain active for copying, while preserved managed divergence holds source-pin advancement.
 - Removed template paths are reported and never auto-deleted; for adopted repos they hold source-pin advancement.
-- Regression tests cover additive managed-file discovery, state-file exclusion, dry-run behavior, filtered-sync pin protection, legacy-manifest compatibility, and removed-file pin holding.
+- Regression tests cover additive managed-file discovery, state-file exclusion, dry-run behavior, filtered-sync pin protection, legacy-manifest compatibility, removed-file pin holding, and preserved-managed-drift pin holding.
 
 ## Links
 

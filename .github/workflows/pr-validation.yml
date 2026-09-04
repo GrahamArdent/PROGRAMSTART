@@ -72,8 +72,16 @@ jobs:
             echo "No changed files to validate."
             exit 0
           fi
+          set +e
           SKIP=programstart-validate,programstart-drift,sync-requirements-txt \
             uv run pre-commit run --files "${changed_files[@]}"
+          hook_status=$?
+          set -e
+          if (( hook_status != 0 )); then
+            echo "--- deterministic hook working-tree diff ---"
+            git diff -- . ':(exclude)changed_files.txt'
+          fi
+          exit "$hook_status"
 
       - name: Check exported requirements stay synchronized
         shell: bash

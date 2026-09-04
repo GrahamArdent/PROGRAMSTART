@@ -93,7 +93,10 @@ def test_worker_instructions_cover_hook_bypassing_publication_paths() -> None:
     copilot = _read(COPILOT_INSTRUCTIONS)
     quickstart = _read(QUICKSTART)
 
-    sequence = "edit -> deterministic fix -> local validation -> commit -> pre-push validation -> GitHub authoritative verification"
+    sequence = (
+        "edit -> deterministic fix -> local validation -> commit -> "
+        "pre-push validation -> GitHub authoritative verification"
+    )
 
     assert sequence in source_jit
     assert sequence in quickstart

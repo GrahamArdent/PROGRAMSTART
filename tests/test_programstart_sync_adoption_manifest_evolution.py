@@ -197,6 +197,31 @@ def test_removed_managed_file_holds_adoption_pin(tmp_path: Path) -> None:
     assert removed in manifest["files"]
 
 
+def test_preserved_managed_drift_holds_adoption_pin_and_manifest_set(tmp_path: Path) -> None:
+    template = tmp_path / "template"
+    destination = tmp_path / "destination"
+    support = "docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md"
+
+    _write_template_file(template, "config/process-registry.json", "{}\n")
+    _write_template_file(template, "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md", "canonical\n")
+    _write_template_file(template, support, "template autonomy\n")
+    _write_manifest(destination)
+    _write_template_file(destination, "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md", "canonical\n")
+    _write_template_file(destination, support, "locally preserved autonomy\n")
+    (destination / ".programstart-preserve").write_text(support + "\n", encoding="utf-8")
+
+    with (
+        patch.object(sync, "load_registry_from_path", return_value=_registry(support_files=[support])),
+        patch.object(sync, "_template_head_hash", return_value="new-template"),
+    ):
+        assert sync.sync(destination, confirm=True, template_root=template) == 0
+
+    assert (destination / support).read_text(encoding="utf-8") == "locally preserved autonomy\n"
+    manifest = _read_manifest(destination)
+    assert manifest["source_commit"] == "old-template"
+    assert support not in manifest["files"]
+
+
 def test_workspace_registry_declares_authority_and_autonomy_support_files() -> None:
     root = Path(__file__).resolve().parents[1]
     workspace = json.loads((root / "config/registry/workspace.json").read_text(encoding="utf-8"))

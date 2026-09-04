@@ -257,9 +257,53 @@ def _semantic_gap(harvest: ConversationHarvest) -> bool:
     return not harvest.converged or harvest.objective is None or harvest.intent_kind == IntentKind.UNKNOWN
 
 
+def _semantic_signature(intent: IntentInterpretation) -> tuple[object, ...]:
+    """Compare executable semantics while intentionally ignoring the raw continuation wording."""
+
+    return (
+        intent.kind,
+        intent.interpreted_objective,
+        intent.project_hint,
+        tuple(intent.explicit_constraints),
+        tuple(intent.unresolved_ambiguities),
+    )
+
+
+def _harvest_changes_packet(harvest: ConversationHarvest, existing: CompiledWorkPacket) -> bool:
+    """Return true only when a complete current harvest materially changes packet semantics."""
+
+    if _semantic_gap(harvest):
+        return False
+    return _semantic_signature(_interpret_harvest(harvest)) != _semantic_signature(existing.intent)
+
+
 def _handoff_required(request: ContextualIntentRequest, authority: AuthoritySnapshot) -> bool:
     current = request.current_repository.strip()
     return bool(current and current != authority.owning_repository)
+
+
+def _recompile_current_harvest(
+    request: ContextualIntentRequest,
+    existing: CompiledWorkPacket,
+    authority: AuthoritySnapshot,
+    *,
+    note: str,
+) -> ContextualIntentResolution:
+    packet = compile_interpreted_work_packet(_interpret_harvest(request.harvest), authority)
+    handoff = _handoff_required(request, authority)
+    return ContextualIntentResolution(
+        state=ConversationState.HANDOFF_READY if handoff else ConversationState.EXECUTION_READY,
+        action=(
+            ContextualTransitionAction.RECOMPILE_OWNER_HANDOFF
+            if handoff
+            else ContextualTransitionAction.RECOMPILE_FOR_ADMISSION
+        ),
+        harvest=request.harvest,
+        packet=packet,
+        supersedes_specification_id=existing.specification_id,
+        handoff_repository=authority.owning_repository if handoff else None,
+        notes=[note],
+    )
 
 
 def resolve_contextual_intent(request: ContextualIntentRequest) -> ContextualIntentResolution:
@@ -337,6 +381,16 @@ def resolve_contextual_intent(request: ContextualIntentRequest) -> ContextualInt
 
         drift = assess_authority_drift(existing, authority)
         if drift.status == "unchanged":
+            if _harvest_changes_packet(harvest, existing):
+                return _recompile_current_harvest(
+                    request,
+                    existing,
+                    authority,
+                    note=(
+                        "Accepted conversation semantics changed while authority remained current; "
+                        "recompile before Controller readmission."
+                    ),
+                )
             return ContextualIntentResolution(
                 state=ConversationState.EXECUTING if harvest.execution_underway else ConversationState.EXECUTION_READY,
                 action=(
@@ -359,20 +413,11 @@ def resolve_contextual_intent(request: ContextualIntentRequest) -> ContextualInt
                 notes=["Authority drift invalidated the packet; stale chat must not be replayed as current authority."],
             )
 
-        packet = compile_interpreted_work_packet(_interpret_harvest(harvest), authority)
-        handoff = _handoff_required(request, authority)
-        return ContextualIntentResolution(
-            state=ConversationState.HANDOFF_READY if handoff else ConversationState.EXECUTION_READY,
-            action=(
-                ContextualTransitionAction.RECOMPILE_OWNER_HANDOFF
-                if handoff
-                else ContextualTransitionAction.RECOMPILE_FOR_ADMISSION
-            ),
-            harvest=harvest,
-            packet=packet,
-            supersedes_specification_id=existing.specification_id,
-            handoff_repository=authority.owning_repository if handoff else None,
-            notes=["Current authority superseded stale packet inputs; recompile before Controller readmission."],
+        return _recompile_current_harvest(
+            request,
+            existing,
+            authority,
+            note="Current authority superseded stale packet inputs; recompile before Controller readmission.",
         )
 
     if _semantic_gap(harvest):

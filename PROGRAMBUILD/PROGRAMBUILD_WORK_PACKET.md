@@ -4,9 +4,9 @@
 
 Purpose: Define the smallest useful current-slice planning structure without creating a competing game plan or unnecessary documentation ceremony.
 Owner: Project Lead / Operator
-Last updated: 2026-08-31
+Last updated: 2026-09-06
 Depends on: `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`, `PROGRAMBUILD_CHALLENGE_GATE.md`, the project's strategic execution spine, relevant requirements/architecture/decisions
-Authority: Canonical for work-packet semantics, including accepted-recommendation resolution evidence and checklist completeness. A filled packet is derived execution context and is never canonical over project authority.
+Authority: Canonical for work-packet semantics, including accepted-recommendation resolution evidence, checklist completeness, and bounded cross-system test envelopes. A filled packet is derived execution context and is never canonical over project authority.
 
 ---
 
@@ -326,6 +326,81 @@ An unchecked/forgotten required item is not equivalent to `not applicable` or `d
 
 Do not create a universal persisted checklist registry. Do not convert checklists into a second Master. Reuse existing checklists when applicable and discard/close derived slice checklists with the packet.
 
+### 3.5 Material cross-system test envelope
+
+Use this section only when one behavioral proposition materially crosses repository, service, runtime, provider, device, human, or authority boundaries and ownership could otherwise become ambiguous. Ordinary unit/component tests do not need this envelope.
+
+A material cross-system test has **exactly one `TEST_AUTHORITY` for each behavioral proposition**. The Test Authority owns the proposition being tested, the START/STOP boundary, and the verdict criteria. A parent system scenario may contain narrower participant-local tests, but each proposition still has one behavioral owner.
+
+The authority roles are deliberately separate:
+
+- **Goal authority** owns the desired product/system outcome.
+- **TEST_AUTHORITY does not grant execution authority**. Test ownership cannot authorize provider, runtime, repository, secret, production, destructive, financial, privacy, legal, or other consequences.
+- **Execution authority** decides which effects may occur while exercising the test.
+- **Evidence authority validates evidence** provenance, integrity, binding, currentness, and sufficiency for its stated evidence purpose; it cannot mint approval or execution scope merely because the evidence is coherent.
+- **Acceptance authority** decides whether verified evidence satisfies the declared behavioral/system claim.
+- A **participant** supplies an input/output/evidence contract inside its own authority. **Participation does not transfer backlog, closure, or execution ownership** to that participant.
+
+When useful, include this conditional envelope:
+
+```text
+TEST_ID:
+BEHAVIOR_UNDER_TEST:
+TEST_AUTHORITY:
+GOAL_AUTHORITY:
+EXECUTION_AUTHORITY:
+PARTICIPATING_SYSTEMS:
+START_CONDITION:
+PRECONDITIONS:
+AUTHORIZED_TEST_EFFECTS:
+PROHIBITED_TEST_EFFECTS:
+OBSERVABLE_SUCCESS:
+OBSERVABLE_FAILURE:
+EVIDENCE_PRODUCERS:
+EVIDENCE_AUTHORITY:
+ACCEPTANCE_AUTHORITY:
+STOP_CONDITION:
+CLEANUP_OWNER:
+INVALIDATION_TRIGGERS:
+OWNER_HANDOFFS:
+```
+
+Test-envelope rules:
+
+1. `START_CONDITION` must identify when the proposition begins to be evaluated; `STOP_CONDITION` must identify when the verdict is terminal enough to end the scenario. Work before START or after STOP is not silently part of the test.
+2. `AUTHORIZED_TEST_EFFECTS` must trace to real execution authority. A test plan is not permission to create credentials, deploy, spend, mutate providers, or widen access.
+3. `PROHIBITED_TEST_EFFECTS` should make high-risk non-goals explicit when scope confusion is plausible.
+4. `EVIDENCE_PRODUCERS` may span systems; that does not make the evidence collector the behavioral owner.
+5. A test may consume Evidence Spine currentness/provenance as evidence without making Evidence Spine the Test Authority or Acceptance Authority for another system's behavior.
+6. A genuine external dependency may still block the originating project's closure when the originating project's own current product/release authority explicitly requires that dependency. **Mere participation or observation is not a closure dependency.**
+7. Do not turn the envelope into a test backlog, orchestration engine, global registry, or mandatory artifact. It is bounded derived context inside the existing Work Packet/PR/task/issue surface.
+
+#### Cross-owner test finding / handoff rule
+
+When a test exposes a defect, debt, or missing behavior owned by another repository/system, preserve a durable handoff to the real owner rather than absorbing foreign work into the originating project's strategy.
+
+A useful handoff may retain:
+
+```text
+HANDOFF:
+OWNER:
+OBSERVED_GAP:
+EVIDENCE:
+REQUIRED_CONDITION:
+```
+
+If the foreign work is not itself an explicit originating-project acceptance dependency, it **must not remain as an unchecked foreign-owner closure item** merely because it was discovered during the test. The originating project may retain the observation/reference after its own scope closes. The receiving owner determines whether/how to promote and execute the work under its own authority.
+
+#### Chat-detachment claims
+
+When the behavioral proposition claims backend continuation independent of ChatGPT or another operator UI, the test envelope must make false success difficult:
+
+- durable admission must satisfy `START_CONDITION` **before** the chat/UI detaches;
+- after START, no ChatGPT-carried command, state, polling result, lane relay, `proceed`, or manual reconstruction may be required for the claimed continuation;
+- Controller/worker/provider state used by the verdict must come from durable machine evidence, not conversation memory;
+- later ChatGPT use may inspect the result only after the backend path has independently reached its declared STOP/recovery condition;
+- an external job merely continuing after a chat closes is not proof of semantic continuation unless the behavioral owner had durably admitted the objective before detachment.
+
 ---
 
 ## 4. Extended `CURRENT_WORK_PACKET.md` Template
@@ -384,6 +459,27 @@ GATE_INVALIDATION:
 RESUME_AT:
 SAFE_WHILE_WAITING:
 
+## Material Cross-System Test Envelope — omit unless ownership/boundaries are materially cross-system
+TEST_ID:
+BEHAVIOR_UNDER_TEST:
+TEST_AUTHORITY:
+GOAL_AUTHORITY:
+EXECUTION_AUTHORITY:
+PARTICIPATING_SYSTEMS:
+START_CONDITION:
+PRECONDITIONS:
+AUTHORIZED_TEST_EFFECTS:
+PROHIBITED_TEST_EFFECTS:
+OBSERVABLE_SUCCESS:
+OBSERVABLE_FAILURE:
+EVIDENCE_PRODUCERS:
+EVIDENCE_AUTHORITY:
+ACCEPTANCE_AUTHORITY:
+STOP_CONDITION:
+CLEANUP_OWNER:
+INVALIDATION_TRIGGERS:
+OWNER_HANDOFFS:
+
 ## Objective
 One concrete outcome.
 
@@ -413,6 +509,8 @@ For coordinated lanes, preserve the independence/conflict/convergence evidence t
 For cross-repository evidence, preserve the repository/runtime/test source and the exact invalidation condition. Do not collapse a partially satisfied dependency into a boolean green state.
 
 For operator-returned evidence, retain non-secret provenance and the exact acceptance/invalidation condition. Do not persist credentials merely to make the handoff durable.
+
+For a material cross-system test, retain only the authority roles, bounded START/STOP conditions, authorized/prohibited effects, and evidence/verdict references needed to prevent ownership confusion. Do not copy participant backlogs into the packet.
 
 ## Assumptions / Unknowns
 | Item | Confidence | Action |
@@ -517,67 +615,3 @@ For provider/runtime resources, keep these facts distinct:
 - cause of any discrepancy, when actually known.
 
 `not visible` or `inaccessible` MUST NOT silently rewrite verified historical existence to `never existed` or `deleted`.
-
-For coordinated Mode-C lanes, reuse the authority/evidence that proves a packet independent until a selected or sibling lane changes a shared dependency, mutable surface, closure assumption, or active shared-mutation resource. A lane label alone is not evidence of independence. If the consequential resource changes under another lane, exact-source/runtime/provider acceptance that depended on the prior resource state is invalid until current ownership/state is reconciled.
-
-For cross-repository dependencies, evidence remains reusable only while its declared assumptions and invalidation conditions still hold. Repository merge state, head changes, contract/runtime changes, provider state, credential state, or directly conflicting evidence may invalidate only the relevant portion rather than forcing a full re-audit of both repositories.
-
-For operator gates, record the returned **outcome/evidence**, not the secret material used to produce it. An operator's statement that an action was performed may satisfy an action-completion fact, but runtime/device/provider acceptance still requires the evidence defined by `EVIDENCE_ACCEPTANCE`.
-
-For accepted recommendations, current execution/runtime evidence can invalidate the recommendation's premise. Generic operator acceptance does not override contradictory evidence discovered during implementation; reconcile actual truth and derive a new slice instead of forcing the original recommendation through.
-
-A green current test suite is reusable evidence, but it is not by itself evidence that an activated post-implementation adversarial closure review occurred. When `PROGRAMBUILD_CHALLENGE_GATE.md` is triggered, challenge the actual completed implementation using the smallest relevant failure-sequence lens and retain only the resulting bounded evidence.
-
----
-
-## 7. Existing-Project / Research Rule
-
-For an existing repository:
-
-- read its current instructions and strategic execution spine first;
-- use the packet only as the current execution lens;
-- keep research/audits as evidence;
-- convert useful findings into explicit deltas to current authority;
-- when a generic operator acceptance follows a recommendation, derive the recommendation disposition from current authority before executing;
-- do not rewrite the Master for normal implementation detail;
-- do not let an accepted future idea resequence current work;
-- preserve stronger explicit approval/operator gates independently from generic acceptance;
-- if another repository is a real prerequisite, inspect only enough of its authority/evidence to classify the dependency while preserving both execution spines;
-- if the active closure row is blocked, classify blocker scope and scan safe lanes before concluding the project must wait;
-- when several current lanes legitimately coexist under the one spine, keep closure-control explicit and select one independently authorized packet for the current invocation;
-- when those lanes share a consequential mutable external/runtime/provider/device/deployment resource, preserve one explicit mutation owner across invocations and keep sibling lanes non-mutating on that resource until release/transfer;
-- if the next action is operator-only, return the exact handoff and resume point rather than a generic blocked status;
-- when operator evidence returns, reorient only enough to confirm acceptance/invalidation and resume the existing spine;
-- use an applicable checklist when omission risk warrants it, and reconcile its required items before closure;
-- inspect the actual completed change for a risk-triggered post-implementation Challenge Gate before merge-ready/closure;
-- reconcile accepted changes back into the repository that owns the relevant canonical artifact;
-- close/replace the packet after the slice.
-
-A newer packet, recommendation-resolution result, coordinated-lane view, shared-mutation lease, checklist, research report, cross-repository graph, operator handoff, or adversarial-review result never outranks established project authority merely because it is newer.
-
----
-
-## 8. Completion Rule
-
-A packet is complete when:
-
-- the scoped outcome is done or explicitly stopped;
-- any accepted-recommendation disposition was honored without over-authorizing generic acceptance;
-- `reconcile_authority_then_execute` work has its durable authority/decision truth reconciled rather than leaving known stale authority behind;
-- `defer_without_resequencing` did not silently execute/reorder the deferred recommendation and the real current slice remains truthful;
-- any stronger gate overlay remains preserved until its actual action/evidence requirement is satisfied;
-- acceptance criteria are resolved;
-- required targeted verification is complete;
-- if a checklist was active, every applicable required item is resolved as satisfied / not applicable with reason / blocked with exact gate / authority-permitted deferred;
-- checklist fields were omitted when checklist completeness was not active rather than adding `not_needed` ceremony;
-- any post-implementation adversarial Challenge Gate required by the actual changed risk surface is `clear` or the packet remains truthfully blocked/warning rather than being declared merge-ready/complete;
-- material durable decisions/state are reconciled;
-- remaining blockers are durably tracked with their narrowest truthful scope;
-- if coordinated Mode-C lanes are present, closure-control stayed unchanged, one packet was selected for this invocation, independence/conflict evidence stayed valid, and the convergence point remains explicit;
-- if a shared-mutation lease was active, the owning packet remained the sole mutator of that resource and completion leaves ownership explicitly released, transferred, or still active with a truthful reason/gate;
-- any cross-repository dependency state is supported by current evidence and does not overstate partial satisfaction;
-- any remaining external/manual boundary is exact;
-- if stopped at an operator gate, the handoff, safe-while-waiting rule, and exact resume point are explicit and project closure is not falsely claimed;
-- the next executable safe slice, or the exact reason no safe slice exists, can be derived from current project state without relying on the old packet/checklist as authority.
-
-**Success test:** the packet reduced execution ambiguity and omission risk more than it increased documentation work.

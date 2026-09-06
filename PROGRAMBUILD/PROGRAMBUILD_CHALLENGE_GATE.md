@@ -4,8 +4,8 @@
 
 Purpose: Reusable transition/convergence check that catches meaningful drift without turning every boundary into the same eight-part ceremony.
 Owner: Stage Owner (or Solo Operator)
-Last updated: 2026-08-28
-Depends on: `PROGRAMBUILD.md`, `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`, `FEASIBILITY.md`, `REQUIREMENTS.md`, `DECISION_LOG.md`
+Last updated: 2026-09-06
+Depends on: `PROGRAMBUILD.md`, `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`, `PROGRAMBUILD_WORK_PACKET.md`, `FEASIBILITY.md`, `REQUIREMENTS.md`, `DECISION_LOG.md`
 Authority: Canonical for stage-transition validation, risk-based gate selection, post-implementation adversarial closure review, and mid-stage convergence criteria.
 
 ---
@@ -100,7 +100,7 @@ Add stage/risk-relevant parts:
 | D — Skipped work | anything was deferred, partial, blocked, TODO, or intentionally omitted |
 | E — Blast radius / verification | architecture, contracts, implementation, config, schema, environment, integration, or release behavior changed or is about to change materially; **required for a triggered post-implementation adversarial closure review** |
 | G — Dependency / KB health | Stage 4+ when a dependency/vendor/platform/research fact is material to the decision |
-| H — Architecture / requirements / implementation alignment | Stage 6+, and earlier whenever implementation already exists or a contract/auth/schema change is being evaluated; **required when the triggered closure review concerns trust/contract/schema/behavior alignment** |
+| H — Architecture / requirements / implementation alignment | Stage 6+, and earlier whenever implementation already exists or a contract/auth/schema/behavior boundary is being evaluated; **required when the triggered closure review concerns trust/contract/schema/behavior alignment** |
 
 **Full A–H Product convergence is required** when the boundary itself justifies a whole-system view, especially:
 
@@ -158,6 +158,14 @@ Ask:
 - Is the success metric still current or explicitly superseded?
 - Has research, an audit, checklist, adaptive-router output, or work packet begun functioning as a second strategic plan?
 
+For a material cross-system test, also challenge its **test authority** and **test envelope**:
+
+- Is there exactly one behavioral owner for each proposition, or did several participants become accidental co-owners?
+- Are START and STOP bounded, or can the test absorb unrelated work indefinitely?
+- Did a participant inherit another owner's backlog/closure merely because it supplied evidence or a runtime hop?
+- Does any evidence/currentness system appear to own the behavior merely because it can observe it?
+- Is a foreign-owner item genuinely an originating-project acceptance dependency, or merely a durable handoff discovered during the test?
+
 Reconcile unauthorized scope before proceeding.
 
 ---
@@ -208,6 +216,13 @@ Select only the lenses relevant to the actual change. Common lenses are:
 - **rollback / recovery** — after failure, can the system retry/recover without corrupting or losing required state?
 - **false success** — can the system report success before the required durable/observable outcome exists?
 - **false suppression** — can unfinished or failed work be mistaken for already-completed work and suppressed?
+
+For cross-system test/acceptance changes, add the smallest relevant ownership failures:
+
+- **test-authority confusion** — can evidence authority, acceptance authority, or a participant silently become behavioral/execution authority?
+- **scope leakage** — can work outside the declared test envelope piggyback merely because the systems are already connected?
+- **foreign-closure capture** — can an owner-local completed slice remain falsely open because another system's independent backlog item was observed during the test?
+- **false chat independence** — when the claim is backend continuation after ChatGPT/operator-UI detachment, was the objective durably admitted before detachment, or did chat later carry command/state/polling/resume information that the backend actually needed?
 
 The reviewer should prefer the smallest counterexample set that covers the material invariants. One strong realistic sequence is better than ten generic hypotheticals.
 
@@ -276,6 +291,8 @@ Ask:
 - Does the current logical/persisted work packet still trace to strategic authority?
 - Were completed packets reconciled rather than accumulated as a parallel hierarchy?
 - Did current changes invalidate retained test/environment/device/migration evidence?
+- For a material cross-system test, does each behavioral proposition still have one test authority, with execution/evidence/acceptance authority separately respected?
+- Did the test envelope end where declared, with foreign findings routed to their owners rather than silently retained as participant backlog?
 
 Prospective contradiction: update canonical authority before implementing the contradictory design.
 
@@ -368,6 +385,8 @@ For a triggered adversarial closure review:
 - construct at least one realistic failure sequence against a material invariant using only relevant lenses such as ordering, partial failure, retry/idempotency, concurrency, restart, provider failure, trust boundary, recovery, false success, or false suppression
 - if a plausible invariant violation appears, add targeted proof/test + fix and re-review before merge-ready/complete status
 
+For a material cross-system test, challenge test-authority ownership, test-envelope START/STOP, participant scope, evidence-vs-acceptance-vs-execution authority, and foreign-owner handoff behavior. If the claim is chat-independent backend continuation, verify durable admission occurred before chat detachment and that no later chat-carried state/command/polling/resume was needed.
+
 Reuse current adaptive-router/research evidence when it remains valid. Do not rerun analysis solely because this is a transition.
 Challenge vague answers. Do not fill irrelevant sections as ceremony.
 
@@ -397,6 +416,9 @@ Return:
 | Declaring a high-risk implementation merge-ready because intended behavior and current CI are green | challenge the actual completed implementation with at least one relevant counterexample/failure sequence before closure |
 | Turning adversarial review into a mandatory generic checklist for every PR | trigger it from actual risk/blast radius and use only the lenses that can matter |
 | Treating a work packet as a mini-master-plan | derive it from the spine and close/reconcile it |
+| Treating an evidence collector as the owner of every behavior it observes | keep test authority with the behavioral owner; evidence authority verifies evidence |
+| Letting participant systems inherit another test owner's backlog | keep the test envelope bounded and route foreign findings as owner handoffs unless product authority makes them a real dependency |
+| Calling a test chat-independent because a background job kept running | require durable semantic admission before detachment and no later chat-carried continuation state |
 | Treating newer research as authority | adopt useful deltas through canonical process |
 | Re-entry by rereading/retesting everything | revalidate plausible invalidation only |
 | Triggering convergence from a fixed counter alone | use actual accumulated change/risk; counters are reminders only |

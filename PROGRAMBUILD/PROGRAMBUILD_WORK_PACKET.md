@@ -615,3 +615,68 @@ For provider/runtime resources, keep these facts distinct:
 - cause of any discrepancy, when actually known.
 
 `not visible` or `inaccessible` MUST NOT silently rewrite verified historical existence to `never existed` or `deleted`.
+
+For coordinated Mode-C lanes, reuse the authority/evidence that proves a packet independent until a selected or sibling lane changes a shared dependency, mutable surface, closure assumption, or active shared-mutation resource. A lane label alone is not evidence of independence. If the consequential resource changes under another lane, exact-source/runtime/provider acceptance that depended on the prior resource state is invalid until current ownership/state is reconciled.
+
+For cross-repository dependencies, evidence remains reusable only while its declared assumptions and invalidation conditions still hold. Repository merge state, head changes, contract/runtime changes, provider state, credential state, or directly conflicting evidence may invalidate only the relevant portion rather than forcing a full re-audit of both repositories.
+
+For operator gates, record the returned **outcome/evidence**, not the secret material used to produce it. An operator's statement that an action was performed may satisfy an action-completion fact, but runtime/device/provider acceptance still requires the evidence defined by `EVIDENCE_ACCEPTANCE`.
+
+For accepted recommendations, current execution/runtime evidence can invalidate the recommendation's premise. Generic operator acceptance does not override contradictory evidence discovered during implementation; reconcile actual truth and derive a new slice instead of forcing the original recommendation through.
+
+A green current test suite is reusable evidence, but it is not by itself evidence that an activated post-implementation adversarial closure review occurred. When `PROGRAMBUILD_CHALLENGE_GATE.md` is triggered, challenge the actual completed implementation using the smallest relevant failure-sequence lens and retain only the resulting bounded evidence.
+
+---
+
+## 7. Existing-Project / Research Rule
+
+For an existing repository:
+
+- read its current instructions and strategic execution spine first;
+- use the packet only as the current execution lens;
+- keep research/audits as evidence;
+- convert useful findings into explicit deltas to current authority;
+- when a generic operator acceptance follows a recommendation, derive the recommendation disposition from current authority before executing;
+- do not rewrite the Master for normal implementation detail;
+- do not let an accepted future idea resequence current work;
+- preserve stronger explicit approval/operator gates independently from generic acceptance;
+- if another repository is a real prerequisite, inspect only enough of its authority/evidence to classify the dependency while preserving both execution spines;
+- if the active closure row is blocked, classify blocker scope and scan safe lanes before concluding the project must wait;
+- when several current lanes legitimately coexist under the one spine, keep closure-control explicit and select one independently authorized packet for the current invocation;
+- when those lanes share a consequential mutable external/runtime/provider/device/deployment resource, preserve one explicit mutation owner across invocations and keep sibling lanes non-mutating on that resource until release/transfer;
+- if the next action is operator-only, return the exact handoff and resume point rather than a generic blocked status;
+- when operator evidence returns, reorient only enough to confirm acceptance/invalidation and resume the existing spine;
+- use an applicable checklist when omission risk warrants it, and reconcile its required items before closure;
+- inspect the actual completed change for a risk-triggered post-implementation Challenge Gate before merge-ready/closure;
+- reconcile accepted changes back into the repository that owns the relevant canonical artifact;
+- close/replace the packet after the slice.
+
+A newer packet, recommendation-resolution result, coordinated-lane view, shared-mutation lease, checklist, research report, cross-repository graph, operator handoff, or adversarial-review result never outranks established project authority merely because it is newer.
+
+---
+
+## 8. Completion Rule
+
+A packet is complete when:
+
+- the scoped outcome is done or explicitly stopped;
+- any accepted-recommendation disposition was honored without over-authorizing generic acceptance;
+- `reconcile_authority_then_execute` work has its durable authority/decision truth reconciled rather than leaving known stale authority behind;
+- `defer_without_resequencing` did not silently execute/reorder the deferred recommendation and the real current slice remains truthful;
+- any stronger gate overlay remains preserved until its actual action/evidence requirement is satisfied;
+- acceptance criteria are resolved;
+- required targeted verification is complete;
+- if a checklist was active, every applicable required item is resolved as satisfied / not applicable with reason / blocked with exact gate / authority-permitted deferred;
+- checklist fields were omitted when checklist completeness was not active rather than adding `not_needed` ceremony;
+- any post-implementation adversarial Challenge Gate required by the actual changed risk surface is `clear` or the packet remains truthfully blocked/warning rather than being declared merge-ready/complete;
+- material durable decisions/state are reconciled;
+- remaining blockers are durably tracked with their narrowest truthful scope;
+- if coordinated Mode-C lanes are present, closure-control stayed unchanged, one packet was selected for this invocation, independence/conflict evidence stayed valid, and the convergence point remains explicit;
+- if a shared-mutation lease was active, the owning packet remained the sole mutator of that resource and completion leaves ownership explicitly released, transferred, or still active with a truthful reason/gate;
+- any cross-repository dependency state is supported by current evidence and does not overstate partial satisfaction;
+- any remaining external/manual boundary is exact;
+- if stopped at an operator gate, the handoff, safe-while-waiting rule, and exact resume point are explicit and project closure is not falsely claimed;
+- if a material cross-system test envelope was active, the declared START/STOP and authority roles remained valid, test effects stayed inside execution authority, and foreign findings were handed to their real owners unless the originating project's own authority explicitly made them closure dependencies;
+- the next executable safe slice, or the exact reason no safe slice exists, can be derived from current project state without relying on the old packet/checklist as authority.
+
+**Success test:** the packet reduced execution ambiguity and omission risk more than it increased documentation work.

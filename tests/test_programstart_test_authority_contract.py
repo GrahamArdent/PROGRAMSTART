@@ -1,19 +1,16 @@
-from pathlib import Path
+WORK_PACKET = "PROGRAMBUILD/PROGRAMBUILD_WORK_PACKET.md"
+TEST_STRATEGY = "PROGRAMBUILD/TEST_STRATEGY.md"
+CHALLENGE = "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md"
 
 
-ROOT = Path(__file__).resolve().parents[1]
-WORK_PACKET = ROOT / "PROGRAMBUILD" / "PROGRAMBUILD_WORK_PACKET.md"
-TEST_STRATEGY = ROOT / "PROGRAMBUILD" / "TEST_STRATEGY.md"
-CHALLENGE = ROOT / "PROGRAMBUILD" / "PROGRAMBUILD_CHALLENGE_GATE.md"
-
-
-def _read(path: Path) -> str:
-    return path.read_text(encoding="utf-8")
+def _read(path: str) -> str:
+    with open(path, encoding="utf-8") as handle:
+        return handle.read()
 
 
 def test_material_cross_system_test_has_explicit_authority_envelope() -> None:
     text = _read(WORK_PACKET)
-    required = [
+    required = (
         "TEST_ID:",
         "BEHAVIOR_UNDER_TEST:",
         "TEST_AUTHORITY:",
@@ -31,7 +28,7 @@ def test_material_cross_system_test_has_explicit_authority_envelope() -> None:
         "STOP_CONDITION:",
         "CLEANUP_OWNER:",
         "OWNER_HANDOFFS:",
-    ]
+    )
     for token in required:
         assert token in text
 

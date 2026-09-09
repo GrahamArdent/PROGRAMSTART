@@ -4,7 +4,7 @@
 
 Purpose: Reusable transition/convergence check that catches meaningful drift without turning every boundary into the same eight-part ceremony.
 Owner: Stage Owner (or Solo Operator)
-Last updated: 2026-09-06
+Last updated: 2026-09-09
 Depends on: `PROGRAMBUILD.md`, `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`, `PROGRAMBUILD_WORK_PACKET.md`, `FEASIBILITY.md`, `REQUIREMENTS.md`, `DECISION_LOG.md`
 Authority: Canonical for stage-transition validation, risk-based gate selection, post-implementation adversarial closure review, and mid-stage convergence criteria.
 
@@ -224,6 +224,19 @@ For cross-system test/acceptance changes, add the smallest relevant ownership fa
 - **foreign-closure capture** — can an owner-local completed slice remain falsely open because another system's independent backlog item was observed during the test?
 - **false chat independence** — when the claim is backend continuation after ChatGPT/operator-UI detachment, was the objective durably admitted before detachment, or did chat later carry command/state/polling/resume information that the backend actually needed?
 
+For a consequential self-hosted control/recovery surface, Challenge must also test the claimed **failure domain** rather than equate structural liveness with useful control progress:
+
+- identify the normal control path and the recovery path;
+- name any shared process/unit/checkout/state store/credential/network/consumer-loop dependencies;
+- ask whether failure of the normal path can eliminate the only recovery actuator;
+- state exactly what a `healthy` result claims, and require a useful end-to-end transaction/progress proof when capability health — rather than merely process/service/checkout health — is being accepted;
+- verify recovery can activate or restore an exact known-good version without arbitrary shell or blind replay when that is the accepted recovery consequence;
+- exercise or explicitly retain residual failure domains for loss of normal transport, recovery transport, controller/VPS, and upstream provider/control-plane connectivity as applicable;
+- distinguish local functions that continue without control-plane connectivity from functions that do not;
+- mechanically or live exercise the relevant failure domain before broad recovery closure when that proof is required by the accepted consequence.
+
+The invariant is scoped to consequential control/recovery systems, not every process: **no recovery claim may depend exclusively on the mechanism it is responsible for repairing, and no capability-health claim may be stronger than the transaction/progress evidence actually observed.** Shared host/kernel/network dependencies may remain when unavoidable, but name them as residual failure domains rather than hiding them.
+
 The reviewer should prefer the smallest counterexample set that covers the material invariants. One strong realistic sequence is better than ten generic hypotheticals.
 
 If a counterexample exposes a plausible invariant violation:
@@ -387,6 +400,8 @@ For a triggered adversarial closure review:
 
 For a material cross-system test, challenge test-authority ownership, test-envelope START/STOP, participant scope, evidence-vs-acceptance-vs-execution authority, and foreign-owner handoff behavior. If the claim is chat-independent backend continuation, verify durable admission occurred before chat detachment and that no later chat-carried state/command/polling/resume was needed.
 
+For a consequential control/recovery surface, distinguish process/service/checkout liveness from useful end-to-end control progress and challenge shared normal/recovery failure domains against the exact capability being accepted.
+
 Reuse current adaptive-router/research evidence when it remains valid. Do not rerun analysis solely because this is a transition.
 Challenge vague answers. Do not fill irrelevant sections as ceremony.
 
@@ -419,6 +434,7 @@ Return:
 | Treating an evidence collector as the owner of every behavior it observes | keep test authority with the behavioral owner; evidence authority verifies evidence |
 | Letting participant systems inherit another test owner's backlog | keep the test envelope bounded and route foreign findings as owner handoffs unless product authority makes them a real dependency |
 | Calling a test chat-independent because a background job kept running | require durable semantic admission before detachment and no later chat-carried continuation state |
+| Treating process/service/checkout liveness as proof of useful control health | match the health claim to transaction/progress evidence and challenge the failure domain the recovery claim actually covers |
 | Treating newer research as authority | adopt useful deltas through canonical process |
 | Re-entry by rereading/retesting everything | revalidate plausible invalidation only |
 | Triggering convergence from a fixed counter alone | use actual accumulated change/risk; counters are reminders only |

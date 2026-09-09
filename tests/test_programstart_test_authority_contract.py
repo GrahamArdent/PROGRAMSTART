@@ -38,7 +38,9 @@ def test_test_authority_is_not_execution_or_evidence_authority() -> None:
     assert "exactly one `TEST_AUTHORITY`" in text
     assert "TEST_AUTHORITY does not grant execution authority" in text
     assert "Evidence authority validates evidence" in text
-    assert "Participation does not transfer backlog, closure, or execution ownership" in text
+    assert (
+        "Participation does not transfer backlog, closure, or execution ownership" in text
+    )
 
 
 def test_foreign_observations_become_handoffs_not_shadow_closure() -> None:
@@ -84,5 +86,11 @@ def test_recovery_challenge_matches_health_claim_to_useful_progress() -> None:
     text = _read(CHALLENGE).lower()
     assert "identify the normal control path and the recovery path" in text
     assert "useful end-to-end transaction/progress proof" in text
-    assert "no recovery claim may depend exclusively on the mechanism it is responsible for repairing" in text
-    assert "no capability-health claim may be stronger than the transaction/progress evidence actually observed" in text
+    assert (
+        "no recovery claim may depend exclusively on the mechanism it is responsible for repairing"
+        in text
+    )
+    assert (
+        "no capability-health claim may be stronger than the transaction/progress evidence actually observed"
+        in text
+    )

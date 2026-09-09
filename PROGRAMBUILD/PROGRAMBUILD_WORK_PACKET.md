@@ -4,7 +4,7 @@
 
 Purpose: Define the smallest useful current-slice planning structure without creating a competing game plan or unnecessary documentation ceremony.
 Owner: Project Lead / Operator
-Last updated: 2026-09-06
+Last updated: 2026-09-09
 Depends on: `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`, `PROGRAMBUILD_CHALLENGE_GATE.md`, the project's strategic execution spine, relevant requirements/architecture/decisions
 Authority: Canonical for work-packet semantics, including accepted-recommendation resolution evidence, checklist completeness, and bounded cross-system test envelopes. A filled packet is derived execution context and is never canonical over project authority.
 
@@ -321,6 +321,23 @@ Closure statuses:
 - **not applicable** — current authority/risk proves the item does not apply; state why when non-obvious;
 - **blocked** — exact gate/action/owner is known and closure remains truthful;
 - **deferred** — only when the project's current authority explicitly permits deferral without invalidating closure.
+
+#### Accepted-recommendation obligation coverage
+
+When checklist completeness is active for a concrete accepted recommendation that is stable and materially multi-part, and omission or cross-owner risk is meaningful, atomize **only its material independently dispositionable obligations** into the existing checklist/Work Packet. Do not activate this rule for trivial recommendations or turn a simple recommendation into mandatory bureaucracy.
+
+For each such obligation, retain enough bounded context to preserve:
+
+- the obligation itself;
+- its durable owner;
+- any dependency that affects truthful closure;
+- the evidence and acceptance condition needed to dispose it;
+- the invalidation condition for that evidence/acceptance;
+- exactly one terminal recommendation-accountability disposition: `implemented_and_accepted`, `rejected_with_evidence`, `superseded_by_accepted_solution`, or `explicitly_deferred_to_owner`.
+
+`implemented_and_accepted` requires evidence sufficient for the owning acceptance authority; code presence or PR merge alone is not acceptance when runtime/provider/human proof remains stronger. `explicitly_deferred_to_owner` closes the **originating recommendation-accountability obligation only**: it does not assert that the receiving owner implemented or accepted the work, and it does not unblock an originating product/release dependency when current authority still requires the foreign outcome. Rejected or superseded obligations retain enough evidence to prevent silent resurrection/re-analysis.
+
+This coverage stays inside the existing derived checklist/Work Packet and is reconciled or discarded with it. Do not create a global obligation registry, recommendation ledger, parallel backlog, or new lifecycle for this purpose.
 
 An unchecked/forgotten required item is not equivalent to `not applicable` or `deferred`.
 
@@ -667,6 +684,7 @@ A packet is complete when:
 - acceptance criteria are resolved;
 - required targeted verification is complete;
 - if a checklist was active, every applicable required item is resolved as satisfied / not applicable with reason / blocked with exact gate / authority-permitted deferred;
+- when accepted-recommendation obligation coverage was activated, every material independently dispositionable obligation has one terminal recommendation-accountability disposition, and `explicitly_deferred_to_owner` is never treated as proof that the receiving owner's implementation is complete;
 - checklist fields were omitted when checklist completeness was not active rather than adding `not_needed` ceremony;
 - any post-implementation adversarial Challenge Gate required by the actual changed risk surface is `clear` or the packet remains truthfully blocked/warning rather than being declared merge-ready/complete;
 - material durable decisions/state are reconciled;

@@ -84,11 +84,5 @@ def test_recovery_challenge_matches_health_claim_to_useful_progress() -> None:
     text = _read(CHALLENGE).lower()
     assert "identify the normal control path and the recovery path" in text
     assert "useful end-to-end transaction/progress proof" in text
-    assert (
-        "no recovery claim may depend exclusively on the mechanism it is responsible for repairing"
-        in text
-    )
-    assert (
-        "no capability-health claim may be stronger than the transaction/progress evidence actually observed"
-        in text
-    )
+    assert "no recovery claim may depend exclusively on the mechanism it is responsible for repairing" in text
+    assert "no capability-health claim may be stronger than the transaction/progress evidence actually observed" in text

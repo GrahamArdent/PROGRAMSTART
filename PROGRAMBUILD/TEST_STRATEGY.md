@@ -1,9 +1,9 @@
 # TEST_STRATEGY.md
 
-Purpose: Test model, fixture strategy, coverage rules, endpoint-to-test registry, and cross-system behavioral-test authority discipline.
+Purpose: Test model, fixture strategy, coverage rules, and endpoint-to-test registry.
 Owner: Solo operator
-Last updated: 2026-09-06
-Depends on: REQUIREMENTS.md, USER_FLOWS.md, ARCHITECTURE.md, `PROGRAMBUILD_WORK_PACKET.md`
+Last updated: 2026-04-14
+Depends on: REQUIREMENTS.md, USER_FLOWS.md, ARCHITECTURE.md
 Authority: Canonical for quality model
 
 ---
@@ -92,51 +92,6 @@ Failure Impact: [What breaks for the user or operator if this fails]
 Test Type:      [unit / component / integration / E2E]
 ```
 
-## Cross-System Test Authority
-
-When a material integration/acceptance proposition spans multiple repositories, runtimes, providers, devices, people, or evidence systems, use the conditional test envelope in `PROGRAMBUILD_WORK_PACKET.md` rather than letting the scenario become a shared backlog.
-
-The core rule is:
-
-> **one behavioral proposition, one test authority**
-
-For that proposition:
-
-- **test authority** owns the behavior being claimed, the START/STOP boundary, and the success/failure verdict criteria;
-- **goal/product authority** owns the desired outcome;
-- **execution authority** owns whether each consequential effect is permitted while exercising the scenario;
-- **evidence authority** validates evidence provenance, integrity, binding, currentness, and evidence-purpose sufficiency;
-- **acceptance authority** decides whether the verified evidence satisfies the declared behavioral/system claim;
-- participant systems contribute bounded contracts/evidence under their own authority and do not inherit the test owner's backlog merely because the scenario traverses them.
-
-These roles may coincide for a simple owner-local test, but a material cross-system scenario must not assume they are identical. In particular:
-
-- evidence authority is not automatically test authority;
-- evidence authority is not automatically acceptance authority;
-- test authority cannot authorize provider/runtime/repository/secret effects;
-- a system that observes or records another system's outcome does not become responsible for that other system's implementation;
-- an external dependency blocks the originating project's closure only when the originating project's own product/release authority explicitly requires that external outcome, not merely because the test touched or discovered it.
-
-Use the cross-system envelope only where ownership ambiguity or consequence scope makes it useful. Do not add it to ordinary unit/component tests as ceremony, and do not create a central test registry, harness, or new orchestration layer merely to represent these roles.
-
-### Nested tests and system acceptance
-
-A parent acceptance scenario may contain participant-local subtests. This does not violate the one-authority rule: each distinct behavioral proposition has one test authority, while the parent proposition has its own single owner. A local Compute retry test, for example, may remain Compute-owned even when its evidence participates in a Controller-owned semantic-continuation acceptance scenario.
-
-### Chat-detachment acceptance
-
-A claim that backend work is independent of ChatGPT or another operator UI is a cross-system behavioral claim, not an Evidence Spine test merely because durable evidence must later be inspected.
-
-The behavioral owner must define an envelope where:
-
-1. durable admission occurs before the chat/UI detaches;
-2. after START, no chat-carried command, state, polling result, lane relay, or redundant `proceed` is required for the claimed continuation;
-3. the backend reaches its declared STOP/recovery state using durable Controller/worker/provider state;
-4. evidence authority may later prove what happened from machine evidence;
-5. later chat inspection is observational only.
-
-A GitHub Action or other external job continuing after chat closure is not by itself proof that a semantic objective was durably admitted and continued independently.
-
 ## Template Quality Standard
 
 - New repositories bootstrapped from PROGRAMSTART should inherit the same test discipline: validated contracts, strong regression coverage, and purpose tests tied to real outcomes.
@@ -180,7 +135,7 @@ PROGRAMSTART has no interactive user login flow. The dominant end-to-end validat
 |---|---|---|---|---|
 | `GET /` (index) | `test_serve_endpoints.py::TestGetIndex` | — | Yes (DOM check) | Yes (screenshot) |
 | `GET /api/state` | `test_serve_endpoints.py::TestGetApiState` | `TestGetStateJson` | Yes (hydration) | — |
-| `GET /api/doc?path=` | `test_serve_endpoints.py::TestGetApiDoc` | — | — | — |
+| `GET /api/doc?path=` | `test_serve_endpoints.py::TestGetApiDoc` | `TestGetDocPreview` | — | — |
 | `POST /api/run` | `test_serve_endpoints.py::TestPostApiRun` | `test_programstart_serve.py` (5 tests) | — | — |
 | `POST /api/uj-phase` | `test_serve_endpoints.py::TestPostUjPhase` | — | — | — |
 | `POST /api/uj-slice` | `test_serve_endpoints.py::TestPostUjSlice` | — | — | — |

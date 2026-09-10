@@ -5,8 +5,8 @@
 Purpose: Define the smallest useful current-slice planning structure without creating a competing game plan or unnecessary documentation ceremony.
 Owner: Project Lead / Operator
 Last updated: 2026-09-09
-Depends on: `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`, `PROGRAMBUILD_CHALLENGE_GATE.md`, the project's strategic execution spine, relevant requirements/architecture/decisions
-Authority: Canonical for work-packet semantics, including accepted-recommendation resolution evidence, checklist completeness, and bounded cross-system test envelopes. A filled packet is derived execution context and is never canonical over project authority.
+Depends on: `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`, `PROGRAMBUILD_CHALLENGE_GATE.md`, `docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md`, the project's strategic execution spine, relevant requirements/architecture/decisions
+Authority: Canonical for work-packet semantics, including accepted-recommendation resolution evidence, checklist completeness, bounded exploration/human-gate readiness, and bounded cross-system test envelopes. A filled packet is derived execution context and is never canonical over project authority.
 
 ---
 
@@ -28,7 +28,8 @@ It answers:
 - when coordinated lanes share one consequential mutable runtime/provider/device/deployment resource, which exact lane owns mutation now and what releases or transfers that ownership?
 - if another repository is a real dependency, which repository owns which meaning/mechanics and what is the current dependency state?
 - what cross-repository evidence is reusable, what invalidates it, and what external/manual boundary remains?
-- if an operator/manual action is the actual next gate, who must do exactly what, what evidence must come back, and where does execution resume?
+- when a proposed concept is materially uncertain, repeatedly failing, consequential, or approaching a human gate, what smallest evidence supports or falsifies that premise and what bounds further exploration?
+- if an operator/manual action is the actual next gate, is the procedure technically ready, what exactly remains human-only, who must do exactly what, what evidence must come back, and where does execution resume?
 - what is in and out of scope?
 - which current authority/evidence matters?
 - what evidence can be reused?
@@ -49,6 +50,7 @@ A work packet is **not**:
 - a place to copy the whole repository;
 - a credential/secret store;
 - a recommendation registry or hidden future-work queue;
+- a retry ledger or concept registry;
 - a checklist that can invent scope;
 - mandatory paperwork for trivial or single-step work.
 
@@ -103,6 +105,32 @@ TARGETED_VERIFICATION:
 DURABLE_UPDATES_IF_NEEDED:
 ```
 
+Conditional concept-viability fields — include only when the chosen mechanism is materially uncertain, repeatedly failing, consequential enough to justify premise testing, or approaching a human gate with unresolved viability:
+
+```text
+CONCEPT:
+WHY_IT_SHOULD_WORK:
+MINIMUM_FALSIFICATION_TEST:
+FALSIFICATION_CONDITION:
+CONCEPT_STATUS: [untested | supported | inconclusive | falsified]
+ALTERNATIVE_CONCEPTS:
+EXPLORATION_BUDGET:
+LAST_ATTEMPT_DELTA:
+```
+
+These fields bound reasoning; they are not a new lifecycle or retry registry. `EXPLORATION_BUDGET` describes a proportional evidence/effort boundary, not a mandatory numeric retry count. `LAST_ATTEMPT_DELTA` is required only when another materially similar attempt is being considered and must state what changed and why that change could alter the result.
+
+Conditional human-gate readiness fields — include when `OPERATOR_GATE: active` and an operator handoff is being prepared:
+
+```text
+GATE_CLASSIFICATION: [genuine_human_gate | temporary_automation_gap]
+GATE_READINESS: [not_ready | ready]
+GATE_READINESS_EVIDENCE:
+HUMAN_ONLY_REMAINDER:
+```
+
+`GATE_READINESS: ready` is admissible only when machine-obtainable uncertainty material to the requested human action has been resolved to the level warranted by its consequence, the procedure itself has been validated, and the exact human-only authority/evidence remainder is known. An automation failure count by itself can never make a gate ready.
+
 Conditional shared-mutation ownership fields — include only when coordinated/current lanes can mutate the same consequential external/runtime/provider/device/deployment resource:
 
 ```text
@@ -155,6 +183,8 @@ Cross-repository fields may be `none` when the packet has no real companion depe
 
 Operator-gate fields may be `none` when the current slice can proceed in the available environment. A manual gate does **not** require a cross-repository dependency; credentials, provider-console actions, physical-device checks, human review, approvals, or other operator-only actions can be single-project gates.
 
+Do not activate concept-viability fields for routine deterministic work that already has sufficient evidence and a well-understood mechanism. Their purpose is to prevent premise lock-in and low-information loops, not to create ceremony.
+
 When checklist completeness is not active, omit the checklist fields entirely rather than recording `not_needed`. When it is active, use `inline` or `referenced`; checklist items must come from current authority/acceptance/risk obligations and cannot silently create scope.
 
 If implementation introduces a material trust/security, persistence/idempotency/retry/concurrency, schema/migration, destructive/external-side-effect, production runtime/deployment, or other high-impact/hard-to-reverse boundary, activate the conditional field and run the existing Challenge Gate before declaring merge-ready/complete.
@@ -187,17 +217,18 @@ A project MAY keep at most one active replaceable `CURRENT_WORK_PACKET.md` unles
 5. **Classify blockers** — if the closure-control row is blocked, identify the exact blocked action and classify the narrowest truthful scope before treating work as stopped.
 6. **Scan safe lanes** — consider Lane A read-only/analysis, Lane B reversible repository/preparation work, and Lane C live/irreversible/external work under the project's own dependency and safety rules. A blocker label never automatically authorizes Lane C.
 7. **Coordinate Mode-C lanes when the spine exposes more than one current lane** — keep closure-control unchanged, list only the current lanes needed for the decision, record independence/conflict/convergence evidence, select exactly one current executable packet for this invocation, and establish exclusive shared-mutation ownership when those lanes can touch the same consequential mutable resource.
-8. **Resolve an operator/manual gate when needed** — if the actual next action cannot be performed in the current environment, return one exact handoff instead of a generic "manual action required" stop.
-9. **Narrow** to one coherent objective with explicit non-goals. If disposition is `defer_without_resequencing`, the accepted future recommendation is not the execution objective; derive the real current slice instead.
-10. **Reference** only the exact authority sections/evidence needed now.
-11. **Reuse** trustworthy evidence whose invalidation conditions have not occurred, including valid evidence from a companion repository or prior operator action.
-12. **Activate checklist completeness when useful** — use an inline/referenced checklist when omission risk is meaningful or an applicable durable checklist exists; omit checklist fields entirely for trivial work rather than adding `not_needed` ceremony.
-13. **Execute** only the selected packet without silently widening scope or treating recommendation acceptance, a dependency graph, coordinated-lane view, shared-mutation ownership, checklist, or handoff as broader mutation authority.
-14. **Verify** the changed/at-risk surface with the smallest sufficient check set.
-15. **Challenge closure when the actual risk surface requires it** — before merge-ready/accepted/complete status, inspect the completed implementation/config/runtime behavior and run the existing `PROGRAMBUILD_CHALLENGE_GATE.md` post-implementation adversarial review when triggered. Do not use green current tests as a substitute for constructing a realistic failure sequence against a material invariant.
-16. **Reconcile checklist completeness when active** — every applicable item must be satisfied, not applicable with reason, blocked with exact gate, or deferred only when authority permits. A forgotten/unresolved required item prevents truthful closure.
-17. **Reconcile durable state** — material decisions/scope/architecture/status belong in the repository that owns each concern. If execution disproved the accepted recommendation's premise, reconcile actual evidence rather than forcing the original recommendation through.
-18. **Close or hand off** the packet and derive the next slice from the newly current state.
+8. **Challenge concept viability when useful** — before materially investing in an uncertain/repeatedly failing/consequential approach or escalating it to a human gate, state the premise, use the smallest discriminating evidence/falsification test, bound further exploration, and pivot rather than forcing a falsified concept. Another attempt must add a material delta and reason it could change the result.
+9. **Resolve an operator/manual gate when needed** — classify the gate, search bounded alternative actuation when it is a temporary automation gap, and prepare a handoff only after `GATE_READINESS: ready`. If readiness is not established, continue machine-side validation/research or pivot instead of making the operator debug the procedure.
+10. **Narrow** to one coherent objective with explicit non-goals. If disposition is `defer_without_resequencing`, the accepted future recommendation is not the execution objective; derive the real current slice instead.
+11. **Reference** only the exact authority sections/evidence needed now.
+12. **Reuse** trustworthy evidence whose invalidation conditions have not occurred, including valid evidence from a companion repository or prior operator action.
+13. **Activate checklist completeness when useful** — use an inline/referenced checklist when omission risk is meaningful or an applicable durable checklist exists; omit checklist fields entirely for trivial work rather than adding `not_needed` ceremony.
+14. **Execute** only the selected packet without silently widening scope or treating recommendation acceptance, a dependency graph, coordinated-lane view, shared-mutation ownership, concept status, checklist, or handoff as broader mutation authority.
+15. **Verify** the changed/at-risk surface with the smallest sufficient check set.
+16. **Challenge closure when the actual risk surface requires it** — before merge-ready/accepted/complete status, inspect the completed implementation/config/runtime behavior and run the existing `PROGRAMBUILD_CHALLENGE_GATE.md` post-implementation adversarial review when triggered. Do not use green current tests or eventual success as a substitute for constructing a realistic failure sequence or reviewing a materially poor execution trajectory.
+17. **Reconcile checklist completeness when active** — every applicable item must be satisfied, not applicable with reason, blocked with exact gate, or deferred only when authority permits. A forgotten/unresolved required item prevents truthful closure.
+18. **Reconcile durable state** — material decisions/scope/architecture/status belong in the repository that owns each concern. If execution disproved the accepted recommendation's premise or the selected concept, reconcile actual evidence rather than forcing the original recommendation/concept through.
+19. **Close or hand off** the packet and derive the next slice from the newly current state.
 
 If the packet needs its own backlog, milestones, or independent sequencing, it is too large. Split it.
 
@@ -240,9 +271,34 @@ Independent work in the primary repository may proceed only when that repository
 
 ### 3.2 Operator / manual gate handoff rule
 
-An operator/manual gate is a **derived, bounded handoff**, not a new project state machine or authority layer. Use it when the current environment cannot perform the exact next action and waiting without a precise handoff would create ambiguity or repeated orientation work.
+An operator/manual gate is a **derived, bounded handoff**, not a new project state machine or authority layer. Use it when the actual next action genuinely needs operator/provider/physical evidence or when a mechanical action is already authorized but no bounded alternative actuator survives the Effective Autonomy checks.
 
-A useful handoff MUST state:
+Before the handoff becomes active for operator notification, classify it under `docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md` and require:
+
+```text
+GATE_CLASSIFICATION: [genuine_human_gate | temporary_automation_gap]
+GATE_READINESS: ready
+GATE_READINESS_EVIDENCE:
+HUMAN_ONLY_REMAINDER:
+```
+
+`GATE_READINESS` is **not** a retry counter. It proves that the system has done the work that can reasonably be done before consuming human attention.
+
+For a non-trivial gate, `GATE_READINESS_EVIDENCE` should retain only the evidence needed to show, where applicable:
+
+- the concept/mechanism remains sufficiently supported for the requested consequence;
+- current documentation/runtime/provider evidence supports the procedure;
+- the relevant shell/tool/version/target is known;
+- syntax, quoting, formatting, paths, typed arguments, config shape, or equivalent procedure details have been validated;
+- harmless/dummy/non-secret portions were exercised where practical and useful;
+- the consumer, destination, scope, owner/permission requirements, and secret-sensitive boundary are known;
+- the post-action system verification is already defined;
+- rollback/removal/recovery is understood when consequence/persistence warrants it;
+- `HUMAN_ONLY_REMAINDER` truly identifies the authority, secret possession, MFA, provider approval, physical action, judgment, or evidence that cannot be supplied mechanically.
+
+If material readiness evidence is still missing, set `GATE_READINESS: not_ready` in current task state and **do not notify the operator simply to debug the instructions**. Continue bounded research/validation, select a better-supported concept, or stop truthfully at the unresolved non-human boundary.
+
+A useful ready handoff MUST state:
 
 - **gate owner** — the person, provider console, physical device, reviewer, approver, or other boundary that can perform the action;
 - **required action** — one concrete next action or tightly coupled action set; avoid vague instructions such as "finish setup";
@@ -264,6 +320,8 @@ Handoff rules:
 7. Resume at the declared `RESUME_AT` point. A handoff does not silently advance or close the project's execution spine.
 8. If the operator action changes a cross-repository dependency, reconcile each repository independently under its own authority rather than treating the handoff as a multi-project transaction.
 9. Generic acceptance of the recommendation that led to the gate does not automatically satisfy the gate itself. Preserve the exact action/evidence boundary until it is actually crossed.
+10. A concept that becomes falsified before the operator acts invalidates the handoff. Withdraw/rebuild the handoff rather than consuming human action to rescue the stale premise.
+11. If the operator must correct command formatting, syntax, path, destination, permission, or another material machine-resolvable detail after handoff, treat that as counterevidence to `GATE_READINESS: ready`, correct the procedure, and route reusable learning to the behavior owner.
 
 A generic statement such as `manual action required` is insufficient when the next action can be specified truthfully.
 
@@ -445,6 +503,16 @@ SAFE_EXECUTION_LANE: [A | B | C | none]
 BLOCKED_ACTION:
 CLOSURE_CONTROL:
 
+## Concept Viability / Bounded Exploration — omit unless materially useful
+CONCEPT:
+WHY_IT_SHOULD_WORK:
+MINIMUM_FALSIFICATION_TEST:
+FALSIFICATION_CONDITION:
+CONCEPT_STATUS: [untested | supported | inconclusive | falsified]
+ALTERNATIVE_CONCEPTS:
+EXPLORATION_BUDGET:
+LAST_ATTEMPT_DELTA:
+
 ## Concurrent Mode-C Lane Coordination
 COORDINATED_MODE_C_LANES: [none | current lane names/descriptions]
 SELECTED_LANE:
@@ -467,6 +535,10 @@ MANUAL_BOUNDARY:
 
 ## Operator / Manual Gate Handoff
 OPERATOR_GATE: [none | active]
+GATE_CLASSIFICATION: [genuine_human_gate | temporary_automation_gap]
+GATE_READINESS: [not_ready | ready]
+GATE_READINESS_EVIDENCE:
+HUMAN_ONLY_REMAINDER:
 GATE_OWNER:
 REQUIRED_ACTION:
 SENSITIVE_INPUT_HANDLING:
@@ -501,7 +573,7 @@ OWNER_HANDOFFS:
 One concrete outcome.
 
 ## Why This Is Next
-Trace to the execution spine, accepted-recommendation disposition, dependency order, blocker resolution, coordinated-lane selection, safe-lane preparation, operator gate, or current stage.
+Trace to the execution spine, accepted-recommendation disposition, dependency order, blocker resolution, concept viability, coordinated-lane selection, safe-lane preparation, ready operator gate, or current stage.
 
 ## Scope
 ### In
@@ -521,11 +593,13 @@ Trace to the execution spine, accepted-recommendation disposition, dependency or
 
 When an external resource is involved, preserve **historical existence** separately from **current visibility/accessibility**. A resource that is currently missing or inaccessible is not automatically proven never to have existed or to have been deleted.
 
+For concept viability, preserve only the evidence/falsification result and attempt delta needed to justify the next action. A later contradictory observation invalidates `supported`; do not retain success-by-inertia.
+
 For coordinated lanes, preserve the independence/conflict/convergence evidence that made the selected packet safe. If another lane changes a shared assumption or mutable surface, re-evaluate only the affected coordination decision rather than replaying the whole project. If a shared-mutation lease exists, any mutation of that resource by another lane invalidates the lease evidence and dependent physical/runtime acceptance until ownership and current state are reconciled again.
 
 For cross-repository evidence, preserve the repository/runtime/test source and the exact invalidation condition. Do not collapse a partially satisfied dependency into a boolean green state.
 
-For operator-returned evidence, retain non-secret provenance and the exact acceptance/invalidation condition. Do not persist credentials merely to make the handoff durable.
+For operator-returned evidence, retain non-secret provenance and the exact acceptance/invalidation condition. Do not persist credentials merely to make the handoff durable. A change that falsifies the concept, procedure, target, consumer, permissions, or secret destination invalidates gate readiness before the human action is requested.
 
 For a material cross-system test, retain only the authority roles, bounded START/STOP conditions, authorized/prohibited effects, and evidence/verdict references needed to prevent ownership confusion. Do not copy participant backlogs into the packet.
 
@@ -599,13 +673,15 @@ Do not paste pages of authoritative text into a packet unless the task genuinely
 
 For accepted recommendations, reference the prior recommendation and only the authority needed to determine its disposition. Do not copy an entire conversation into the packet.
 
+For concept viability/bounded exploration, keep the smallest discriminating premise/evidence/falsification/attempt-delta state; do not accumulate an exhaustive retry diary.
+
 For checklist items, reference the owning requirement/gate/acceptance source rather than copying broad documents. The checklist should reduce omission risk without increasing context unnecessarily.
 
 For coordinated Mode-C lanes, load only the source rows/constraints and shared surfaces needed to prove independence/conflict/convergence and any active shared-mutation ownership. Do not load the whole future milestone map just to list candidate lanes.
 
 For a companion repository, load only the authority/evidence needed to resolve the declared dependency. Do not load its entire planning hierarchy merely because a cross-repository edge exists.
 
-For an operator gate, name secure secret/config surfaces and required non-secret return evidence rather than copying secret values, broad provider-console state, or unrelated logs into the packet.
+For an operator gate, name secure secret/config surfaces, readiness evidence, human-only remainder, and required non-secret return evidence rather than copying secret values, broad provider-console state, or unrelated logs into the packet.
 
 The packet should make context **smaller**.
 
@@ -633,11 +709,13 @@ For provider/runtime resources, keep these facts distinct:
 
 `not visible` or `inaccessible` MUST NOT silently rewrite verified historical existence to `never existed` or `deleted`.
 
+For concept viability, `supported` remains reusable only while the evidence, mechanism, environment, requirements, and falsification conditions that justified it still hold. A materially contradictory result must lower/reclassify the concept rather than be buried under more retries. A successful end state does not erase a materially defective trajectory when deciding whether to standardize/reuse the path.
+
 For coordinated Mode-C lanes, reuse the authority/evidence that proves a packet independent until a selected or sibling lane changes a shared dependency, mutable surface, closure assumption, or active shared-mutation resource. A lane label alone is not evidence of independence. If the consequential resource changes under another lane, exact-source/runtime/provider acceptance that depended on the prior resource state is invalid until current ownership/state is reconciled.
 
 For cross-repository dependencies, evidence remains reusable only while its declared assumptions and invalidation conditions still hold. Repository merge state, head changes, contract/runtime changes, provider state, credential state, or directly conflicting evidence may invalidate only the relevant portion rather than forcing a full re-audit of both repositories.
 
-For operator gates, record the returned **outcome/evidence**, not the secret material used to produce it. An operator's statement that an action was performed may satisfy an action-completion fact, but runtime/device/provider acceptance still requires the evidence defined by `EVIDENCE_ACCEPTANCE`.
+For operator gates, record the returned **outcome/evidence**, not the secret material used to produce it. An operator's statement that an action was performed may satisfy an action-completion fact, but runtime/device/provider acceptance still requires the evidence defined by `EVIDENCE_ACCEPTANCE`. Human-gate readiness is invalidated when the concept, procedure, target, consumer, version, permission model, secret destination, or post-check changes materially before the operator acts.
 
 For accepted recommendations, current execution/runtime evidence can invalidate the recommendation's premise. Generic operator acceptance does not override contradictory evidence discovered during implementation; reconcile actual truth and derive a new slice instead of forcing the original recommendation through.
 
@@ -661,14 +739,16 @@ For an existing repository:
 - if the active closure row is blocked, classify blocker scope and scan safe lanes before concluding the project must wait;
 - when several current lanes legitimately coexist under the one spine, keep closure-control explicit and select one independently authorized packet for the current invocation;
 - when those lanes share a consequential mutable external/runtime/provider/device/deployment resource, preserve one explicit mutation owner across invocations and keep sibling lanes non-mutating on that resource until release/transfer;
-- if the next action is operator-only, return the exact handoff and resume point rather than a generic blocked status;
+- when the chosen mechanism is materially uncertain, repeatedly failing, consequential, or approaching a human gate, test/falsify the concept and bound exploration instead of exhaustively perturbing one implementation;
+- another materially similar attempt must state the attempt delta and why it could change the result;
+- if the next action is operator-only, classify the gate and require gate readiness before returning the exact handoff; do not make the operator debug unvalidated instructions;
 - when operator evidence returns, reorient only enough to confirm acceptance/invalidation and resume the existing spine;
 - use an applicable checklist when omission risk warrants it, and reconcile its required items before closure;
-- inspect the actual completed change for a risk-triggered post-implementation Challenge Gate before merge-ready/closure;
+- inspect both the actual completed change and any materially suspect execution trajectory for a risk-triggered post-implementation Challenge Gate before merge-ready/closure;
 - reconcile accepted changes back into the repository that owns the relevant canonical artifact;
 - close/replace the packet after the slice.
 
-A newer packet, recommendation-resolution result, coordinated-lane view, shared-mutation lease, checklist, research report, cross-repository graph, operator handoff, or adversarial-review result never outranks established project authority merely because it is newer.
+A newer packet, recommendation-resolution result, concept status, coordinated-lane view, shared-mutation lease, checklist, research report, cross-repository graph, operator handoff, or adversarial-review result never outranks established project authority merely because it is newer.
 
 ---
 
@@ -681,20 +761,22 @@ A packet is complete when:
 - `reconcile_authority_then_execute` work has its durable authority/decision truth reconciled rather than leaving known stale authority behind;
 - `defer_without_resequencing` did not silently execute/reorder the deferred recommendation and the real current slice remains truthful;
 - any stronger gate overlay remains preserved until its actual action/evidence requirement is satisfied;
+- if concept viability/bounded exploration was activated, its status/evidence truthfully supports the final action or records the falsification/pivot; a falsified concept was not silently rescued through operator effort;
+- no repeated-attempt sequence used substantially identical attempts as evidence of progress without a material attempt delta;
 - acceptance criteria are resolved;
 - required targeted verification is complete;
 - if a checklist was active, every applicable required item is resolved as satisfied / not applicable with reason / blocked with exact gate / authority-permitted deferred;
 - when accepted-recommendation obligation coverage was activated, every material independently dispositionable obligation has one terminal recommendation-accountability disposition, and `explicitly_deferred_to_owner` is never treated as proof that the receiving owner's implementation is complete;
 - checklist fields were omitted when checklist completeness was not active rather than adding `not_needed` ceremony;
-- any post-implementation adversarial Challenge Gate required by the actual changed risk surface is `clear` or the packet remains truthfully blocked/warning rather than being declared merge-ready/complete;
+- any post-implementation adversarial Challenge Gate required by the actual changed risk surface or materially suspect trajectory is `clear` or the packet remains truthfully blocked/warning rather than being declared merge-ready/complete;
 - material durable decisions/state are reconciled;
 - remaining blockers are durably tracked with their narrowest truthful scope;
 - if coordinated Mode-C lanes are present, closure-control stayed unchanged, one packet was selected for this invocation, independence/conflict evidence stayed valid, and the convergence point remains explicit;
 - if a shared-mutation lease was active, the owning packet remained the sole mutator of that resource and completion leaves ownership explicitly released, transferred, or still active with a truthful reason/gate;
 - any cross-repository dependency state is supported by current evidence and does not overstate partial satisfaction;
 - any remaining external/manual boundary is exact;
-- if stopped at an operator gate, the handoff, safe-while-waiting rule, and exact resume point are explicit and project closure is not falsely claimed;
+- if stopped at an operator gate, `GATE_READINESS: ready`, readiness evidence, human-only remainder, the handoff, safe-while-waiting rule, and exact resume point are explicit and project closure is not falsely claimed;
 - if a material cross-system test envelope was active, the declared START/STOP and authority roles remained valid, test effects stayed inside execution authority, and foreign findings were handed to their real owners unless the originating project's own authority explicitly made them closure dependencies;
 - the next executable safe slice, or the exact reason no safe slice exists, can be derived from current project state without relying on the old packet/checklist as authority.
 
-**Success test:** the packet reduced execution ambiguity and omission risk more than it increased documentation work.
+**Success test:** the packet reduced execution ambiguity, premise lock-in, avoidable human debugging, and omission risk more than it increased documentation work.

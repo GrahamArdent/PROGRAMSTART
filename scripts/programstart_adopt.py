@@ -39,6 +39,9 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
     )
 
 
+AGENT_CONTRACT = "AGENTS.md"
+
+
 def _git_head_hash() -> str:
     try:
         return subprocess.check_output(
@@ -78,6 +81,24 @@ def _assert_safe_destination(destination_root: Path, prompt_assets: tuple[str, .
             identical = False
         if not identical:
             raise FileExistsError(f"Adoption would overwrite existing project file: {relative_path}")
+
+
+def _seed_agent_contract(destination_root: Path, *, dry_run: bool) -> bool:
+    """Seed the reusable root AGENTS.md only when the project has no local contract.
+
+    An existing project-owned AGENTS.md is authoritative for that repository's execution
+    behavior and must never be replaced by PROGRAMSTART adoption. A seeded AGENTS.md is
+    intentionally not added to the managed adoption manifest, so subsequent methodology
+    sync cannot silently overwrite project-local agent rules.
+    """
+    destination = destination_root / AGENT_CONTRACT
+    if destination.exists():
+        if dry_run:
+            print(f"PRESERVE {destination}")
+        return False
+
+    copy_file(workspace_path(AGENT_CONTRACT), destination, dry_run)
+    return True
 
 
 def _adopted_registry(
@@ -172,6 +193,7 @@ def adopt_programbuild(
         print(f"ADOPT PROGRAMBUILD -> {destination_root}")
 
     bootstrap_programbuild(destination_root, registry, variant, dry_run)
+    _seed_agent_contract(destination_root, dry_run=dry_run)
 
     for relative_path in prompt_assets:
         source = workspace_path(relative_path)

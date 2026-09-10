@@ -33,11 +33,7 @@ def _registry() -> dict:
             "operator_prompt_files": [],
             "internal_prompt_files": [],
         },
-        "prompt_authority": {
-            ".github/prompts/stage.prompt.md": {
-                "authority_files": ["PROGRAMBUILD/PROGRAMBUILD.md"]
-            }
-        },
+        "prompt_authority": {".github/prompts/stage.prompt.md": {"authority_files": ["PROGRAMBUILD/PROGRAMBUILD.md"]}},
         "workflow_guidance": {"operator": {"unused": {}}, "programbuild": {}},
         "validation": {"enforce_engineering_ready_in_all": True},
         "integrity": {"baselines": [{"name": "template"}]},
@@ -93,28 +89,17 @@ def test_adopt_preserves_host_toolchain_and_tracks_only_managed_methodology(
     adopt.adopt_programbuild(destination, project_name="Existing App", variant="product")
 
     assert (destination / "README.md").read_text(encoding="utf-8") == "host readme\n"
-    assert (destination / "pyproject.toml").read_text(encoding="utf-8") == (
-        "[project]\nname='host'\n"
-    )
+    assert (destination / "pyproject.toml").read_text(encoding="utf-8") == ("[project]\nname='host'\n")
     assert (destination / ".github" / "prompts" / "stage.prompt.md").exists()
-    assert (destination / "AGENTS.md").read_text(encoding="utf-8") == (
-        "# PROGRAMSTART agent contract\n"
-    )
+    assert (destination / "AGENTS.md").read_text(encoding="utf-8") == ("# PROGRAMSTART agent contract\n")
 
-    project_registry = json.loads(
-        (destination / "config" / "process-registry.json").read_text(encoding="utf-8")
-    )
+    project_registry = json.loads((destination / "config" / "process-registry.json").read_text(encoding="utf-8"))
     assert project_registry["workspace"]["repo_role"] == "existing_project_repo"
-    assert (
-        project_registry["workspace"]["provisioning_scope"]
-        == "programbuild_management_overlay_only"
-    )
+    assert project_registry["workspace"]["provisioning_scope"] == "programbuild_management_overlay_only"
     assert "pyproject.toml" not in project_registry["workspace"]["bootstrap_assets"]
     assert project_registry["validation"]["enforce_engineering_ready_in_all"] is False
 
-    manifest = json.loads(
-        (destination / ".programstart-manifest.json").read_text(encoding="utf-8")
-    )
+    manifest = json.loads((destination / ".programstart-manifest.json").read_text(encoding="utf-8"))
     assert manifest["mode"] == "existing_project_adoption"
     assert manifest["source_commit"] == "abc123"
     assert "PROGRAMBUILD/PROGRAMBUILD.md" in manifest["files"]
@@ -144,9 +129,7 @@ def test_adopt_preserves_existing_project_agent_contract(tmp_path: Path, monkeyp
     adopt.adopt_programbuild(destination, project_name="Existing App")
 
     assert existing_agents.read_text(encoding="utf-8") == "# host-specific execution contract\n"
-    manifest = json.loads(
-        (destination / ".programstart-manifest.json").read_text(encoding="utf-8")
-    )
+    manifest = json.loads((destination / ".programstart-manifest.json").read_text(encoding="utf-8"))
     assert "AGENTS.md" not in manifest["files"]
 
 

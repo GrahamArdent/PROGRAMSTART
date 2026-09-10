@@ -31,6 +31,7 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
         generated_repo_prompt_authority_for_mode,
         generated_repo_prompt_registry_for_mode,
     )
+
     from programstart_common import (
         load_registry,
         warn_direct_script_invocation,
@@ -62,13 +63,9 @@ def _assert_safe_destination(destination_root: Path, prompt_assets: tuple[str, .
     if (destination_root / "PROGRAMBUILD").exists():
         raise FileExistsError("PROGRAMBUILD already exists in destination; adoption will not overwrite it.")
     if (destination_root / "config" / "process-registry.json").exists():
-        raise FileExistsError(
-            "config/process-registry.json already exists in destination; adoption will not overwrite it."
-        )
+        raise FileExistsError("config/process-registry.json already exists in destination; adoption will not overwrite it.")
     if (destination_root / MANIFEST_FILENAME).exists():
-        raise FileExistsError(
-            f"{MANIFEST_FILENAME} already exists in destination; repository may already be linked."
-        )
+        raise FileExistsError(f"{MANIFEST_FILENAME} already exists in destination; repository may already be linked.")
 
     for relative_path in prompt_assets:
         destination = destination_root / relative_path
@@ -158,9 +155,7 @@ def _write_adoption_manifest(
     prompt_assets: tuple[str, ...],
 ) -> None:
     state_file = registry["workflow_state"]["programbuild"]["state_file"]
-    managed_controls = [
-        path for path in registry["systems"]["programbuild"]["control_files"] if path != state_file
-    ]
+    managed_controls = [path for path in registry["systems"]["programbuild"]["control_files"] if path != state_file]
     manifest = {
         "programstart_version": "1.0.0",
         "source_commit": _git_head_hash(),
@@ -229,10 +224,7 @@ def adopt_programbuild(
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description=(
-            "Adopt PROGRAMBUILD in an existing repository without replacing "
-            "its native engineering toolchain."
-        )
+        description=("Adopt PROGRAMBUILD in an existing repository without replacing its native engineering toolchain.")
     )
     parser.add_argument("--dest", required=True, help="Existing repository root to adopt.")
     parser.add_argument("--project-name", help="Project name to stamp into the adopted registry.")

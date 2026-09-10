@@ -69,6 +69,7 @@ def test_adopt_preserves_host_toolchain_and_tracks_only_managed_methodology(
     prompt = template / ".github" / "prompts" / "stage.prompt.md"
     prompt.parent.mkdir(parents=True)
     prompt.write_text("# Stage Prompt\n", encoding="utf-8")
+    (template / "AGENTS.md").write_text("# PROGRAMSTART agent contract\n", encoding="utf-8")
 
     destination = tmp_path / "existing"
     destination.mkdir()
@@ -96,6 +97,9 @@ def test_adopt_preserves_host_toolchain_and_tracks_only_managed_methodology(
         "[project]\nname='host'\n"
     )
     assert (destination / ".github" / "prompts" / "stage.prompt.md").exists()
+    assert (destination / "AGENTS.md").read_text(encoding="utf-8") == (
+        "# PROGRAMSTART agent contract\n"
+    )
 
     project_registry = json.loads(
         (destination / "config" / "process-registry.json").read_text(encoding="utf-8")
@@ -118,6 +122,32 @@ def test_adopt_preserves_host_toolchain_and_tracks_only_managed_methodology(
     assert "PROGRAMBUILD/PROGRAMBUILD_STATE.json" not in manifest["files"]
     assert "PROGRAMBUILD/REQUIREMENTS.md" not in manifest["files"]
     assert "config/process-registry.json" not in manifest["files"]
+    assert "AGENTS.md" not in manifest["files"]
+
+
+def test_adopt_preserves_existing_project_agent_contract(tmp_path: Path, monkeypatch) -> None:
+    template = tmp_path / "template"
+    template.mkdir()
+    (template / "AGENTS.md").write_text("# template agent contract\n", encoding="utf-8")
+
+    destination = tmp_path / "existing"
+    destination.mkdir()
+    existing_agents = destination / "AGENTS.md"
+    existing_agents.write_text("# host-specific execution contract\n", encoding="utf-8")
+
+    monkeypatch.setattr(adopt, "load_registry", _registry)
+    monkeypatch.setattr(adopt, "_managed_prompt_assets", lambda _registry: ())
+    monkeypatch.setattr(adopt, "workspace_path", lambda relative: template / relative)
+    monkeypatch.setattr(adopt, "bootstrap_programbuild", _fake_bootstrap)
+    monkeypatch.setattr(adopt, "_git_head_hash", lambda: "abc123")
+
+    adopt.adopt_programbuild(destination, project_name="Existing App")
+
+    assert existing_agents.read_text(encoding="utf-8") == "# host-specific execution contract\n"
+    manifest = json.loads(
+        (destination / ".programstart-manifest.json").read_text(encoding="utf-8")
+    )
+    assert "AGENTS.md" not in manifest["files"]
 
 
 def test_adopt_refuses_to_overwrite_existing_prompt(tmp_path: Path, monkeypatch) -> None:
@@ -159,6 +189,9 @@ def test_adopt_dry_run_does_not_modify_repo(tmp_path: Path, monkeypatch, capsys)
         dry_run=True,
     )
 
-    assert "ADOPT PROGRAMBUILD" in capsys.readouterr().out
+    output = capsys.readouterr().out
+    assert "ADOPT PROGRAMBUILD" in output
+    assert "AGENTS.md" in output
     assert not (destination / "PROGRAMBUILD").exists()
+    assert not (destination / "AGENTS.md").exists()
     assert not (destination / ".programstart-manifest.json").exists()

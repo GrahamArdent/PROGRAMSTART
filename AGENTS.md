@@ -2,11 +2,9 @@
 
 Status: **ACTIVE**
 
-Repository: `GrahamArdent/PROGRAMSTART`
+This file defines **how coding/review agents execute work in a PROGRAMSTART-managed repository**. It is an execution-facing instruction surface for agents such as Codex; it does not replace the repository's project/methodology authority.
 
-This file defines **how coding/review agents execute work in this repository**. It is an execution-facing instruction surface for agents such as Codex; it does not replace PROGRAMSTART project/methodology authority.
-
-PROGRAMSTART remains authoritative through the existing owners indexed in `PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md` and `PROGRAMBUILD/PROGRAMBUILD_FILE_INDEX.md`.
+In the PROGRAMSTART template repository, reusable methodology authority is indexed by `PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md` and `PROGRAMBUILD/PROGRAMBUILD_FILE_INDEX.md`. In a generated or adopted project, the project's current execution spine, decisions, requirements, architecture, live/runtime truth, and any stronger local authority remain primary for their concerns.
 
 The operating principle is:
 
@@ -16,16 +14,16 @@ The operating principle is:
 
 ## 1. Mandatory startup — narrow and current
 
-For substantive PROGRAMSTART work:
+For substantive work:
 
 1. recover current repository / branch / PR / CI truth;
-2. read `PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md` and the exact authority owners implicated by the requested change;
-3. when an existing PR/branch already owns the same mutation surface, continue that owner rather than creating a competing branch/PR;
+2. identify the repository's current strategic execution spine and the exact authority owners implicated by the requested change; use `PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md` as the PROGRAMSTART concern-routing map where applicable;
+3. when an existing PR/branch already owns the same mutation surface, continue that owner rather than creating a competing branch/PR unless current repository authority explicitly requires otherwise;
 4. load only the PROGRAMSTART protocols triggered by the current work, especially:
    - `PROGRAMBUILD/PROGRAMBUILD_WORK_PACKET.md` for current-slice execution semantics;
    - `PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md` for risk/convergence/post-implementation adversarial review;
    - `docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md` for autonomy, concept viability, alternative actuation, and human-gate readiness;
-   - `docs/PROGRAMSTART_LEARNING_LOOP.md` for reusable methodology learning;
+   - `docs/PROGRAMSTART_LEARNING_LOOP.md` for reusable methodology learning when that support file is present;
    - `docs/PROGRAMSTART_AUTHORITY_GAP_RECONCILIATION.md` when a material derived finding is missing from its real owner;
 5. use `PROGRAMBUILD/PROGRAMBUILD_SUBAGENTS.md` or `.github/agents/*.agent.md` only when a bounded specialist role materially improves the result.
 
@@ -35,18 +33,20 @@ Do not load the entire methodology corpus by habit. Reuse still-valid evidence a
 
 ## 2. Authority and instruction boundary
 
-`AGENTS.md` owns repository execution behavior for agents. It does **not** own project scope, sequencing, architecture, requirements, release status, or provider/runtime truth.
+`AGENTS.md` owns repository execution behavior for compatible agents. It does **not** own project scope, sequencing, architecture, requirements, release status, or provider/runtime truth.
 
 When sources disagree, prefer the strongest current applicable evidence/authority. At minimum:
 
 1. direct system/developer/user instructions that apply to the current agent session;
 2. observed live repository/runtime/provider truth for claims about current state;
 3. validated code and reproducible tests for implementation behavior;
-4. `PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md` and the concern owner named there;
+4. the repository's current strategic execution spine and canonical concern owner, including `PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md` where applicable;
 5. this `AGENTS.md` for execution behavior;
 6. supporting/derived evidence and historical material.
 
 A Work Packet, checklist, recommendation, learning observation, audit, chat transcript, or specialist-agent result cannot grant authority merely because it is newer.
+
+A project-local `AGENTS.md` may add stronger repository-specific execution/safety rules. PROGRAMSTART adoption must preserve an existing project-owned `AGENTS.md` rather than overwrite it with the reusable default.
 
 ---
 
@@ -144,7 +144,7 @@ Do not modify requirements/architecture/canonical files merely to silence a drif
 
 ## 7. PROGRAMSTART learning
 
-At meaningful completion/blocker/correction points, apply `docs/PROGRAMSTART_LEARNING_LOOP.md`.
+At meaningful completion/blocker/correction points, apply `docs/PROGRAMSTART_LEARNING_LOOP.md` when that protocol is part of the repository's managed PROGRAMSTART surface.
 
 A reusable methodology lesson may be earned when, for example:
 
@@ -160,7 +160,7 @@ Do not create learning noise for ordinary local failures. Route behavior-specifi
 
 ## 8. Specialist agents are not `AGENTS.md`
 
-`PROGRAMBUILD/PROGRAMBUILD_SUBAGENTS.md` and `.github/agents/*.agent.md` define optional bounded specialist roles.
+`PROGRAMBUILD/PROGRAMBUILD_SUBAGENTS.md` and `.github/agents/*.agent.md` define optional bounded specialist roles when those files exist.
 
 They do not replace this repository-level execution contract, and they do not become project authority.
 

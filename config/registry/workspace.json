@@ -36,6 +36,7 @@
       "SECURITY.md",
       "requirements.txt",
       "QUICKSTART.md",
+      "AGENTS.md",
       "config/process-registry.json",
       "config/registry/workspace.json",
       "config/registry/sync_rules.json",

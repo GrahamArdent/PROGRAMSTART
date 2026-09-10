@@ -4,8 +4,8 @@
 
 Purpose: Reusable transition/convergence check that catches meaningful drift without turning every boundary into the same eight-part ceremony.
 Owner: Stage Owner (or Solo Operator)
-Last updated: 2026-08-28
-Depends on: `PROGRAMBUILD.md`, `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`, `FEASIBILITY.md`, `REQUIREMENTS.md`, `DECISION_LOG.md`
+Last updated: 2026-09-09
+Depends on: `PROGRAMBUILD.md`, `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`, `PROGRAMBUILD_WORK_PACKET.md`, `FEASIBILITY.md`, `REQUIREMENTS.md`, `DECISION_LOG.md`
 Authority: Canonical for stage-transition validation, risk-based gate selection, post-implementation adversarial closure review, and mid-stage convergence criteria.
 
 ---
@@ -72,9 +72,16 @@ Before a completed work packet, implementation PR, or equivalent code/config cha
 - production runtime, deployment, infrastructure, provider, or availability boundaries;
 - another high-impact or hard-to-reverse invariant where a subtle implementation defect could survive ordinary happy-path tests.
 
+Also run the focused closure review when a supposedly successful path itself supplies material counterevidence, for example:
+
+- the work succeeded only after repeated materially similar failed attempts with little new information;
+- an operator had to correct command syntax, formatting, path, permission, target, or another machine-resolvable detail after the handoff was declared ready;
+- the implementation pivoted between materially different concepts after evidence weakened or falsified the original premise;
+- apparent final success may hide a brittle, unsafe, unnecessarily human-dependent, or non-repeatable execution trajectory.
+
 This is a **risk-triggered use of the existing Challenge Gate**, not a new lifecycle stage, document, agent, or mandatory ceremony for every PR.
 
-The trigger is based on what the implementation actually changed, not merely what the work packet expected to change. A supposedly low-risk packet that reveals a material trust/persistence/side-effect boundary during implementation must activate the review before closure.
+The trigger is based on what the implementation actually changed and what the execution trajectory actually revealed, not merely what the work packet expected to change. A supposedly low-risk packet that reveals a material trust/persistence/side-effect or human-readiness defect during implementation must activate the review before closure.
 
 A team MAY configure time/slice reminders, but elapsed time or a fixed feature count is never proof that convergence is required.
 
@@ -98,9 +105,9 @@ Add stage/risk-relevant parts:
 |---|---|
 | B — Assumptions / evidence | prior assumptions/evidence materially support the next decision, or an invalidation trigger may have occurred |
 | D — Skipped work | anything was deferred, partial, blocked, TODO, or intentionally omitted |
-| E — Blast radius / verification | architecture, contracts, implementation, config, schema, environment, integration, or release behavior changed or is about to change materially; **required for a triggered post-implementation adversarial closure review** |
+| E — Blast radius / verification | architecture, contracts, implementation, config, schema, environment, integration, release behavior, or a materially suspect execution trajectory changed or is about to change materially; **required for a triggered post-implementation adversarial closure review** |
 | G — Dependency / KB health | Stage 4+ when a dependency/vendor/platform/research fact is material to the decision |
-| H — Architecture / requirements / implementation alignment | Stage 6+, and earlier whenever implementation already exists or a contract/auth/schema change is being evaluated; **required when the triggered closure review concerns trust/contract/schema/behavior alignment** |
+| H — Architecture / requirements / implementation alignment | Stage 6+, and earlier whenever implementation already exists or a contract/auth/schema/behavior boundary is being evaluated; **required when the triggered closure review concerns trust/contract/schema/behavior alignment** |
 
 **Full A–H Product convergence is required** when the boundary itself justifies a whole-system view, especially:
 
@@ -142,6 +149,8 @@ Ask:
 - Did a documented invalidation trigger occur?
 - What evidence remains reusable?
 - What is the smallest check that re-establishes invalidated confidence?
+- When concept viability was materially uncertain, is the selected concept still `supported`, or did current evidence make it `inconclusive` / `falsified`?
+- If another materially similar attempt is proposed, what changed and why can that change alter the result rather than merely repeat the same hypothesis?
 
 Age/session change alone is not invalidation unless the underlying fact is genuinely time-sensitive.
 
@@ -157,6 +166,14 @@ Ask:
 - Did an out-of-scope item quietly enter the work?
 - Is the success metric still current or explicitly superseded?
 - Has research, an audit, checklist, adaptive-router output, or work packet begun functioning as a second strategic plan?
+
+For a material cross-system test, also challenge its **test authority** and **test envelope**:
+
+- Is there exactly one behavioral owner for each proposition, or did several participants become accidental co-owners?
+- Are START and STOP bounded, or can the test absorb unrelated work indefinitely?
+- Did a participant inherit another owner's backlog/closure merely because it supplied evidence or a runtime hop?
+- Does any evidence/currentness system appear to own the behavior merely because it can observe it?
+- Is a foreign-owner item genuinely an originating-project acceptance dependency, or merely a durable handoff discovered during the test?
 
 Reconcile unauthorized scope before proceeding.
 
@@ -185,12 +202,13 @@ Ask:
 - Which evidence was invalidated?
 - What targeted checks restore confidence?
 - Does this boundary also require wider convergence verification?
+- Did the execution path reveal a premise, retry, human-readiness, or repeatability defect that would be hidden if we looked only at the final state?
 
 Do not use “run everything” instead of impact reasoning. Do not use narrow tests instead of a required convergence gate.
 
 ### Post-Implementation Adversarial Closure Review
 
-When the trigger in §2.1 applies, Part E must challenge the **completed implementation**, not just confirm the intended design or rerun the tests the builder already chose.
+When the trigger in §2.1 applies, Part E must challenge the **completed implementation and materially relevant execution trajectory**, not just confirm the intended design or rerun the tests the builder already chose.
 
 Use this rule:
 
@@ -208,6 +226,40 @@ Select only the lenses relevant to the actual change. Common lenses are:
 - **rollback / recovery** — after failure, can the system retry/recover without corrupting or losing required state?
 - **false success** — can the system report success before the required durable/observable outcome exists?
 - **false suppression** — can unfinished or failed work be mistaken for already-completed work and suppressed?
+- **concept lock-in** — did implementation keep perturbing one mechanism after evidence materially weakened/falsified its premise?
+- **low-information retry** — were substantially similar attempts repeated without a material delta that could change the outcome?
+- **human-gate readiness** — was the operator asked to execute/debug a procedure before machine-resolvable syntax, target, permission, destination, version, rollback, or post-check uncertainty was closed?
+- **trajectory quality** — would the same path be safe/repeatable to standardize, or did final success depend on accidental state, manual correction, stale evidence, or avoidable human transport?
+
+For cross-system test/acceptance changes, add the smallest relevant ownership failures:
+
+- **test-authority confusion** — can evidence authority, acceptance authority, or a participant silently become behavioral/execution authority?
+- **scope leakage** — can work outside the declared test envelope piggyback merely because the systems are already connected?
+- **foreign-closure capture** — can an owner-local completed slice remain falsely open because another system's independent backlog item was observed during the test?
+- **false chat independence** — when the claim is backend continuation after ChatGPT/operator-UI detachment, was the objective durably admitted before detachment, or did chat later carry command/state/polling/resume information that the backend actually needed?
+
+For a consequential self-hosted control/recovery surface, Challenge must also test the claimed **failure domain** rather than equate structural liveness with useful control progress:
+
+- identify the normal control path and the recovery path;
+- name any shared process/unit/checkout/state store/credential/network/consumer-loop dependencies;
+- ask whether failure of the normal path can eliminate the only recovery actuator;
+- state exactly what a `healthy` result claims, and require a useful end-to-end transaction/progress proof when capability health — rather than merely process/service/checkout health — is being accepted;
+- verify recovery can activate or restore an exact known-good version without arbitrary shell or blind replay when that is the accepted recovery consequence;
+- exercise or explicitly retain residual failure domains for loss of normal transport, recovery transport, controller/VPS, and upstream provider/control-plane connectivity as applicable;
+- distinguish local functions that continue without control-plane connectivity from functions that do not;
+- mechanically or live exercise the relevant failure domain before broad recovery closure when that proof is required by the accepted consequence.
+
+The invariant is scoped to consequential control/recovery systems, not every process: **no recovery claim may depend exclusively on the mechanism it is responsible for repairing, and no capability-health claim may be stronger than the transaction/progress evidence actually observed.** Shared host/kernel/network dependencies may remain when unavoidable, but name them as residual failure domains rather than hiding them.
+
+For a concept-viability or human-gate surface, also challenge:
+
+- whether the concept itself remained supported before deeper investment;
+- whether the smallest useful falsification test was defined/run when uncertainty warranted it;
+- whether each repeated attempt carried a material attempt delta plus a reason it could change the result;
+- whether exploration stopped/pivoted when expected information gain became low or the premise was contradicted;
+- whether an operator handoff was issued only after `GATE_READINESS: ready` and the `HUMAN_ONLY_REMAINDER` was explicit;
+- whether non-secret/dummy portions, exact tool/shell/version/target, formatting/quoting/path/config shape, permission/destination, post-check, and recovery were validated to the degree warranted by the consequence before the operator was involved;
+- whether any operator correction after handoff is being treated as counterevidence to the readiness claim and routed to the behavior owner.
 
 The reviewer should prefer the smallest counterexample set that covers the material invariants. One strong realistic sequence is better than ten generic hypotheticals.
 
@@ -215,12 +267,12 @@ If a counterexample exposes a plausible invariant violation:
 
 1. do not declare the packet/PR merge-ready or complete;
 2. add the smallest targeted regression test or equivalent proof that reproduces/protects the failure mode when practical;
-3. correct the implementation or explicitly block/reshape the slice if the issue cannot be bounded safely;
+3. correct the implementation, concept, procedure, or handoff; or explicitly block/reshape the slice if the issue cannot be bounded safely;
 4. rerun the affected verification and the adversarial closure review against the corrected state.
 
-If no material counterexample survives current evidence, record the challenged invariant/failure sequence and the proof that cleared it. Do not claim “adversarial review passed” merely because existing CI was green.
+If no material counterexample survives current evidence, record the challenged invariant/failure sequence and the proof that cleared it. Do not claim “adversarial review passed” merely because existing CI was green or the final outcome eventually succeeded.
 
-A separate model/agent/reviewer MAY improve independence when available, but PROGRAMBUILD does not require a new reviewer role or tool. The required property is a fresh opposition framing against the actual completed implementation.
+A separate model/agent/reviewer MAY improve independence when available, but PROGRAMBUILD does not require a new reviewer role or tool. The required property is a fresh opposition framing against the actual completed implementation and relevant trajectory.
 
 ---
 
@@ -276,6 +328,9 @@ Ask:
 - Does the current logical/persisted work packet still trace to strategic authority?
 - Were completed packets reconciled rather than accumulated as a parallel hierarchy?
 - Did current changes invalidate retained test/environment/device/migration evidence?
+- For a material cross-system test, does each behavioral proposition still have one test authority, with execution/evidence/acceptance authority separately respected?
+- Did the test envelope end where declared, with foreign findings routed to their owners rather than silently retained as participant backlog?
+- When agent behavior is part of the execution path, does the applicable `AGENTS.md` remain subordinate to and correctly reference current methodology/project authority rather than carrying stale duplicate truth?
 
 Prospective contradiction: update canonical authority before implementing the contradictory design.
 
@@ -354,6 +409,7 @@ First identify:
 - current logical/persisted work packet if any
 - reusable evidence + invalidation triggers
 - the actual completed implementation/config/runtime surface when closure or merge-readiness is being evaluated
+- any concept-viability / repeated-attempt / human-gate-readiness evidence that materially affected the execution path
 
 Select gate parts using PROGRAMBUILD_CHALLENGE_GATE.md:
 - Lite/Product baseline: A, C, F
@@ -365,8 +421,14 @@ Select gate parts using PROGRAMBUILD_CHALLENGE_GATE.md:
 For a triggered adversarial closure review:
 - do not merely confirm the intended design or rerun existing happy-path tests
 - assume a hidden defect may remain
-- construct at least one realistic failure sequence against a material invariant using only relevant lenses such as ordering, partial failure, retry/idempotency, concurrency, restart, provider failure, trust boundary, recovery, false success, or false suppression
+- construct at least one realistic failure sequence against a material invariant using only relevant lenses such as ordering, partial failure, retry/idempotency, concurrency, restart, provider failure, trust boundary, recovery, false success, false suppression, concept lock-in, low-information retry, human-gate readiness, or trajectory quality
 - if a plausible invariant violation appears, add targeted proof/test + fix and re-review before merge-ready/complete status
+
+For a material cross-system test, challenge test-authority ownership, test-envelope START/STOP, participant scope, evidence-vs-acceptance-vs-execution authority, and foreign-owner handoff behavior. If the claim is chat-independent backend continuation, verify durable admission occurred before chat detachment and that no later chat-carried state/command/polling/resume was needed.
+
+For a consequential control/recovery surface, distinguish process/service/checkout liveness from useful end-to-end control progress and challenge shared normal/recovery failure domains against the exact capability being accepted.
+
+For a concept-viability or human-gate surface, challenge the premise separately from the implementation, require material attempt deltas for retries, reject low-information persistence, and verify `GATE_READINESS: ready` plus the exact `HUMAN_ONLY_REMAINDER` before treating operator involvement as justified.
 
 Reuse current adaptive-router/research evidence when it remains valid. Do not rerun analysis solely because this is a transition.
 Challenge vague answers. Do not fill irrelevant sections as ceremony.
@@ -395,8 +457,17 @@ Return:
 | Running every test at every gate | identify invalidation, then run targeted + required convergence checks |
 | Keeping verification too narrow at release | widen at release/whole-system convergence |
 | Declaring a high-risk implementation merge-ready because intended behavior and current CI are green | challenge the actual completed implementation with at least one relevant counterexample/failure sequence before closure |
+| Treating eventual success as proof that the execution path was sound | inspect materially suspect retry/handoff/trajectory evidence before standardizing or closing the lesson |
+| Repeating substantially identical attempts after failure | require a material attempt delta plus a reason it could change the outcome; otherwise gather discriminating evidence or pivot |
+| Asking the operator to debug syntax/format/path/permissions of an unvalidated procedure | finish machine-side validation and establish human-gate readiness first; operator supplies only the human-only remainder |
+| Persisting with a falsified concept because more implementations are imaginable | preserve the evidence and pivot/stop; exploration is bounded by information value, not exhaustiveness |
+| Burying critical agent execution rules only in deep methodology docs | keep a lean applicable `AGENTS.md` that points agents to the current owners without becoming authority itself |
 | Turning adversarial review into a mandatory generic checklist for every PR | trigger it from actual risk/blast radius and use only the lenses that can matter |
 | Treating a work packet as a mini-master-plan | derive it from the spine and close/reconcile it |
+| Treating an evidence collector as the owner of every behavior it observes | keep test authority with the behavioral owner; evidence authority verifies evidence |
+| Letting participant systems inherit another test owner's backlog | keep the test envelope bounded and route foreign findings as owner handoffs unless product authority makes them a real dependency |
+| Calling a test chat-independent because a background job kept running | require durable semantic admission before detachment and no later chat-carried continuation state |
+| Treating process/service/checkout liveness as proof of useful control health | match the health claim to transaction/progress evidence and challenge the failure domain the recovery claim actually covers |
 | Treating newer research as authority | adopt useful deltas through canonical process |
 | Re-entry by rereading/retesting everything | revalidate plausible invalidation only |
 | Triggering convergence from a fixed counter alone | use actual accumulated change/risk; counters are reminders only |
@@ -406,4 +477,4 @@ Return:
 
 ## Operating Principle
 
-**Rigor means knowing what is authoritative, what changed, what evidence remains valid, what could still fail despite current proof, and what must be proven now. Rigor is not the number of boxes filled.**
+**Rigor means knowing what is authoritative, what changed, what evidence remains valid, whether the premise still deserves investment, whether human involvement is technically ready and genuinely human-only, what could still fail despite current proof, and what must be proven now. Rigor is not the number of boxes filled.**

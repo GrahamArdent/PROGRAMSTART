@@ -1,9 +1,9 @@
 ---
 description: "Orchestrate a new project, worthwhile captured idea, or existing-project change from a plain-language request using the current PROGRAMSTART methodology and the execution tools actually available."
 name: "Orchestrate PROGRAMSTART Work"
-argument-hint: "Describe what you want to build/change or an idea worth preserving; optionally name the target repository, execution spine, companion dependency, known operator gate, blocked closure-control slice, material cost/provider decision, or accept the most recent concrete recommendation with natural language such as 'proceed'"
+argument-hint: "Describe what you want to build/change, ask in ordinary language to save/capture/retain worthwhile ideas or suggestions from the current conversation, name an idea worth preserving, or optionally name the target repository, execution spine, companion dependency, known operator gate, blocked closure-control slice, material cost/provider decision, or accept the most recent concrete recommendation with natural language such as 'proceed'"
 agent: "agent"
-version: "2.9"
+version: "2.10"
 ---
 
 # Orchestrate PROGRAMSTART Work
@@ -13,6 +13,8 @@ Turn the operator's plain-language request into the smallest correct PROGRAMSTAR
 A short operator response such as `proceed`, `go ahead`, `proceed with your recommendation`, `do what you recommend`, or an equivalent generic acceptance is a valid orchestration input when the prior concrete recommendation is available in current context. The operator should not have to restate PROGRAMSTART mechanics that can be derived from current project authority.
 
 A worthwhile idea may also be preserved without becoming current work. Follow the Planning Operating Model's rule: **capture broadly, promote deliberately, execute only from authority.**
+
+Natural-language **retention intent** is also a valid orchestration input. If the operator's meaning is to save, capture, retain, preserve, or make sure the worthwhile ideas/suggestions/decisions/rationale/risks/dependencies/recommendations from the available conversation are not lost, treat that as a request to run the existing capture/reconciliation path over the current available context. Do not require a magic phrase, exact command, or the words `PROGRAMSTART`, `retention`, or `checkpoint`. Interpret the operator's meaning semantically from context. Retention intent is not execution authorization.
 
 ## Data Grounding Rule
 
@@ -30,7 +32,7 @@ This prompt follows:
 - `docs/PROGRAMSTART_COST_GOVERNANCE.md`;
 - `docs/PROGRAMSTART_LEARNING_LOOP.md`.
 
-It preserves one-project/one-spine authority, cheap non-authoritative idea capture, deliberate idea promotion, Mode A/B/C entry selection, JIT context loading, evidence reuse, blocker-scope/safe-lane reasoning, coordinated Mode-C lane selection, adaptive decision routing, deterministic accepted-recommendation resolution, task-scoped cross-repository dependency reasoning, operator/manual-gate handoffs, decision-scoped cost governance, bounded work packets, conditional checklist completeness, proportional verification, risk-triggered post-implementation adversarial closure review, and the PROGRAMSTART Learning Gate.
+It preserves one-project/one-spine authority, cheap non-authoritative idea capture, deliberate idea promotion, semantic retention-intent handling, Mode A/B/C entry selection, JIT context loading, evidence reuse, blocker-scope/safe-lane reasoning, coordinated Mode-C lane selection, adaptive decision routing, deterministic accepted-recommendation resolution, task-scoped cross-repository dependency reasoning, operator/manual-gate handoffs, decision-scoped cost governance, bounded work packets, conditional checklist completeness, proportional verification, risk-triggered post-implementation adversarial closure review, and the PROGRAMSTART Learning Gate.
 
 `programstart orchestrate` is the executable contract generator when the central runtime is available. Its output, any Idea Record, accepted-recommendation disposition, coordinated lane view, derived cross-repository graph, operator handoff, Cost Envelope, checklist, adversarial-closure routing, and learning observation are guidance/evidence, not new project execution spines or purchasing authority.
 
@@ -41,6 +43,7 @@ Before substantive edits:
 1. Determine whether the current environment has the central PROGRAMSTART runtime, connected repository/runtime tools, or both.
 2. Resolve the target repository/workspace if one exists.
 3. If the operator states or develops a worthwhile idea that is not necessarily current work, preserve it in the existing appropriate project/workspace idea/reference surface; if none exists and durable retention is useful, use the optional `IDEA_LEDGER.md` pattern. Do not require full intake merely to remember it and do not treat capture as priority/approval.
+3a. If the operator expresses retention intent for the current conversation, review the full conversation context actually available in this invocation, enumerate substantive outcomes that would be costly to reconstruct, deduplicate against current owning/reference surfaces, distinguish merely preserved ideas from clearly accepted durable deltas, and preserve useful rationale plus known revisit/promotion triggers. When the active workspace already has a resurfacing-assurance mechanism, use it rather than inventing another watcher. Do not execute work merely because it was retained.
 4. If the current operator turn is a generic acceptance of a prior recommendation, identify the exact most recent concrete recommendation being accepted before executing. Do not guess across several materially different unresolved recommendations.
 5. Resolve that accepted recommendation against current project authority using the Accepted Recommendation Resolution contract below. Generic acceptance is not a universal permission slip.
 6. If the operation changes PROGRAMBUILD/project planning authority and a local PROGRAMSTART runtime is available, run `uv run programstart drift` before the authority edit and resolve existing drift before stacking a new authority change.
@@ -71,9 +74,11 @@ uv run programstart orchestrate --request "<plain-language goal>" \
 
 The CLI remains deliberately narrow. Natural-language accepted-recommendation resolution requires current recommendation + project-authority context and MUST NOT be replaced with brittle keyword parsing or a new operator-maintained recommendation state machine merely so the CLI can parse the word `proceed`.
 
+Natural-language retention intent likewise requires the available conversation context and MUST NOT be replaced with a brittle keyword list, magic command, or new retention state machine merely so a CLI can parse phrases such as `save the good stuff`.
+
 Likewise, idea capture MUST NOT require a new CLI state machine or force every idea through Stage 0. Use the project's/workspace's existing durable idea surface when available; `IDEA_LEDGER.md` is an optional template, not a mandatory database.
 
-Use the canonical Planning Operating Model and this agent-facing orchestration protocol to derive the recommendation disposition. Coordinated work-lane reasoning, detailed Cost Envelopes, checklist selection/reconciliation, and acceptance-learning decisions are likewise derived from live authority/evidence rather than maintained as a second CLI backlog, scheduler, price database, or methodology database.
+Use the canonical Planning Operating Model and this agent-facing orchestration protocol to derive the recommendation disposition. Coordinated work-lane reasoning, detailed Cost Envelopes, checklist selection/reconciliation, retention dispositions, and acceptance-learning decisions are likewise derived from live authority/evidence rather than maintained as a second CLI backlog, scheduler, price database, retention database, or methodology database.
 
 When a real companion dependency is supplied, add only the relationship/authority/evidence arguments required to describe it. Do not assemble a portfolio registry inside the command.
 
@@ -90,26 +95,27 @@ Do **not** fail merely because the local CLI is unavailable and do **not** claim
 Instead:
 
 1. inspect the live target repository/runtime before substantive decisions;
-2. preserve any worthwhile non-current idea in an existing durable idea/reference surface when one is available, or use the optional `IDEA_LEDGER.md` pattern when needed; do not promote it merely because it was captured;
-3. resolve Mode A/B/C from actual maturity/authority;
-4. identify the project's one execution spine if one exists;
-5. load only authority/evidence needed for the current decision/slice;
-6. when the operator generically accepted a prior recommendation, resolve its exact disposition and any stronger gate from current authority before treating it as execution authorization;
-7. resolve bounded related-repository dependencies only when real and only after Mode C is established;
-8. scope blockers and scan safe execution lanes before treating work as stopped;
-9. derive a coordinated Mode-C lane view only when project authority proves multiple relevant current lanes exist;
-10. invoke adaptive decision/research reasoning only when uncertainty/consequence could materially change the action;
-11. activate a decision-scoped Cost Envelope only when the slice materially changes paid/metered/quota-limited infrastructure or when cost evidence can change the architecture/provider choice;
-12. derive one compact bounded work packet;
-13. activate an inline/referenced completion checklist only when omission risk or an existing applicable checklist warrants it;
-14. execute one selected allowed slice with connected tools;
-15. derive an exact operator/manual handoff when the real next action is outside the current environment;
-16. verify returned gate evidence when it comes back and, if it satisfies the declared `EVIDENCE_ACCEPTANCE`, resume at `RESUME_AT` without requiring a redundant second `proceed` unless the handoff explicitly requires a separate post-evidence approval;
-17. verify proportionally against the actual completed change;
-18. reconcile any active checklist against actual evidence; unresolved required items prevent truthful closure;
-19. before merge-ready/accepted/complete status, inspect the actual changed surface and run the existing Challenge Gate's post-implementation adversarial closure review when material trust/security, persistence/idempotency/retry/concurrency, schema/migration, destructive/external-side-effect, production runtime/deployment, or other high-impact/hard-to-reverse behavior was changed;
-20. reconcile durable state in the repository that owns it;
-21. at a meaningful acceptance checkpoint, run the Learning Gate from `docs/PROGRAMSTART_LEARNING_LOOP.md`.
+2. if the operator expressed retention intent, review the full currently available conversation context before narrowing to only the final turn; extract substantive outcomes, deduplicate them, preserve non-current ideas/research/rationale in their appropriate existing surfaces, and reconcile clearly accepted durable deltas only through their real owners. Do not infer execution from retention.
+3. preserve any worthwhile non-current idea in an existing durable idea/reference surface when one is available, or use the optional `IDEA_LEDGER.md` pattern when needed; do not promote it merely because it was captured;
+4. resolve Mode A/B/C from actual maturity/authority;
+5. identify the project's one execution spine if one exists;
+6. load only authority/evidence needed for the current decision/slice;
+7. when the operator generically accepted a prior recommendation, resolve its exact disposition and any stronger gate from current authority before treating it as execution authorization;
+8. resolve bounded related-repository dependencies only when real and only after Mode C is established;
+9. scope blockers and scan safe execution lanes before treating work as stopped;
+10. derive a coordinated Mode-C lane view only when project authority proves multiple relevant current lanes exist;
+11. invoke adaptive decision/research reasoning only when uncertainty/consequence could materially change the action;
+12. activate a decision-scoped Cost Envelope only when the slice materially changes paid/metered/quota-limited infrastructure or when cost evidence can change the architecture/provider choice;
+13. derive one compact bounded work packet;
+14. activate an inline/referenced completion checklist only when omission risk or an existing applicable checklist warrants it;
+15. execute one selected allowed slice with connected tools;
+16. derive an exact operator/manual handoff when the real next action is outside the current environment;
+17. verify returned gate evidence when it comes back and, if it satisfies the declared `EVIDENCE_ACCEPTANCE`, resume at `RESUME_AT` without requiring a redundant second `proceed` unless the handoff explicitly requires a separate post-evidence approval;
+18. verify proportionally against the actual completed change;
+19. reconcile any active checklist against actual evidence; unresolved required items prevent truthful closure;
+20. before merge-ready/accepted/complete status, inspect the actual changed surface and run the existing Challenge Gate's post-implementation adversarial closure review when material trust/security, persistence/idempotency/retry/concurrency, schema/migration, destructive/external-side-effect, production runtime/deployment, or other high-impact/hard-to-reverse behavior was changed;
+21. reconcile durable state in the repository that owns it;
+22. at a meaningful acceptance checkpoint, run the Learning Gate from `docs/PROGRAMSTART_LEARNING_LOOP.md`.
 
 Repository/runtime/provider state is authoritative for current technical reality. Current operator/project authority is authoritative for product intent. Legacy framework/prototype evidence does not become rebuild direction by itself.
 
@@ -140,6 +146,25 @@ When an idea is worth remembering:
 - default to `CAPTURED` unless current evidence supports another status;
 - do not launch Idea Intake merely to save it;
 - do not infer priority or sequencing from capture order/status.
+
+### Semantic retention intent
+
+When the operator uses ordinary language whose meaning is equivalent to “save the good stuff from this chat,” “make sure we don't lose these ideas,” “capture the useful suggestions,” “retain everything important,” or another clear preservation request, treat the request by meaning rather than exact wording.
+
+Unless the operator narrows the scope, use the full conversation context actually available in the current invocation as the source set. Then:
+
+1. enumerate substantive ideas, recommendations, decisions, alternatives, rationale, research findings, risks, dependencies, accepted deltas, and useful revisit conditions that would be expensive to reconstruct;
+2. search plausible owning/reference surfaces before creating duplicates;
+3. preserve worthwhile non-current material cheaply and non-authoritatively;
+4. reconcile clearly accepted durable changes into the artifact that actually owns the concern when current authority permits that reconciliation;
+5. preserve rationale and revisit/promotion triggers when useful;
+6. use an existing workspace resurfacing/detection mechanism when one exists instead of inventing a new watcher or backlog;
+7. do not infer execution, priority, sequencing, budget, or architecture merely from retention intent;
+8. return a concise retention receipt distinguishing what was already durable, newly preserved, reconciled, or unresolved.
+
+If the operator says the semantic equivalent of “save the good stuff, then proceed,” complete the retention/reconciliation pass first, then independently resolve `proceed` through the Accepted Recommendation Resolution contract. Retention itself never upgrades the later `proceed` into broader authority.
+
+Do not ask the operator to restate the request as `PROGRAMSTART retention checkpoint` or any other magic phrase when the retention intent is already clear.
 
 Use `PROGRAMBUILD_IDEA_INTAKE.md` when the idea is being actively evaluated for promotion. If accepted, update the Idea Record to `ACCEPTED`, point it to the reconciled owner (`PROMOTED_TO`), and execute only from that project authority. Preserve useful shelved/rejected/superseded rationale rather than repeatedly rediscovering it.
 
@@ -241,7 +266,7 @@ Rules:
 
 ## Orchestration Protocol
 
-1. **Capture the request and preserve worthwhile ideas.** Restate the desired outcome without expanding scope. If the request is generic acceptance, bind it to the most recent concrete recommendation actually available in context. Preserve useful non-current ideas cheaply without treating them as scope/priority.
+1. **Capture the request and preserve worthwhile ideas.** Restate the desired outcome without expanding scope. If the request is retention intent, use the full currently available conversation context as the source set unless the operator narrowed it; do not reduce the request to only the final turn. If the request is generic acceptance, bind it to the most recent concrete recommendation actually available in context. Preserve useful non-current ideas cheaply without treating them as scope/priority.
 2. **Orient from live authority.** Inspect target repository/runtime before substantive decisions when tools permit; locate stable instructions, canonical indexes, current execution spine, and only affected authority/evidence.
 3. **Resolve Mode A/B/C.** Reuse valid evidence and inspect only enough additional context to resolve ambiguity.
 4. **Resolve primary authority.** In Mode C, name/preserve the existing execution spine. Do not create a competing master/game plan.
@@ -355,6 +380,8 @@ Learning rules:
 
 - Automate selection/routing of rigor and accepted-recommendation effect, not manufacture of rigor or authority.
 - Preserve worthwhile ideas when capture is cheap; do not discard them merely because they are not current work.
+- Treat clear natural-language retention intent semantically; do not require a magic phrase or build a keyword-trigger state machine.
+- Retention means preserve/reconcile worthwhile conversation outcomes, not execute them.
 - Do not force every captured idea through full Idea Intake, research, feasibility, or roadmap placement.
 - Do not treat Idea Records/ledgers as scope, priority, sequencing, budget, or execution authority.
 - Do not make PROGRAMSTART itself the operator's live portfolio-wide idea registry; portfolio state belongs in the planning workspace/dedicated system.
@@ -404,31 +431,32 @@ Before declaring the orchestration slice complete, confirm:
 1. entry mode and primary authority chain are explicit;
 2. a pre-existing execution spine was preserved in Mode C;
 3. worthwhile non-current ideas encountered in the active request were preserved when capture was warranted, without being silently promoted or prioritized;
-4. if this followed generic acceptance, the exact recommendation was identified and one disposition was derived from current authority;
-5. `execute_current_authority` did not cause unnecessary Master churn;
-6. `reconcile_authority_then_execute` reconciled the owning durable authority before or atomically with dependent implementation;
-7. `defer_without_resequencing` preserved the useful future direction without silently reordering/executing it;
-8. any stronger gate overlay remained unsatisfied until its actual required action/evidence occurred;
-9. any accepted operator-gate return evidence resumed from the declared `RESUME_AT` point without requiring a redundant generic acknowledgement, unless a distinct follow-up approval was explicitly part of the gate;
-10. any coordinated lane view came from that spine, retained actual closure control, and selected one packet;
-11. lane independence/conflict/convergence claims are evidence-backed;
-12. non-closure completion did not silently advance closure sequencing;
-13. any related repository was loaded only for a real Mode-C dependency and both spines remain independent;
-14. dependency state/evidence/invalidation are truthful, including partial state;
-15. blocker scope is narrow and consequential Lane C was not inferred from blocker/lane visibility;
-16. provider/resource historical evidence is separate from current visibility where relevant;
-17. research stopped at decision sufficiency;
-18. any material cost decision has a current-enough Cost Envelope, with charge trigger/cap/reuse/pay-when semantics truthful and no stale central price authority created;
-19. any operator gate is exact, secret-safe, and distinguishes action from acceptance;
-20. work packet remained bounded/subordinate;
-21. checklist form was activated only when useful or already applicable, omitted entirely when inactive, and did not create scope;
-22. when a checklist was active, every applicable required item was reconciled as satisfied / not applicable with reason / blocked with exact gate / authority-permitted deferred;
-23. verification claims match what actually ran;
-24. the actual completed change was inspected for whether the post-implementation adversarial closure trigger applies, rather than relying only on the packet's original risk classification;
-25. when adversarial closure was triggered, the completed implementation was challenged with at least one realistic failure sequence against a material invariant and any discovered violation received targeted proof/test + correction or a truthful block before merge-ready/closure;
-26. durable product authority/state was reconciled only where owned and actual evidence superseded any disproved recommendation assumption;
-27. accepted Idea Records point to their real promoted authority rather than substituting for it;
-28. if a Learning Gate triggered, classification is supported by real evidence and no unnecessary learning write/change was manufactured;
-29. detailed learning evidence, when warranted, lives in an observation record while the main ledger remains a concise maturity rollup;
-30. product completion/next action remains independent from whether PROGRAMSTART learning persistence was possible;
-31. the next executable product slice, selected lane, exact operator gate, cost decision, or narrowly scoped blocker is explicit.
+4. if this invocation was triggered by semantic retention intent, the full available conversation context (unless explicitly narrowed) was reviewed for substantive outcomes, existing durable owners were reused/deduplicated where possible, retention did not imply execution, and a concise retention receipt can distinguish preserved/reconciled/unresolved results;
+5. if this followed generic acceptance, the exact recommendation was identified and one disposition was derived from current authority;
+6. `execute_current_authority` did not cause unnecessary Master churn;
+7. `reconcile_authority_then_execute` reconciled the owning durable authority before or atomically with dependent implementation;
+8. `defer_without_resequencing` preserved the useful future direction without silently reordering/executing it;
+9. any stronger gate overlay remained unsatisfied until its actual required action/evidence occurred;
+10. any accepted operator-gate return evidence resumed from the declared `RESUME_AT` point without requiring a redundant generic acknowledgement, unless a distinct follow-up approval was explicitly part of the gate;
+11. any coordinated lane view came from that spine, retained actual closure control, and selected one packet;
+12. lane independence/conflict/convergence claims are evidence-backed;
+13. non-closure completion did not silently advance closure sequencing;
+14. any related repository was loaded only for a real Mode-C dependency and both spines remain independent;
+15. dependency state/evidence/invalidation are truthful, including partial state;
+16. blocker scope is narrow and consequential Lane C was not inferred from blocker/lane visibility;
+17. provider/resource historical evidence is separate from current visibility where relevant;
+18. research stopped at decision sufficiency;
+19. any material cost decision has a current-enough Cost Envelope, with charge trigger/cap/reuse/pay-when semantics truthful and no stale central price authority created;
+20. any operator gate is exact, secret-safe, and distinguishes action from acceptance;
+21. work packet remained bounded/subordinate;
+22. checklist form was activated only when useful or already applicable, omitted entirely when inactive, and did not create scope;
+23. when a checklist was active, every applicable required item was reconciled as satisfied / not applicable with reason / blocked with exact gate / authority-permitted deferred;
+24. verification claims match what actually ran;
+25. the actual completed change was inspected for whether the post-implementation adversarial closure trigger applies, rather than relying only on the packet's original risk classification;
+26. when adversarial closure was triggered, the completed implementation was challenged with at least one realistic failure sequence against a material invariant and any discovered violation received targeted proof/test + correction or a truthful block before merge-ready/closure;
+27. durable product authority/state was reconciled only where owned and actual evidence superseded any disproved recommendation assumption;
+28. accepted Idea Records point to their real promoted authority rather than substituting for it;
+29. if a Learning Gate triggered, classification is supported by real evidence and no unnecessary learning write/change was manufactured;
+30. detailed learning evidence, when warranted, lives in an observation record while the main ledger remains a concise maturity rollup;
+31. product completion/next action remains independent from whether PROGRAMSTART learning persistence was possible;
+32. the next executable product slice, selected lane, exact operator gate, cost decision, or narrowly scoped blocker is explicit.

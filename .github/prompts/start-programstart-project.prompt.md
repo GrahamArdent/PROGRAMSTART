@@ -162,6 +162,8 @@ Unless the operator narrows the scope, use the full conversation context actuall
 7. do not infer execution, priority, sequencing, budget, or architecture merely from retention intent;
 8. return a concise retention receipt distinguishing what was already durable, newly preserved, reconciled, or unresolved.
 
+Preserve the smallest useful durable meaning. Do not archive or copy the raw conversation merely because retention intent fired; existing privacy, security, secret-handling, and data-minimization boundaries still govern what may be persisted.
+
 If the operator says the semantic equivalent of “save the good stuff, then proceed,” complete the retention/reconciliation pass first, then independently resolve `proceed` through the Accepted Recommendation Resolution contract. Retention itself never upgrades the later `proceed` into broader authority.
 
 Do not ask the operator to restate the request as `PROGRAMSTART retention checkpoint` or any other magic phrase when the retention intent is already clear.

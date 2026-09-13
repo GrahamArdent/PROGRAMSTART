@@ -132,7 +132,7 @@ def test_trivial_work_omits_checklist_bookkeeping() -> None:
 def test_agent_orchestration_handles_natural_language_without_new_cli_state_machine() -> None:
     prompt = _read(ORCHESTRATION_PROMPT)
 
-    assert 'version: "2.9"' in prompt
+    assert 'version: "2.10"' in prompt
     assert (
         "is a valid orchestration input when the prior concrete recommendation is available"
         in prompt
@@ -141,6 +141,36 @@ def test_agent_orchestration_handles_natural_language_without_new_cli_state_mach
         "MUST NOT be replaced with brittle keyword parsing or a new operator-maintained recommendation state machine"
         in prompt
     )
+
+
+def test_semantic_retention_intent_needs_no_magic_phrase_and_does_not_execute() -> None:
+    prompt = _read(ORCHESTRATION_PROMPT)
+
+    assert "Natural-language **retention intent** is also a valid orchestration input" in prompt
+    assert "Do not require a magic phrase, exact command" in prompt
+    assert "Interpret the operator's meaning semantically from context" in prompt
+    assert "Retention intent is not execution authorization" in prompt
+    assert "full conversation context actually available" in prompt
+    assert "save the good stuff from this chat" in prompt
+    assert "do not infer execution, priority, sequencing, budget, or architecture" in prompt
+
+
+def test_retention_then_proceed_keeps_retention_and_execution_semantically_separate() -> None:
+    prompt = _read(ORCHESTRATION_PROMPT)
+
+    assert "save the good stuff, then proceed" in prompt
+    assert "complete the retention/reconciliation pass first" in prompt
+    assert "then independently resolve `proceed`" in prompt
+    assert "Retention itself never upgrades the later `proceed` into broader authority" in prompt
+
+
+def test_retention_uses_available_context_and_reuses_existing_surfaces() -> None:
+    prompt = _read(ORCHESTRATION_PROMPT)
+
+    assert "use the full conversation context actually available" in prompt
+    assert "search plausible owning/reference surfaces before creating duplicates" in prompt
+    assert "use an existing workspace resurfacing/detection mechanism when one exists" in prompt
+    assert "return a concise retention receipt" in prompt
 
 
 def test_accepted_gate_return_evidence_resumes_without_redundant_proceed() -> None:

@@ -127,7 +127,8 @@ def _git_head(repo_root: Path) -> str:
 
 
 def evaluate(payload: Any, *, repo_root: Path, observed_head: str | None = None) -> dict[str, Any]:
-    if not isinstance(payload, dict) or set(payload) != {"schema_version", "target_repository", "target_sha", "handoff"}:
+    required_payload_fields = {"schema_version", "target_repository", "target_sha", "handoff"}
+    if not isinstance(payload, dict) or set(payload) != required_payload_fields:
         raise IntakeError("intake payload fields do not match the fixed contract")
     if payload.get("schema_version") != 1:
         raise IntakeError("unsupported intake schema_version")
@@ -200,6 +201,10 @@ def evaluate(payload: Any, *, repo_root: Path, observed_head: str | None = None)
         "disposition": disposition,
     }
     replay_key = hashlib.sha256(_canonical(replay_material).encode("utf-8")).hexdigest()
+    disposition_reason = (
+        "current PROGRAMSTART authority was re-read; semantic consequence remains gated because this fixed intake helper "
+        "does not manufacture target-owner admission"
+    )
     return {
         "schema_version": 1,
         "target_repository": TARGET_REPOSITORY,
@@ -210,7 +215,7 @@ def evaluate(payload: Any, *, repo_root: Path, observed_head: str | None = None)
         "packet_sha256": packet_sha256,
         "authority_paths_verified": verified_paths,
         "disposition": disposition,
-        "disposition_reason": "current PROGRAMSTART authority was re-read; semantic consequence remains gated because this fixed intake helper does not manufacture target-owner admission",
+        "disposition_reason": disposition_reason,
         "replay_key": replay_key,
         "delivery_is_acceptance": False,
         "mutation_performed": False,

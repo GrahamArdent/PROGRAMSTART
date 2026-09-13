@@ -1,12 +1,9 @@
-from pathlib import Path
-
-
-ROOT = Path(__file__).resolve().parents[1]
-PROMPT = ROOT / ".github" / "prompts" / "start-programstart-project.prompt.md"
+PROMPT = ".github/prompts/start-programstart-project.prompt.md"
 
 
 def _prompt() -> str:
-    return PROMPT.read_text(encoding="utf-8")
+    with open(PROMPT, encoding="utf-8") as handle:
+        return handle.read()
 
 
 def test_retention_intent_needs_no_magic_phrase_and_does_not_execute() -> None:

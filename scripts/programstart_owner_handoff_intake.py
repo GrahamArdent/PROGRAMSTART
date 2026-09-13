@@ -113,8 +113,7 @@ def _git_head(repo_root: Path) -> str:
     proc = subprocess.run(
         ["/usr/bin/git", "-C", str(repo_root), "rev-parse", "HEAD"],
         stdin=subprocess.DEVNULL,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+        capture_output=True,
         text=True,
         timeout=10,
         check=False,

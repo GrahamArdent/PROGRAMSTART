@@ -3,14 +3,14 @@ from __future__ import annotations
 import hashlib
 import importlib.util
 import json
-from pathlib import Path
 import tempfile
 import unittest
+from pathlib import Path
 
 MODULE_PATH = Path(__file__).parents[1] / "scripts" / "programstart_owner_handoff_intake.py"
 SPEC = importlib.util.spec_from_file_location("owner_intake", MODULE_PATH)
+assert SPEC is not None and SPEC.loader is not None
 mod = importlib.util.module_from_spec(SPEC)
-assert SPEC and SPEC.loader
 SPEC.loader.exec_module(mod)
 
 TARGET_SHA = "a" * 40
@@ -63,6 +63,28 @@ def make_payload():
     }
 
 
+def refresh_handoff_binding(payload):
+    packet = payload["handoff"]["packet"]
+    body = dict(packet)
+    body.pop("specification_id", None)
+    body.pop("semantic_digest", None)
+    semantic = hashlib.sha256(canonical(body).encode()).hexdigest()
+    packet["specification_id"] = f"WPK-{semantic[:16]}"
+    packet["semantic_digest"] = semantic
+    payload["handoff"]["specification_id"] = packet["specification_id"]
+    payload["handoff"]["semantic_digest"] = semantic
+    payload["handoff"]["packet_sha256"] = hashlib.sha256(canonical(packet).encode()).hexdigest()
+    identity_fields = (
+        "source_repository",
+        "source_context_ref",
+        "target_repository",
+        "specification_id",
+        "semantic_digest",
+    )
+    identity = {key: payload["handoff"][key] for key in identity_fields}
+    payload["handoff"]["handoff_id"] = "handoff-" + hashlib.sha256(canonical(identity).encode()).hexdigest()[:24]
+
+
 class IntakeTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
@@ -92,19 +114,8 @@ class IntakeTests(unittest.TestCase):
 
     def test_stale_packet_authority_fails_closed(self):
         payload = make_payload()
-        packet = payload["handoff"]["packet"]
-        packet["authority"]["authority_commit"] = "b" * 40
-        body = dict(packet)
-        body.pop("specification_id")
-        body.pop("semantic_digest")
-        semantic = hashlib.sha256(canonical(body).encode()).hexdigest()
-        packet["specification_id"] = f"WPK-{semantic[:16]}"
-        packet["semantic_digest"] = semantic
-        payload["handoff"]["specification_id"] = packet["specification_id"]
-        payload["handoff"]["semantic_digest"] = semantic
-        payload["handoff"]["packet_sha256"] = hashlib.sha256(canonical(packet).encode()).hexdigest()
-        identity = {k: payload["handoff"][k] for k in ("source_repository", "source_context_ref", "target_repository", "specification_id", "semantic_digest")}
-        payload["handoff"]["handoff_id"] = "handoff-" + hashlib.sha256(canonical(identity).encode()).hexdigest()[:24]
+        payload["handoff"]["packet"]["authority"]["authority_commit"] = "b" * 40
+        refresh_handoff_binding(payload)
         with self.assertRaisesRegex(mod.IntakeError, "authority commit is stale"):
             mod.evaluate(payload, repo_root=self.root, observed_head=TARGET_SHA)
 
@@ -116,19 +127,8 @@ class IntakeTests(unittest.TestCase):
 
     def test_missing_or_unsafe_authority_path_fails_closed(self):
         payload = make_payload()
-        packet = payload["handoff"]["packet"]
-        packet["authority"]["authority_paths"] = ["../outside"]
-        body = dict(packet)
-        body.pop("specification_id")
-        body.pop("semantic_digest")
-        semantic = hashlib.sha256(canonical(body).encode()).hexdigest()
-        packet["specification_id"] = f"WPK-{semantic[:16]}"
-        packet["semantic_digest"] = semantic
-        payload["handoff"]["specification_id"] = packet["specification_id"]
-        payload["handoff"]["semantic_digest"] = semantic
-        payload["handoff"]["packet_sha256"] = hashlib.sha256(canonical(packet).encode()).hexdigest()
-        identity = {k: payload["handoff"][k] for k in ("source_repository", "source_context_ref", "target_repository", "specification_id", "semantic_digest")}
-        payload["handoff"]["handoff_id"] = "handoff-" + hashlib.sha256(canonical(identity).encode()).hexdigest()[:24]
+        payload["handoff"]["packet"]["authority"]["authority_paths"] = ["../outside"]
+        refresh_handoff_binding(payload)
         with self.assertRaisesRegex(mod.IntakeError, "safe repository-relative"):
             mod.evaluate(payload, repo_root=self.root, observed_head=TARGET_SHA)
 

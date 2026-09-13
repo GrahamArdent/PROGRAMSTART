@@ -3,7 +3,7 @@ description: "Orchestrate a new project, worthwhile captured idea, or existing-p
 name: "Orchestrate PROGRAMSTART Work"
 argument-hint: "Describe what you want to build/change, ask in ordinary language to save/capture/retain worthwhile ideas or suggestions from the current conversation, name an idea worth preserving, or optionally name the target repository, execution spine, companion dependency, known operator gate, blocked closure-control slice, material cost/provider decision, or accept the most recent concrete recommendation with natural language such as 'proceed'"
 agent: "agent"
-version: "2.10"
+version: "2.9"
 ---
 
 # Orchestrate PROGRAMSTART Work

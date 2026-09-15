@@ -31,12 +31,16 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
         generated_repo_prompt_authority_for_mode,
         generated_repo_prompt_registry_for_mode,
     )
+
     from programstart_common import (
         load_registry,
         warn_direct_script_invocation,
         workspace_path,
         write_json,
     )
+
+
+AGENT_CONTRACT = "AGENTS.md"
 
 
 def _git_head_hash() -> str:
@@ -59,13 +63,9 @@ def _assert_safe_destination(destination_root: Path, prompt_assets: tuple[str, .
     if (destination_root / "PROGRAMBUILD").exists():
         raise FileExistsError("PROGRAMBUILD already exists in destination; adoption will not overwrite it.")
     if (destination_root / "config" / "process-registry.json").exists():
-        raise FileExistsError(
-            "config/process-registry.json already exists in destination; adoption will not overwrite it."
-        )
+        raise FileExistsError("config/process-registry.json already exists in destination; adoption will not overwrite it.")
     if (destination_root / MANIFEST_FILENAME).exists():
-        raise FileExistsError(
-            f"{MANIFEST_FILENAME} already exists in destination; repository may already be linked."
-        )
+        raise FileExistsError(f"{MANIFEST_FILENAME} already exists in destination; repository may already be linked.")
 
     for relative_path in prompt_assets:
         destination = destination_root / relative_path
@@ -78,6 +78,24 @@ def _assert_safe_destination(destination_root: Path, prompt_assets: tuple[str, .
             identical = False
         if not identical:
             raise FileExistsError(f"Adoption would overwrite existing project file: {relative_path}")
+
+
+def _seed_agent_contract(destination_root: Path, *, dry_run: bool) -> bool:
+    """Seed the reusable root AGENTS.md only when the project has no local contract.
+
+    An existing project-owned AGENTS.md is authoritative for that repository's execution
+    behavior and must never be replaced by PROGRAMSTART adoption. A seeded AGENTS.md is
+    intentionally not added to the managed adoption manifest, so subsequent methodology
+    sync cannot silently overwrite project-local agent rules.
+    """
+    destination = destination_root / AGENT_CONTRACT
+    if destination.exists():
+        if dry_run:
+            print(f"PRESERVE {destination}")
+        return False
+
+    copy_file(workspace_path(AGENT_CONTRACT), destination, dry_run)
+    return True
 
 
 def _adopted_registry(
@@ -137,9 +155,7 @@ def _write_adoption_manifest(
     prompt_assets: tuple[str, ...],
 ) -> None:
     state_file = registry["workflow_state"]["programbuild"]["state_file"]
-    managed_controls = [
-        path for path in registry["systems"]["programbuild"]["control_files"] if path != state_file
-    ]
+    managed_controls = [path for path in registry["systems"]["programbuild"]["control_files"] if path != state_file]
     manifest = {
         "programstart_version": "1.0.0",
         "source_commit": _git_head_hash(),
@@ -172,6 +188,7 @@ def adopt_programbuild(
         print(f"ADOPT PROGRAMBUILD -> {destination_root}")
 
     bootstrap_programbuild(destination_root, registry, variant, dry_run)
+    _seed_agent_contract(destination_root, dry_run=dry_run)
 
     for relative_path in prompt_assets:
         source = workspace_path(relative_path)
@@ -207,10 +224,7 @@ def adopt_programbuild(
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description=(
-            "Adopt PROGRAMBUILD in an existing repository without replacing "
-            "its native engineering toolchain."
-        )
+        description=("Adopt PROGRAMBUILD in an existing repository without replacing its native engineering toolchain.")
     )
     parser.add_argument("--dest", required=True, help="Existing repository root to adopt.")
     parser.add_argument("--project-name", help="Project name to stamp into the adopted registry.")

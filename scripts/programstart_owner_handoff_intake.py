@@ -7,8 +7,9 @@ import json
 import re
 import subprocess
 import sys
+from collections.abc import Mapping
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any
 
 TARGET_REPOSITORY = "GrahamArdent/PROGRAMSTART"
 PACKET_SCHEMA = "programstart.compiled-work-packet.v0.1"

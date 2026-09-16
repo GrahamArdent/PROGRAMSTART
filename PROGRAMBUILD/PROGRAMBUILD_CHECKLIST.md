@@ -114,7 +114,11 @@ For each coherent slice:
 - [ ] if a derived checklist/audit/portfolio finding is material but not represented in current owning authority, apply `docs/PROGRAMSTART_AUTHORITY_GAP_RECONCILIATION.md`; the derived finding may route/reconcile work but must not execute as authority
 - [ ] preserve any stronger security/destructive/financial/credential/production/privacy/legal/release/operator gate; generic acceptance does not satisfy it automatically
 - [ ] when autonomous execution is available, resolve the exact action under `docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md`; new Controller/Compute/worker capability may automate only an already-authorized consequence class and must not create new permission
+- [ ] when a mechanism is materially uncertain, repeatedly failing, consequential, recurrent, or approaching a human gate, state/test the concept separately from its implementation, define the smallest useful falsification condition, and bound exploration by expected information value rather than an arbitrary retry count
+- [ ] before another materially similar attempt, record the material attempt delta and why that change could alter the result; do not treat syntax perturbation/repetition without new information as progress
 - [ ] before escalating an already-authorized mechanical action to operator transport, classify the boundary origin and run the Effective Autonomy alternative-actuation search across available connected APIs/connectors, provider APIs, CLI tools, accepted runtimes, repository automation, local agents/tasks, machine identities, control queues, and bounded compositions; use the safest viable in-authority mechanism or record why none survives Challenge
+- [ ] before notifying the operator, establish `GATE_READINESS: ready` and the exact `HUMAN_ONLY_REMAINDER`; resolve machine-obtainable uncertainty material to the requested action, including procedure/source, shell/tool/version/target, syntax/quoting/spacing/formatting/path/config shape, permission/destination, non-secret/dummy checks where useful, post-action verification, and rollback/recovery where warranted
+- [ ] never use the operator as the debugger of a falsified concept or unvalidated machine instruction; if the operator must correct a machine-resolvable detail after handoff, invalidate the readiness claim and route reusable learning to the behavior owner
 - [ ] persist `CURRENT_WORK_PACKET.md` only if persistence materially improves coordination/risk/resumption
 - [ ] trace the slice to current authority and exact relevant requirements/contracts
 - [ ] load only task-relevant authority/specialist context
@@ -129,7 +133,7 @@ For each coherent slice:
 - [ ] reconcile material decisions/scope/architecture/status
 - [ ] when a checklist is active, reconcile every applicable item as satisfied / n/a-with-reason / blocked-with-exact-gate / authority-permitted-deferred
 - [ ] close/replace the packet; do not accumulate a parallel plan
-- [ ] widen to a mid-implementation Challenge Gate when accumulated change/risk makes the narrow slice view insufficient
+- [ ] widen to a mid-implementation Challenge Gate when accumulated change/risk or the execution trajectory makes the narrow slice view insufficient
 
 ---
 
@@ -185,8 +189,13 @@ For each coherent slice:
 - [ ] specialist agents are used only when decomposition/review value justifies them
 - [ ] learning-capable behavior, when activated, remains subordinate to deterministic permission/safety/budget/gate authority and cannot self-expand authority
 - [ ] effective autonomy is consequence-scoped; newly available execution capability has not been mistaken for broader project authority or a project-wide `autonomous=true` permission
+- [ ] uncertain/repeated/consequential approaches were challenged at the concept level and exploration stayed information-seeking rather than exhaustive/repetitive
+- [ ] repeated attempts, when any, carried a material attempt delta and a concrete reason the result could differ
 - [ ] tool creativity was applied before any operator transport claim for already-authorized mechanical work, while authority remained conservative and stronger gates were not disguised or bypassed
+- [ ] every operator handoff was technically ready before notification, with machine-resolvable uncertainty closed to the warranted level and the human-only remainder explicit
 - [ ] a narrow human/consequence gate is not unnecessarily freezing unrelated safe work, and accepted gate evidence can resume without routine human transport where current runtime capability permits
+- [ ] a final-success claim did not hide a materially defective trajectory such as stale-evidence loops, repeated indistinguishable retries, unready human handoffs, unsafe shortcuts, or accidental/non-repeatable success
+- [ ] the applicable root/nested `AGENTS.md` used by Codex/agents points to current authority rather than acting as a stale duplicate roadmap
 - [ ] no universal numeric/time threshold is being substituted for risk judgment
 - [ ] project-specific state is not stored in reusable PROGRAMSTART methodology
 
@@ -207,4 +216,4 @@ Do not duplicate the full gate prose in this checklist.
 
 ---
 
-Last updated: 2026-09-04
+Last updated: 2026-09-09

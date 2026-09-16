@@ -8,7 +8,7 @@ This record does not own product scope, execution order, release state, merge au
 
 - **Date:** 2026-09-16
 - **Project / repository:** Networking TR-04 / `GrahamArdent/programstart-autonomous-controller`, with methodology owner `GrahamArdent/PROGRAMSTART`
-- **PROGRAMSTART lesson ID:** none new; confirmation/strengthening evidence for `PSL-007`, `PSL-018`, `PSL-023`-candidate Verification Economics behavior, and the 2026-09-15 PR-terminalization/resumption observation
+- **PROGRAMSTART lesson ID:** none new; confirmation/strengthening evidence for `PSL-007`, `PSL-018`, current Verification Economics behavior, and the 2026-09-15 PR-terminalization/resumption observation
 - **Checkpoint / acceptance surface:** explicit continuation/durability experiment using TR-04 waiting/resume behavior and Controller AC-09 owner-handoff wake semantics
 - **Classification:** PROGRAMSTART methodology `confirmation`; Controller product/system learning `systemic candidate / strengthening evidence`
 

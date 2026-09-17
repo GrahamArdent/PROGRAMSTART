@@ -2,6 +2,7 @@ PROTOCOL = "docs/PROGRAMSTART_AUTHORITY_GAP_RECONCILIATION.md"
 CHECKLIST = "PROGRAMBUILD/PROGRAMBUILD_CHECKLIST.md"
 PLANNING = "PROGRAMBUILD/PROGRAMBUILD_PLANNING_OPERATING_MODEL.md"
 LEARNING = "docs/PROGRAMSTART_LEARNING_LOOP.md"
+WORK_PACKET = "PROGRAMBUILD/PROGRAMBUILD_WORK_PACKET.md"
 
 
 def _read(path: str) -> str:
@@ -60,3 +61,13 @@ def test_checklist_integration_invokes_authority_gap_protocol() -> None:
     assert "PROGRAMSTART_AUTHORITY_GAP_RECONCILIATION.md" in checklist
     assert "no checklist/audit silently became authority" in checklist
     assert "existing Learning Gate" in checklist
+
+
+def test_material_gap_and_packet_closure_evaluate_learning_gate() -> None:
+    protocol = _read(PROTOCOL)
+    packet = _read(WORK_PACKET)
+
+    assert "A resolved material Authority Gap is itself a meaningful Learning Gate checkpoint" in protocol
+    assert "Evaluate the Learning Gate at a meaningful checkpoint" in packet
+    assert "before closing" in packet
+    assert "no reusable lesson" in packet

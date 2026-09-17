@@ -197,7 +197,8 @@ A project MAY keep at most one active replaceable `CURRENT_WORK_PACKET.md` unles
 15. **Challenge closure when the actual risk surface requires it** — before merge-ready/accepted/complete status, inspect the completed implementation/config/runtime behavior and run the existing `PROGRAMBUILD_CHALLENGE_GATE.md` post-implementation adversarial review when triggered. Do not use green current tests as a substitute for constructing a realistic failure sequence against a material invariant.
 16. **Reconcile checklist completeness when active** — every applicable item must be satisfied, not applicable with reason, blocked with exact gate, or deferred only when authority permits. A forgotten/unresolved required item prevents truthful closure.
 17. **Reconcile durable state** — material decisions/scope/architecture/status belong in the repository that owns each concern. If execution disproved the accepted recommendation's premise, reconcile actual evidence rather than forcing the original recommendation through.
-18. **Close or hand off** the packet and derive the next slice from the newly current state.
+18. **Evaluate the Learning Gate at a meaningful checkpoint** — when packet acceptance/closure, a material gate return, convergence result, cross-repository dependency resolution, physical/provider/runtime evidence, or PROGRAMSTART friction matches `docs/PROGRAMSTART_LEARNING_LOOP.md`, classify the observation before closing. `no reusable lesson` is a valid result and requires no durable learning write. Product completion must not wait on PROGRAMSTART write access.
+19. **Close or hand off** the packet and derive the next slice from the newly current state.
 
 If the packet needs its own backlog, milestones, or independent sequencing, it is too large. Split it.
 

@@ -177,7 +177,7 @@ Every resolved Authority Gap should answer two different questions:
 
 Do not assume every Authority Gap is a PROGRAMSTART defect.
 
-At the next meaningful Learning Gate, classify the cause under `docs/PROGRAMSTART_LEARNING_LOOP.md`:
+A resolved material Authority Gap is itself a meaningful Learning Gate checkpoint when it exposed cross-project authority mismatch, systemic PROGRAMSTART friction/failure, or evidence that contradicted a prior methodology assumption. In simpler local/new-information cases, the normal next meaningful checkpoint remains sufficient. In either case, classify the cause under `docs/PROGRAMSTART_LEARNING_LOOP.md`; `no reusable lesson` remains a valid result and does not require a durable PROGRAMSTART write:
 
 - **genuinely new information** — no methodology defect;
 - **local project omission** — reconcile locally;

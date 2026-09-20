@@ -68,7 +68,8 @@ def test_disproved_recommendation_is_not_forced_through() -> None:
 
     assert "do not force the accepted recommendation through" in planning
     assert (
-        "actual evidence rather than forcing the original recommendation through" in packet
+        "actual evidence rather than forcing the original recommendation through"
+        in packet
     )
 
 
@@ -129,7 +130,9 @@ def test_trivial_work_omits_checklist_bookkeeping() -> None:
     assert "COMPLETENESS_CHECKLIST: [not_needed | inline | referenced]" not in prompt
 
 
-def test_agent_orchestration_handles_natural_language_without_new_cli_state_machine() -> None:
+def test_agent_orchestration_handles_natural_language_without_new_cli_state_machine() -> (
+    None
+):
     prompt = _read(ORCHESTRATION_PROMPT)
 
     assert 'version: "2.10"' in prompt
@@ -165,7 +168,10 @@ def test_accepted_gate_return_evidence_resumes_without_redundant_proceed() -> No
     prompt = _read(ORCHESTRATION_PROMPT)
 
     assert "that accepted evidence is itself the resume signal" in packet
-    assert "unless the handoff explicitly declares a separate post-evidence approval" in packet
+    assert (
+        "unless the handoff explicitly declares a separate post-evidence approval"
+        in packet
+    )
     assert "without asking for a redundant `proceed`" in prompt
     assert "resume automatically at `RESUME_AT`" in prompt
 

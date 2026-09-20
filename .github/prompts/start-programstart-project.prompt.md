@@ -3,7 +3,7 @@ description: "Orchestrate a new project, worthwhile captured idea, or existing-p
 name: "Orchestrate PROGRAMSTART Work"
 argument-hint: "Describe what you want to build/change, ask in ordinary language to save/capture/retain worthwhile ideas or suggestions from the current conversation, name an idea worth preserving, or optionally name the target repository, execution spine, companion dependency, known operator gate, blocked closure-control slice, material cost/provider decision, or accept the most recent concrete recommendation with natural language such as 'proceed'"
 agent: "agent"
-version: "2.9"
+version: "2.10"
 ---
 
 # Orchestrate PROGRAMSTART Work
@@ -53,6 +53,7 @@ Before substantive edits:
 10. If another repository is a real prerequisite, identify it as a bounded dependency rather than loading/replanning an entire portfolio.
 11. If a Mode-C closure-control slice is blocked, determine whether the same project authority explicitly permits another independent bounded lane before treating the whole project as stopped.
 12. If the actual next action is unavailable in the environment, determine whether an exact operator/provider/device/reviewer handoff is required rather than returning a vague blocked status.
+12a. When the work touches an external provider, system, organization, resource, device family, platform, or service, enumerate all materially supported connection surfaces relevant to observation, control, administration, events, authentication, recovery, integration, or data exchange before selecting a path or declaring a human gate. Preserve distinct capability/trust/failure-domain differences. Select a connection/auth path per operation; never let one preferred path suppress another supported surface. Keep discovery separate from activation and credential creation: `complete connection inventory != every credential materialized != every surface activated`.
 13. If the current decision introduces or materially changes a paid, metered, quota-limited, or independently operated external service, activate the Cost Gate from `docs/PROGRAMSTART_COST_GOVERNANCE.md`. Do not create cost paperwork for ordinary work already inside still-valid included capacity.
 14. Decide whether omission risk or an existing applicable durable checklist warrants an active completion checklist for the slice. Do not create large checklist paperwork for trivial work.
 15. Do **not** load the full PROGRAMSTART learning history during routine implementation. Load the learning ledger only at a Learning Gate trigger or when the current situation directly matches a known open retest condition.
@@ -105,6 +106,7 @@ Instead:
 9. scope blockers and scan safe execution lanes before treating work as stopped;
 10. derive a coordinated Mode-C lane view only when project authority proves multiple relevant current lanes exist;
 11. invoke adaptive decision/research reasoning only when uncertainty/consequence could materially change the action;
+11a. for any external provider/system/resource, map all materially supported connection surfaces before concluding automation is unavailable or choosing a global preferred path; preserve alternatives and choose per effect, while keeping surface discovery separate from activation/credential creation;
 12. activate a decision-scoped Cost Envelope only when the slice materially changes paid/metered/quota-limited infrastructure or when cost evidence can change the architecture/provider choice;
 13. derive one compact bounded work packet;
 14. activate an inline/referenced completion checklist only when omission risk or an existing applicable checklist warrants it;
@@ -122,6 +124,8 @@ Repository/runtime/provider state is authoritative for current technical reality
 For idea preservation, preserve the difference between **worth remembering** and **accepted for execution**. `CAPTURED`, `CANDIDATE`, `INVESTIGATING`, `SHELVED`, `REJECTED`, and `SUPERSEDED` are reference/evidence states. `ACCEPTED` means promote/reconcile into the actual owning authority; execution still comes from that authority.
 
 For provider/runtime resources, preserve verified historical existence separately from current visibility/accessibility. Current invisibility alone does not prove deletion or nonexistence.
+
+For external connection surfaces, preserve the difference between **surface exists**, **surface is authenticated/materialized**, **surface is currently active**, and **surface is selected for this effect**. A safer/preferred path for one effect must not make other materially supported API/CLI/SDK/OAuth/webhook/native/private-network/local/admin surfaces disappear from architecture or currentness.
 
 For cost evidence, preserve the evidence date/source and refresh only when pricing/limits are stale enough to change the decision. `Currently free/included` is not the same claim as `cannot incur cost`.
 

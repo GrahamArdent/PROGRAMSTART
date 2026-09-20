@@ -1,7 +1,7 @@
 # Connection-surface completeness — Tailscale / Secrets natural learning observation
 
-**Date:** 2026-09-20  
-**Learning candidate:** PSL-023  
+**Date:** 2026-09-20
+**Learning candidate:** PSL-023
 **Origin:** Execution Node #211, Secrets #78/#79, Secrets PR #80
 
 ## Trigger

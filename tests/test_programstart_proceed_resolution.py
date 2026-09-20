@@ -143,14 +143,21 @@ def test_agent_orchestration_handles_natural_language_without_new_cli_state_mach
     )
 
 
-
-def test_external_system_discovery_is_connection_complete_without_forcing_activation() -> None:
+def test_external_system_discovery_is_connection_complete_without_forcing_activation() -> (
+    None
+):
     prompt = _read(ORCHESTRATION_PROMPT)
 
     assert "enumerate all materially supported connection surfaces" in prompt
     assert "never let one preferred path suppress another supported surface" in prompt
-    assert "complete connection inventory != every credential materialized != every surface activated" in prompt
-    assert "map all materially supported connection surfaces before concluding automation is unavailable" in prompt
+    assert (
+        "complete connection inventory != every credential materialized != every surface activated"
+        in prompt
+    )
+    assert (
+        "map all materially supported connection surfaces before concluding automation is unavailable"
+        in prompt
+    )
 
 
 def test_accepted_gate_return_evidence_resumes_without_redundant_proceed() -> None:

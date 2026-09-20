@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
 PLANNING = ROOT / "PROGRAMBUILD" / "PROGRAMBUILD_PLANNING_OPERATING_MODEL.md"
 WORK_PACKET = ROOT / "PROGRAMBUILD" / "PROGRAMBUILD_WORK_PACKET.md"

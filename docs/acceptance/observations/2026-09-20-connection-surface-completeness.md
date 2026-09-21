@@ -1,7 +1,7 @@
 # Connection-surface completeness — Tailscale / Secrets natural learning observation
 
 **Date:** 2026-09-20
-**Learning candidate:** PSL-023
+**Learning candidate:** connection-complete external-system discovery (lesson ID allocation deferred until current ledger owners reconcile)
 **Origin:** Execution Node #211, Secrets #78/#79, Secrets PR #80
 
 ## Trigger
@@ -57,7 +57,7 @@ The owning project still controls provider/domain semantics and consequence auth
 
 ## Disposition
 
-`PSL-023=IMPLEMENTED`
+`LEARNING_DISPOSITION=IMPLEMENTED_BEHAVIOR / LESSON_ID_ALLOCATION_DEFERRED`
 
 Natural validation is still required on the next unrelated provider/system with multiple viable connection surfaces.
 

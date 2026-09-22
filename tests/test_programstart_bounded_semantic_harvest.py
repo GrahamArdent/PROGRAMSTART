@@ -1,5 +1,5 @@
-from pydantic import ValidationError
 import pytest
+from pydantic import ValidationError
 
 from scripts.programstart_intent_compile import IntentKind
 from scripts.programstart_intent_ingress import (

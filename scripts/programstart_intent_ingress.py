@@ -162,7 +162,7 @@ class SemanticInterpretationCandidate(BaseModel):
 def build_trusted_conversation_harvest(
     envelope: BoundedIntentEnvelope,
     semantic: SemanticInterpretationCandidate,
-) -> "ConversationHarvest":
+) -> ConversationHarvest:
     """Bind mechanical context to bounded semantic interpretation without minting authority."""
 
     source_ref = f"semantic-producer:{semantic.producer}@{semantic.producer_version}"

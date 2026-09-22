@@ -106,7 +106,7 @@ def test_trivial_work_omits_checklist_bookkeeping() -> None:
 def test_agent_orchestration_handles_natural_language_without_new_cli_state_machine() -> None:
     prompt = _read(ORCHESTRATION_PROMPT)
 
-    assert 'version: "2.10"' in prompt
+    assert 'version: "2.11"' in prompt
     assert "is a valid orchestration input when the prior concrete recommendation is available" in prompt
     assert "MUST NOT be replaced with brittle keyword parsing or a new operator-maintained recommendation state machine" in prompt
 
@@ -137,3 +137,22 @@ def test_checklist_remains_derived_and_cannot_create_scope() -> None:
     assert "derived completeness / verification surface" in checklist
     assert "never let a checklist item silently create new project scope or sequencing" in checklist
     assert "a checklist that can invent scope" in packet
+
+
+def test_material_learning_gate_preserves_protected_outcome_before_classification() -> None:
+    prompt = _read(ORCHESTRATION_PROMPT)
+
+    assert "preserve the protected outcome/claim before classification" in prompt
+    assert "what was supposed to become true" in prompt
+    assert "the first unproven/broken hop" in prompt
+    assert "what evidence would falsify the proposed reusable lesson" in prompt
+    assert "is not by itself proof that the accepted end goal is terminal" in prompt
+
+
+def test_learning_gate_causal_projection_stays_conditional_and_allows_quiet_success() -> None:
+    prompt = _read(ORCHESTRATION_PROMPT)
+
+    assert "material/problematic checkpoint" in prompt
+    assert "No reusable lesson" in prompt
+    assert "Do not manufacture a methodology change" in prompt
+    assert "trivial successful packets" in prompt

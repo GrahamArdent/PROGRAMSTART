@@ -111,6 +111,85 @@ class HumanConsequenceGate(BaseModel):
         return self
 
 
+class BoundedIntentEnvelope(BaseModel):
+    """Mechanically captured operator input before trusted semantic interpretation.
+
+    This is transport/context evidence, not semantic or execution authority.
+    """
+
+    context_ref: str
+    latest_operator_utterance: str
+    source_principal: str
+    captured_at: str
+    project_hint: str = ""
+    existing_work_packet_ref: str = ""
+    durable_artifact_refs: list[str] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def mechanical_context_must_be_present(self) -> BoundedIntentEnvelope:
+        required = (self.context_ref, self.latest_operator_utterance, self.source_principal, self.captured_at)
+        if any(not value.strip() for value in required):
+            raise ValueError("bounded intent envelope requires context, utterance, principal, and capture time")
+        return self
+
+
+class SemanticInterpretationCandidate(BaseModel):
+    """Bounded semantic output from a trusted producer.
+
+    Confidence is evidence only. It never grants authority.
+    """
+
+    objective: str
+    intent_kind: IntentKind
+    converged: bool
+    accepted_decisions: list[str] = Field(default_factory=list)
+    active_constraints: list[str] = Field(default_factory=list)
+    explicit_exclusions: list[str] = Field(default_factory=list)
+    unresolved_material_ambiguities: list[str] = Field(default_factory=list)
+    producer: str
+    producer_version: str
+    confidence: float | None = Field(default=None, ge=0.0, le=1.0)
+
+    @model_validator(mode="after")
+    def semantic_candidate_must_be_attributed(self) -> SemanticInterpretationCandidate:
+        if not self.objective.strip() or not self.producer.strip() or not self.producer_version.strip():
+            raise ValueError("semantic interpretation requires objective and producer provenance")
+        if self.intent_kind == IntentKind.UNKNOWN and not self.unresolved_material_ambiguities:
+            raise ValueError("unknown intent must retain a material ambiguity")
+        return self
+
+
+def build_trusted_conversation_harvest(
+    envelope: BoundedIntentEnvelope,
+    semantic: SemanticInterpretationCandidate,
+) -> "ConversationHarvest":
+    """Bind mechanical context to bounded semantic interpretation without minting authority."""
+
+    source_ref = f"semantic-producer:{semantic.producer}@{semantic.producer_version}"
+
+    def statement(text: str) -> MaterialStatement:
+        return MaterialStatement(
+            text=text,
+            source=ConversationBasisSource.SYSTEM_INFERENCE,
+            source_ref=source_ref,
+        )
+
+    ambiguities = [statement(value) for value in semantic.unresolved_material_ambiguities]
+    return ConversationHarvest(
+        context_ref=envelope.context_ref,
+        latest_operator_utterance=envelope.latest_operator_utterance,
+        objective=statement(semantic.objective),
+        intent_kind=semantic.intent_kind,
+        project_hint=envelope.project_hint,
+        converged=semantic.converged and not ambiguities,
+        accepted_decisions=[statement(value) for value in semantic.accepted_decisions],
+        active_constraints=[statement(value) for value in semantic.active_constraints],
+        explicit_exclusions=[statement(value) for value in semantic.explicit_exclusions],
+        unresolved_material_ambiguities=ambiguities,
+        existing_work_packet_ref=envelope.existing_work_packet_ref,
+    )
+
+
 class ConversationHarvest(BaseModel):
     """Trusted semantic harvest of only execution-relevant conversation state.
 

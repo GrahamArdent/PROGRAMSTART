@@ -12,9 +12,12 @@ runtime states. The Autonomous Controller remains the durable execution/admissio
 
 from __future__ import annotations
 
+import hashlib
+import json
 from enum import StrEnum
+from typing import Any, Literal
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
 from .programstart_intent_compile import (
     AuthoritySnapshot,
@@ -117,6 +120,8 @@ class BoundedIntentEnvelope(BaseModel):
     This is transport/context evidence, not semantic or execution authority.
     """
 
+    model_config = ConfigDict(extra="forbid")
+
     context_ref: str
     latest_operator_utterance: str
     source_principal: str
@@ -139,6 +144,8 @@ class SemanticInterpretationCandidate(BaseModel):
     Confidence is evidence only. It never grants authority.
     """
 
+    model_config = ConfigDict(extra="forbid")
+
     objective: str
     intent_kind: IntentKind
     converged: bool
@@ -157,6 +164,174 @@ class SemanticInterpretationCandidate(BaseModel):
         if self.intent_kind == IntentKind.UNKNOWN and not self.unresolved_material_ambiguities:
             raise ValueError("unknown intent must retain a material ambiguity")
         return self
+
+
+SEMANTIC_PRODUCER_REQUEST_VERSION = "programstart.semantic-producer.request.v1"
+SEMANTIC_PRODUCER_RESPONSE_VERSION = "programstart.semantic-producer.response.v1"
+BOUNDED_CODEX_SEMANTIC_PROFILE = "bounded-codex-semantic-v1"
+
+
+def _semantic_effect_id(envelope: BoundedIntentEnvelope) -> str:
+    canonical = json.dumps(envelope.model_dump(mode="json"), sort_keys=True, separators=(",", ":"))
+    return f"sha256:{hashlib.sha256(canonical.encode('utf-8')).hexdigest()}"
+
+
+class SemanticProducerRequest(BaseModel):
+    """Versioned input for an external bounded semantic producer.
+
+    The envelope is entirely mechanical. The effect id makes identical inputs comparable
+    across retries without claiming that probabilistic provider bytes will be identical.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    schema_version: Literal["programstart.semantic-producer.request.v1"] = SEMANTIC_PRODUCER_REQUEST_VERSION
+    profile: Literal["bounded-codex-semantic-v1"] = BOUNDED_CODEX_SEMANTIC_PROFILE
+    envelope: BoundedIntentEnvelope
+    semantic_effect_id: str
+
+    @classmethod
+    def from_envelope(cls, envelope: BoundedIntentEnvelope) -> SemanticProducerRequest:
+        return cls(envelope=envelope, semantic_effect_id=_semantic_effect_id(envelope))
+
+    @model_validator(mode="after")
+    def effect_id_must_match_mechanical_input(self) -> SemanticProducerRequest:
+        if self.semantic_effect_id != _semantic_effect_id(self.envelope):
+            raise ValueError("semantic_effect_id does not match the mechanical envelope")
+        return self
+
+
+class SemanticProducerStatus(StrEnum):
+    SUCCEEDED = "succeeded"
+    FAILED = "failed"
+
+
+class SemanticProducerFailure(StrEnum):
+    PROVIDER_FAILURE = "provider_failure"
+    PROVIDER_UNAVAILABLE = "provider_unavailable"
+    OUTPUT_TRUNCATED = "output_truncated"
+
+
+class SemanticProducerResponse(BaseModel):
+    """Untrusted provider response; acceptance requires deterministic validation below."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    schema_version: Literal["programstart.semantic-producer.response.v1"] = SEMANTIC_PRODUCER_RESPONSE_VERSION
+    semantic_effect_id: str
+    status: SemanticProducerStatus
+    candidate: SemanticInterpretationCandidate | None = None
+    failure: SemanticProducerFailure | None = None
+
+    @model_validator(mode="after")
+    def status_payload_must_be_consistent(self) -> SemanticProducerResponse:
+        if self.status == SemanticProducerStatus.SUCCEEDED and (self.candidate is None or self.failure is not None):
+            raise ValueError("successful semantic response requires only a candidate")
+        if self.status == SemanticProducerStatus.FAILED and (self.failure is None or self.candidate is not None):
+            raise ValueError("failed semantic response requires only a provider failure")
+        return self
+
+
+class SemanticProducerRejection(StrEnum):
+    MALFORMED_SCHEMA = "malformed_schema"
+    UNSUPPORTED_VERSION = "unsupported_version"
+    MATERIAL_AMBIGUITY = "material_ambiguity"
+    ATTEMPTED_AUTHORITY_MANUFACTURE = "attempted_authority_manufacture"
+    PROVIDER_FAILURE = "provider_failure"
+    PROVENANCE_MISMATCH = "provenance_mismatch"
+
+
+class SemanticProducerValidation(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    accepted: bool
+    semantic_effect_id: str
+    candidate: SemanticInterpretationCandidate | None = None
+    rejection: SemanticProducerRejection | None = None
+
+    @model_validator(mode="after")
+    def outcome_must_be_consistent(self) -> SemanticProducerValidation:
+        if self.accepted and (self.candidate is None or self.rejection is not None):
+            raise ValueError("accepted semantic validation requires only a candidate")
+        if not self.accepted and (self.rejection is None or self.candidate is not None):
+            raise ValueError("rejected semantic validation requires only a rejection")
+        return self
+
+
+_AUTHORITY_KEYS = {
+    "authority",
+    "authority_snapshot",
+    "currentness",
+    "current_authority",
+    "execution_permission",
+    "execution_authorized",
+    "admission_authorized",
+}
+
+
+def _contains_authority_key(value: Any) -> bool:
+    if isinstance(value, dict):
+        return bool(_AUTHORITY_KEYS.intersection(value)) or any(_contains_authority_key(item) for item in value.values())
+    if isinstance(value, list):
+        return any(_contains_authority_key(item) for item in value)
+    return False
+
+
+def validate_semantic_producer_response(
+    request: SemanticProducerRequest,
+    raw_response: Any,
+) -> SemanticProducerValidation:
+    """Fail closed at the provider boundary while retaining mechanical provenance."""
+
+    effect_id = request.semantic_effect_id
+    if _contains_authority_key(raw_response):
+        return SemanticProducerValidation(
+            accepted=False,
+            semantic_effect_id=effect_id,
+            rejection=SemanticProducerRejection.ATTEMPTED_AUTHORITY_MANUFACTURE,
+        )
+    if not isinstance(raw_response, dict):
+        return SemanticProducerValidation(
+            accepted=False,
+            semantic_effect_id=effect_id,
+            rejection=SemanticProducerRejection.MALFORMED_SCHEMA,
+        )
+    if raw_response.get("schema_version") != SEMANTIC_PRODUCER_RESPONSE_VERSION:
+        return SemanticProducerValidation(
+            accepted=False,
+            semantic_effect_id=effect_id,
+            rejection=SemanticProducerRejection.UNSUPPORTED_VERSION,
+        )
+    try:
+        response = SemanticProducerResponse.model_validate(raw_response)
+    except ValidationError:
+        return SemanticProducerValidation(
+            accepted=False,
+            semantic_effect_id=effect_id,
+            rejection=SemanticProducerRejection.MALFORMED_SCHEMA,
+        )
+    if response.semantic_effect_id != effect_id:
+        return SemanticProducerValidation(
+            accepted=False,
+            semantic_effect_id=effect_id,
+            rejection=SemanticProducerRejection.PROVENANCE_MISMATCH,
+        )
+    if response.status == SemanticProducerStatus.FAILED:
+        return SemanticProducerValidation(
+            accepted=False,
+            semantic_effect_id=effect_id,
+            rejection=SemanticProducerRejection.PROVIDER_FAILURE,
+        )
+    candidate = response.candidate
+    if candidate is None:  # Defensive: the response model already enforces this.
+        raise AssertionError("validated success response has no candidate")
+    if candidate.unresolved_material_ambiguities or not candidate.converged:
+        return SemanticProducerValidation(
+            accepted=False,
+            semantic_effect_id=effect_id,
+            rejection=SemanticProducerRejection.MATERIAL_AMBIGUITY,
+        )
+    return SemanticProducerValidation(accepted=True, semantic_effect_id=effect_id, candidate=candidate)
 
 
 def build_trusted_conversation_harvest(

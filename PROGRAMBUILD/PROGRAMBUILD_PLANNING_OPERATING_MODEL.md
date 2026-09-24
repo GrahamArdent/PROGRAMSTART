@@ -341,6 +341,29 @@ Load only when triggered by the task:
 
 Agents SHOULD prefer retrieval and just-in-time loading over repeatedly stuffing the complete documentation hierarchy into context.
 
+### 7.1 Objective-level convergence and anti-drift
+
+Progressive context loading protects execution only when the current objective remains the anchor.
+
+For each non-trivial packet, derive or recover the **terminal condition** from current project authority: the observable state that makes the selected objective complete. Keep that condition stable unless current authority or material evidence legitimately changes it.
+
+Load additional context just in time when it can resolve a current uncertainty, dependency, consequence, or proof obligation. A newly discovered fact, stale artifact, open PR, adjacent defect, or interesting improvement does **not** automatically become current work.
+
+When new evidence appears, classify it against the terminal condition:
+
+1. **blocking** — it prevents truthful completion or invalidates a required premise; resolve or route it before closure;
+2. **required dependency** — it is not the objective itself but must be satisfied for the terminal condition; bind the exact consequence/resource and continue through that dependency chain;
+3. **non-blocking relevant** — preserve/route it to the existing owner when useful, but do not abandon the selected objective;
+4. **unrelated** — leave it outside the packet.
+
+Do not stop at a locally green intermediate artifact when unattended-safe authorized work remains between that artifact and the terminal condition. Conversely, do not widen the packet merely to clean up every discovered issue.
+
+The anti-drift question at a material transition is:
+
+> **What exact part of the selected objective's terminal condition does this next action advance or protect?**
+
+If the answer is none, the action requires an independent authority/dependency reason or it stays outside the packet.
+
 ---
 
 ## 8. Evidence Reuse And Re-Verification

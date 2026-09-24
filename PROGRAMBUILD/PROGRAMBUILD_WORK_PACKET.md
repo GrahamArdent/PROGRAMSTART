@@ -70,6 +70,7 @@ Required fields:
 
 ```text
 OBJECTIVE:
+TERMINAL_CONDITION:
 WHY_NOW / AUTHORITY:
 BLOCKER_SCOPE: [none | row_only | merge_gate | mutation_gate | milestone | release | unresolved]
 SAFE_EXECUTION_LANE: [A | B | C | none] + why it is actually allowed
@@ -98,6 +99,7 @@ OUT_OF_SCOPE:
 REQUIRED_CONTEXT:
 REUSABLE_EVIDENCE:
 INVALIDATION_TRIGGERS:
+DISCOVERY_DISPOSITION: [none | blocking | required_dependency | non_blocking_relevant] + owner/route when applicable
 ACCEPTANCE_CRITERIA:
 TARGETED_VERIFICATION:
 DURABLE_UPDATES_IF_NEEDED:
@@ -188,8 +190,8 @@ A project MAY keep at most one active replaceable `CURRENT_WORK_PACKET.md` unles
 6. **Scan safe lanes** — consider Lane A read-only/analysis, Lane B reversible repository/preparation work, and Lane C live/irreversible/external work under the project's own dependency and safety rules. A blocker label never automatically authorizes Lane C.
 7. **Coordinate Mode-C lanes when the spine exposes more than one current lane** — keep closure-control unchanged, list only the current lanes needed for the decision, record independence/conflict/convergence evidence, select exactly one current executable packet for this invocation, and establish exclusive shared-mutation ownership when those lanes can touch the same consequential mutable resource.
 8. **Resolve an operator/manual gate when needed** — if the actual next action cannot be performed in the current environment, return one exact handoff instead of a generic "manual action required" stop.
-9. **Narrow** to one coherent objective with explicit non-goals. If disposition is `defer_without_resequencing`, the accepted future recommendation is not the execution objective; derive the real current slice instead.
-10. **Reference** only the exact authority sections/evidence needed now.
+9. **Narrow** to one coherent objective with explicit non-goals and a terminal condition derived from current authority. If disposition is `defer_without_resequencing`, the accepted future recommendation is not the execution objective; derive the real current slice instead.
+10. **Reference just in time** only the exact authority sections/evidence needed for the current uncertainty, dependency, consequence, or proof obligation. Classify discoveries against the terminal condition; resolve blocking/required dependencies, route useful non-blocking findings without abandoning the objective, and leave unrelated findings outside the packet.
 11. **Reuse** trustworthy evidence whose invalidation conditions have not occurred, including valid evidence from a companion repository or prior operator action.
 12. **Activate checklist completeness when useful** — use an inline/referenced checklist when omission risk is meaningful or an applicable durable checklist exists; omit checklist fields entirely for trivial work rather than adding `not_needed` ceremony.
 13. **Execute** only the selected packet without silently widening scope or treating recommendation acceptance, a dependency graph, coordinated-lane view, shared-mutation ownership, checklist, or handoff as broader mutation authority.

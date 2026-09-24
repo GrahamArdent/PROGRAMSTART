@@ -129,6 +129,10 @@ Examples:
 
 Capability declarations must be derived from actual accepted implementation/runtime evidence and may be invalidated when health, identity, version or environment changes.
 
+When a declared capability materially depends on an operational path between actor and target, component/end-point health alone is insufficient evidence that the capability is current. Capability acceptance must include current accepted evidence, proportional to consequence and the intended operating model, that each material path supports the claimed execution semantics. Relevant properties may include reachability, authentication/authority, unattended-versus-human-gate behavior, lifecycle continuity, recovery/re-establishment, and machine-verifiable health.
+
+This requirement is scoped to paths whose failure can invalidate the capability claim at the current boundary. It does not require a path registry, fallback path, non-expiring credential, or recovery ceremony for every capability. An explicitly intended human authorization step may be part of a ready path; an expiring credential with proven automatic renewal may satisfy continuity. Actual path inventory, primary/fallback/break-glass roles, live health, proof timestamps, invalidation triggers, monitoring, and recovery procedures remain owned by the relevant Path Authority or owning project and are referenced rather than duplicated here.
+
 A capability declaration is never permission to use that capability against every project.
 
 ---

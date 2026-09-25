@@ -311,5 +311,3 @@ def test_malformed_and_stale_bound_evidence_are_rejected(context) -> None:
         **{**binding, "authority_fingerprint": "0" * 64},
     )
     assert evaluate_objective_continuation(root, packet, authority, [stale]).disposition == ContinuationDisposition.REORIENT
-
-[executed on device: execution-node (f06c7cdc-f670-49c4-9af8-64b2043a000a)]

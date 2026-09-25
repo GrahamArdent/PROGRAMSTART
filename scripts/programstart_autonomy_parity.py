@@ -218,6 +218,8 @@ def validate_contract(c):
             e.append("canonical credential human-enablement behavior must cover Effective Autonomy section 9")
         if credential.get("closure_status") == "pending_methodology":
             e.append("canonical credential human-enablement behavior cannot remain pending_methodology")
+        if credential.get("machinery_state") not in {"partial", "implemented"}:
+            e.append("canonical credential human-enablement behavior must remain at least partial")
 
     ch = c.get("matrix_challenge", {})
     if ch.get("status") not in {"pending", "clear", "failed"}:

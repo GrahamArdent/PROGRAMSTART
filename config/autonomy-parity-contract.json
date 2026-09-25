@@ -2,7 +2,7 @@
   "schema_version": 1,
   "contract_id": "programstart.autonomy-parity.v1",
   "derived_at": {
-    "programstart_commit": "e442fb0e6a6de37629d454b06e4d06038f70188b",
+    "programstart_commit": "GrahamArdent/PROGRAMSTART@e442fb0e6a6de37629d454b06e4d06038f70188b",
     "controller_commit": "GrahamArdent/programstart-autonomous-controller@c95372bd5640110cf13791546ae1930cd0abb240",
     "durable_reference": "GrahamArdent/PROGRAMSTART#143"
   },
@@ -4528,7 +4528,7 @@
       "execution_mode": "hybrid",
       "current_proof": [
         {
-          "kind": "code",
+          "kind": "contract",
           "ref": "GrahamArdent/PROGRAMSTART@e442fb0e6a6de37629d454b06e4d06038f70188b:docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md"
         },
         {
@@ -5659,7 +5659,7 @@
       },
       {
         "id": "CH-06",
-        "attack": "Lose the accepted credential/human-enablement correction before canonicalization.",
+        "attack": "Lose or silently re-pend the accepted credential/human-enablement correction after canonicalization.",
         "result": "canonical Effective Autonomy section 9 + focused tests + behavior mapping preserve the credential/human-enablement correction"
       },
       {

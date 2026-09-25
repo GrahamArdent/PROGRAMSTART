@@ -4,7 +4,7 @@
 > This is not a Master, scheduler, backlog, controller, methodology database, or execution spine.
 
 - Contract: programstart.autonomy-parity.v1
-- PROGRAMSTART baseline: e442fb0e6a6de37629d454b06e4d06038f70188b
+- PROGRAMSTART baseline: GrahamArdent/PROGRAMSTART@e442fb0e6a6de37629d454b06e4d06038f70188b
 - Controller observation baseline: GrahamArdent/programstart-autonomous-controller@c95372bd5640110cf13791546ae1930cd0abb240
 - Durable reference: GrahamArdent/PROGRAMSTART#143
 - Fingerprinted source files: 8
@@ -133,7 +133,7 @@ Status: CLEAR
 - CH-03: Rename/remove an anchored obligation without changing the stored hash intentionally. -> anchor validation fails
 - CH-04: Mark documentation-only behavior implemented. -> implemented classification requires code plus test/live proof
 - CH-05: Turn the parity contract into a load-all runtime checklist and violate JIT. -> runtime usage contract requires jit_by_trigger and forbids load-entire-contract-per-effect
-- CH-06: Lose the accepted credential/human-enablement correction before canonicalization. -> canonical Effective Autonomy section 9 + focused tests + behavior mapping preserve the credential/human-enablement correction
+- CH-06: Lose or silently re-pend the accepted credential/human-enablement correction after canonicalization. -> canonical Effective Autonomy section 9 + focused tests + behavior mapping preserve the credential/human-enablement correction
 - CH-07: Collapse operator action completion into system acceptance. -> separate operator-gate and auto-verify/resume rows preserve the distinction
 - CH-08: Collapse cross-repository evidence into multi-project mutation authority. -> repository-independence row remains separately required
 - CH-09: Treat semantic judgment as a deterministic enum implementation. -> execution_mode distinguishes semantic/hybrid behaviors from deterministic machinery

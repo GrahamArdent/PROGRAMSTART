@@ -291,6 +291,14 @@ def test_credential_human_enablement_is_canonical_not_pending() -> None:
     assert "support.effective_autonomy.09" in behavior["covers"]
 
 
+def test_canonical_credential_human_enablement_cannot_regress_to_missing() -> None:
+    contract = parity.load_contract()
+    behavior = next(x for x in contract["behaviors"] if x["id"] == "credential_human_enablement_leverage")
+    behavior["machinery_state"] = "missing"
+    errors = _errors(contract)
+    assert any("canonical credential human-enablement behavior must remain at least partial" in x for x in errors)
+
+
 def test_required_cross_cutting_jit_row_cannot_disappear() -> None:
     contract = parity.load_contract()
     contract["behaviors"] = [x for x in contract["behaviors"] if x["id"] != "jit_context_evidence_governor"]

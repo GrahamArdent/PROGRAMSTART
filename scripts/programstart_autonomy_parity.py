@@ -21,7 +21,7 @@ CONVERSATION_DECISION_STATUSES = {
 }
 HOP_CLASSES = {"objective_ingress", "semantic_pipeline", "execution_fabric", "async_continuation", "control_plane", "owner_instance"}
 HOP_STATUSES = {"proven", "partial", "unproven", "human_gate"}
-HOP_ID_RE = re.compile(r"^HOP-\\d{3}$")
+HOP_ID_RE = re.compile(r"^HOP-\d{3}$")
 HOP_FIELDS = {
     "id",
     "class",

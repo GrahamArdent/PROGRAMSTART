@@ -1,0 +1,200 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://programstart.local/schemas/decision-closure.schema.json",
+  "title": "PROGRAMSTART Decision Closure Receipt",
+  "description": "Derived, non-authoritative receipt for semantic outcomes and their disposition. It never grants execution authority.",
+  "type": "object",
+  "required": [
+    "contract_version",
+    "record_type",
+    "source",
+    "coverage",
+    "outcomes",
+    "execution_authority"
+  ],
+  "properties": {
+    "contract_version": { "const": "1.0" },
+    "record_type": { "const": "programstart.decision_closure_receipt" },
+    "source": {
+      "type": "object",
+      "required": ["kind", "ref", "scope"],
+      "properties": {
+        "kind": { "type": "string", "minLength": 1 },
+        "ref": { "type": "string", "minLength": 1 },
+        "scope": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "coverage": {
+      "type": "object",
+      "required": ["status", "method", "evidence_refs", "residuals"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["unknown", "partial", "challenged"]
+        },
+        "method": {
+          "type": "string",
+          "enum": ["none", "bounded_source", "independent_review", "adjudicated_fixture"]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "residuals": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "status": { "const": "challenged" } },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "method": {
+                "enum": ["independent_review", "adjudicated_fixture"]
+              },
+              "evidence_refs": { "minItems": 1 }
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "outcomes": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/outcome" }
+    },
+    "execution_authority": { "const": false }
+  },
+  "$defs": {
+    "outcome": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "summary",
+        "disposition",
+        "acceptance_state",
+        "authority_state",
+        "currentness_state",
+        "evidence_refs",
+        "execution_authority"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "idea",
+            "decision",
+            "accepted_delta",
+            "task_or_slice",
+            "research_finding",
+            "risk",
+            "dependency",
+            "revisit_trigger",
+            "rationale",
+            "no_durable_value"
+          ]
+        },
+        "summary": { "type": "string", "minLength": 1 },
+        "disposition": {
+          "type": "string",
+          "enum": [
+            "ALREADY_DURABLE",
+            "ROUTED_REFERENCE",
+            "RECONCILED_AUTHORITY",
+            "CANDIDATE_PRESERVED",
+            "TRIGGER_ARMED",
+            "READY_FOR_REVIEW",
+            "PRIVACY_EXCLUDED",
+            "ROUTINE_EXCLUDED",
+            "UNRESOLVED"
+          ]
+        },
+        "acceptance_state": {
+          "type": "string",
+          "enum": ["not_accepted", "accepted", "unresolved", "not_applicable"]
+        },
+        "authority_state": {
+          "type": "string",
+          "enum": ["not_authority", "already_durable", "reconciled", "unresolved"]
+        },
+        "currentness_state": {
+          "type": "string",
+          "enum": ["current", "superseded", "unresolved", "not_applicable"]
+        },
+        "owner_ref": { "type": "string", "minLength": 1 },
+        "evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "acceptance_evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "superseded_by_ref": { "type": "string", "minLength": 1 },
+        "revisit_trigger": { "type": "string", "minLength": 1 },
+        "execution_authority": { "const": false }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "acceptance_state": { "const": "accepted" } },
+            "required": ["acceptance_state"]
+          },
+          "then": { "required": ["acceptance_evidence_refs"] }
+        },
+        {
+          "if": {
+            "properties": {
+              "authority_state": {
+                "enum": ["already_durable", "reconciled"]
+              }
+            },
+            "required": ["authority_state"]
+          },
+          "then": { "required": ["owner_ref"] }
+        },
+        {
+          "if": {
+            "properties": {
+              "disposition": {
+                "enum": ["ALREADY_DURABLE", "ROUTED_REFERENCE", "RECONCILED_AUTHORITY"]
+              }
+            },
+            "required": ["disposition"]
+          },
+          "then": { "required": ["owner_ref"] }
+        },
+        {
+          "if": {
+            "properties": { "currentness_state": { "const": "superseded" } },
+            "required": ["currentness_state"]
+          },
+          "then": { "required": ["superseded_by_ref"] }
+        },
+        {
+          "if": {
+            "properties": { "disposition": { "const": "TRIGGER_ARMED" } },
+            "required": ["disposition"]
+          },
+          "then": { "required": ["revisit_trigger"] }
+        }
+      ],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

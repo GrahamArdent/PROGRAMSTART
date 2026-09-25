@@ -1,0 +1,100 @@
+{
+  "contract_version": "1.0",
+  "record_type": "programstart.decision_closure_receipt",
+  "source": {
+    "kind": "chat",
+    "ref": "conversation:2026-09-25:matrix-decision-closure",
+    "scope": "Available conversation from Decision Lifecycle re-foundation through Decision-Closure contract placement."
+  },
+  "coverage": {
+    "status": "challenged",
+    "method": "independent_review",
+    "evidence_refs": [
+      "GrahamArdent/decision-lifecycle#20",
+      "GrahamArdent/PROGRAMSTART#152"
+    ],
+    "residuals": [
+      "Exact Matrix gateway/storage/mandatory-ingress architecture remains unsettled.",
+      "This fixture does not claim complete account-wide ChatGPT history coverage."
+    ]
+  },
+  "outcomes": [
+    {
+      "id": "dc-001",
+      "kind": "decision",
+      "summary": "The standalone Decision Lifecycle runtime architecture is superseded in favor of federated Decision Closure through existing owners.",
+      "disposition": "ALREADY_DURABLE",
+      "acceptance_state": "accepted",
+      "authority_state": "already_durable",
+      "currentness_state": "current",
+      "owner_ref": "GrahamArdent/decision-lifecycle:MASTER_GAMEPLAN.md",
+      "evidence_refs": [
+        "GrahamArdent/decision-lifecycle#20"
+      ],
+      "acceptance_evidence_refs": [
+        "GrahamArdent/decision-lifecycle#20"
+      ],
+      "execution_authority": false
+    },
+    {
+      "id": "dc-002",
+      "kind": "idea",
+      "summary": "Autonomous consequential mutation should use a mandatory Matrix-mediated coordination ingress.",
+      "disposition": "CANDIDATE_PRESERVED",
+      "acceptance_state": "not_accepted",
+      "authority_state": "not_authority",
+      "currentness_state": "current",
+      "evidence_refs": [
+        "conversation:2026-09-25:matrix-decision-closure"
+      ],
+      "execution_authority": false
+    },
+    {
+      "id": "dc-003",
+      "kind": "decision",
+      "summary": "The exact Matrix gateway, storage, and mandatory-ingress architecture remains unresolved after Decision Lifecycle re-foundation.",
+      "disposition": "UNRESOLVED",
+      "acceptance_state": "unresolved",
+      "authority_state": "unresolved",
+      "currentness_state": "unresolved",
+      "evidence_refs": [
+        "GrahamArdent/decision-lifecycle#20"
+      ],
+      "execution_authority": false
+    },
+    {
+      "id": "dc-004",
+      "kind": "decision",
+      "summary": "Decision Lifecycle should be a standalone Python API service with local SQLite lifecycle state.",
+      "disposition": "ALREADY_DURABLE",
+      "acceptance_state": "accepted",
+      "authority_state": "already_durable",
+      "currentness_state": "superseded",
+      "owner_ref": "GrahamArdent/decision-lifecycle:PROGRAMBUILD/DECISION_LOG.md",
+      "evidence_refs": [
+        "GrahamArdent/decision-lifecycle:PROGRAMBUILD/DECISION_LOG.md"
+      ],
+      "acceptance_evidence_refs": [
+        "GrahamArdent/decision-lifecycle:PROGRAMBUILD/DECISION_LOG.md"
+      ],
+      "superseded_by_ref": "GrahamArdent/decision-lifecycle#20",
+      "execution_authority": false
+    },
+    {
+      "id": "dc-005",
+      "kind": "research_finding",
+      "summary": "PROGRAMSTART should examine evidence independence and early natural falsification as a reusable methodology lesson.",
+      "disposition": "ROUTED_REFERENCE",
+      "acceptance_state": "not_applicable",
+      "authority_state": "not_authority",
+      "currentness_state": "current",
+      "owner_ref": "GrahamArdent/PROGRAMSTART#152",
+      "evidence_refs": [
+        "GrahamArdent/decision-lifecycle#20",
+        "GrahamArdent/PROGRAMSTART#152"
+      ],
+      "execution_authority": false
+    }
+  ],
+  "execution_authority": false
+}

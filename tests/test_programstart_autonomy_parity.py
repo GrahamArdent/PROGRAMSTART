@@ -331,3 +331,54 @@ def test_coverage_is_not_mistaken_for_backbone_parity() -> None:
     assert states["partial"] >= 1
     assert states["prompt_only"] >= 1
     assert checked["matrix_challenge"]["status"] == "clear"
+
+
+def test_jit_behavior_selector_returns_only_requested_behavior_and_source_refs() -> None:
+    contract = parity.load_contract()
+    selected = parity.select_behaviors(contract, ["jit_context_evidence_governor"])
+    assert selected["authority_role"] == "derived_acceptance_evidence"
+    assert selected["retrieval_policy"] == "jit_by_trigger"
+    assert selected["canonical_source_required"] is True
+    assert selected["selected_behavior_ids"] == ["jit_context_evidence_governor"]
+    assert "behaviors" not in selected
+    assert len(selected["selections"]) == 1
+    result = selected["selections"][0]
+    assert result["behavior"]["id"] == "jit_context_evidence_governor"
+    expected = next(x for x in contract["behaviors"] if x["id"] == "jit_context_evidence_governor")
+    assert {x["obligation_id"] for x in result["canonical_source_refs"]} == set(expected["covers"])
+    assert all("source_path" in x and "anchor" in x for x in result["canonical_source_refs"])
+    assert all("source_text" not in x for x in result["canonical_source_refs"])
+
+
+def test_jit_behavior_selector_preserves_exact_order_and_deduplicates() -> None:
+    contract = parity.load_contract()
+    selected = parity.select_behaviors(
+        contract,
+        ["evidence_reuse_invalidation", "jit_context_evidence_governor", "evidence_reuse_invalidation"],
+    )
+    assert selected["selected_behavior_ids"] == [
+        "evidence_reuse_invalidation",
+        "jit_context_evidence_governor",
+    ]
+    assert [x["behavior"]["id"] for x in selected["selections"]] == selected["selected_behavior_ids"]
+
+
+def test_jit_behavior_selector_fails_closed_on_unknown_behavior() -> None:
+    contract = parity.load_contract()
+    try:
+        parity.select_behaviors(contract, ["does_not_exist"])
+    except ValueError as exc:
+        assert "unknown parity behavior id" in str(exc)
+    else:
+        raise AssertionError("unknown behavior id did not fail closed")
+
+
+def test_jit_behavior_selector_rejects_contract_drift_before_selection() -> None:
+    contract = parity.load_contract()
+    contract["source_files"][0]["sha256"] = "0" * 64
+    try:
+        parity.select_behaviors(contract, ["jit_context_evidence_governor"])
+    except ValueError as exc:
+        assert "source fingerprint drift" in str(exc)
+    else:
+        raise AssertionError("selector returned routing evidence from an invalid contract")

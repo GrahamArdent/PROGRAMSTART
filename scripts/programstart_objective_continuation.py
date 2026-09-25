@@ -198,7 +198,7 @@ def evaluate_objective_continuation(
 
     terminal = [item for item in evidence if isinstance(item, RootTerminalEvidence)]
     if terminal:
-        if ready or any(isinstance(item, (MachineWaitEvidence, HumanWaitEvidence)) for item in evidence):
+        if ready or any(isinstance(item, MachineWaitEvidence | HumanWaitEvidence) for item in evidence):
             return _reorient()
         if any(item.status != "proven" for item in terminal):
             return _reorient()
@@ -210,7 +210,7 @@ def evaluate_objective_continuation(
             disposition=ContinuationDisposition(selected.disposition),
         )
 
-    waits = [item for item in evidence if isinstance(item, (MachineWaitEvidence, HumanWaitEvidence))]
+    waits = [item for item in evidence if isinstance(item, MachineWaitEvidence | HumanWaitEvidence)]
     admitted_waits: list[MachineWaitEvidence | HumanWaitEvidence] = []
     for item in waits:
         if ready:

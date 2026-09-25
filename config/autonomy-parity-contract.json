@@ -401,7 +401,7 @@
     {
       "id": "jit.temporal.3",
       "source_path": ".github/instructions/source-of-truth.instructions.md",
-      "anchor": "“Never from memory” means re-read the relevant current authority after session/context reset",
+      "anchor": "\u201cNever from memory\u201d means re-read the relevant current authority after session/context reset",
       "required": true,
       "kind": "jit_temporal"
     },
@@ -1101,7 +1101,7 @@
     {
       "id": "support.work_packet.05",
       "source_path": "PROGRAMBUILD/PROGRAMBUILD_WORK_PACKET.md",
-      "anchor": "## Accepted Recommendation Resolution — omit unless this packet follows generic acceptance",
+      "anchor": "## Accepted Recommendation Resolution \u2014 omit unless this packet follows generic acceptance",
       "required": true,
       "kind": "supporting_methodology_section"
     },
@@ -1178,7 +1178,7 @@
     {
       "id": "support.work_packet.16",
       "source_path": "PROGRAMBUILD/PROGRAMBUILD_WORK_PACKET.md",
-      "anchor": "## Completeness Checklist — omit unless activated",
+      "anchor": "## Completeness Checklist \u2014 omit unless activated",
       "required": true,
       "kind": "supporting_methodology_section"
     },
@@ -1374,56 +1374,56 @@
     {
       "id": "support.challenge.04",
       "source_path": "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
-      "anchor": "## Part A — Kill Criteria Re-Check",
+      "anchor": "## Part A \u2014 Kill Criteria Re-Check",
       "required": true,
       "kind": "supporting_methodology_section"
     },
     {
       "id": "support.challenge.05",
       "source_path": "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
-      "anchor": "## Part B — Assumption Decay And Evidence Validity",
+      "anchor": "## Part B \u2014 Assumption Decay And Evidence Validity",
       "required": true,
       "kind": "supporting_methodology_section"
     },
     {
       "id": "support.challenge.06",
       "source_path": "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
-      "anchor": "## Part C — Scope Integrity",
+      "anchor": "## Part C \u2014 Scope Integrity",
       "required": true,
       "kind": "supporting_methodology_section"
     },
     {
       "id": "support.challenge.07",
       "source_path": "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
-      "anchor": "## Part D — Skipped / Deferred Work",
+      "anchor": "## Part D \u2014 Skipped / Deferred Work",
       "required": true,
       "kind": "supporting_methodology_section"
     },
     {
       "id": "support.challenge.08",
       "source_path": "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
-      "anchor": "## Part E — Blast Radius And Verification Scope",
+      "anchor": "## Part E \u2014 Blast Radius And Verification Scope",
       "required": true,
       "kind": "supporting_methodology_section"
     },
     {
       "id": "support.challenge.09",
       "source_path": "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
-      "anchor": "## Part F — Decision Reversal Check",
+      "anchor": "## Part F \u2014 Decision Reversal Check",
       "required": true,
       "kind": "supporting_methodology_section"
     },
     {
       "id": "support.challenge.10",
       "source_path": "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
-      "anchor": "## Part G — Dependency And KB Health",
+      "anchor": "## Part G \u2014 Dependency And KB Health",
       "required": true,
       "kind": "supporting_methodology_section"
     },
     {
       "id": "support.challenge.11",
       "source_path": "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
-      "anchor": "## Part H — Architecture / Requirements / Implementation Alignment",
+      "anchor": "## Part H \u2014 Architecture / Requirements / Implementation Alignment",
       "required": true,
       "kind": "supporting_methodology_section"
     },
@@ -2085,7 +2085,7 @@
     {
       "id": "prompt.normative.047",
       "source_path": ".github/prompts/start-programstart-project.prompt.md",
-      "anchor": "- **Mode A — raw idea:** genuinely new work with little reliable planning.",
+      "anchor": "- **Mode A \u2014 raw idea:** genuinely new work with little reliable planning.",
       "required": true,
       "kind": "prompt_normative_clause",
       "section": "Entry-Mode Resolution"
@@ -2093,7 +2093,7 @@
     {
       "id": "prompt.normative.048",
       "source_path": ".github/prompts/start-programstart-project.prompt.md",
-      "anchor": "- **Mode B — research-backed:** substantial evidence exists but has not yet been converted into execution authority.",
+      "anchor": "- **Mode B \u2014 research-backed:** substantial evidence exists but has not yet been converted into execution authority.",
       "required": true,
       "kind": "prompt_normative_clause",
       "section": "Entry-Mode Resolution"
@@ -2101,7 +2101,7 @@
     {
       "id": "prompt.normative.049",
       "source_path": ".github/prompts/start-programstart-project.prompt.md",
-      "anchor": "- **Mode C — existing/in-flight:** an established project already has meaningful plans, decisions, implementation, and execution state.",
+      "anchor": "- **Mode C \u2014 existing/in-flight:** an established project already has meaningful plans, decisions, implementation, and execution state.",
       "required": true,
       "kind": "prompt_normative_clause",
       "section": "Entry-Mode Resolution"
@@ -2493,7 +2493,7 @@
     {
       "id": "prompt.normative.098",
       "source_path": ".github/prompts/start-programstart-project.prompt.md",
-      "anchor": "23. **Run the Learning Gate when triggered.** Evaluate whether the real project taught PROGRAMSTART something reusable. At a material/problematic checkpoint—especially a blocked close/handoff, disputed success, operator correction, Authority Gap, or cross-owner convergence—preserve the protected outcome/claim before classification: state what was supposed to become true, how far execution actually got, the first unproven/broken hop if any, any later operator/human correction that reveals premature completion, and what evidence would falsify the proposed reusable lesson. A current execution disposition such as `blocked` or `routed` is not by itself proof that the accepted end goal is terminal. `No reusable lesson` is a valid result when this causal check is quiet. Do not manufacture a methodology change or require this expanded causal projection for trivial successful packets.",
+      "anchor": "23. **Run the Learning Gate when triggered.** Evaluate whether the real project taught PROGRAMSTART something reusable. At a material/problematic checkpoint\u2014especially a blocked close/handoff, disputed success, operator correction, Authority Gap, or cross-owner convergence\u2014preserve the protected outcome/claim before classification: state what was supposed to become true, how far execution actually got, the first unproven/broken hop if any, any later operator/human correction that reveals premature completion, and what evidence would falsify the proposed reusable lesson. A current execution disposition such as `blocked` or `routed` is not by itself proof that the accepted end goal is terminal. `No reusable lesson` is a valid result when this causal check is quiet. Do not manufacture a methodology change or require this expanded causal projection for trivial successful packets.",
       "required": true,
       "kind": "prompt_normative_clause",
       "section": "Orchestration Protocol"
@@ -2853,7 +2853,7 @@
     {
       "id": "prompt.prose.033",
       "source_path": ".github/prompts/start-programstart-project.prompt.md",
-      "anchor": "When the operator uses ordinary language whose meaning is equivalent to “save the good stuff from this chat,” “make sure we don't lose these ideas,” “capture the useful suggestions,” “retain everything important,” or another clear preservation request, treat the request by meaning rather than exact wording.",
+      "anchor": "When the operator uses ordinary language whose meaning is equivalent to \u201csave the good stuff from this chat,\u201d \u201cmake sure we don't lose these ideas,\u201d \u201ccapture the useful suggestions,\u201d \u201cretain everything important,\u201d or another clear preservation request, treat the request by meaning rather than exact wording.",
       "required": true,
       "kind": "prompt_prose_clause",
       "section": "Idea Preservation / Promotion"
@@ -2877,7 +2877,7 @@
     {
       "id": "prompt.prose.036",
       "source_path": ".github/prompts/start-programstart-project.prompt.md",
-      "anchor": "If the operator says the semantic equivalent of “save the good stuff, then proceed,” complete the retention/reconciliation pass first, then independently resolve `proceed` through the Accepted Recommendation Resolution contract. Retention itself never upgrades the later `proceed` into broader authority.",
+      "anchor": "If the operator says the semantic equivalent of \u201csave the good stuff, then proceed,\u201d complete the retention/reconciliation pass first, then independently resolve `proceed` through the Accepted Recommendation Resolution contract. Retention itself never upgrades the later `proceed` into broader authority.",
       "required": true,
       "kind": "prompt_prose_clause",
       "section": "Idea Preservation / Promotion"
@@ -5282,7 +5282,7 @@
       "current_proof": [
         {
           "kind": "contract",
-          "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:PROGRAMBUILD/PROGRAMBUILD_PLANNING_OPERATING_MODEL.md §5"
+          "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:PROGRAMBUILD/PROGRAMBUILD_PLANNING_OPERATING_MODEL.md \u00a75"
         }
       ],
       "acceptance_scenarios": [
@@ -5325,7 +5325,7 @@
       "current_proof": [
         {
           "kind": "contract",
-          "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md §§3-7"
+          "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md \u00a7\u00a73-7"
         },
         {
           "kind": "code",
@@ -5364,7 +5364,7 @@
       "current_proof": [
         {
           "kind": "contract",
-          "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md §6"
+          "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md \u00a76"
         },
         {
           "kind": "code",
@@ -5403,7 +5403,7 @@
       "current_proof": [
         {
           "kind": "contract",
-          "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md §8"
+          "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md \u00a78"
         },
         {
           "kind": "live",
@@ -5442,7 +5442,7 @@
       "current_proof": [
         {
           "kind": "contract",
-          "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md §9"
+          "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md \u00a79"
         },
         {
           "kind": "code",
@@ -5484,7 +5484,7 @@
       "current_proof": [
         {
           "kind": "contract",
-          "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md §§4,9"
+          "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md \u00a7\u00a74,9"
         },
         {
           "kind": "live",
@@ -5523,7 +5523,7 @@
       "current_proof": [
         {
           "kind": "contract",
-          "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md §12"
+          "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md \u00a712"
         },
         {
           "kind": "code",
@@ -5576,7 +5576,7 @@
       "current_proof": [
         {
           "kind": "contract",
-          "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:docs/PROGRAMSTART_LEARNING_LOOP.md §§4-9"
+          "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:docs/PROGRAMSTART_LEARNING_LOOP.md \u00a7\u00a74-9"
         }
       ],
       "acceptance_scenarios": [

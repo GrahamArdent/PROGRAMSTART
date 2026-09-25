@@ -1,3 +1,5 @@
+[Reading 515 lines from start (total: 515 lines, 0 remaining)]
+
 from __future__ import annotations
 
 import argparse
@@ -223,7 +225,6 @@ def validate_contract(c):
         if decision.get("status") == "accepted_pending_methodology" and not delta_refs:
             e.append(f"pending-methodology conversation decision lacks methodology mapping: {did}")
 
-
     hop_policy = c.get("hop_policy", {})
     if hop_policy.get("authority_role") != "derived_acceptance_evidence":
         e.append("hop matrix must remain derived acceptance evidence")
@@ -247,11 +248,7 @@ def validate_contract(c):
             e.append("hop entries must be objects")
             continue
         hid = hop.get("id")
-        if (
-            not isinstance(hid, str)
-            or HOP_ID_RE.fullmatch(hid) is None
-            or hid in hop_ids
-        ):
+        if not isinstance(hid, str) or HOP_ID_RE.fullmatch(hid) is None or hid in hop_ids:
             e.append("hop ids must be unique HOP-NNN values")
             continue
         hop_ids.add(hid)
@@ -294,11 +291,7 @@ def validate_contract(c):
                     e.append(f"{hid} owner instance missing required behavior: {required_ref}")
         for field in ("evidence_refs", "invalidation"):
             value = hop.get(field)
-            if (
-                not isinstance(value, list)
-                or not value
-                or not all(isinstance(x, str) and x.strip() for x in value)
-            ):
+            if not isinstance(value, list) or not value or not all(isinstance(x, str) and x.strip() for x in value):
                 e.append(f"{hid}.{field} must be non-empty string list")
 
     for required in (
@@ -522,3 +515,5 @@ def main():
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+[executed on device: vps-743d7c1d (3eb617df-2b3f-4634-9ca3-f35dc62b5f04)]

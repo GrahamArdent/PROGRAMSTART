@@ -19,7 +19,14 @@ CONVERSATION_DECISION_STATUSES = {
     "accepted_pending_methodology",
     "accepted_execution_sequence",
 }
-HOP_CLASSES = {"objective_ingress", "semantic_pipeline", "execution_fabric", "async_continuation", "control_plane", "owner_instance"}
+HOP_CLASSES = {
+    "objective_ingress",
+    "semantic_pipeline",
+    "execution_fabric",
+    "async_continuation",
+    "control_plane",
+    "owner_instance",
+}
 HOP_STATUSES = {"proven", "partial", "unproven", "human_gate"}
 HOP_ID_RE = re.compile(r"^HOP-\d{3}$")
 HOP_FIELDS = {
@@ -240,7 +247,11 @@ def validate_contract(c):
             e.append("hop entries must be objects")
             continue
         hid = hop.get("id")
-        if not isinstance(hid, str) or HOP_ID_RE.fullmatch(hid) is None or hid in hop_ids:
+        if (
+            not isinstance(hid, str)
+            or HOP_ID_RE.fullmatch(hid) is None
+            or hid in hop_ids
+        ):
             e.append("hop ids must be unique HOP-NNN values")
             continue
         hop_ids.add(hid)
@@ -253,7 +264,13 @@ def validate_contract(c):
         status = hop.get("instance_status")
         if status not in HOP_STATUSES:
             e.append(f"{hid} invalid hop instance status")
-        for field in ("source", "target", "purpose", "general_mechanism", "path_authority_ref"):
+        for field in (
+            "source",
+            "target",
+            "purpose",
+            "general_mechanism",
+            "path_authority_ref",
+        ):
             if not isinstance(hop.get(field), str) or not hop[field].strip():
                 e.append(f"{hid}.{field} must be non-empty string")
         key = (hop.get("source"), hop.get("target"), hop.get("purpose"))
@@ -268,12 +285,20 @@ def validate_contract(c):
             if ref not in bids:
                 e.append(f"{hid} references unknown behavior: {ref}")
         if hclass == "owner_instance":
-            for required_ref in ("cross_repository_dependency_graph", "canonical_before_dependent", "repository_independence"):
+            for required_ref in (
+                "cross_repository_dependency_graph",
+                "canonical_before_dependent",
+                "repository_independence",
+            ):
                 if required_ref not in behavior_refs:
                     e.append(f"{hid} owner instance missing required behavior: {required_ref}")
         for field in ("evidence_refs", "invalidation"):
             value = hop.get(field)
-            if not isinstance(value, list) or not value or not all(isinstance(x, str) and x.strip() for x in value):
+            if (
+                not isinstance(value, list)
+                or not value
+                or not all(isinstance(x, str) and x.strip() for x in value)
+            ):
                 e.append(f"{hid}.{field} must be non-empty string list")
 
     for required in (

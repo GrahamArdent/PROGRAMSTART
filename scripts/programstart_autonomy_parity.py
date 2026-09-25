@@ -209,6 +209,16 @@ def validate_contract(c):
         if required not in bids:
             e.append(f"required cross-cutting behavior missing: {required}")
 
+    credential = next(
+        (b for b in c.get("behaviors", []) if b.get("id") == "credential_human_enablement_leverage"),
+        None,
+    )
+    if credential and "credential_human_enablement_v1" not in deltas:
+        if "support.effective_autonomy.09" not in credential.get("covers", []):
+            e.append("canonical credential human-enablement behavior must cover Effective Autonomy section 9")
+        if credential.get("closure_status") == "pending_methodology":
+            e.append("canonical credential human-enablement behavior cannot remain pending_methodology")
+
     ch = c.get("matrix_challenge", {})
     if ch.get("status") not in {"pending", "clear", "failed"}:
         e.append("matrix challenge status invalid")

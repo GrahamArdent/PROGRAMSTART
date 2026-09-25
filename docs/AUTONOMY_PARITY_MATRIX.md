@@ -4,9 +4,9 @@
 > This is not a Master, scheduler, backlog, controller, methodology database, or execution spine.
 
 - Contract: programstart.autonomy-parity.v1
-- PROGRAMSTART baseline: GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87
+- PROGRAMSTART baseline: e442fb0e6a6de37629d454b06e4d06038f70188b
 - Controller observation baseline: GrahamArdent/programstart-autonomous-controller@c95372bd5640110cf13791546ae1930cd0abb240
-- Durable reference: GrahamArdent/PROGRAMSTART#139
+- Durable reference: GrahamArdent/PROGRAMSTART#143
 - Fingerprinted source files: 8
 - Required source obligations covered: 422
 - Parity behaviors: 49
@@ -21,8 +21,7 @@ Reuse still-valid evidence; widen only on declared invalidation or convergence b
 
 - human_gate: 1
 - implemented: 8
-- missing: 1
-- partial: 22
+- partial: 23
 - prompt_only: 11
 - semantic: 6
 
@@ -55,7 +54,7 @@ Reuse still-valid evidence; widen only on declared invalidation or convergence b
 | execute_one_selected_packet — Execute one selected bounded packet | implemented | deterministic | proven | Controller |
 | operator_gate_exact_handoff — Exact secret-safe operator/manual handoff | partial | hybrid | partial | PROGRAMSTART + Controller |
 | operator_gate_auto_verify_resume — Verify gate evidence and resume without redundant proceed | partial | deterministic | partial | Controller |
-| credential_human_enablement_leverage — Credential/access human-enablement leverage test | missing | hybrid | pending_methodology | PROGRAMSTART + Controller |
+| credential_human_enablement_leverage — Credential/access human-enablement leverage test | partial | hybrid | partial | PROGRAMSTART + Controller |
 | proportional_verification — Verify changed or newly-at-risk surfaces proportionally | prompt_only | hybrid | unproven | PROGRAMSTART + owning repository |
 | risk_triggered_challenge — Risk-triggered post-implementation adversarial Challenge | semantic | semantic | unproven | PROGRAMSTART semantic layer |
 | durable_state_reconciliation — Reconcile accepted durable truth to its owner | partial | hybrid | partial | PROGRAMSTART + owning repository |
@@ -92,22 +91,22 @@ Reuse still-valid evidence; widen only on declared invalidation or convergence b
 - third_party_frameworks_reference_only_now [accepted_reconciled]: LangGraph, Temporal, Prefect, and Windmill remain reference/escalation options, not production backbone dependencies now; reconsider only if evidence exposes a concrete incumbent Controller limitation. (behaviors: authority_non_minting_no_second_spine, jit_context_evidence_governor; methodology deltas: none; durable: GrahamArdent/PROGRAMSTART#141)
 - matrix_before_machinery [accepted_reconciled]: Build and Challenge the parity matrix before changing backbone behavior so implementation has an omission-resistant acceptance oracle. (behaviors: conversation_decision_reconciliation, authority_non_minting_no_second_spine, verification_claim_truthfulness; methodology deltas: none; durable: GrahamArdent/PROGRAMSTART#141)
 - coverage_not_parity [accepted_reconciled]: Complete source/decision coverage and implemented backbone parity are distinct; the matrix must remain truthfully non-green while gaps remain. (behaviors: verification_claim_truthfulness, authority_non_minting_no_second_spine; methodology deltas: none; durable: GrahamArdent/PROGRAMSTART#141)
-- credential_human_enablement_precedes_expensive_workaround [accepted_pending_methodology]: For credential/identity/trust/access gaps, evaluate bounded high-leverage human enablement before expensive alternative-actuation engineering after first recovering existing capability. (behaviors: credential_human_enablement_leverage; methodology deltas: credential_human_enablement_v1; durable: GrahamArdent/PROGRAMSTART#141)
-- backbone_prepares_minimal_human_gate [accepted_pending_methodology]: When human enablement wins, the backbone performs all delegable preparation, presents only the smallest irreducible link/console/approval action, verifies completion itself, and resumes automatically. (behaviors: credential_human_enablement_leverage, operator_gate_exact_handoff, operator_gate_auto_verify_resume; methodology deltas: credential_human_enablement_v1; durable: GrahamArdent/PROGRAMSTART#141)
-- eliminate_human_transport_preserve_human_enablement [accepted_pending_methodology]: Eliminate humans as message/command transport, while deliberately using bounded high-leverage human enablement when it safely creates materially greater durable autonomy. (behaviors: credential_human_enablement_leverage, irreducible_human_consequence, operator_gate_auto_verify_resume; methodology deltas: credential_human_enablement_v1; durable: GrahamArdent/PROGRAMSTART#141)
+- credential_human_enablement_precedes_expensive_workaround [accepted_reconciled]: For credential/identity/trust/access gaps, evaluate bounded high-leverage human enablement before expensive alternative-actuation engineering after first recovering existing capability. (behaviors: credential_human_enablement_leverage; methodology deltas: none; durable: GrahamArdent/PROGRAMSTART#141)
+- backbone_prepares_minimal_human_gate [accepted_reconciled]: When human enablement wins, the backbone performs all delegable preparation, presents only the smallest irreducible link/console/approval action, verifies completion itself, and resumes automatically. (behaviors: credential_human_enablement_leverage, operator_gate_exact_handoff, operator_gate_auto_verify_resume; methodology deltas: none; durable: GrahamArdent/PROGRAMSTART#141)
+- eliminate_human_transport_preserve_human_enablement [accepted_reconciled]: Eliminate humans as message/command transport, while deliberately using bounded high-leverage human enablement when it safely creates materially greater durable autonomy. (behaviors: credential_human_enablement_leverage, irreducible_human_consequence, operator_gate_auto_verify_resume; methodology deltas: none; durable: GrahamArdent/PROGRAMSTART#141)
 - cross_owner_generic_observation_owner_specific_admission [accepted_reconciled]: Cross-owner authority should use a reusable observation mechanism with explicit owner-specific admission, not a universal credential or universal authority service. (behaviors: cross_repository_dependency_graph, repository_independence, external_connection_surface_inventory, authority_non_minting_no_second_spine; methodology deltas: none; durable: GrahamArdent/PROGRAMSTART#141)
 - observation_does_not_create_authority [accepted_reconciled]: Repository access or observation does not create authority; PROGRAMSTART still resolves exact owner authority/currentness before dependent execution. (behaviors: canonical_before_dependent, authority_non_minting_no_second_spine, exact_machine_currentness_binding; methodology deltas: none; durable: GrahamArdent/PROGRAMSTART#141)
-- ecosystem_contracts_first_live_integration [accepted_execution_sequence]: After parity/methodology preparation, use the unresolved ecosystem-contracts cross-owner authority case as the first live integration acceptance. (behaviors: cross_repository_dependency_graph, credential_human_enablement_leverage, objective_terminality_next_effect; methodology deltas: credential_human_enablement_v1; durable: GrahamArdent/PROGRAMSTART#141)
+- ecosystem_contracts_first_live_integration [accepted_execution_sequence]: After parity/methodology preparation, use the unresolved ecosystem-contracts cross-owner authority case as the first live integration acceptance. (behaviors: cross_repository_dependency_graph, credential_human_enablement_leverage, objective_terminality_next_effect; methodology deltas: none; durable: GrahamArdent/PROGRAMSTART#141)
 - ordinary_intent_should_be_sufficient [accepted_reconciled]: The target interaction is ordinary natural intent or a simple Proceed; Graham should not need to paste the large autonomy prompt to obtain correct orchestration. (behaviors: semantic_objective_ingress, accepted_recommendation_resolution, objective_terminality_next_effect; methodology deltas: none; durable: GrahamArdent/PROGRAMSTART#141)
 - chatgpt_bootstrap_not_recurring_orchestrator [accepted_reconciled]: ChatGPT may bootstrap the transition, but success requires the backbone to reproduce the accepted behavior without ChatGPT acting as the recurring orchestrator. (behaviors: authority_non_minting_no_second_spine, objective_terminality_next_effect, conversation_decision_reconciliation; methodology deltas: none; durable: GrahamArdent/PROGRAMSTART#141)
 - matrix_makes_omission_mechanically_visible [accepted_reconciled]: Use the parity contract/checklist to make omissions mechanically visible rather than relying on ChatGPT memory or promises of completeness. (behaviors: conversation_decision_reconciliation, verification_claim_truthfulness, conditional_checklist_completeness; methodology deltas: none; durable: GrahamArdent/PROGRAMSTART#141)
 - supporting_methodology_remains_canonical_jit [accepted_reconciled]: Supporting methodology remains canonical at its owner and is loaded just in time when relevant; do not copy the entire methodology into runtime/parity state. (behaviors: jit_context_evidence_governor, canonical_before_dependent, authority_non_minting_no_second_spine; methodology deltas: none; durable: GrahamArdent/PROGRAMSTART#141)
-- reuse_current_learning_gate_for_promotion [accepted_pending_methodology]: The updated PROGRAMSTART Learning Gate is the mechanism expected to classify/promote this credential lesson now; do not invent a separate learning system merely because the earlier lesson was under-promoted. (behaviors: learning_gate, conditional_learning_persistence, learning_maturity_dedup_retest; methodology deltas: credential_human_enablement_v1; durable: GrahamArdent/PROGRAMSTART#141)
+- reuse_current_learning_gate_for_promotion [accepted_reconciled]: The updated PROGRAMSTART Learning Gate is the mechanism expected to classify/promote this credential lesson now; do not invent a separate learning system merely because the earlier lesson was under-promoted. (behaviors: learning_gate, conditional_learning_persistence, learning_maturity_dedup_retest; methodology deltas: none; durable: GrahamArdent/PROGRAMSTART#141)
 - parity_matrix_not_vector_authority [accepted_reconciled]: The parity matrix is a structured acceptance/coverage contract, not a vector database. Embeddings/RAG may assist JIT retrieval later, but similarity retrieval must never select or manufacture canonical authority. (behaviors: jit_context_evidence_governor, exact_machine_currentness_binding, authority_non_minting_no_second_spine; methodology deltas: none; durable: GrahamArdent/PROGRAMSTART#141)
-- first_wave_machinery_priority [accepted_execution_sequence]: After methodology correction and accepted parity coverage, prioritize machinery in this order: JIT context/evidence governance; credential/access Human Enablement Gate; accepted-recommendation disposition; connection-surface/capability resolution; blocker/safe-lane/shared-mutation coordination; automatic Challenge/Learning triggering; then cost/checklist/retention automation where it adds value. (behaviors: jit_context_evidence_governor, credential_human_enablement_leverage, accepted_recommendation_resolution, external_connection_surface_inventory, blocker_scope_safe_lane, shared_mutation_ownership, risk_triggered_challenge, learning_gate, cost_governance, conditional_checklist_completeness, retention_intent; methodology deltas: credential_human_enablement_v1; durable: GrahamArdent/PROGRAMSTART#141)
+- first_wave_machinery_priority [accepted_execution_sequence]: After methodology correction and accepted parity coverage, prioritize machinery in this order: JIT context/evidence governance; credential/access Human Enablement Gate; accepted-recommendation disposition; connection-surface/capability resolution; blocker/safe-lane/shared-mutation coordination; automatic Challenge/Learning triggering; then cost/checklist/retention automation where it adds value. (behaviors: jit_context_evidence_governor, credential_human_enablement_leverage, accepted_recommendation_resolution, external_connection_surface_inventory, blocker_scope_safe_lane, shared_mutation_ownership, risk_triggered_challenge, learning_gate, cost_governance, conditional_checklist_completeness, retention_intent; methodology deltas: none; durable: GrahamArdent/PROGRAMSTART#141)
 - cross_owner_observation_extends_existing_repository_broker [accepted_reconciled]: The reusable cross-owner authority-observation capability should extend the existing Execution Node repository broker/policy machinery rather than introduce a new universal authority service or broker. (behaviors: cross_repository_dependency_graph, external_connection_surface_inventory, authority_non_minting_no_second_spine; methodology deltas: none; durable: GrahamArdent/PROGRAMSTART#141)
-- credential_enablement_leverage_dimensions [accepted_pending_methodology]: Credential human-enablement evaluation must consider human action size, recurrence, durability gain, reuse scope/autonomy unlock, authority delta, blast radius, revocability, secret exposure, autonomous-workaround complexity/cost, and why human involvement is justified now. (behaviors: credential_human_enablement_leverage, operator_gate_exact_handoff; methodology deltas: credential_human_enablement_v1; durable: GrahamArdent/PROGRAMSTART#141)
-- credential_exception_not_general_human_gate_preference [accepted_pending_methodology]: The high-leverage human-enablement ordering is specifically for credential/identity/trust/access boundaries; it must not become a blanket rule to ask a human whenever a human could do the work. (behaviors: credential_human_enablement_leverage, irreducible_human_consequence; methodology deltas: credential_human_enablement_v1; durable: GrahamArdent/PROGRAMSTART#141)
+- credential_enablement_leverage_dimensions [accepted_reconciled]: Credential human-enablement evaluation must consider human action size, recurrence, durability gain, reuse scope/autonomy unlock, authority delta, blast radius, revocability, secret exposure, autonomous-workaround complexity/cost, and why human involvement is justified now. (behaviors: credential_human_enablement_leverage, operator_gate_exact_handoff; methodology deltas: none; durable: GrahamArdent/PROGRAMSTART#141)
+- credential_exception_not_general_human_gate_preference [accepted_reconciled]: The high-leverage human-enablement ordering is specifically for credential/identity/trust/access boundaries; it must not become a blanket rule to ask a human whenever a human could do the work. (behaviors: credential_human_enablement_leverage, irreducible_human_consequence; methodology deltas: none; durable: GrahamArdent/PROGRAMSTART#141)
 
 ## Priority gaps
 
@@ -117,7 +116,6 @@ Reuse still-valid evidence; widen only on declared invalidation or convergence b
 - coordinated_mode_c_lanes: Coordinate multiple Mode-C lanes without parallel authority
 - external_resource_evidence_continuity: Preserve external resource history/current visibility distinction
 - external_connection_surface_inventory: Enumerate connection surfaces before declaring automation unavailable
-- credential_human_enablement_leverage: Credential/access human-enablement leverage test
 - proportional_verification: Verify changed or newly-at-risk surfaces proportionally
 - conditional_learning_persistence: Persist learning only when earned and owner-writable
 - progressive_context_widening: Progressive narrowing then widening at convergence
@@ -125,12 +123,6 @@ Reuse still-valid evidence; widen only on declared invalidation or convergence b
 - learning_maturity_dedup_retest: Deduplicate lessons, track evidence maturity, and route only matching future retests
 
 ## Pending methodology deltas
-
-### credential_human_enablement_v1
-
-For credential, identity, trust, and access gaps, recover existing capability first, then evaluate whether a tiny bounded human authorization creates materially greater durable/reusable autonomy before investing in alternative-actuation engineering. When human enablement clearly wins, the backbone prepares everything delegable, presents only the irreducible action, verifies completion itself, and resumes automatically.
-
-Durable reference: GrahamArdent/PROGRAMSTART#139
 
 ## Matrix Challenge
 
@@ -141,7 +133,7 @@ Status: CLEAR
 - CH-03: Rename/remove an anchored obligation without changing the stored hash intentionally. -> anchor validation fails
 - CH-04: Mark documentation-only behavior implemented. -> implemented classification requires code plus test/live proof
 - CH-05: Turn the parity contract into a load-all runtime checklist and violate JIT. -> runtime usage contract requires jit_by_trigger and forbids load-entire-contract-per-effect
-- CH-06: Lose the accepted credential/human-enablement correction before canonicalization. -> pending methodology delta must be covered by a behavior row
+- CH-06: Lose the accepted credential/human-enablement correction before canonicalization. -> canonical Effective Autonomy section 9 + focused tests + behavior mapping preserve the credential/human-enablement correction
 - CH-07: Collapse operator action completion into system acceptance. -> separate operator-gate and auto-verify/resume rows preserve the distinction
 - CH-08: Collapse cross-repository evidence into multi-project mutation authority. -> repository-independence row remains separately required
 - CH-09: Treat semantic judgment as a deterministic enum implementation. -> execution_mode distinguishes semantic/hybrid behaviors from deterministic machinery

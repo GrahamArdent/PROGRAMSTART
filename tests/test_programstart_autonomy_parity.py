@@ -235,14 +235,13 @@ def test_conversation_decision_without_mapping_fails_closed() -> None:
     assert any("has no durable mapping" in x for x in errors)
 
 
-def test_pending_methodology_conversation_decision_requires_delta_mapping() -> None:
+def test_credential_human_enablement_decision_is_canonicalized() -> None:
     contract = parity.load_contract()
     target = next(
         x for x in contract["conversation_decisions"] if x["id"] == "credential_human_enablement_precedes_expensive_workaround"
     )
-    target["methodology_delta_refs"] = []
-    errors = _errors(contract)
-    assert any("pending-methodology conversation decision lacks methodology mapping" in x for x in errors)
+    assert target["status"] == "accepted_reconciled"
+    assert target["methodology_delta_refs"] == []
 
 
 def test_conversation_reconciliation_behavior_is_required() -> None:
@@ -283,12 +282,13 @@ def test_documentation_only_row_cannot_be_inflated_to_implemented() -> None:
     assert any("lacks code plus test/live proof" in x for x in errors)
 
 
-def test_pending_credential_human_enablement_delta_cannot_disappear() -> None:
+def test_credential_human_enablement_is_canonical_not_pending() -> None:
     contract = parity.load_contract()
+    assert "credential_human_enablement_v1" not in {x["id"] for x in contract["pending_methodology_deltas"]}
     behavior = next(x for x in contract["behaviors"] if x["id"] == "credential_human_enablement_leverage")
-    behavior.pop("methodology_delta_refs")
-    errors = _errors(contract)
-    assert any("pending methodology delta not represented" in x for x in errors)
+    assert behavior["machinery_state"] == "partial"
+    assert behavior["closure_status"] == "partial"
+    assert "support.effective_autonomy.09" in behavior["covers"]
 
 
 def test_required_cross_cutting_jit_row_cannot_disappear() -> None:
@@ -306,12 +306,12 @@ def test_implemented_rows_require_exact_repo_commit_path_proof_references() -> N
     assert any("non-exact code proof reference" in x for x in errors)
 
 
-def test_pending_methodology_behavior_cannot_claim_canonical_coverage() -> None:
+def test_canonical_credential_human_enablement_coverage_cannot_disappear() -> None:
     contract = parity.load_contract()
     behavior = next(x for x in contract["behaviors"] if x["id"] == "credential_human_enablement_leverage")
-    behavior["covers"] = ["support.effective_autonomy.09"]
+    behavior["covers"] = []
     errors = _errors(contract)
-    assert any("must not claim canonical source coverage" in x for x in errors)
+    assert any("canonical credential human-enablement behavior must cover Effective Autonomy section 9" in x for x in errors)
 
 
 def test_coverage_is_not_mistaken_for_backbone_parity() -> None:
@@ -320,6 +320,6 @@ def test_coverage_is_not_mistaken_for_backbone_parity() -> None:
     assert parity.validate_contract(checked) == []
     states = checked["_summary"]["machinery_states"]
     assert states["implemented"] < checked["_summary"]["behaviors"]
-    assert states["missing"] >= 1
+    assert states["partial"] >= 1
     assert states["prompt_only"] >= 1
     assert checked["matrix_challenge"]["status"] == "clear"

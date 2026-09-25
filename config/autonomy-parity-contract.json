@@ -5580,6 +5580,59 @@
         "counterevidence narrows an existing lesson instead of minting a synonym; future retest surfaces only when current situation matches"
       ],
       "closure_status": "unproven"
+    },
+    {
+      "id": "conversation_decision_reconciliation",
+      "title": "Reconcile accepted conversation decisions into durable parity evidence",
+      "owner": "PROGRAMSTART + owning project",
+      "covers": [
+        "prompt.preflight.3a",
+        "prompt.step.01",
+        "prompt.step.05",
+        "prompt.verification.05"
+      ],
+      "trigger": [
+        "a material design/project conversation produces accepted decisions not yet represented in canonical owner authority",
+        "a session or execution phase is about to rely on prior conversational decisions"
+      ],
+      "expected_behavior": [
+        "enumerate material accepted conversation decisions, map each to an existing parity behavior and/or pending methodology delta, and persist the mapping durably before claiming completeness",
+        "use current conversation content as transition evidence when available, but eliminate future chat archaeology by reconciling accepted decisions into durable owner-visible evidence"
+      ],
+      "must_not": [
+        "must not treat conversation history as permanent runtime authority",
+        "must not claim no-information-loss from semantic similarity alone; each material accepted decision requires an explicit durable mapping"
+      ],
+      "jit_inputs": [
+        "current conversation content actually available for the reconciliation task",
+        "current parity contract and current canonical owner authority needed to classify each accepted decision"
+      ],
+      "invalidation": [
+        "new material conversation decision is accepted",
+        "mapped parity behavior or pending methodology delta is removed, renamed, or superseded",
+        "owning canonical authority changes the accepted decision"
+      ],
+      "machinery_state": "partial",
+      "execution_mode": "hybrid",
+      "current_proof": [
+        {
+          "kind": "code",
+          "ref": "GrahamArdent/PROGRAMSTART@053e810cb85820bb380ddd8cf23a19a4e19a19f3:scripts/programstart_intent_ingress.py"
+        },
+        {
+          "kind": "test",
+          "ref": "GrahamArdent/PROGRAMSTART@053e810cb85820bb380ddd8cf23a19a4e19a19f3:tests/test_programstart_contextual_currentness_state.py"
+        },
+        {
+          "kind": "decision",
+          "ref": "GrahamArdent/PROGRAMSTART#141"
+        }
+      ],
+      "acceptance_scenarios": [
+        "after a design conversation, every material accepted decision is present in conversation_decisions and mapped to an existing behavior and/or pending methodology delta",
+        "a fresh session can determine the accepted design decisions from durable parity evidence without rereading the original chat"
+      ],
+      "closure_status": "partial"
     }
   ],
   "matrix_challenge": {
@@ -5690,5 +5743,332 @@
     ],
     "clear_scope": "matrix construction / omission resistance only; does not assert backbone parity"
   },
-  "closure_rule": "Matrix construction is complete only when all required source obligations are covered, fingerprints/anchors validate, rendered output is generated from the machine contract, adversarial Challenge is CLEAR, and hosted/local checks pass. Coverage completeness does not mean backbone parity: missing, prompt-only, semantic, human-gate, and partial rows remain explicit implementation work. No Controller behavior change is authorized by this contract."
+  "closure_rule": "Matrix construction is complete only when all required source obligations are covered, fingerprints/anchors validate, rendered output is generated from the machine contract, adversarial Challenge is CLEAR, and hosted/local checks pass. Coverage completeness does not mean backbone parity: missing, prompt-only, semantic, human-gate, and partial rows remain explicit implementation work. No Controller behavior change is authorized by this contract.",
+  "conversation_decisions": [
+    {
+      "id": "chat_transition_input_not_runtime_authority",
+      "summary": "Use the current design conversation as first-class transition evidence while extracting/reconciling decisions; do not make chat history permanent runtime authority.",
+      "behavior_refs": [
+        "conversation_decision_reconciliation",
+        "data_grounding_instruction_isolation",
+        "authority_non_minting_no_second_spine"
+      ],
+      "methodology_delta_refs": [],
+      "status": "accepted_reconciled",
+      "durable_reference": "GrahamArdent/PROGRAMSTART#141"
+    },
+    {
+      "id": "three_way_completeness",
+      "summary": "No-information-loss requires reconciliation across canonical PROGRAMSTART obligations, actual machinery/runtime capability, and accepted conversation decisions not yet canonical.",
+      "behavior_refs": [
+        "conversation_decision_reconciliation",
+        "jit_context_evidence_governor",
+        "verification_claim_truthfulness"
+      ],
+      "methodology_delta_refs": [],
+      "status": "accepted_reconciled",
+      "durable_reference": "GrahamArdent/PROGRAMSTART#141"
+    },
+    {
+      "id": "explicit_mapping_for_material_chat_decisions",
+      "summary": "Every material accepted conversation decision must have an explicit durable parity-behavior and/or pending-methodology mapping before completeness is claimed.",
+      "behavior_refs": [
+        "conversation_decision_reconciliation"
+      ],
+      "methodology_delta_refs": [],
+      "status": "accepted_reconciled",
+      "durable_reference": "GrahamArdent/PROGRAMSTART#141"
+    },
+    {
+      "id": "jit_is_cross_cutting",
+      "summary": "JIT context/evidence governance is a cross-cutting runtime invariant, not a one-time load-context step.",
+      "behavior_refs": [
+        "jit_context_evidence_governor",
+        "progressive_context_widening"
+      ],
+      "methodology_delta_refs": [],
+      "status": "accepted_reconciled",
+      "durable_reference": "GrahamArdent/PROGRAMSTART#141"
+    },
+    {
+      "id": "evidence_reuse_until_invalidation",
+      "summary": "Reuse still-valid evidence until a declared invalidation; a session reset alone is not invalidation.",
+      "behavior_refs": [
+        "jit_context_evidence_governor",
+        "evidence_reuse_invalidation"
+      ],
+      "methodology_delta_refs": [],
+      "status": "accepted_reconciled",
+      "durable_reference": "GrahamArdent/PROGRAMSTART#141"
+    },
+    {
+      "id": "autonomy_prompt_becomes_oracle",
+      "summary": "The autonomy prompt should evolve into specification, acceptance oracle, bootstrap/fallback interface, and regression source rather than remain the recurring runtime orchestrator.",
+      "behavior_refs": [
+        "authority_non_minting_no_second_spine",
+        "objective_terminality_next_effect",
+        "conversation_decision_reconciliation"
+      ],
+      "methodology_delta_refs": [],
+      "status": "accepted_reconciled",
+      "durable_reference": "GrahamArdent/PROGRAMSTART#141"
+    },
+    {
+      "id": "no_second_orchestrator",
+      "summary": "Mechanizing prompt behavior must extend the existing Controller/backbone rather than create a second orchestrator, controller, scheduler, or state spine.",
+      "behavior_refs": [
+        "authority_non_minting_no_second_spine"
+      ],
+      "methodology_delta_refs": [],
+      "status": "accepted_reconciled",
+      "durable_reference": "GrahamArdent/PROGRAMSTART#141"
+    },
+    {
+      "id": "third_party_frameworks_reference_only_now",
+      "summary": "LangGraph, Temporal, Prefect, and Windmill remain reference/escalation options, not production backbone dependencies now; reconsider only if evidence exposes a concrete incumbent Controller limitation.",
+      "behavior_refs": [
+        "authority_non_minting_no_second_spine",
+        "jit_context_evidence_governor"
+      ],
+      "methodology_delta_refs": [],
+      "status": "accepted_reconciled",
+      "durable_reference": "GrahamArdent/PROGRAMSTART#141"
+    },
+    {
+      "id": "matrix_before_machinery",
+      "summary": "Build and Challenge the parity matrix before changing backbone behavior so implementation has an omission-resistant acceptance oracle.",
+      "behavior_refs": [
+        "conversation_decision_reconciliation",
+        "authority_non_minting_no_second_spine",
+        "verification_claim_truthfulness"
+      ],
+      "methodology_delta_refs": [],
+      "status": "accepted_reconciled",
+      "durable_reference": "GrahamArdent/PROGRAMSTART#141"
+    },
+    {
+      "id": "coverage_not_parity",
+      "summary": "Complete source/decision coverage and implemented backbone parity are distinct; the matrix must remain truthfully non-green while gaps remain.",
+      "behavior_refs": [
+        "verification_claim_truthfulness",
+        "authority_non_minting_no_second_spine"
+      ],
+      "methodology_delta_refs": [],
+      "status": "accepted_reconciled",
+      "durable_reference": "GrahamArdent/PROGRAMSTART#141"
+    },
+    {
+      "id": "credential_human_enablement_precedes_expensive_workaround",
+      "summary": "For credential/identity/trust/access gaps, evaluate bounded high-leverage human enablement before expensive alternative-actuation engineering after first recovering existing capability.",
+      "behavior_refs": [
+        "credential_human_enablement_leverage"
+      ],
+      "methodology_delta_refs": [
+        "credential_human_enablement_v1"
+      ],
+      "status": "accepted_pending_methodology",
+      "durable_reference": "GrahamArdent/PROGRAMSTART#141"
+    },
+    {
+      "id": "backbone_prepares_minimal_human_gate",
+      "summary": "When human enablement wins, the backbone performs all delegable preparation, presents only the smallest irreducible link/console/approval action, verifies completion itself, and resumes automatically.",
+      "behavior_refs": [
+        "credential_human_enablement_leverage",
+        "operator_gate_exact_handoff",
+        "operator_gate_auto_verify_resume"
+      ],
+      "methodology_delta_refs": [
+        "credential_human_enablement_v1"
+      ],
+      "status": "accepted_pending_methodology",
+      "durable_reference": "GrahamArdent/PROGRAMSTART#141"
+    },
+    {
+      "id": "eliminate_human_transport_preserve_human_enablement",
+      "summary": "Eliminate humans as message/command transport, while deliberately using bounded high-leverage human enablement when it safely creates materially greater durable autonomy.",
+      "behavior_refs": [
+        "credential_human_enablement_leverage",
+        "irreducible_human_consequence",
+        "operator_gate_auto_verify_resume"
+      ],
+      "methodology_delta_refs": [
+        "credential_human_enablement_v1"
+      ],
+      "status": "accepted_pending_methodology",
+      "durable_reference": "GrahamArdent/PROGRAMSTART#141"
+    },
+    {
+      "id": "cross_owner_generic_observation_owner_specific_admission",
+      "summary": "Cross-owner authority should use a reusable observation mechanism with explicit owner-specific admission, not a universal credential or universal authority service.",
+      "behavior_refs": [
+        "cross_repository_dependency_graph",
+        "repository_independence",
+        "external_connection_surface_inventory",
+        "authority_non_minting_no_second_spine"
+      ],
+      "methodology_delta_refs": [],
+      "status": "accepted_reconciled",
+      "durable_reference": "GrahamArdent/PROGRAMSTART#141"
+    },
+    {
+      "id": "observation_does_not_create_authority",
+      "summary": "Repository access or observation does not create authority; PROGRAMSTART still resolves exact owner authority/currentness before dependent execution.",
+      "behavior_refs": [
+        "canonical_before_dependent",
+        "authority_non_minting_no_second_spine",
+        "exact_machine_currentness_binding"
+      ],
+      "methodology_delta_refs": [],
+      "status": "accepted_reconciled",
+      "durable_reference": "GrahamArdent/PROGRAMSTART#141"
+    },
+    {
+      "id": "ecosystem_contracts_first_live_integration",
+      "summary": "After parity/methodology preparation, use the unresolved ecosystem-contracts cross-owner authority case as the first live integration acceptance.",
+      "behavior_refs": [
+        "cross_repository_dependency_graph",
+        "credential_human_enablement_leverage",
+        "objective_terminality_next_effect"
+      ],
+      "methodology_delta_refs": [
+        "credential_human_enablement_v1"
+      ],
+      "status": "accepted_execution_sequence",
+      "durable_reference": "GrahamArdent/PROGRAMSTART#141"
+    },
+    {
+      "id": "ordinary_intent_should_be_sufficient",
+      "summary": "The target interaction is ordinary natural intent or a simple Proceed; Graham should not need to paste the large autonomy prompt to obtain correct orchestration.",
+      "behavior_refs": [
+        "semantic_objective_ingress",
+        "accepted_recommendation_resolution",
+        "objective_terminality_next_effect"
+      ],
+      "methodology_delta_refs": [],
+      "status": "accepted_reconciled",
+      "durable_reference": "GrahamArdent/PROGRAMSTART#141"
+    },
+    {
+      "id": "chatgpt_bootstrap_not_recurring_orchestrator",
+      "summary": "ChatGPT may bootstrap the transition, but success requires the backbone to reproduce the accepted behavior without ChatGPT acting as the recurring orchestrator.",
+      "behavior_refs": [
+        "authority_non_minting_no_second_spine",
+        "objective_terminality_next_effect",
+        "conversation_decision_reconciliation"
+      ],
+      "methodology_delta_refs": [],
+      "status": "accepted_reconciled",
+      "durable_reference": "GrahamArdent/PROGRAMSTART#141"
+    },
+    {
+      "id": "matrix_makes_omission_mechanically_visible",
+      "summary": "Use the parity contract/checklist to make omissions mechanically visible rather than relying on ChatGPT memory or promises of completeness.",
+      "behavior_refs": [
+        "conversation_decision_reconciliation",
+        "verification_claim_truthfulness",
+        "conditional_checklist_completeness"
+      ],
+      "methodology_delta_refs": [],
+      "status": "accepted_reconciled",
+      "durable_reference": "GrahamArdent/PROGRAMSTART#141"
+    },
+    {
+      "id": "supporting_methodology_remains_canonical_jit",
+      "summary": "Supporting methodology remains canonical at its owner and is loaded just in time when relevant; do not copy the entire methodology into runtime/parity state.",
+      "behavior_refs": [
+        "jit_context_evidence_governor",
+        "canonical_before_dependent",
+        "authority_non_minting_no_second_spine"
+      ],
+      "methodology_delta_refs": [],
+      "status": "accepted_reconciled",
+      "durable_reference": "GrahamArdent/PROGRAMSTART#141"
+    },
+    {
+      "id": "reuse_current_learning_gate_for_promotion",
+      "summary": "The updated PROGRAMSTART Learning Gate is the mechanism expected to classify/promote this credential lesson now; do not invent a separate learning system merely because the earlier lesson was under-promoted.",
+      "behavior_refs": [
+        "learning_gate",
+        "conditional_learning_persistence",
+        "learning_maturity_dedup_retest"
+      ],
+      "methodology_delta_refs": [
+        "credential_human_enablement_v1"
+      ],
+      "status": "accepted_pending_methodology",
+      "durable_reference": "GrahamArdent/PROGRAMSTART#141"
+    },
+    {
+      "id": "parity_matrix_not_vector_authority",
+      "summary": "The parity matrix is a structured acceptance/coverage contract, not a vector database. Embeddings/RAG may assist JIT retrieval later, but similarity retrieval must never select or manufacture canonical authority.",
+      "behavior_refs": [
+        "jit_context_evidence_governor",
+        "exact_machine_currentness_binding",
+        "authority_non_minting_no_second_spine"
+      ],
+      "methodology_delta_refs": [],
+      "status": "accepted_reconciled",
+      "durable_reference": "GrahamArdent/PROGRAMSTART#141"
+    },
+    {
+      "id": "first_wave_machinery_priority",
+      "summary": "After methodology correction and accepted parity coverage, prioritize machinery in this order: JIT context/evidence governance; credential/access Human Enablement Gate; accepted-recommendation disposition; connection-surface/capability resolution; blocker/safe-lane/shared-mutation coordination; automatic Challenge/Learning triggering; then cost/checklist/retention automation where it adds value.",
+      "behavior_refs": [
+        "jit_context_evidence_governor",
+        "credential_human_enablement_leverage",
+        "accepted_recommendation_resolution",
+        "external_connection_surface_inventory",
+        "blocker_scope_safe_lane",
+        "shared_mutation_ownership",
+        "risk_triggered_challenge",
+        "learning_gate",
+        "cost_governance",
+        "conditional_checklist_completeness",
+        "retention_intent"
+      ],
+      "methodology_delta_refs": [
+        "credential_human_enablement_v1"
+      ],
+      "status": "accepted_execution_sequence",
+      "durable_reference": "GrahamArdent/PROGRAMSTART#141"
+    },
+    {
+      "id": "cross_owner_observation_extends_existing_repository_broker",
+      "summary": "The reusable cross-owner authority-observation capability should extend the existing Execution Node repository broker/policy machinery rather than introduce a new universal authority service or broker.",
+      "behavior_refs": [
+        "cross_repository_dependency_graph",
+        "external_connection_surface_inventory",
+        "authority_non_minting_no_second_spine"
+      ],
+      "methodology_delta_refs": [],
+      "status": "accepted_reconciled",
+      "durable_reference": "GrahamArdent/PROGRAMSTART#141"
+    },
+    {
+      "id": "credential_enablement_leverage_dimensions",
+      "summary": "Credential human-enablement evaluation must consider human action size, recurrence, durability gain, reuse scope/autonomy unlock, authority delta, blast radius, revocability, secret exposure, autonomous-workaround complexity/cost, and why human involvement is justified now.",
+      "behavior_refs": [
+        "credential_human_enablement_leverage",
+        "operator_gate_exact_handoff"
+      ],
+      "methodology_delta_refs": [
+        "credential_human_enablement_v1"
+      ],
+      "status": "accepted_pending_methodology",
+      "durable_reference": "GrahamArdent/PROGRAMSTART#141"
+    },
+    {
+      "id": "credential_exception_not_general_human_gate_preference",
+      "summary": "The high-leverage human-enablement ordering is specifically for credential/identity/trust/access boundaries; it must not become a blanket rule to ask a human whenever a human could do the work.",
+      "behavior_refs": [
+        "credential_human_enablement_leverage",
+        "irreducible_human_consequence"
+      ],
+      "methodology_delta_refs": [
+        "credential_human_enablement_v1"
+      ],
+      "status": "accepted_pending_methodology",
+      "durable_reference": "GrahamArdent/PROGRAMSTART#141"
+    }
+  ]
 }

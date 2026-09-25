@@ -16,7 +16,8 @@ def test_current_contract_is_complete_and_rendered_view_is_derived() -> None:
     assert parity.validate_contract(checked) == []
     assert checked["_summary"]["source_obligations"] == 422
     assert checked["_summary"]["behaviors"] == 49
-    assert checked["_summary"]["conversation_decisions"] == 26
+    assert checked["_summary"]["conversation_decisions"] == 27
+    assert checked["_summary"]["hop_instances"] == 37
     obligations = checked["source_obligations"]
     assert sum(x["id"].startswith("prompt.step.") for x in obligations) == 25
     assert sum(x["id"].startswith("prompt.preflight.") for x in obligations) == 17
@@ -211,12 +212,18 @@ def test_accepted_conversation_decision_set_is_exact_and_fully_mapped() -> None:
         "cross_owner_observation_extends_existing_repository_broker",
         "credential_enablement_leverage_dimensions",
         "credential_exception_not_general_human_gate_preference",
+        "general_mechanism_does_not_satisfy_instance_acceptance",
     }
     actual = {item["id"] for item in contract["conversation_decisions"]}
     assert actual == expected
-    assert len(actual) == 26
+    assert len(actual) == 27
     for item in contract["conversation_decisions"]:
-        assert item["durable_reference"] == "GrahamArdent/PROGRAMSTART#141"
+        expected_ref = (
+            "GrahamArdent/PROGRAMSTART#147"
+            if item["id"] == "general_mechanism_does_not_satisfy_instance_acceptance"
+            else "GrahamArdent/PROGRAMSTART#141"
+        )
+        assert item["durable_reference"] == expected_ref
         assert item["behavior_refs"] or item["methodology_delta_refs"]
 
 
@@ -382,3 +389,46 @@ def test_jit_behavior_selector_rejects_contract_drift_before_selection() -> None
         assert "source fingerprint drift" in str(exc)
     else:
         raise AssertionError("selector returned routing evidence from an invalid contract")
+
+
+def test_material_hop_inventory_is_exact_and_instance_scoped() -> None:
+    contract = parity.load_contract()
+    assert _errors(contract) == []
+    hop_ids = [item["id"] for item in contract["hop_instances"]]
+    assert hop_ids == [f"HOP-{n:03d}" for n in range(1, 38)]
+    assert len(hop_ids) == 37
+    assert contract["hop_policy"]["instance_acceptance_required"] is True
+    assert contract["hop_policy"]["general_mechanism_implies_instance_acceptance"] is False
+    assert contract["hop_policy"]["path_authority_role"] == "referenced_not_replaced"
+    assert any(item["target"] == "Paths Project / Path Authority logical owner" for item in contract["hop_instances"])
+
+
+def test_generic_hop_mechanism_cannot_imply_instance_acceptance() -> None:
+    contract = parity.load_contract()
+    contract["hop_policy"]["general_mechanism_implies_instance_acceptance"] = True
+    errors = _errors(contract)
+    assert any("must never imply instance acceptance" in x for x in errors)
+
+
+def test_duplicate_concrete_hop_fails_closed() -> None:
+    contract = parity.load_contract()
+    duplicate = copy.deepcopy(contract["hop_instances"][0])
+    duplicate["id"] = "HOP-999"
+    contract["hop_instances"].append(duplicate)
+    errors = _errors(contract)
+    assert any("duplicate concrete hop instance" in x for x in errors)
+
+
+def test_hop_unknown_behavior_reference_fails_closed() -> None:
+    contract = parity.load_contract()
+    contract["hop_instances"][0]["required_behavior_refs"] = ["does_not_exist"]
+    errors = _errors(contract)
+    assert any("references unknown behavior" in x for x in errors)
+
+
+def test_owner_hop_cannot_drop_cross_owner_safety_refs() -> None:
+    contract = parity.load_contract()
+    owner = next(x for x in contract["hop_instances"] if x["class"] == "owner_instance")
+    owner["required_behavior_refs"] = [x for x in owner["required_behavior_refs"] if x != "repository_independence"]
+    errors = _errors(contract)
+    assert any("owner instance missing required behavior: repository_independence" in x for x in errors)

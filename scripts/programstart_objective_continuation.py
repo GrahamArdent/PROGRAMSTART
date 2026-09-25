@@ -242,5 +242,3 @@ def evaluate_objective_continuation(
         disposition=ContinuationDisposition.EFFECT,
         semantic_effect_token=ready_effect,
     )
-
-[executed on device: execution-node (f06c7cdc-f670-49c4-9af8-64b2043a000a)]

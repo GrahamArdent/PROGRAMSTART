@@ -1,3 +1,5 @@
+[Reading 434 lines from start (total: 434 lines, 0 remaining)]
+
 from __future__ import annotations
 
 import copy
@@ -398,14 +400,9 @@ def test_material_hop_inventory_is_exact_and_instance_scoped() -> None:
     assert hop_ids == [f"HOP-{n:03d}" for n in range(1, 38)]
     assert len(hop_ids) == 37
     assert contract["hop_policy"]["instance_acceptance_required"] is True
-    assert (
-        contract["hop_policy"]["general_mechanism_implies_instance_acceptance"] is False
-    )
+    assert contract["hop_policy"]["general_mechanism_implies_instance_acceptance"] is False
     assert contract["hop_policy"]["path_authority_role"] == "referenced_not_replaced"
-    assert any(
-        item["target"] == "Paths Project / Path Authority logical owner"
-        for item in contract["hop_instances"]
-    )
+    assert any(item["target"] == "Paths Project / Path Authority logical owner" for item in contract["hop_instances"])
 
 
 def test_generic_hop_mechanism_cannot_imply_instance_acceptance() -> None:
@@ -434,8 +431,8 @@ def test_hop_unknown_behavior_reference_fails_closed() -> None:
 def test_owner_hop_cannot_drop_cross_owner_safety_refs() -> None:
     contract = parity.load_contract()
     owner = next(x for x in contract["hop_instances"] if x["class"] == "owner_instance")
-    owner["required_behavior_refs"] = [
-        x for x in owner["required_behavior_refs"] if x != "repository_independence"
-    ]
+    owner["required_behavior_refs"] = [x for x in owner["required_behavior_refs"] if x != "repository_independence"]
     errors = _errors(contract)
     assert any("owner instance missing required behavior: repository_independence" in x for x in errors)
+
+[executed on device: vps-743d7c1d (3eb617df-2b3f-4634-9ca3-f35dc62b5f04)]

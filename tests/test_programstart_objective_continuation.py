@@ -224,9 +224,7 @@ def test_prohibited_next_effect_reorients(context) -> None:
         "work_packet_specification_id": packet.specification_id,
         "authority_fingerprint": authority_fingerprint(authority),
     }
-    decision = evaluate_objective_continuation(
-        root, packet, authority, [_ready("inspect semantic state", binding)]
-    )
+    decision = evaluate_objective_continuation(root, packet, authority, [_ready("inspect semantic state", binding)])
     assert decision.disposition == ContinuationDisposition.REORIENT
 
 

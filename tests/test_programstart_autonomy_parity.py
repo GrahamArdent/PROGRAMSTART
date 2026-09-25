@@ -1,0 +1,254 @@
+from __future__ import annotations
+
+import copy
+
+from scripts import programstart_autonomy_parity as parity
+
+
+def _errors(contract):
+    return parity.validate_contract(copy.deepcopy(contract))
+
+
+def test_current_contract_is_complete_and_rendered_view_is_derived() -> None:
+    contract = parity.load_contract()
+    assert _errors(contract) == []
+    checked = copy.deepcopy(contract)
+    assert parity.validate_contract(checked) == []
+    assert checked["_summary"]["source_obligations"] == 422
+    assert checked["_summary"]["behaviors"] == 48
+    obligations = checked["source_obligations"]
+    assert sum(x["id"].startswith("prompt.step.") for x in obligations) == 25
+    assert sum(x["id"].startswith("prompt.preflight.") for x in obligations) == 17
+    assert sum(x["id"].startswith("prompt.guardrail.") for x in obligations) == 45
+    assert sum(x["id"].startswith("prompt.verification.") for x in obligations) == 32
+    assert sum(x["id"].startswith("jit.rule.") for x in obligations) == 7
+    assert sum(x["id"].startswith("jit.temporal.") for x in obligations) == 4
+    assert parity.RENDERED.read_text(encoding="utf-8") == parity.render(checked)
+
+
+def test_prompt_closure_inventory_matches_contract_exactly() -> None:
+    import re
+
+    contract = parity.load_contract()
+    prompt = (parity.ROOT / ".github/prompts/start-programstart-project.prompt.md").read_text(encoding="utf-8")
+
+    def section(start: str, end: str | None = None) -> str:
+        text = prompt.split(start, 1)[1]
+        return text.split(end, 1)[0] if end else text
+
+    expected = {
+        "prompt.preflight.": [
+            line for line in section("## Pre-flight", "## Environment Boundary").splitlines() if re.match(r"^\d+[a-z]?\. ", line)
+        ],
+        "prompt.guardrail.": [
+            line for line in section("## Automation Guardrails", "## Verification Gate").splitlines() if line.startswith("- ")
+        ],
+        "prompt.verification.": [line for line in section("## Verification Gate").splitlines() if re.match(r"^\d+\. ", line)],
+    }
+    for prefix, anchors in expected.items():
+        actual = [item["anchor"] for item in contract["source_obligations"] if item["id"].startswith(prefix)]
+        assert actual == anchors
+
+
+def test_supporting_methodology_heading_inventory_matches_contract() -> None:
+    contract = parity.load_contract()
+    specs = {
+        "support.work_packet.": "PROGRAMBUILD/PROGRAMBUILD_WORK_PACKET.md",
+        "support.planning.": "PROGRAMBUILD/PROGRAMBUILD_PLANNING_OPERATING_MODEL.md",
+        "support.challenge.": "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
+        "support.effective_autonomy.": "docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md",
+        "support.learning.": "docs/PROGRAMSTART_LEARNING_LOOP.md",
+        "support.cost.": "docs/PROGRAMSTART_COST_GOVERNANCE.md",
+    }
+    expected_counts = {
+        "support.work_packet.": 25,
+        "support.planning.": 15,
+        "support.challenge.": 12,
+        "support.effective_autonomy.": 14,
+        "support.learning.": 13,
+        "support.cost.": 13,
+    }
+    for prefix, rel in specs.items():
+        headings = [line for line in (parity.ROOT / rel).read_text(encoding="utf-8").splitlines() if line.startswith("## ")]
+        actual = [item["anchor"] for item in contract["source_obligations"] if item["id"].startswith(prefix)]
+        assert actual == headings
+        assert len(actual) == expected_counts[prefix]
+
+
+def test_every_prompt_normative_clause_is_explicitly_inventoried() -> None:
+    import re
+
+    contract = parity.load_contract()
+    prompt = (parity.ROOT / ".github/prompts/start-programstart-project.prompt.md").read_text(encoding="utf-8")
+    expected = []
+    for raw in prompt.splitlines():
+        line = raw.strip()
+        if not line:
+            continue
+        if line.startswith("### ") or line.startswith("- ") or re.match(r"^\d+[a-z]?\. ", line):
+            expected.append(line)
+    # Exact-anchor set: duplicate textual clauses need only one source obligation.
+    expected_unique = set(expected)
+    actual = {
+        item["anchor"]
+        for item in contract["source_obligations"]
+        if item["source_path"] == ".github/prompts/start-programstart-project.prompt.md"
+    }
+    assert expected_unique <= actual
+    assert len(expected_unique - actual) == 0
+
+
+def test_every_prompt_prose_block_is_explicitly_inventoried() -> None:
+    import re
+
+    contract = parity.load_contract()
+    lines = (parity.ROOT / ".github/prompts/start-programstart-project.prompt.md").read_text(encoding="utf-8").splitlines()
+    expected = []
+    buf = []
+    in_code = False
+    in_front = False
+    for i, raw in enumerate(lines):
+        line = raw.strip()
+        if i == 0 and line == "---":
+            in_front = True
+            continue
+        if in_front:
+            if line == "---":
+                in_front = False
+            continue
+        if line.startswith(chr(96) * 3):
+            if buf:
+                expected.append(" ".join(buf))
+                buf = []
+            in_code = not in_code
+            continue
+        if in_code:
+            continue
+        if not line:
+            if buf:
+                expected.append(" ".join(buf))
+                buf = []
+            continue
+        if line.startswith("#") or line.startswith("- ") or re.match(r"^\d+[a-z]?\.\s", line) or line.startswith("|"):
+            if buf:
+                expected.append(" ".join(buf))
+                buf = []
+            continue
+        buf.append(line)
+    if buf:
+        expected.append(" ".join(buf))
+
+    actual = {
+        item["anchor"]
+        for item in contract["source_obligations"]
+        if item["source_path"] == ".github/prompts/start-programstart-project.prompt.md"
+    }
+    assert set(expected) <= actual
+
+
+def test_every_prompt_contract_code_block_is_explicitly_inventoried() -> None:
+    contract = parity.load_contract()
+    lines = (parity.ROOT / ".github/prompts/start-programstart-project.prompt.md").read_text(encoding="utf-8").splitlines()
+    expected = []
+    in_code = False
+    code = []
+    in_front = False
+    for i, raw in enumerate(lines):
+        line = raw.strip()
+        if i == 0 and line == "---":
+            in_front = True
+            continue
+        if in_front:
+            if line == "---":
+                in_front = False
+            continue
+        if line.startswith(chr(96) * 3):
+            if not in_code:
+                in_code = True
+                code = []
+            else:
+                in_code = False
+                expected.append("\n".join(code))
+            continue
+        if in_code:
+            code.append(raw.rstrip())
+
+    actual = {
+        item["anchor"]
+        for item in contract["source_obligations"]
+        if item["source_path"] == ".github/prompts/start-programstart-project.prompt.md"
+    }
+    assert set(expected) <= actual
+
+
+def test_source_fingerprint_drift_fails_closed() -> None:
+    contract = parity.load_contract()
+    contract["source_files"][0]["sha256"] = "0" * 64
+    errors = _errors(contract)
+    assert any("source fingerprint drift" in x for x in errors)
+
+
+def test_uncovered_prompt_obligation_fails_closed() -> None:
+    contract = parity.load_contract()
+    target = "prompt.step.25"
+    for behavior in contract["behaviors"]:
+        behavior["covers"] = [x for x in behavior["covers"] if x != target]
+    errors = _errors(contract)
+    assert f"uncovered obligation: {target}" in errors
+
+
+def test_matrix_cannot_become_load_all_runtime_contract() -> None:
+    contract = parity.load_contract()
+    contract["runtime_usage"]["load_entire_contract_per_effect"] = True
+    errors = _errors(contract)
+    assert any("must remain JIT" in x for x in errors)
+
+
+def test_documentation_only_row_cannot_be_inflated_to_implemented() -> None:
+    contract = parity.load_contract()
+    behavior = next(x for x in contract["behaviors"] if x["id"] == "data_grounding_instruction_isolation")
+    behavior["machinery_state"] = "implemented"
+    errors = _errors(contract)
+    assert any("lacks code plus test/live proof" in x for x in errors)
+
+
+def test_pending_credential_human_enablement_delta_cannot_disappear() -> None:
+    contract = parity.load_contract()
+    behavior = next(x for x in contract["behaviors"] if x["id"] == "credential_human_enablement_leverage")
+    behavior.pop("methodology_delta_refs")
+    errors = _errors(contract)
+    assert any("pending methodology delta not represented" in x for x in errors)
+
+
+def test_required_cross_cutting_jit_row_cannot_disappear() -> None:
+    contract = parity.load_contract()
+    contract["behaviors"] = [x for x in contract["behaviors"] if x["id"] != "jit_context_evidence_governor"]
+    errors = _errors(contract)
+    assert any("required cross-cutting behavior missing" in x for x in errors)
+
+
+def test_implemented_rows_require_exact_repo_commit_path_proof_references() -> None:
+    contract = parity.load_contract()
+    behavior = next(x for x in contract["behaviors"] if x["id"] == "replay_idempotency")
+    behavior["current_proof"][0]["ref"] = "some replay code"
+    errors = _errors(contract)
+    assert any("non-exact code proof reference" in x for x in errors)
+
+
+def test_pending_methodology_behavior_cannot_claim_canonical_coverage() -> None:
+    contract = parity.load_contract()
+    behavior = next(x for x in contract["behaviors"] if x["id"] == "credential_human_enablement_leverage")
+    behavior["covers"] = ["support.effective_autonomy.09"]
+    errors = _errors(contract)
+    assert any("must not claim canonical source coverage" in x for x in errors)
+
+
+def test_coverage_is_not_mistaken_for_backbone_parity() -> None:
+    contract = parity.load_contract()
+    checked = copy.deepcopy(contract)
+    assert parity.validate_contract(checked) == []
+    states = checked["_summary"]["machinery_states"]
+    assert states["implemented"] < checked["_summary"]["behaviors"]
+    assert states["missing"] >= 1
+    assert states["prompt_only"] >= 1
+    assert checked["matrix_challenge"]["status"] == "clear"

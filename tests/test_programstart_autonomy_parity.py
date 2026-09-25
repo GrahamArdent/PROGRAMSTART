@@ -333,7 +333,6 @@ def test_coverage_is_not_mistaken_for_backbone_parity() -> None:
     assert checked["matrix_challenge"]["status"] == "clear"
 
 
-
 def test_jit_behavior_selector_returns_only_requested_behavior_and_source_refs() -> None:
     contract = parity.load_contract()
     selected = parity.select_behaviors(contract, ["jit_context_evidence_governor"])

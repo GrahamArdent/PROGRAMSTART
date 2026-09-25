@@ -398,9 +398,14 @@ def test_material_hop_inventory_is_exact_and_instance_scoped() -> None:
     assert hop_ids == [f"HOP-{n:03d}" for n in range(1, 38)]
     assert len(hop_ids) == 37
     assert contract["hop_policy"]["instance_acceptance_required"] is True
-    assert contract["hop_policy"]["general_mechanism_implies_instance_acceptance"] is False
+    assert (
+        contract["hop_policy"]["general_mechanism_implies_instance_acceptance"] is False
+    )
     assert contract["hop_policy"]["path_authority_role"] == "referenced_not_replaced"
-    assert any(item["target"] == "Paths Project / Path Authority logical owner" for item in contract["hop_instances"])
+    assert any(
+        item["target"] == "Paths Project / Path Authority logical owner"
+        for item in contract["hop_instances"]
+    )
 
 
 def test_generic_hop_mechanism_cannot_imply_instance_acceptance() -> None:

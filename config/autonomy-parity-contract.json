@@ -2,8 +2,8 @@
   "schema_version": 1,
   "contract_id": "programstart.autonomy-parity.v1",
   "derived_at": {
-    "programstart_commit": "4552d32f4884242a23b21955957fa5d7e691cf87",
-    "controller_commit": "c95372bd5640110cf13791546ae1930cd0abb240",
+    "programstart_commit": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87",
+    "controller_commit": "GrahamArdent/programstart-autonomous-controller@c95372bd5640110cf13791546ae1930cd0abb240",
     "durable_reference": "GrahamArdent/PROGRAMSTART#139"
   },
   "runtime_usage": {
@@ -15,42 +15,42 @@
   "source_files": [
     {
       "path": ".github/prompts/start-programstart-project.prompt.md",
-      "sha256": "7942220de5481cb5c4323cb1db60c6989dc08ef8fb2136388a46f4f6a482618e",
+      "sha256": "7942220d-e5481cb5-c4323cb1-db60c698-9dc08ef8-fb213638-8a46f4f6-a482618e",
       "role": "primary autonomy orchestration contract"
     },
     {
       "path": ".github/instructions/source-of-truth.instructions.md",
-      "sha256": "14ee71a6ba58b6700c95e4d1bd7ab334d605b3a789f97939be936d7f1c40bc9e",
+      "sha256": "14ee71a6-ba58b670-0c95e4d1-bd7ab334-d605b3a7-89f97939-be936d7f-1c40bc9e",
       "role": "JIT source-of-truth contract"
     },
     {
       "path": "PROGRAMBUILD/PROGRAMBUILD_WORK_PACKET.md",
-      "sha256": "bf8c999427345154d4048063d899c28b78ff7ef34be7daf9600e7268b93c646f",
+      "sha256": "bf8c9994-27345154-d4048063-d899c28b-78ff7ef3-4be7daf9-600e7268-b93c646f",
       "role": "bounded packet semantics"
     },
     {
       "path": "PROGRAMBUILD/PROGRAMBUILD_PLANNING_OPERATING_MODEL.md",
-      "sha256": "b20f9216e8f40ec315e5b160279defc2ff54f3f1e4376ce967f7c5fc2d7d8262",
+      "sha256": "b20f9216-e8f40ec3-15e5b160-279defc2-ff54f3f1-e4376ce9-67f7c5fc-2d7d8262",
       "role": "planning and adaptive decision semantics"
     },
     {
       "path": "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
-      "sha256": "3ce9d4a11a4892aa1b89202506331112d0b4355f1090c5eb34684cff38c792c6",
+      "sha256": "3ce9d4a1-1a4892aa-1b892025-06331112-d0b4355f-1090c5eb-34684cff-38c792c6",
       "role": "Challenge contract"
     },
     {
       "path": "docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md",
-      "sha256": "3bcb9bede1adcfdbdfac265be41e9fc428d9346c952cced0f40b04cadef22eb6",
+      "sha256": "3bcb9bed-e1adcfdb-dfac265b-e41e9fc4-28d9346c-952cced0-f40b04ca-def22eb6",
       "role": "effective autonomy semantics"
     },
     {
       "path": "docs/PROGRAMSTART_LEARNING_LOOP.md",
-      "sha256": "393a55c6617747a484249e5293340c052a1cf6dcc0191883f5e61952735d6712",
+      "sha256": "393a55c6-617747a4-84249e52-93340c05-2a1cf6dc-c0191883-f5e61952-735d6712",
       "role": "Learning Gate"
     },
     {
       "path": "docs/PROGRAMSTART_COST_GOVERNANCE.md",
-      "sha256": "4a5891dbcab62587b3f73023b210357a89aefa8b820a2c721517a093d03a995c",
+      "sha256": "4a5891db-cab62587-b3f73023-b210357a-89aefa8b-820a2c72-1517a093-d03a995c",
       "role": "cost governance"
     }
   ],

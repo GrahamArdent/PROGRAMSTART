@@ -26,16 +26,11 @@ def test_current_contract_is_complete_and_rendered_view_is_derived() -> None:
     assert parity.RENDERED.read_text(encoding="utf-8") == parity.render(checked)
 
 
-
-
-
 def test_prompt_closure_inventory_matches_contract_exactly() -> None:
     import re
 
     contract = parity.load_contract()
-    prompt = (parity.ROOT / ".github/prompts/start-programstart-project.prompt.md").read_text(
-        encoding="utf-8"
-    )
+    prompt = (parity.ROOT / ".github/prompts/start-programstart-project.prompt.md").read_text(encoding="utf-8")
 
     def section(start: str, end: str | None = None) -> str:
         text = prompt.split(start, 1)[1]
@@ -43,31 +38,16 @@ def test_prompt_closure_inventory_matches_contract_exactly() -> None:
 
     expected = {
         "prompt.preflight.": [
-            line
-            for line in section("## Pre-flight", "## Environment Boundary").splitlines()
-            if re.match(r"^\d+[a-z]?\. ", line)
+            line for line in section("## Pre-flight", "## Environment Boundary").splitlines() if re.match(r"^\d+[a-z]?\. ", line)
         ],
         "prompt.guardrail.": [
-            line
-            for line in section("## Automation Guardrails", "## Verification Gate").splitlines()
-            if line.startswith("- ")
+            line for line in section("## Automation Guardrails", "## Verification Gate").splitlines() if line.startswith("- ")
         ],
-        "prompt.verification.": [
-            line
-            for line in section("## Verification Gate").splitlines()
-            if re.match(r"^\d+\. ", line)
-        ],
+        "prompt.verification.": [line for line in section("## Verification Gate").splitlines() if re.match(r"^\d+\. ", line)],
     }
     for prefix, anchors in expected.items():
-        actual = [
-            item["anchor"]
-            for item in contract["source_obligations"]
-            if item["id"].startswith(prefix)
-        ]
+        actual = [item["anchor"] for item in contract["source_obligations"] if item["id"].startswith(prefix)]
         assert actual == anchors
-
-
-
 
 
 def test_supporting_methodology_heading_inventory_matches_contract() -> None:
@@ -89,39 +69,23 @@ def test_supporting_methodology_heading_inventory_matches_contract() -> None:
         "support.cost.": 13,
     }
     for prefix, rel in specs.items():
-        headings = [
-            line
-            for line in (parity.ROOT / rel).read_text(encoding="utf-8").splitlines()
-            if line.startswith("## ")
-        ]
-        actual = [
-            item["anchor"]
-            for item in contract["source_obligations"]
-            if item["id"].startswith(prefix)
-        ]
+        headings = [line for line in (parity.ROOT / rel).read_text(encoding="utf-8").splitlines() if line.startswith("## ")]
+        actual = [item["anchor"] for item in contract["source_obligations"] if item["id"].startswith(prefix)]
         assert actual == headings
         assert len(actual) == expected_counts[prefix]
-
-
 
 
 def test_every_prompt_normative_clause_is_explicitly_inventoried() -> None:
     import re
 
     contract = parity.load_contract()
-    prompt = (parity.ROOT / ".github/prompts/start-programstart-project.prompt.md").read_text(
-        encoding="utf-8"
-    )
+    prompt = (parity.ROOT / ".github/prompts/start-programstart-project.prompt.md").read_text(encoding="utf-8")
     expected = []
     for raw in prompt.splitlines():
         line = raw.strip()
         if not line:
             continue
-        if (
-            line.startswith("### ")
-            or line.startswith("- ")
-            or re.match(r"^\d+[a-z]?\. ", line)
-        ):
+        if line.startswith("### ") or line.startswith("- ") or re.match(r"^\d+[a-z]?\. ", line):
             expected.append(line)
     # Exact-anchor set: duplicate textual clauses need only one source obligation.
     expected_unique = set(expected)
@@ -134,14 +98,11 @@ def test_every_prompt_normative_clause_is_explicitly_inventoried() -> None:
     assert len(expected_unique - actual) == 0
 
 
-
 def test_every_prompt_prose_block_is_explicitly_inventoried() -> None:
     import re
 
     contract = parity.load_contract()
-    lines = (
-        parity.ROOT / ".github/prompts/start-programstart-project.prompt.md"
-    ).read_text(encoding="utf-8").splitlines()
+    lines = (parity.ROOT / ".github/prompts/start-programstart-project.prompt.md").read_text(encoding="utf-8").splitlines()
     expected = []
     buf = []
     in_code = False
@@ -168,12 +129,7 @@ def test_every_prompt_prose_block_is_explicitly_inventoried() -> None:
                 expected.append(" ".join(buf))
                 buf = []
             continue
-        if (
-            line.startswith("#")
-            or line.startswith("- ")
-            or re.match(r"^\d+[a-z]?\.\s", line)
-            or line.startswith("|")
-        ):
+        if line.startswith("#") or line.startswith("- ") or re.match(r"^\d+[a-z]?\.\s", line) or line.startswith("|"):
             if buf:
                 expected.append(" ".join(buf))
                 buf = []
@@ -192,9 +148,7 @@ def test_every_prompt_prose_block_is_explicitly_inventoried() -> None:
 
 def test_every_prompt_contract_code_block_is_explicitly_inventoried() -> None:
     contract = parity.load_contract()
-    lines = (
-        parity.ROOT / ".github/prompts/start-programstart-project.prompt.md"
-    ).read_text(encoding="utf-8").splitlines()
+    lines = (parity.ROOT / ".github/prompts/start-programstart-project.prompt.md").read_text(encoding="utf-8").splitlines()
     expected = []
     in_code = False
     code = []
@@ -225,6 +179,7 @@ def test_every_prompt_contract_code_block_is_explicitly_inventoried() -> None:
         if item["source_path"] == ".github/prompts/start-programstart-project.prompt.md"
     }
     assert set(expected) <= actual
+
 
 def test_source_fingerprint_drift_fails_closed() -> None:
     contract = parity.load_contract()
@@ -267,14 +222,9 @@ def test_pending_credential_human_enablement_delta_cannot_disappear() -> None:
 
 def test_required_cross_cutting_jit_row_cannot_disappear() -> None:
     contract = parity.load_contract()
-    contract["behaviors"] = [
-        x for x in contract["behaviors"] if x["id"] != "jit_context_evidence_governor"
-    ]
+    contract["behaviors"] = [x for x in contract["behaviors"] if x["id"] != "jit_context_evidence_governor"]
     errors = _errors(contract)
     assert any("required cross-cutting behavior missing" in x for x in errors)
-
-
-
 
 
 def test_implemented_rows_require_exact_repo_commit_path_proof_references() -> None:
@@ -287,10 +237,7 @@ def test_implemented_rows_require_exact_repo_commit_path_proof_references() -> N
 
 def test_pending_methodology_behavior_cannot_claim_canonical_coverage() -> None:
     contract = parity.load_contract()
-    behavior = next(
-        x for x in contract["behaviors"]
-        if x["id"] == "credential_human_enablement_leverage"
-    )
+    behavior = next(x for x in contract["behaviors"] if x["id"] == "credential_human_enablement_leverage")
     behavior["covers"] = ["support.effective_autonomy.09"]
     errors = _errors(contract)
     assert any("must not claim canonical source coverage" in x for x in errors)

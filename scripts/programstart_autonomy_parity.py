@@ -14,14 +14,23 @@ RENDERED = ROOT / "docs" / "AUTONOMY_PARITY_MATRIX.md"
 STATES = {"implemented", "partial", "missing", "prompt_only", "semantic", "human_gate"}
 MODES = {"deterministic", "semantic", "hybrid", "human"}
 CLOSURES = {"proven", "partial", "unproven", "pending_methodology"}
-EXACT_FILE_PROOF_RE = re.compile(
-    r"^GrahamArdent/[A-Za-z0-9_.-]+@[0-9a-f]{40}:[A-Za-z0-9_./-]+$"
-)
+EXACT_FILE_PROOF_RE = re.compile(r"^GrahamArdent/[A-Za-z0-9_.-]+@[0-9a-f]{40}:[A-Za-z0-9_./-]+$")
 EXACT_LIVE_PROOF_RE = re.compile(r"^GrahamArdent/[A-Za-z0-9_.-]+#[0-9]+$")
 FIELDS = {
-    "id", "title", "owner", "covers", "trigger", "expected_behavior", "must_not",
-    "jit_inputs", "invalidation", "machinery_state", "execution_mode",
-    "current_proof", "acceptance_scenarios", "closure_status",
+    "id",
+    "title",
+    "owner",
+    "covers",
+    "trigger",
+    "expected_behavior",
+    "must_not",
+    "jit_inputs",
+    "invalidation",
+    "machinery_state",
+    "execution_mode",
+    "current_proof",
+    "acceptance_scenarios",
+    "closure_status",
 }
 
 
@@ -55,8 +64,10 @@ def validate_contract(c):
         fp = ROOT / p
         if not fp.is_file():
             e.append(f"source missing: {p}")
-        elif sha(fp) != s.get("sha256"):
-            e.append(f"source fingerprint drift: {p}")
+        else:
+            expected = str(s.get("sha256", "")).replace("-", "")
+            if sha(fp) != expected:
+                e.append(f"source fingerprint drift: {p}")
 
     oids = set()
     for o in c.get("source_obligations", []):
@@ -105,7 +116,15 @@ def validate_contract(c):
             e.append(f"{bid} invalid closure state")
         else:
             closure_counts[closure] += 1
-        for f in ("trigger", "expected_behavior", "must_not", "jit_inputs", "invalidation", "current_proof", "acceptance_scenarios"):
+        for f in (
+            "trigger",
+            "expected_behavior",
+            "must_not",
+            "jit_inputs",
+            "invalidation",
+            "current_proof",
+            "acceptance_scenarios",
+        ):
             if not isinstance(b.get(f), list) or not b[f]:
                 e.append(f"{bid}.{f} must be non-empty list")
         if state == "implemented":
@@ -115,13 +134,9 @@ def validate_contract(c):
                 e.append(f"{bid} implemented claim lacks code plus test/live proof")
             for item in proofs:
                 kind, ref = item.get("kind"), item.get("ref")
-                if kind in {"code", "test"} and (
-                    not isinstance(ref, str) or EXACT_FILE_PROOF_RE.fullmatch(ref) is None
-                ):
+                if kind in {"code", "test"} and (not isinstance(ref, str) or EXACT_FILE_PROOF_RE.fullmatch(ref) is None):
                     e.append(f"{bid} has non-exact {kind} proof reference: {ref}")
-                if kind == "live" and (
-                    not isinstance(ref, str) or EXACT_LIVE_PROOF_RE.fullmatch(ref) is None
-                ):
+                if kind == "live" and (not isinstance(ref, str) or EXACT_LIVE_PROOF_RE.fullmatch(ref) is None):
                     e.append(f"{bid} has non-exact live proof reference: {ref}")
 
     for oid in sorted(oids):
@@ -144,7 +159,11 @@ def validate_contract(c):
     for d in deltas - covered_deltas:
         e.append(f"pending methodology delta not represented: {d}")
 
-    for required in ("jit_context_evidence_governor", "credential_human_enablement_leverage", "objective_terminality_next_effect"):
+    for required in (
+        "jit_context_evidence_governor",
+        "credential_human_enablement_leverage",
+        "objective_terminality_next_effect",
+    ):
         if required not in bids:
             e.append(f"required cross-cutting behavior missing: {required}")
 

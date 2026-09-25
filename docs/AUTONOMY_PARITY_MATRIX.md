@@ -4,8 +4,8 @@
 > This is not a Master, scheduler, backlog, controller, methodology database, or execution spine.
 
 - Contract: programstart.autonomy-parity.v1
-- PROGRAMSTART baseline: 4552d32f4884242a23b21955957fa5d7e691cf87
-- Controller observation baseline: c95372bd5640110cf13791546ae1930cd0abb240
+- PROGRAMSTART baseline: GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87
+- Controller observation baseline: GrahamArdent/programstart-autonomous-controller@c95372bd5640110cf13791546ae1930cd0abb240
 - Durable reference: GrahamArdent/PROGRAMSTART#139
 - Fingerprinted source files: 8
 - Required source obligations covered: 422

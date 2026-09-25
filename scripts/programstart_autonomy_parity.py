@@ -19,6 +19,22 @@ CONVERSATION_DECISION_STATUSES = {
     "accepted_pending_methodology",
     "accepted_execution_sequence",
 }
+HOP_CLASSES = {"objective_ingress", "semantic_pipeline", "execution_fabric", "async_continuation", "control_plane", "owner_instance"}
+HOP_STATUSES = {"proven", "partial", "unproven", "human_gate"}
+HOP_ID_RE = re.compile(r"^HOP-\\d{3}$")
+HOP_FIELDS = {
+    "id",
+    "class",
+    "source",
+    "target",
+    "purpose",
+    "general_mechanism",
+    "required_behavior_refs",
+    "instance_status",
+    "evidence_refs",
+    "invalidation",
+    "path_authority_ref",
+}
 EXACT_FILE_PROOF_RE = re.compile(r"^GrahamArdent/[A-Za-z0-9_.-]+@[0-9a-f]{40}:[A-Za-z0-9_./-]+$")
 EXACT_LIVE_PROOF_RE = re.compile(r"^GrahamArdent/[A-Za-z0-9_.-]+#[0-9]+$")
 FIELDS = {
@@ -200,6 +216,66 @@ def validate_contract(c):
         if decision.get("status") == "accepted_pending_methodology" and not delta_refs:
             e.append(f"pending-methodology conversation decision lacks methodology mapping: {did}")
 
+
+    hop_policy = c.get("hop_policy", {})
+    if hop_policy.get("authority_role") != "derived_acceptance_evidence":
+        e.append("hop matrix must remain derived acceptance evidence")
+    if hop_policy.get("instance_acceptance_required") is not True:
+        e.append("hop policy must require concrete instance acceptance")
+    if hop_policy.get("general_mechanism_implies_instance_acceptance") is not False:
+        e.append("generalized hop machinery must never imply instance acceptance")
+    if hop_policy.get("path_authority_role") != "referenced_not_replaced":
+        e.append("hop matrix must reference, not replace, Path Authority")
+    if not hop_policy.get("durable_reference"):
+        e.append("hop policy lacks durable reference")
+
+    hops = c.get("hop_instances")
+    hop_ids = set()
+    hop_keys = set()
+    if not isinstance(hops, list) or not hops:
+        e.append("hop_instances must be a non-empty list")
+        hops = []
+    for hop in hops:
+        if not isinstance(hop, dict):
+            e.append("hop entries must be objects")
+            continue
+        hid = hop.get("id")
+        if not isinstance(hid, str) or HOP_ID_RE.fullmatch(hid) is None or hid in hop_ids:
+            e.append("hop ids must be unique HOP-NNN values")
+            continue
+        hop_ids.add(hid)
+        missing = HOP_FIELDS - set(hop)
+        if missing:
+            e.append(f"{hid} missing hop fields: {sorted(missing)}")
+        hclass = hop.get("class")
+        if hclass not in HOP_CLASSES:
+            e.append(f"{hid} invalid hop class")
+        status = hop.get("instance_status")
+        if status not in HOP_STATUSES:
+            e.append(f"{hid} invalid hop instance status")
+        for field in ("source", "target", "purpose", "general_mechanism", "path_authority_ref"):
+            if not isinstance(hop.get(field), str) or not hop[field].strip():
+                e.append(f"{hid}.{field} must be non-empty string")
+        key = (hop.get("source"), hop.get("target"), hop.get("purpose"))
+        if key in hop_keys:
+            e.append(f"duplicate concrete hop instance: {hid}")
+        hop_keys.add(key)
+        behavior_refs = hop.get("required_behavior_refs")
+        if not isinstance(behavior_refs, list) or not behavior_refs:
+            e.append(f"{hid}.required_behavior_refs must be non-empty list")
+            behavior_refs = []
+        for ref in behavior_refs:
+            if ref not in bids:
+                e.append(f"{hid} references unknown behavior: {ref}")
+        if hclass == "owner_instance":
+            for required_ref in ("cross_repository_dependency_graph", "canonical_before_dependent", "repository_independence"):
+                if required_ref not in behavior_refs:
+                    e.append(f"{hid} owner instance missing required behavior: {required_ref}")
+        for field in ("evidence_refs", "invalidation"):
+            value = hop.get(field)
+            if not isinstance(value, list) or not value or not all(isinstance(x, str) and x.strip() for x in value):
+                e.append(f"{hid}.{field} must be non-empty string list")
+
     for required in (
         "jit_context_evidence_governor",
         "credential_human_enablement_leverage",
@@ -235,6 +311,7 @@ def validate_contract(c):
         "closure_states": dict(sorted(closure_counts.items())),
         "pending_methodology_deltas": len(deltas),
         "conversation_decisions": len(conversation_ids),
+        "hop_instances": len(hop_ids),
     }
     return e
 
@@ -255,6 +332,7 @@ def render(c):
         f"- Required source obligations covered: {s['source_obligations']}",
         f"- Parity behaviors: {s['behaviors']}",
         f"- Accepted conversation decisions reconciled: {s['conversation_decisions']}",
+        f"- Material hop instances: {s['hop_instances']}",
         "",
         "## JIT usage invariant",
         "",
@@ -277,6 +355,22 @@ def render(c):
         out.append(
             f"| {b['id']} — {b['title']} | {b['machinery_state']} | {b['execution_mode']} | "
             f"{b['closure_status']} | {b['owner']} |"
+        )
+    out += [
+        "",
+        "## Material hop instance matrix",
+        "",
+        "> Generalized machinery may be reused, but every concrete material hop requires its own instance acceptance evidence.",
+        "> Physical path inventory/health/recovery remains authoritative in Paths/Path Authority or the owning project.",
+        "",
+        "| Hop | Class | Source | Target | Mechanism | Status | Evidence |",
+        "|---|---|---|---|---|---|---|",
+    ]
+    for hop in c["hop_instances"]:
+        evidence = "<br>".join(hop["evidence_refs"])
+        out.append(
+            f"| {hop['id']} | {hop['class']} | {hop['source']} | {hop['target']} | "
+            f"{hop['general_mechanism']} | {hop['instance_status']} | {evidence} |"
         )
     out += ["", "## Accepted conversation-decision reconciliation", ""]
     for decision in c["conversation_decisions"]:

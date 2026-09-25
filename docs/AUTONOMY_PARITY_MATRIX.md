@@ -10,7 +10,8 @@
 - Fingerprinted source files: 8
 - Required source obligations covered: 422
 - Parity behaviors: 49
-- Accepted conversation decisions reconciled: 26
+- Accepted conversation decisions reconciled: 27
+- Material hop instances: 37
 
 ## JIT usage invariant
 
@@ -79,6 +80,51 @@ Reuse still-valid evidence; widen only on declared invalidation or convergence b
 | learning_maturity_dedup_retest — Deduplicate lessons, track evidence maturity, and route only matching future retests | prompt_only | semantic | unproven | PROGRAMSTART |
 | conversation_decision_reconciliation — Reconcile accepted conversation decisions into durable parity evidence | partial | hybrid | partial | PROGRAMSTART + owning project |
 
+## Material hop instance matrix
+
+> Generalized machinery may be reused, but every concrete material hop requires its own instance acceptance evidence.
+> Physical path inventory/health/recovery remains authoritative in Paths/Path Authority or the owning project.
+
+| Hop | Class | Source | Target | Mechanism | Status | Evidence |
+|---|---|---|---|---|---|---|
+| HOP-001 | objective_ingress | Windows operator / admitted private source | Controller private natural-objective ingress | tailscale_private_http_v1 | proven | GrahamArdent/programstart-autonomous-controller#97 |
+| HOP-002 | objective_ingress | Mission-Control private operator surface | Controller private natural-objective ingress | Mission-Control private objective transport | partial | GrahamArdent/programstart-autonomous-controller#88<br>GrahamArdent/execution-node-control#218 |
+| HOP-003 | semantic_pipeline | Controller contextual runtime | PROGRAMSTART JIT / intent runtime | installed PROGRAMSTART exact behavior selector and intent adapter | proven | GrahamArdent/programstart-autonomous-controller#102<br>GrahamArdent/PROGRAMSTART#145 |
+| HOP-004 | semantic_pipeline | PROGRAMSTART bounded intent runtime | Compute semantic relay | local Unix semantic relay | proven | GrahamArdent/programstart-autonomous-controller#97 |
+| HOP-005 | semantic_pipeline | Compute semantic relay | Execution Node typed semantic producer | fixed typed Execution Node semantic action | proven | GrahamArdent/programstart-autonomous-controller#97<br>GrahamArdent/execution-node-control#221 |
+| HOP-006 | semantic_pipeline | Execution Node semantic producer | PROGRAMSTART semantic validation | typed semantic harvest return | proven | GrahamArdent/programstart-autonomous-controller#97 |
+| HOP-007 | semantic_pipeline | PROGRAMSTART semantic validation | Controller durable admission | existing Controller contextual admission and sealed packet persistence | proven | GrahamArdent/programstart-autonomous-controller#97 |
+| HOP-008 | execution_fabric | Controller execution owner | Compute worker bridge | Controller-to-Compute typed request/result bridge | proven | GrahamArdent/programstart-autonomous-controller#53<br>GrahamArdent/programstart-autonomous-controller#97 |
+| HOP-009 | execution_fabric | Compute worker bridge | Execution Node typed normal work carrier | TR-05 typed Compute-to-Execution transport / fixed semantic carrier where already accepted | partial | GrahamArdent/programstart-compute-spine#75<br>GrahamArdent/programstart-autonomous-controller#97 |
+| HOP-010 | execution_fabric | Execution Node typed action | Compute bounded result envelope | typed Execution Node result binding | proven | GrahamArdent/programstart-autonomous-controller#53<br>GrahamArdent/programstart-autonomous-controller#97 |
+| HOP-011 | execution_fabric | Compute bounded result envelope | Controller continuation evidence | Controller request/result correlation | proven | GrahamArdent/programstart-autonomous-controller#53<br>GrahamArdent/programstart-autonomous-controller#97 |
+| HOP-012 | async_continuation | GitHub provider terminal events | Watchtower authenticated event sensor | authenticated GitHub webhook intake and durable delivery identity | proven | GrahamArdent/programstart-autonomous-controller#71<br>GrahamArdent/repo-watchtower#16 |
+| HOP-013 | async_continuation | Watchtower terminal evidence projection | Controller exact durable machine wait | bounded terminal-evidence projection plus exact wait correlation | partial | GrahamArdent/programstart-autonomous-controller#71<br>GrahamArdent/repo-watchtower#16<br>GrahamArdent/execution-node-control#188 |
+| HOP-014 | async_continuation | Controller genuine human gate | Mission-Control operator interaction surface | Mission-Control human-gate notification/interaction transport | partial | GrahamArdent/programstart-autonomous-controller#71<br>GrahamArdent/programstart-autonomous-controller#88 |
+| HOP-015 | async_continuation | Mission-Control operator evidence | Controller human-gate evidence acceptance | Mission-Control evidence return plus Controller human-gate acceptance | partial | GrahamArdent/programstart-autonomous-controller#71 |
+| HOP-016 | async_continuation | Controller durable nonterminal wait | Controller semantic owner reconsideration | durable wait/wake/retry plus event-first recovery sweep | partial | GrahamArdent/programstart-autonomous-controller#71 |
+| HOP-017 | control_plane | Execution fabric | GitHub repository/provider effects and observation | bounded GitHub App / authenticated gh CLI / repository broker capability | partial | GrahamArdent/execution-node-control#225<br>GrahamArdent/PROGRAMSTART#147 |
+| HOP-018 | control_plane | Execution fabric | Secrets Control Plane / Infisical | owner-scoped Infisical machine identities and bounded secret consumers | partial | GrahamArdent/secrets-control-plane#69<br>GrahamArdent/secrets-control-plane#78 |
+| HOP-019 | control_plane | Compute/VPS control plane | Execution Node independent control/recovery | accepted private recovery/control paths with typed control surface | proven | GrahamArdent/execution-node-control#180 |
+| HOP-020 | control_plane | Execution Node control plane | VPS / Controller maintenance and release surfaces | fixed reviewed typed remote maintenance/release actions | proven | GrahamArdent/execution-node-control#154<br>GrahamArdent/execution-node-control#180 |
+| HOP-021 | owner_instance | Controller owner-handoff / execution fabric | GrahamArdent/PROGRAMSTART | owner_handoff_v1 + repository carrier + target-specific intake | proven | GrahamArdent/programstart-autonomous-controller#53<br>GrahamArdent/execution-node-control#145<br>GrahamArdent/programstart-compute-spine#72 |
+| HOP-022 | owner_instance | Controller owner-handoff / execution fabric | GrahamArdent/ecosystem-contracts | owner_handoff_v1 + per-target repository admission + target-owned intake | partial | GrahamArdent/ecosystem-contracts#24<br>GrahamArdent/programstart-autonomous-controller#106<br>GrahamArdent/execution-node-control#225 |
+| HOP-023 | owner_instance | Controller owner-handoff / execution fabric | GrahamArdent/programstart-autonomous-controller | Controller-local authority plus typed repository/release paths | proven | GrahamArdent/programstart-autonomous-controller#102 |
+| HOP-024 | owner_instance | Controller owner-handoff / execution fabric | GrahamArdent/programstart-compute-spine | existing Compute carrier/repository mechanisms plus owner-specific admission | partial | GrahamArdent/programstart-compute-spine#72<br>GrahamArdent/programstart-compute-spine#75 |
+| HOP-025 | owner_instance | Controller owner-handoff / execution fabric | GrahamArdent/execution-node-control | typed EN control/release machinery plus owner-specific repository admission | partial | GrahamArdent/execution-node-control#180<br>GrahamArdent/PROGRAMSTART#147 |
+| HOP-026 | owner_instance | Controller owner-handoff / execution fabric | GrahamArdent/mission-control | owner-specific repository intake plus typed Mission-Control release/runtime paths | partial | GrahamArdent/execution-node-control#218<br>GrahamArdent/programstart-autonomous-controller#88 |
+| HOP-027 | owner_instance | Controller owner-handoff / execution fabric | GrahamArdent/repo-watchtower | owner-specific repository/runtime intake while Watchtower remains sensor-only | partial | GrahamArdent/repo-watchtower#16<br>GrahamArdent/execution-node-control#188 |
+| HOP-028 | owner_instance | Controller owner-handoff / execution fabric | GrahamArdent/evidence-spine | owner-specific repository admission; Evidence Spine remains evidence owner, not Controller | partial | GrahamArdent/evidence-spine#1<br>GrahamArdent/PROGRAMSTART#147 |
+| HOP-029 | owner_instance | Controller owner-handoff / execution fabric | GrahamArdent/portfolio-operations | owner-specific repository admission and target-owned intake | partial | GrahamArdent/portfolio-operations#43<br>GrahamArdent/PROGRAMSTART#147 |
+| HOP-030 | owner_instance | Controller owner-handoff / execution fabric | GrahamArdent/dependency-intelligence | owner-specific repository admission and target-owned intake | unproven | GrahamArdent/PROGRAMSTART#147 |
+| HOP-031 | owner_instance | Controller owner-handoff / execution fabric | GrahamArdent/secrets-control-plane | owner-specific repository intake plus existing brokered secret/identity capabilities | partial | GrahamArdent/secrets-control-plane#69<br>GrahamArdent/secrets-control-plane#78 |
+| HOP-032 | owner_instance | Controller owner-handoff / execution fabric | GrahamArdent/home-automation-control | owner-specific repository intake plus typed home-automation execution paths | partial | GrahamArdent/home-automation-control#56<br>GrahamArdent/PROGRAMSTART#147 |
+| HOP-033 | owner_instance | Controller owner-handoff / execution fabric | GrahamArdent/truck-route-authority | owner-specific repository admission plus bounded repository-scoped execution | partial | GrahamArdent/execution-node-control#186<br>GrahamArdent/truck-route-authority#1 |
+| HOP-034 | owner_instance | Controller owner-handoff / execution fabric | GrahamArdent/GCRM | owner-specific repository intake plus existing typed GCRM runtime capability | partial | GrahamArdent/GCRM#47<br>GrahamArdent/PROGRAMSTART#147 |
+| HOP-035 | owner_instance | Controller owner-handoff / execution fabric | GrahamArdent/resume-creator-v6 | owner-specific repository capability/intake | partial | GrahamArdent/execution-node-control#127<br>GrahamArdent/PROGRAMSTART#147 |
+| HOP-036 | owner_instance | Controller owner-handoff / execution fabric | GrahamArdent/decision-lifecycle | owner-specific repository admission and target-owned intake | unproven | GrahamArdent/PROGRAMSTART#147 |
+| HOP-037 | owner_instance | Controller owner-handoff / execution fabric | Paths Project / Path Authority logical owner | non-repository owner adapter/reference path; must not be forced through repository-only admission | partial | GrahamArdent/programstart-autonomous-controller#88<br>GrahamArdent/PROGRAMSTART#132<br>GrahamArdent/PROGRAMSTART#147 |
+
 ## Accepted conversation-decision reconciliation
 
 - chat_transition_input_not_runtime_authority [accepted_reconciled]: Use the current design conversation as first-class transition evidence while extracting/reconciling decisions; do not make chat history permanent runtime authority. (behaviors: conversation_decision_reconciliation, data_grounding_instruction_isolation, authority_non_minting_no_second_spine; methodology deltas: none; durable: GrahamArdent/PROGRAMSTART#141)
@@ -107,6 +153,7 @@ Reuse still-valid evidence; widen only on declared invalidation or convergence b
 - cross_owner_observation_extends_existing_repository_broker [accepted_reconciled]: The reusable cross-owner authority-observation capability should extend the existing Execution Node repository broker/policy machinery rather than introduce a new universal authority service or broker. (behaviors: cross_repository_dependency_graph, external_connection_surface_inventory, authority_non_minting_no_second_spine; methodology deltas: none; durable: GrahamArdent/PROGRAMSTART#141)
 - credential_enablement_leverage_dimensions [accepted_reconciled]: Credential human-enablement evaluation must consider human action size, recurrence, durability gain, reuse scope/autonomy unlock, authority delta, blast radius, revocability, secret exposure, autonomous-workaround complexity/cost, and why human involvement is justified now. (behaviors: credential_human_enablement_leverage, operator_gate_exact_handoff; methodology deltas: none; durable: GrahamArdent/PROGRAMSTART#141)
 - credential_exception_not_general_human_gate_preference [accepted_reconciled]: The high-leverage human-enablement ordering is specifically for credential/identity/trust/access boundaries; it must not become a blanket rule to ask a human whenever a human could do the work. (behaviors: credential_human_enablement_leverage, irreducible_human_consequence; methodology deltas: none; durable: GrahamArdent/PROGRAMSTART#141)
+- general_mechanism_does_not_satisfy_instance_acceptance [accepted_reconciled]: Generalized connector/transport machinery may provide implementation reuse, but each concrete material hop remains an explicit matrix instance and requires its own acceptance evidence; a class-level proof cannot silently turn untested instances green. (behaviors: verification_claim_truthfulness, cross_repository_dependency_graph, external_connection_surface_inventory; methodology deltas: none; durable: GrahamArdent/PROGRAMSTART#147)
 
 ## Priority gaps
 

@@ -3360,9 +3360,18 @@
         {
           "kind": "contract",
           "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:.github/instructions/source-of-truth.instructions.md"
+        },
+        {
+          "kind": "code",
+          "ref": "GrahamArdent/PROGRAMSTART@27297fe7b7c8182b34298762d6004ae38c852fc4:scripts/programstart_autonomy_parity.py exact JIT behavior selector"
+        },
+        {
+          "kind": "test",
+          "ref": "GrahamArdent/PROGRAMSTART@27297fe7b7c8182b34298762d6004ae38c852fc4:tests/test_programstart_autonomy_parity.py"
         }
       ],
       "acceptance_scenarios": [
+        "exact requested behavior returns only its canonical source anchors rather than the full parity matrix",
         "unchanged evidence after session reset is reused rather than broadly re-proven",
         "authority invalidation causes only affected authority/evidence to be reloaded"
       ],

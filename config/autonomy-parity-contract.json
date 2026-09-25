@@ -401,7 +401,7 @@
     {
       "id": "jit.temporal.3",
       "source_path": ".github/instructions/source-of-truth.instructions.md",
-      "anchor": "\u201cNever from memory\u201d means re-read the relevant current authority after session/context reset",
+      "anchor": "“Never from memory” means re-read the relevant current authority after session/context reset",
       "required": true,
       "kind": "jit_temporal"
     },
@@ -1101,7 +1101,7 @@
     {
       "id": "support.work_packet.05",
       "source_path": "PROGRAMBUILD/PROGRAMBUILD_WORK_PACKET.md",
-      "anchor": "## Accepted Recommendation Resolution \u2014 omit unless this packet follows generic acceptance",
+      "anchor": "## Accepted Recommendation Resolution — omit unless this packet follows generic acceptance",
       "required": true,
       "kind": "supporting_methodology_section"
     },
@@ -1178,7 +1178,7 @@
     {
       "id": "support.work_packet.16",
       "source_path": "PROGRAMBUILD/PROGRAMBUILD_WORK_PACKET.md",
-      "anchor": "## Completeness Checklist \u2014 omit unless activated",
+      "anchor": "## Completeness Checklist — omit unless activated",
       "required": true,
       "kind": "supporting_methodology_section"
     },
@@ -1374,56 +1374,56 @@
     {
       "id": "support.challenge.04",
       "source_path": "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
-      "anchor": "## Part A \u2014 Kill Criteria Re-Check",
+      "anchor": "## Part A — Kill Criteria Re-Check",
       "required": true,
       "kind": "supporting_methodology_section"
     },
     {
       "id": "support.challenge.05",
       "source_path": "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
-      "anchor": "## Part B \u2014 Assumption Decay And Evidence Validity",
+      "anchor": "## Part B — Assumption Decay And Evidence Validity",
       "required": true,
       "kind": "supporting_methodology_section"
     },
     {
       "id": "support.challenge.06",
       "source_path": "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
-      "anchor": "## Part C \u2014 Scope Integrity",
+      "anchor": "## Part C — Scope Integrity",
       "required": true,
       "kind": "supporting_methodology_section"
     },
     {
       "id": "support.challenge.07",
       "source_path": "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
-      "anchor": "## Part D \u2014 Skipped / Deferred Work",
+      "anchor": "## Part D — Skipped / Deferred Work",
       "required": true,
       "kind": "supporting_methodology_section"
     },
     {
       "id": "support.challenge.08",
       "source_path": "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
-      "anchor": "## Part E \u2014 Blast Radius And Verification Scope",
+      "anchor": "## Part E — Blast Radius And Verification Scope",
       "required": true,
       "kind": "supporting_methodology_section"
     },
     {
       "id": "support.challenge.09",
       "source_path": "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
-      "anchor": "## Part F \u2014 Decision Reversal Check",
+      "anchor": "## Part F — Decision Reversal Check",
       "required": true,
       "kind": "supporting_methodology_section"
     },
     {
       "id": "support.challenge.10",
       "source_path": "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
-      "anchor": "## Part G \u2014 Dependency And KB Health",
+      "anchor": "## Part G — Dependency And KB Health",
       "required": true,
       "kind": "supporting_methodology_section"
     },
     {
       "id": "support.challenge.11",
       "source_path": "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
-      "anchor": "## Part H \u2014 Architecture / Requirements / Implementation Alignment",
+      "anchor": "## Part H — Architecture / Requirements / Implementation Alignment",
       "required": true,
       "kind": "supporting_methodology_section"
     },
@@ -2085,7 +2085,7 @@
     {
       "id": "prompt.normative.047",
       "source_path": ".github/prompts/start-programstart-project.prompt.md",
-      "anchor": "- **Mode A \u2014 raw idea:** genuinely new work with little reliable planning.",
+      "anchor": "- **Mode A — raw idea:** genuinely new work with little reliable planning.",
       "required": true,
       "kind": "prompt_normative_clause",
       "section": "Entry-Mode Resolution"
@@ -2093,7 +2093,7 @@
     {
       "id": "prompt.normative.048",
       "source_path": ".github/prompts/start-programstart-project.prompt.md",
-      "anchor": "- **Mode B \u2014 research-backed:** substantial evidence exists but has not yet been converted into execution authority.",
+      "anchor": "- **Mode B — research-backed:** substantial evidence exists but has not yet been converted into execution authority.",
       "required": true,
       "kind": "prompt_normative_clause",
       "section": "Entry-Mode Resolution"
@@ -2101,7 +2101,7 @@
     {
       "id": "prompt.normative.049",
       "source_path": ".github/prompts/start-programstart-project.prompt.md",
-      "anchor": "- **Mode C \u2014 existing/in-flight:** an established project already has meaningful plans, decisions, implementation, and execution state.",
+      "anchor": "- **Mode C — existing/in-flight:** an established project already has meaningful plans, decisions, implementation, and execution state.",
       "required": true,
       "kind": "prompt_normative_clause",
       "section": "Entry-Mode Resolution"
@@ -2493,7 +2493,7 @@
     {
       "id": "prompt.normative.098",
       "source_path": ".github/prompts/start-programstart-project.prompt.md",
-      "anchor": "23. **Run the Learning Gate when triggered.** Evaluate whether the real project taught PROGRAMSTART something reusable. At a material/problematic checkpoint\u2014especially a blocked close/handoff, disputed success, operator correction, Authority Gap, or cross-owner convergence\u2014preserve the protected outcome/claim before classification: state what was supposed to become true, how far execution actually got, the first unproven/broken hop if any, any later operator/human correction that reveals premature completion, and what evidence would falsify the proposed reusable lesson. A current execution disposition such as `blocked` or `routed` is not by itself proof that the accepted end goal is terminal. `No reusable lesson` is a valid result when this causal check is quiet. Do not manufacture a methodology change or require this expanded causal projection for trivial successful packets.",
+      "anchor": "23. **Run the Learning Gate when triggered.** Evaluate whether the real project taught PROGRAMSTART something reusable. At a material/problematic checkpoint—especially a blocked close/handoff, disputed success, operator correction, Authority Gap, or cross-owner convergence—preserve the protected outcome/claim before classification: state what was supposed to become true, how far execution actually got, the first unproven/broken hop if any, any later operator/human correction that reveals premature completion, and what evidence would falsify the proposed reusable lesson. A current execution disposition such as `blocked` or `routed` is not by itself proof that the accepted end goal is terminal. `No reusable lesson` is a valid result when this causal check is quiet. Do not manufacture a methodology change or require this expanded causal projection for trivial successful packets.",
       "required": true,
       "kind": "prompt_normative_clause",
       "section": "Orchestration Protocol"
@@ -2853,7 +2853,7 @@
     {
       "id": "prompt.prose.033",
       "source_path": ".github/prompts/start-programstart-project.prompt.md",
-      "anchor": "When the operator uses ordinary language whose meaning is equivalent to \u201csave the good stuff from this chat,\u201d \u201cmake sure we don't lose these ideas,\u201d \u201ccapture the useful suggestions,\u201d \u201cretain everything important,\u201d or another clear preservation request, treat the request by meaning rather than exact wording.",
+      "anchor": "When the operator uses ordinary language whose meaning is equivalent to “save the good stuff from this chat,” “make sure we don't lose these ideas,” “capture the useful suggestions,” “retain everything important,” or another clear preservation request, treat the request by meaning rather than exact wording.",
       "required": true,
       "kind": "prompt_prose_clause",
       "section": "Idea Preservation / Promotion"
@@ -2877,7 +2877,7 @@
     {
       "id": "prompt.prose.036",
       "source_path": ".github/prompts/start-programstart-project.prompt.md",
-      "anchor": "If the operator says the semantic equivalent of \u201csave the good stuff, then proceed,\u201d complete the retention/reconciliation pass first, then independently resolve `proceed` through the Accepted Recommendation Resolution contract. Retention itself never upgrades the later `proceed` into broader authority.",
+      "anchor": "If the operator says the semantic equivalent of “save the good stuff, then proceed,” complete the retention/reconciliation pass first, then independently resolve `proceed` through the Accepted Recommendation Resolution contract. Retention itself never upgrades the later `proceed` into broader authority.",
       "required": true,
       "kind": "prompt_prose_clause",
       "section": "Idea Preservation / Promotion"
@@ -5282,7 +5282,7 @@
       "current_proof": [
         {
           "kind": "contract",
-          "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:PROGRAMBUILD/PROGRAMBUILD_PLANNING_OPERATING_MODEL.md \u00a75"
+          "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:PROGRAMBUILD/PROGRAMBUILD_PLANNING_OPERATING_MODEL.md §5"
         }
       ],
       "acceptance_scenarios": [
@@ -5325,7 +5325,7 @@
       "current_proof": [
         {
           "kind": "contract",
-          "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md \u00a7\u00a73-7"
+          "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md §§3-7"
         },
         {
           "kind": "code",
@@ -5364,7 +5364,7 @@
       "current_proof": [
         {
           "kind": "contract",
-          "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md \u00a76"
+          "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md §6"
         },
         {
           "kind": "code",
@@ -5403,7 +5403,7 @@
       "current_proof": [
         {
           "kind": "contract",
-          "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md \u00a78"
+          "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md §8"
         },
         {
           "kind": "live",
@@ -5442,7 +5442,7 @@
       "current_proof": [
         {
           "kind": "contract",
-          "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md \u00a79"
+          "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md §9"
         },
         {
           "kind": "code",
@@ -5484,7 +5484,7 @@
       "current_proof": [
         {
           "kind": "contract",
-          "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md \u00a7\u00a74,9"
+          "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md §§4,9"
         },
         {
           "kind": "live",
@@ -5523,7 +5523,7 @@
       "current_proof": [
         {
           "kind": "contract",
-          "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md \u00a712"
+          "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md §12"
         },
         {
           "kind": "code",
@@ -5576,7 +5576,7 @@
       "current_proof": [
         {
           "kind": "contract",
-          "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:docs/PROGRAMSTART_LEARNING_LOOP.md \u00a7\u00a74-9"
+          "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:docs/PROGRAMSTART_LEARNING_LOOP.md §§4-9"
         }
       ],
       "acceptance_scenarios": [
@@ -6056,6 +6056,875 @@
       "methodology_delta_refs": [],
       "status": "accepted_reconciled",
       "durable_reference": "GrahamArdent/PROGRAMSTART#141"
+    },
+    {
+      "id": "general_mechanism_does_not_satisfy_instance_acceptance",
+      "status": "accepted_reconciled",
+      "durable_reference": "GrahamArdent/PROGRAMSTART#147",
+      "summary": "Generalized connector/transport machinery may provide implementation reuse, but each concrete material hop remains an explicit matrix instance and requires its own acceptance evidence; a class-level proof cannot silently turn untested instances green.",
+      "behavior_refs": [
+        "verification_claim_truthfulness",
+        "cross_repository_dependency_graph",
+        "external_connection_surface_inventory"
+      ],
+      "methodology_delta_refs": []
+    }
+  ],
+  "hop_policy": {
+    "authority_role": "derived_acceptance_evidence",
+    "definition": "A material actor-to-target transition whose failure can strand an accepted objective or force recurring human/ChatGPT transport.",
+    "instance_acceptance_required": true,
+    "general_mechanism_implies_instance_acceptance": false,
+    "path_authority_role": "referenced_not_replaced",
+    "durable_reference": "GrahamArdent/PROGRAMSTART#147"
+  },
+  "hop_instances": [
+    {
+      "id": "HOP-001",
+      "class": "objective_ingress",
+      "source": "Windows operator / admitted private source",
+      "target": "Controller private natural-objective ingress",
+      "purpose": "Submit ordinary natural intent without ChatGPT acting as command transport.",
+      "general_mechanism": "tailscale_private_http_v1",
+      "required_behavior_refs": [
+        "semantic_objective_ingress",
+        "replay_idempotency",
+        "exact_machine_currentness_binding"
+      ],
+      "instance_status": "proven",
+      "evidence_refs": [
+        "GrahamArdent/programstart-autonomous-controller#97"
+      ],
+      "invalidation": [
+        "Controller ingress release, source allowlist, identity, bind, or request contract changes."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-002",
+      "class": "objective_ingress",
+      "source": "Mission-Control private operator surface",
+      "target": "Controller private natural-objective ingress",
+      "purpose": "Carry operator objectives from the intended durable operator plane into Controller.",
+      "general_mechanism": "Mission-Control private objective transport",
+      "required_behavior_refs": [
+        "semantic_objective_ingress",
+        "operator_gate_exact_handoff",
+        "exact_machine_currentness_binding"
+      ],
+      "instance_status": "partial",
+      "evidence_refs": [
+        "GrahamArdent/programstart-autonomous-controller#88",
+        "GrahamArdent/execution-node-control#218"
+      ],
+      "invalidation": [
+        "Mission-Control API, private transport, deployed release, session identity, or Controller ingress contract changes."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-003",
+      "class": "semantic_pipeline",
+      "source": "Controller contextual runtime",
+      "target": "PROGRAMSTART JIT / intent runtime",
+      "purpose": "Resolve exact current methodology/behavior context without loading chat history as authority.",
+      "general_mechanism": "installed PROGRAMSTART exact behavior selector and intent adapter",
+      "required_behavior_refs": [
+        "jit_context_evidence_governor",
+        "live_orientation_currentness",
+        "semantic_objective_ingress"
+      ],
+      "instance_status": "proven",
+      "evidence_refs": [
+        "GrahamArdent/programstart-autonomous-controller#102",
+        "GrahamArdent/PROGRAMSTART#145"
+      ],
+      "invalidation": [
+        "PROGRAMSTART runtime/manifest, selector contract, Controller adoption baseline, or canonical source fingerprints change."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-004",
+      "class": "semantic_pipeline",
+      "source": "PROGRAMSTART bounded intent runtime",
+      "target": "Compute semantic relay",
+      "purpose": "Move bounded semantic work into the execution fabric without Git/chat transport.",
+      "general_mechanism": "local Unix semantic relay",
+      "required_behavior_refs": [
+        "semantic_objective_ingress",
+        "authority_non_minting_no_second_spine",
+        "runtime_capability_declaration"
+      ],
+      "instance_status": "proven",
+      "evidence_refs": [
+        "GrahamArdent/programstart-autonomous-controller#97"
+      ],
+      "invalidation": [
+        "PROGRAMSTART adapter, Compute relay release, Unix socket contract, or process placement changes."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-005",
+      "class": "semantic_pipeline",
+      "source": "Compute semantic relay",
+      "target": "Execution Node typed semantic producer",
+      "purpose": "Invoke the bounded machine semantic producer through typed execution fabric.",
+      "general_mechanism": "fixed typed Execution Node semantic action",
+      "required_behavior_refs": [
+        "semantic_objective_ingress",
+        "runtime_capability_declaration",
+        "execute_one_selected_packet"
+      ],
+      "instance_status": "proven",
+      "evidence_refs": [
+        "GrahamArdent/programstart-autonomous-controller#97",
+        "GrahamArdent/execution-node-control#221"
+      ],
+      "invalidation": [
+        "Compute bridge, Execution Node release, typed action schema, or installed-release assertion changes."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-006",
+      "class": "semantic_pipeline",
+      "source": "Execution Node semantic producer",
+      "target": "PROGRAMSTART semantic validation",
+      "purpose": "Return typed semantic harvest for PROGRAMSTART validation and current-authority resolution.",
+      "general_mechanism": "typed semantic harvest return",
+      "required_behavior_refs": [
+        "semantic_objective_ingress",
+        "live_orientation_currentness",
+        "verification_claim_truthfulness"
+      ],
+      "instance_status": "proven",
+      "evidence_refs": [
+        "GrahamArdent/programstart-autonomous-controller#97"
+      ],
+      "invalidation": [
+        "Semantic harvest schema, producer release, PROGRAMSTART validator, or provenance requirements change."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-007",
+      "class": "semantic_pipeline",
+      "source": "PROGRAMSTART semantic validation",
+      "target": "Controller durable admission",
+      "purpose": "Admit validated intent as sealed durable Controller work without a generic continuation prompt.",
+      "general_mechanism": "existing Controller contextual admission and sealed packet persistence",
+      "required_behavior_refs": [
+        "bounded_work_packet",
+        "semantic_objective_ingress",
+        "replay_idempotency",
+        "objective_terminality_next_effect"
+      ],
+      "instance_status": "proven",
+      "evidence_refs": [
+        "GrahamArdent/programstart-autonomous-controller#97"
+      ],
+      "invalidation": [
+        "Controller admission schema, sealed packet semantics, PROGRAMSTART result contract, or owner authority resolution changes."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-008",
+      "class": "execution_fabric",
+      "source": "Controller execution owner",
+      "target": "Compute worker bridge",
+      "purpose": "Dispatch already-authorized bounded machine work without operator/chat command relay.",
+      "general_mechanism": "Controller-to-Compute typed request/result bridge",
+      "required_behavior_refs": [
+        "execute_one_selected_packet",
+        "replay_idempotency",
+        "exact_machine_currentness_binding"
+      ],
+      "instance_status": "proven",
+      "evidence_refs": [
+        "GrahamArdent/programstart-autonomous-controller#53",
+        "GrahamArdent/programstart-autonomous-controller#97"
+      ],
+      "invalidation": [
+        "Controller request schema, Compute bridge release, request/result identity, or currentness contract changes."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-009",
+      "class": "execution_fabric",
+      "source": "Compute worker bridge",
+      "target": "Execution Node typed normal work carrier",
+      "purpose": "Carry bounded normal execution beyond Compute using typed private transport.",
+      "general_mechanism": "TR-05 typed Compute-to-Execution transport / fixed semantic carrier where already accepted",
+      "required_behavior_refs": [
+        "execute_one_selected_packet",
+        "runtime_capability_declaration",
+        "exact_machine_currentness_binding"
+      ],
+      "instance_status": "partial",
+      "evidence_refs": [
+        "GrahamArdent/programstart-compute-spine#75",
+        "GrahamArdent/programstart-autonomous-controller#97"
+      ],
+      "invalidation": [
+        "Compute or Execution Node release, listener/key/path semantics, typed action allowlist, or TR-05 acceptance changes."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-010",
+      "class": "execution_fabric",
+      "source": "Execution Node typed action",
+      "target": "Compute bounded result envelope",
+      "purpose": "Return exact bounded effect/disposition evidence to the parent execution request.",
+      "general_mechanism": "typed Execution Node result binding",
+      "required_behavior_refs": [
+        "replay_idempotency",
+        "verification_claim_truthfulness",
+        "durable_state_reconciliation"
+      ],
+      "instance_status": "proven",
+      "evidence_refs": [
+        "GrahamArdent/programstart-autonomous-controller#53",
+        "GrahamArdent/programstart-autonomous-controller#97"
+      ],
+      "invalidation": [
+        "Execution Node result schema, request/result binding, replay journal, or Compute bridge parsing changes."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-011",
+      "class": "execution_fabric",
+      "source": "Compute bounded result envelope",
+      "target": "Controller continuation evidence",
+      "purpose": "Return machine evidence to the semantic owner so it can continue/reclassify without chat rediscovery.",
+      "general_mechanism": "Controller request/result correlation",
+      "required_behavior_refs": [
+        "durable_state_reconciliation",
+        "objective_terminality_next_effect",
+        "replay_idempotency"
+      ],
+      "instance_status": "proven",
+      "evidence_refs": [
+        "GrahamArdent/programstart-autonomous-controller#53",
+        "GrahamArdent/programstart-autonomous-controller#97"
+      ],
+      "invalidation": [
+        "Controller/Compute correlation identity, result schema, durable run model, or semantic return-point semantics change."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-012",
+      "class": "async_continuation",
+      "source": "GitHub provider terminal events",
+      "target": "Watchtower authenticated event sensor",
+      "purpose": "Capture/deduplicate terminal provider evidence without giving Watchtower semantic continuation authority.",
+      "general_mechanism": "authenticated GitHub webhook intake and durable delivery identity",
+      "required_behavior_refs": [
+        "wait_wake_retry",
+        "external_resource_evidence_continuity",
+        "verification_claim_truthfulness"
+      ],
+      "instance_status": "proven",
+      "evidence_refs": [
+        "GrahamArdent/programstart-autonomous-controller#71",
+        "GrahamArdent/repo-watchtower#16"
+      ],
+      "invalidation": [
+        "GitHub webhook authorization, Watchtower schema/runtime, repository allowlist, or provider event shape changes."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-013",
+      "class": "async_continuation",
+      "source": "Watchtower terminal evidence projection",
+      "target": "Controller exact durable machine wait",
+      "purpose": "Project positive/terminal machine evidence into the exact waiting Controller lifecycle.",
+      "general_mechanism": "bounded terminal-evidence projection plus exact wait correlation",
+      "required_behavior_refs": [
+        "wait_wake_retry",
+        "exact_machine_currentness_binding",
+        "verification_claim_truthfulness"
+      ],
+      "instance_status": "partial",
+      "evidence_refs": [
+        "GrahamArdent/programstart-autonomous-controller#71",
+        "GrahamArdent/repo-watchtower#16",
+        "GrahamArdent/execution-node-control#188"
+      ],
+      "invalidation": [
+        "Watchtower projection contract, Controller wait schema, event correlation identity, or sensor/runtime currentness changes."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-014",
+      "class": "async_continuation",
+      "source": "Controller genuine human gate",
+      "target": "Mission-Control operator interaction surface",
+      "purpose": "Deliver exactly one irreducible human decision/action without using chat as recurring transport.",
+      "general_mechanism": "Mission-Control human-gate notification/interaction transport",
+      "required_behavior_refs": [
+        "operator_gate_exact_handoff",
+        "irreducible_human_consequence",
+        "credential_human_enablement_leverage"
+      ],
+      "instance_status": "partial",
+      "evidence_refs": [
+        "GrahamArdent/programstart-autonomous-controller#71",
+        "GrahamArdent/programstart-autonomous-controller#88"
+      ],
+      "invalidation": [
+        "Mission-Control interaction provider, notification/session transport, human-gate schema, or gate authority changes."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-015",
+      "class": "async_continuation",
+      "source": "Mission-Control operator evidence",
+      "target": "Controller human-gate evidence acceptance",
+      "purpose": "Return the human's bounded evidence/decision to the exact waiting lifecycle and verify it mechanically.",
+      "general_mechanism": "Mission-Control evidence return plus Controller human-gate acceptance",
+      "required_behavior_refs": [
+        "operator_gate_auto_verify_resume",
+        "operator_gate_exact_handoff",
+        "replay_idempotency"
+      ],
+      "instance_status": "partial",
+      "evidence_refs": [
+        "GrahamArdent/programstart-autonomous-controller#71"
+      ],
+      "invalidation": [
+        "Mission-Control response schema, Controller human-gate evidence contract, correlation identity, or gate invalidation rules change."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-016",
+      "class": "async_continuation",
+      "source": "Controller durable nonterminal wait",
+      "target": "Controller semantic owner reconsideration",
+      "purpose": "Reclaim machine-safe work after async evidence/retry without a redundant Proceed.",
+      "general_mechanism": "durable wait/wake/retry plus event-first recovery sweep",
+      "required_behavior_refs": [
+        "wait_wake_retry",
+        "objective_terminality_next_effect",
+        "operator_gate_auto_verify_resume"
+      ],
+      "instance_status": "partial",
+      "evidence_refs": [
+        "GrahamArdent/programstart-autonomous-controller#71"
+      ],
+      "invalidation": [
+        "Controller wait model, event/sweep correlation, resume_at semantics, fencing, or currentness requirements change."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-017",
+      "class": "control_plane",
+      "source": "Execution fabric",
+      "target": "GitHub repository/provider effects and observation",
+      "purpose": "Observe current repository/provider state and perform only owner-authorized GitHub effects without manual web transport.",
+      "general_mechanism": "bounded GitHub App / authenticated gh CLI / repository broker capability",
+      "required_behavior_refs": [
+        "external_connection_surface_inventory",
+        "runtime_capability_declaration",
+        "clean_candidate_publication",
+        "verification_claim_truthfulness"
+      ],
+      "instance_status": "partial",
+      "evidence_refs": [
+        "GrahamArdent/execution-node-control#225",
+        "GrahamArdent/PROGRAMSTART#147"
+      ],
+      "invalidation": [
+        "GitHub App/CLI identity, scopes, repository installation/access, provider policy, or broker capability changes."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-018",
+      "class": "control_plane",
+      "source": "Execution fabric",
+      "target": "Secrets Control Plane / Infisical",
+      "purpose": "Resolve brokered machine credentials/secrets without Graham or ChatGPT carrying secret values.",
+      "general_mechanism": "owner-scoped Infisical machine identities and bounded secret consumers",
+      "required_behavior_refs": [
+        "external_connection_surface_inventory",
+        "credential_human_enablement_leverage",
+        "runtime_capability_declaration"
+      ],
+      "instance_status": "partial",
+      "evidence_refs": [
+        "GrahamArdent/secrets-control-plane#69",
+        "GrahamArdent/secrets-control-plane#78"
+      ],
+      "invalidation": [
+        "Infisical identity, credential profile, target environment, secret path, consumer policy, or broker release changes."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-019",
+      "class": "control_plane",
+      "source": "Compute/VPS control plane",
+      "target": "Execution Node independent control/recovery",
+      "purpose": "Retain a durable machine path to recover/control Execution Node without conversational transport.",
+      "general_mechanism": "accepted private recovery/control paths with typed control surface",
+      "required_behavior_refs": [
+        "external_connection_surface_inventory",
+        "runtime_capability_declaration",
+        "verification_claim_truthfulness"
+      ],
+      "instance_status": "proven",
+      "evidence_refs": [
+        "GrahamArdent/execution-node-control#180"
+      ],
+      "invalidation": [
+        "Machine identity, SSH/Tailscale policy, ports, host keys, recovery service, or reboot persistence changes."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-020",
+      "class": "control_plane",
+      "source": "Execution Node control plane",
+      "target": "VPS / Controller maintenance and release surfaces",
+      "purpose": "Perform fixed privileged maintenance/release effects without generic root shell transport.",
+      "general_mechanism": "fixed reviewed typed remote maintenance/release actions",
+      "required_behavior_refs": [
+        "runtime_capability_declaration",
+        "verification_claim_truthfulness",
+        "automatic_capability_adoption"
+      ],
+      "instance_status": "proven",
+      "evidence_refs": [
+        "GrahamArdent/execution-node-control#154",
+        "GrahamArdent/execution-node-control#180"
+      ],
+      "invalidation": [
+        "Execution Node installed release, VPS identity, fixed script bytes, sudo policy, target service, or rollback contract changes."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-021",
+      "class": "owner_instance",
+      "source": "Controller owner-handoff / execution fabric",
+      "target": "GrahamArdent/PROGRAMSTART",
+      "purpose": "Resolve current PROGRAMSTART owner authority and return a bounded owner disposition without human transport.",
+      "general_mechanism": "owner_handoff_v1 + repository carrier + target-specific intake",
+      "required_behavior_refs": [
+        "cross_repository_dependency_graph",
+        "canonical_before_dependent",
+        "repository_independence",
+        "owner_handoff",
+        "exact_machine_currentness_binding"
+      ],
+      "instance_status": "proven",
+      "evidence_refs": [
+        "GrahamArdent/programstart-autonomous-controller#53",
+        "GrahamArdent/execution-node-control#145",
+        "GrahamArdent/programstart-compute-spine#72"
+      ],
+      "invalidation": [
+        "PROGRAMSTART owner-intake contract, repository identity, branch/current SHA policy, carrier, or target authority changes."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-022",
+      "class": "owner_instance",
+      "source": "Controller owner-handoff / execution fabric",
+      "target": "GrahamArdent/ecosystem-contracts",
+      "purpose": "Resolve ecosystem-contracts owner authority and return bounded cross-owner disposition.",
+      "general_mechanism": "owner_handoff_v1 + per-target repository admission + target-owned intake",
+      "required_behavior_refs": [
+        "cross_repository_dependency_graph",
+        "canonical_before_dependent",
+        "repository_independence",
+        "owner_handoff",
+        "exact_machine_currentness_binding",
+        "credential_human_enablement_leverage"
+      ],
+      "instance_status": "partial",
+      "evidence_refs": [
+        "GrahamArdent/ecosystem-contracts#24",
+        "GrahamArdent/programstart-autonomous-controller#106",
+        "GrahamArdent/execution-node-control#225"
+      ],
+      "invalidation": [
+        "Target authority declaration/intake, private repository credential, broker admission, Controller target policy, or target SHA changes."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-023",
+      "class": "owner_instance",
+      "source": "Controller owner-handoff / execution fabric",
+      "target": "GrahamArdent/programstart-autonomous-controller",
+      "purpose": "Resolve and maintain Controller's own repository/runtime authority without treating self-observation as permission.",
+      "general_mechanism": "Controller-local authority plus typed repository/release paths",
+      "required_behavior_refs": [
+        "cross_repository_dependency_graph",
+        "canonical_before_dependent",
+        "repository_independence",
+        "owner_handoff",
+        "exact_machine_currentness_binding"
+      ],
+      "instance_status": "proven",
+      "evidence_refs": [
+        "GrahamArdent/programstart-autonomous-controller#102"
+      ],
+      "invalidation": [
+        "Controller strategic authority, repository/release contract, current Work Packet, or runtime release changes."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-024",
+      "class": "owner_instance",
+      "source": "Controller owner-handoff / execution fabric",
+      "target": "GrahamArdent/programstart-compute-spine",
+      "purpose": "Resolve Compute Spine owner authority for bounded repository/runtime work and return disposition.",
+      "general_mechanism": "existing Compute carrier/repository mechanisms plus owner-specific admission",
+      "required_behavior_refs": [
+        "cross_repository_dependency_graph",
+        "canonical_before_dependent",
+        "repository_independence",
+        "owner_handoff",
+        "exact_machine_currentness_binding"
+      ],
+      "instance_status": "partial",
+      "evidence_refs": [
+        "GrahamArdent/programstart-compute-spine#72",
+        "GrahamArdent/programstart-compute-spine#75"
+      ],
+      "invalidation": [
+        "Compute owner authority, bridge/repository policy, current release, or owner-intake semantics change."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-025",
+      "class": "owner_instance",
+      "source": "Controller owner-handoff / execution fabric",
+      "target": "GrahamArdent/execution-node-control",
+      "purpose": "Resolve Execution Node owner authority for bounded repository/release work and return disposition.",
+      "general_mechanism": "typed EN control/release machinery plus owner-specific repository admission",
+      "required_behavior_refs": [
+        "cross_repository_dependency_graph",
+        "canonical_before_dependent",
+        "repository_independence",
+        "owner_handoff",
+        "exact_machine_currentness_binding"
+      ],
+      "instance_status": "partial",
+      "evidence_refs": [
+        "GrahamArdent/execution-node-control#180",
+        "GrahamArdent/PROGRAMSTART#147"
+      ],
+      "invalidation": [
+        "Execution Node strategic authority, repository admission, installed release, shared mutation ownership, or release path changes."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-026",
+      "class": "owner_instance",
+      "source": "Controller owner-handoff / execution fabric",
+      "target": "GrahamArdent/mission-control",
+      "purpose": "Resolve Mission-Control repository/runtime owner authority and return bounded disposition.",
+      "general_mechanism": "owner-specific repository intake plus typed Mission-Control release/runtime paths",
+      "required_behavior_refs": [
+        "cross_repository_dependency_graph",
+        "canonical_before_dependent",
+        "repository_independence",
+        "owner_handoff",
+        "exact_machine_currentness_binding"
+      ],
+      "instance_status": "partial",
+      "evidence_refs": [
+        "GrahamArdent/execution-node-control#218",
+        "GrahamArdent/programstart-autonomous-controller#88"
+      ],
+      "invalidation": [
+        "Mission-Control authority, private repository admission, deployed release, objective transport, or target intake changes."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-027",
+      "class": "owner_instance",
+      "source": "Controller owner-handoff / execution fabric",
+      "target": "GrahamArdent/repo-watchtower",
+      "purpose": "Resolve Watchtower sensor-owner authority and return bounded disposition without granting semantic continuation.",
+      "general_mechanism": "owner-specific repository/runtime intake while Watchtower remains sensor-only",
+      "required_behavior_refs": [
+        "cross_repository_dependency_graph",
+        "canonical_before_dependent",
+        "repository_independence",
+        "owner_handoff",
+        "exact_machine_currentness_binding"
+      ],
+      "instance_status": "partial",
+      "evidence_refs": [
+        "GrahamArdent/repo-watchtower#16",
+        "GrahamArdent/execution-node-control#188"
+      ],
+      "invalidation": [
+        "Watchtower authority, schema/runtime release, provider admission, owner-intake, or sensor/consumer contract changes."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-028",
+      "class": "owner_instance",
+      "source": "Controller owner-handoff / execution fabric",
+      "target": "GrahamArdent/evidence-spine",
+      "purpose": "Resolve Evidence Spine owner authority and return bounded evidence-owner disposition.",
+      "general_mechanism": "owner-specific repository admission; Evidence Spine remains evidence owner, not Controller",
+      "required_behavior_refs": [
+        "cross_repository_dependency_graph",
+        "canonical_before_dependent",
+        "repository_independence",
+        "owner_handoff",
+        "exact_machine_currentness_binding"
+      ],
+      "instance_status": "partial",
+      "evidence_refs": [
+        "GrahamArdent/evidence-spine#1",
+        "GrahamArdent/PROGRAMSTART#147"
+      ],
+      "invalidation": [
+        "Evidence Spine authority/schema, repository admission, consumer contract, or evidence ownership boundaries change."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-029",
+      "class": "owner_instance",
+      "source": "Controller owner-handoff / execution fabric",
+      "target": "GrahamArdent/portfolio-operations",
+      "purpose": "Resolve portfolio-level owner authority for bounded detached/project operations and return disposition.",
+      "general_mechanism": "owner-specific repository admission and target-owned intake",
+      "required_behavior_refs": [
+        "cross_repository_dependency_graph",
+        "canonical_before_dependent",
+        "repository_independence",
+        "owner_handoff",
+        "exact_machine_currentness_binding"
+      ],
+      "instance_status": "partial",
+      "evidence_refs": [
+        "GrahamArdent/portfolio-operations#43",
+        "GrahamArdent/PROGRAMSTART#147"
+      ],
+      "invalidation": [
+        "Portfolio strategic authority, repository admission, detached-objective contract, or target intake changes."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-030",
+      "class": "owner_instance",
+      "source": "Controller owner-handoff / execution fabric",
+      "target": "GrahamArdent/dependency-intelligence",
+      "purpose": "Resolve dependency-intelligence owner authority when dependency work becomes part of an accepted convergence chain.",
+      "general_mechanism": "owner-specific repository admission and target-owned intake",
+      "required_behavior_refs": [
+        "cross_repository_dependency_graph",
+        "canonical_before_dependent",
+        "repository_independence",
+        "owner_handoff",
+        "exact_machine_currentness_binding"
+      ],
+      "instance_status": "unproven",
+      "evidence_refs": [
+        "GrahamArdent/PROGRAMSTART#147"
+      ],
+      "invalidation": [
+        "Dependency-intelligence authority, repository admission, target intake, or role in the convergence chain changes."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-031",
+      "class": "owner_instance",
+      "source": "Controller owner-handoff / execution fabric",
+      "target": "GrahamArdent/secrets-control-plane",
+      "purpose": "Resolve Secrets Control Plane owner authority for credential/profile work without making secrets machinery project authority.",
+      "general_mechanism": "owner-specific repository intake plus existing brokered secret/identity capabilities",
+      "required_behavior_refs": [
+        "cross_repository_dependency_graph",
+        "canonical_before_dependent",
+        "repository_independence",
+        "owner_handoff",
+        "exact_machine_currentness_binding",
+        "credential_human_enablement_leverage"
+      ],
+      "instance_status": "partial",
+      "evidence_refs": [
+        "GrahamArdent/secrets-control-plane#69",
+        "GrahamArdent/secrets-control-plane#78"
+      ],
+      "invalidation": [
+        "Secrets authority, identity allocation, repository admission, credential profile, or provider capability changes."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-032",
+      "class": "owner_instance",
+      "source": "Controller owner-handoff / execution fabric",
+      "target": "GrahamArdent/home-automation-control",
+      "purpose": "Resolve Home Automation owner authority for bounded automation work and return disposition.",
+      "general_mechanism": "owner-specific repository intake plus typed home-automation execution paths",
+      "required_behavior_refs": [
+        "cross_repository_dependency_graph",
+        "canonical_before_dependent",
+        "repository_independence",
+        "owner_handoff",
+        "exact_machine_currentness_binding"
+      ],
+      "instance_status": "partial",
+      "evidence_refs": [
+        "GrahamArdent/home-automation-control#56",
+        "GrahamArdent/PROGRAMSTART#147"
+      ],
+      "invalidation": [
+        "Home Automation authority, repository admission, provider/credential binding, or target intake changes."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-033",
+      "class": "owner_instance",
+      "source": "Controller owner-handoff / execution fabric",
+      "target": "GrahamArdent/truck-route-authority",
+      "purpose": "Resolve Truck Route Authority repository/domain owner authority for bounded autonomous work.",
+      "general_mechanism": "owner-specific repository admission plus bounded repository-scoped execution",
+      "required_behavior_refs": [
+        "cross_repository_dependency_graph",
+        "canonical_before_dependent",
+        "repository_independence",
+        "owner_handoff",
+        "exact_machine_currentness_binding"
+      ],
+      "instance_status": "partial",
+      "evidence_refs": [
+        "GrahamArdent/execution-node-control#186",
+        "GrahamArdent/truck-route-authority#1"
+      ],
+      "invalidation": [
+        "Truck Route Authority contract, repository admission, deploy identity, target intake, or execution profile changes."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-034",
+      "class": "owner_instance",
+      "source": "Controller owner-handoff / execution fabric",
+      "target": "GrahamArdent/GCRM",
+      "purpose": "Resolve GCRM owner authority for bounded repository/runtime work and return disposition.",
+      "general_mechanism": "owner-specific repository intake plus existing typed GCRM runtime capability",
+      "required_behavior_refs": [
+        "cross_repository_dependency_graph",
+        "canonical_before_dependent",
+        "repository_independence",
+        "owner_handoff",
+        "exact_machine_currentness_binding"
+      ],
+      "instance_status": "partial",
+      "evidence_refs": [
+        "GrahamArdent/GCRM#47",
+        "GrahamArdent/PROGRAMSTART#147"
+      ],
+      "invalidation": [
+        "GCRM authority, repository/runtime admission, secret-at-destination contract, or target intake changes."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-035",
+      "class": "owner_instance",
+      "source": "Controller owner-handoff / execution fabric",
+      "target": "GrahamArdent/resume-creator-v6",
+      "purpose": "Resolve Resume Creator V6 owner authority for bounded repository work and return disposition.",
+      "general_mechanism": "owner-specific repository capability/intake",
+      "required_behavior_refs": [
+        "cross_repository_dependency_graph",
+        "canonical_before_dependent",
+        "repository_independence",
+        "owner_handoff",
+        "exact_machine_currentness_binding"
+      ],
+      "instance_status": "partial",
+      "evidence_refs": [
+        "GrahamArdent/execution-node-control#127",
+        "GrahamArdent/PROGRAMSTART#147"
+      ],
+      "invalidation": [
+        "Resume Creator V6 authority, repository admission, execution profile, target intake, or branch/currentness changes."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-036",
+      "class": "owner_instance",
+      "source": "Controller owner-handoff / execution fabric",
+      "target": "GrahamArdent/decision-lifecycle",
+      "purpose": "Resolve Decision Lifecycle owner authority for material idea/decision lifecycle work and return disposition.",
+      "general_mechanism": "owner-specific repository admission and target-owned intake",
+      "required_behavior_refs": [
+        "cross_repository_dependency_graph",
+        "canonical_before_dependent",
+        "repository_independence",
+        "owner_handoff",
+        "exact_machine_currentness_binding"
+      ],
+      "instance_status": "unproven",
+      "evidence_refs": [
+        "GrahamArdent/PROGRAMSTART#147"
+      ],
+      "invalidation": [
+        "Decision Lifecycle authority, repository admission, lifecycle schema, target intake, or owner role changes."
+      ],
+      "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
+    },
+    {
+      "id": "HOP-037",
+      "class": "owner_instance",
+      "source": "Controller owner-handoff / execution fabric",
+      "target": "Paths Project / Path Authority logical owner",
+      "purpose": "Resolve non-repository path authority/currentness without assuming the repository broker generalization covers it.",
+      "general_mechanism": "non-repository owner adapter/reference path; must not be forced through repository-only admission",
+      "required_behavior_refs": [
+        "cross_repository_dependency_graph",
+        "canonical_before_dependent",
+        "repository_independence",
+        "owner_handoff",
+        "exact_machine_currentness_binding",
+        "external_connection_surface_inventory"
+      ],
+      "instance_status": "partial",
+      "evidence_refs": [
+        "GrahamArdent/programstart-autonomous-controller#88",
+        "GrahamArdent/PROGRAMSTART#132",
+        "GrahamArdent/PROGRAMSTART#147"
+      ],
+      "invalidation": [
+        "Paths canonical owner/location, Path Authority contract, material path inventory, project continuation mechanism, or authority location changes."
+      ],
+      "path_authority_ref": "Paths / Path Authority is the target owner for this row; parity matrix remains derived evidence only."
     }
   ]
 }

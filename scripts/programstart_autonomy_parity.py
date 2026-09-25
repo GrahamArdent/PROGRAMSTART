@@ -301,11 +301,74 @@ def render(c):
     return "\n".join(out)
 
 
+def select_behaviors(c, behavior_ids):
+    errors = validate_contract(c)
+    if errors:
+        raise ValueError("invalid parity contract: " + "; ".join(errors))
+
+    requested = tuple(dict.fromkeys(behavior_ids))
+    if not requested:
+        raise ValueError("at least one exact behavior id is required")
+
+    behaviors = {item["id"]: item for item in c["behaviors"]}
+    unknown = [behavior_id for behavior_id in requested if behavior_id not in behaviors]
+    if unknown:
+        raise ValueError(f"unknown parity behavior id(s): {', '.join(unknown)}")
+
+    obligations = {item["id"]: item for item in c["source_obligations"]}
+    selected = []
+    for behavior_id in requested:
+        behavior = behaviors[behavior_id]
+        source_refs = [
+            {
+                "obligation_id": obligation_id,
+                "source_path": obligations[obligation_id]["source_path"],
+                "anchor": obligations[obligation_id]["anchor"],
+                "kind": obligations[obligation_id]["kind"],
+            }
+            for obligation_id in behavior["covers"]
+        ]
+        selected.append(
+            {
+                "behavior": {
+                    key: behavior[key]
+                    for key in (
+                        "id",
+                        "title",
+                        "owner",
+                        "trigger",
+                        "expected_behavior",
+                        "must_not",
+                        "jit_inputs",
+                        "invalidation",
+                        "machinery_state",
+                        "execution_mode",
+                        "closure_status",
+                    )
+                },
+                "canonical_source_refs": source_refs,
+            }
+        )
+
+    return {
+        "schema_version": 1,
+        "authority_role": c["runtime_usage"]["authority_role"],
+        "retrieval_policy": c["runtime_usage"]["retrieval_policy"],
+        "selection_rule": c["runtime_usage"]["selection_rule"],
+        "canonical_source_required": True,
+        "selected_behavior_ids": list(requested),
+        "selections": selected,
+    }
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--write", action="store_true")
     ap.add_argument("--check", action="store_true")
+    ap.add_argument("--select-behavior", action="append", default=[])
     args = ap.parse_args()
+    if args.select_behavior and (args.write or args.check):
+        ap.error("--select-behavior cannot be combined with --write or --check")
     try:
         c = load_contract()
     except Exception as exc:
@@ -316,6 +379,14 @@ def main():
         for x in errors:
             print(f"FAIL: {x}", file=sys.stderr)
         return 1
+    if args.select_behavior:
+        try:
+            selection = select_behaviors(c, args.select_behavior)
+        except ValueError as exc:
+            print(f"FAIL: {exc}", file=sys.stderr)
+            return 1
+        print(json.dumps(selection, sort_keys=True))
+        return 0
     expected = render(c)
     if args.write:
         RENDERED.write_text(expected, encoding="utf-8")

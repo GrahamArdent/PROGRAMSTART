@@ -16,7 +16,7 @@ def test_current_contract_is_complete_and_rendered_view_is_derived() -> None:
     assert parity.validate_contract(checked) == []
     assert checked["_summary"]["source_obligations"] == 422
     assert checked["_summary"]["behaviors"] == 49
-    assert checked["_summary"]["conversation_decisions"] == 27
+    assert checked["_summary"]["conversation_decisions"] == 28
     assert checked["_summary"]["hop_instances"] == 37
     obligations = checked["source_obligations"]
     assert sum(x["id"].startswith("prompt.step.") for x in obligations) == 25
@@ -213,16 +213,18 @@ def test_accepted_conversation_decision_set_is_exact_and_fully_mapped() -> None:
         "credential_enablement_leverage_dimensions",
         "credential_exception_not_general_human_gate_preference",
         "general_mechanism_does_not_satisfy_instance_acceptance",
+        "matrix_coordination_projection_non_authoritative",
     }
     actual = {item["id"] for item in contract["conversation_decisions"]}
     assert actual == expected
-    assert len(actual) == 27
+    assert len(actual) == 28
     for item in contract["conversation_decisions"]:
-        expected_ref = (
-            "GrahamArdent/PROGRAMSTART#147"
-            if item["id"] == "general_mechanism_does_not_satisfy_instance_acceptance"
-            else "GrahamArdent/PROGRAMSTART#141"
-        )
+        if item["id"] == "general_mechanism_does_not_satisfy_instance_acceptance":
+            expected_ref = "GrahamArdent/PROGRAMSTART#147"
+        elif item["id"] == "matrix_coordination_projection_non_authoritative":
+            expected_ref = "GrahamArdent/PROGRAMSTART#156"
+        else:
+            expected_ref = "GrahamArdent/PROGRAMSTART#141"
         assert item["durable_reference"] == expected_ref
         assert item["behavior_refs"] or item["methodology_delta_refs"]
 

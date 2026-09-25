@@ -25,9 +25,27 @@ def test_manual_boundary_origin_is_explicit():
     assert "custom/bounded API composition" in autonomy
     assert "proportional to the consequence and urgency" in autonomy
     assert "not a requirement to build new infrastructure for every blocked action" in autonomy
+    assert "credential, identity, trust, or access boundary" in autonomy
+    assert "human action size and recurrence" in autonomy
+    assert "durability gain" in autonomy
+    assert "reuse scope/autonomy unlock" in autonomy
+    assert "authority delta" in autonomy
+    assert "blast radius" in autonomy
+    assert "revocability" in autonomy
+    assert "secret exposure" in autonomy
+    assert "workaround complexity/cost" in autonomy
+    assert "perform all delegable preparation" in autonomy
+    assert "owning secure surface" in autonomy
+    assert "verify completion itself" in autonomy
+    assert "resume automatically" in autonomy
+    assert "narrow exception" in autonomy
     assert "request a short operator relay only when no bounded alternative survives" in autonomy
     assert "must not disguise, bypass, or weaken a stronger gate" in autonomy
     assert "before escalating an already-authorized mechanical action to operator transport" in checklist
+    assert "human-enablement leverage test before expensive workaround engineering" in checklist
+    assert "present only the irreducible secure-surface action" in checklist
+    assert "verify it mechanically, and auto-resume" in checklist
+    assert "do not generalize this into human-first behavior" in checklist
     assert "tool creativity was applied before any operator transport claim" in checklist
     assert "GrahamArdent/whats" in observation
     assert "GrahamArdent/resume_creator_v5" in observation

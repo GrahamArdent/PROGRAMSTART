@@ -197,6 +197,16 @@ Before declaring a human gate, classify the boundary origin:
 
 **Current-environment inability alone is never evidence of a genuine human gate.** A temporary automation gap is removable implementation debt, not permanent project architecture.
 
+For a **credential, identity, trust, or access boundary**, apply a narrower ordering before investing in expensive alternative-actuation engineering:
+
+1. recover and reuse any already-accepted capability, identity, credential path, or trust relationship first;
+2. compare the smallest bounded non-delegable human authorization against the autonomous workaround, considering human action size and recurrence, durability gain, reuse scope/autonomy unlock, authority delta, blast radius, revocability, secret exposure, workaround complexity/cost, and why human involvement is justified now;
+3. prefer bounded human enablement only when that comparison clearly shows that one small authorization creates materially greater durable/reusable autonomy without unjustified authority expansion;
+4. when human enablement wins, the backbone MUST perform all delegable preparation, present only the irreducible action on the owning secure surface, avoid requesting secret values in chat, verify completion itself from accepted evidence, and resume automatically at the declared point without a redundant generic `proceed`;
+5. otherwise continue with the normal alternative-actuation search below.
+
+This credential/access ordering is a **narrow exception**, not a general human-first preference. Human availability alone never makes an action a genuine gate and must not replace an already-authorized machine-safe path.
+
 Before requesting operator transport for a `temporary_automation_gap`, PROGRAMSTART MUST perform an **alternative-actuation search** proportional to the consequence and urgency:
 
 1. restate the exact already-authorized consequence and preserve the strongest applicable gate;

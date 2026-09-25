@@ -2,9 +2,9 @@
   "schema_version": 1,
   "contract_id": "programstart.autonomy-parity.v1",
   "derived_at": {
-    "programstart_commit": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87",
+    "programstart_commit": "GrahamArdent/PROGRAMSTART@e442fb0e6a6de37629d454b06e4d06038f70188b",
     "controller_commit": "GrahamArdent/programstart-autonomous-controller@c95372bd5640110cf13791546ae1930cd0abb240",
-    "durable_reference": "GrahamArdent/PROGRAMSTART#139"
+    "durable_reference": "GrahamArdent/PROGRAMSTART#143"
   },
   "runtime_usage": {
     "authority_role": "derived_acceptance_evidence",
@@ -40,7 +40,7 @@
     },
     {
       "path": "docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md",
-      "sha256": "3bcb9bed-e1adcfdb-dfac265b-e41e9fc4-28d9346c-952cced0-f40b04ca-def22eb6",
+      "sha256": "9c91c520-2136889c-a6b35562-cf5785c4-be2d6966-a4ced8e5-f7753f2c-9a7ad3e5",
       "role": "effective autonomy semantics"
     },
     {
@@ -3195,16 +3195,7 @@
       "section": "PROGRAMSTART Learning Gate"
     }
   ],
-  "pending_methodology_deltas": [
-    {
-      "id": "credential_human_enablement_v1",
-      "durable_reference": "GrahamArdent/PROGRAMSTART#139",
-      "summary": "For credential, identity, trust, and access gaps, recover existing capability first, then evaluate whether a tiny bounded human authorization creates materially greater durable/reusable autonomy before investing in alternative-actuation engineering. When human enablement clearly wins, the backbone prepares everything delegable, presents only the irreducible action, verifies completion itself, and resumes automatically.",
-      "authority_status": "accepted_pending_canonicalization",
-      "narrows_current_rule": "docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md \u00a79 alternative-actuation ordering",
-      "canonical_effect": "none until a focused PROGRAMSTART methodology change is accepted"
-    }
-  ],
+  "pending_methodology_deltas": [],
   "behaviors": [
     {
       "id": "semantic_objective_ingress",
@@ -4515,7 +4506,9 @@
       "id": "credential_human_enablement_leverage",
       "title": "Credential/access human-enablement leverage test",
       "owner": "PROGRAMSTART + Controller",
-      "covers": [],
+      "covers": [
+        "support.effective_autonomy.09"
+      ],
       "trigger": [
         "when the covered autonomy obligation is active"
       ],
@@ -4531,22 +4524,23 @@
       "invalidation": [
         "canonical source or relevant runtime/currentness evidence changes"
       ],
-      "machinery_state": "missing",
+      "machinery_state": "partial",
       "execution_mode": "hybrid",
       "current_proof": [
         {
-          "kind": "decision",
-          "ref": "PROGRAMSTART#139 accepted pending methodology delta"
+          "kind": "contract",
+          "ref": "GrahamArdent/PROGRAMSTART@e442fb0e6a6de37629d454b06e4d06038f70188b:docs/PROGRAMSTART_EFFECTIVE_AUTONOMY.md"
+        },
+        {
+          "kind": "test",
+          "ref": "GrahamArdent/PROGRAMSTART@e442fb0e6a6de37629d454b06e4d06038f70188b:tests/test_manual_boundary_origin_contract.py"
         }
       ],
       "acceptance_scenarios": [
         "small read-only/revocable one-time authorization that unlocks durable reuse is preferred over expensive workaround when leverage clearly wins",
         "backbone prepares link/key/policy, human performs irreducible act, backbone verifies and auto-resumes"
       ],
-      "closure_status": "pending_methodology",
-      "methodology_delta_refs": [
-        "credential_human_enablement_v1"
-      ]
+      "closure_status": "partial"
     },
     {
       "id": "proportional_verification",
@@ -5665,8 +5659,8 @@
       },
       {
         "id": "CH-06",
-        "attack": "Lose the accepted credential/human-enablement correction before canonicalization.",
-        "result": "pending methodology delta must be covered by a behavior row"
+        "attack": "Lose or silently re-pend the accepted credential/human-enablement correction after canonicalization.",
+        "result": "canonical Effective Autonomy section 9 + focused tests + behavior mapping preserve the credential/human-enablement correction"
       },
       {
         "id": "CH-07",
@@ -5863,10 +5857,8 @@
       "behavior_refs": [
         "credential_human_enablement_leverage"
       ],
-      "methodology_delta_refs": [
-        "credential_human_enablement_v1"
-      ],
-      "status": "accepted_pending_methodology",
+      "methodology_delta_refs": [],
+      "status": "accepted_reconciled",
       "durable_reference": "GrahamArdent/PROGRAMSTART#141"
     },
     {
@@ -5877,10 +5869,8 @@
         "operator_gate_exact_handoff",
         "operator_gate_auto_verify_resume"
       ],
-      "methodology_delta_refs": [
-        "credential_human_enablement_v1"
-      ],
-      "status": "accepted_pending_methodology",
+      "methodology_delta_refs": [],
+      "status": "accepted_reconciled",
       "durable_reference": "GrahamArdent/PROGRAMSTART#141"
     },
     {
@@ -5891,10 +5881,8 @@
         "irreducible_human_consequence",
         "operator_gate_auto_verify_resume"
       ],
-      "methodology_delta_refs": [
-        "credential_human_enablement_v1"
-      ],
-      "status": "accepted_pending_methodology",
+      "methodology_delta_refs": [],
+      "status": "accepted_reconciled",
       "durable_reference": "GrahamArdent/PROGRAMSTART#141"
     },
     {
@@ -5930,9 +5918,7 @@
         "credential_human_enablement_leverage",
         "objective_terminality_next_effect"
       ],
-      "methodology_delta_refs": [
-        "credential_human_enablement_v1"
-      ],
+      "methodology_delta_refs": [],
       "status": "accepted_execution_sequence",
       "durable_reference": "GrahamArdent/PROGRAMSTART#141"
     },
@@ -5992,10 +5978,8 @@
         "conditional_learning_persistence",
         "learning_maturity_dedup_retest"
       ],
-      "methodology_delta_refs": [
-        "credential_human_enablement_v1"
-      ],
-      "status": "accepted_pending_methodology",
+      "methodology_delta_refs": [],
+      "status": "accepted_reconciled",
       "durable_reference": "GrahamArdent/PROGRAMSTART#141"
     },
     {
@@ -6026,9 +6010,7 @@
         "conditional_checklist_completeness",
         "retention_intent"
       ],
-      "methodology_delta_refs": [
-        "credential_human_enablement_v1"
-      ],
+      "methodology_delta_refs": [],
       "status": "accepted_execution_sequence",
       "durable_reference": "GrahamArdent/PROGRAMSTART#141"
     },
@@ -6051,10 +6033,8 @@
         "credential_human_enablement_leverage",
         "operator_gate_exact_handoff"
       ],
-      "methodology_delta_refs": [
-        "credential_human_enablement_v1"
-      ],
-      "status": "accepted_pending_methodology",
+      "methodology_delta_refs": [],
+      "status": "accepted_reconciled",
       "durable_reference": "GrahamArdent/PROGRAMSTART#141"
     },
     {
@@ -6064,10 +6044,8 @@
         "credential_human_enablement_leverage",
         "irreducible_human_consequence"
       ],
-      "methodology_delta_refs": [
-        "credential_human_enablement_v1"
-      ],
-      "status": "accepted_pending_methodology",
+      "methodology_delta_refs": [],
+      "status": "accepted_reconciled",
       "durable_reference": "GrahamArdent/PROGRAMSTART#141"
     }
   ]

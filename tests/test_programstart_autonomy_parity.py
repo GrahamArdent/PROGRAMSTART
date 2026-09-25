@@ -15,7 +15,8 @@ def test_current_contract_is_complete_and_rendered_view_is_derived() -> None:
     checked = copy.deepcopy(contract)
     assert parity.validate_contract(checked) == []
     assert checked["_summary"]["source_obligations"] == 422
-    assert checked["_summary"]["behaviors"] == 48
+    assert checked["_summary"]["behaviors"] == 49
+    assert checked["_summary"]["conversation_decisions"] == 26
     obligations = checked["source_obligations"]
     assert sum(x["id"].startswith("prompt.step.") for x in obligations) == 25
     assert sum(x["id"].startswith("prompt.preflight.") for x in obligations) == 17
@@ -179,6 +180,76 @@ def test_every_prompt_contract_code_block_is_explicitly_inventoried() -> None:
         if item["source_path"] == ".github/prompts/start-programstart-project.prompt.md"
     }
     assert set(expected) <= actual
+
+
+def test_accepted_conversation_decision_set_is_exact_and_fully_mapped() -> None:
+    contract = parity.load_contract()
+    expected = {
+        "chat_transition_input_not_runtime_authority",
+        "three_way_completeness",
+        "explicit_mapping_for_material_chat_decisions",
+        "jit_is_cross_cutting",
+        "evidence_reuse_until_invalidation",
+        "autonomy_prompt_becomes_oracle",
+        "no_second_orchestrator",
+        "third_party_frameworks_reference_only_now",
+        "matrix_before_machinery",
+        "coverage_not_parity",
+        "credential_human_enablement_precedes_expensive_workaround",
+        "backbone_prepares_minimal_human_gate",
+        "eliminate_human_transport_preserve_human_enablement",
+        "cross_owner_generic_observation_owner_specific_admission",
+        "observation_does_not_create_authority",
+        "ecosystem_contracts_first_live_integration",
+        "ordinary_intent_should_be_sufficient",
+        "chatgpt_bootstrap_not_recurring_orchestrator",
+        "matrix_makes_omission_mechanically_visible",
+        "supporting_methodology_remains_canonical_jit",
+        "reuse_current_learning_gate_for_promotion",
+        "parity_matrix_not_vector_authority",
+        "first_wave_machinery_priority",
+        "cross_owner_observation_extends_existing_repository_broker",
+        "credential_enablement_leverage_dimensions",
+        "credential_exception_not_general_human_gate_preference",
+    }
+    actual = {item["id"] for item in contract["conversation_decisions"]}
+    assert actual == expected
+    assert len(actual) == 26
+    for item in contract["conversation_decisions"]:
+        assert item["durable_reference"] == "GrahamArdent/PROGRAMSTART#141"
+        assert item["behavior_refs"] or item["methodology_delta_refs"]
+
+
+def test_conversation_decision_unknown_behavior_fails_closed() -> None:
+    contract = parity.load_contract()
+    contract["conversation_decisions"][0]["behavior_refs"] = ["does_not_exist"]
+    errors = _errors(contract)
+    assert any("references unknown behavior" in x for x in errors)
+
+
+def test_conversation_decision_without_mapping_fails_closed() -> None:
+    contract = parity.load_contract()
+    contract["conversation_decisions"][0]["behavior_refs"] = []
+    contract["conversation_decisions"][0]["methodology_delta_refs"] = []
+    errors = _errors(contract)
+    assert any("has no durable mapping" in x for x in errors)
+
+
+def test_pending_methodology_conversation_decision_requires_delta_mapping() -> None:
+    contract = parity.load_contract()
+    target = next(
+        x for x in contract["conversation_decisions"] if x["id"] == "credential_human_enablement_precedes_expensive_workaround"
+    )
+    target["methodology_delta_refs"] = []
+    errors = _errors(contract)
+    assert any("pending-methodology conversation decision lacks methodology mapping" in x for x in errors)
+
+
+def test_conversation_reconciliation_behavior_is_required() -> None:
+    contract = parity.load_contract()
+    contract["behaviors"] = [x for x in contract["behaviors"] if x["id"] != "conversation_decision_reconciliation"]
+    errors = _errors(contract)
+    assert any("required cross-cutting behavior missing: conversation_decision_reconciliation" in x for x in errors)
 
 
 def test_source_fingerprint_drift_fails_closed() -> None:

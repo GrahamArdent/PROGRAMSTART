@@ -14,6 +14,11 @@ RENDERED = ROOT / "docs" / "AUTONOMY_PARITY_MATRIX.md"
 STATES = {"implemented", "partial", "missing", "prompt_only", "semantic", "human_gate"}
 MODES = {"deterministic", "semantic", "hybrid", "human"}
 CLOSURES = {"proven", "partial", "unproven", "pending_methodology"}
+CONVERSATION_DECISION_STATUSES = {
+    "accepted_reconciled",
+    "accepted_pending_methodology",
+    "accepted_execution_sequence",
+}
 EXACT_FILE_PROOF_RE = re.compile(r"^GrahamArdent/[A-Za-z0-9_.-]+@[0-9a-f]{40}:[A-Za-z0-9_./-]+$")
 EXACT_LIVE_PROOF_RE = re.compile(r"^GrahamArdent/[A-Za-z0-9_.-]+#[0-9]+$")
 FIELDS = {
@@ -159,9 +164,46 @@ def validate_contract(c):
     for d in deltas - covered_deltas:
         e.append(f"pending methodology delta not represented: {d}")
 
+    conversation = c.get("conversation_decisions")
+    conversation_ids = set()
+    if not isinstance(conversation, list) or not conversation:
+        e.append("conversation_decisions must be a non-empty list")
+        conversation = []
+    for decision in conversation:
+        if not isinstance(decision, dict):
+            e.append("conversation decision entries must be objects")
+            continue
+        did = decision.get("id")
+        if not isinstance(did, str) or not did or did in conversation_ids:
+            e.append("conversation decision ids must be unique/non-empty")
+            continue
+        conversation_ids.add(did)
+        if decision.get("status") not in CONVERSATION_DECISION_STATUSES:
+            e.append(f"conversation decision has invalid status: {did}")
+        if not decision.get("durable_reference"):
+            e.append(f"conversation decision lacks durable reference: {did}")
+        if not decision.get("summary"):
+            e.append(f"conversation decision lacks summary: {did}")
+        behavior_refs = decision.get("behavior_refs")
+        delta_refs = decision.get("methodology_delta_refs")
+        if not isinstance(behavior_refs, list) or not isinstance(delta_refs, list):
+            e.append(f"conversation decision mappings must be lists: {did}")
+            continue
+        if not behavior_refs and not delta_refs:
+            e.append(f"conversation decision has no durable mapping: {did}")
+        for ref in behavior_refs:
+            if ref not in bids:
+                e.append(f"conversation decision {did} references unknown behavior: {ref}")
+        for ref in delta_refs:
+            if ref not in deltas:
+                e.append(f"conversation decision {did} references unknown methodology delta: {ref}")
+        if decision.get("status") == "accepted_pending_methodology" and not delta_refs:
+            e.append(f"pending-methodology conversation decision lacks methodology mapping: {did}")
+
     for required in (
         "jit_context_evidence_governor",
         "credential_human_enablement_leverage",
+        "conversation_decision_reconciliation",
         "objective_terminality_next_effect",
     ):
         if required not in bids:
@@ -180,6 +222,7 @@ def validate_contract(c):
         "machinery_states": dict(sorted(state_counts.items())),
         "closure_states": dict(sorted(closure_counts.items())),
         "pending_methodology_deltas": len(deltas),
+        "conversation_decisions": len(conversation_ids),
     }
     return e
 
@@ -199,6 +242,7 @@ def render(c):
         f"- Fingerprinted source files: {s['source_files']}",
         f"- Required source obligations covered: {s['source_obligations']}",
         f"- Parity behaviors: {s['behaviors']}",
+        f"- Accepted conversation decisions reconciled: {s['conversation_decisions']}",
         "",
         "## JIT usage invariant",
         "",
@@ -221,6 +265,15 @@ def render(c):
         out.append(
             f"| {b['id']} — {b['title']} | {b['machinery_state']} | {b['execution_mode']} | "
             f"{b['closure_status']} | {b['owner']} |"
+        )
+    out += ["", "## Accepted conversation-decision reconciliation", ""]
+    for decision in c["conversation_decisions"]:
+        behaviors = ", ".join(decision["behavior_refs"]) or "none"
+        deltas = ", ".join(decision["methodology_delta_refs"]) or "none"
+        out.append(
+            f"- {decision['id']} [{decision['status']}]: {decision['summary']} "
+            f"(behaviors: {behaviors}; methodology deltas: {deltas}; "
+            f"durable: {decision['durable_reference']})"
         )
     out += ["", "## Priority gaps", ""]
     for b in c["behaviors"]:

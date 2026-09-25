@@ -4054,24 +4054,46 @@
         "load only the current authority/evidence needed for this behavior"
       ],
       "invalidation": [
-        "canonical source or relevant runtime/currentness evidence changes"
+        "PROGRAMSTART compiled write-set or shared-mutation contract changes",
+        "accepted live Controller coordination release changes",
+        "owning-project authority/currentness or declared mutable surfaces change"
       ],
-      "machinery_state": "partial",
+      "machinery_state": "implemented",
       "execution_mode": "hybrid",
       "current_proof": [
         {
+          "kind": "contract",
+          "ref": "GrahamArdent/PROGRAMSTART@6a2d2565d6723eca56b53b7f76139e6960c45c6a:docs/PROGRAMSTART_MATRIX_COORDINATION.md"
+        },
+        {
           "kind": "code",
-          "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:scripts/programstart_intent_compile.py mutation ownership"
+          "ref": "GrahamArdent/PROGRAMSTART@6a2d2565d6723eca56b53b7f76139e6960c45c6a:scripts/programstart_intent_compile.py"
         },
         {
           "kind": "test",
-          "ref": "GrahamArdent/PROGRAMSTART@4552d32f4884242a23b21955957fa5d7e691cf87:tests/test_programstart_intent_compile.py"
+          "ref": "GrahamArdent/PROGRAMSTART@6a2d2565d6723eca56b53b7f76139e6960c45c6a:tests/test_matrix_coordination_contract.py"
+        },
+        {
+          "kind": "code",
+          "ref": "GrahamArdent/programstart-autonomous-controller@97f4dcaed4cbf8aaf282d07a67627b7c1f684851:controller/ac06_runtime_authority.py"
+        },
+        {
+          "kind": "test",
+          "ref": "GrahamArdent/programstart-autonomous-controller@97f4dcaed4cbf8aaf282d07a67627b7c1f684851:tests/test_matrix_coordination.py"
+        },
+        {
+          "kind": "live",
+          "ref": "GrahamArdent/programstart-autonomous-controller#114"
         }
       ],
       "acceptance_scenarios": [
-        "parallel lane cannot mutate an already-owned installed release until ownership releases/transfers"
+        "two independently admitted nonterminal runs targeting the same declared mutable resource cannot both reserve mutation",
+        "disjoint declared write sets remain concurrently admissible",
+        "multi-resource acquisition is atomic and replay preserves one owner/fencing identity",
+        "unresolved downstream mutation prevents terminal claim release; resolved terminal release permits a later higher fence",
+        "read-only Matrix coordination projection reports current claims without granting execution authority"
       ],
-      "closure_status": "partial"
+      "closure_status": "proven"
     },
     {
       "id": "external_resource_evidence_continuity",
@@ -6068,6 +6090,19 @@
         "external_connection_surface_inventory"
       ],
       "methodology_delta_refs": []
+    },
+    {
+      "id": "matrix_coordination_projection_non_authoritative",
+      "summary": "Use the Matrix as the default ecosystem coordination/read projection while canonical owners remain authoritative: Controller owns transactional live mutation claims, consequential admission revalidates current owner authority, the Matrix projection cannot mint execution authority, and Paths/Path Authority retains availability/failover/recovery ownership.",
+      "behavior_refs": [
+        "shared_mutation_ownership",
+        "exact_machine_currentness_binding",
+        "authority_non_minting_no_second_spine",
+        "external_connection_surface_inventory"
+      ],
+      "methodology_delta_refs": [],
+      "status": "accepted_reconciled",
+      "durable_reference": "GrahamArdent/PROGRAMSTART#156"
     }
   ],
   "hop_policy": {

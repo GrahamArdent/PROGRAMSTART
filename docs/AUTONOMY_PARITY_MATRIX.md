@@ -10,7 +10,7 @@
 - Fingerprinted source files: 8
 - Required source obligations covered: 422
 - Parity behaviors: 49
-- Accepted conversation decisions reconciled: 27
+- Accepted conversation decisions reconciled: 28
 - Material hop instances: 37
 
 ## JIT usage invariant
@@ -21,8 +21,8 @@ Reuse still-valid evidence; widen only on declared invalidation or convergence b
 ## Coverage summary
 
 - human_gate: 1
-- implemented: 8
-- partial: 23
+- implemented: 9
+- partial: 22
 - prompt_only: 11
 - semantic: 6
 
@@ -45,7 +45,7 @@ Reuse still-valid evidence; widen only on declared invalidation or convergence b
 | repository_independence — Cross-repository evidence does not authorize multi-project mutation | prompt_only | deterministic | unproven | PROGRAMSTART |
 | blocker_scope_safe_lane — Narrow blocker scope and scan safe lanes | partial | hybrid | partial | PROGRAMSTART + Controller |
 | coordinated_mode_c_lanes — Coordinate multiple Mode-C lanes without parallel authority | prompt_only | semantic | unproven | PROGRAMSTART |
-| shared_mutation_ownership — Single owner for consequential shared mutation | partial | hybrid | partial | PROGRAMSTART + Controller |
+| shared_mutation_ownership — Single owner for consequential shared mutation | implemented | hybrid | proven | PROGRAMSTART + Controller |
 | external_resource_evidence_continuity — Preserve external resource history/current visibility distinction | prompt_only | semantic | unproven | PROGRAMSTART |
 | adaptive_research_depth — Adaptive research depth to decision sufficiency | semantic | semantic | unproven | PROGRAMSTART semantic layer |
 | external_connection_surface_inventory — Enumerate connection surfaces before declaring automation unavailable | prompt_only | semantic | unproven | PROGRAMSTART capability resolution |
@@ -154,6 +154,7 @@ Reuse still-valid evidence; widen only on declared invalidation or convergence b
 - credential_enablement_leverage_dimensions [accepted_reconciled]: Credential human-enablement evaluation must consider human action size, recurrence, durability gain, reuse scope/autonomy unlock, authority delta, blast radius, revocability, secret exposure, autonomous-workaround complexity/cost, and why human involvement is justified now. (behaviors: credential_human_enablement_leverage, operator_gate_exact_handoff; methodology deltas: none; durable: GrahamArdent/PROGRAMSTART#141)
 - credential_exception_not_general_human_gate_preference [accepted_reconciled]: The high-leverage human-enablement ordering is specifically for credential/identity/trust/access boundaries; it must not become a blanket rule to ask a human whenever a human could do the work. (behaviors: credential_human_enablement_leverage, irreducible_human_consequence; methodology deltas: none; durable: GrahamArdent/PROGRAMSTART#141)
 - general_mechanism_does_not_satisfy_instance_acceptance [accepted_reconciled]: Generalized connector/transport machinery may provide implementation reuse, but each concrete material hop remains an explicit matrix instance and requires its own acceptance evidence; a class-level proof cannot silently turn untested instances green. (behaviors: verification_claim_truthfulness, cross_repository_dependency_graph, external_connection_surface_inventory; methodology deltas: none; durable: GrahamArdent/PROGRAMSTART#147)
+- matrix_coordination_projection_non_authoritative [accepted_reconciled]: Use the Matrix as the default ecosystem coordination/read projection while canonical owners remain authoritative: Controller owns transactional live mutation claims, consequential admission revalidates current owner authority, the Matrix projection cannot mint execution authority, and Paths/Path Authority retains availability/failover/recovery ownership. (behaviors: shared_mutation_ownership, exact_machine_currentness_binding, authority_non_minting_no_second_spine, external_connection_surface_inventory; methodology deltas: none; durable: GrahamArdent/PROGRAMSTART#156)
 
 ## Priority gaps
 

@@ -1,5 +1,3 @@
-[Reading 434 lines from start (total: 434 lines, 0 remaining)]
-
 from __future__ import annotations
 
 import copy
@@ -434,5 +432,3 @@ def test_owner_hop_cannot_drop_cross_owner_safety_refs() -> None:
     owner["required_behavior_refs"] = [x for x in owner["required_behavior_refs"] if x != "repository_independence"]
     errors = _errors(contract)
     assert any("owner instance missing required behavior: repository_independence" in x for x in errors)
-
-[executed on device: vps-743d7c1d (3eb617df-2b3f-4634-9ca3-f35dc62b5f04)]

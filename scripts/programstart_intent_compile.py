@@ -86,6 +86,20 @@ class ParallelWork(BaseModel):
     evidence_ref: str = ""
 
 
+class EffectReadinessRule(BaseModel):
+    """Owner-authored semantics relating completed effects to one ready effect."""
+
+    completed_effect: str = Field(min_length=1)
+    ready_effect: str = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def validate_effect_tokens(self) -> EffectReadinessRule:
+        tokens = [self.completed_effect, self.ready_effect]
+        if any(token != token.strip() for token in tokens):
+            raise ValueError("effect readiness tokens must not have surrounding whitespace")
+        return self
+
+
 class AuthoritySnapshot(BaseModel):
     """Resolved current authority/currentness input; not a new authority source."""
 
@@ -102,6 +116,7 @@ class AuthoritySnapshot(BaseModel):
     read_only_surfaces: list[SurfaceRef] = Field(default_factory=list)
     allowed_effects: list[str] = Field(default_factory=list)
     prohibited_effects: list[str] = Field(default_factory=list)
+    effect_readiness_rules: list[EffectReadinessRule] = Field(default_factory=list)
     human_gate_conditions: list[str] = Field(default_factory=list)
     automation_gap_conditions: list[str] = Field(default_factory=list)
 

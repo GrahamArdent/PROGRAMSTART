@@ -7,6 +7,8 @@ terminality when current, bound evidence proves it.
 
 from __future__ import annotations
 
+import hashlib
+import json
 import re
 from collections.abc import Sequence
 from enum import StrEnum
@@ -135,6 +137,75 @@ def _is_abstract_effect(token: str) -> bool:
         or any(fragment in lowered for fragment in forbidden_fragments)
         or lowered.startswith(command_prefixes)
         or sha
+    )
+
+
+def derive_effect_readiness(
+    root_objective: RootObjective,
+    packet: CompiledWorkPacket,
+    current_authority: AuthoritySnapshot,
+    completion_evidence: Sequence[CompletedEffectEvidence],
+) -> EffectReadyEvidence | None:
+    """Return one owner-authorized readiness receipt, or fail closed with none."""
+
+    if not verify_integrity(packet):
+        return None
+    current_fingerprint = authority_fingerprint(current_authority)
+    if packet.evidence.authority_fingerprint != authority_fingerprint(packet.authority):
+        return None
+    if assess_authority_drift(packet, current_authority).status != "unchanged":
+        return None
+
+    expected_binding = (root_objective.root_id, packet.specification_id, current_fingerprint)
+    if not completion_evidence or len({item.evidence_id for item in completion_evidence}) != len(completion_evidence):
+        return None
+    if any(
+        (item.root_id, item.work_packet_specification_id, item.authority_fingerprint) != expected_binding
+        for item in completion_evidence
+    ):
+        return None
+
+    allowed = set(packet.scope.allowed_effects)
+    prohibited = set(packet.scope.prohibited_effects)
+    completed_tokens = [item.semantic_effect_token for item in completion_evidence]
+    completed = set(completed_tokens)
+    if len(completed) != len(completed_tokens) or not completed.issubset(allowed) or completed & prohibited:
+        return None
+
+    candidates: list[str] = []
+    for rule in current_authority.effect_readiness_rules:
+        if rule.completed_effect not in completed:
+            continue
+        if rule.completed_effect not in allowed or rule.completed_effect in prohibited:
+            return None
+        if rule.ready_effect not in allowed or rule.ready_effect in prohibited or not _is_abstract_effect(rule.ready_effect):
+            return None
+        if rule.ready_effect in completed:
+            continue
+        candidates.append(rule.ready_effect)
+
+    if len(candidates) != 1:
+        return None
+
+    ready_effect = candidates[0]
+    evidence_body = {
+        "root_id": root_objective.root_id,
+        "work_packet_specification_id": packet.specification_id,
+        "authority_fingerprint": current_fingerprint,
+        "completed_evidence_ids": sorted(item.evidence_id for item in completion_evidence),
+        "semantic_effect_token": ready_effect,
+    }
+    digest = hashlib.sha256(
+        json.dumps(evidence_body, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+    return EffectReadyEvidence(
+        evidence_id=f"effect-ready-{digest}",
+        status="proven",
+        root_id=root_objective.root_id,
+        work_packet_specification_id=packet.specification_id,
+        authority_fingerprint=current_fingerprint,
+        semantic_effect_token=ready_effect,
+        preconditions_proven=True,
     )
 
 

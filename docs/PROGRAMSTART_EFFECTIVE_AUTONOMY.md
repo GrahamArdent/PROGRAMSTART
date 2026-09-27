@@ -210,14 +210,18 @@ This credential/access ordering is a **narrow exception**, not a general human-f
 Before requesting operator transport for a `temporary_automation_gap`, PROGRAMSTART MUST perform an **alternative-actuation search** proportional to the consequence and urgency:
 
 1. restate the exact already-authorized consequence and preserve the strongest applicable gate;
-2. inspect the capability graph beyond the first obvious tool surface, including connected APIs/connectors, provider-native APIs, CLI tools, repository automation, accepted runtimes, local agents, scheduled tasks, authenticated machine identities, existing control queues, custom/bounded API composition, and other already-trusted execution mechanisms that are actually available;
-3. generate bounded compositions of those capabilities rather than assuming one tool must perform the whole action end-to-end;
-4. prefer reuse of an existing trusted bridge, exact accepted artifact, fixed target/path, typed arguments, reversible behavior, and independently verifiable result over a new broad actuator;
-5. Challenge candidate mechanisms for authority expansion, secret/identity widening, arbitrary command execution, destructive/external effects, spend, privacy, persistence and recovery risk;
-6. use the safest viable composition that remains inside current authority; route any durable capability debt to its real owner;
-7. request a short operator relay only when no bounded alternative survives the authority/capability/Challenge checks or when the boundary is genuinely human.
+2. inspect current owner/path evidence and resolve an accepted current **canonical invocation mechanism, source, and principal** that a consequence producer can actually use; knowing that a receiver or operational path exists is insufficient when the producer must still synthesize transport ad hoc;
+3. inspect the capability graph beyond the first obvious tool surface, including connected APIs/connectors, provider-native APIs, CLI tools, repository automation, accepted runtimes, local agents, scheduled tasks, authenticated machine identities, existing control queues, custom/bounded API composition, and other already-trusted execution mechanisms that are actually available;
+4. generate bounded compositions of those capabilities rather than assuming one tool must perform the whole action end-to-end, but do not improvise a transport, invent a principal, or use a human/chat relay as the producer mechanism;
+5. prefer reuse of an existing trusted bridge, exact accepted artifact, fixed target/path, typed arguments, reversible behavior, and independently verifiable result over a new broad actuator;
+6. Challenge candidate mechanisms for authority expansion, secret/identity widening, arbitrary command execution, destructive/external effects, spend, privacy, persistence and recovery risk;
+7. use the safest viable composition that remains inside current authority; route any durable capability debt to its real owner;
+8. if the receiver exists but no bounded producer invocation is accepted and current, classify `temporary_automation_gap` and repair it or route it to the owning system rather than improvising transport or delegating transport to a human/chat relay;
+9. request a short operator relay only when no bounded alternative survives the authority/capability/Challenge checks or when the boundary is genuinely human; an absent producer invocation for an already-authorized mechanical consequence is not such a human boundary.
 
 This search is a reasoning obligation, not a requirement to build new infrastructure for every blocked action. It should be fast for simple cases and deeper only when the consequence, recurrence or operator burden warrants it.
+
+The canonical invocation resolution is likewise not a global registry, mandatory fallback, or second orchestrator. Actual path and invocation inventory, currentness, principal binding, recovery, and repair remain with Path Authority or the owning project; PROGRAMSTART consumes their accepted evidence at the consequence boundary.
 
 > **Tool creativity is mandatory before human transport. Be creative in mechanism and conservative in authority.**
 

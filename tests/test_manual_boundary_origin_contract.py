@@ -40,8 +40,14 @@ def test_manual_boundary_origin_is_explicit():
     assert "resume automatically" in autonomy
     assert "narrow exception" in autonomy
     assert "request a short operator relay only when no bounded alternative survives" in autonomy
+    assert "canonical invocation mechanism, source, and principal" in autonomy
+    assert "receiver exists but no bounded producer invocation" in autonomy
+    assert "rather than improvising transport or delegating transport to a human/chat relay" in autonomy
+    assert "not a global registry, mandatory fallback, or second orchestrator" in autonomy
     assert "must not disguise, bypass, or weaken a stronger gate" in autonomy
-    assert "before escalating an already-authorized mechanical action to operator transport" in checklist
+    assert "before producing an already-authorized mechanical consequence" in checklist
+    assert "resolve from current owner/path evidence" in checklist
+    assert "rather than improvising transport or using a human/chat relay" in checklist
     assert "human-enablement leverage test before expensive workaround engineering" in checklist
     assert "present only the irreducible secure-surface action" in checklist
     assert "verify it mechanically, and auto-resume" in checklist

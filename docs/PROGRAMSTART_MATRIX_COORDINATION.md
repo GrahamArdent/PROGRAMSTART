@@ -1,6 +1,6 @@
 # PROGRAMSTART Matrix Coordination Contract
 
-Purpose: define the reusable PROGRAMSTART semantics for mandatory autonomous mutation coordination without turning the Matrix into a new authority, scheduler, database, or execution spine.
+Purpose: define the reusable PROGRAMSTART semantics for mandatory autonomous mutation coordination without turning Matrix persistence into a new authority, scheduler, mutation-admission surface, or execution spine.
 
 Status: **PROGRAMSTART reusable coordination contract / subordinate to owning-project authority and Controller runtime currentness**.
 
@@ -20,7 +20,9 @@ The Matrix is a composed coordination/read model. It may expose current authorit
 - **Paths / Path Authority** owns availability, failover, recovery, and proof of the mandatory coordination access path.
 - **Mission Control** may render/operator-interact with Matrix state but is not an authority source.
 
-No new Matrix repository, state database, queue, scheduler, or orchestration layer is implied by this contract.
+This coordination contract neither requires nor prohibits a durable Ecosystem Matrix task/state database. A Matrix database MAY persist comprehensive operational/task records, relationships, and Matrix-owned bookkeeping when its own accepted architecture permits it. Persistence does not change field ownership: owner-authority/evidence/currentness facts remain sourced from their owners, derived readiness/priority remains advisory/recomputable, and Matrix records cannot mint execution permission.
+
+A new queue, scheduler, mutation-admission authority, or orchestration layer is not implied by this contract.
 
 ## 3. Existing packet is the coordination declaration
 
@@ -120,6 +122,8 @@ The broader logical **Ecosystem Matrix** may compose:
 - Paths availability/recovery state.
 
 Composition does not collapse ownership.
+
+The broader Ecosystem Matrix MAY also serve as a comprehensive operational/task database. It may persist objectives, tasks, subtasks, findings, dependencies, blockers, terminal conditions, owner/evidence references, currentness observations, and Matrix-native reconciliation metadata. Such persistence must distinguish owner-sourced facts, Matrix-owned bookkeeping, and derived/advisory state. A Matrix task status or priority is not owner acceptance, semantic authority, or Controller execution admission.
 
 ## 10. Acceptance cases
 

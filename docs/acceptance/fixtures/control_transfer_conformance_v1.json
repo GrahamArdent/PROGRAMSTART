@@ -275,5 +275,16 @@
       "expected_disposition": "invalidate_stale_approval_revalidate_before_consequence",
       "expected_parent_disposition": "ACTIVE_OR_WAITING"
     }
+  ],
+  "observed_at": "2026-09-28",
+  "evidence_basis": [
+    "GrahamArdent/PROGRAMSTART#132",
+    "GrahamArdent/PROGRAMSTART#158",
+    "GrahamArdent/programstart-autonomous-controller#71"
+  ],
+  "invalidation": [
+    "PROGRAMSTART objective-convergence or blocker/safe-lane semantics materially change",
+    "Controller #71 or successor lifecycle semantics materially change",
+    "a natural acceptance case contradicts a recorded coverage classification"
   ]
 }

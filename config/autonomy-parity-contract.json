@@ -4974,11 +4974,16 @@
         "load only the current authority/evidence needed for this behavior"
       ],
       "invalidation": [
-        "canonical source or relevant runtime/currentness evidence changes"
+        "canonical source or relevant runtime/currentness evidence changes",
+        "effective service/unit/drop-in composition changes where it determines runtime semantics"
       ],
       "machinery_state": "implemented",
       "execution_mode": "deterministic",
       "current_proof": [
+        {
+          "kind": "live",
+          "ref": "GrahamArdent/execution-node-control#247"
+        },
         {
           "kind": "code",
           "ref": "GrahamArdent/programstart-autonomous-controller@c95372bd5640110cf13791546ae1930cd0abb240:controller/semantic_continuation.py"
@@ -4993,7 +4998,8 @@
         }
       ],
       "acceptance_scenarios": [
-        "exact installed/base/allowed heads bind already-authorized effect; mismatch fails closed"
+        "exact installed/base/allowed heads bind already-authorized effect; mismatch fails closed",
+        "for service-managed machinery, material currentness binds effective unit/drop-ins, executable role, expected service separation/multiplicity, relevant sandbox/group composition, and reviewed release identity; mismatch fails closed"
       ],
       "closure_status": "proven"
     },

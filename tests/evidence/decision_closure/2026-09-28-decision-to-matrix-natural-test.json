@@ -5,7 +5,7 @@
   "scope": "Read-only semantic test through proposed Matrix handoff. No live Matrix mutation and no Work Packet execution.",
   "protected_outcome": "Accepted conversational decisions can be durably settled, independently reconstructed, transformed into an explicit protected outcome, decomposed into a complete current set of outcome obligations, challenged against false closure, and expressed as a sufficient proposed Matrix handoff before bounded execution begins.",
   "decision_closure_result": {
-    "status": "challenged_with_gap",
+    "status": "challenged_gap_repaired",
     "accepted_current": [
       {
         "id": "T-AC-01",
@@ -49,13 +49,13 @@
       "Exact automatic checkpoint/delta-detection implementation for conversational acceptance.",
       "Long-term archival/retirement disposition of the Decision Lifecycle prototype repository."
     ],
-    "fixture_gap": "The pre-test fixture names material_current_accepted_outcomes dc28-001..003 but does not define their summaries or provide resolvable references. Therefore the durable fixture alone cannot reconstruct exactly what those accepted decisions were."
+    "fixture_gap": "REPAIRED: the natural fixture now durably defines seven accepted/current decision records (T-AC-01..T-AC-07), each with semantic summary, accepted/current classification, and a settlement evidence reference."
   },
   "source_omission_challenge": {
-    "result": "conditional_clear",
+    "result": "clear_for_declared_scope",
     "method": "independent reconstruction from the declared conversation followed by comparison with the pre-existing fixture",
-    "finding": "No material category needed for the protected workflow was found missing from the independent reconstruction, but the fixture's opaque accepted-outcome IDs prevent independent verification of its own three-item Decision Closure claim.",
-    "residual": "The source conversation remains the evidence for the independent reconstruction until the durable fixture/result contains resolvable settled-decision evidence."
+    "finding": "The repaired fixture durably represents the material accepted/current decision set used by the natural test and preserves non-projecting superseded/unresolved history. No material omission was found in the declared test scope.",
+    "residual": "Coverage remains bounded to the declared source/test scope; this is not a claim of universal conversation completeness."
   },
   "independently_derived_obligations": [
     {
@@ -115,11 +115,30 @@
     "persisted_to_live_matrix": false,
     "parent": {
       "title": "Reliable conversational decision-to-execution lifecycle",
-      "decision_refs": ["T-AC-01","T-AC-02","T-AC-03","T-AC-04","T-AC-05","T-AC-06","T-AC-07"],
+      "decision_refs": [
+        "T-AC-01",
+        "T-AC-02",
+        "T-AC-03",
+        "T-AC-04",
+        "T-AC-05",
+        "T-AC-06",
+        "T-AC-07"
+      ],
       "protected_outcome_ref": "protected_outcome",
       "terminal_condition": "All applicable current obligations have current acceptance evidence and the original protected outcome is re-evaluated as materially true. Completion of tasks/Work Packets alone cannot close the parent."
     },
-    "current_obligation_refs": ["NAT-01","NAT-02","NAT-03","NAT-04","NAT-05","NAT-06","NAT-07","NAT-08","NAT-09","NAT-10"],
+    "current_obligation_refs": [
+      "NAT-01",
+      "NAT-02",
+      "NAT-03",
+      "NAT-04",
+      "NAT-05",
+      "NAT-06",
+      "NAT-07",
+      "NAT-08",
+      "NAT-09",
+      "NAT-10"
+    ],
     "material_dependencies": [
       "NAT-01 and NAT-02 precede trustworthy operational eligibility.",
       "NAT-03 precedes NAT-04 and NAT-05.",
@@ -152,35 +171,37 @@
     ]
   },
   "fresh_context_reconstruction": {
-    "result": "partial_fail",
-    "from_durable_contract_and_pretest_fixture_only": {
+    "result": "pass",
+    "from_durable_contract_and_repaired_fixture_only": {
       "can_reconstruct_protected_outcome": true,
       "can_reconstruct_current_obligations": true,
       "can_reconstruct_exclusions": true,
-      "can_reconstruct_exact_settled_accepted_decisions": false
+      "can_reconstruct_exact_settled_accepted_decisions": true,
+      "can_reconstruct_dependencies_acceptance_terminal_invalidation": true
     },
-    "cause": "dc28-001..003 are opaque and undefined in the pre-test fixture.",
-    "required_correction_before_live_matrix_projection": "Persist resolvable settled-decision summaries/receipt references so a fresh consumer can reconstruct both what was decided and what must become true."
+    "evidence": "tests/fixtures/decision_closure/2026-09-28-decision-to-matrix.json@79f12ca00c32d910b3c7d5a21a0705ec8887b5f1",
+    "method": "Parsed and reconstructed the fixture without consulting the originating chat. Seven accepted/current records T-AC-01..T-AC-07 were resolvable with summaries, state, and settlement evidence references; protected outcome, nine obligations, exclusions, dependencies, acceptance conditions, terminal condition, and invalidation conditions were all present.",
+    "residual": "None blocking this natural test. Live Matrix projection remains a separate, explicitly unexecuted step."
   },
   "programstart_challenge": {
     "parts": {
-      "A_kill_criteria": "clear: no evidence the bounded semantic test should be killed; the discovered gap is repairable without architecture expansion.",
-      "B_evidence_validity": "warning: methodology/fixture evidence is current, but opaque decision IDs weaken the claimed fresh-context proof.",
-      "C_scope_integrity": "clear: test remained inside Decision Closure -> proposed Matrix handoff; no live Matrix or Work Packet execution.",
-      "D_skipped_work": "warning: exact settled-decision durability is incomplete and must remain explicit.",
-      "E_blast_radius_verification": "clear for test scope: only durable test evidence is added; live Matrix/runtime is untouched.",
-      "F_decision_reversal": "clear: superseded/rejected architecture alternatives remain historical and are not projected as current work.",
-      "G_dependency_health": "not_applicable: no external dependency fact controls this semantic test.",
-      "H_alignment": "warning: contract requires fresh reconstruction, while the pre-test fixture cannot reconstruct its accepted decisions by ID."
+      "A_kill_criteria": "clear: no kill criterion triggered; the narrow evidence defect was repaired without architecture expansion.",
+      "B_evidence_validity": "clear: accepted/current decisions are now durable and resolvable; fixture and evidence references are explicit.",
+      "C_scope_integrity": "clear: only the existing natural fixture and test evidence were changed; live Matrix/runtime and Work Packet execution remain untouched.",
+      "D_skipped_work": "clear for this objective: the previously failed fresh-context proof was rerun and passed.",
+      "E_blast_radius_verification": "clear: branch remains limited to Decision-Closure methodology, its natural fixture, and its test evidence.",
+      "F_decision_reversal": "clear: superseded/rejected/unresolved material remains preserved as non-projecting history.",
+      "G_dependency_health": "not_applicable: no external dependency fact controls this bounded semantic proof.",
+      "H_alignment": "clear: the durable fixture now supports the contract requirement that a fresh consumer reconstruct what was decided and what must become true."
     },
-    "overall": "conditional",
-    "adversarial_closure": "clear_for_false_closure_detection",
-    "matrix_projection_permitted_now": false
+    "overall": "pass",
+    "adversarial_closure": "clear: deliberate removal of the evidence-return/protected-outcome-validation obligation remains a detected false-closure failure.",
+    "matrix_projection_permitted_now": "eligible_for_separate_explicit_next_step_only"
   },
   "discrepancies_from_pretest_fixture": [
-    "Independent derivation produced ten semantic obligations rather than nine; the extra explicit requirement is durable reconstruction/currentness/supersession, which the original fixture mostly embeds in invalidation semantics.",
-    "The original fixture's accepted decision IDs dc28-001..003 are not defined/resolvable, so its Decision Closure cannot be independently reconstructed.",
-    "The existing Matrix projection example is structurally sufficient for obligation references but relies on the unresolved decision_ref for full semantic traceability."
+    "REPAIRED: opaque dc28-001..003 accepted-outcome references were replaced by seven resolvable accepted/current records T-AC-01..T-AC-07 derived in the natural test evidence.",
+    "Independent derivation produced ten semantic requirements while the original decomposition fixture has nine obligations; this remains non-blocking because semantic coverage, not forced count identity, is the acceptance criterion.",
+    "No live Matrix representation was tested or mutated; Matrix persistence/gateway details remain outside this natural-test objective."
   ],
   "lessons": [
     "Outcome-obligation count should not be forced to match a fixture; semantic coverage is the acceptance criterion.",
@@ -189,17 +210,16 @@
     "False-closure detection must remain separate from source-omission detection."
   ],
   "unresolved_gaps": [
-    "Durably define or resolve the accepted/current Decision Closure outcomes referenced by the natural fixture.",
-    "Re-run fresh-context reconstruction after that correction.",
-    "Only after the fresh-context test passes should live Matrix projection be considered."
+    "No blocking gap remains for the Decision-to-Matrix natural semantic test.",
+    "Live Matrix projection remains a separate future step requiring explicit authorization and its own current-state/collision check."
   ],
-  "final_status": "CONDITIONAL",
-  "recommended_next_step": "Correct only the durable Decision-Closure evidence gap by replacing/augmenting opaque dc28-001..003 references with resolvable accepted/current outcome records or references, then rerun the fresh-context reconstruction and PROGRAMSTART Challenge. Do not write to the live Matrix until that passes.",
+  "final_status": "PASS",
+  "recommended_next_step": "After PR validation succeeds, review/accept PR #175 as the completed PROGRAMSTART methodology + natural-test evidence. Only after that acceptance should a separately authorized objective perform the first live Matrix projection; do not derive or execute Work Packets merely from this PASS.",
   "evidence_refs": [
     "GrahamArdent/PROGRAMSTART#174",
     "GrahamArdent/PROGRAMSTART#175",
     "docs/PROGRAMSTART_DECISION_CLOSURE.md@1d7f87e226b3fed8837422139afe84a47ec1b1ff",
-    "tests/fixtures/decision_closure/2026-09-28-decision-to-matrix.json@d0c9466829d48acbf8b00f40c8b8a8ff20e5a6f4",
+    "tests/fixtures/decision_closure/2026-09-28-decision-to-matrix.json@79f12ca00c32d910b3c7d5a21a0705ec8887b5f1",
     "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md@799ccaf93122c382a3127828922cb615a2472962",
     "docs/PROGRAMSTART_MATRIX_COORDINATION.md@2607470d06af223d4c801fd8da577f78259a28e6"
   ]

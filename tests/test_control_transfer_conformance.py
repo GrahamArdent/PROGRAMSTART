@@ -12,6 +12,7 @@ ALLOWED = {
     "DISPROVEN_OR_UNNECESSARY",
 }
 
+
 def test_control_transfer_fixture_is_complete_and_non_authoritative():
     data = json.loads(FIXTURE.read_text(encoding="utf-8"))
     assert data["schema_version"] == "1.0"
@@ -19,6 +20,7 @@ def test_control_transfer_fixture_is_complete_and_non_authoritative():
     cases = data["cases"]
     assert {case["id"] for case in cases} == REQUIRED_IDS
     assert all(case["coverage"] in ALLOWED for case in cases)
+
 
 def test_control_transfer_fixture_preserves_branch_scope_and_false_terminality_guards():
     data = json.loads(FIXTURE.read_text(encoding="utf-8"))
@@ -47,6 +49,7 @@ def test_earned_cross_owner_cases_have_explicit_dispositions():
     for case_id, (disposition, parent) in expected.items():
         assert by_id[case_id]["expected_disposition"] == disposition
         assert by_id[case_id]["expected_parent_disposition"] == parent
+
 
 def test_blocked_exhaustion_is_not_a_casual_terminal_state():
     data = json.loads(FIXTURE.read_text(encoding="utf-8"))

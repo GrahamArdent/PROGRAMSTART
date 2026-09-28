@@ -297,8 +297,12 @@ def test_explicit_machine_and_human_waits_require_admitted_conditions(context) -
         machine_safe_on_match=True,
     )
     machine = MachineWaitEvidence(
-        evidence_id="machine", status="accepted", condition="verified actuator unavailable",
-        active=True, wait=registration, **binding
+        evidence_id="machine",
+        status="accepted",
+        condition="verified actuator unavailable",
+        active=True,
+        wait=registration,
+        **binding,
     )
     human = HumanWaitEvidence(
         evidence_id="human",

@@ -15,7 +15,7 @@
   "source_files": [
     {
       "path": ".github/prompts/start-programstart-project.prompt.md",
-      "sha256": "7942220d-e5481cb5-c4323cb1-db60c698-9dc08ef8-fb213638-8a46f4f6-a482618e",
+      "sha256": "7815bac2f8fb9c588cacb26904170142d8b91886321b7bb1e020a24d01c0208d",
       "role": "primary autonomy orchestration contract"
     },
     {
@@ -282,7 +282,7 @@
     {
       "id": "prompt.step.18",
       "source_path": ".github/prompts/start-programstart-project.prompt.md",
-      "anchor": "18. **Verify returned gate evidence proportionally and resume when accepted.**",
+      "anchor": "18. **Verify returned gate evidence proportionally and resume when accepted.** Action completion is not runtime/provider/device acceptance unless declared evidence passes. Once `EVIDENCE_ACCEPTANCE` is satisfied, treat that accepted return evidence as the resume signal and continue at `RESUME_AT` without asking for a redundant `proceed`, unless the handoff explicitly requires a separate post-evidence approval. Routine machine waits inside already-authorized work (for example CI/check completion, bounded propagation, expected service restart, or retryable tool/provider transport) are not operator gates: boundedly wait/recheck and continue automatically when accepted evidence arrives. If the next packet/slice is already authorized, its prerequisites are satisfied, and no declared convergence checkpoint or stronger gate intervenes, continue into it without requesting a generic acknowledgement.",
       "required": true,
       "kind": "orchestration_step"
     },
@@ -4900,7 +4900,8 @@
         }
       ],
       "acceptance_scenarios": [
-        "machine wait survives polling/retry and resumes on matching current evidence"
+        "machine wait survives polling/retry and resumes on matching current evidence",
+        "already-authorized routine machine wait does not become an operator gate: bounded recheck resumes automatically and enters an already-authorized ready successor unless a declared checkpoint or stronger gate intervenes"
       ],
       "closure_status": "proven"
     },

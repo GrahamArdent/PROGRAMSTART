@@ -127,7 +127,9 @@
         "local_success_as_parent_completion",
         "stale_approval_consequence",
         "duplicate_semantic_effect"
-      ]
+      ],
+      "expected_disposition": "park_child_gate_continue_independent_siblings",
+      "expected_parent_disposition": "ACTIVE"
     },
     {
       "id": "J",
@@ -141,7 +143,9 @@
         "local_success_as_parent_completion",
         "stale_approval_consequence",
         "duplicate_semantic_effect"
-      ]
+      ],
+      "expected_disposition": "fence_colliding_child_continue_disjoint_siblings",
+      "expected_parent_disposition": "ACTIVE"
     },
     {
       "id": "K",
@@ -155,7 +159,9 @@
         "local_success_as_parent_completion",
         "stale_approval_consequence",
         "duplicate_semantic_effect"
-      ]
+      ],
+      "expected_disposition": "wait_dependent_descendant_continue_independent_work",
+      "expected_parent_disposition": "ACTIVE"
     },
     {
       "id": "L",
@@ -169,7 +175,9 @@
         "local_success_as_parent_completion",
         "stale_approval_consequence",
         "duplicate_semantic_effect"
-      ]
+      ],
+      "expected_disposition": "preserve_parent_until_all_objective_obligations_terminal",
+      "expected_parent_disposition": "ACTIVE"
     },
     {
       "id": "M",
@@ -183,7 +191,9 @@
         "local_success_as_parent_completion",
         "stale_approval_consequence",
         "duplicate_semantic_effect"
-      ]
+      ],
+      "expected_disposition": "report_and_continue",
+      "expected_parent_disposition": "UNCHANGED"
     },
     {
       "id": "N",
@@ -197,7 +207,9 @@
         "local_success_as_parent_completion",
         "stale_approval_consequence",
         "duplicate_semantic_effect"
-      ]
+      ],
+      "expected_disposition": "use_authorized_alternative_or_owner_route_then_resume",
+      "expected_parent_disposition": "ACTIVE"
     },
     {
       "id": "O",
@@ -211,7 +223,9 @@
         "local_success_as_parent_completion",
         "stale_approval_consequence",
         "duplicate_semantic_effect"
-      ]
+      ],
+      "expected_disposition": "exhaustion_classification_only_after_bounded_search",
+      "expected_parent_disposition": "ACTIVE_OR_WAITING"
     },
     {
       "id": "P",
@@ -225,7 +239,9 @@
         "local_success_as_parent_completion",
         "stale_approval_consequence",
         "duplicate_semantic_effect"
-      ]
+      ],
+      "expected_disposition": "validate_subjective_branch_continue_independent_siblings",
+      "expected_parent_disposition": "ACTIVE"
     },
     {
       "id": "Q",
@@ -239,7 +255,9 @@
         "local_success_as_parent_completion",
         "stale_approval_consequence",
         "duplicate_semantic_effect"
-      ]
+      ],
+      "expected_disposition": "protect_risky_consequence_continue_safe_remediation_and_unrelated_work",
+      "expected_parent_disposition": "ACTIVE"
     },
     {
       "id": "R",
@@ -253,7 +271,9 @@
         "local_success_as_parent_completion",
         "stale_approval_consequence",
         "duplicate_semantic_effect"
-      ]
+      ],
+      "expected_disposition": "invalidate_stale_approval_revalidate_before_consequence",
+      "expected_parent_disposition": "ACTIVE_OR_WAITING"
     }
   ]
 }

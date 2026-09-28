@@ -16,6 +16,9 @@ ALLOWED = {
 def test_control_transfer_fixture_is_complete_and_non_authoritative():
     data = json.loads(FIXTURE.read_text(encoding="utf-8"))
     assert data["schema_version"] == "1.0"
+    assert data["observed_at"] == "2026-09-28"
+    assert len(data["evidence_basis"]) >= 3
+    assert data["invalidation"]
     assert "never execution authority" in data["purpose"]
     cases = data["cases"]
     assert {case["id"] for case in cases} == REQUIRED_IDS

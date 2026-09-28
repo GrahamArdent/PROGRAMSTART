@@ -1,5 +1,5 @@
 {
-  "fixture_version": "1.0",
+  "fixture_version": "1.1",
   "fixture_type": "programstart.accepted_outcome_decomposition_fixture",
   "source": {
     "kind": "chat",
@@ -9,9 +9,55 @@
   "decision_closure": {
     "coverage_status": "challenged",
     "material_current_accepted_outcomes": [
-      "dc28-001",
-      "dc28-002",
-      "dc28-003"
+      {
+        "id": "T-AC-01",
+        "acceptance_state": "accepted",
+        "currentness_state": "current",
+        "summary": "Decision Closure is a reusable PROGRAMSTART semantic capability; the former standalone Decision Lifecycle runtime is not the production owner of this workflow.",
+        "settlement_evidence_ref": "tests/evidence/decision_closure/2026-09-28-decision-to-matrix-natural-test.json#decision_closure_result.accepted_current[T-AC-01]"
+      },
+      {
+        "id": "T-AC-02",
+        "acceptance_state": "accepted",
+        "currentness_state": "current",
+        "summary": "PROGRAMSTART should use a small Outcome Decomposition step after Decision Closure rather than create a new Decision Consequence Compiler/subsystem.",
+        "settlement_evidence_ref": "tests/evidence/decision_closure/2026-09-28-decision-to-matrix-natural-test.json#decision_closure_result.accepted_current[T-AC-02]"
+      },
+      {
+        "id": "T-AC-03",
+        "acceptance_state": "accepted",
+        "currentness_state": "current",
+        "summary": "Accepted/current decisions being operationalized must become protected outcomes and complete outcome obligations before Matrix projection.",
+        "settlement_evidence_ref": "tests/evidence/decision_closure/2026-09-28-decision-to-matrix-natural-test.json#decision_closure_result.accepted_current[T-AC-03]"
+      },
+      {
+        "id": "T-AC-04",
+        "acceptance_state": "accepted",
+        "currentness_state": "current",
+        "summary": "The Matrix receives current operational obligations and traceability, not the full historical conversation; Work Packet derivation remains downstream.",
+        "settlement_evidence_ref": "tests/evidence/decision_closure/2026-09-28-decision-to-matrix-natural-test.json#decision_closure_result.accepted_current[T-AC-04]"
+      },
+      {
+        "id": "T-AC-05",
+        "acceptance_state": "accepted",
+        "currentness_state": "current",
+        "summary": "Parent completion must be judged against the original protected outcome, not merely completion of derived tasks or Work Packets.",
+        "settlement_evidence_ref": "tests/evidence/decision_closure/2026-09-28-decision-to-matrix-natural-test.json#decision_closure_result.accepted_current[T-AC-05]"
+      },
+      {
+        "id": "T-AC-06",
+        "acceptance_state": "accepted",
+        "currentness_state": "current",
+        "summary": "Conversational acceptance must not create ad-hoc execution for a materially new or changed objective; the settled decision delta must traverse Decision Closure, outcome decomposition, and the Matrix boundary first, while already-reconciled continuation need not rescan the whole conversation.",
+        "settlement_evidence_ref": "tests/evidence/decision_closure/2026-09-28-decision-to-matrix-natural-test.json#decision_closure_result.accepted_current[T-AC-06]"
+      },
+      {
+        "id": "T-AC-07",
+        "acceptance_state": "accepted",
+        "currentness_state": "current",
+        "summary": "This conversation is the natural falsification fixture and its findings must be durable before any live Matrix projection is authorized.",
+        "settlement_evidence_ref": "tests/evidence/decision_closure/2026-09-28-decision-to-matrix-natural-test.json#decision_closure_result.accepted_current[T-AC-07]"
+      }
     ],
     "non_projecting_outcomes": [
       {
@@ -32,7 +78,7 @@
     ]
   },
   "decomposition": {
-    "decision_ref": "conversation:2026-09-28:decision-to-matrix-workflow#accepted-current",
+    "decision_ref": "tests/fixtures/decision_closure/2026-09-28-decision-to-matrix.json#decision_closure.material_current_accepted_outcomes",
     "protected_outcome": "Material decisions accepted through conversational surfaces are reliably settled, decomposed into everything that must become true, represented as current Matrix obligations, executed through bounded work, and validated against the original intended outcome without ad-hoc conversational execution.",
     "obligations": [
       {
@@ -105,7 +151,7 @@
   },
   "matrix_projection_example": {
     "parent": {
-      "decision_ref": "conversation:2026-09-28:decision-to-matrix-workflow#accepted-current",
+      "decision_ref": "tests/fixtures/decision_closure/2026-09-28-decision-to-matrix.json#decision_closure.material_current_accepted_outcomes",
       "protected_outcome_ref": "decomposition.protected_outcome",
       "terminal_condition_ref": "decomposition.terminal_condition"
     },

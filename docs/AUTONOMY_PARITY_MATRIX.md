@@ -87,7 +87,7 @@ Reuse still-valid evidence; widen only on declared invalidation or convergence b
 
 | Hop | Class | Source | Target | Mechanism | Status | Evidence |
 |---|---|---|---|---|---|---|
-| HOP-001 | objective_ingress | Windows operator / admitted private source | Controller private natural-objective ingress | tailscale_private_http_v1 | proven | GrahamArdent/programstart-autonomous-controller#97 |
+| HOP-001 | objective_ingress | Authenticated operator/client source (client instance outside backbone topology) | Controller private natural-objective ingress | tailscale_private_http_v1 | proven | GrahamArdent/programstart-autonomous-controller#97<br>GrahamArdent/programstart-autonomous-controller#170<br>GrahamArdent/PROGRAMSTART#158 |
 | HOP-002 | objective_ingress | Mission-Control private operator surface | Controller private natural-objective ingress | Mission-Control private objective transport | partial | GrahamArdent/programstart-autonomous-controller#88<br>GrahamArdent/execution-node-control#218 |
 | HOP-003 | semantic_pipeline | Controller contextual runtime | PROGRAMSTART JIT / intent runtime | installed PROGRAMSTART exact behavior selector and intent adapter | proven | GrahamArdent/programstart-autonomous-controller#102<br>GrahamArdent/PROGRAMSTART#145 |
 | HOP-004 | semantic_pipeline | PROGRAMSTART bounded intent runtime | Compute semantic relay | local Unix semantic relay | proven | GrahamArdent/programstart-autonomous-controller#97 |

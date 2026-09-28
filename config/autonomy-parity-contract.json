@@ -6123,9 +6123,9 @@
     {
       "id": "HOP-001",
       "class": "objective_ingress",
-      "source": "Windows operator / admitted private source",
+      "source": "Authenticated operator/client source (client instance outside backbone topology)",
       "target": "Controller private natural-objective ingress",
-      "purpose": "Submit ordinary natural intent without ChatGPT acting as command transport.",
+      "purpose": "Submit ordinary natural intent through the logical authenticated objective-ingress capability without ChatGPT acting as command transport or any specific client becoming backbone topology.",
       "general_mechanism": "tailscale_private_http_v1",
       "required_behavior_refs": [
         "semantic_objective_ingress",
@@ -6134,10 +6134,13 @@
       ],
       "instance_status": "proven",
       "evidence_refs": [
-        "GrahamArdent/programstart-autonomous-controller#97"
+        "GrahamArdent/programstart-autonomous-controller#97",
+        "GrahamArdent/programstart-autonomous-controller#170",
+        "GrahamArdent/PROGRAMSTART#158"
       ],
       "invalidation": [
-        "Controller ingress release, source allowlist, identity, bind, or request contract changes."
+        "Controller ingress release, logical ingress contract, source authentication/admission policy, bind, or request contract changes.",
+        "A specific client/terminal becomes required for downstream backbone health or continuation after durable admission."
       ],
       "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
     },

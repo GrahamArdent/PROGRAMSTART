@@ -202,7 +202,7 @@ A project MAY keep at most one active replaceable `CURRENT_WORK_PACKET.md` unles
 
 If the packet needs its own backlog, milestones, or independent sequencing, it is too large. Split it.
 
-### 3.1 Control-transfer / branch-propagation conformance rule
+### Control-transfer / branch-propagation conformance rule
 
 Control transfer is a **scoped execution disposition**, not a new lifecycle or authority layer.
 

@@ -122,3 +122,78 @@ The contract stays in PROGRAMSTART because the semantics are reusable methodolog
 It is **not** added to every generated child repository in this slice. Distribution/materialization into generated repos is a separate concern and should be reconciled with the active generated-repo transition work rather than widening this contract-placement change.
 
 Likewise, Matrix gateway/storage/mandatory-ingress implementation remains outside this contract-placement objective.
+
+
+## 10. Accepted-outcome decomposition and Matrix handoff
+
+Decision Closure answers **what was decided**. When an accepted, current material outcome is to be operationalized, PROGRAMSTART must next derive **what must become true because of that decision** before bounded execution work is selected.
+
+This is an **outcome decomposition**, not a new lifecycle, planner, backlog, authority source, or extension of the Decision-Closure receipt into execution state.
+
+### 10.1 Eligibility
+
+Decompose only an outcome that is both:
+
+- `acceptance_state: accepted`; and
+- `currentness_state: current`.
+
+Rejected/not-accepted, unresolved, superseded, routine-excluded, or historical outcomes remain useful Decision-Closure evidence but do not silently become current Matrix obligations.
+
+### 10.2 Derived handoff
+
+For each eligible material outcome being operationalized, derive the smallest sufficient handoff containing:
+
+- `decision_ref` — stable reference to the settled Decision-Closure outcome or its durable owner record;
+- `protected_outcome` — observable result the accepted decision intends to make true;
+- `obligations[]` — the minimum complete set of outcome obligations that must become true;
+- `dependencies[]` — only material relationships needed to understand obligation readiness/order;
+- `acceptance_conditions[]` — evidence conditions that demonstrate the obligations/protected outcome;
+- `terminal_condition` — the condition under which the parent outcome can truthfully close;
+- `invalidation_conditions[]` — events/evidence that require decomposition/currentness to be reconsidered.
+
+Outcome obligations describe **required truths/results**, not prematurely invented implementation tasks. Owning project/runtime mechanisms determine implementation after reconciliation.
+
+The handoff is derived/reconstructable and must not become a second copy of historical Decision-Closure state.
+
+### 10.3 Completeness Challenge
+
+Before a decomposition may be projected as complete, challenge it with:
+
+> **Could every listed obligation be satisfied while the protected outcome is still materially false?**
+
+If yes, the decomposition is incomplete. Add/correct the missing outcome obligation or narrow/reshape the protected outcome before downstream projection.
+
+This Challenge is distinct from Decision Closure's source-coverage/omission Challenge:
+
+- **source coverage** asks whether material outcomes from the declared source were missed;
+- **outcome completeness** asks whether the accepted decision's derived obligations are sufficient to make its protected outcome true.
+
+Neither permits a self-attested universal `complete=true`; retain evidence/residuals appropriate to the fixture or consumer.
+
+### 10.4 Matrix projection boundary
+
+After the decomposition survives the completeness Challenge, a Matrix/read-model consumer may project the **current** operational view, including:
+
+- the protected outcome as parent objective/outcome;
+- current obligations and their relationships/dependencies;
+- acceptance and terminal conditions;
+- current status/blocker/evidence/currentness references as supplied by their existing owners;
+- the `decision_ref` needed to trace the operational view back to the settled semantic outcome.
+
+Do not project rejected/superseded/history-only outcomes as current obligations merely to preserve conversation history. Decision Closure/owning decision records retain that history.
+
+Matrix projection does not select implementation by itself. Existing PROGRAMSTART Work Packet semantics derive the bounded current executable slice only after the current obligations have been reconciled into the operational view.
+
+### 10.5 Closure invariant
+
+Task or Work Packet completion is not sufficient parent closure.
+
+Before the parent outcome is considered fulfilled, re-evaluate the original `protected_outcome` against current acceptance evidence. If all known tasks are complete but the protected outcome remains false or materially unproven, the objective remains open and the decomposition must be challenged/reconciled rather than falsely terminalized.
+
+### 10.6 Natural fixture
+
+The first natural fixture for this extension is the 2026-09-28 conversation that challenged Decision Lifecycle placement, retained Decision Closure in PROGRAMSTART, rejected a new consequence-planner subsystem, and accepted:
+
+`conversation -> Decision Closure -> protected outcome -> outcome decomposition -> completeness Challenge -> Matrix -> Work Packet -> execution/evidence -> protected-outcome validation`.
+
+The fixture must preserve superseded/rejected/unresolved discussion without projecting it as current obligations, and must demonstrate that an intentionally incomplete obligation set fails the outcome-completeness Challenge.

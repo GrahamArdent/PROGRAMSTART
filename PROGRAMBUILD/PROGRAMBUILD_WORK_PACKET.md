@@ -202,27 +202,6 @@ A project MAY keep at most one active replaceable `CURRENT_WORK_PACKET.md` unles
 
 If the packet needs its own backlog, milestones, or independent sequencing, it is too large. Split it.
 
-### Control-transfer / branch-propagation conformance rule
-
-Control transfer is a **scoped execution disposition**, not a new lifecycle or authority layer.
-
-For any event that could pause, hand off, protect, or close work:
-
-1. classify the smallest affected action, consequence, branch, or shared mutation surface;
-2. keep independently authorized sibling work executable unless current dependency/conflict evidence proves it cannot proceed safely;
-3. propagate a pause/handoff upward only when no independent authorized machine-actionable work remains for the parent objective;
-4. treat reports, status updates, evidence arrivals, PR/test/packet completion, and other response boundaries as observability only unless current authority independently changes execution disposition;
-5. treat local completion as local: a child/packet/PR/test becoming terminal MUST NOT make its parent objective terminal while accepted objective obligations remain;
-6. machine-safe dependency/wait/automation gaps MUST follow bounded owner/equivalent-capability/remediation reasoning before a human gate is emitted;
-7. a genuine human gate MUST bind the exact decision/consequence, return evidence, invalidation/currentness condition, safe work while waiting, and resume point;
-8. stale gate/approval/evidence MUST be revalidated before consequence;
-9. a protective restriction MAY suspend the affected risky consequence but MUST NOT silently prohibit safe diagnosis, remediation, or unrelated authorized work;
-10. restart/replay MUST preserve semantic effect identity and MUST NOT duplicate consequence or resurrect terminal work.
-
-`REPORT` is not an execution state. `BLOCKED` is not a convenient terminal state: the narrow blocker scope, safe lanes, owner route, equivalent capability, remediation path, and truthful parent terminal condition must be evaluated first.
-
-This rule composes existing blocker scope, safe-lane, coordinated-lane, operator-gate, dependency, currentness, Challenge, and objective-level convergence semantics. It does not create a second Controller, scheduler, state machine, queue, or authority source.
-
 ### 3.1 Cross-repository dependency rule
 
 A cross-repository relationship is a **derived, task-scoped authority/dependency graph**. It is canonical for nothing.

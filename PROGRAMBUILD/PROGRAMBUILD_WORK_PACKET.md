@@ -257,6 +257,7 @@ A useful handoff MUST state:
 Handoff rules:
 
 1. Do not ask the operator to restate facts or evidence already available from project/repository/runtime authority.
+1a. Before declaring a human gate or emitting an exact copy/paste command, path, identifier, current-version assertion, or similarly actionable handoff, verify every material machine-observable premise that currently available authoritative tools can check **and the material dependency closure consumed by that action** on the actual target where practical. Perform already-authorized machine-safe preparation yourself. If a material premise or dependency cannot be verified, mark it unresolved and do not present the handoff as exact. Hypotheses may guide investigation; they must not silently become operator instructions.
 2. Do not ask for raw secrets, refresh tokens, private keys, service-role keys, passwords, or similarly sensitive values in ordinary handoff evidence. Point to the secure provider/deployment/device surface that owns them.
 3. Distinguish **operator action completed** from **system acceptance verified**. A console click or credential entry is not itself proof that the dependent runtime behavior works.
 4. Request the smallest non-secret return evidence that can close the uncertainty. Do not demand broad screenshots/log dumps when a resource ID, status/result, or narrow smoke outcome is enough.

@@ -111,7 +111,7 @@ Instead:
 13. derive one compact bounded work packet;
 14. activate an inline/referenced completion checklist only when omission risk or an existing applicable checklist warrants it;
 15. execute one selected allowed slice with connected tools;
-16. derive an exact operator/manual handoff when the real next action is outside the current environment;
+16. derive an exact operator/manual handoff when the real next action is outside the current environment; before emitting it, verify every material machine-observable premise and material dependency closure that available authoritative tools can check on the actual target (for example path, identifier, current version/SHA, service/resource existence, consumed files/artifacts, and command prerequisites), perform already-authorized machine-safe preparation yourself, and label any unverified material premise unresolved rather than guessing it into an operator instruction;
 17. verify returned gate evidence when it comes back and, if it satisfies the declared `EVIDENCE_ACCEPTANCE`, resume at `RESUME_AT` without requiring a redundant second `proceed` unless the handoff explicitly requires a separate post-evidence approval;
 18. verify proportionally against the actual completed change;
 19. reconcile any active checklist against actual evidence; unresolved required items prevent truthful closure;

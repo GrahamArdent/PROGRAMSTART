@@ -15,7 +15,7 @@
   "source_files": [
     {
       "path": ".github/prompts/start-programstart-project.prompt.md",
-      "sha256": "7815bac2-f8fb9c58-8cacb269-04170142-d8b91886-321b7bb1-e020a24d-01c0208d",
+      "sha256": "183c2f0d-da6a9873-d27417f2-acb3fd72-82d90876-6cb3a8fa-bc4081a1-f1065774",
       "role": "primary autonomy orchestration contract"
     },
     {
@@ -25,7 +25,7 @@
     },
     {
       "path": "PROGRAMBUILD/PROGRAMBUILD_WORK_PACKET.md",
-      "sha256": "bf8c9994-27345154-d4048063-d899c28b-78ff7ef3-4be7daf9-600e7268-b93c646f",
+      "sha256": "a4064bca-4c331c3e-b41c07a7-5d6a4313-a9aefc71-7be7d54c-355eaa8f-830f1e34",
       "role": "bounded packet semantics"
     },
     {
@@ -1917,7 +1917,7 @@
     {
       "id": "prompt.normative.026",
       "source_path": ".github/prompts/start-programstart-project.prompt.md",
-      "anchor": "16. derive an exact operator/manual handoff when the real next action is outside the current environment;",
+      "anchor": "16. derive an exact operator/manual handoff when the real next action is outside the current environment; before emitting it, verify every material machine-observable premise and material dependency closure that available authoritative tools can check on the actual target (for example path, identifier, current version/SHA, service/resource existence, consumed files/artifacts, and command prerequisites), perform already-authorized machine-safe preparation yourself, and label any unverified material premise unresolved rather than guessing it into an operator instruction;",
       "required": true,
       "kind": "prompt_normative_clause",
       "section": "Environment Boundary"

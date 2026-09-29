@@ -117,7 +117,7 @@ class ContinuationDisposition(StrEnum):
 class ObjectiveContinuationDecision(_StrictModel):
     disposition: ContinuationDisposition
     semantic_effect_token: str | None = None
-    wait: MachineWaitRegistration | None = None
+    wait: MachineWaitRegistration | None = Field(default=None, exclude_if=lambda value: value is None)
 
     @model_validator(mode="after")
     def payload_matches_disposition(self) -> ObjectiveContinuationDecision:

@@ -1,0 +1,175 @@
+{
+  "fixture_version": "1.1",
+  "fixture_type": "programstart.accepted_outcome_decomposition_fixture",
+  "source": {
+    "kind": "chat",
+    "ref": "conversation:2026-09-28:decision-to-matrix-workflow",
+    "scope": "Conversation from Decision Lifecycle placement challenge through acceptance of Decision Closure -> protected outcome -> outcome decomposition -> Matrix workflow."
+  },
+  "decision_closure": {
+    "coverage_status": "challenged",
+    "material_current_accepted_outcomes": [
+      {
+        "id": "T-AC-01",
+        "acceptance_state": "accepted",
+        "currentness_state": "current",
+        "summary": "Decision Closure is a reusable PROGRAMSTART semantic capability; the former standalone Decision Lifecycle runtime is not the production owner of this workflow.",
+        "settlement_evidence_ref": "tests/evidence/decision_closure/2026-09-28-decision-to-matrix-natural-test.json#decision_closure_result.accepted_current[T-AC-01]"
+      },
+      {
+        "id": "T-AC-02",
+        "acceptance_state": "accepted",
+        "currentness_state": "current",
+        "summary": "PROGRAMSTART should use a small Outcome Decomposition step after Decision Closure rather than create a new Decision Consequence Compiler/subsystem.",
+        "settlement_evidence_ref": "tests/evidence/decision_closure/2026-09-28-decision-to-matrix-natural-test.json#decision_closure_result.accepted_current[T-AC-02]"
+      },
+      {
+        "id": "T-AC-03",
+        "acceptance_state": "accepted",
+        "currentness_state": "current",
+        "summary": "Accepted/current decisions being operationalized must become protected outcomes and complete outcome obligations before Matrix projection.",
+        "settlement_evidence_ref": "tests/evidence/decision_closure/2026-09-28-decision-to-matrix-natural-test.json#decision_closure_result.accepted_current[T-AC-03]"
+      },
+      {
+        "id": "T-AC-04",
+        "acceptance_state": "accepted",
+        "currentness_state": "current",
+        "summary": "The Matrix receives current operational obligations and traceability, not the full historical conversation; Work Packet derivation remains downstream.",
+        "settlement_evidence_ref": "tests/evidence/decision_closure/2026-09-28-decision-to-matrix-natural-test.json#decision_closure_result.accepted_current[T-AC-04]"
+      },
+      {
+        "id": "T-AC-05",
+        "acceptance_state": "accepted",
+        "currentness_state": "current",
+        "summary": "Parent completion must be judged against the original protected outcome, not merely completion of derived tasks or Work Packets.",
+        "settlement_evidence_ref": "tests/evidence/decision_closure/2026-09-28-decision-to-matrix-natural-test.json#decision_closure_result.accepted_current[T-AC-05]"
+      },
+      {
+        "id": "T-AC-06",
+        "acceptance_state": "accepted",
+        "currentness_state": "current",
+        "summary": "Conversational acceptance must not create ad-hoc execution for a materially new or changed objective; the settled decision delta must traverse Decision Closure, outcome decomposition, and the Matrix boundary first, while already-reconciled continuation need not rescan the whole conversation.",
+        "settlement_evidence_ref": "tests/evidence/decision_closure/2026-09-28-decision-to-matrix-natural-test.json#decision_closure_result.accepted_current[T-AC-06]"
+      },
+      {
+        "id": "T-AC-07",
+        "acceptance_state": "accepted",
+        "currentness_state": "current",
+        "summary": "This conversation is the natural falsification fixture and its findings must be durable before any live Matrix projection is authorized.",
+        "settlement_evidence_ref": "tests/evidence/decision_closure/2026-09-28-decision-to-matrix-natural-test.json#decision_closure_result.accepted_current[T-AC-07]"
+      }
+    ],
+    "non_projecting_outcomes": [
+      {
+        "id": "dc28-h01",
+        "state": "superseded",
+        "summary": "Create a separate Decision Consequence Compilation subsystem."
+      },
+      {
+        "id": "dc28-h02",
+        "state": "superseded",
+        "summary": "Use the standalone Decision Lifecycle runtime as the production owner of the workflow."
+      },
+      {
+        "id": "dc28-h03",
+        "state": "unresolved_or_historical",
+        "summary": "Implementation details discussed before the bounded Outcome Decomposition contract was selected."
+      }
+    ]
+  },
+  "decomposition": {
+    "decision_ref": "tests/fixtures/decision_closure/2026-09-28-decision-to-matrix.json#decision_closure.material_current_accepted_outcomes",
+    "protected_outcome": "Material decisions accepted through conversational surfaces are reliably settled, decomposed into everything that must become true, represented as current Matrix obligations, executed through bounded work, and validated against the original intended outcome without ad-hoc conversational execution.",
+    "obligations": [
+      {
+        "id": "DCM-01",
+        "outcome": "Material conversational outcomes can be captured and classified as accepted, rejected/not accepted, deferred or unresolved, superseded, or routine/non-durable."
+      },
+      {
+        "id": "DCM-02",
+        "outcome": "Material source omissions are challenged before the Decision-Closure result is treated as sufficiently covered for the declared source scope."
+      },
+      {
+        "id": "DCM-03",
+        "outcome": "Each accepted and current material decision being operationalized has an explicit protected outcome."
+      },
+      {
+        "id": "DCM-04",
+        "outcome": "Each protected outcome is decomposed into the minimum complete set of required outcome obligations rather than prematurely invented implementation tasks."
+      },
+      {
+        "id": "DCM-05",
+        "outcome": "Outcome decomposition is challenged so all listed obligations cannot pass while the protected outcome remains materially false."
+      },
+      {
+        "id": "DCM-06",
+        "outcome": "Only current operational obligations, relationships, acceptance conditions, terminal conditions, currentness/evidence references, and traceability to the settled decision are projected to Matrix; historical/rejected/superseded discussion is not projected as current work."
+      },
+      {
+        "id": "DCM-07",
+        "outcome": "Bounded Work Packets are derived only after the current obligation view exists; conversational acceptance does not jump directly to ad-hoc implementation."
+      },
+      {
+        "id": "DCM-08",
+        "outcome": "Execution evidence reconciles the current obligation view and parent closure requires re-validation of the original protected outcome."
+      },
+      {
+        "id": "DCM-09",
+        "outcome": "A fresh session can reconstruct what must currently become true from durable Decision-Closure/decomposition/Matrix references without rereading the originating chat."
+      }
+    ],
+    "dependencies": [
+      "Decision Closure must settle accepted/current semantic outcomes before operational decomposition.",
+      "Matrix projection consumes the challenged decomposition before Work Packet selection.",
+      "Protected-outcome validation consumes execution/acceptance evidence before parent closure."
+    ],
+    "acceptance_conditions": [
+      "Superseded, rejected/not-accepted, unresolved, and history-only outcomes do not silently become current Matrix obligations.",
+      "The complete fixture passes the outcome-completeness Challenge.",
+      "The intentionally incomplete counterexample fails the outcome-completeness Challenge.",
+      "A Matrix consumer has enough semantic information to project the parent outcome and current obligations without rereading the chat.",
+      "No Decision-Closure receipt, decomposition, or Matrix projection grants execution authority merely by existing."
+    ],
+    "terminal_condition": "All current required obligations are satisfied with current evidence and the original protected outcome is independently re-evaluated as materially true; task completion alone is insufficient.",
+    "invalidation_conditions": [
+      "A material accepted decision is superseded or reversed.",
+      "A source-coverage Challenge finds a previously omitted material current decision.",
+      "Outcome-completeness Challenge or execution evidence reveals a missing obligation.",
+      "The protected outcome materially changes.",
+      "Current evidence disproves an obligation or terminal-condition premise."
+    ]
+  },
+  "completeness_challenge": {
+    "question": "Could every listed obligation be satisfied while the protected outcome is still materially false?",
+    "complete_fixture_result": "no_material_counterexample_found",
+    "counterexample": {
+      "removed_obligation": "DCM-08",
+      "result": "fail",
+      "failure_sequence": "All implementation-oriented obligations can be marked satisfied while execution evidence never returns to the parent outcome. Tasks can therefore finish while the conversational decision's intended outcome remains false or unproven.",
+      "required_correction": "Restore explicit evidence reconciliation and protected-outcome validation before parent closure."
+    }
+  },
+  "matrix_projection_example": {
+    "parent": {
+      "decision_ref": "tests/fixtures/decision_closure/2026-09-28-decision-to-matrix.json#decision_closure.material_current_accepted_outcomes",
+      "protected_outcome_ref": "decomposition.protected_outcome",
+      "terminal_condition_ref": "decomposition.terminal_condition"
+    },
+    "current_obligation_refs": [
+      "DCM-01",
+      "DCM-02",
+      "DCM-03",
+      "DCM-04",
+      "DCM-05",
+      "DCM-06",
+      "DCM-07",
+      "DCM-08",
+      "DCM-09"
+    ],
+    "excluded_history_refs": [
+      "dc28-h01",
+      "dc28-h02",
+      "dc28-h03"
+    ]
+  }
+}

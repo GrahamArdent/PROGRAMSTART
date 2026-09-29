@@ -314,14 +314,19 @@ def test_explicit_machine_and_human_waits_require_admitted_conditions(context) -
     machine_decision = evaluate_objective_continuation(root, packet, authority, [machine])
     assert machine_decision.disposition == ContinuationDisposition.WAIT_MACHINE
     assert machine_decision.wait == registration
-    assert machine_decision.model_dump(mode="json", exclude_none=True)["wait"]["correlation_key"] == registration.correlation_key
+    assert (
+        machine_decision.model_dump(mode="json", exclude_none=True)["wait"]["correlation_key"]
+        == registration.correlation_key
+    )
     for changed in (
         {"work_packet_id": "WPK-foreign"},
         {"owner_repository": "example/foreign"},
         {"authority_version": "f" * 40},
         {"semantic_digest": "0" * 64},
     ):
-        foreign = machine.model_copy(update={"wait": registration.model_copy(update=changed)})
+        foreign = machine.model_copy(
+            update={"wait": registration.model_copy(update=changed)}
+        )
         assert (
             evaluate_objective_continuation(root, packet, authority, [foreign]).disposition
             == ContinuationDisposition.REORIENT

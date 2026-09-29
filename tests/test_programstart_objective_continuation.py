@@ -24,6 +24,7 @@ from scripts.programstart_objective_continuation import (  # noqa: E402
     EffectReadyEvidence,
     HumanWaitEvidence,
     MachineWaitEvidence,
+    MachineWaitRegistration,
     RootObjective,
     RootTerminalEvidence,
     evaluate_objective_continuation,
@@ -280,8 +281,28 @@ def test_root_terminality_must_be_proven_and_does_not_hide_bad_effect_evidence(c
 
 def test_explicit_machine_and_human_waits_require_admitted_conditions(context) -> None:
     root, packet, authority, binding = context
+    registration = MachineWaitRegistration(
+        run_id="run-1",
+        work_packet_id=packet.specification_id,
+        owner_repository=authority.owning_repository,
+        authority_version=authority.authority_commit,
+        semantic_digest=packet.semantic_digest,
+        awaited_proposition="exact CI terminal evidence",
+        trigger_source="github",
+        trigger_type="workflow_run",
+        correlation_key="ci:example/owner:123",
+        expected_conclusion="success",
+        expected_head_sha="c" * 40,
+        resume_at="repository.prepare:example/owner",
+        machine_safe_on_match=True,
+    )
     machine = MachineWaitEvidence(
-        evidence_id="machine", status="accepted", condition="verified actuator unavailable", active=True, **binding
+        evidence_id="machine",
+        status="accepted",
+        condition="verified actuator unavailable",
+        active=True,
+        wait=registration,
+        **binding,
     )
     human = HumanWaitEvidence(
         evidence_id="human",
@@ -290,7 +311,18 @@ def test_explicit_machine_and_human_waits_require_admitted_conditions(context) -
         active=True,
         **binding,
     )
-    assert evaluate_objective_continuation(root, packet, authority, [machine]).disposition == ContinuationDisposition.WAIT_MACHINE
+    machine_decision = evaluate_objective_continuation(root, packet, authority, [machine])
+    assert machine_decision.disposition == ContinuationDisposition.WAIT_MACHINE
+    assert machine_decision.wait == registration
+    assert machine_decision.model_dump(mode="json", exclude_none=True)["wait"]["correlation_key"] == registration.correlation_key
+    for changed in (
+        {"work_packet_id": "WPK-foreign"},
+        {"owner_repository": "example/foreign"},
+        {"authority_version": "f" * 40},
+        {"semantic_digest": "0" * 64},
+    ):
+        foreign = machine.model_copy(update={"wait": registration.model_copy(update=changed)})
+        assert evaluate_objective_continuation(root, packet, authority, [foreign]).disposition == ContinuationDisposition.REORIENT
     assert evaluate_objective_continuation(root, packet, authority, [human]).disposition == ContinuationDisposition.WAIT_HUMAN
     invented = human.model_copy(update={"admitted_gate_condition": "ask a person what to do"})
     assert evaluate_objective_continuation(root, packet, authority, [invented]).disposition == ContinuationDisposition.REORIENT

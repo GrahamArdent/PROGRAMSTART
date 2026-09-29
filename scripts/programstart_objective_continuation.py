@@ -117,7 +117,7 @@ class ContinuationDisposition(StrEnum):
 class ObjectiveContinuationDecision(_StrictModel):
     disposition: ContinuationDisposition
     semantic_effect_token: str | None = None
-    wait: MachineWaitRegistration | None = Field(default=None, exclude=True)
+    wait: MachineWaitRegistration | None = None
 
     @model_validator(mode="after")
     def payload_matches_disposition(self) -> ObjectiveContinuationDecision:
@@ -311,6 +311,13 @@ def evaluate_objective_continuation(
             if item.admitted_gate_condition not in packet.autonomy.human_gates:
                 return _reorient()
         elif item.condition not in packet.autonomy.temporary_automation_gaps:
+            return _reorient()
+        elif (
+            item.wait.work_packet_id != packet.specification_id
+            or item.wait.owner_repository != current_authority.owning_repository
+            or item.wait.authority_version != current_authority.authority_commit
+            or item.wait.semantic_digest != packet.semantic_digest
+        ):
             return _reorient()
         admitted_waits.append(item)
     if admitted_waits:

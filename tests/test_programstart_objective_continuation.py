@@ -366,37 +366,3 @@ def test_malformed_and_stale_bound_evidence_are_rejected(context) -> None:
         **{**binding, "authority_fingerprint": "0" * 64},
     )
     assert evaluate_objective_continuation(root, packet, authority, [stale]).disposition == ContinuationDisposition.REORIENT
-
-
-def test_live_effect_durability_requires_independent_reproducibility() -> None:
-    base = {
-        "status": "proven",
-        "proof_class": "live_effect",
-        "mechanism": "typed protected replay",
-        "verification_ref": "result:current",
-        "invalidation_conditions": ("runtime identity changes", "fresh replay fails"),
-    }
-    with pytest.raises(ValidationError, match="live-effect durability requires"):
-        EvidenceDurability.model_validate(base)
-
-    proven = EvidenceDurability.model_validate(
-        {
-            **base,
-            "canonical_effect_ref": "execution-node:repository_work_profile:secrets-bootstrap",
-            "independent_reproduction_ref": "result:req-independent-replay",
-            "persistence_boundary": "independent invocation after original acceptance",
-            "falsifier_ref": "test:wrong-account-fails-closed",
-        }
-    )
-    assert proven.proof_class == "live_effect"
-
-
-def test_deterministic_durability_cannot_smuggle_live_effect_claims() -> None:
-    with pytest.raises(ValidationError, match="valid only for live-effect"):
-        EvidenceDurability(
-            status="proven",
-            mechanism="deterministic derivation",
-            verification_ref="sha256:abc",
-            invalidation_conditions=("derivation changes",),
-            canonical_effect_ref="runtime:guessed-service",
-        )

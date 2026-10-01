@@ -188,6 +188,10 @@ For proof-bearing PROGRAMSTART evidence:
 - a green validator is not durable proof when the asserted checks were not actually executable or otherwise independently shown to run;
 - methodology changes implementing this invariant receive no exemption: their own proof must satisfy the same durability gate before merge.
 
+For a **live/runtime/provider effect**, durable proof has a stricter meaning than historical acceptance. The proof MUST identify the canonical effect from current owner/runtime truth, independently reproduce the accepted effect after the original acceptance event, cross a meaningful persistence boundary, retain an executable falsifier or negative-control reference, and retain a non-sensitive retest recipe plus invalidation conditions. A persisted PASS, terminal comment, CI result, or prior runtime receipt alone proves historical acceptance, not current live durability. Guessed service names, aliases, or reconstructed chat context MUST NOT substitute for canonical effect identity.
+
+Use these states when the distinction matters: `ACCEPTED` (passed once), `DURABILITY_PENDING` (accepted but independent durability proof not yet earned), `DURABLE` (independent reproduction/currentness/persistence/falsifier proven), and `INVALIDATED` (a declared invalidation condition or fresh replay failure fired).
+
 This invariant constrains proof consumption; it does not turn every observation into durable state or broaden project authority.
 
 ## 10. Safety and Privacy

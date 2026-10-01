@@ -45,7 +45,7 @@
     },
     {
       "path": "docs/PROGRAMSTART_LEARNING_LOOP.md",
-      "sha256": "393a55c6-617747a4-84249e52-93340c05-2a1cf6dc-c0191883-f5e61952-735d6712",
+      "sha256": "618ec42f-470066d0-03ee7b51-1afc624d-7e3357f1-d22dab2e-b9d59c63-ca695374",
       "role": "Learning Gate"
     },
     {
@@ -1592,6 +1592,13 @@
       "id": "support.learning.09",
       "source_path": "docs/PROGRAMSTART_LEARNING_LOOP.md",
       "anchor": "## 9. PROGRAMSTART Change Gate",
+      "required": true,
+      "kind": "supporting_methodology_section"
+    },
+    {
+      "id": "support.learning.09a",
+      "source_path": "docs/PROGRAMSTART_LEARNING_LOOP.md",
+      "anchor": "## 9a. Proof Durability Invariant",
       "required": true,
       "kind": "supporting_methodology_section"
     },
@@ -4736,6 +4743,7 @@
         "support.learning.03",
         "support.learning.07",
         "support.learning.09",
+        "support.learning.09a",
         "support.learning.12",
         "support.learning.13",
         "prompt.normative.032",

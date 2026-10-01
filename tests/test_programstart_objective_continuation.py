@@ -22,6 +22,7 @@ from scripts.programstart_objective_continuation import (  # noqa: E402
     CompletedEffectEvidence,
     ContinuationDisposition,
     EffectReadyEvidence,
+    EvidenceDurability,
     HumanWaitEvidence,
     MachineWaitEvidence,
     MachineWaitRegistration,
@@ -66,12 +67,22 @@ def context():
     return root, packet, authority, binding
 
 
+def _durability() -> EvidenceDurability:
+    return EvidenceDurability(
+        status="proven",
+        mechanism="executable regression",
+        verification_ref="test:durability",
+        invalidation_conditions=("proof mechanism changes",),
+    )
+
+
 def _ready(token: str, binding: dict[str, str], *, evidence_id: str = "ready") -> EffectReadyEvidence:
     return EffectReadyEvidence(
         evidence_id=evidence_id,
         status="proven",
         semantic_effect_token=token,
         preconditions_proven=True,
+        durability=_durability(),
         root_id=binding["root_id"],
         work_packet_specification_id=binding["work_packet_specification_id"],
         authority_fingerprint=binding["authority_fingerprint"],
@@ -179,6 +190,19 @@ def test_ready_evidence_contract_is_strict_and_proven(context) -> None:
         )
 
 
+def test_proven_evidence_requires_durability(context) -> None:
+    _, _, _, binding = context
+    payload = {
+        "evidence_id": "false-proof",
+        "status": "proven",
+        "semantic_effect_token": "inspect semantic state",
+        "preconditions_proven": True,
+        **binding,
+    }
+    with pytest.raises(ValidationError, match="proven evidence requires proven durability"):
+        EffectReadyEvidence.model_validate(payload)
+
+
 def test_root_objective_validator_uses_renamed_root_id() -> None:
     assert RootObjective(root_id="root-1", objective="Outcome").root_id == "root-1"
     with pytest.raises(ValidationError):
@@ -250,6 +274,7 @@ def test_explicit_bound_root_terminality(context, disposition: Literal["terminal
         disposition=disposition,
         evidence_scope="root_objective",
         basis="Root acceptance oracle is proven.",
+        durability=_durability(),
         **binding,
     )
     assert evaluate_objective_continuation(root, packet, authority, [item]).disposition.value == disposition
@@ -266,7 +291,7 @@ def test_root_terminality_must_be_proven_and_does_not_hide_bad_effect_evidence(c
         **binding,
     )
     assert evaluate_objective_continuation(root, packet, authority, [terminal]).disposition == ContinuationDisposition.REORIENT
-    proven = terminal.model_copy(update={"status": "proven"})
+    proven = terminal.model_copy(update={"status": "proven", "durability": _durability()})
     unsealed = CompletedEffectEvidence(
         evidence_id="bad-effect",
         status="accepted",

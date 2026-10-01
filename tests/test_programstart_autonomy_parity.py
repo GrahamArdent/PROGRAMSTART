@@ -14,7 +14,7 @@ def test_current_contract_is_complete_and_rendered_view_is_derived() -> None:
     assert _errors(contract) == []
     checked = copy.deepcopy(contract)
     assert parity.validate_contract(checked) == []
-    assert checked["_summary"]["source_obligations"] == 422
+    assert checked["_summary"]["source_obligations"] == 423
     assert checked["_summary"]["behaviors"] == 49
     assert checked["_summary"]["conversation_decisions"] == 28
     assert checked["_summary"]["hop_instances"] == 37
@@ -67,7 +67,7 @@ def test_supporting_methodology_heading_inventory_matches_contract() -> None:
         "support.planning.": 15,
         "support.challenge.": 12,
         "support.effective_autonomy.": 14,
-        "support.learning.": 13,
+        "support.learning.": 14,
         "support.cost.": 13,
     }
     for prefix, rel in specs.items():

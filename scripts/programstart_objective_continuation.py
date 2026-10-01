@@ -62,7 +62,7 @@ class EvidenceDurability(_StrictModel):
             self.falsifier_ref,
         )
         if self.proof_class == "live_effect" and any(item is None for item in live_refs):
-            raise ValueError("live-effect durability requires canonical identity, independent reproduction, persistence boundary, and falsifier")
+            raise ValueError(\n                "live-effect durability requires canonical identity, independent reproduction, persistence boundary, and falsifier"\n            )
         if self.proof_class == "deterministic" and any(item is not None for item in live_refs):
             raise ValueError("live-effect durability fields are valid only for live-effect proof")
         return self

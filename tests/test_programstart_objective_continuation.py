@@ -190,7 +190,6 @@ def test_ready_evidence_contract_is_strict_and_proven(context) -> None:
         )
 
 
-
 def test_proven_evidence_requires_durability(context) -> None:
     _, _, _, binding = context
     payload = {
@@ -202,7 +201,6 @@ def test_proven_evidence_requires_durability(context) -> None:
     }
     with pytest.raises(ValidationError, match="proven evidence requires proven durability"):
         EffectReadyEvidence.model_validate(payload)
-
 
 
 def test_root_objective_validator_uses_renamed_root_id() -> None:

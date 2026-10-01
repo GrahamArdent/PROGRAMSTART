@@ -174,6 +174,22 @@ Before changing PROGRAMSTART:
 
 After merge, mark the lesson `implemented` until a meaningful real retest earns `validated`.
 
+## 9a. Proof Durability Invariant
+
+**Evidence is not proof until the proof is durable.**
+
+A successful observation, command, check, CI run, receipt, PR result, runtime state, or acceptance artifact may be candidate evidence. It MUST NOT acquire or satisfy a `proven` status, authorize a downstream consequence, advance another PR/release/continuation, or establish terminality until its proof mechanism is itself durably verifiable.
+
+For proof-bearing PROGRAMSTART evidence:
+
+- durability must be explicit and machine-checkable rather than inferred from `status=proven`;
+- the verification mechanism/reference and invalidation conditions must be retained;
+- missing or unproven durability fails closed: treat the item as non-proof and do not progress a proof-gated consequence;
+- a green validator is not durable proof when the asserted checks were not actually executable or otherwise independently shown to run;
+- methodology changes implementing this invariant receive no exemption: their own proof must satisfy the same durability gate before merge.
+
+This invariant constrains proof consumption; it does not turn every observation into durable state or broaden project authority.
+
 ## 10. Safety and Privacy
 
 Learning records MUST NOT become a data-exfiltration path.

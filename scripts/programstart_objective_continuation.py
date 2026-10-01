@@ -61,7 +61,6 @@ class _BoundEvidence(_StrictModel):
     work_packet_specification_id: str = Field(min_length=1, max_length=256)
     authority_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
 
-
     @model_validator(mode="after")
     def proof_requires_durability(self) -> _BoundEvidence:
         if self.status == "proven" and self.durability is None:

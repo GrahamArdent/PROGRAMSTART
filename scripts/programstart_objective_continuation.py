@@ -42,29 +42,14 @@ class RootObjective(_StrictModel):
 
 class EvidenceDurability(_StrictModel):
     status: Literal["proven"]
-    proof_class: Literal["deterministic", "live_effect"] = "deterministic"
     mechanism: str = Field(min_length=1, max_length=512)
     verification_ref: str = Field(min_length=1, max_length=2048)
     invalidation_conditions: tuple[str, ...] = Field(min_length=1)
-    canonical_effect_ref: str | None = Field(default=None, min_length=1, max_length=2048)
-    independent_reproduction_ref: str | None = Field(default=None, min_length=1, max_length=2048)
-    persistence_boundary: str | None = Field(default=None, min_length=1, max_length=512)
-    falsifier_ref: str | None = Field(default=None, min_length=1, max_length=2048)
 
     @model_validator(mode="after")
     def durability_must_be_explicit(self) -> EvidenceDurability:
         if any(not item.strip() for item in self.invalidation_conditions):
             raise ValueError("durability invalidation conditions must be non-empty")
-        live_refs = (
-            self.canonical_effect_ref,
-            self.independent_reproduction_ref,
-            self.persistence_boundary,
-            self.falsifier_ref,
-        )
-        if self.proof_class == "live_effect" and any(item is None for item in live_refs):
-            raise ValueError(\n                "live-effect durability requires canonical identity, independent reproduction, persistence boundary, and falsifier"\n            )
-        if self.proof_class == "deterministic" and any(item is not None for item in live_refs):
-            raise ValueError("live-effect durability fields are valid only for live-effect proof")
         return self
 
 

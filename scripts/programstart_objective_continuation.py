@@ -40,12 +40,35 @@ class RootObjective(_StrictModel):
         return self
 
 
+class EvidenceDurability(_StrictModel):
+    status: Literal["proven"]
+    mechanism: str = Field(min_length=1, max_length=512)
+    verification_ref: str = Field(min_length=1, max_length=2048)
+    invalidation_conditions: tuple[str, ...] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def durability_must_be_explicit(self) -> EvidenceDurability:
+        if any(not item.strip() for item in self.invalidation_conditions):
+            raise ValueError("durability invalidation conditions must be non-empty")
+        return self
+
+
 class _BoundEvidence(_StrictModel):
     evidence_id: str = Field(min_length=1, max_length=256)
     status: Literal["accepted", "proven"]
+    durability: EvidenceDurability | None = None
     root_id: str = Field(min_length=1, max_length=256)
     work_packet_specification_id: str = Field(min_length=1, max_length=256)
     authority_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+
+    @model_validator(mode="after")
+    def proof_requires_durability(self) -> _BoundEvidence:
+        if self.status == "proven" and self.durability is None:
+            raise ValueError("proven evidence requires proven durability")
+        if self.status != "proven" and self.durability is not None:
+            raise ValueError("durability proof is valid only for proven evidence")
+        return self
 
 
 class CompletedEffectEvidence(_BoundEvidence):
@@ -227,6 +250,17 @@ def derive_effect_readiness(
         authority_fingerprint=current_fingerprint,
         semantic_effect_token=ready_effect,
         preconditions_proven=True,
+        durability=EvidenceDurability(
+            status="proven",
+            mechanism="deterministic derivation from current bound completion evidence",
+            verification_ref=f"sha256:{digest}",
+            invalidation_conditions=(
+                "work packet integrity changes",
+                "authority fingerprint changes",
+                "completion evidence binding changes",
+                "effect-readiness derivation semantics change",
+            ),
+        ),
     )
 
 

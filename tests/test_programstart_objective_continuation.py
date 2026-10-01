@@ -271,6 +271,7 @@ def test_explicit_bound_root_terminality(context, disposition: Literal["terminal
         disposition=disposition,
         evidence_scope="root_objective",
         basis="Root acceptance oracle is proven.",
+        durability=_durability(),
         **binding,
     )
     assert evaluate_objective_continuation(root, packet, authority, [item]).disposition.value == disposition
@@ -287,7 +288,7 @@ def test_root_terminality_must_be_proven_and_does_not_hide_bad_effect_evidence(c
         **binding,
     )
     assert evaluate_objective_continuation(root, packet, authority, [terminal]).disposition == ContinuationDisposition.REORIENT
-    proven = terminal.model_copy(update={"status": "proven"})
+    proven = terminal.model_copy(update={"status": "proven", "durability": _durability()})
     unsealed = CompletedEffectEvidence(
         evidence_id="bad-effect",
         status="accepted",

@@ -67,7 +67,7 @@ def test_supporting_methodology_heading_inventory_matches_contract() -> None:
         "support.planning.": 15,
         "support.challenge.": 12,
         "support.effective_autonomy.": 14,
-        "support.learning.": 13,
+        "support.learning.": 14,
         "support.cost.": 13,
     }
     for prefix, rel in specs.items():

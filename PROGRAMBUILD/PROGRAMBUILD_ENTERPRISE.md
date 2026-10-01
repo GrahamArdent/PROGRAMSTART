@@ -64,6 +64,7 @@ If the product is non-interactive, replace journey-centric assumptions with oper
 
 ## Required Enterprise Additions
 
+- repository scope is explicit for AI-assisted work: do not inspect, edit, stage, commit, or push another repository unless the user explicitly names another repo and asks for that action
 - data classification matrix
 - tenancy and access-control model
 - secret rotation and key management plan

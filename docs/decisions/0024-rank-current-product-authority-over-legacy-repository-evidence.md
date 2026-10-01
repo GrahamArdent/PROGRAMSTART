@@ -76,6 +76,8 @@ This decision is implemented when:
 
 ## Links
 
+- <!-- DEC-021 -->
+
 - [Planning operating model](../../PROGRAMBUILD/PROGRAMBUILD_PLANNING_OPERATING_MODEL.md)
 - [Idea intake protocol](../../PROGRAMBUILD/PROGRAMBUILD_IDEA_INTAKE.md)
 - [Mode-C shape prompt](../../.github/prompts/shape-idea.prompt.md)

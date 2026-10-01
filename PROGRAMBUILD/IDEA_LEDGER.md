@@ -1,6 +1,6 @@
 # Idea Ledger
 
-**Status:** optional non-authoritative preservation surface  
+**Status:** optional non-authoritative preservation surface
 **Purpose:** preserve worthwhile ideas, opportunities, rejected concepts, and shelved possibilities without turning them into current scope, priority, sequencing, or execution authority.
 
 Use this file only when a project or planning workspace does not already have an appropriate durable idea/opportunity surface. An existing issue tracker, notes system, product-discovery database, or equivalent may be used instead if it preserves the same semantics.
@@ -91,7 +91,7 @@ When a captured idea becomes a real candidate for action:
 
 ## Shelved, Rejected, And Superseded Ideas
 
-Do not delete useful reasoning merely because the idea is not current.
+Do not delete useful reasoning merely because the idea is not current. For shelved or rejected ideas, preserve the rationale and any evidence that would justify reconsideration.
 
 For `SHELVED`, preserve the revisit trigger when knowable, for example:
 

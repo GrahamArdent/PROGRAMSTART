@@ -254,7 +254,7 @@ Expected behavior:
 - higher verification depth
 - ADRs where durable architecture/policy decisions warrant them
 - deeper research only when high-impact uncertainty cannot be bounded cheaply
-- explicit reconciliation of applicable checklist/gate obligations before closure
+- explicit reconciliation of applicable checklist/gate obligations before closure; every applicable item must be dispositioned as `satisfied`, `not applicable`, `blocked`, or `deferred` with the reason/evidence required by the owning checklist
 
 More documents do not automatically mean more rigor. Rigor is the quality of decisions, evidence, boundaries, and verification.
 

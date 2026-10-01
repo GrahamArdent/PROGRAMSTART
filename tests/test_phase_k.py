@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 import sys
 from pathlib import Path
 from unittest.mock import patch
@@ -134,12 +135,13 @@ class TestPromptVersion:
     def test_all_prompts_have_version(self) -> None:
         for path in sorted(self.PROMPTS_DIR.glob("*.prompt.md")):
             text = path.read_text(encoding="utf-8")
-            assert 'version: "1.0"' in text, f"{path.name} missing version field"
+            assert re.search(r'^version: "[0-9]+\.[0-9]+"$', text, re.MULTILINE), f"{path.name} missing semantic version field"
 
     def test_prompt_standard_documents_version(self) -> None:
         standard = (self.PROMPTS_DIR / "PROMPT_STANDARD.md").read_text(encoding="utf-8")
-        assert "version:" in standard
-        assert "deprecated:" in standard
+        assert "`version`" in standard
+        assert "`deprecated`" in standard
+        assert "Recommended/optional fields:" in standard
 
 
 # ---------------------------------------------------------------------------

@@ -32,7 +32,9 @@ Resolve the question before reading broadly:
 
 Do not turn an ordinary repository-scope question into a portfolio scan.
 
-## Repository-Scope Pre-flight
+## Pre-flight
+
+### Repository Scope
 
 Use repository state and registry guidance before relying on conversational memory.
 Run `uv run programstart drift` before making planning-authority or registry edits. Do not require a broad validation rerun for a read-only "what next" answer.

@@ -54,6 +54,7 @@ Lite means **less ceremony**, not weaker authority discipline. Keep one strategi
 ## Non-Negotiables
 
 - one strategic execution spine for the project; research, audits, and work packets do not become competing plans
+- repository scope is explicit for AI-assisted work: do not inspect, edit, stage, commit, or push another repository unless the user explicitly names another repo and asks for that action
 - one contract layer for the dominant external surface: routes, endpoints, commands, jobs, or public API
 - one auth-aware client, trusted caller wrapper, or equivalent boundary helper when access control exists
 - no hardcoded protected paths, commands, or contract identifiers outside the contract layer

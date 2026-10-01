@@ -462,7 +462,7 @@ Required guardrails (select only those applicable):
 - route or endpoint contract layer with canonical, deprecated, and planned states
 - auth-aware client or trusted-caller boundary where applicable
 - service/handler registration pattern where applicable
-- repo-boundary consent rule for AI-assisted work: do not inspect, edit, stage, commit, or push another repository unless the user explicitly names it and asks for that action
+- repo-boundary consent rule for AI-assisted work: do not inspect, edit, stage, commit, or push another repository unless the user explicitly names another repo and asks for that action
 - CI/local verification appropriate to the product's risk and active status
 - local bootstrap command with no tribal knowledge
 

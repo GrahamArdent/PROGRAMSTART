@@ -571,6 +571,19 @@ def test_bootstrap_helpers_support_dry_run_and_main(tmp_path: Path, monkeypatch,
     assert (destination / "README.md").exists()
 
 
+def test_managed_generated_prompts_may_be_absent_in_clean_checkout(monkeypatch, tmp_path) -> None:
+    registry = common.load_registry()
+    artifact_root = tmp_path / "generated-prompts"
+    monkeypatch.setattr(
+        validate_core,
+        "workspace_path",
+        lambda path: (
+            artifact_root / Path(path).name if str(path).startswith("outputs/generated-prompts/") else common.workspace_path(path)
+        ),
+    )
+    assert validate_core.validate_prompt_generation_boundary(registry) == []
+
+
 def test_validate_main_all_passes(capsys, monkeypatch) -> None:
     programstart_prompt_build.sync_managed_prompts()
     monkeypatch.setattr("sys.argv", ["programstart_validate.py", "--check", "all"])

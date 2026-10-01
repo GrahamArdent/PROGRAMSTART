@@ -45,6 +45,8 @@ Authority: Canonical for project decision history
 | DEC-018 | 2026-04-19 | inputs_and_mode_selection | `programstart prompt-build --mode context` generates structured `.prompt.md` from arbitrary `--context key=value` pairs without requiring a bootstrapped PROGRAMBUILD project; required key: `goal`; well-known keys: `project`, `stage`, `stack`, `shape` | ACTIVE | — | Solo operator | docs/decisions/0021-prompt-builder-mode-b-context-driven-generation.md |
 | DEC-019 | 2026-04-19 | inputs_and_mode_selection | `programstart sync --from-template <path>` pull mode: copies changed files from an upstream PROGRAMSTART template into the current (or `--dest`) repo; shares manifest, preserve, and filter logic with push mode; `--dest` defaults to `.` when `--from-template` is used | ACTIVE | — | Solo operator | docs/decisions/0022-sync-pull-mode-with-from-template.md |
 | DEC-020 | 2026-08-24 | inputs_and_mode_selection | Each real project keeps one strategic execution spine; non-trivial active work is narrowed into derived work packets with task-scoped authority, evidence reuse/invalidation triggers, targeted verification, and wider convergence checks | ACTIVE | — | Solo operator | docs/decisions/0023-use-one-strategic-execution-spine-with-bounded-work-packets.md |
+| DEC-021 | 2026-08-25 | inputs_and_mode_selection | In Mode C, current explicit operator decisions and designated project authority govern product direction over descriptive README/framework/prototype/legacy evidence; repository state remains evidence of current behavior | ACTIVE | — | Solo operator | docs/decisions/0024-rank-current-product-authority-over-legacy-repository-evidence.md |
+| DEC-022 | 2026-09-04 | inputs_and_mode_selection | Intent Ingress is an orthogonal pre-entry profile that resolves trusted semantics and authority/currentness before normal project-entry and Controller admission; it is not Mode D | ACTIVE | — | Solo operator | docs/decisions/0025-intent-ingress-precedes-project-entry-mode.md |
 
 ## Decision Details
 
@@ -167,3 +169,21 @@ Authority: Canonical for project decision history
 - Alternatives considered: (1) Keep broad stage-centric JIT and validation around every slice. (2) Make work packets the primary authority and weaken stage governance. (3) Layer bounded packets underneath the existing strategic authority and convergence gates.
 - Consequences: Stage 7 becomes task-scoped; Stage 8 and periodic Stage 7 reviews become explicit convergence points. Research and subagent outputs remain evidence/deltas until adopted by project authority. Lite/Product/Enterprise vary ceremony and evidence strength but not the one-spine rule.
 - Related ADR: `docs/decisions/0023-use-one-strategic-execution-spine-with-bounded-work-packets.md`.
+
+---
+
+### DEC-021
+
+- Context: Existing-project Mode-C work needs an explicit precedence rule when legacy repository artifacts conflict with current accepted product direction.
+- Decision: Rank current explicit operator decisions and designated project authority above descriptive README/framework/prototype/legacy evidence for product direction, while retaining repository state as evidence of current behavior.
+- Why: Prevent obsolete implementation evidence from silently becoming rebuild authority.
+- Related ADR: `docs/decisions/0024-rank-current-product-authority-over-legacy-repository-evidence.md`.
+
+---
+
+### DEC-022
+
+- Context: Natural-language operator intent can arrive before project owner, current authority, active work, or project-entry mode is resolved.
+- Decision: Treat Intent Ingress as an orthogonal pre-entry profile that resolves trusted semantics and authority/currentness before normal project-entry and Controller admission; do not create Mode D.
+- Why: Preserve existing lifecycle authority while allowing low-friction natural-language ingress.
+- Related ADR: `docs/decisions/0025-intent-ingress-precedes-project-entry-mode.md`.

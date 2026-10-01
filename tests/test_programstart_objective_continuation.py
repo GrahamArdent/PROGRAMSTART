@@ -185,6 +185,21 @@ def test_ready_evidence_contract_is_strict_and_proven(context) -> None:
         )
 
 
+
+def test_proven_evidence_requires_durability(context) -> None:
+    _, _, _, binding = context
+    payload = {
+        "evidence_id": "false-proof",
+        "status": "proven",
+        "semantic_effect_token": "inspect semantic state",
+        "preconditions_proven": True,
+        **binding,
+    }
+    with pytest.raises(ValidationError, match="proven evidence requires proven durability"):
+        EffectReadyEvidence.model_validate(payload)
+
+
+
 def test_root_objective_validator_uses_renamed_root_id() -> None:
     assert RootObjective(root_id="root-1", objective="Outcome").root_id == "root-1"
     with pytest.raises(ValidationError):

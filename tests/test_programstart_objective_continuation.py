@@ -22,6 +22,7 @@ from scripts.programstart_objective_continuation import (  # noqa: E402
     CompletedEffectEvidence,
     ContinuationDisposition,
     EffectReadyEvidence,
+    EvidenceDurability,
     HumanWaitEvidence,
     MachineWaitEvidence,
     MachineWaitRegistration,
@@ -66,12 +67,17 @@ def context():
     return root, packet, authority, binding
 
 
+def _durability() -> EvidenceDurability:
+    return EvidenceDurability(status="proven", mechanism="executable regression", verification_ref="test:durability", invalidation_conditions=("proof mechanism changes",))
+
+
 def _ready(token: str, binding: dict[str, str], *, evidence_id: str = "ready") -> EffectReadyEvidence:
     return EffectReadyEvidence(
         evidence_id=evidence_id,
         status="proven",
         semantic_effect_token=token,
         preconditions_proven=True,
+        durability=_durability(),
         root_id=binding["root_id"],
         work_packet_specification_id=binding["work_packet_specification_id"],
         authority_fingerprint=binding["authority_fingerprint"],

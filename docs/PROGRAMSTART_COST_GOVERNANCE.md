@@ -128,6 +128,16 @@ For usage-based services:
 - prefer a safe failure/throttle mode over unlimited surprise billing unless the product explicitly requires continued service;
 - pair application-level limits with provider-side limits for high-variance surfaces such as LLMs, maps/places, enrichment, messaging, storage, bandwidth, and compute;
 - choose the lowest-cost model/tier that meets the measured quality/reliability target rather than defaulting to the most capable option;
+
+### Reasoning Locality for metered model work
+
+Model tier and reasoning effort are **decision-boundary properties, not objective-wide inheritance**. A difficult objective does not justify keeping the most capable model active for mechanical retrieval, command execution, measurement, formatting, polling, or repetition after the uncertainty that earned escalation has been resolved.
+
+Escalate to premium reasoning only when at least one material condition is present: unresolved novel inference; conflicting credible evidence; a consequential architectural decision; authority/security/safety ambiguity; or documented inability of a cheaper sufficient path to resolve the decision. When the condition is resolved, **step down** to the cheapest sufficient deterministic/tool/worker path. Re-escalate only when new material uncertainty appears.
+
+When premium model usage is material and telemetry is available, retain decision-scoped evidence sufficient to explain the spend and later challenge it: model/reasoning tier, escalation reason, timestamps, provider-reported input/cached-input/output/reasoning tokens, derived uncached input when computable, material tool-result payload, wall time, termination reason, whether a decision or assumption changed, the cheaper candidate, and the observed step-down point. Missing telemetry is `unknown`, never estimated as fact.
+
+This evidence is diagnostic and subordinate. It MUST NOT become a model registry, provider capability authority, permanent price table, objective scheduler, or automatic permission to cross an existing authority/safety gate. Optimize cost per correct accepted decision subject to correctness, authority, security, currentness, and durability constraints; never trade those constraints for token savings.
 - make test/dev budgets materially smaller than production budgets;
 - do not use a large budget ceiling as a substitute for deciding what normal spend should be.
 

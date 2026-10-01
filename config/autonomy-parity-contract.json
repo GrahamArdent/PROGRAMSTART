@@ -1596,6 +1596,13 @@
       "kind": "supporting_methodology_section"
     },
     {
+      "id": "support.learning.09a",
+      "source_path": "docs/PROGRAMSTART_LEARNING_LOOP.md",
+      "anchor": "## 9a. Proof Durability Invariant",
+      "required": true,
+      "kind": "supporting_methodology_section"
+    },
+    {
       "id": "support.learning.10",
       "source_path": "docs/PROGRAMSTART_LEARNING_LOOP.md",
       "anchor": "## 10. Safety and Privacy",
@@ -4736,6 +4743,7 @@
         "support.learning.03",
         "support.learning.07",
         "support.learning.09",
+        "support.learning.09a",
         "support.learning.12",
         "support.learning.13",
         "prompt.normative.032",

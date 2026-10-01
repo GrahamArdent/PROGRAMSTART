@@ -1,7 +1,7 @@
 # Observation — Local Desktop Commander bounded proof exposes actor-to-path invocation distinction
 
-Date: 2026-09-30  
-Project/system: Paths / Desktop Commander capability investigation  
+Date: 2026-09-30
+Project/system: Paths / Desktop Commander capability investigation
 Status: subordinate PROGRAMSTART learning evidence; not project authority or execution authorization.
 
 ## What happened

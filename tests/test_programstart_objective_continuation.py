@@ -68,7 +68,12 @@ def context():
 
 
 def _durability() -> EvidenceDurability:
-    return EvidenceDurability(status="proven", mechanism="executable regression", verification_ref="test:durability", invalidation_conditions=("proof mechanism changes",))
+    return EvidenceDurability(
+        status="proven",
+        mechanism="executable regression",
+        verification_ref="test:durability",
+        invalidation_conditions=("proof mechanism changes",),
+    )
 
 
 def _ready(token: str, binding: dict[str, str], *, evidence_id: str = "ready") -> EffectReadyEvidence:

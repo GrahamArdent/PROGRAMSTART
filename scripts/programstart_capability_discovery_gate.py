@@ -238,7 +238,6 @@ def validate_capability_discovery(decision: CapabilityDiscoveryDecision) -> None
             raise ValueError("discovered realization requires owner-native JIT verification before consequential selection")
 
 
-
 def validate_failure_localization(decision: FailureLocalizationDecision) -> None:
     result = decision.discovery.classifier_result
     constraints = result.input.constraints

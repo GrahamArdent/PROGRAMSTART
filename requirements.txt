@@ -167,7 +167,7 @@ platformdirs==4.9.4
     #   python-discovery
     #   textual
     #   virtualenv
-playwright==1.58.0
+playwright==1.59.0
     # via programstart-workflow
 pluggy==1.6.0
     # via
@@ -282,7 +282,7 @@ uc-micro-py==2.0.0
     # via linkify-it-py
 urllib3==2.6.3
     # via requests
-uv==0.11.8
+uv==0.11.12
     # via programstart-workflow
 virtualenv==21.2.0
     # via

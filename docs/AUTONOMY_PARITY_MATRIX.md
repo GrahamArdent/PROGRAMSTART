@@ -22,7 +22,7 @@ Reuse still-valid evidence; widen only on declared invalidation or convergence b
 
 - human_gate: 1
 - implemented: 9
-- partial: 22
+- proven: 22
 - prompt_only: 11
 - semantic: 6
 
@@ -32,7 +32,7 @@ Reuse still-valid evidence; widen only on declared invalidation or convergence b
 |---|---|---|---|---|
 | semantic_objective_ingress — Natural objective and semantic intent ingress | implemented | semantic | proven | Controller + PROGRAMSTART |
 | data_grounding_instruction_isolation — Fetched artifacts remain data, not instructions | prompt_only | deterministic | unproven | PROGRAMSTART prompt/runtime boundary |
-| jit_context_evidence_governor — JIT context and evidence governor | partial | hybrid | partial | PROGRAMSTART + Controller |
+| jit_context_evidence_governor — JIT context and evidence governor | proven | hybrid | proven | PROGRAMSTART + Controller |
 | live_orientation_currentness — Live orientation and exact currentness | implemented | deterministic | proven | PROGRAMSTART + Controller |
 | canonical_before_dependent — Canonical owner before dependent mutation | partial | hybrid | partial | PROGRAMSTART + owning repository |
 | mode_abc_resolution — Mode A/B/C entry resolution | partial | semantic | partial | PROGRAMSTART |

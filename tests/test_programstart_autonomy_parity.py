@@ -449,7 +449,8 @@ def test_consequence_execution_contract_behaviors_are_required_and_truthfully_un
     assert set(rows) == required
     assert all(x["machinery_state"] == "prompt_only" for x in rows.values())
     assert all(x["closure_status"] == "unproven" for x in rows.values())
-    assert all(x["current_proof"] == [{"kind": "contract", "ref": "docs/PROGRAMSTART_CONSEQUENCE_EXECUTION_CONTRACT.md"}] for x in rows.values())
+    expected_proof = [{"kind": "contract", "ref": "docs/PROGRAMSTART_CONSEQUENCE_EXECUTION_CONTRACT.md"}]
+    assert all(x["current_proof"] == expected_proof for x in rows.values())
 
 
 def test_consequence_execution_contract_cannot_claim_implementation_from_contract_only() -> None:
@@ -462,7 +463,11 @@ def test_consequence_execution_contract_cannot_claim_implementation_from_contrac
 
 def test_consequence_execution_contract_source_fingerprint_is_governed() -> None:
     contract = parity.load_contract()
-    source = next(x for x in contract["source_files"] if x["path"] == "docs/PROGRAMSTART_CONSEQUENCE_EXECUTION_CONTRACT.md")
+    source = next(
+        x
+        for x in contract["source_files"]
+        if x["path"] == "docs/PROGRAMSTART_CONSEQUENCE_EXECUTION_CONTRACT.md"
+    )
     source["sha256"] = "0" * 64
     errors = _errors(contract)
     assert any("source fingerprint drift" in x for x in errors)

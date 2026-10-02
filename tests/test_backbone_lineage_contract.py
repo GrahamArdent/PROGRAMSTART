@@ -8,6 +8,7 @@ from jsonschema import Draft202012Validator
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA_PATH = ROOT / "schemas" / "backbone-lineage.schema.json"
 FIXTURE_PATH = ROOT / "tests" / "fixtures" / "backbone_lineage" / "controller_227.json"
+ASYNC_FIXTURE_PATH = ROOT / "tests" / "fixtures" / "backbone_lineage" / "controller_71_async.json"
 DOC_PATH = ROOT / "docs" / "PROGRAMSTART_BACKBONE_END_TO_END_INFORMATION_FLOW.md"
 
 
@@ -17,6 +18,10 @@ def _schema() -> dict:
 
 def _fixture() -> dict:
     return json.loads(FIXTURE_PATH.read_text(encoding="utf-8"))
+
+
+def _async_fixture() -> dict:
+    return json.loads(ASYNC_FIXTURE_PATH.read_text(encoding="utf-8"))
 
 
 def _errors(payload: dict) -> list:
@@ -138,3 +143,62 @@ def test_contract_describes_lineage_as_non_authoritative_and_reference_first() -
     assert "lineage/correlation envelope only" in doc
     assert "Causal graph, not forced tree" in doc
     assert "Cold-reconstruction acceptance" in doc
+
+
+def test_async_71_fixture_validates_without_schema_widening() -> None:
+    assert _errors(_async_fixture()) == []
+
+
+def test_async_fixture_contains_real_multi_parent_event_joins() -> None:
+    records = _records_by_id(_async_fixture())
+
+    first = records["snapshot-after-event-3"]
+    assert set(first["caused_by"]) == {"postfix-wait-arm", "provider-event-attempt-3"}
+
+    second = records["snapshot-after-event-4"]
+    assert set(second["caused_by"]) == {"snapshot-after-event-3", "provider-event-attempt-4"}
+
+
+def test_async_fixture_preserves_owner_boundaries_without_authority_transfer() -> None:
+    records = _records_by_id(_async_fixture())
+
+    en_record = records["en302-restart-acceptance"]
+    assert en_record["producer_owner"] == "GrahamArdent/execution-node-control"
+    assert en_record["execution_authority"] is False
+
+    watchtower_record = records["watchtower16-terminal-return"]
+    assert watchtower_record["producer_owner"] == "GrahamArdent/repo-watchtower"
+    assert watchtower_record["execution_authority"] is False
+
+    terminal = records["terminal-acceptance-71"]
+    assert terminal["producer_owner"] == "GrahamArdent/programstart-autonomous-controller"
+    assert terminal["execution_authority"] is False
+
+
+def test_async_fixture_preserves_fail_closed_attempt_before_repair() -> None:
+    records = _records_by_id(_async_fixture())
+    conflict = records["fresh-request-authority-conflict"]
+    repair = records["repair-232"]
+
+    assert conflict["effect_attempt_ref"] == "req-controller-71-single-lane-acceptance-1002"
+    assert repair["caused_by"] == ["fresh-request-authority-conflict"]
+
+
+def test_async_fixture_terminal_requires_reconsideration_not_wait_disappearance() -> None:
+    records = _records_by_id(_async_fixture())
+    terminal_snapshot = records["snapshot-after-event-4"]
+    terminal = records["terminal-acceptance-71"]
+
+    assert terminal_snapshot["resume_or_reconsider_ref"] == "PREPARE_EXECUTED"
+    assert terminal["caused_by"] == ["snapshot-after-event-4"]
+    assert "TERMINAL" in terminal["stage_projection"]
+
+
+def test_async_fixture_does_not_require_common_wait_or_provider_specific_fields() -> None:
+    schema = _schema()
+    record_properties = schema["$defs"]["record"]["properties"]
+
+    assert "wait_ref" not in record_properties
+    assert "workflow_run_id" not in record_properties
+    assert "delivery_id" not in record_properties
+    assert "provider_event_type" not in record_properties

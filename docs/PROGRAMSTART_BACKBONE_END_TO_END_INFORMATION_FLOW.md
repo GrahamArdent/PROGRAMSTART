@@ -5,7 +5,7 @@ Owner: **GrahamArdent/PROGRAMSTART**
 Date: **2026-10-02**
 
 Machine-readable reconstruction form: `schemas/backbone-lineage.schema.json` (V0.1).
-Natural representability fixture: `tests/fixtures/backbone_lineage/controller_227.json`.
+Natural representability fixtures: `tests/fixtures/backbone_lineage/controller_227.json` and `tests/fixtures/backbone_lineage/controller_71_async.json`.
 Runtime propagation status: **not implemented / not implied by this contract**.
 
 ## 1. Purpose
@@ -550,13 +550,18 @@ Do not yet:
 - backfill the ecosystem;
 - mark the flow contract implemented merely because this document exists.
 
-## 15. Next bounded step after Lineage V0.1 representability acceptance
+## 15. Next bounded step after independent Lineage V0.1 fixtures
+
+V0.1 has now survived two materially different natural fixtures:
+
+- Controller #227: sequential semantic flow with repair history and an explicit not-reached boundary;
+- Controller #71: async provider evidence, owner handoff, durable wait, multi-parent reconsideration joins and terminal continuation.
+
+The #71 fixture did not earn schema widening.
 
 The next step is still **not runtime propagation**.
 
-Challenge the V0.1 reconstruction model against at least one independent natural objective whose causal shape materially differs from #227—for example an async-event or genuine human-gate flow—before treating the schema as reusable enough to wire across live components.
-
-The second fixture must test the abstraction rather than replay #227's exact shape. If it exposes missing fields, change the reconstruction contract first. If V0.1 survives, then separately design the smallest owner-native propagation/adoption slice and challenge its write surfaces before runtime mutation.
+Separately design the smallest owner-native lineage propagation/adoption slice. Determine the lineage minting boundary, first durable root-objective binding, first emitted causal edge, currentness/invalidation behavior and exact non-authority guarantee. Challenge the proposed write surfaces before any live component mutation.
 
 That preserves PROGRAMSTART's rule:
 

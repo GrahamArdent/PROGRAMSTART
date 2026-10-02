@@ -41,8 +41,42 @@ This binds discovery to the PROGRAMSTART proof-durability invariant: evidence is
 7. Accept human_required only with owner-native evidence that the remaining human gate is irreducible; Paths discovery alone cannot grant or infer that authority.
 8. Re-run discovery at material failure or resumed/cold-start boundaries when its retained invalidation conditions may have fired.
 
-## Scope of this slice
+## Failure localization after discovery
 
-This gate prevents self-asserted widening and false new-capability escalation. It does not yet declare an existing component defective or authorize replacement after a composed failure. Failure-localization/component-preservation semantics remain a separate follow-on hardening, to be earned from durable discovery evidence rather than added as a parallel mechanism.
+A higher-order failure does not erase previously earned component evidence by itself. After durable discovery, PROGRAMSTART must localize the first causal boundary before declaring an existing capability defective or replacement-required.
+
+Allowed failure classes are:
+
+- composition/wiring gap;
+- component-contract failure;
+- component-contract insufficiency;
+- currentness/activation failure;
+- independent degradation;
+- test/assumption failure;
+- unknown/unresolved.
+
+The localization record must identify the observed failure, the component and its contract, the first failed boundary, preserved evidence, any contradictory evidence, explicit invalidated proof, independent-degradation evidence, and any requirement gap. It remains diagnostic only and must set authorization_inferred=false.
+
+Replacement is fail-closed:
+
+- composition/wiring failure => preserve the component and repair the missing boundary when prior proof remains valid;
+- component-contract failure => defect/replacement requires contradictory component evidence plus explicit invalidation of the affected component proof;
+- component-contract insufficiency => replacement/extension requires an evidenced requirement gap; historical proof may remain valid for the narrower old contract;
+- currentness/activation failure => recheck currentness rather than infer defect;
+- independent degradation => record separately and do not attribute component defect without counterevidence;
+- test/assumption failure => correct the test/model rather than replace the component;
+- unresolved boundary => further localization only.
+
+This rule does not forbid redesign. It prevents a composed failure from being treated as proof that every lower-level capability failed. The smallest architecturally complete causal repair remains preferred, while repeated composition failures may still justify a later contract-boundary redesign when evidence supports that conclusion.
+
+## Acceptance examples
+
+The primary regression is the actuator/dispatcher case: a proven reachability actuator remains valid while a higher-order scenario fails because dispatcher wiring is absent. PROGRAMSTART must preserve the actuator proof and select boundary repair; replacement must fail closed.
+
+Counterexamples deliberately permit replacement when fresh evidence contradicts the actuator's own contract or proves that the old contract cannot satisfy a newly required effect.
+
+## Scope
+
+This gate now owns both pre-design capability discovery and post-failure localization for consequential capability conclusions. It remains a decision/evidence gate only: it does not execute repairs, grant semantic permission, replace owner authority, or become a second Paths registry.
 
 This is targeted retrieval, not a requirement to load the Paths corpus for every task.

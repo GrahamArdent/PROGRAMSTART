@@ -1,4 +1,5 @@
 """Fail-closed gate for consequential capability conclusions."""
+
 from __future__ import annotations
 
 import hashlib
@@ -62,7 +63,7 @@ class PathsClassifierResult(BaseModel):
     reason_code: str = Field(min_length=1)
 
     @model_validator(mode="after")
-    def normalized(self) -> "PathsClassifierResult":
+    def normalized(self) -> PathsClassifierResult:
         refs = (
             self.ordered_candidate_refs,
             self.constituent_refs,
@@ -90,7 +91,7 @@ class PathsDiscoveryDurability(BaseModel):
     invalidation_conditions: tuple[str, ...] = Field(min_length=1)
 
     @model_validator(mode="after")
-    def normalized(self) -> "PathsDiscoveryDurability":
+    def normalized(self) -> PathsDiscoveryDurability:
         if self.verification_ref != self.verification_ref.strip():
             raise ValueError("verification_ref must be normalized")
         if any(not item.strip() or item != item.strip() for item in self.invalidation_conditions):
@@ -116,11 +117,8 @@ class PathsDiscoveryEvidence(BaseModel):
     owner_native_verification_refs: list[str] = Field(default_factory=list)
 
     @model_validator(mode="after")
-    def validate_receipt(self) -> "PathsDiscoveryEvidence":
-        if any(
-            value != value.strip()
-            for value in (self.actor_ref, self.effect_ref, self.target_ref)
-        ):
+    def validate_receipt(self) -> PathsDiscoveryEvidence:
+        if any(value != value.strip() for value in (self.actor_ref, self.effect_ref, self.target_ref)):
             raise ValueError("Paths discovery references must be normalized")
         expected = (self.actor_ref, self.effect_ref, self.target_ref)
         observed = (
@@ -134,10 +132,7 @@ class PathsDiscoveryEvidence(BaseModel):
             raise ValueError("Paths classifier receipt hash does not match durable proof")
         if len(self.owner_native_verification_refs) != len(set(self.owner_native_verification_refs)):
             raise ValueError("owner-native verification references must be unique")
-        if any(
-            not value.strip() or value != value.strip()
-            for value in self.owner_native_verification_refs
-        ):
+        if any(not value.strip() or value != value.strip() for value in self.owner_native_verification_refs):
             raise ValueError("owner-native verification references must be normalized")
         return self
 
@@ -149,38 +144,26 @@ class CapabilityDiscoveryDecision(BaseModel):
 
 def validate_capability_discovery(decision: CapabilityDiscoveryDecision) -> None:
     if decision.discovery is None:
-        raise ValueError(
-            "consequential capability conclusion requires deterministic Paths discovery evidence"
-        )
+        raise ValueError("consequential capability conclusion requires deterministic Paths discovery evidence")
     evidence = decision.discovery
     result = evidence.classifier_result
     constraints = result.input.constraints
 
     if decision.conclusion in ABSENCE_CONCLUSIONS:
-        if not (
-            constraints.require_current
-            and constraints.require_proven
-            and constraints.exclude_human_transport
-        ):
+        if not (constraints.require_current and constraints.require_proven and constraints.exclude_human_transport):
             raise ValueError(
                 "capability-absence/escalation conclusion requires current, proven, machine-only Paths composition search"
             )
         if result.classification in USABLE_MACHINE_CLASSIFICATIONS:
-            raise ValueError(
-                "capability-absence/escalation conclusion conflicts with discovered usable machine realization"
-            )
+            raise ValueError("capability-absence/escalation conclusion conflicts with discovered usable machine realization")
 
     if decision.conclusion == CapabilityConclusion.NEW_CAPABILITY_REQUIRED:
         if result.classification != "GENUINELY_NEW_PATH_REQUIRED":
-            raise ValueError(
-                "new_capability_required requires Paths classification GENUINELY_NEW_PATH_REQUIRED"
-            )
+            raise ValueError("new_capability_required requires Paths classification GENUINELY_NEW_PATH_REQUIRED")
 
     if decision.conclusion == CapabilityConclusion.HUMAN_REQUIRED:
         if not evidence.owner_native_verification_refs:
-            raise ValueError(
-                "human_required requires owner-native verification of the irreducible human gate"
-            )
+            raise ValueError("human_required requires owner-native verification of the irreducible human gate")
 
     if decision.conclusion == CapabilityConclusion.PATH_SELECTED:
         if result.classification not in USABLE_MACHINE_CLASSIFICATIONS:
@@ -188,6 +171,4 @@ def validate_capability_discovery(decision: CapabilityDiscoveryDecision) -> None
         if not result.ordered_candidate_refs:
             raise ValueError("selected path requires at least one Paths realization")
         if not evidence.owner_native_verification_refs:
-            raise ValueError(
-                "discovered realization requires owner-native JIT verification before consequential selection"
-            )
+            raise ValueError("discovered realization requires owner-native JIT verification before consequential selection")

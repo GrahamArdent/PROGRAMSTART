@@ -35,9 +35,7 @@ def classifier_result(
         ),
         ordered_candidate_refs=ordered_candidate_refs or [],
         constituent_refs=[],
-        missing_typed_edges=["actor-specific admitted invocation edge"]
-        if classification == "MISSING_TYPED_EDGE"
-        else [],
+        missing_typed_edges=["actor-specific admitted invocation edge"] if classification == "MISSING_TYPED_EDGE" else [],
         owner_refs=[],
         evidence_refs=[],
         currentness_facts=[],
@@ -52,7 +50,14 @@ def classifier_result(
     )
 
 
-def ev(*, result=None, owner_refs=None, **updates):
+def ev(
+    *,
+    result: PathsClassifierResult | None = None,
+    owner_refs: list[str] | None = None,
+    actor_ref: str = "actor:chatgpt-connected-github",
+    effect_ref: str = "effect:reviewed-en-privileged-maintenance",
+    target_ref: str = "execution-node",
+) -> PathsDiscoveryEvidence:
     result = result or classifier_result()
     durability = PathsDiscoveryDurability(
         status="proven",
@@ -66,16 +71,14 @@ def ev(*, result=None, owner_refs=None, **updates):
             "Paths canonical composition inputs change",
         ),
     )
-    data = dict(
-        actor_ref="actor:chatgpt-connected-github",
-        effect_ref="effect:reviewed-en-privileged-maintenance",
-        target_ref="execution-node",
+    return PathsDiscoveryEvidence(
+        actor_ref=actor_ref,
+        effect_ref=effect_ref,
+        target_ref=target_ref,
         classifier_result=result,
         durability=durability,
         owner_native_verification_refs=owner_refs or [],
     )
-    data.update(updates)
-    return PathsDiscoveryEvidence(**data)
 
 
 @pytest.mark.parametrize(

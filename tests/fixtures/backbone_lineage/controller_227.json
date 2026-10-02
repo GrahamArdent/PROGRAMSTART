@@ -69,7 +69,6 @@
       "root_objective_ref": "GrahamArdent/programstart-autonomous-controller#227",
       "stage_projection": ["INGRESS", "SEMANTIC_INTERPRETATION", "CONTROLLER_ADMISSION"],
       "owner_ref": "GrahamArdent/programstart-autonomous-controller",
-      "work_packet_ref": "req-programstart-objective-backbone-227-complete-081653",
       "authority_refs": [
         "GrahamArdent/programstart-autonomous-controller#227"
       ],
@@ -126,8 +125,6 @@
       "owner_ref": "GrahamArdent/programstart-autonomous-controller",
       "controller_root_ref": "root-8587f916b07c12daf753a297",
       "controller_run_ref": "intent-164c265053d2b7b7",
-      "work_packet_ref": "req-programstart-objective-backbone-227-autocont-082749",
-      "resume_or_reconsider_ref": "AUTOMATION_GAP_RECORDED",
       "currentness_refs": [
         "GrahamArdent/programstart-autonomous-controller@d11ae41f18a05d5df5b5b90210e5688281e4516d"
       ],
@@ -175,9 +172,9 @@
         "GrahamArdent/execution-node-control#301"
       ],
       "invalidation_refs": [
-        "Controller #227 closes or current Work Packet changes",
-        "Execution Node repository capability projection gains an accepted Controller self-hosting profile",
-        "Paths ER-012 or its owner/currentness evidence changes materially"
+        "GrahamArdent/programstart-autonomous-controller#227",
+        "GrahamArdent/programstart-autonomous-controller@d11ae41f18a05d5df5b5b90210e5688281e4516d:CURRENT_WORK_PACKET.md",
+        "GrahamArdent/paths@093b90c3d6429d376fc8dd7cbb8292e76827a0ec:registry/effect-reachability.json#ER-012"
       ],
       "execution_authority": false
     }

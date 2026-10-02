@@ -7,7 +7,9 @@ from jsonschema import Draft202012Validator
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA_PATH = ROOT / "schemas" / "backbone-lineage.schema.json"
-FIXTURE_PATH = (\n    ROOT / "tests" / "fixtures" / "backbone_lineage" / "controller_227.json"\n)
+FIXTURE_PATH = (
+    ROOT / "tests" / "fixtures" / "backbone_lineage" / "controller_227.json"
+)
 DOC_PATH = ROOT / "docs" / "PROGRAMSTART_BACKBONE_END_TO_END_INFORMATION_FLOW.md"
 
 
@@ -102,7 +104,8 @@ def test_fixture_does_not_falsely_claim_er012_selection_or_consequence() -> None
     assert "CONSEQUENCE" in residual["stage_projection"]
 
 
-def test_fixture_preserves_typed_diagnostic_without_promoting_it_to_authority(\n) -> None:
+def test_fixture_preserves_typed_diagnostic_without_promoting_it_to_authority(
+) -> None:
     records = _records_by_id(_fixture())
     diagnostic = records["diagnostic-0829"]
 

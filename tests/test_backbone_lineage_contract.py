@@ -104,8 +104,7 @@ def test_fixture_does_not_falsely_claim_er012_selection_or_consequence() -> None
     assert "CONSEQUENCE" in residual["stage_projection"]
 
 
-def test_fixture_preserves_typed_diagnostic_without_promoting_it_to_authority(
-) -> None:
+def test_typed_diagnostic_is_not_promoted_to_authority() -> None:
     records = _records_by_id(_fixture())
     diagnostic = records["diagnostic-0829"]
 

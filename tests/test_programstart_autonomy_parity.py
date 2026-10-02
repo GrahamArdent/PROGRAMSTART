@@ -463,11 +463,7 @@ def test_consequence_execution_contract_cannot_claim_implementation_from_contrac
 
 def test_consequence_execution_contract_source_fingerprint_is_governed() -> None:
     contract = parity.load_contract()
-    source = next(
-        x
-        for x in contract["source_files"]
-        if x["path"] == "docs/PROGRAMSTART_CONSEQUENCE_EXECUTION_CONTRACT.md"
-    )
+    source = next(x for x in contract["source_files"] if x["path"] == "docs/PROGRAMSTART_CONSEQUENCE_EXECUTION_CONTRACT.md")
     source["sha256"] = "0" * 64
     errors = _errors(contract)
     assert any("source fingerprint drift" in x for x in errors)

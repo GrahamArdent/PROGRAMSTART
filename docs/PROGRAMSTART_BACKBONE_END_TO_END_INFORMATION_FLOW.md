@@ -1,8 +1,12 @@
 # PROGRAMSTART Backbone End-to-End Information Flow Contract
 
-Status: **PROPOSED REUSABLE METHODOLOGY CONTRACT / DOCUMENTATION-ONLY**
+Status: **ACCEPTED REUSABLE METHODOLOGY CONTRACT / INFORMATION-FLOW ARCHITECTURE**
 Owner: **GrahamArdent/PROGRAMSTART**
 Date: **2026-10-02**
+
+Machine-readable reconstruction form: `schemas/backbone-lineage.schema.json` (V0.1).  
+Natural representability fixture: `tests/fixtures/backbone_lineage/controller_227.json`.  
+Runtime propagation status: **not implemented / not implied by this contract**.
 
 ## 1. Purpose
 
@@ -139,9 +143,9 @@ Use the following principle:
 
 > **Propagate identity and decision-critical references. Keep owner-native payloads in their owning systems and fetch them JIT when required.**
 
-### 5.1 Candidate Backbone Lineage Envelope
+### 5.1 Backbone Lineage V0 reconstruction envelope
 
-A future machine-readable lineage envelope SHOULD remain deliberately small.
+The accepted V0.1 machine-readable form is a **non-authoritative reconstruction graph**, not yet an on-wire/runtime propagation format. Its records remain deliberately small.
 
 Core correlation fields:
 

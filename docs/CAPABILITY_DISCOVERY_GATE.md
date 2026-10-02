@@ -12,6 +12,8 @@ A caller assertion that discovery or widening occurred is not proof. Discovery e
 
 Paths remains discovery/read-model authority for path relationships, composition/reuse knowledge, and resilience. It does not grant semantic permission. Owning repositories/providers remain authority for permission, admission, release/currentness, human-gate irreducibility, and consequence.
 
+Discovery evidence never implies credential use, repository mutation/merge, release activation, sudo/root, provider-policy, or human-approval authority. Those remain consequence-specific owner decisions. Owner-native verification is required when a realization is selected for consequence (and when an irreducible human gate is asserted), not merely to retain a read-only discovery receipt.
+
 The canonical discovery mechanism for this gate is the existing Paths composition classifier at scripts/find_capability_composition.py. PROGRAMSTART consumes its result; it does not create a second composition engine.
 
 ## Durable discovery receipt

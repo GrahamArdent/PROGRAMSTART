@@ -52,6 +52,11 @@
       "path": "docs/PROGRAMSTART_COST_GOVERNANCE.md",
       "sha256": "4a5891db-cab62587-b3f73023-b210357a-89aefa8b-820a2c72-1517a093-d03a995c",
       "role": "cost governance"
+    },
+    {
+      "path": "docs/PROGRAMSTART_CONSEQUENCE_EXECUTION_CONTRACT.md",
+      "sha256": "53c1213fd9d0dd90f860999dbd9e2f07064afbdb23709626ae5c488b4c9dfb12",
+      "role": "typed consequence execution semantics and owner-boundary contract"
     }
   ],
   "source_obligations": [
@@ -5673,6 +5678,196 @@
         "a fresh session can determine the accepted design decisions from durable parity evidence without rereading the original chat"
       ],
       "closure_status": "partial"
+    },
+    {
+      "id": "typed_consequence_grant",
+      "title": "Compile exact owner authority into a typed consequence grant",
+      "owner": "PROGRAMSTART + Controller",
+      "covers": [
+        "support.effective_autonomy.01",
+        "support.effective_autonomy.06",
+        "support.effective_autonomy.08",
+        "support.effective_autonomy.14"
+      ],
+      "trigger": [
+        "when a consequential machine effect is selected or a new machine capability is considered for adoption"
+      ],
+      "expected_behavior": [
+        "compile exact authority/effect/resource/operation/write-set/currentness/evidence constraints; provider capability never grants semantic permission"
+      ],
+      "must_not": [
+        "must not infer semantic permission from provider capability, Matrix state, Paths discovery, credential possession, or adapter availability"
+      ],
+      "jit_inputs": [
+        "current owner authority; exact consequence; targeted Paths realization evidence; current identity capability evidence; mutation ownership when applicable"
+      ],
+      "invalidation": [
+        "owner authority, effect/resource constraints, Paths realization/currentness, identity/provider capability, mutation ownership, adapter grammar, or evidence contract changes"
+      ],
+      "machinery_state": "prompt_only",
+      "execution_mode": "semantic",
+      "current_proof": [
+        {
+          "kind": "contract",
+          "ref": "docs/PROGRAMSTART_CONSEQUENCE_EXECUTION_CONTRACT.md"
+        }
+      ],
+      "acceptance_scenarios": [
+        "repository creation, exact PR integration, GitHub reversible mutation, non-GitHub provider mutation, and local/runtime mutation each require instance proof plus an adversarial capability-without-authority rejection"
+      ],
+      "closure_status": "unproven"
+    },
+    {
+      "id": "provider_identity_capability_satisfaction",
+      "title": "Satisfy provider requirements without minting semantic authority",
+      "owner": "Secrets / identity owner + Controller",
+      "covers": [
+        "support.effective_autonomy.01",
+        "support.effective_autonomy.06",
+        "support.effective_autonomy.08",
+        "support.effective_autonomy.14"
+      ],
+      "trigger": [
+        "when a consequential machine effect is selected or a new machine capability is considered for adoption"
+      ],
+      "expected_behavior": [
+        "prove a current identity can satisfy provider/resource/permission requirements without exporting secrets or broadening project permission"
+      ],
+      "must_not": [
+        "must not infer semantic permission from provider capability, Matrix state, Paths discovery, credential possession, or adapter availability"
+      ],
+      "jit_inputs": [
+        "current owner authority; exact consequence; targeted Paths realization evidence; current identity capability evidence; mutation ownership when applicable"
+      ],
+      "invalidation": [
+        "owner authority, effect/resource constraints, Paths realization/currentness, identity/provider capability, mutation ownership, adapter grammar, or evidence contract changes"
+      ],
+      "machinery_state": "prompt_only",
+      "execution_mode": "semantic",
+      "current_proof": [
+        {
+          "kind": "contract",
+          "ref": "docs/PROGRAMSTART_CONSEQUENCE_EXECUTION_CONTRACT.md"
+        }
+      ],
+      "acceptance_scenarios": [
+        "repository creation, exact PR integration, GitHub reversible mutation, non-GitHub provider mutation, and local/runtime mutation each require instance proof plus an adversarial capability-without-authority rejection"
+      ],
+      "closure_status": "unproven"
+    },
+    {
+      "id": "consequence_realization_resolution",
+      "title": "Resolve admitted consequences to current realizations",
+      "owner": "Paths + Controller",
+      "covers": [
+        "support.effective_autonomy.01",
+        "support.effective_autonomy.06",
+        "support.effective_autonomy.08",
+        "support.effective_autonomy.14"
+      ],
+      "trigger": [
+        "when a consequential machine effect is selected or a new machine capability is considered for adoption"
+      ],
+      "expected_behavior": [
+        "resolve the exact effect/target to current proven realizations/compositions while keeping authorization_inferred=false"
+      ],
+      "must_not": [
+        "must not infer semantic permission from provider capability, Matrix state, Paths discovery, credential possession, or adapter availability"
+      ],
+      "jit_inputs": [
+        "current owner authority; exact consequence; targeted Paths realization evidence; current identity capability evidence; mutation ownership when applicable"
+      ],
+      "invalidation": [
+        "owner authority, effect/resource constraints, Paths realization/currentness, identity/provider capability, mutation ownership, adapter grammar, or evidence contract changes"
+      ],
+      "machinery_state": "prompt_only",
+      "execution_mode": "semantic",
+      "current_proof": [
+        {
+          "kind": "contract",
+          "ref": "docs/PROGRAMSTART_CONSEQUENCE_EXECUTION_CONTRACT.md"
+        }
+      ],
+      "acceptance_scenarios": [
+        "repository creation, exact PR integration, GitHub reversible mutation, non-GitHub provider mutation, and local/runtime mutation each require instance proof plus an adversarial capability-without-authority rejection"
+      ],
+      "closure_status": "unproven"
+    },
+    {
+      "id": "consequence_execution_admission",
+      "title": "Admit and dispatch only the exact bounded consequence",
+      "owner": "Controller + typed execution fabric",
+      "covers": [
+        "support.effective_autonomy.01",
+        "support.effective_autonomy.06",
+        "support.effective_autonomy.08",
+        "support.effective_autonomy.14"
+      ],
+      "trigger": [
+        "when a consequential machine effect is selected or a new machine capability is considered for adoption"
+      ],
+      "expected_behavior": [
+        "bind current owner authority, mutation coordination, realization, identity satisfaction and adapter grammar before dispatch"
+      ],
+      "must_not": [
+        "must not infer semantic permission from provider capability, Matrix state, Paths discovery, credential possession, or adapter availability"
+      ],
+      "jit_inputs": [
+        "current owner authority; exact consequence; targeted Paths realization evidence; current identity capability evidence; mutation ownership when applicable"
+      ],
+      "invalidation": [
+        "owner authority, effect/resource constraints, Paths realization/currentness, identity/provider capability, mutation ownership, adapter grammar, or evidence contract changes"
+      ],
+      "machinery_state": "prompt_only",
+      "execution_mode": "semantic",
+      "current_proof": [
+        {
+          "kind": "contract",
+          "ref": "docs/PROGRAMSTART_CONSEQUENCE_EXECUTION_CONTRACT.md"
+        }
+      ],
+      "acceptance_scenarios": [
+        "repository creation, exact PR integration, GitHub reversible mutation, non-GitHub provider mutation, and local/runtime mutation each require instance proof plus an adversarial capability-without-authority rejection"
+      ],
+      "closure_status": "unproven"
+    },
+    {
+      "id": "consequence_result_reconciliation",
+      "title": "Reconcile consequence results and ambiguous outcomes durably",
+      "owner": "Controller + Evidence/owner runtime",
+      "covers": [
+        "support.effective_autonomy.01",
+        "support.effective_autonomy.06",
+        "support.effective_autonomy.08",
+        "support.effective_autonomy.14"
+      ],
+      "trigger": [
+        "when a consequential machine effect is selected or a new machine capability is considered for adoption"
+      ],
+      "expected_behavior": [
+        "bind result evidence to exact grant/effect and reconcile ambiguous mutation outcomes before retry"
+      ],
+      "must_not": [
+        "must not infer semantic permission from provider capability, Matrix state, Paths discovery, credential possession, or adapter availability"
+      ],
+      "jit_inputs": [
+        "current owner authority; exact consequence; targeted Paths realization evidence; current identity capability evidence; mutation ownership when applicable"
+      ],
+      "invalidation": [
+        "owner authority, effect/resource constraints, Paths realization/currentness, identity/provider capability, mutation ownership, adapter grammar, or evidence contract changes"
+      ],
+      "machinery_state": "prompt_only",
+      "execution_mode": "semantic",
+      "current_proof": [
+        {
+          "kind": "contract",
+          "ref": "docs/PROGRAMSTART_CONSEQUENCE_EXECUTION_CONTRACT.md"
+        }
+      ],
+      "acceptance_scenarios": [
+        "repository creation, exact PR integration, GitHub reversible mutation, non-GitHub provider mutation, and local/runtime mutation each require instance proof plus an adversarial capability-without-authority rejection"
+      ],
+      "closure_status": "unproven"
     }
   ],
   "matrix_challenge": {

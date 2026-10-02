@@ -15,7 +15,7 @@ def test_current_contract_is_complete_and_rendered_view_is_derived() -> None:
     checked = copy.deepcopy(contract)
     assert parity.validate_contract(checked) == []
     assert checked["_summary"]["source_obligations"] == 423
-    assert checked["_summary"]["behaviors"] == 49
+    assert checked["_summary"]["behaviors"] == 54
     assert checked["_summary"]["conversation_decisions"] == 28
     assert checked["_summary"]["hop_instances"] == 37
     obligations = checked["source_obligations"]
@@ -434,3 +434,35 @@ def test_owner_hop_cannot_drop_cross_owner_safety_refs() -> None:
     owner["required_behavior_refs"] = [x for x in owner["required_behavior_refs"] if x != "repository_independence"]
     errors = _errors(contract)
     assert any("owner instance missing required behavior: repository_independence" in x for x in errors)
+
+
+def test_consequence_execution_contract_behaviors_are_required_and_truthfully_unproven() -> None:
+    contract = parity.load_contract()
+    required = {
+        "typed_consequence_grant",
+        "provider_identity_capability_satisfaction",
+        "consequence_realization_resolution",
+        "consequence_execution_admission",
+        "consequence_result_reconciliation",
+    }
+    rows = {x["id"]: x for x in contract["behaviors"] if x["id"] in required}
+    assert set(rows) == required
+    assert all(x["machinery_state"] == "prompt_only" for x in rows.values())
+    assert all(x["closure_status"] == "unproven" for x in rows.values())
+    assert all(x["current_proof"] == [{"kind": "contract", "ref": "docs/PROGRAMSTART_CONSEQUENCE_EXECUTION_CONTRACT.md"}] for x in rows.values())
+
+
+def test_consequence_execution_contract_cannot_claim_implementation_from_contract_only() -> None:
+    contract = parity.load_contract()
+    row = next(x for x in contract["behaviors"] if x["id"] == "typed_consequence_grant")
+    row["machinery_state"] = "implemented"
+    errors = _errors(contract)
+    assert any("lacks code plus test/live proof" in x for x in errors)
+
+
+def test_consequence_execution_contract_source_fingerprint_is_governed() -> None:
+    contract = parity.load_contract()
+    source = next(x for x in contract["source_files"] if x["path"] == "docs/PROGRAMSTART_CONSEQUENCE_EXECUTION_CONTRACT.md")
+    source["sha256"] = "0" * 64
+    errors = _errors(contract)
+    assert any("source fingerprint drift" in x for x in errors)

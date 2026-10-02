@@ -7,9 +7,9 @@
 - PROGRAMSTART baseline: GrahamArdent/PROGRAMSTART@e442fb0e6a6de37629d454b06e4d06038f70188b
 - Controller observation baseline: GrahamArdent/programstart-autonomous-controller@c95372bd5640110cf13791546ae1930cd0abb240
 - Durable reference: GrahamArdent/PROGRAMSTART#143
-- Fingerprinted source files: 8
+- Fingerprinted source files: 9
 - Required source obligations covered: 423
-- Parity behaviors: 49
+- Parity behaviors: 54
 - Accepted conversation decisions reconciled: 28
 - Material hop instances: 37
 
@@ -23,7 +23,7 @@ Reuse still-valid evidence; widen only on declared invalidation or convergence b
 - human_gate: 1
 - implemented: 9
 - partial: 22
-- prompt_only: 11
+- prompt_only: 16
 - semantic: 6
 
 ## Behavior matrix
@@ -79,6 +79,11 @@ Reuse still-valid evidence; widen only on declared invalidation or convergence b
 | autonomy_metrics_observability — Measure avoidable gates, redundant continuation, and capability debt without creating authority | partial | deterministic | partial | Controller + PROGRAMSTART |
 | learning_maturity_dedup_retest — Deduplicate lessons, track evidence maturity, and route only matching future retests | prompt_only | semantic | unproven | PROGRAMSTART |
 | conversation_decision_reconciliation — Reconcile accepted conversation decisions into durable parity evidence | partial | hybrid | partial | PROGRAMSTART + owning project |
+| typed_consequence_grant — Compile exact owner authority into a typed consequence grant | prompt_only | semantic | unproven | PROGRAMSTART + Controller |
+| provider_identity_capability_satisfaction — Satisfy provider requirements without minting semantic authority | prompt_only | semantic | unproven | Secrets / identity owner + Controller |
+| consequence_realization_resolution — Resolve admitted consequences to current realizations | prompt_only | semantic | unproven | Paths + Controller |
+| consequence_execution_admission — Admit and dispatch only the exact bounded consequence | prompt_only | semantic | unproven | Controller + typed execution fabric |
+| consequence_result_reconciliation — Reconcile consequence results and ambiguous outcomes durably | prompt_only | semantic | unproven | Controller + Evidence/owner runtime |
 
 ## Material hop instance matrix
 
@@ -169,6 +174,11 @@ Reuse still-valid evidence; widen only on declared invalidation or convergence b
 - progressive_context_widening: Progressive narrowing then widening at convergence
 - temporary_automation_gap_alternative_actuation: Search bounded alternative actuation before using a human as transport
 - learning_maturity_dedup_retest: Deduplicate lessons, track evidence maturity, and route only matching future retests
+- typed_consequence_grant: Compile exact owner authority into a typed consequence grant
+- provider_identity_capability_satisfaction: Satisfy provider requirements without minting semantic authority
+- consequence_realization_resolution: Resolve admitted consequences to current realizations
+- consequence_execution_admission: Admit and dispatch only the exact bounded consequence
+- consequence_result_reconciliation: Reconcile consequence results and ambiguous outcomes durably
 
 ## Pending methodology deltas
 

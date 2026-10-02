@@ -4,13 +4,23 @@ from pydantic import ValidationError
 from scripts.programstart_capability_discovery_gate import (
     CapabilityConclusion,
     CapabilityDiscoveryDecision,
+    ContractDisposition,
+    FailureAction,
+    FailureBoundaryEvidence,
+    FailureBoundaryKind,
+    FailureLocalizationDecision,
+    FailureLocalizationDurability,
+    FailureLocalizationEvidence,
+    FailureLocalizationFacts,
     PathsClassifierConstraints,
     PathsClassifierInput,
     PathsClassifierResult,
     PathsDiscoveryDurability,
     PathsDiscoveryEvidence,
     classifier_result_sha256,
+    failure_localization_facts_sha256,
     validate_capability_discovery,
+    validate_failure_localization,
 )
 
 
@@ -222,3 +232,187 @@ def test_human_required_needs_owner_native_gate_verification():
             discovery=ev(result=result, owner_refs=["owner@current-human-gate"]),
         )
     )
+
+
+def localized_failure(
+    *,
+    contract_disposition: ContractDisposition = ContractDisposition.SATISFIED,
+    boundary_kind: FailureBoundaryKind = FailureBoundaryKind.DISPATCHER,
+    independent_degradation_refs: tuple[str, ...] = (),
+    replacement_necessity_refs: tuple[str, ...] = (),
+    discovery: PathsDiscoveryEvidence | None = None,
+) -> FailureLocalizationEvidence:
+    facts = FailureLocalizationFacts(
+        capability_ref="capability:existing-reachability-actuator",
+        contract_ref="contract:reachability-actuator-v1",
+        prior_proof_refs=("proof:actuator-unit-and-contract",),
+        contract_evidence_refs=("proof:current-actuator-contract-check",),
+        contract_disposition=contract_disposition,
+        first_failed_boundary=FailureBoundaryEvidence(
+            boundary_ref=f"boundary:{boundary_kind.value}",
+            kind=boundary_kind,
+            evidence_refs=(f"proof:first-failure:{boundary_kind.value}",),
+        ),
+        independent_degradation_refs=independent_degradation_refs,
+        replacement_necessity_refs=replacement_necessity_refs,
+    )
+    durability = FailureLocalizationDurability(
+        status="proven",
+        mechanism="deterministic failure-boundary regression",
+        verification_ref="test:failure-localization",
+        facts_sha256=failure_localization_facts_sha256(facts),
+        invalidation_conditions=(
+            "component contract changes",
+            "failure-boundary evidence changes",
+        ),
+    )
+    return FailureLocalizationEvidence(
+        discovery=discovery or ev(),
+        facts=facts,
+        durability=durability,
+    )
+
+
+def test_dispatcher_gap_blocks_component_replacement_and_admits_composition_repair():
+    evidence = localized_failure()
+    with pytest.raises(ValueError, match="first proven failing boundary"):
+        validate_failure_localization(
+            FailureLocalizationDecision(
+                action=FailureAction.REPLACE_EXISTING_CAPABILITY,
+                evidence=evidence,
+            )
+        )
+    validate_failure_localization(
+        FailureLocalizationDecision(
+            action=FailureAction.REPAIR_COMPOSITION,
+            evidence=evidence,
+        )
+    )
+
+
+def test_component_contract_contradiction_admits_repair_without_erasing_prior_proof():
+    evidence = localized_failure(
+        contract_disposition=ContractDisposition.CONTRADICTED,
+        boundary_kind=FailureBoundaryKind.COMPONENT,
+    )
+    assert evidence.facts.prior_proof_refs == ("proof:actuator-unit-and-contract",)
+    validate_failure_localization(
+        FailureLocalizationDecision(
+            action=FailureAction.REPAIR_EXISTING_CAPABILITY,
+            evidence=evidence,
+        )
+    )
+
+
+def test_insufficient_component_contract_admits_extension():
+    evidence = localized_failure(
+        contract_disposition=ContractDisposition.INSUFFICIENT,
+        boundary_kind=FailureBoundaryKind.COMPONENT,
+    )
+    validate_failure_localization(
+        FailureLocalizationDecision(
+            action=FailureAction.EXTEND_EXISTING_CAPABILITY,
+            evidence=evidence,
+        )
+    )
+
+
+def test_replacement_requires_evidence_that_bounded_repair_or_extension_is_insufficient():
+    evidence = localized_failure(
+        contract_disposition=ContractDisposition.CONTRADICTED,
+        boundary_kind=FailureBoundaryKind.COMPONENT,
+    )
+    with pytest.raises(ValueError, match="repair or extension is not"):
+        validate_failure_localization(
+            FailureLocalizationDecision(
+                action=FailureAction.REPLACE_EXISTING_CAPABILITY,
+                evidence=evidence,
+            )
+        )
+
+    replacement = localized_failure(
+        contract_disposition=ContractDisposition.CONTRADICTED,
+        boundary_kind=FailureBoundaryKind.COMPONENT,
+        replacement_necessity_refs=("proof:bounded-repair-rejected",),
+    )
+    validate_failure_localization(
+        FailureLocalizationDecision(
+            action=FailureAction.REPLACE_EXISTING_CAPABILITY,
+            evidence=replacement,
+        )
+    )
+
+
+def test_independent_external_degradation_is_isolated_without_blaming_component():
+    evidence = localized_failure(
+        boundary_kind=FailureBoundaryKind.EXTERNAL_DEPENDENCY,
+        independent_degradation_refs=("proof:provider-degradation",),
+    )
+    validate_failure_localization(
+        FailureLocalizationDecision(
+            action=FailureAction.ISOLATE_EXTERNAL_DEGRADATION,
+            evidence=evidence,
+        )
+    )
+    with pytest.raises(ValueError, match="first proven failing boundary"):
+        validate_failure_localization(
+            FailureLocalizationDecision(
+                action=FailureAction.REPLACE_EXISTING_CAPABILITY,
+                evidence=evidence,
+            )
+        )
+
+
+def test_stale_component_evidence_requires_reverification_before_mutation():
+    evidence = localized_failure(
+        contract_disposition=ContractDisposition.STALE_OR_UNKNOWN,
+        boundary_kind=FailureBoundaryKind.CURRENTNESS,
+    )
+    validate_failure_localization(
+        FailureLocalizationDecision(
+            action=FailureAction.REVERIFY_CAPABILITY,
+            evidence=evidence,
+        )
+    )
+    with pytest.raises(ValueError, match="first proven failing boundary"):
+        validate_failure_localization(
+            FailureLocalizationDecision(
+                action=FailureAction.REPLACE_EXISTING_CAPABILITY,
+                evidence=evidence,
+            )
+        )
+
+
+def test_bad_test_assumption_is_corrected_without_component_replacement():
+    evidence = localized_failure(boundary_kind=FailureBoundaryKind.TEST_ASSUMPTION)
+    validate_failure_localization(
+        FailureLocalizationDecision(
+            action=FailureAction.CORRECT_TEST_ASSUMPTION,
+            evidence=evidence,
+        )
+    )
+    with pytest.raises(ValueError, match="first proven failing boundary"):
+        validate_failure_localization(
+            FailureLocalizationDecision(
+                action=FailureAction.REPLACE_EXISTING_CAPABILITY,
+                evidence=evidence,
+            )
+        )
+
+
+def test_failure_localization_receipt_hash_is_fail_closed():
+    evidence = localized_failure()
+    payload = evidence.model_dump(mode="json")
+    payload["facts"]["contract_ref"] = "contract:tampered"
+    with pytest.raises(ValidationError, match="facts hash"):
+        FailureLocalizationEvidence.model_validate(payload)
+
+
+def test_existing_capability_failure_assessment_rejects_genuinely_new_path_discovery():
+    result = classifier_result(
+        classification="GENUINELY_NEW_PATH_REQUIRED",
+        reason_code="NO_REGISTERED_EFFECT_TARGET_EDGE",
+    )
+    discovery = ev(result=result)
+    with pytest.raises(ValidationError, match="conflicts with GENUINELY_NEW_PATH_REQUIRED"):
+        localized_failure(discovery=discovery)

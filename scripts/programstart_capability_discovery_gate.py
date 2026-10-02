@@ -172,3 +172,201 @@ def validate_capability_discovery(decision: CapabilityDiscoveryDecision) -> None
             raise ValueError("selected path requires at least one Paths realization")
         if not evidence.owner_native_verification_refs:
             raise ValueError("discovered realization requires owner-native JIT verification before consequential selection")
+
+
+class ContractDisposition(StrEnum):
+    SATISFIED = "satisfied"
+    CONTRADICTED = "contradicted"
+    INSUFFICIENT = "insufficient"
+    STALE_OR_UNKNOWN = "stale_or_unknown"
+    SUPERSEDED = "superseded"
+
+
+class FailureBoundaryKind(StrEnum):
+    COMPONENT = "component"
+    DISPATCHER = "dispatcher"
+    ADAPTER = "adapter"
+    COMPOSITION = "composition"
+    INVOCATION = "invocation"
+    CURRENTNESS = "currentness"
+    EXTERNAL_DEPENDENCY = "external_dependency"
+    TEST_ASSUMPTION = "test_assumption"
+
+
+class FailureAction(StrEnum):
+    REPAIR_COMPOSITION = "repair_composition"
+    REVERIFY_CAPABILITY = "reverify_capability"
+    ISOLATE_EXTERNAL_DEGRADATION = "isolate_external_degradation"
+    CORRECT_TEST_ASSUMPTION = "correct_test_assumption"
+    REPAIR_EXISTING_CAPABILITY = "repair_existing_capability"
+    EXTEND_EXISTING_CAPABILITY = "extend_existing_capability"
+    REPLACE_EXISTING_CAPABILITY = "replace_existing_capability"
+
+
+COMPOSITION_BOUNDARIES = {
+    FailureBoundaryKind.DISPATCHER,
+    FailureBoundaryKind.ADAPTER,
+    FailureBoundaryKind.COMPOSITION,
+    FailureBoundaryKind.INVOCATION,
+}
+
+
+class FailureBoundaryEvidence(BaseModel):
+    boundary_ref: str = Field(min_length=1)
+    kind: FailureBoundaryKind
+    evidence_refs: tuple[str, ...] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def normalized(self) -> FailureBoundaryEvidence:
+        values = (self.boundary_ref, *self.evidence_refs)
+        if any(not value.strip() or value != value.strip() for value in values):
+            raise ValueError("failure-boundary references must be normalized and non-empty")
+        if len(self.evidence_refs) != len(set(self.evidence_refs)):
+            raise ValueError("failure-boundary evidence references must be unique")
+        return self
+
+
+class FailureLocalizationFacts(BaseModel):
+    capability_ref: str = Field(min_length=1)
+    contract_ref: str = Field(min_length=1)
+    prior_proof_refs: tuple[str, ...] = Field(min_length=1)
+    contract_evidence_refs: tuple[str, ...] = Field(min_length=1)
+    contract_disposition: ContractDisposition
+    first_failed_boundary: FailureBoundaryEvidence
+    independent_degradation_refs: tuple[str, ...] = ()
+    replacement_necessity_refs: tuple[str, ...] = ()
+
+    @model_validator(mode="after")
+    def normalized(self) -> FailureLocalizationFacts:
+        values = (
+            self.capability_ref,
+            self.contract_ref,
+            *self.prior_proof_refs,
+            *self.contract_evidence_refs,
+            *self.independent_degradation_refs,
+            *self.replacement_necessity_refs,
+        )
+        if any(not value.strip() or value != value.strip() for value in values):
+            raise ValueError("failure-localization references must be normalized and non-empty")
+        for name, refs in (
+            ("prior_proof_refs", self.prior_proof_refs),
+            ("contract_evidence_refs", self.contract_evidence_refs),
+            ("independent_degradation_refs", self.independent_degradation_refs),
+            ("replacement_necessity_refs", self.replacement_necessity_refs),
+        ):
+            if len(refs) != len(set(refs)):
+                raise ValueError(f"{name} must contain unique references")
+        return self
+
+
+def failure_localization_facts_sha256(facts: FailureLocalizationFacts) -> str:
+    payload = json.dumps(
+        facts.model_dump(mode="json"),
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode()
+    return hashlib.sha256(payload).hexdigest()
+
+
+class FailureLocalizationDurability(BaseModel):
+    status: Literal["proven"]
+    mechanism: str = Field(min_length=1)
+    verification_ref: str = Field(min_length=1)
+    facts_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    invalidation_conditions: tuple[str, ...] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def normalized(self) -> FailureLocalizationDurability:
+        values = (self.mechanism, self.verification_ref, *self.invalidation_conditions)
+        if any(not value.strip() or value != value.strip() for value in values):
+            raise ValueError("failure-localization durability references must be normalized and non-empty")
+        return self
+
+
+class FailureLocalizationEvidence(BaseModel):
+    discovery: PathsDiscoveryEvidence
+    facts: FailureLocalizationFacts
+    durability: FailureLocalizationDurability
+
+    @model_validator(mode="after")
+    def validate_localization(self) -> FailureLocalizationEvidence:
+        constraints = self.discovery.classifier_result.input.constraints
+        if not (constraints.require_current and constraints.require_proven and constraints.exclude_human_transport):
+            raise ValueError("failure localization requires current, proven, machine-only Paths discovery")
+        if self.discovery.classifier_result.classification == "GENUINELY_NEW_PATH_REQUIRED":
+            raise ValueError("existing-capability failure localization conflicts with GENUINELY_NEW_PATH_REQUIRED discovery")
+        if failure_localization_facts_sha256(self.facts) != self.durability.facts_sha256:
+            raise ValueError("failure-localization facts hash does not match durable proof")
+        return self
+
+
+class FailureLocalizationDecision(BaseModel):
+    action: FailureAction
+    evidence: FailureLocalizationEvidence | None = None
+
+
+def validate_failure_localization(decision: FailureLocalizationDecision) -> None:
+    if decision.evidence is None:
+        raise ValueError("capability mutation conclusion requires durable failure-localization evidence")
+
+    facts = decision.evidence.facts
+    boundary = facts.first_failed_boundary
+    action = decision.action
+
+    if action == FailureAction.REPAIR_COMPOSITION:
+        if boundary.kind not in COMPOSITION_BOUNDARIES or facts.contract_disposition != ContractDisposition.SATISFIED:
+            raise ValueError("repair_composition requires a satisfied component contract and a localized composition boundary")
+        return
+
+    if action == FailureAction.REVERIFY_CAPABILITY:
+        if facts.contract_disposition != ContractDisposition.STALE_OR_UNKNOWN:
+            raise ValueError("reverify_capability requires stale_or_unknown component contract evidence")
+        return
+
+    if action == FailureAction.ISOLATE_EXTERNAL_DEGRADATION:
+        if (
+            boundary.kind != FailureBoundaryKind.EXTERNAL_DEPENDENCY
+            or facts.contract_disposition != ContractDisposition.SATISFIED
+            or not facts.independent_degradation_refs
+        ):
+            raise ValueError(
+                "isolate_external_degradation requires a satisfied component contract "
+                "and independently evidenced external degradation"
+            )
+        return
+
+    if action == FailureAction.CORRECT_TEST_ASSUMPTION:
+        if boundary.kind != FailureBoundaryKind.TEST_ASSUMPTION or facts.contract_disposition != ContractDisposition.SATISFIED:
+            raise ValueError(
+                "correct_test_assumption requires a satisfied component contract and localized test-assumption failure"
+            )
+        return
+
+    if action == FailureAction.REPAIR_EXISTING_CAPABILITY:
+        if boundary.kind != FailureBoundaryKind.COMPONENT or facts.contract_disposition != ContractDisposition.CONTRADICTED:
+            raise ValueError("repair_existing_capability requires durable evidence contradicting the component's own contract")
+        return
+
+    if action == FailureAction.EXTEND_EXISTING_CAPABILITY:
+        if boundary.kind != FailureBoundaryKind.COMPONENT or facts.contract_disposition != ContractDisposition.INSUFFICIENT:
+            raise ValueError("extend_existing_capability requires durable evidence that the component contract is insufficient")
+        return
+
+    if action == FailureAction.REPLACE_EXISTING_CAPABILITY:
+        if boundary.kind != FailureBoundaryKind.COMPONENT:
+            raise ValueError("replacement requires the first proven failing boundary to be the component itself")
+        if facts.contract_disposition not in {
+            ContractDisposition.CONTRADICTED,
+            ContractDisposition.INSUFFICIENT,
+            ContractDisposition.SUPERSEDED,
+        }:
+            raise ValueError(
+                "replacement requires the existing component contract to be contradicted, insufficient, or superseded"
+            )
+        if not facts.replacement_necessity_refs:
+            raise ValueError(
+                "replacement requires durable evidence that repair or extension is not the sufficient bounded remediation"
+            )
+        return
+
+    raise ValueError(f"unsupported failure-localization action: {action}")

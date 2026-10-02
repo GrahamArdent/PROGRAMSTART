@@ -61,6 +61,8 @@ Before selecting or implementing a Mode-C rebuild slice, reconcile apparent repo
 
 ## Protocol
 
+Protocol ordering follows current `sync_rule:` authority/dependent relationships from `config/process-registry.json`; do not write a dependent before its owning authority when the applicable rule requires reconciliation.
+
 1. **Select the entry mode.** Use Mode A for a raw idea, Mode B for a research-backed project not yet structured for execution, or Mode C for an existing/in-flight project.
 
 2. **Establish what is already known.**
@@ -107,13 +109,27 @@ Treat PROGRAMSTART as methodology. Update the existing project's canonical owner
 
 ## DECISION_LOG
 
-Record material decisions in the project's existing decision mechanism. Use `PROGRAMBUILD/DECISION_LOG.md` only when it is the adopted project decision surface rather than a duplicate of an existing authority.
+Material decisions MUST update the adopted project DECISION_LOG or equivalent decision authority. Use `PROGRAMBUILD/DECISION_LOG.md` only when it is the adopted project decision surface rather than a duplicate of an existing authority.
 
 ## Verification Gate
 
+For a stage-completing PROGRAMBUILD mutation, the baseline gate is:
+
+```bash
+uv run programstart validate --check all
+uv run programstart drift
+```
+
 ### Mode A / Mode B stage completion
 
-Before advancing the PROGRAMBUILD stage, run the validators and drift checks required by the current stage protocol.
+Before advancing the PROGRAMBUILD stage, run:
+
+```bash
+uv run programstart validate --check all
+uv run programstart drift
+```
+
+Then apply `.github/prompts/programstart-cross-stage-validation.prompt.md` before the stage transition.
 
 ### Mode C existing-project work
 

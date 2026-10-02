@@ -54,6 +54,7 @@ For an existing project, identify and preserve its current strategic execution s
 Apply guardrails to the actual product shape/risk rather than mechanically installing every pattern:
 
 - one strategic execution spine;
+- repository scope is explicit for AI-assisted work: do not inspect, edit, stage, commit, or push another repository unless the user explicitly names another repo and asks for that action;
 - explicit dominant contract/trust boundary where relevant;
 - auth/trust tests for protected surfaces;
 - alignment tests where producer/consumer drift is plausible;

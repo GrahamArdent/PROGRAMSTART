@@ -2,7 +2,7 @@
 
 # Program Build Execution Checklist
 
-Use this when checklist form is useful. Do not complete boxes that are irrelevant solely for ceremony; follow the authority/risk rules in `PROGRAMBUILD_CANONICAL.md`, `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`, `PROGRAMBUILD_CHALLENGE_GATE.md`, and `PROGRAMBUILD_WORK_PACKET.md`.
+Use this when checklist form is useful. Do not declare work complete while an applicable required item is merely forgotten; reconcile it truthfully as satisfied, not applicable, blocked, or deferred. Do not complete boxes that are irrelevant solely for ceremony; follow the authority/risk rules in `PROGRAMBUILD_CANONICAL.md`, `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`, `PROGRAMBUILD_CHALLENGE_GATE.md`, and `PROGRAMBUILD_WORK_PACKET.md`.
 
 A checklist is a **derived completeness / verification surface**. It does not own strategy, scope, sequencing, architecture, or project state.
 

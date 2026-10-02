@@ -35,6 +35,8 @@ Legacy pre-register ADRs: `0001`-`0003` predate the current `DECISION_LOG.md` li
 | [0023](0023-use-one-strategic-execution-spine-with-bounded-work-packets.md) | Use One Strategic Execution Spine with Bounded Work Packets | accepted | 2026-08-24 |
 | [0024](0024-rank-current-product-authority-over-legacy-repository-evidence.md) | Rank Current Product Authority over Legacy Repository Evidence in Mode C | accepted | 2026-08-25 |
 
+| [0025](0025-intent-ingress-precedes-project-entry-mode.md) | Treat Intent Ingress as a Pre-Entry Profile, Not a New Project Mode | accepted | 2026-09-04 |
+
 ## Rules
 
 - ADRs are append-only. To supersede a decision, create a new ADR with an incremented number and update the old record's `status` to `superseded by ADR-NNNN`.

@@ -142,6 +142,8 @@ This decision is considered implemented for V0.1 when:
 
 ## Links
 
+- <!-- DEC-022 -->
+
 - [Prompt Builder Mode B decision](0021-prompt-builder-mode-b-context-driven-generation.md)
 - [Mode-C authority precedence](0024-rank-current-product-authority-over-legacy-repository-evidence.md)
 - [PROGRAMBUILD playbook](../../PROGRAMBUILD/PROGRAMBUILD.md)

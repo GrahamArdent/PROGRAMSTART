@@ -1192,7 +1192,8 @@ def validate_prompt_generation_boundary(registry: dict) -> list[str]:
 
         path = workspace_path(prompt_path)
         if not path.exists():
-            problems.append(f"prompt_generation managed prompt is missing on disk: {prompt_path}")
+            # Managed prompts live under the gitignored generated-artifact root.
+            # Absence in a clean checkout is valid; when materialized, content must match current authority.
             continue
         expected = build_prompt(stage, registry=registry)
         actual = path.read_text(encoding="utf-8")

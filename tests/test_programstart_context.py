@@ -24,7 +24,7 @@ def test_build_context_index_contains_core_sections() -> None:
     assert index["commands"]["cli"]
     assert index["commands"]["dashboard"]
     assert any(route["path"] == "/api/state" for route in index["routes"])
-    assert any(item["concern"] == "overall process and stage order" for item in index["concerns"])
+    assert any(item["concern"] == "overall process and stage deliverables" for item in index["concerns"])
 
 
 def test_query_context_index_by_concern_returns_owner() -> None:
@@ -208,7 +208,7 @@ def test_document_record_returns_none_for_nonexistent_path() -> None:
 
 def test_main_query_subcommand_builds_index_when_missing(tmp_path: Path, monkeypatch) -> None:
     monkeypatch.setattr("scripts.programstart_context.default_index_path", lambda: tmp_path / "no.json")
-    exit_code = programstart_context.main(["query", "--concern", "overall process and stage order"])
+    exit_code = programstart_context.main(["query", "--concern", "overall process and stage deliverables"])
     assert exit_code == 0
 
 
@@ -228,7 +228,7 @@ def test_main_query_uses_existing_compatible_index(tmp_path: Path, monkeypatch) 
     index_path = tmp_path / "existing.json"
     index_path.write_text(_json.dumps(index), encoding="utf-8")
     monkeypatch.setattr("scripts.programstart_context.default_index_path", lambda: index_path)
-    exit_code = programstart_context.main(["query", "--concern", "overall process and stage order"])
+    exit_code = programstart_context.main(["query", "--concern", "overall process and stage deliverables"])
     assert exit_code == 0
 
 

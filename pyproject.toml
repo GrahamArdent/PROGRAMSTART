@@ -146,6 +146,7 @@ source = [
   "scripts.programstart_artifact_profiles",
   "scripts.programstart_adopt",
   "scripts.programstart_backup",
+  "scripts.programstart_capability_discovery_gate",
   "scripts.programstart_context",
   "scripts.programstart_decision",
   "scripts.programstart_evidence",

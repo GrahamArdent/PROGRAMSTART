@@ -7,9 +7,7 @@ from jsonschema import Draft202012Validator
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA_PATH = ROOT / "schemas" / "backbone-lineage.schema.json"
-FIXTURE_PATH = (
-    ROOT / "tests" / "fixtures" / "backbone_lineage" / "controller_227.json"
-)
+FIXTURE_PATH = ROOT / "tests" / "fixtures" / "backbone_lineage" / "controller_227.json"
 DOC_PATH = ROOT / "docs" / "PROGRAMSTART_BACKBONE_END_TO_END_INFORMATION_FLOW.md"
 
 
@@ -22,10 +20,7 @@ def _fixture() -> dict:
 
 
 def _errors(payload: dict) -> list:
-    return sorted(
-        Draft202012Validator(_schema()).iter_errors(payload),
-        key=lambda error: list(error.path),
-    )
+    return sorted(Draft202012Validator(_schema()).iter_errors(payload), key=lambda error: list(error.path))
 
 
 def _records_by_id(payload: dict) -> dict[str, dict]:
@@ -94,11 +89,7 @@ def test_fixture_does_not_falsely_claim_er012_selection_or_consequence() -> None
     assert not any(record.get("realization_ref") == "ER-012" for record in records)
     assert not any("CONSEQUENCE" in record["stage_projection"] for record in records)
 
-    residual = next(
-        item
-        for item in payload["residuals"]
-        if item["residual_id"] == "residual-paths-consequence-not-reached"
-    )
+    residual = next(item for item in payload["residuals"] if item["residual_id"] == "residual-paths-consequence-not-reached")
     assert residual["kind"] == "not_reached"
     assert "CAPABILITY_DISCOVERY" in residual["stage_projection"]
     assert "CONSEQUENCE" in residual["stage_projection"]
@@ -108,9 +99,7 @@ def test_typed_diagnostic_is_not_promoted_to_authority() -> None:
     records = _records_by_id(_fixture())
     diagnostic = records["diagnostic-0829"]
 
-    assert diagnostic["producer_record_ref"].endswith(
-        "@a2ac6d31c1c1e2e12a2cee06a2e54640051a323e"
-    )
+    assert diagnostic["producer_record_ref"].endswith("@a2ac6d31c1c1e2e12a2cee06a2e54640051a323e")
     assert diagnostic["effect_attempt_ref"] == "req-vps-worker-227-status-diagnostic-0829"
     assert diagnostic["execution_authority"] is False
     assert "realization_ref" not in diagnostic

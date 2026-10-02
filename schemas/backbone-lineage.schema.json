@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://programstart.local/schemas/backbone-lineage.schema.json",
+  "title": "PROGRAMSTART Backbone Lineage Graph V0",
+  "description": "Non-authoritative causal reconstruction projection across owner-native backbone records. It never grants execution authority or replaces native owner state.",
+  "type": "object",
+  "required": [
+    "contract_version",
+    "record_type",
+    "lineage_id",
+    "root_objective_ref",
+    "coverage",
+    "records",
+    "residuals",
+    "execution_authority"
+  ],
+  "properties": {
+    "contract_version": { "const": "0.1" },
+    "record_type": { "const": "programstart.backbone_lineage_graph" },
+    "lineage_id": { "type": "string", "minLength": 1 },
+    "root_objective_ref": { "type": "string", "minLength": 1 },
+    "current_disposition_ref": { "type": "string", "minLength": 1 },
+    "coverage": { "$ref": "#/$defs/coverage" },
+    "records": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/record" }
+    },
+    "residuals": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/residual" }
+    },
+    "execution_authority": { "const": false }
+  },
+  "$defs": {
+    "stage": {
+      "type": "string",
+      "enum": [
+        "INGRESS",
+        "SEMANTIC_INTERPRETATION",
+        "DECISION_SETTLEMENT",
+        "OUTCOME_DECOMPOSITION",
+        "CURRENT_STATE_PROJECTION",
+        "WORK_SELECTION",
+        "CONTROLLER_ADMISSION",
+        "CAPABILITY_DISCOVERY",
+        "OWNER_ADMISSION",
+        "CONSEQUENCE",
+        "EVIDENCE",
+        "RECONSIDERATION",
+        "OUTCOME_VALIDATION",
+        "RECONCILIATION",
+        "TERMINAL"
+      ]
+    },
+    "ref_array": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "coverage": {
+      "type": "object",
+      "required": ["status", "method", "evidence_refs", "residual_summary"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["unknown", "partial", "challenged"]
+        },
+        "method": {
+          "type": "string",
+          "enum": ["none", "bounded_source", "independent_review", "adjudicated_fixture"]
+        },
+        "evidence_refs": { "$ref": "#/$defs/ref_array" },
+        "residual_summary": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "status": { "const": "challenged" } },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "method": {
+                "enum": ["independent_review", "adjudicated_fixture"]
+              },
+              "evidence_refs": { "minItems": 1 }
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "record": {
+      "type": "object",
+      "required": [
+        "record_id",
+        "record_type",
+        "producer_owner",
+        "producer_record_ref",
+        "caused_by",
+        "root_objective_ref",
+        "stage_projection",
+        "execution_authority"
+      ],
+      "properties": {
+        "record_id": { "type": "string", "minLength": 1 },
+        "record_type": { "type": "string", "minLength": 1 },
+        "producer_owner": { "type": "string", "minLength": 1 },
+        "producer_record_ref": { "type": "string", "minLength": 1 },
+        "caused_by": { "$ref": "#/$defs/ref_array" },
+        "root_objective_ref": { "type": "string", "minLength": 1 },
+        "stage_projection": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/stage" },
+          "uniqueItems": true
+        },
+        "owner_ref": { "type": "string", "minLength": 1 },
+        "decision_ref": { "type": "string", "minLength": 1 },
+        "protected_outcome_ref": { "type": "string", "minLength": 1 },
+        "work_packet_ref": { "type": "string", "minLength": 1 },
+        "controller_root_ref": { "type": "string", "minLength": 1 },
+        "controller_run_ref": { "type": "string", "minLength": 1 },
+        "semantic_effect_ref": { "type": "string", "minLength": 1 },
+        "realization_ref": { "type": "string", "minLength": 1 },
+        "effect_attempt_ref": { "type": "string", "minLength": 1 },
+        "terminal_condition_ref": { "type": "string", "minLength": 1 },
+        "resume_or_reconsider_ref": { "type": "string", "minLength": 1 },
+        "authority_refs": { "$ref": "#/$defs/ref_array" },
+        "currentness_refs": { "$ref": "#/$defs/ref_array" },
+        "evidence_refs": { "$ref": "#/$defs/ref_array" },
+        "invalidation_refs": { "$ref": "#/$defs/ref_array" },
+        "execution_authority": { "const": false }
+      },
+      "additionalProperties": false
+    },
+    "residual": {
+      "type": "object",
+      "required": [
+        "residual_id",
+        "kind",
+        "summary",
+        "evidence_refs"
+      ],
+      "properties": {
+        "residual_id": { "type": "string", "minLength": 1 },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "manual_correlation_required",
+            "missing_causal_link",
+            "not_reached",
+            "unknown_or_partial",
+            "stale_or_invalidated",
+            "not_required",
+            "not_present"
+          ]
+        },
+        "summary": { "type": "string", "minLength": 1 },
+        "stage_projection": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/stage" },
+          "uniqueItems": true
+        },
+        "evidence_refs": { "$ref": "#/$defs/ref_array" },
+        "resolution_ref": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

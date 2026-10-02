@@ -1,8 +1,12 @@
 # PROGRAMSTART Backbone End-to-End Information Flow Contract
 
-Status: **PROPOSED REUSABLE METHODOLOGY CONTRACT / DOCUMENTATION-ONLY**
+Status: **ACCEPTED REUSABLE METHODOLOGY CONTRACT / INFORMATION-FLOW ARCHITECTURE**
 Owner: **GrahamArdent/PROGRAMSTART**
 Date: **2026-10-02**
+
+Machine-readable reconstruction form: `schemas/backbone-lineage.schema.json` (V0.1).
+Natural representability fixture: `tests/fixtures/backbone_lineage/controller_227.json`.
+Runtime propagation status: **not implemented / not implied by this contract**.
 
 ## 1. Purpose
 
@@ -139,9 +143,9 @@ Use the following principle:
 
 > **Propagate identity and decision-critical references. Keep owner-native payloads in their owning systems and fetch them JIT when required.**
 
-### 5.1 Candidate Backbone Lineage Envelope
+### 5.1 Backbone Lineage V0 reconstruction envelope
 
-A future machine-readable lineage envelope SHOULD remain deliberately small.
+The accepted V0.1 machine-readable form is a **non-authoritative reconstruction graph**, not yet an on-wire/runtime propagation format. Its records remain deliberately small.
 
 Core correlation fields:
 
@@ -462,14 +466,15 @@ The stage vocabulary is informational projection only. Owner-native state remain
 
 **EXPLICITLY DEFERRED / NON-BLOCKING FOR THIS CONTRACT.**
 
-Not implemented here:
+Not implemented by the architecture contract itself:
 
-- JSON schema for the lineage envelope;
-- Controller runtime propagation;
+- live Controller/Paths/Compute/Execution Node lineage propagation;
 - Matrix lineage projection;
 - Evidence Spine indexing changes;
 - automatic cold-reconstruction CLI/API;
 - historical migration/backfill.
+
+The bounded V0.1 reconstruction schema and first natural fixture are now defined separately and remain non-authoritative.
 
 Those are follow-on implementation candidates only if this architecture survives natural fixtures. Their absence means **not implemented**, not a failed documentation contract.
 
@@ -545,19 +550,13 @@ Do not yet:
 - backfill the ecosystem;
 - mark the flow contract implemented merely because this document exists.
 
-## 15. Next bounded step after contract acceptance
+## 15. Next bounded step after Lineage V0.1 representability acceptance
 
-The next step is **not runtime implementation**.
+The next step is still **not runtime propagation**.
 
-Perform one fresh-context, read-only #227 reconstruction using this contract and record:
+Challenge the V0.1 reconstruction model against at least one independent natural objective whose causal shape materially differs from #227—for example an async-event or genuine human-gate flow—before treating the schema as reusable enough to wire across live components.
 
-1. every durable link that can already be resolved automatically;
-2. every link resolvable only through manual repository archaeology;
-3. every missing causal/identity reference;
-4. every duplicated fact that should instead be referenced;
-5. the minimum candidate lineage fields actually required by this real fixture.
-
-Only after that empirical pass should a machine-readable envelope/schema or runtime propagation change be proposed.
+The second fixture must test the abstraction rather than replay #227's exact shape. If it exposes missing fields, change the reconstruction contract first. If V0.1 survives, then separately design the smallest owner-native propagation/adoption slice and challenge its write surfaces before runtime mutation.
 
 That preserves PROGRAMSTART's rule:
 

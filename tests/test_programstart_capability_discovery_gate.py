@@ -4,6 +4,10 @@ from pydantic import ValidationError
 from scripts.programstart_capability_discovery_gate import (
     CapabilityConclusion,
     CapabilityDiscoveryDecision,
+    FailureLocalizationClass,
+    FailureLocalizationConclusion,
+    FailureLocalizationDecision,
+    FailureLocalizationEvidence,
     PathsClassifierConstraints,
     PathsClassifierInput,
     PathsClassifierResult,
@@ -11,6 +15,7 @@ from scripts.programstart_capability_discovery_gate import (
     PathsDiscoveryEvidence,
     classifier_result_sha256,
     validate_capability_discovery,
+    validate_failure_localization,
 )
 
 
@@ -222,3 +227,235 @@ def test_human_required_needs_owner_native_gate_verification():
             discovery=ev(result=result, owner_refs=["owner@current-human-gate"]),
         )
     )
+
+
+def loc(
+    classification: FailureLocalizationClass,
+    *,
+    preserved=None,
+    contradictory=None,
+    invalidated=None,
+    degradation=None,
+    requirement_gaps=None,
+    boundary="boundary:dispatcher",
+) -> FailureLocalizationEvidence:
+    return FailureLocalizationEvidence(
+        observed_failure_ref="evidence:higher-order-e2e-failure",
+        component_ref="capability:existing-reachability-actuator",
+        component_contract_ref="contract:reachability-actuator-v1",
+        classification=classification,
+        first_failed_boundary_ref=boundary,
+        preserved_evidence_refs=preserved or [],
+        contradictory_component_evidence_refs=contradictory or [],
+        invalidated_component_evidence_refs=invalidated or [],
+        independent_degradation_refs=degradation or [],
+        requirement_gap_refs=requirement_gaps or [],
+        authorization_inferred=False,
+    )
+
+
+def test_composed_failure_preserves_actuator_and_repairs_missing_dispatcher():
+    discovery = ev(
+        result=classifier_result(
+            classification="DIRECT_REALIZATION",
+            reason_code="EXACT_PROVEN_CURRENT_REALIZATION",
+            ordered_candidate_refs=["ER-ACTUATOR"],
+        )
+    )
+    validate_failure_localization(
+        FailureLocalizationDecision(
+            conclusion=FailureLocalizationConclusion.PRESERVE_COMPONENT_AND_REPAIR_BOUNDARY,
+            discovery=discovery,
+            localization=loc(
+                FailureLocalizationClass.COMPOSITION_OR_WIRING_GAP,
+                preserved=["proof:reachability-actuator-v1"],
+                boundary="boundary:dispatcher-wiring",
+            ),
+        )
+    )
+
+
+def test_composed_failure_cannot_replace_proven_actuator_without_component_counterevidence():
+    discovery = ev()
+    with pytest.raises(ValueError, match="replacement requires component contract failure"):
+        validate_failure_localization(
+            FailureLocalizationDecision(
+                conclusion=FailureLocalizationConclusion.COMPONENT_REPLACEMENT_REQUIRED,
+                discovery=discovery,
+                localization=loc(
+                    FailureLocalizationClass.COMPOSITION_OR_WIRING_GAP,
+                    preserved=["proof:reachability-actuator-v1"],
+                    boundary="boundary:dispatcher-wiring",
+                ),
+            )
+        )
+
+
+def test_component_defect_requires_counterevidence_and_explicit_invalidation():
+    discovery = ev()
+    weak = loc(
+        FailureLocalizationClass.COMPONENT_CONTRACT_FAILURE,
+        contradictory=["evidence:actuator-contract-violation"],
+        boundary="boundary:actuator-contract",
+    )
+    with pytest.raises(ValueError, match="contradictory evidence and explicit component-proof invalidation"):
+        validate_failure_localization(
+            FailureLocalizationDecision(
+                conclusion=FailureLocalizationConclusion.COMPONENT_DEFECTIVE,
+                discovery=discovery,
+                localization=weak,
+            )
+        )
+
+    strong = loc(
+        FailureLocalizationClass.COMPONENT_CONTRACT_FAILURE,
+        contradictory=["evidence:actuator-contract-violation"],
+        invalidated=["proof:reachability-actuator-v1"],
+        boundary="boundary:actuator-contract",
+    )
+    validate_failure_localization(
+        FailureLocalizationDecision(
+            conclusion=FailureLocalizationConclusion.COMPONENT_DEFECTIVE,
+            discovery=discovery,
+            localization=strong,
+        )
+    )
+    validate_failure_localization(
+        FailureLocalizationDecision(
+            conclusion=FailureLocalizationConclusion.COMPONENT_REPLACEMENT_REQUIRED,
+            discovery=discovery,
+            localization=strong,
+        )
+    )
+
+
+def test_contract_insufficiency_can_require_replacement_without_erasing_historical_proof():
+    discovery = ev()
+    validate_failure_localization(
+        FailureLocalizationDecision(
+            conclusion=FailureLocalizationConclusion.COMPONENT_REPLACEMENT_REQUIRED,
+            discovery=discovery,
+            localization=loc(
+                FailureLocalizationClass.COMPONENT_CONTRACT_INSUFFICIENT,
+                preserved=["proof:reachability-actuator-v1"],
+                requirement_gaps=["requirement:effect-needs-semantic-not-covered-by-v1"],
+                boundary="boundary:component-contract-scope",
+            ),
+        )
+    )
+
+
+def test_independent_degradation_is_not_component_replacement_evidence():
+    discovery = ev()
+    degradation = loc(
+        FailureLocalizationClass.INDEPENDENT_DEGRADATION,
+        preserved=["proof:reachability-actuator-v1"],
+        degradation=["evidence:external-provider-degraded"],
+        boundary="boundary:external-provider",
+    )
+    validate_failure_localization(
+        FailureLocalizationDecision(
+            conclusion=FailureLocalizationConclusion.INDEPENDENT_DEGRADATION,
+            discovery=discovery,
+            localization=degradation,
+        )
+    )
+    with pytest.raises(ValueError, match="replacement requires component contract failure"):
+        validate_failure_localization(
+            FailureLocalizationDecision(
+                conclusion=FailureLocalizationConclusion.COMPONENT_REPLACEMENT_REQUIRED,
+                discovery=discovery,
+                localization=degradation,
+            )
+        )
+
+
+def test_currentness_failure_requires_recheck_not_replacement():
+    discovery = ev()
+    currentness = loc(
+        FailureLocalizationClass.CURRENTNESS_OR_ACTIVATION_FAILURE,
+        preserved=["proof:historical-actuator-proof"],
+        boundary="boundary:runtime-currentness",
+    )
+    validate_failure_localization(
+        FailureLocalizationDecision(
+            conclusion=FailureLocalizationConclusion.CURRENTNESS_RECHECK_REQUIRED,
+            discovery=discovery,
+            localization=currentness,
+        )
+    )
+    with pytest.raises(ValueError, match="replacement requires component contract failure"):
+        validate_failure_localization(
+            FailureLocalizationDecision(
+                conclusion=FailureLocalizationConclusion.COMPONENT_REPLACEMENT_REQUIRED,
+                discovery=discovery,
+                localization=currentness,
+            )
+        )
+
+
+def test_test_assumption_failure_requires_correction_not_replacement():
+    discovery = ev()
+    assumption = loc(
+        FailureLocalizationClass.TEST_OR_ASSUMPTION_FAILURE,
+        preserved=["proof:reachability-actuator-v1"],
+        boundary="boundary:test-assumption",
+    )
+    validate_failure_localization(
+        FailureLocalizationDecision(
+            conclusion=FailureLocalizationConclusion.TEST_ASSUMPTION_CORRECTION_REQUIRED,
+            discovery=discovery,
+            localization=assumption,
+        )
+    )
+    with pytest.raises(ValueError, match="replacement requires component contract failure"):
+        validate_failure_localization(
+            FailureLocalizationDecision(
+                conclusion=FailureLocalizationConclusion.COMPONENT_REPLACEMENT_REQUIRED,
+                discovery=discovery,
+                localization=assumption,
+            )
+        )
+
+
+def test_unknown_boundary_can_only_request_further_localization():
+    discovery = ev()
+    unresolved = loc(FailureLocalizationClass.UNKNOWN, boundary="boundary:unresolved")
+    validate_failure_localization(
+        FailureLocalizationDecision(
+            conclusion=FailureLocalizationConclusion.FURTHER_LOCALIZATION_REQUIRED,
+            discovery=discovery,
+            localization=unresolved,
+        )
+    )
+    with pytest.raises(ValueError, match="replacement requires component contract failure"):
+        validate_failure_localization(
+            FailureLocalizationDecision(
+                conclusion=FailureLocalizationConclusion.COMPONENT_REPLACEMENT_REQUIRED,
+                discovery=discovery,
+                localization=unresolved,
+            )
+        )
+
+
+def test_failure_localization_requires_current_proven_discovery_context():
+    weak_discovery = ev(
+        result=classifier_result(
+            constraints=PathsClassifierConstraints(
+                require_current=False,
+                require_proven=True,
+                exclude_human_transport=True,
+            )
+        )
+    )
+    with pytest.raises(ValueError, match="requires current and proven Paths discovery context"):
+        validate_failure_localization(
+            FailureLocalizationDecision(
+                conclusion=FailureLocalizationConclusion.PRESERVE_COMPONENT_AND_REPAIR_BOUNDARY,
+                discovery=weak_discovery,
+                localization=loc(
+                    FailureLocalizationClass.COMPOSITION_OR_WIRING_GAP,
+                    preserved=["proof:reachability-actuator-v1"],
+                ),
+            )
+        )

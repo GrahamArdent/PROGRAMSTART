@@ -98,6 +98,8 @@ Reuse still-valid evidence; widen only on declared invalidation or convergence b
 | HOP-009 | execution_fabric | Compute worker bridge | Execution Node typed normal work carrier | TR-05 typed Compute-to-Execution transport / fixed semantic carrier where already accepted | partial | GrahamArdent/programstart-compute-spine#75<br>GrahamArdent/programstart-autonomous-controller#97 |
 | HOP-010 | execution_fabric | Execution Node typed action | Compute bounded result envelope | typed Execution Node result binding | proven | GrahamArdent/programstart-autonomous-controller#53<br>GrahamArdent/programstart-autonomous-controller#97 |
 | HOP-011 | execution_fabric | Compute bounded result envelope | Controller continuation evidence | Controller request/result correlation | proven | GrahamArdent/programstart-autonomous-controller#53<br>GrahamArdent/programstart-autonomous-controller#97 |
+
+[executed on device: execution-node (f06c7cdc-f670-49c4-9af8-64b2043a000a)]
 | HOP-012 | async_continuation | GitHub provider terminal events | Watchtower authenticated event sensor | authenticated GitHub webhook intake and durable delivery identity | proven | GrahamArdent/programstart-autonomous-controller#71<br>GrahamArdent/repo-watchtower#16 |
 | HOP-013 | async_continuation | Watchtower terminal evidence projection | Controller exact durable machine wait | bounded terminal-evidence projection plus exact wait correlation | proven | GrahamArdent/programstart-autonomous-controller#71<br>GrahamArdent/repo-watchtower#16<br>GrahamArdent/execution-node-control#188 |
 | HOP-014 | async_continuation | Controller genuine human gate | Mission-Control operator interaction surface | Mission-Control human-gate notification/interaction transport | partial | GrahamArdent/programstart-autonomous-controller#71<br>GrahamArdent/programstart-autonomous-controller#88 |
@@ -196,7 +198,5 @@ Status: CLEAR
 ## Closure rule
 
 Matrix construction is complete only when all required source obligations are covered, fingerprints/anchors validate, rendered output is generated from the machine contract, adversarial Challenge is CLEAR, and hosted/local checks pass. Coverage completeness does not mean backbone parity: missing, prompt-only, semantic, human-gate, and partial rows remain explicit implementation work. No Controller behavior change is authorized by this contract.
-
-[executed on device: execution-node (f06c7cdc-f670-49c4-9af8-64b2043a000a)]
 
 [executed on device: execution-node (f06c7cdc-f670-49c4-9af8-64b2043a000a)]

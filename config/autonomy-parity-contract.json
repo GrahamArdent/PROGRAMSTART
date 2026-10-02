@@ -6383,7 +6383,7 @@
         "external_resource_evidence_continuity",
         "verification_claim_truthfulness"
       ],
-      "instance_status": "proven",
+      "instance_status": "partial",
       "evidence_refs": [
         "GrahamArdent/programstart-autonomous-controller#71",
         "GrahamArdent/repo-watchtower#16"

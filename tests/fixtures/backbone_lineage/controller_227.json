@@ -1,0 +1,229 @@
+{
+  "contract_version": "0.1",
+  "record_type": "programstart.backbone_lineage_graph",
+  "lineage_id": "lineage:controller-227-backbone-20261002",
+  "root_objective_ref": "GrahamArdent/programstart-autonomous-controller#227",
+  "current_disposition_ref": "GrahamArdent/programstart-autonomous-controller#227#issuecomment-5948262009",
+  "coverage": {
+    "status": "challenged",
+    "method": "adjudicated_fixture",
+    "evidence_refs": [
+      "GrahamArdent/PROGRAMSTART@e3a909773327258321ec50313fbece5628cf9f42:docs/PROGRAMSTART_BACKBONE_END_TO_END_INFORMATION_FLOW.md",
+      "GrahamArdent/PROGRAMSTART@e3a909773327258321ec50313fbece5628cf9f42:docs/acceptance/observations/2026-10-02-backbone-e2e-flow-227-reconstruction.md",
+      "GrahamArdent/programstart-autonomous-controller#227#issuecomment-5948262009",
+      "GrahamArdent/programstart-compute-spine@a2ac6d31c1c1e2e12a2cee06a2e54640051a323e"
+    ],
+    "residual_summary": [
+      "The ingress-request to native Controller root/run relation is not exposed as one generic machine-addressable cross-owner lineage edge.",
+      "Repair PRs and the typed diagnostic are correlated to the semantic objective through durable prose rather than a shared lineage field.",
+      "Paths selection, consequence-time owner JIT admission, the fresh ER-012 consequence, and post-result continuation are not reached for the current #227 run."
+    ]
+  },
+  "records": [
+    {
+      "record_id": "objective-227",
+      "record_type": "github.issue.objective",
+      "producer_owner": "GrahamArdent/programstart-autonomous-controller",
+      "producer_record_ref": "GrahamArdent/programstart-autonomous-controller#227",
+      "caused_by": [],
+      "root_objective_ref": "GrahamArdent/programstart-autonomous-controller#227",
+      "stage_projection": ["WORK_SELECTION"],
+      "owner_ref": "GrahamArdent/programstart-autonomous-controller",
+      "protected_outcome_ref": "GrahamArdent/programstart-autonomous-controller#227#Objective",
+      "terminal_condition_ref": "GrahamArdent/programstart-autonomous-controller@d11ae41f18a05d5df5b5b90210e5688281e4516d:CURRENT_WORK_PACKET.md#Terminal-condition",
+      "authority_refs": [
+        "GrahamArdent/programstart-autonomous-controller@d11ae41f18a05d5df5b5b90210e5688281e4516d:CURRENT_WORK_PACKET.md"
+      ],
+      "evidence_refs": [
+        "GrahamArdent/programstart-autonomous-controller#227"
+      ],
+      "execution_authority": false
+    },
+    {
+      "record_id": "work-packet-227",
+      "record_type": "controller.current_work_packet",
+      "producer_owner": "GrahamArdent/programstart-autonomous-controller",
+      "producer_record_ref": "GrahamArdent/programstart-autonomous-controller@d11ae41f18a05d5df5b5b90210e5688281e4516d:CURRENT_WORK_PACKET.md",
+      "caused_by": ["objective-227"],
+      "root_objective_ref": "GrahamArdent/programstart-autonomous-controller#227",
+      "stage_projection": ["OUTCOME_DECOMPOSITION", "WORK_SELECTION"],
+      "owner_ref": "GrahamArdent/programstart-autonomous-controller",
+      "work_packet_ref": "GrahamArdent/programstart-autonomous-controller@d11ae41f18a05d5df5b5b90210e5688281e4516d:CURRENT_WORK_PACKET.md",
+      "protected_outcome_ref": "GrahamArdent/programstart-autonomous-controller#227#Objective",
+      "terminal_condition_ref": "GrahamArdent/programstart-autonomous-controller@d11ae41f18a05d5df5b5b90210e5688281e4516d:CURRENT_WORK_PACKET.md#Terminal-condition",
+      "authority_refs": [
+        "GrahamArdent/PROGRAMSTART#187",
+        "GrahamArdent/programstart-autonomous-controller#227"
+      ],
+      "evidence_refs": [
+        "GrahamArdent/paths@093b90c3d6429d376fc8dd7cbb8292e76827a0ec:registry/effect-reachability.json#ER-012"
+      ],
+      "execution_authority": false
+    },
+    {
+      "record_id": "ingress-081653",
+      "record_type": "controller.issue_comment_projection.private_objective_ingress",
+      "producer_owner": "GrahamArdent/programstart-autonomous-controller",
+      "producer_record_ref": "GrahamArdent/programstart-autonomous-controller#227#issuecomment-5948262009",
+      "caused_by": ["work-packet-227"],
+      "root_objective_ref": "GrahamArdent/programstart-autonomous-controller#227",
+      "stage_projection": ["INGRESS", "SEMANTIC_INTERPRETATION", "CONTROLLER_ADMISSION"],
+      "owner_ref": "GrahamArdent/programstart-autonomous-controller",
+      "work_packet_ref": "req-programstart-objective-backbone-227-complete-081653",
+      "authority_refs": [
+        "GrahamArdent/programstart-autonomous-controller#227"
+      ],
+      "currentness_refs": [
+        "GrahamArdent/programstart-autonomous-controller#227#issuecomment-5948262009"
+      ],
+      "evidence_refs": [
+        "req-programstart-objective-backbone-227-complete-081653"
+      ],
+      "execution_authority": false
+    },
+    {
+      "record_id": "repair-236",
+      "record_type": "github.pull_request.repair",
+      "producer_owner": "GrahamArdent/programstart-autonomous-controller",
+      "producer_record_ref": "GrahamArdent/programstart-autonomous-controller#236",
+      "caused_by": ["ingress-081653"],
+      "root_objective_ref": "GrahamArdent/programstart-autonomous-controller#227",
+      "stage_projection": ["RECONCILIATION"],
+      "owner_ref": "GrahamArdent/programstart-autonomous-controller",
+      "authority_refs": [
+        "GrahamArdent/programstart-autonomous-controller#227"
+      ],
+      "evidence_refs": [
+        "GrahamArdent/programstart-autonomous-controller@194b63eb6fd6104b2e068ff88004165a4d5cea13"
+      ],
+      "execution_authority": false
+    },
+    {
+      "record_id": "repair-237",
+      "record_type": "github.pull_request.repair",
+      "producer_owner": "GrahamArdent/programstart-autonomous-controller",
+      "producer_record_ref": "GrahamArdent/programstart-autonomous-controller#237",
+      "caused_by": ["repair-236"],
+      "root_objective_ref": "GrahamArdent/programstart-autonomous-controller#227",
+      "stage_projection": ["RECONCILIATION"],
+      "owner_ref": "GrahamArdent/programstart-autonomous-controller",
+      "authority_refs": [
+        "GrahamArdent/programstart-autonomous-controller#227"
+      ],
+      "evidence_refs": [
+        "GrahamArdent/programstart-autonomous-controller@d11ae41f18a05d5df5b5b90210e5688281e4516d"
+      ],
+      "execution_authority": false
+    },
+    {
+      "record_id": "autocont-run-082749",
+      "record_type": "controller.issue_comment_projection.semantic_run",
+      "producer_owner": "GrahamArdent/programstart-autonomous-controller",
+      "producer_record_ref": "GrahamArdent/programstart-autonomous-controller#227#issuecomment-5948262009",
+      "caused_by": ["repair-237"],
+      "root_objective_ref": "GrahamArdent/programstart-autonomous-controller#227",
+      "stage_projection": ["CONTROLLER_ADMISSION", "RECONSIDERATION"],
+      "owner_ref": "GrahamArdent/programstart-autonomous-controller",
+      "controller_root_ref": "root-8587f916b07c12daf753a297",
+      "controller_run_ref": "intent-164c265053d2b7b7",
+      "work_packet_ref": "req-programstart-objective-backbone-227-autocont-082749",
+      "resume_or_reconsider_ref": "AUTOMATION_GAP_RECORDED",
+      "currentness_refs": [
+        "GrahamArdent/programstart-autonomous-controller@d11ae41f18a05d5df5b5b90210e5688281e4516d"
+      ],
+      "evidence_refs": [
+        "req-programstart-objective-backbone-227-autocont-082749"
+      ],
+      "execution_authority": false
+    },
+    {
+      "record_id": "diagnostic-0829",
+      "record_type": "compute.typed_execution_node_observation",
+      "producer_owner": "GrahamArdent/programstart-compute-spine",
+      "producer_record_ref": "GrahamArdent/programstart-compute-spine@a2ac6d31c1c1e2e12a2cee06a2e54640051a323e",
+      "caused_by": ["autocont-run-082749"],
+      "root_objective_ref": "GrahamArdent/programstart-autonomous-controller#227",
+      "stage_projection": ["EVIDENCE"],
+      "owner_ref": "GrahamArdent/programstart-compute-spine",
+      "effect_attempt_ref": "req-vps-worker-227-status-diagnostic-0829",
+      "currentness_refs": [
+        "GrahamArdent/execution-node-control@42b1d34ae347395cccb2f64f71d273e854f342ca"
+      ],
+      "evidence_refs": [
+        "req-vps-worker-227-status-diagnostic-0829",
+        "req-spine-6fa22a7ede514cb6e9cf-status"
+      ],
+      "execution_authority": false
+    },
+    {
+      "record_id": "reconstruction-227",
+      "record_type": "programstart.backbone_cold_reconstruction",
+      "producer_owner": "GrahamArdent/PROGRAMSTART",
+      "producer_record_ref": "GrahamArdent/PROGRAMSTART@e3a909773327258321ec50313fbece5628cf9f42:docs/acceptance/observations/2026-10-02-backbone-e2e-flow-227-reconstruction.md",
+      "caused_by": ["autocont-run-082749", "diagnostic-0829"],
+      "root_objective_ref": "GrahamArdent/programstart-autonomous-controller#227",
+      "stage_projection": ["OUTCOME_VALIDATION", "RECONCILIATION"],
+      "owner_ref": "GrahamArdent/PROGRAMSTART",
+      "protected_outcome_ref": "GrahamArdent/programstart-autonomous-controller#227#Objective",
+      "terminal_condition_ref": "GrahamArdent/programstart-autonomous-controller@d11ae41f18a05d5df5b5b90210e5688281e4516d:CURRENT_WORK_PACKET.md#Terminal-condition",
+      "currentness_refs": [
+        "GrahamArdent/programstart-autonomous-controller#227#issuecomment-5948262009",
+        "GrahamArdent/programstart-compute-spine@a2ac6d31c1c1e2e12a2cee06a2e54640051a323e"
+      ],
+      "evidence_refs": [
+        "GrahamArdent/paths@093b90c3d6429d376fc8dd7cbb8292e76827a0ec:registry/effect-reachability.json#ER-012",
+        "GrahamArdent/execution-node-control#301"
+      ],
+      "invalidation_refs": [
+        "Controller #227 closes or current Work Packet changes",
+        "Execution Node repository capability projection gains an accepted Controller self-hosting profile",
+        "Paths ER-012 or its owner/currentness evidence changes materially"
+      ],
+      "execution_authority": false
+    }
+  ],
+  "residuals": [
+    {
+      "residual_id": "residual-native-ingress-root-link",
+      "kind": "manual_correlation_required",
+      "summary": "The private ingress request and native Controller root/run are durably described together in the #227 issue narrative, but no generic cross-owner causal reference directly joins them for ecosystem reconstruction.",
+      "stage_projection": ["INGRESS", "CONTROLLER_ADMISSION"],
+      "evidence_refs": [
+        "GrahamArdent/programstart-autonomous-controller#227#issuecomment-5948262009"
+      ]
+    },
+    {
+      "residual_id": "residual-repair-causality",
+      "kind": "manual_correlation_required",
+      "summary": "PR #236 and PR #237 explain their originating live failures in prose; the repair commits do not carry a standard caused-by field linking them to the semantic objective.",
+      "stage_projection": ["RECONCILIATION"],
+      "evidence_refs": [
+        "GrahamArdent/programstart-autonomous-controller#236",
+        "GrahamArdent/programstart-autonomous-controller#237"
+      ]
+    },
+    {
+      "residual_id": "residual-diagnostic-root-link",
+      "kind": "missing_causal_link",
+      "summary": "The typed Compute diagnostic is strongly identified and durable but does not carry the Controller root/run or root-objective reference in its native result.",
+      "stage_projection": ["EVIDENCE", "RECONSIDERATION"],
+      "evidence_refs": [
+        "GrahamArdent/programstart-compute-spine@a2ac6d31c1c1e2e12a2cee06a2e54640051a323e",
+        "GrahamArdent/programstart-autonomous-controller#227#issuecomment-5948262009"
+      ]
+    },
+    {
+      "residual_id": "residual-paths-consequence-not-reached",
+      "kind": "not_reached",
+      "summary": "The fresh #227 run has not reached deterministic Paths selection, consequence-time owner JIT admission, the new ER-012 reachability consequence, or post-result Controller continuation because Controller self-hosting repository capability is absent from the current typed repository fabric.",
+      "stage_projection": ["CAPABILITY_DISCOVERY", "OWNER_ADMISSION", "CONSEQUENCE", "EVIDENCE", "RECONSIDERATION"],
+      "evidence_refs": [
+        "GrahamArdent/programstart-autonomous-controller#227#issuecomment-5948262009",
+        "GrahamArdent/paths@093b90c3d6429d376fc8dd7cbb8292e76827a0ec:registry/effect-reachability.json#ER-012",
+        "GrahamArdent/programstart-compute-spine@a2ac6d31c1c1e2e12a2cee06a2e54640051a323e"
+      ],
+      "resolution_ref": "GrahamArdent/programstart-autonomous-controller#227"
+    }
+  ],
+  "execution_authority": false
+}

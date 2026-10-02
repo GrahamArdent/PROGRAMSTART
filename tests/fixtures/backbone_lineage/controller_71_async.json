@@ -1,0 +1,301 @@
+{
+  "contract_version": "0.1",
+  "record_type": "programstart.backbone_lineage_graph",
+  "lineage_id": "lineage:controller-71-async-continuation-20261002",
+  "root_objective_ref": "GrahamArdent/programstart-autonomous-controller#71",
+  "current_disposition_ref": "GrahamArdent/programstart-autonomous-controller#71#issuecomment-5946919286",
+  "coverage": {
+    "status": "challenged",
+    "method": "adjudicated_fixture",
+    "evidence_refs": [
+      "GrahamArdent/PROGRAMSTART@6148573f3cdb3a5ada29555794f8965ee72b75be:schemas/backbone-lineage.schema.json",
+      "GrahamArdent/programstart-autonomous-controller#71#issuecomment-5946919286",
+      "GrahamArdent/repo-watchtower#16#issuecomment-5946552192",
+      "GrahamArdent/execution-node-control#302#issuecomment-5946437169"
+    ],
+    "residual_summary": [
+      "The final Controller run/wait/snapshot identities are durably preserved in owner narrative evidence but are not exposed through one generic cross-owner reconstruction API.",
+      "The distinct Watchtower provider events used by the final #71 acceptance are correlated in the Controller terminal record rather than through common lineage fields emitted by the sensor and Controller.",
+      "No human-gate lineage is present because the accepted machine-safe path explicitly required no conversational re-entry or human result transport."
+    ]
+  },
+  "records": [
+    {
+      "record_id": "objective-71",
+      "record_type": "github.issue.objective",
+      "producer_owner": "GrahamArdent/programstart-autonomous-controller",
+      "producer_record_ref": "GrahamArdent/programstart-autonomous-controller#71",
+      "caused_by": [],
+      "root_objective_ref": "GrahamArdent/programstart-autonomous-controller#71",
+      "stage_projection": ["WORK_SELECTION"],
+      "owner_ref": "GrahamArdent/programstart-autonomous-controller",
+      "protected_outcome_ref": "GrahamArdent/programstart-autonomous-controller#71#Acceptance-terminal-condition",
+      "authority_refs": [
+        "GrahamArdent/programstart-autonomous-controller#71"
+      ],
+      "evidence_refs": [
+        "GrahamArdent/programstart-autonomous-controller#71"
+      ],
+      "execution_authority": false
+    },
+    {
+      "record_id": "sensor-currentness-blocker",
+      "record_type": "controller.issue_comment_projection.sensor_currentness_blocker",
+      "producer_owner": "GrahamArdent/programstart-autonomous-controller",
+      "producer_record_ref": "GrahamArdent/programstart-autonomous-controller#71#issuecomment-5945954667",
+      "caused_by": ["objective-71"],
+      "root_objective_ref": "GrahamArdent/programstart-autonomous-controller#71",
+      "stage_projection": ["RECONSIDERATION", "OUTCOME_VALIDATION"],
+      "owner_ref": "GrahamArdent/programstart-autonomous-controller",
+      "currentness_refs": [
+        "GrahamArdent/repo-watchtower#16"
+      ],
+      "evidence_refs": [
+        "C71-SENSOR-CURRENTNESS"
+      ],
+      "execution_authority": false
+    },
+    {
+      "record_id": "en302-restart-acceptance",
+      "record_type": "execution_node.typed_restart_acceptance",
+      "producer_owner": "GrahamArdent/execution-node-control",
+      "producer_record_ref": "GrahamArdent/execution-node-control#302#issuecomment-5946437169",
+      "caused_by": ["sensor-currentness-blocker"],
+      "root_objective_ref": "GrahamArdent/programstart-autonomous-controller#71",
+      "stage_projection": ["CONSEQUENCE", "EVIDENCE"],
+      "owner_ref": "GrahamArdent/execution-node-control",
+      "effect_attempt_ref": "req-reconcile-en302-current-restart-fallback-20261002T060200Z",
+      "authority_refs": [
+        "GrahamArdent/execution-node-control#302",
+        "GrahamArdent/repo-watchtower#16"
+      ],
+      "currentness_refs": [
+        "GrahamArdent/execution-node-control@42b1d34ae347395cccb2f64f71d273e854f342ca",
+        "GrahamArdent/repo-watchtower@2651f97673d3e35226f9c65cf48cc26dbb2b4e79"
+      ],
+      "evidence_refs": [
+        "GrahamArdent/execution-node-control@283585b98900d3094618d3f40a4bcd990f5d8e5a"
+      ],
+      "execution_authority": false
+    },
+    {
+      "record_id": "watchtower16-terminal-return",
+      "record_type": "watchtower.owner_acceptance_return",
+      "producer_owner": "GrahamArdent/repo-watchtower",
+      "producer_record_ref": "GrahamArdent/repo-watchtower#16#issuecomment-5946552192",
+      "caused_by": ["en302-restart-acceptance"],
+      "root_objective_ref": "GrahamArdent/programstart-autonomous-controller#71",
+      "stage_projection": ["EVIDENCE", "RECONCILIATION"],
+      "owner_ref": "GrahamArdent/repo-watchtower",
+      "currentness_refs": [
+        "GrahamArdent/repo-watchtower@5227d18fce9977fccfb78a37cb595049291492f4",
+        "GrahamArdent/repo-watchtower@2651f97673d3e35226f9c65cf48cc26dbb2b4e79"
+      ],
+      "evidence_refs": [
+        "workflow_run:36966882897:attempt:2",
+        "watchtower-delivery:843f4650-be26-11f1-97aa-880f78898603",
+        "sha256:a57729e0afb64eb6fc781abbffbb4ce0570e6aac88f3c9857d206ad74d8d47f3"
+      ],
+      "invalidation_refs": [
+        "GrahamArdent/repo-watchtower#16",
+        "GrahamArdent/repo-watchtower@5227d18fce9977fccfb78a37cb595049291492f4"
+      ],
+      "execution_authority": false
+    },
+    {
+      "record_id": "fresh-request-authority-conflict",
+      "record_type": "controller.issue_comment_projection.fail_closed_acceptance",
+      "producer_owner": "GrahamArdent/programstart-autonomous-controller",
+      "producer_record_ref": "GrahamArdent/programstart-autonomous-controller#71#issuecomment-5946701504",
+      "caused_by": ["watchtower16-terminal-return"],
+      "root_objective_ref": "GrahamArdent/programstart-autonomous-controller#71",
+      "stage_projection": ["CONTROLLER_ADMISSION", "RECONSIDERATION"],
+      "owner_ref": "GrahamArdent/programstart-autonomous-controller",
+      "effect_attempt_ref": "req-controller-71-single-lane-acceptance-1002",
+      "evidence_refs": [
+        "RuntimeAuthorityError:sealed Work Packet replay conflicts with durable authority"
+      ],
+      "execution_authority": false
+    },
+    {
+      "record_id": "repair-232",
+      "record_type": "github.pull_request.repair",
+      "producer_owner": "GrahamArdent/programstart-autonomous-controller",
+      "producer_record_ref": "GrahamArdent/programstart-autonomous-controller#232",
+      "caused_by": ["fresh-request-authority-conflict"],
+      "root_objective_ref": "GrahamArdent/programstart-autonomous-controller#71",
+      "stage_projection": ["RECONCILIATION"],
+      "owner_ref": "GrahamArdent/programstart-autonomous-controller",
+      "authority_refs": [
+        "GrahamArdent/programstart-autonomous-controller#71"
+      ],
+      "evidence_refs": [
+        "GrahamArdent/programstart-autonomous-controller@34b4aca1c47bee19f9fea8cb8749945cf46b3e6d"
+      ],
+      "execution_authority": false
+    },
+    {
+      "record_id": "controller-release-232",
+      "record_type": "controller.typed_release_acceptance",
+      "producer_owner": "GrahamArdent/programstart-autonomous-controller",
+      "producer_record_ref": "GrahamArdent/programstart-autonomous-controller#71#issuecomment-5946919286",
+      "caused_by": ["repair-232"],
+      "root_objective_ref": "GrahamArdent/programstart-autonomous-controller#71",
+      "stage_projection": ["CONSEQUENCE", "EVIDENCE"],
+      "owner_ref": "GrahamArdent/programstart-autonomous-controller",
+      "effect_attempt_ref": "req-vps-worker-c71-release-1002",
+      "currentness_refs": [
+        "GrahamArdent/programstart-autonomous-controller@34b4aca1c47bee19f9fea8cb8749945cf46b3e6d"
+      ],
+      "evidence_refs": [
+        "release-predecessor:a6e572975569f17f25b00bdd607f51af5a5ddfbe"
+      ],
+      "execution_authority": false
+    },
+    {
+      "record_id": "postfix-wait-arm",
+      "record_type": "controller.machine_evidence_wait_arm",
+      "producer_owner": "GrahamArdent/programstart-autonomous-controller",
+      "producer_record_ref": "GrahamArdent/programstart-autonomous-controller#71#issuecomment-5946919286",
+      "caused_by": ["controller-release-232"],
+      "root_objective_ref": "GrahamArdent/programstart-autonomous-controller#71",
+      "stage_projection": ["CONTROLLER_ADMISSION"],
+      "owner_ref": "GrahamArdent/programstart-autonomous-controller",
+      "controller_run_ref": "run-detached-c2ce627bea7bfd86c2564079",
+      "work_packet_ref": "WPK-f0591b063fcd3d0f",
+      "authority_refs": [
+        "GrahamArdent/programstart-autonomous-controller#71"
+      ],
+      "currentness_refs": [
+        "GrahamArdent/repo-watchtower@5227d18fce9977fccfb78a37cb595049291492f4"
+      ],
+      "evidence_refs": [
+        "req-controller-71-postfix-acceptance-1002",
+        "machine-wait:mwait-0b8b62f7bbb98a286853b16c"
+      ],
+      "execution_authority": false
+    },
+    {
+      "record_id": "provider-event-attempt-3",
+      "record_type": "controller.issue_comment_projection.provider_terminal_event",
+      "producer_owner": "GrahamArdent/programstart-autonomous-controller",
+      "producer_record_ref": "GrahamArdent/programstart-autonomous-controller#71#issuecomment-5946919286",
+      "caused_by": ["postfix-wait-arm"],
+      "root_objective_ref": "GrahamArdent/programstart-autonomous-controller#71",
+      "stage_projection": ["EVIDENCE"],
+      "owner_ref": "GrahamArdent/repo-watchtower",
+      "currentness_refs": [
+        "GrahamArdent/repo-watchtower@5227d18fce9977fccfb78a37cb595049291492f4"
+      ],
+      "evidence_refs": [
+        "workflow_run:36966882897:attempt:3"
+      ],
+      "execution_authority": false
+    },
+    {
+      "record_id": "snapshot-after-event-3",
+      "record_type": "controller.native_reconsideration_snapshot",
+      "producer_owner": "GrahamArdent/programstart-autonomous-controller",
+      "producer_record_ref": "GrahamArdent/programstart-autonomous-controller#71#issuecomment-5946919286",
+      "caused_by": ["postfix-wait-arm", "provider-event-attempt-3"],
+      "root_objective_ref": "GrahamArdent/programstart-autonomous-controller#71",
+      "stage_projection": ["EVIDENCE", "RECONSIDERATION"],
+      "owner_ref": "GrahamArdent/programstart-autonomous-controller",
+      "controller_run_ref": "run-detached-c2ce627bea7bfd86c2564079",
+      "resume_or_reconsider_ref": "semantic_decision_required",
+      "evidence_refs": [
+        "req-controller-71-postfix-snapshot-1002",
+        "machine-evidence:mev-418aa587700d799bb03b5c1f",
+        "machine-wait:mwait-0b8b62f7bbb98a286853b16c"
+      ],
+      "execution_authority": false
+    },
+    {
+      "record_id": "provider-event-attempt-4",
+      "record_type": "controller.issue_comment_projection.provider_terminal_event",
+      "producer_owner": "GrahamArdent/programstart-autonomous-controller",
+      "producer_record_ref": "GrahamArdent/programstart-autonomous-controller#71#issuecomment-5946919286",
+      "caused_by": ["snapshot-after-event-3"],
+      "root_objective_ref": "GrahamArdent/programstart-autonomous-controller#71",
+      "stage_projection": ["EVIDENCE"],
+      "owner_ref": "GrahamArdent/repo-watchtower",
+      "currentness_refs": [
+        "GrahamArdent/repo-watchtower@5227d18fce9977fccfb78a37cb595049291492f4"
+      ],
+      "evidence_refs": [
+        "workflow_run:36966882897:attempt:4"
+      ],
+      "execution_authority": false
+    },
+    {
+      "record_id": "snapshot-after-event-4",
+      "record_type": "controller.native_terminal_reconsideration_snapshot",
+      "producer_owner": "GrahamArdent/programstart-autonomous-controller",
+      "producer_record_ref": "GrahamArdent/programstart-autonomous-controller#71#issuecomment-5946919286",
+      "caused_by": ["snapshot-after-event-3", "provider-event-attempt-4"],
+      "root_objective_ref": "GrahamArdent/programstart-autonomous-controller#71",
+      "stage_projection": ["RECONSIDERATION", "OUTCOME_VALIDATION"],
+      "owner_ref": "GrahamArdent/programstart-autonomous-controller",
+      "controller_run_ref": "run-detached-c2ce627bea7bfd86c2564079",
+      "resume_or_reconsider_ref": "PREPARE_EXECUTED",
+      "evidence_refs": [
+        "req-controller-71-postfix-snapshot2-1002",
+        "machine-wait:mwait-0b8b62f7bbb98a286853b16c:absent-from-active-waits"
+      ],
+      "execution_authority": false
+    },
+    {
+      "record_id": "terminal-acceptance-71",
+      "record_type": "controller.owner_terminal_acceptance",
+      "producer_owner": "GrahamArdent/programstart-autonomous-controller",
+      "producer_record_ref": "GrahamArdent/programstart-autonomous-controller#71#issuecomment-5946919286",
+      "caused_by": ["snapshot-after-event-4"],
+      "root_objective_ref": "GrahamArdent/programstart-autonomous-controller#71",
+      "stage_projection": ["RECONCILIATION", "TERMINAL"],
+      "owner_ref": "GrahamArdent/programstart-autonomous-controller",
+      "protected_outcome_ref": "GrahamArdent/programstart-autonomous-controller#71#Acceptance-terminal-condition",
+      "terminal_condition_ref": "GrahamArdent/programstart-autonomous-controller#71#Acceptance-terminal-condition",
+      "currentness_refs": [
+        "GrahamArdent/programstart-autonomous-controller@34b4aca1c47bee19f9fea8cb8749945cf46b3e6d",
+        "GrahamArdent/repo-watchtower@5227d18fce9977fccfb78a37cb595049291492f4"
+      ],
+      "evidence_refs": [
+        "CONVERSATIONAL_REENTRY_REQUIRED=0",
+        "HUMAN_TRANSPORT=NO",
+        "GrahamArdent/programstart-autonomous-controller#71#issuecomment-5946919286"
+      ],
+      "execution_authority": false
+    }
+  ],
+  "residuals": [
+    {
+      "residual_id": "residual-native-runtime-addressability",
+      "kind": "manual_correlation_required",
+      "summary": "The final run, machine-wait and native snapshot identities are durable in the Controller terminal record, but the ecosystem still lacks one generic cross-owner lookup surface that resolves them directly from the root objective.",
+      "stage_projection": ["CONTROLLER_ADMISSION", "RECONSIDERATION"],
+      "evidence_refs": [
+        "GrahamArdent/programstart-autonomous-controller#71#issuecomment-5946919286"
+      ]
+    },
+    {
+      "residual_id": "residual-provider-event-lineage",
+      "kind": "manual_correlation_required",
+      "summary": "The final provider attempts are correlated to the Controller wait through terminal acceptance evidence rather than common lineage fields emitted by Watchtower and Controller.",
+      "stage_projection": ["EVIDENCE", "RECONSIDERATION"],
+      "evidence_refs": [
+        "GrahamArdent/programstart-autonomous-controller#71#issuecomment-5946919286",
+        "GrahamArdent/repo-watchtower#16#issuecomment-5946552192"
+      ]
+    },
+    {
+      "residual_id": "residual-human-gate-not-required",
+      "kind": "not_required",
+      "summary": "The accepted #71 machine-safe path did not require a human gate, conversational proceed, or human result transport.",
+      "stage_projection": ["RECONSIDERATION"],
+      "evidence_refs": [
+        "GrahamArdent/programstart-autonomous-controller#71#issuecomment-5946919286"
+      ]
+    }
+  ],
+  "execution_authority": false
+}

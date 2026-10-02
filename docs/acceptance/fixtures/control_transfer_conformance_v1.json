@@ -1,0 +1,290 @@
+{
+  "schema_version": "1.0",
+  "purpose": "Cross-owner control-transfer conformance reconciliation; evaluation evidence only, never execution authority.",
+  "existing_runtime_owner": "GrahamArdent/programstart-autonomous-controller#71",
+  "cases": [
+    {
+      "id": "A",
+      "scenario": "async_machine_safe_continuation",
+      "coverage": "EXISTS_AND_ADEQUATE",
+      "owner": "controller_71",
+      "expected_scope": "smallest_affected_branch_or_consequence",
+      "parent_rule": "parent remains active while independent authorized machine-actionable work remains",
+      "forbidden": [
+        "report_as_stop",
+        "local_success_as_parent_completion",
+        "stale_approval_consequence",
+        "duplicate_semantic_effect"
+      ]
+    },
+    {
+      "id": "B",
+      "scenario": "unchanged_quiet_wait",
+      "coverage": "EXISTS_AND_ADEQUATE",
+      "owner": "controller_71",
+      "expected_scope": "smallest_affected_branch_or_consequence",
+      "parent_rule": "parent remains active while independent authorized machine-actionable work remains",
+      "forbidden": [
+        "report_as_stop",
+        "local_success_as_parent_completion",
+        "stale_approval_consequence",
+        "duplicate_semantic_effect"
+      ]
+    },
+    {
+      "id": "C",
+      "scenario": "stale_authority_currentness",
+      "coverage": "EXISTS_AND_ADEQUATE",
+      "owner": "controller_71",
+      "expected_scope": "smallest_affected_branch_or_consequence",
+      "parent_rule": "parent remains active while independent authorized machine-actionable work remains",
+      "forbidden": [
+        "report_as_stop",
+        "local_success_as_parent_completion",
+        "stale_approval_consequence",
+        "duplicate_semantic_effect"
+      ]
+    },
+    {
+      "id": "D",
+      "scenario": "genuine_human_decision",
+      "coverage": "EXISTS_AND_ADEQUATE",
+      "owner": "controller_71",
+      "expected_scope": "smallest_affected_branch_or_consequence",
+      "parent_rule": "parent remains active while independent authorized machine-actionable work remains",
+      "forbidden": [
+        "report_as_stop",
+        "local_success_as_parent_completion",
+        "stale_approval_consequence",
+        "duplicate_semantic_effect"
+      ]
+    },
+    {
+      "id": "E",
+      "scenario": "failed_machine_gate_repair_retry_defer",
+      "coverage": "EXISTS_AND_ADEQUATE",
+      "owner": "controller_71",
+      "expected_scope": "smallest_affected_branch_or_consequence",
+      "parent_rule": "parent remains active while independent authorized machine-actionable work remains",
+      "forbidden": [
+        "report_as_stop",
+        "local_success_as_parent_completion",
+        "stale_approval_consequence",
+        "duplicate_semantic_effect"
+      ]
+    },
+    {
+      "id": "F",
+      "scenario": "duplicate_replayed_event",
+      "coverage": "EXISTS_AND_ADEQUATE",
+      "owner": "controller_71",
+      "expected_scope": "smallest_affected_branch_or_consequence",
+      "parent_rule": "parent remains active while independent authorized machine-actionable work remains",
+      "forbidden": [
+        "report_as_stop",
+        "local_success_as_parent_completion",
+        "stale_approval_consequence",
+        "duplicate_semantic_effect"
+      ]
+    },
+    {
+      "id": "G",
+      "scenario": "parallel_mutation_collision_fencing",
+      "coverage": "EXISTS_AND_ADEQUATE",
+      "owner": "controller_71",
+      "expected_scope": "smallest_affected_branch_or_consequence",
+      "parent_rule": "parent remains active while independent authorized machine-actionable work remains",
+      "forbidden": [
+        "report_as_stop",
+        "local_success_as_parent_completion",
+        "stale_approval_consequence",
+        "duplicate_semantic_effect"
+      ]
+    },
+    {
+      "id": "H",
+      "scenario": "terminal_no_resurrection",
+      "coverage": "EXISTS_AND_ADEQUATE",
+      "owner": "controller_71",
+      "expected_scope": "smallest_affected_branch_or_consequence",
+      "parent_rule": "parent remains active while independent authorized machine-actionable work remains",
+      "forbidden": [
+        "report_as_stop",
+        "local_success_as_parent_completion",
+        "stale_approval_consequence",
+        "duplicate_semantic_effect"
+      ]
+    },
+    {
+      "id": "I",
+      "scenario": "child_gate_runnable_siblings",
+      "coverage": "EXISTS_CONFORMANCE_GAP",
+      "owner": "programstart_branch_propagation",
+      "expected_scope": "smallest_affected_branch_or_consequence",
+      "parent_rule": "parent remains active while independent authorized machine-actionable work remains",
+      "forbidden": [
+        "report_as_stop",
+        "local_success_as_parent_completion",
+        "stale_approval_consequence",
+        "duplicate_semantic_effect"
+      ],
+      "expected_disposition": "park_child_gate_continue_independent_siblings",
+      "expected_parent_disposition": "ACTIVE"
+    },
+    {
+      "id": "J",
+      "scenario": "child_collision_runnable_siblings",
+      "coverage": "EXISTS_CONFORMANCE_GAP",
+      "owner": "programstart_branch_propagation",
+      "expected_scope": "smallest_affected_branch_or_consequence",
+      "parent_rule": "parent remains active while independent authorized machine-actionable work remains",
+      "forbidden": [
+        "report_as_stop",
+        "local_success_as_parent_completion",
+        "stale_approval_consequence",
+        "duplicate_semantic_effect"
+      ],
+      "expected_disposition": "fence_colliding_child_continue_disjoint_siblings",
+      "expected_parent_disposition": "ACTIVE"
+    },
+    {
+      "id": "K",
+      "scenario": "dependent_child_behind_gate",
+      "coverage": "EXISTS_TEST_GAP",
+      "owner": "programstart_branch_propagation",
+      "expected_scope": "smallest_affected_branch_or_consequence",
+      "parent_rule": "parent remains active while independent authorized machine-actionable work remains",
+      "forbidden": [
+        "report_as_stop",
+        "local_success_as_parent_completion",
+        "stale_approval_consequence",
+        "duplicate_semantic_effect"
+      ],
+      "expected_disposition": "wait_dependent_descendant_continue_independent_work",
+      "expected_parent_disposition": "ACTIVE"
+    },
+    {
+      "id": "L",
+      "scenario": "local_complete_parent_active",
+      "coverage": "EXISTS_CONFORMANCE_GAP",
+      "owner": "programstart_objective_convergence",
+      "expected_scope": "smallest_affected_branch_or_consequence",
+      "parent_rule": "parent remains active while independent authorized machine-actionable work remains",
+      "forbidden": [
+        "report_as_stop",
+        "local_success_as_parent_completion",
+        "stale_approval_consequence",
+        "duplicate_semantic_effect"
+      ],
+      "expected_disposition": "preserve_parent_until_all_objective_obligations_terminal",
+      "expected_parent_disposition": "ACTIVE"
+    },
+    {
+      "id": "M",
+      "scenario": "report_execution_continues",
+      "coverage": "EXISTS_TEST_GAP",
+      "owner": "programstart_branch_propagation",
+      "expected_scope": "smallest_affected_branch_or_consequence",
+      "parent_rule": "parent remains active while independent authorized machine-actionable work remains",
+      "forbidden": [
+        "report_as_stop",
+        "local_success_as_parent_completion",
+        "stale_approval_consequence",
+        "duplicate_semantic_effect"
+      ],
+      "expected_disposition": "report_and_continue",
+      "expected_parent_disposition": "UNCHANGED"
+    },
+    {
+      "id": "N",
+      "scenario": "automation_gap_with_alternative",
+      "coverage": "EXISTS_AND_ADEQUATE",
+      "owner": "programstart_effective_autonomy",
+      "expected_scope": "smallest_affected_branch_or_consequence",
+      "parent_rule": "parent remains active while independent authorized machine-actionable work remains",
+      "forbidden": [
+        "report_as_stop",
+        "local_success_as_parent_completion",
+        "stale_approval_consequence",
+        "duplicate_semantic_effect"
+      ],
+      "expected_disposition": "use_authorized_alternative_or_owner_route_then_resume",
+      "expected_parent_disposition": "ACTIVE"
+    },
+    {
+      "id": "O",
+      "scenario": "autonomous_alternatives_exhausted",
+      "coverage": "EXISTS_TEST_GAP",
+      "owner": "programstart_effective_autonomy",
+      "expected_scope": "smallest_affected_branch_or_consequence",
+      "parent_rule": "parent remains active while independent authorized machine-actionable work remains",
+      "forbidden": [
+        "report_as_stop",
+        "local_success_as_parent_completion",
+        "stale_approval_consequence",
+        "duplicate_semantic_effect"
+      ],
+      "expected_disposition": "exhaustion_classification_only_after_bounded_search",
+      "expected_parent_disposition": "ACTIVE_OR_WAITING"
+    },
+    {
+      "id": "P",
+      "scenario": "subjective_validation_independent_siblings",
+      "coverage": "EXISTS_TEST_GAP",
+      "owner": "programstart_human_gate_reason",
+      "expected_scope": "smallest_affected_branch_or_consequence",
+      "parent_rule": "parent remains active while independent authorized machine-actionable work remains",
+      "forbidden": [
+        "report_as_stop",
+        "local_success_as_parent_completion",
+        "stale_approval_consequence",
+        "duplicate_semantic_effect"
+      ],
+      "expected_disposition": "validate_subjective_branch_continue_independent_siblings",
+      "expected_parent_disposition": "ACTIVE"
+    },
+    {
+      "id": "Q",
+      "scenario": "protective_restriction_remediation_continues",
+      "coverage": "EXISTS_TEST_GAP",
+      "owner": "programstart_branch_propagation",
+      "expected_scope": "smallest_affected_branch_or_consequence",
+      "parent_rule": "parent remains active while independent authorized machine-actionable work remains",
+      "forbidden": [
+        "report_as_stop",
+        "local_success_as_parent_completion",
+        "stale_approval_consequence",
+        "duplicate_semantic_effect"
+      ],
+      "expected_disposition": "protect_risky_consequence_continue_safe_remediation_and_unrelated_work",
+      "expected_parent_disposition": "ACTIVE"
+    },
+    {
+      "id": "R",
+      "scenario": "stale_human_approval",
+      "coverage": "EXISTS_AND_ADEQUATE",
+      "owner": "programstart_operator_gate",
+      "expected_scope": "smallest_affected_branch_or_consequence",
+      "parent_rule": "parent remains active while independent authorized machine-actionable work remains",
+      "forbidden": [
+        "report_as_stop",
+        "local_success_as_parent_completion",
+        "stale_approval_consequence",
+        "duplicate_semantic_effect"
+      ],
+      "expected_disposition": "invalidate_stale_approval_revalidate_before_consequence",
+      "expected_parent_disposition": "ACTIVE_OR_WAITING"
+    }
+  ],
+  "observed_at": "2026-09-28",
+  "evidence_basis": [
+    "GrahamArdent/PROGRAMSTART#132",
+    "GrahamArdent/PROGRAMSTART#158",
+    "GrahamArdent/programstart-autonomous-controller#71"
+  ],
+  "invalidation": [
+    "PROGRAMSTART objective-convergence or blocker/safe-lane semantics materially change",
+    "Controller #71 or successor lifecycle semantics materially change",
+    "a natural acceptance case contradicts a recorded coverage classification"
+  ]
+}

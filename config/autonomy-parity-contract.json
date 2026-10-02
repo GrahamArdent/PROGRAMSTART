@@ -15,7 +15,7 @@
   "source_files": [
     {
       "path": ".github/prompts/start-programstart-project.prompt.md",
-      "sha256": "7942220d-e5481cb5-c4323cb1-db60c698-9dc08ef8-fb213638-8a46f4f6-a482618e",
+      "sha256": "183c2f0d-da6a9873-d27417f2-acb3fd72-82d90876-6cb3a8fa-bc4081a1-f1065774",
       "role": "primary autonomy orchestration contract"
     },
     {
@@ -25,7 +25,7 @@
     },
     {
       "path": "PROGRAMBUILD/PROGRAMBUILD_WORK_PACKET.md",
-      "sha256": "bf8c9994-27345154-d4048063-d899c28b-78ff7ef3-4be7daf9-600e7268-b93c646f",
+      "sha256": "e53a41ce-5329-b565-3d83-ce34bfab859b-6e8da03d-014a-a87e-5f25-112cfe2c6385",
       "role": "bounded packet semantics"
     },
     {
@@ -45,7 +45,7 @@
     },
     {
       "path": "docs/PROGRAMSTART_LEARNING_LOOP.md",
-      "sha256": "393a55c6-617747a4-84249e52-93340c05-2a1cf6dc-c0191883-f5e61952-735d6712",
+      "sha256": "618ec42f-470066d0-03ee7b51-1afc624d-7e3357f1-d22dab2e-b9d59c63-ca695374",
       "role": "Learning Gate"
     },
     {
@@ -282,7 +282,7 @@
     {
       "id": "prompt.step.18",
       "source_path": ".github/prompts/start-programstart-project.prompt.md",
-      "anchor": "18. **Verify returned gate evidence proportionally and resume when accepted.**",
+      "anchor": "18. **Verify returned gate evidence proportionally and resume when accepted.** Action completion is not runtime/provider/device acceptance unless declared evidence passes. Once `EVIDENCE_ACCEPTANCE` is satisfied, treat that accepted return evidence as the resume signal and continue at `RESUME_AT` without asking for a redundant `proceed`, unless the handoff explicitly requires a separate post-evidence approval. Routine machine waits inside already-authorized work (for example CI/check completion, bounded propagation, expected service restart, or retryable tool/provider transport) are not operator gates: boundedly wait/recheck and continue automatically when accepted evidence arrives. If the next packet/slice is already authorized, its prerequisites are satisfied, and no declared convergence checkpoint or stronger gate intervenes, continue into it without requesting a generic acknowledgement.",
       "required": true,
       "kind": "orchestration_step"
     },
@@ -1596,6 +1596,13 @@
       "kind": "supporting_methodology_section"
     },
     {
+      "id": "support.learning.09a",
+      "source_path": "docs/PROGRAMSTART_LEARNING_LOOP.md",
+      "anchor": "## 9a. Proof Durability Invariant",
+      "required": true,
+      "kind": "supporting_methodology_section"
+    },
+    {
       "id": "support.learning.10",
       "source_path": "docs/PROGRAMSTART_LEARNING_LOOP.md",
       "anchor": "## 10. Safety and Privacy",
@@ -1917,7 +1924,7 @@
     {
       "id": "prompt.normative.026",
       "source_path": ".github/prompts/start-programstart-project.prompt.md",
-      "anchor": "16. derive an exact operator/manual handoff when the real next action is outside the current environment;",
+      "anchor": "16. derive an exact operator/manual handoff when the real next action is outside the current environment; before emitting it, verify every material machine-observable premise and material dependency closure that available authoritative tools can check on the actual target (for example path, identifier, current version/SHA, service/resource existence, consumed files/artifacts, and command prerequisites), perform already-authorized machine-safe preparation yourself, and label any unverified material premise unresolved rather than guessing it into an operator instruction;",
       "required": true,
       "kind": "prompt_normative_clause",
       "section": "Environment Boundary"
@@ -4736,6 +4743,7 @@
         "support.learning.03",
         "support.learning.07",
         "support.learning.09",
+        "support.learning.09a",
         "support.learning.12",
         "support.learning.13",
         "prompt.normative.032",
@@ -4900,7 +4908,8 @@
         }
       ],
       "acceptance_scenarios": [
-        "machine wait survives polling/retry and resumes on matching current evidence"
+        "machine wait survives polling/retry and resumes on matching current evidence",
+        "already-authorized routine machine wait does not become an operator gate: bounded recheck resumes automatically and enters an already-authorized ready successor unless a declared checkpoint or stronger gate intervenes"
       ],
       "closure_status": "proven"
     },
@@ -4974,11 +4983,16 @@
         "load only the current authority/evidence needed for this behavior"
       ],
       "invalidation": [
-        "canonical source or relevant runtime/currentness evidence changes"
+        "canonical source or relevant runtime/currentness evidence changes",
+        "effective service/unit/drop-in composition changes where it determines runtime semantics"
       ],
       "machinery_state": "implemented",
       "execution_mode": "deterministic",
       "current_proof": [
+        {
+          "kind": "live",
+          "ref": "GrahamArdent/execution-node-control#247"
+        },
         {
           "kind": "code",
           "ref": "GrahamArdent/programstart-autonomous-controller@c95372bd5640110cf13791546ae1930cd0abb240:controller/semantic_continuation.py"
@@ -4993,7 +5007,8 @@
         }
       ],
       "acceptance_scenarios": [
-        "exact installed/base/allowed heads bind already-authorized effect; mismatch fails closed"
+        "exact installed/base/allowed heads bind already-authorized effect; mismatch fails closed",
+        "for service-managed machinery, material currentness binds effective unit/drop-ins, executable role, expected service separation/multiplicity, relevant sandbox/group composition, and reviewed release identity; mismatch fails closed"
       ],
       "closure_status": "proven"
     },
@@ -6117,9 +6132,9 @@
     {
       "id": "HOP-001",
       "class": "objective_ingress",
-      "source": "Windows operator / admitted private source",
+      "source": "Authenticated operator/client source (client instance outside backbone topology)",
       "target": "Controller private natural-objective ingress",
-      "purpose": "Submit ordinary natural intent without ChatGPT acting as command transport.",
+      "purpose": "Submit ordinary natural intent through the logical authenticated objective-ingress capability without ChatGPT acting as command transport or any specific client becoming backbone topology.",
       "general_mechanism": "tailscale_private_http_v1",
       "required_behavior_refs": [
         "semantic_objective_ingress",
@@ -6128,10 +6143,13 @@
       ],
       "instance_status": "proven",
       "evidence_refs": [
-        "GrahamArdent/programstart-autonomous-controller#97"
+        "GrahamArdent/programstart-autonomous-controller#97",
+        "GrahamArdent/programstart-autonomous-controller#170",
+        "GrahamArdent/PROGRAMSTART#158"
       ],
       "invalidation": [
-        "Controller ingress release, source allowlist, identity, bind, or request contract changes."
+        "Controller ingress release, logical ingress contract, source authentication/admission policy, bind, or request contract changes.",
+        "A specific client/terminal becomes required for downstream backbone health or continuation after durable admission."
       ],
       "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
     },

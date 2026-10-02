@@ -22,8 +22,10 @@ from scripts.programstart_objective_continuation import (  # noqa: E402
     CompletedEffectEvidence,
     ContinuationDisposition,
     EffectReadyEvidence,
+    EvidenceDurability,
     HumanWaitEvidence,
     MachineWaitEvidence,
+    MachineWaitRegistration,
     RootObjective,
     RootTerminalEvidence,
     evaluate_objective_continuation,
@@ -65,12 +67,22 @@ def context():
     return root, packet, authority, binding
 
 
+def _durability() -> EvidenceDurability:
+    return EvidenceDurability(
+        status="proven",
+        mechanism="executable regression",
+        verification_ref="test:durability",
+        invalidation_conditions=("proof mechanism changes",),
+    )
+
+
 def _ready(token: str, binding: dict[str, str], *, evidence_id: str = "ready") -> EffectReadyEvidence:
     return EffectReadyEvidence(
         evidence_id=evidence_id,
         status="proven",
         semantic_effect_token=token,
         preconditions_proven=True,
+        durability=_durability(),
         root_id=binding["root_id"],
         work_packet_specification_id=binding["work_packet_specification_id"],
         authority_fingerprint=binding["authority_fingerprint"],
@@ -178,6 +190,19 @@ def test_ready_evidence_contract_is_strict_and_proven(context) -> None:
         )
 
 
+def test_proven_evidence_requires_durability(context) -> None:
+    _, _, _, binding = context
+    payload = {
+        "evidence_id": "false-proof",
+        "status": "proven",
+        "semantic_effect_token": "inspect semantic state",
+        "preconditions_proven": True,
+        **binding,
+    }
+    with pytest.raises(ValidationError, match="proven evidence requires proven durability"):
+        EffectReadyEvidence.model_validate(payload)
+
+
 def test_root_objective_validator_uses_renamed_root_id() -> None:
     assert RootObjective(root_id="root-1", objective="Outcome").root_id == "root-1"
     with pytest.raises(ValidationError):
@@ -249,6 +274,7 @@ def test_explicit_bound_root_terminality(context, disposition: Literal["terminal
         disposition=disposition,
         evidence_scope="root_objective",
         basis="Root acceptance oracle is proven.",
+        durability=_durability(),
         **binding,
     )
     assert evaluate_objective_continuation(root, packet, authority, [item]).disposition.value == disposition
@@ -265,7 +291,7 @@ def test_root_terminality_must_be_proven_and_does_not_hide_bad_effect_evidence(c
         **binding,
     )
     assert evaluate_objective_continuation(root, packet, authority, [terminal]).disposition == ContinuationDisposition.REORIENT
-    proven = terminal.model_copy(update={"status": "proven"})
+    proven = terminal.model_copy(update={"status": "proven", "durability": _durability()})
     unsealed = CompletedEffectEvidence(
         evidence_id="bad-effect",
         status="accepted",
@@ -280,8 +306,28 @@ def test_root_terminality_must_be_proven_and_does_not_hide_bad_effect_evidence(c
 
 def test_explicit_machine_and_human_waits_require_admitted_conditions(context) -> None:
     root, packet, authority, binding = context
+    registration = MachineWaitRegistration(
+        run_id="run-1",
+        work_packet_id=packet.specification_id,
+        owner_repository=authority.owning_repository,
+        authority_version=authority.authority_commit,
+        semantic_digest=packet.semantic_digest,
+        awaited_proposition="exact CI terminal evidence",
+        trigger_source="github",
+        trigger_type="workflow_run",
+        correlation_key="ci:example/owner:123",
+        expected_conclusion="success",
+        expected_head_sha="c" * 40,
+        resume_at="repository.prepare:example/owner",
+        machine_safe_on_match=True,
+    )
     machine = MachineWaitEvidence(
-        evidence_id="machine", status="accepted", condition="verified actuator unavailable", active=True, **binding
+        evidence_id="machine",
+        status="accepted",
+        condition="verified actuator unavailable",
+        active=True,
+        wait=registration,
+        **binding,
     )
     human = HumanWaitEvidence(
         evidence_id="human",
@@ -290,7 +336,18 @@ def test_explicit_machine_and_human_waits_require_admitted_conditions(context) -
         active=True,
         **binding,
     )
-    assert evaluate_objective_continuation(root, packet, authority, [machine]).disposition == ContinuationDisposition.WAIT_MACHINE
+    machine_decision = evaluate_objective_continuation(root, packet, authority, [machine])
+    assert machine_decision.disposition == ContinuationDisposition.WAIT_MACHINE
+    assert machine_decision.wait == registration
+    assert machine_decision.model_dump(mode="json", exclude_none=True)["wait"]["correlation_key"] == registration.correlation_key
+    for changed in (
+        {"work_packet_id": "WPK-foreign"},
+        {"owner_repository": "example/foreign"},
+        {"authority_version": "f" * 40},
+        {"semantic_digest": "0" * 64},
+    ):
+        foreign = machine.model_copy(update={"wait": registration.model_copy(update=changed)})
+        assert evaluate_objective_continuation(root, packet, authority, [foreign]).disposition == ContinuationDisposition.REORIENT
     assert evaluate_objective_continuation(root, packet, authority, [human]).disposition == ContinuationDisposition.WAIT_HUMAN
     invented = human.model_copy(update={"admitted_gate_condition": "ask a person what to do"})
     assert evaluate_objective_continuation(root, packet, authority, [invented]).disposition == ContinuationDisposition.REORIENT

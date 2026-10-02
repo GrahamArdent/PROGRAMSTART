@@ -40,12 +40,34 @@ class RootObjective(_StrictModel):
         return self
 
 
+class EvidenceDurability(_StrictModel):
+    status: Literal["proven"]
+    mechanism: str = Field(min_length=1, max_length=512)
+    verification_ref: str = Field(min_length=1, max_length=2048)
+    invalidation_conditions: tuple[str, ...] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def durability_must_be_explicit(self) -> EvidenceDurability:
+        if any(not item.strip() for item in self.invalidation_conditions):
+            raise ValueError("durability invalidation conditions must be non-empty")
+        return self
+
+
 class _BoundEvidence(_StrictModel):
     evidence_id: str = Field(min_length=1, max_length=256)
     status: Literal["accepted", "proven"]
+    durability: EvidenceDurability | None = None
     root_id: str = Field(min_length=1, max_length=256)
     work_packet_specification_id: str = Field(min_length=1, max_length=256)
     authority_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+    @model_validator(mode="after")
+    def proof_requires_durability(self) -> _BoundEvidence:
+        if self.status == "proven" and self.durability is None:
+            raise ValueError("proven evidence requires proven durability")
+        if self.status != "proven" and self.durability is not None:
+            raise ValueError("durability proof is valid only for proven evidence")
+        return self
 
 
 class CompletedEffectEvidence(_BoundEvidence):
@@ -69,10 +91,27 @@ class RootTerminalEvidence(_BoundEvidence):
     basis: str = Field(min_length=1, max_length=16_384)
 
 
+class MachineWaitRegistration(_StrictModel):
+    run_id: str = Field(min_length=1, max_length=256)
+    work_packet_id: str = Field(min_length=1, max_length=256)
+    owner_repository: str = Field(pattern=r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
+    authority_version: str = Field(min_length=1, max_length=256)
+    semantic_digest: str = Field(pattern=r"^[0-9a-f]{64}$")
+    awaited_proposition: str = Field(min_length=1, max_length=1000)
+    trigger_source: str = Field(min_length=1, max_length=128)
+    trigger_type: str = Field(min_length=1, max_length=128)
+    correlation_key: str = Field(min_length=1, max_length=512)
+    expected_conclusion: str = Field(min_length=1, max_length=128)
+    expected_head_sha: str | None = Field(default=None, pattern=r"^[0-9a-f]{40}$")
+    resume_at: str = Field(min_length=1, max_length=512)
+    machine_safe_on_match: bool
+
+
 class MachineWaitEvidence(_BoundEvidence):
     kind: Literal["machine_wait"] = "machine_wait"
     condition: str = Field(min_length=1, max_length=4096)
     active: Literal[True]
+    wait: MachineWaitRegistration
 
 
 class HumanWaitEvidence(_BoundEvidence):
@@ -100,12 +139,16 @@ class ContinuationDisposition(StrEnum):
 class ObjectiveContinuationDecision(_StrictModel):
     disposition: ContinuationDisposition
     semantic_effect_token: str | None = None
+    wait: MachineWaitRegistration | None = Field(default=None, exclude_if=lambda value: value is None)
 
     @model_validator(mode="after")
-    def effect_only_for_selection(self) -> ObjectiveContinuationDecision:
+    def payload_matches_disposition(self) -> ObjectiveContinuationDecision:
         has_effect = self.semantic_effect_token is not None
         if has_effect != (self.disposition == ContinuationDisposition.EFFECT):
             raise ValueError("semantic_effect_token is required only for effect")
+        has_wait = self.wait is not None
+        if has_wait != (self.disposition == ContinuationDisposition.WAIT_MACHINE):
+            raise ValueError("wait registration is required only for machine wait")
         return self
 
 
@@ -206,6 +249,17 @@ def derive_effect_readiness(
         authority_fingerprint=current_fingerprint,
         semantic_effect_token=ready_effect,
         preconditions_proven=True,
+        durability=EvidenceDurability(
+            status="proven",
+            mechanism="deterministic derivation from current bound completion evidence",
+            verification_ref=f"sha256:{digest}",
+            invalidation_conditions=(
+                "work packet integrity changes",
+                "authority fingerprint changes",
+                "completion evidence binding changes",
+                "effect-readiness derivation semantics change",
+            ),
+        ),
     )
 
 
@@ -291,6 +345,13 @@ def evaluate_objective_continuation(
                 return _reorient()
         elif item.condition not in packet.autonomy.temporary_automation_gaps:
             return _reorient()
+        elif (
+            item.wait.work_packet_id != packet.specification_id
+            or item.wait.owner_repository != current_authority.owning_repository
+            or item.wait.authority_version != current_authority.authority_commit
+            or item.wait.semantic_digest != packet.semantic_digest
+        ):
+            return _reorient()
         admitted_waits.append(item)
     if admitted_waits:
         if len(admitted_waits) != 1:
@@ -301,6 +362,11 @@ def evaluate_objective_continuation(
             if isinstance(selected_wait, HumanWaitEvidence)
             else ContinuationDisposition.WAIT_MACHINE
         )
+        if isinstance(selected_wait, MachineWaitEvidence):
+            return ObjectiveContinuationDecision(
+                disposition=disposition,
+                wait=selected_wait.wait,
+            )
         return ObjectiveContinuationDecision(
             disposition=disposition,
         )

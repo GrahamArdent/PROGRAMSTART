@@ -17,7 +17,9 @@ def test_matrix_coordination_is_mandatory_but_non_authoritative() -> None:
     text = _text(CONTRACT)
     assert "No consequential autonomous mutation may cross the mutation boundary" in text
     assert "does not create any of those truths" in text
-    assert "No new Matrix repository, state database, queue, scheduler, or orchestration layer" in text
+    assert "neither requires nor prohibits a durable Ecosystem Matrix task/state database" in text
+    assert "Matrix records cannot mint execution permission" in text
+    assert "A new queue, scheduler, mutation-admission authority, or orchestration layer is not implied" in text
 
 
 def test_existing_compiled_write_set_is_the_only_semantic_claim_declaration() -> None:

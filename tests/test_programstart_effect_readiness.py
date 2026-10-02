@@ -173,6 +173,7 @@ def test_prepare_readiness_receipt_contains_no_executor_material_and_feeds_exist
     assert set(receipt.model_dump()) == {
         "evidence_id",
         "status",
+        "durability",
         "root_id",
         "work_packet_specification_id",
         "authority_fingerprint",

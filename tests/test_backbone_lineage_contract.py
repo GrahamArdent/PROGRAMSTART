@@ -7,7 +7,8 @@ from jsonschema import Draft202012Validator
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA_PATH = ROOT / "schemas" / "backbone-lineage.schema.json"
-FIXTURE_PATH = ROOT / "tests" / "fixtures" / "backbone_lineage" / "controller_227.json"\nASYNC_FIXTURE_PATH = ROOT / "tests" / "fixtures" / "backbone_lineage" / "controller_71_async.json"
+FIXTURE_PATH = ROOT / "tests" / "fixtures" / "backbone_lineage" / "controller_227.json"
+ASYNC_FIXTURE_PATH = ROOT / "tests" / "fixtures" / "backbone_lineage" / "controller_71_async.json"
 DOC_PATH = ROOT / "docs" / "PROGRAMSTART_BACKBONE_END_TO_END_INFORMATION_FLOW.md"
 
 

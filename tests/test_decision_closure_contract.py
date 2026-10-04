@@ -102,11 +102,7 @@ def test_contract_document_preserves_owner_boundaries() -> None:
 
 def test_owner_settlement_fixture_preserves_acceptance_without_false_authority() -> None:
     outcomes = _owner_settlement_fixture()["outcomes"]
-    pending = [
-        item
-        for item in outcomes
-        if item["acceptance_state"] == "accepted" and item["authority_state"] == "unresolved"
-    ]
+    pending = [item for item in outcomes if item["acceptance_state"] == "accepted" and item["authority_state"] == "unresolved"]
 
     assert {item["id"] for item in pending} == {
         "dc-205-004",

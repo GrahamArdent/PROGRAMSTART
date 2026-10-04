@@ -143,6 +143,8 @@ Before creating owner state, search the likely current owner for the material me
 - Similar wording is insufficient; the material meaning must actually be represented.
 - Ambiguous ownership fails closed rather than being guessed.
 
+If the accepted conversational meaning contradicts current owner truth, do not silently overwrite the current record. Run the existing decision-reversal/supersession check, preserve the prior decision as historical/superseded under the owner's normal rules, and let the owner establish the current replacement. Matrix must never be the surface that invents the reversal.
+
 ### 9A.3 Conversation acceptance is not owner acceptance
 
 An accepted conversational outcome may be represented as accepted while `authority_state` remains `unresolved`.

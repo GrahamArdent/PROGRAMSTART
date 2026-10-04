@@ -121,7 +121,7 @@ def test_owner_settlement_fixture_preserves_acceptance_without_false_authority()
 
 def test_owner_settlement_reuses_existing_decision_closure_dimensions() -> None:
     schema = _schema()
-    outcome = schema["properties"]["outcomes"]["items"]["properties"]
+    outcome = schema["$defs"]["outcome"]["properties"]
     dispositions = set(outcome["disposition"]["enum"])
 
     assert "READY_FOR_REVIEW" in dispositions

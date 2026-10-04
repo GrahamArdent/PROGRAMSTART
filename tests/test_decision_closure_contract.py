@@ -107,7 +107,15 @@ def test_owner_settlement_fixture_preserves_acceptance_without_false_authority()
         if item["acceptance_state"] == "accepted" and item["authority_state"] == "unresolved"
     ]
 
-    assert pending
+    assert {item["id"] for item in pending} == {
+        "dc-205-004",
+        "dc-205-005",
+        "dc-205-006",
+        "dc-205-007",
+        "dc-205-008",
+        "dc-205-009",
+        "dc-205-010",
+    }
     assert all(item["currentness_state"] == "current" for item in pending)
     assert all(item["disposition"] == "READY_FOR_REVIEW" for item in pending)
     assert all(item["owner_ref"] == "GrahamArdent/PROGRAMSTART#205" for item in pending)

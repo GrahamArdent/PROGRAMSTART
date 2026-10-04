@@ -179,6 +179,24 @@
       ],
       "revisit_trigger": "PROGRAMSTART owner acceptance or rejection of the #205 settlement implementation.",
       "execution_authority": false
+    },
+    {
+      "id": "dc-205-010",
+      "kind": "decision",
+      "summary": "A materially accepted reversal must be reconciled through the owner without silently overwriting history; the prior decision remains recoverable as superseded and Matrix cannot invent the reversal.",
+      "disposition": "READY_FOR_REVIEW",
+      "acceptance_state": "accepted",
+      "authority_state": "unresolved",
+      "currentness_state": "current",
+      "owner_ref": "GrahamArdent/PROGRAMSTART#205",
+      "evidence_refs": [
+        "GrahamArdent/PROGRAMSTART#205"
+      ],
+      "acceptance_evidence_refs": [
+        "GrahamArdent/PROGRAMSTART#205"
+      ],
+      "revisit_trigger": "PROGRAMSTART owner acceptance or rejection of the #205 settlement implementation.",
+      "execution_authority": false
     }
   ],
   "execution_authority": false

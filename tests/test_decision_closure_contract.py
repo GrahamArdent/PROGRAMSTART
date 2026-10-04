@@ -8,6 +8,7 @@ from jsonschema import Draft202012Validator
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA_PATH = ROOT / "schemas" / "decision-closure.schema.json"
 FIXTURE_PATH = ROOT / "tests" / "fixtures" / "decision_closure" / "current_conversation.json"
+OWNER_SETTLEMENT_FIXTURE_PATH = ROOT / "tests" / "fixtures" / "decision_closure" / "2026-10-04-owner-settlement.json"
 DOC_PATH = ROOT / "docs" / "PROGRAMSTART_DECISION_CLOSURE.md"
 
 
@@ -19,6 +20,10 @@ def _fixture() -> dict:
     return json.loads(FIXTURE_PATH.read_text(encoding="utf-8"))
 
 
+def _owner_settlement_fixture() -> dict:
+    return json.loads(OWNER_SETTLEMENT_FIXTURE_PATH.read_text(encoding="utf-8"))
+
+
 def _errors(payload: dict) -> list:
     return sorted(Draft202012Validator(_schema()).iter_errors(payload), key=lambda error: list(error.path))
 
@@ -27,6 +32,7 @@ def test_decision_closure_schema_and_natural_fixture_are_valid() -> None:
     schema = _schema()
     Draft202012Validator.check_schema(schema)
     assert _errors(_fixture()) == []
+    assert _errors(_owner_settlement_fixture()) == []
 
 
 def test_receipt_and_outcomes_cannot_claim_execution_authority() -> None:
@@ -92,3 +98,46 @@ def test_contract_document_preserves_owner_boundaries() -> None:
     assert "Matrix/read models" in doc
     assert "Capture != acceptance != authority != execution" in doc
     assert "Distribution/materialization into generated repos is a separate concern" in doc
+
+def test_owner_settlement_fixture_preserves_acceptance_without_false_authority() -> None:
+    outcomes = _owner_settlement_fixture()["outcomes"]
+    pending = [
+        item
+        for item in outcomes
+        if item["acceptance_state"] == "accepted" and item["authority_state"] == "unresolved"
+    ]
+
+    assert pending
+    assert all(item["currentness_state"] == "current" for item in pending)
+    assert all(item["disposition"] == "READY_FOR_REVIEW" for item in pending)
+    assert all(item["owner_ref"] == "GrahamArdent/PROGRAMSTART#205" for item in pending)
+    assert all(item["execution_authority"] is False for item in pending)
+
+
+def test_owner_settlement_reuses_existing_decision_closure_dimensions() -> None:
+    schema = _schema()
+    outcome = schema["properties"]["outcomes"]["items"]["properties"]
+    dispositions = set(outcome["disposition"]["enum"])
+
+    assert "READY_FOR_REVIEW" in dispositions
+    assert "RECONCILIATION_REQUIRED" not in dispositions
+    assert "PENDING_OWNER_ACCEPTANCE" not in dispositions
+    assert set(outcome["authority_state"]["enum"]) == {
+        "not_authority",
+        "already_durable",
+        "reconciled",
+        "unresolved",
+    }
+
+
+def test_contract_requires_owner_acceptance_before_dependent_changed_scope() -> None:
+    doc = DOC_PATH.read_text(encoding="utf-8")
+
+    assert "Owner proposal != owner acceptance." in doc
+    assert "block only the dependent changed-scope consequence" in doc
+    assert "unrelated work that is independently authorized may continue" in doc
+    assert "final current owner truth" in doc
+    assert "Owner settlement and Matrix projection are not a distributed transaction." in doc
+    assert "Matrix failure never rolls back, duplicates, or overrides the owner decision." in doc
+    assert "no recurring Conversation Capture Sweep" in doc
+

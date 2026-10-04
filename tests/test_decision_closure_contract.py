@@ -99,6 +99,7 @@ def test_contract_document_preserves_owner_boundaries() -> None:
     assert "Capture != acceptance != authority != execution" in doc
     assert "Distribution/materialization into generated repos is a separate concern" in doc
 
+
 def test_owner_settlement_fixture_preserves_acceptance_without_false_authority() -> None:
     outcomes = _owner_settlement_fixture()["outcomes"]
     pending = [
@@ -148,4 +149,3 @@ def test_contract_requires_owner_acceptance_before_dependent_changed_scope() -> 
     assert "Owner settlement and Matrix projection are not a distributed transaction." in doc
     assert "Matrix failure never rolls back, duplicates, or overrides the owner decision." in doc
     assert "no recurring Conversation Capture Sweep" in doc
-

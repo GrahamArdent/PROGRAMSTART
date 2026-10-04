@@ -124,6 +124,74 @@ It is **not** added to every generated child repository in this slice. Distribut
 Likewise, Matrix gateway/storage/mandatory-ingress implementation remains outside this contract-placement objective.
 
 
+## 9A. Owner-settlement and canonical-before-dependent boundary
+
+Decision Closure may identify that a material conversational outcome is accepted before that outcome is current owner-native authority. That distinction is intentional and must remain visible.
+
+### 9A.1 Trigger
+
+Use this boundary only when a conversation contains a materially new or changed accepted decision whose dependent consequence would be costly, unsafe, or semantically wrong if reconstructed incorrectly.
+
+Routine status, brainstorming, repeated explanation of already-current owner truth, and implementation detail already covered by current authority do not require a new settlement.
+
+### 9A.2 Search and deduplicate before writing
+
+Before creating owner state, search the likely current owner for the material meaning.
+
+- If current owner truth already represents the accepted meaning, return the existing owner reference and treat the semantic result as `ALREADY_DURABLE`.
+- Do not create a second decision merely because the conversation or session is new.
+- Similar wording is insufficient; the material meaning must actually be represented.
+- Ambiguous ownership fails closed rather than being guessed.
+
+If the accepted conversational meaning contradicts current owner truth, do not silently overwrite the current record. Run the existing decision-reversal/supersession check, preserve the prior decision as historical/superseded under the owner's normal rules, and let the owner establish the current replacement. Matrix must never be the surface that invents the reversal.
+
+### 9A.3 Conversation acceptance is not owner acceptance
+
+An accepted conversational outcome may be represented as accepted while `authority_state` remains `unresolved`.
+
+Creating or delivering an issue, branch, pull request, ADR proposal, handoff packet, or other owner proposal is not by itself settlement.
+
+> **Owner proposal != owner acceptance.**
+
+Settlement becomes current only when the owning system's normal acceptance rules say the decision is current owner-native truth.
+
+Decision-Closure disposition, `acceptance_state`, `authority_state`, and `currentness_state` remain separate dimensions. Do not add a parallel lifecycle state merely to describe this boundary.
+
+### 9A.4 Canonical before dependent consequence
+
+Before a dependent consequential action relies on a materially new or changed accepted conversational decision:
+
+1. if the material meaning is already current owner truth, reuse its owner reference;
+2. otherwise reconcile the accepted delta through the owner's normal acceptance path;
+3. if current accepted owner truth still does not exist, block only the dependent changed-scope consequence and surface the exact owner reconciliation requirement;
+4. unrelated work that is independently authorized may continue.
+
+Conversation acceptance, Decision-Closure receipts, Matrix projection, observation, transport, and owner-handoff delivery cannot substitute for current owner acceptance.
+
+### 9A.5 Re-read after owner acceptance
+
+After owner acceptance, re-read the current owner-native result before outcome decomposition.
+
+Do not assume the final owner result is identical to the original conversational wording. Owner review may narrow, correct, supersede, or add constraints.
+
+The protected outcome and obligations are therefore derived from the **final current owner truth**, while the conversation remains transition/provenance evidence.
+
+### 9A.6 Operationalization and Matrix partial failure
+
+A durable accepted decision that is not being operationalized now may stop at owner durability; do not manufacture current Matrix obligations merely to preserve history.
+
+When an accepted/current decision is being operationalized, use §10 only after the owner re-read and completeness Challenge.
+
+Owner settlement and Matrix projection are not a distributed transaction. If owner settlement succeeds and Matrix refresh fails, the truthful state is:
+
+- owner truth remains current and durable;
+- Matrix is stale or reconsideration-required;
+- recovery rebuilds from owner-native current truth;
+- Matrix failure never rolls back, duplicates, or overrides the owner decision.
+
+This boundary introduces no recurring Conversation Capture Sweep, standalone Decision Lifecycle runtime, global decision registry, universal writer, scheduler, queue, watcher, or second Controller.
+
+
 ## 10. Accepted-outcome decomposition and Matrix handoff
 
 Decision Closure answers **what was decided**. When an accepted, current material outcome is to be operationalized, PROGRAMSTART must next derive **what must become true because of that decision** before bounded execution work is selected.

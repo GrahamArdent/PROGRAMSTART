@@ -1,0 +1,203 @@
+{
+  "contract_version": "1.0",
+  "record_type": "programstart.decision_closure_receipt",
+  "source": {
+    "kind": "chat",
+    "ref": "conversation:2026-10-04:decision-settlement-owner-reconciliation",
+    "scope": "Available 2026-10-04 conversation that settled conversational decision settlement, owner reconciliation, and Matrix projection semantics."
+  },
+  "coverage": {
+    "status": "challenged",
+    "method": "independent_review",
+    "evidence_refs": [
+      "GrahamArdent/PROGRAMSTART#205",
+      "GrahamArdent/PROGRAMSTART#141",
+      "GrahamArdent/PROGRAMSTART#174",
+      "GrahamArdent/PROGRAMSTART#201"
+    ],
+    "residuals": [
+      "This fixture declares available-conversation coverage only; it does not claim universal account-wide chat completeness.",
+      "The materially new canonical-before-dependent settlement rule remains owner-pending until PROGRAMSTART accepts the #205 implementation through its normal owner process."
+    ]
+  },
+  "outcomes": [
+    {
+      "id": "dc-205-001",
+      "kind": "decision",
+      "summary": "Chat is transition evidence, not permanent runtime or execution authority.",
+      "disposition": "ALREADY_DURABLE",
+      "acceptance_state": "accepted",
+      "authority_state": "already_durable",
+      "currentness_state": "current",
+      "owner_ref": "GrahamArdent/PROGRAMSTART#141",
+      "evidence_refs": [
+        "GrahamArdent/PROGRAMSTART#141"
+      ],
+      "acceptance_evidence_refs": [
+        "GrahamArdent/PROGRAMSTART#141"
+      ],
+      "execution_authority": false
+    },
+    {
+      "id": "dc-205-002",
+      "kind": "decision",
+      "summary": "Only accepted and current decisions being operationalized are decomposed into protected outcomes and current Matrix obligations.",
+      "disposition": "ALREADY_DURABLE",
+      "acceptance_state": "accepted",
+      "authority_state": "already_durable",
+      "currentness_state": "current",
+      "owner_ref": "GrahamArdent/PROGRAMSTART#174",
+      "evidence_refs": [
+        "GrahamArdent/PROGRAMSTART#174"
+      ],
+      "acceptance_evidence_refs": [
+        "GrahamArdent/PROGRAMSTART#174"
+      ],
+      "execution_authority": false
+    },
+    {
+      "id": "dc-205-003",
+      "kind": "decision",
+      "summary": "Routine reconciliation should reuse existing owner, Controller, and Matrix machinery; projection cannot manufacture owner truth and replay must not duplicate consequence.",
+      "disposition": "ALREADY_DURABLE",
+      "acceptance_state": "accepted",
+      "authority_state": "already_durable",
+      "currentness_state": "current",
+      "owner_ref": "GrahamArdent/PROGRAMSTART#201",
+      "evidence_refs": [
+        "GrahamArdent/PROGRAMSTART#201"
+      ],
+      "acceptance_evidence_refs": [
+        "GrahamArdent/PROGRAMSTART#201"
+      ],
+      "execution_authority": false
+    },
+    {
+      "id": "dc-205-004",
+      "kind": "decision",
+      "summary": "A materially new or changed accepted conversational decision must resolve to current accepted owner-native truth before dependent changed-scope consequence; owner proposal is not owner acceptance and decomposition must re-read final owner truth.",
+      "disposition": "READY_FOR_REVIEW",
+      "acceptance_state": "accepted",
+      "authority_state": "unresolved",
+      "currentness_state": "current",
+      "owner_ref": "GrahamArdent/PROGRAMSTART#205",
+      "evidence_refs": [
+        "GrahamArdent/PROGRAMSTART#205"
+      ],
+      "acceptance_evidence_refs": [
+        "GrahamArdent/PROGRAMSTART#205"
+      ],
+      "revisit_trigger": "PROGRAMSTART owner acceptance or rejection of the #205 settlement implementation.",
+      "execution_authority": false
+    },
+    {
+      "id": "dc-205-005",
+      "kind": "decision",
+      "summary": "Decision-Closure JSON and Matrix JSON are derived machine-readable interchange/projection; owner-native truth remains canonical and Matrix failure cannot roll back owner settlement.",
+      "disposition": "READY_FOR_REVIEW",
+      "acceptance_state": "accepted",
+      "authority_state": "unresolved",
+      "currentness_state": "current",
+      "owner_ref": "GrahamArdent/PROGRAMSTART#205",
+      "evidence_refs": [
+        "GrahamArdent/PROGRAMSTART#205"
+      ],
+      "acceptance_evidence_refs": [
+        "GrahamArdent/PROGRAMSTART#205"
+      ],
+      "revisit_trigger": "PROGRAMSTART owner acceptance or rejection of the #205 settlement implementation.",
+      "execution_authority": false
+    },
+    {
+      "id": "dc-205-006",
+      "kind": "decision",
+      "summary": "Owner search and semantic dedupe precede new writes; if the accepted meaning is already current owner truth, reuse the existing owner reference rather than creating a duplicate decision or Matrix obligation.",
+      "disposition": "READY_FOR_REVIEW",
+      "acceptance_state": "accepted",
+      "authority_state": "unresolved",
+      "currentness_state": "current",
+      "owner_ref": "GrahamArdent/PROGRAMSTART#205",
+      "evidence_refs": [
+        "GrahamArdent/PROGRAMSTART#205"
+      ],
+      "acceptance_evidence_refs": [
+        "GrahamArdent/PROGRAMSTART#205"
+      ],
+      "revisit_trigger": "PROGRAMSTART owner acceptance or rejection of the #205 settlement implementation.",
+      "execution_authority": false
+    },
+    {
+      "id": "dc-205-007",
+      "kind": "decision",
+      "summary": "Ambiguous owner or linkage fails closed; a guessed owner cannot become settled authority or a current Matrix obligation.",
+      "disposition": "READY_FOR_REVIEW",
+      "acceptance_state": "accepted",
+      "authority_state": "unresolved",
+      "currentness_state": "current",
+      "owner_ref": "GrahamArdent/PROGRAMSTART#205",
+      "evidence_refs": [
+        "GrahamArdent/PROGRAMSTART#205"
+      ],
+      "acceptance_evidence_refs": [
+        "GrahamArdent/PROGRAMSTART#205"
+      ],
+      "revisit_trigger": "PROGRAMSTART owner acceptance or rejection of the #205 settlement implementation.",
+      "execution_authority": false
+    },
+    {
+      "id": "dc-205-008",
+      "kind": "decision",
+      "summary": "A durable accepted decision that is not currently being operationalized stops at owner durability and does not create current Matrix obligations merely to preserve history.",
+      "disposition": "READY_FOR_REVIEW",
+      "acceptance_state": "accepted",
+      "authority_state": "unresolved",
+      "currentness_state": "current",
+      "owner_ref": "GrahamArdent/PROGRAMSTART#205",
+      "evidence_refs": [
+        "GrahamArdent/PROGRAMSTART#205"
+      ],
+      "acceptance_evidence_refs": [
+        "GrahamArdent/PROGRAMSTART#205"
+      ],
+      "revisit_trigger": "PROGRAMSTART owner acceptance or rejection of the #205 settlement implementation.",
+      "execution_authority": false
+    },
+    {
+      "id": "dc-205-009",
+      "kind": "decision",
+      "summary": "The normal current path does not use a recurring Conversation Capture Sweep or standalone Decision Lifecycle runtime; Decision Closure composes existing owners and receipts are optional interchange evidence rather than a second authority store.",
+      "disposition": "READY_FOR_REVIEW",
+      "acceptance_state": "accepted",
+      "authority_state": "unresolved",
+      "currentness_state": "current",
+      "owner_ref": "GrahamArdent/PROGRAMSTART#205",
+      "evidence_refs": [
+        "GrahamArdent/PROGRAMSTART#205"
+      ],
+      "acceptance_evidence_refs": [
+        "GrahamArdent/PROGRAMSTART#205"
+      ],
+      "revisit_trigger": "PROGRAMSTART owner acceptance or rejection of the #205 settlement implementation.",
+      "execution_authority": false
+    },
+    {
+      "id": "dc-205-010",
+      "kind": "decision",
+      "summary": "A materially accepted reversal must be reconciled through the owner without silently overwriting history; the prior decision remains recoverable as superseded and Matrix cannot invent the reversal.",
+      "disposition": "READY_FOR_REVIEW",
+      "acceptance_state": "accepted",
+      "authority_state": "unresolved",
+      "currentness_state": "current",
+      "owner_ref": "GrahamArdent/PROGRAMSTART#205",
+      "evidence_refs": [
+        "GrahamArdent/PROGRAMSTART#205"
+      ],
+      "acceptance_evidence_refs": [
+        "GrahamArdent/PROGRAMSTART#205"
+      ],
+      "revisit_trigger": "PROGRAMSTART owner acceptance or rejection of the #205 settlement implementation.",
+      "execution_authority": false
+    }
+  ],
+  "execution_authority": false
+}

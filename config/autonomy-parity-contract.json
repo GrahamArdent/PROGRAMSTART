@@ -30,12 +30,12 @@
     },
     {
       "path": "PROGRAMBUILD/PROGRAMBUILD_PLANNING_OPERATING_MODEL.md",
-      "sha256": "59b3e455-b45cec9a-c04d74fe-75be8849-1623e296-e768530b-62753510-5038799c",
+      "sha256": "5cb072a566ea99124179f9925b480c4741c75851d6097a2deeabecbb8cddca76",
       "role": "planning and adaptive decision semantics"
     },
     {
       "path": "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
-      "sha256": "3ce9d4a1-1a4892aa-1b892025-06331112-d0b4355f-1090c5eb-34684cff-38c792c6",
+      "sha256": "333e3be825b9e21cd806ba8ee1e8ba70b9a4e8b907d05e8bac27e26254eeef33",
       "role": "Challenge contract"
     },
     {

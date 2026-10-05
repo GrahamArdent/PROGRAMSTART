@@ -6,6 +6,16 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 
 ---
 
+
+## 2026-10-05 (Convergence Output + Durable Packet Routing)
+
+- added owner-routed Convergence Packet semantics to the Planning Operating Model for material Challenge-converged design/plan/recommendation/handoff work
+- added material-delta re-Challenge behavior to the existing Challenge Gate: a Challenge that changes the candidate cannot also clear the revised candidate
+- added `programstart-convergence-packet.prompt.md` as one workflow guidance/task entry point rather than imposing artifact output on every prompt
+- kept the operator summary concise while preserving host-neutral Markdown delivery; downloadable-file behavior remains host-specific presentation
+- preserved packets as derived/non-authoritative references and routed durability by semantic ownership instead of creating a PROGRAMSTART dump folder, global packet registry, queue, or new repository
+- recorded DEC-023; no new lifecycle, Work Packet type, runtime, Matrix projection, or second Challenge Gate was introduced
+
 ## 2026-08-29 (Idea Preservation Without Backlog Promotion)
 
 - added the principle **Capture broadly. Promote deliberately. Execute only from authority.** so worthwhile ideas are not lost merely because they are not current work
@@ -336,4 +346,4 @@ Tracks changes to the reusable PROGRAMBUILD system itself.
 
 ---
 
-Last updated: 2026-08-29
+Last updated: 2026-10-05

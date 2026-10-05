@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from typing import Any
 
 import jsonschema
 import pytest
@@ -26,35 +27,75 @@ def _manifest(role: str = "REFERENCE_PLAN") -> dict[str, Any]:
         },
         "projection_role": role,
         "protected_outcome": "A disposable hostile-code boundary is reconstructable without chat.",
-        "obligations": [{
-            "id": "ISO-01", "outcome": "Host feasibility is proven.", "owner_ref": "GrahamArdent/execution-node-control#335",
-            "acceptance_refs": ["fixture:iso-01"], "terminal_refs": ["fixture:terminal"], "invalidation_triggers": []
-        }],
-        "planned_steps": [{
-            "id": "GATE-01", "title": "Prove feasibility", "outcome_supported": ["ISO-01"],
-            "owner_ref": "GrahamArdent/execution-node-control#335", "depends_on": [], "gate_refs": [],
-            "execution_class": "read_only", "expected_effect_surface": ["execution-node"],
-            "acceptance_conditions": ["feasibility evidence exists"], "stop_conditions": ["falsifier fires"]
-        }],
-        "impact_scope": [{
-            "object_id": "GrahamArdent/execution-node-control#335", "object_type": "issue",
-            "owner_ref": "GrahamArdent/execution-node-control", "source_ref": "GrahamArdent/programstart-compute-spine#135",
-            "impact_type": "host_isolation"
-        }],
-        "associations": [{
-            "source": "ISO-01", "target": "GrahamArdent/execution-node-control#335", "relation": "OWNED_BY",
-            "basis_ref": "GrahamArdent/programstart-compute-spine#135", "currentness": "CURRENT"
-        }],
-        "gates": [{
-            "id": "GATE-01", "type": "feasibility", "condition": "candidate is evaluated",
-            "pass_condition": "requirements satisfied", "fail_disposition": "reconsider", "owner_ref": "GrahamArdent/programstart-compute-spine#135"
-        }],
-        "falsifiers": [{"id": "F-01", "condition": "boundary cannot contain hostile code", "consequence": "evaluate stronger isolation"}],
+        "obligations": [
+            {
+                "id": "ISO-01",
+                "outcome": "Host feasibility is proven.",
+                "owner_ref": "GrahamArdent/execution-node-control#335",
+                "acceptance_refs": ["fixture:iso-01"],
+                "terminal_refs": ["fixture:terminal"],
+                "invalidation_triggers": [],
+            }
+        ],
+        "planned_steps": [
+            {
+                "id": "GATE-01",
+                "title": "Prove feasibility",
+                "outcome_supported": ["ISO-01"],
+                "owner_ref": "GrahamArdent/execution-node-control#335",
+                "depends_on": [],
+                "gate_refs": [],
+                "execution_class": "read_only",
+                "expected_effect_surface": ["execution-node"],
+                "acceptance_conditions": ["feasibility evidence exists"],
+                "stop_conditions": ["falsifier fires"],
+            }
+        ],
+        "impact_scope": [
+            {
+                "object_id": "GrahamArdent/execution-node-control#335",
+                "object_type": "issue",
+                "owner_ref": "GrahamArdent/execution-node-control",
+                "source_ref": "GrahamArdent/programstart-compute-spine#135",
+                "impact_type": "host_isolation",
+            }
+        ],
+        "associations": [
+            {
+                "source": "ISO-01",
+                "target": "GrahamArdent/execution-node-control#335",
+                "relation": "OWNED_BY",
+                "basis_ref": "GrahamArdent/programstart-compute-spine#135",
+                "currentness": "CURRENT",
+            }
+        ],
+        "gates": [
+            {
+                "id": "GATE-01",
+                "type": "feasibility",
+                "condition": "candidate is evaluated",
+                "pass_condition": "requirements satisfied",
+                "fail_disposition": "reconsider",
+                "owner_ref": "GrahamArdent/programstart-compute-spine#135",
+            }
+        ],
+        "falsifiers": [
+            {
+                "id": "F-01",
+                "condition": "boundary cannot contain hostile code",
+                "consequence": "evaluate stronger isolation",
+            }
+        ],
         "exclusions": ["generic shell"], "non_goals": ["second Controller"], "constraints": ["execution_authority=false"],
         "residuals": [], "acceptance_conditions": ["cold reconstruction succeeds"],
         "terminal_condition": "protected outcome is independently proven",
         "invalidation_conditions": ["owner supersedes the plan"], "reconsideration_triggers": ["candidate falsified"],
-        "coverage": {"status": "challenged", "method": "independent fixture challenge", "evidence_refs": ["fixture:coverage"], "residuals": []},
+        "coverage": {
+            "status": "challenged",
+            "method": "independent fixture challenge",
+            "evidence_refs": ["fixture:coverage"],
+            "residuals": [],
+        },
         "execution_authority": False,
     }
 

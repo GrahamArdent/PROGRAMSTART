@@ -329,6 +329,46 @@ def test_existing_packet_without_current_authority_is_revalidated_not_regenerate
     assert resolution.next_system_requirement is not None
 
 
+def test_existing_packet_recompiles_when_nonempty_durable_refs_change() -> None:
+    authority = _authority()
+    packet = compile_work_packet(
+        "Implement the accepted bounded change.",
+        authority,
+        kind=IntentKind.BOUNDED_EXECUTION,
+        durable_artifact_refs=["artifact:old"],
+    )
+    harvest = _harvest(durable_artifact_refs=["artifact:new"])
+
+    resolution = resolve_contextual_intent(
+        ContextualIntentRequest(harvest=harvest, authority=authority, existing_packet=packet)
+    )
+
+    assert resolution.action == ContextualTransitionAction.RECOMPILE_FOR_ADMISSION
+    assert resolution.packet is not None
+    assert resolution.packet.evidence_context_refs == ["artifact:new"]
+    assert resolution.packet.specification_id != packet.specification_id
+
+
+def test_empty_followup_refs_do_not_erase_existing_sealed_context() -> None:
+    authority = _authority()
+    packet = compile_work_packet(
+        "Implement the accepted bounded change.",
+        authority,
+        kind=IntentKind.BOUNDED_EXECUTION,
+        durable_artifact_refs=["artifact:retained"],
+    )
+    harvest = _harvest()
+
+    resolution = resolve_contextual_intent(
+        ContextualIntentRequest(harvest=harvest, authority=authority, existing_packet=packet)
+    )
+
+    assert resolution.action == ContextualTransitionAction.CONTINUE_EXISTING_PACKET
+    assert resolution.packet is not None
+    assert resolution.packet.specification_id == packet.specification_id
+    assert resolution.packet.evidence_context_refs == ["artifact:retained"]
+
+
 def test_tampered_existing_packet_is_rejected_before_contextual_resolution() -> None:
     authority = _authority()
     packet = compile_work_packet("Continue.", authority, kind=IntentKind.CONTINUATION)

@@ -236,6 +236,7 @@
       ".github/prompts/audit-process-drift.prompt.md",
       ".github/prompts/programstart-stage-guide.prompt.md",
       ".github/prompts/programstart-what-next.prompt.md",
+      ".github/prompts/programstart-convergence-packet.prompt.md",
       ".github/prompts/programstart-cross-stage-validation.prompt.md",
       ".github/prompts/programstart-stage-transition.prompt.md",
       ".github/prompts/start-programstart-project.prompt.md",

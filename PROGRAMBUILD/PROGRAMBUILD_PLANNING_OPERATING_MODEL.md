@@ -2,11 +2,11 @@
 
 # Program Build Planning Operating Model
 
-Purpose: Define how planning, idea preservation, research, execution authority, active work, context loading, adaptive decision routing, blocker scope, safe-lane execution, accepted recommendations, checklist completeness, and verification fit together without creating competing plans or unnecessary process overhead.
+Purpose: Define how planning, idea preservation, research, execution authority, active work, context loading, adaptive decision routing, blocker scope, safe-lane execution, accepted recommendations, checklist completeness, convergence output/durable packet routing, and verification fit together without creating competing plans or unnecessary process overhead.
 Owner: Project Lead / Operator
-Last updated: 2026-08-29
+Last updated: 2026-10-05
 Depends on: `PROGRAMBUILD_CANONICAL.md`, `PROGRAMBUILD_FILE_INDEX.md`, `PROGRAMBUILD_GAMEPLAN.md`, `DECISION_LOG.md`
-Authority: Canonical for planning-to-execution separation, idea capture/promotion semantics, proportional rigor, progressive disclosure, adaptive decision routing, blocker/safe-lane handling, accepted-recommendation resolution, evidence sufficiency, and evidence-reuse rules.
+Authority: Canonical for planning-to-execution separation, idea capture/promotion semantics, proportional rigor, progressive disclosure, adaptive decision routing, blocker/safe-lane handling, accepted-recommendation resolution, convergence output/durable packet routing, evidence sufficiency, and evidence-reuse rules.
 
 ---
 
@@ -573,6 +573,77 @@ When active:
 `PROGRAMBUILD_CHECKLIST.md` provides the reusable checklist form. The Work Packet owns how checklist completeness participates in current-slice closure.
 
 ---
+
+
+### 9.9 Convergence Output And Durable Packet Routing
+
+When an operator deliberately asks for a material design, implementation plan, recommendation, handoff, or other result to be challenged until the current candidate is clear, preserve the useful result without turning the reporting artifact into a second authority.
+
+Use this behavior when at least one is true:
+
+- the operator explicitly requests a durable Markdown result;
+- repeated Challenge/re-Challenge materially shapes the candidate;
+- the result is intended for later implementation or handoff;
+- reconstructing the reasoning from chat/session history would be costly or unreliable;
+- a non-authoritative decision/rationale record has genuine future reuse value.
+
+Do not require it for routine status, simple factual questions, trivial edits, or work already durably represented by its real owner.
+
+#### Output contract
+
+When activated, produce:
+
+1. a **concise operator summary** containing the result, exact GO/NO-GO boundary, recommended next step, and only material caveats; and
+2. one complete **Markdown Convergence Packet** carrying the reconstructable detail.
+
+A ChatGPT-like host may target roughly 150 words or less for the concise response when the complete packet is available, or honor a tighter operator-requested limit. The methodology does not depend on a particular UI, attachment mechanism, or word count; do not omit a material blocker, safety boundary, or currentness qualification merely to satisfy presentation brevity.
+
+The packet should contain the smallest complete set needed to reconstruct the result:
+
+- title/date/mode/declared scope;
+- convergence status;
+- authority status and owner references;
+- evidence basis and mutations performed;
+- executive conclusion;
+- candidate/objective evaluated;
+- only the **material** Challenge findings that changed the candidate or boundary;
+- final converged recommendation/design/plan;
+- compact decision log when multiple material decisions were made;
+- residuals/blockers;
+- GO/NO-GO;
+- recommended next step;
+- durable owner/reconciliation references.
+
+Do not preserve repetitive drafts or raw conversation transcripts merely to prove that multiple passes occurred.
+
+#### Authority labels
+
+Use truthful derived-state labels such as:
+
+- `NON_AUTHORITATIVE_REFERENCE`;
+- `DERIVED_FROM_CURRENT_AUTHORITY`;
+- `OWNER_RECONCILIATION_REQUIRED`;
+- `OWNER_RECONCILED`.
+
+A Convergence Packet is not project authority merely because it is complete, polished, or Challenge-clear. If a material accepted result has not yet become current owner-native truth, preserve that distinction and route it through the existing owner/Decision-Closure reconciliation path before dependent consequence.
+
+#### Durable routing
+
+Route a durable packet by semantic ownership:
+
+1. **Project-specific result** — store with the owning project using an existing compatible non-authoritative report/design/note surface. Reference canonical owner truth rather than copying it as a replacement.
+2. **PROGRAMSTART-methodology result** — use an existing PROGRAMSTART non-authoritative design/evidence surface when appropriate.
+3. **Genuine cross-project/operator reference** — use the operator's external non-authoritative workspace or another already-earned portfolio/reference surface. Such an archive is not a queue, backlog, priority source, currentness source, or execution authority.
+4. **Owner unclear** — do not use a convergence archive as a catch-all inbox. Use existing owner-search, idea-preservation, conversation-capture, or Authority-Gap routing until the correct owner is known.
+
+A downloadable/ephemeral copy and a repository-persisted copy are delivery/reference views of the same result, not two independently maintained truths. When a durable copy is created, expose its durable reference when practical.
+
+#### Reuse and retrieval
+
+Do not scan packet archives on every project turn. Retrieve a packet only when the current request, owner reference, handoff, or explicit revisit trigger makes it relevant.
+
+If current owner truth conflicts with a stored packet, the packet is stale. Reconcile or supersede the derived packet; never rewrite current project truth to match the archive.
+
 
 ## 10. Research Integration Rule
 

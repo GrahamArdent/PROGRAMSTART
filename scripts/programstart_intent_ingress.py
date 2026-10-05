@@ -135,6 +135,11 @@ class BoundedIntentEnvelope(BaseModel):
         required = (self.context_ref, self.latest_operator_utterance, self.source_principal, self.captured_at)
         if any(not value.strip() for value in required):
             raise ValueError("bounded intent envelope requires context, utterance, principal, and capture time")
+        if len(self.durable_artifact_refs) > 32 or any(
+            not value.strip() or len(value) > 512 or any(ord(character) < 32 or ord(character) == 127 for character in value)
+            for value in self.durable_artifact_refs
+        ):
+            raise ValueError("durable_artifact_refs exceed the bounded mechanical-context contract")
         return self
 
 
@@ -402,7 +407,8 @@ class ConversationHarvest(BaseModel):
         if not self.latest_operator_utterance.strip():
             raise ValueError("latest_operator_utterance must not be empty")
         if len(self.durable_artifact_refs) > 32 or any(
-            not value.strip() or len(value) > 512 for value in self.durable_artifact_refs
+            not value.strip() or len(value) > 512 or any(ord(character) < 32 or ord(character) == 127 for character in value)
+            for value in self.durable_artifact_refs
         ):
             raise ValueError("durable_artifact_refs exceed the bounded mechanical-context contract")
         return self

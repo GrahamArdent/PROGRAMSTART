@@ -651,7 +651,11 @@ def compile_interpreted_work_packet(
 
     context_refs = list(durable_artifact_refs or [])
     if len(context_refs) > 32 or any(
-        not isinstance(value, str) or not value.strip() or len(value) > 512 for value in context_refs
+        not isinstance(value, str)
+        or not value.strip()
+        or len(value) > 512
+        or any(ord(character) < 32 or ord(character) == 127 for character in value)
+        for value in context_refs
     ):
         raise ValueError("durable_artifact_refs exceed the bounded mechanical-context contract")
 

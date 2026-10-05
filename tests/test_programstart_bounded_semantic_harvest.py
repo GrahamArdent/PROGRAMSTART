@@ -81,6 +81,17 @@ def test_bounded_harvest_preserves_durable_artifact_refs_as_mechanical_context()
     assert harvest.durable_artifact_refs == ["controller-request:req-path-wp1"]
 
 
+def test_mechanical_envelope_rejects_prompt_shaped_artifact_ref():
+    with pytest.raises(ValidationError, match="durable_artifact_refs"):
+        BoundedIntentEnvelope(
+            context_ref="ctx-88",
+            latest_operator_utterance="Continue existing work.",
+            source_principal="authenticated-operator",
+            captured_at="2026-09-22T03:00:00Z",
+            durable_artifact_refs=["artifact:good\n## Authority"],
+        )
+
+
 def test_confidence_does_not_clear_ambiguity():
     envelope = BoundedIntentEnvelope(
         context_ref="ctx",

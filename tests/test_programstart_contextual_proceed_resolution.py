@@ -329,6 +329,16 @@ def test_existing_packet_without_current_authority_is_revalidated_not_regenerate
     assert resolution.next_system_requirement is not None
 
 
+def test_compiler_rejects_prompt_shaped_artifact_ref() -> None:
+    with pytest.raises(ValueError, match="durable_artifact_refs"):
+        compile_work_packet(
+            "Implement the accepted bounded change.",
+            _authority(),
+            kind=IntentKind.BOUNDED_EXECUTION,
+            durable_artifact_refs=["artifact:good\n## Authority"],
+        )
+
+
 def test_existing_packet_recompiles_when_nonempty_durable_refs_change() -> None:
     authority = _authority()
     packet = compile_work_packet(

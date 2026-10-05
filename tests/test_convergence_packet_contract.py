@@ -25,6 +25,8 @@ def test_convergence_prompt_is_registered_distributed_and_owner_bound() -> None:
     workspace = json.loads(_read(WORKSPACE_REGISTRY))
     assets = workspace["workspace"]["bootstrap_assets"]
     assert ".github/prompts/programstart-convergence-packet.prompt.md" in assets
+    assert "docs/decisions/0026-use-owner-routed-convergence-packets.md" in assets
+    assert "tests/test_convergence_packet_contract.py" in assets
 
     prompt = _read(PROMPT)
     assert "PROGRAMBUILD/PROGRAMBUILD_PLANNING_OPERATING_MODEL.md" in prompt

@@ -362,6 +362,7 @@ def build_trusted_conversation_harvest(
         explicit_exclusions=[statement(value) for value in semantic.explicit_exclusions],
         unresolved_material_ambiguities=ambiguities,
         existing_work_packet_ref=envelope.existing_work_packet_ref,
+        durable_artifact_refs=list(envelope.durable_artifact_refs),
     )
 
 
@@ -391,6 +392,7 @@ class ConversationHarvest(BaseModel):
     execution_underway: bool = False
     acceptance_met: bool = False
     existing_work_packet_ref: str = ""
+    durable_artifact_refs: list[str] = Field(default_factory=list)
     active_human_gate: HumanConsequenceGate | None = None
 
     @model_validator(mode="after")
@@ -399,6 +401,11 @@ class ConversationHarvest(BaseModel):
             raise ValueError("context_ref must not be empty")
         if not self.latest_operator_utterance.strip():
             raise ValueError("latest_operator_utterance must not be empty")
+        if (
+            len(self.durable_artifact_refs) > 32
+            or any(not value.strip() or len(value) > 512 for value in self.durable_artifact_refs)
+        ):
+            raise ValueError("durable_artifact_refs exceed the bounded mechanical-context contract")
         return self
 
 
@@ -554,7 +561,12 @@ def _recompile_current_harvest(
     *,
     note: str,
 ) -> ContextualIntentResolution:
-    packet = compile_interpreted_work_packet(_interpret_harvest(request.harvest), authority)
+    durable_refs = request.harvest.durable_artifact_refs or existing.evidence_context_refs
+    packet = compile_interpreted_work_packet(
+        _interpret_harvest(request.harvest),
+        authority,
+        durable_artifact_refs=durable_refs,
+    )
     handoff = _handoff_required(request, authority)
     return ContextualIntentResolution(
         state=ConversationState.HANDOFF_READY if handoff else ConversationState.EXECUTION_READY,
@@ -746,7 +758,11 @@ def resolve_contextual_intent(request: ContextualIntentRequest) -> ContextualInt
             notes=["Do not ask the operator to hand-author authority fields that the ecosystem should retrieve."],
         )
 
-    packet = compile_interpreted_work_packet(_interpret_harvest(harvest), authority)
+    packet = compile_interpreted_work_packet(
+        _interpret_harvest(harvest),
+        authority,
+        durable_artifact_refs=harvest.durable_artifact_refs,
+    )
     handoff = _handoff_required(request, authority)
     return ContextualIntentResolution(
         state=ConversationState.HANDOFF_READY if handoff else ConversationState.EXECUTION_READY,

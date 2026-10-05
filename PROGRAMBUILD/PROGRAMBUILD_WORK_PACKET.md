@@ -288,7 +288,7 @@ For the current invocation:
 6. record `LANE_CONVERGENCE` describing where context/verification must widen again before milestone/release closure or consequential mutation;
 7. when two or more current lanes can mutate the same consequential resource, record the exact `SHARED_MUTATION_RESOURCE`, one `MUTATION_OWNER`, and the `RELEASE_OR_TRANSFER_CONDITION` before any lane crosses that mutation boundary;
 8. immediately before consequential mutation, re-check the current resource state, selected lane/candidate, and mutation owner; stale ownership evidence is not permission to proceed;
-9. transfer mutation ownership only after the previous owner is explicitly released/complete/superseded and the new owner is reconciled against current resource/repository/runtime state.
+9. transfer mutation ownership only after the previous owner is explicitly released/complete/superseded **and positive evidence shows its execution can no longer mutate the shared resource**; a transport/session exit, disconnect, timeout, cancellation acknowledgement, or termination request is not by itself release evidence. Verify the bounded execution unit and any surviving/reparented descendants or equivalent runtime actors capable of mutation, then reconcile the new owner against current resource/repository/runtime state. If termination cannot be established, fail closed: retain mutation ownership and allow only work proven unable to mutate that resource.
 
 Coordination rules:
 

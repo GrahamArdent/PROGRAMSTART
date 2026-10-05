@@ -58,3 +58,6 @@ def test_work_packet_methodology_already_requires_single_shared_mutation_owner()
     assert "MUTATION_OWNER:" in text
     assert "RELEASE_OR_TRANSFER_CONDITION:" in text
     assert "at most one lane may own mutation of that resource at a time" in text
+    assert "transport/session exit" in text
+    assert "surviving/reparented descendants" in text
+    assert "retain mutation ownership" in text

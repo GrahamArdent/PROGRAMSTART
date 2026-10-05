@@ -100,6 +100,93 @@ class EffectReadinessRule(BaseModel):
         return self
 
 
+class MatrixProjectionBinding(BaseModel):
+    """Positive-current Matrix projection evidence; never owner or execution authority."""
+
+    artifact_ref: str
+    projection_identity: str
+    decision_ref: str
+    source_ref: str
+    source_version: str
+    semantic_hash: str
+    source_fingerprint: str
+    source_currentness: Literal["CURRENT"]
+    projection_currentness: Literal["CURRENT"]
+    ingestion_reconciliation_state: Literal["RECONCILED"]
+    reconsideration_required: Literal[False]
+    execution_authority: Literal[False]
+
+    @model_validator(mode="after")
+    def validate_positive_current_projection(self) -> MatrixProjectionBinding:
+        required = (
+            self.artifact_ref,
+            self.projection_identity,
+            self.decision_ref,
+            self.source_ref,
+            self.source_version,
+            self.semantic_hash,
+            self.source_fingerprint,
+        )
+        if any(not value.strip() for value in required):
+            raise ValueError("Matrix projection binding requires exact non-empty identity/currentness evidence")
+        try:
+            repository_version, artifact_path = self.artifact_ref.split(":", 1)
+            repository, commit = repository_version.rsplit("@", 1)
+        except ValueError as exc:
+            raise ValueError("Matrix artifact_ref must be an immutable repository@commit:path reference") from exc
+        if "/" not in repository or not artifact_path or len(commit) != 40:
+            raise ValueError("Matrix artifact_ref must be an immutable repository@commit:path reference")
+        try:
+            int(commit, 16)
+        except ValueError as exc:
+            raise ValueError("Matrix artifact_ref must contain an exact 40-character Git commit") from exc
+        for digest in (self.semantic_hash, self.source_fingerprint):
+            if len(digest) != 64:
+                raise ValueError("Matrix projection semantic/source fingerprints must be exact SHA-256 hex digests")
+            try:
+                int(digest, 16)
+            except ValueError as exc:
+                raise ValueError("Matrix projection semantic/source fingerprints must be exact SHA-256 hex digests") from exc
+        return self
+
+
+class DecisionOperationalizationBinding(BaseModel):
+    """Currentness binding for work derived from one operationalized accepted decision."""
+
+    owner_decision_ref: str
+    operationalization_source_ref: str
+    operationalization_source_version: str
+    projection_identity: str
+    matrix_projection: MatrixProjectionBinding | None = None
+
+    @model_validator(mode="after")
+    def validate_decision_projection_consistency(self) -> DecisionOperationalizationBinding:
+        required = (
+            self.owner_decision_ref,
+            self.operationalization_source_ref,
+            self.operationalization_source_version,
+            self.projection_identity,
+        )
+        if any(not value.strip() for value in required):
+            raise ValueError("decision operationalization requires exact decision/source/projection identity")
+        projection = self.matrix_projection
+        if projection is None:
+            return self
+        if projection.decision_ref != self.owner_decision_ref:
+            raise ValueError("Matrix projection decision_ref does not match the operationalized owner decision")
+        if projection.source_ref != self.operationalization_source_ref:
+            raise ValueError("Matrix projection source_ref does not match the operationalization source")
+        if projection.source_version != self.operationalization_source_version:
+            raise ValueError("Matrix projection source_version does not match the operationalization source version")
+        if projection.projection_identity != self.projection_identity:
+            raise ValueError("Matrix projection identity does not match the required operationalization projection")
+        return self
+
+    @property
+    def projection_ready(self) -> bool:
+        return self.matrix_projection is not None
+
+
 class AuthoritySnapshot(BaseModel):
     """Resolved current authority/currentness input; not a new authority source."""
 
@@ -111,6 +198,7 @@ class AuthoritySnapshot(BaseModel):
     methodology_commit: str
     execution_mode: str
     current_work_refs: list[str] = Field(default_factory=list)
+    decision_operationalization: DecisionOperationalizationBinding | None = None
 
     mutable_surfaces: list[SurfaceRef] = Field(default_factory=list)
     read_only_surfaces: list[SurfaceRef] = Field(default_factory=list)
@@ -140,6 +228,11 @@ class AuthoritySnapshot(BaseModel):
         if overlap:
             raise ValueError(f"authority snapshot marks surfaces both mutable and read-only: {overlap}")
         return self
+
+    @property
+    def decision_operationalization_ready(self) -> bool:
+        binding = self.decision_operationalization
+        return binding is None or binding.projection_ready
 
 
 class IntentInterpretation(BaseModel):
@@ -539,6 +632,15 @@ def compile_interpreted_work_packet(
     authority: AuthoritySnapshot,
 ) -> CompiledWorkPacket:
     """Compile trusted semantic intent + current authority into a sealed packet."""
+
+    if not authority.decision_operationalization_ready:
+        binding = authority.decision_operationalization
+        if binding is None:
+            raise AssertionError("decision operationalization readiness is inconsistent")
+        raise ValueError(
+            "decision-derived work is not currentness-ready: reconcile and re-read the required "
+            f"Matrix projection for {binding.owner_decision_ref} / {binding.operationalization_source_ref}"
+        )
 
     scope, conflicts = _build_scope(intent, authority)
     authority_hash = authority_fingerprint(authority)

@@ -596,6 +596,30 @@ def resolve_contextual_intent(request: ContextualIntentRequest) -> ContextualInt
             notes=["Generic continuation language does not satisfy a stronger admitted human consequence gate."],
         )
 
+    if authority is not None and not authority.decision_operationalization_ready:
+        binding = authority.decision_operationalization
+        if binding is None:
+            raise AssertionError("decision operationalization readiness is inconsistent")
+        return ContextualIntentResolution(
+            state=ConversationState.CONVERGED,
+            action=(
+                ContextualTransitionAction.REVALIDATE_EXISTING_PACKET
+                if existing is not None
+                else ContextualTransitionAction.RESOLVE_CURRENT_AUTHORITY
+            ),
+            harvest=harvest,
+            packet=existing,
+            next_system_requirement=(
+                "reconcile and re-read the required current Matrix projection for "
+                f"{binding.owner_decision_ref} / {binding.operationalization_source_ref}, "
+                "then re-resolve Work Packet currentness"
+            ),
+            notes=[
+                "Owner truth remains valid, but dependent decision-derived work is not execution-ready "
+                "until the required Matrix projection is current and reconciled."
+            ],
+        )
+
     if harvest.acceptance_met:
         return ContextualIntentResolution(
             state=ConversationState.COMPLETE,

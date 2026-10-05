@@ -1,0 +1,34 @@
+{
+  "fixture_type": "programstart.decision_operationalization_currentness_regression",
+  "source": "Compute D-012 / #132 / #134",
+  "owner_decision_ref": "GrahamArdent/programstart-compute-spine@40f5b05b73ff04c397ab7ec4e0b4e72b6d9d93bd:docs/DECISIONS.md#D-012",
+  "operationalization_source_ref": "GrahamArdent/programstart-compute-spine#134",
+  "operationalization_source_version": "2026-10-04T10:43:27Z",
+  "projection_identity": "compute-134-reasoning-resource-routing-v1",
+  "historical_false_terminal_evidence": "GrahamArdent/programstart-compute-spine#132#issuecomment-5979129811",
+  "before_repair": {
+    "owner_current": true,
+    "operationalized": true,
+    "matrix_projection_bound": false,
+    "historical_terminal_claim": true,
+    "expected_full_operational_reconciliation": false,
+    "expected_dependent_packet_ready": false
+  },
+  "after_repair": {
+    "matrix_main": "73e6994997f8b6823a20c1c4b5cf93df52efc5f3",
+    "artifact_ref": "GrahamArdent/ecosystem-matrix@73e6994997f8b6823a20c1c4b5cf93df52efc5f3:generated/compute-134-reasoning-resource-routing.json",
+    "decision_ref": "GrahamArdent/programstart-compute-spine@40f5b05b73ff04c397ab7ec4e0b4e72b6d9d93bd:docs/DECISIONS.md#D-012",
+    "source_ref": "GrahamArdent/programstart-compute-spine#134",
+    "source_version": "2026-10-04T10:43:27Z",
+    "semantic_hash": "265831637b51c276aa19804b242c06710edb4c110b34fab4766b1782a9fea2ca",
+    "source_fingerprint": "7f2b091bc708ee42ea34960e47b0fdc2dcf713fa9d9aca8b08c2427aa755bc96",
+    "source_currentness": "CURRENT",
+    "projection_currentness": "CURRENT",
+    "ingestion_reconciliation_state": "RECONCILED",
+    "reconsideration_required": false,
+    "execution_authority": false,
+    "obligation_ids": ["RR-01", "RR-02", "RR-03", "RR-04", "RR-05", "RR-06", "RR-07", "RR-08", "RR-09", "RR-10", "RR-11"],
+    "expected_full_operational_reconciliation": true,
+    "expected_dependent_packet_eligible_for_normal_compilation": true
+  }
+}

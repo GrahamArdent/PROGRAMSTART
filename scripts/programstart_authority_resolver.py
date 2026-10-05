@@ -16,7 +16,13 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
-from .programstart_intent_compile import AuthoritySnapshot, CompiledWorkPacket, ParallelWork, SurfaceRef
+from .programstart_intent_compile import (
+    AuthoritySnapshot,
+    CompiledWorkPacket,
+    DecisionOperationalizationBinding,
+    ParallelWork,
+    SurfaceRef,
+)
 from .programstart_intent_ingress import (
     BoundedIntentEnvelope,
     ContextualIntentRequest,
@@ -198,6 +204,23 @@ def resolve_repository_authority(observation: RepositoryAuthorityObservation) ->
         authority_commit=observed,
         methodology_commit=observation.methodology_commit,
     )
+
+
+def compose_decision_operationalization_currentness(
+    authority: AuthoritySnapshot,
+    binding: DecisionOperationalizationBinding | None,
+) -> AuthoritySnapshot:
+    """Bind decision-derived Matrix currentness after owner-native authority resolution."""
+
+    if binding is None:
+        raise AuthorityResolutionError(
+            "decision-derived currentness composition requires an explicit decision operationalization binding"
+        )
+    if not isinstance(binding, DecisionOperationalizationBinding):
+        raise AuthorityResolutionError("decision operationalization currentness binding is not typed/validated")
+    if authority.decision_operationalization is not None and authority.decision_operationalization != binding:
+        raise AuthorityResolutionError("resolved authority already carries a different decision operationalization binding")
+    return authority.model_copy(update={"decision_operationalization": binding})
 
 
 def compose_owner_local_intent(

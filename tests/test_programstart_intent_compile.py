@@ -13,20 +13,37 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from scripts.programstart_authority_resolver import (
+    AuthorityResolutionError,
+    OwnerAuthorityDeclaration,
+    compose_decision_operationalization_currentness,
+)
 from scripts.programstart_intent_compile import (
     AuthoritySnapshot,
     CompiledWorkPacket,
+    DecisionOperationalizationBinding,
     FieldOrigin,
     IntentKind,
+    MatrixProjectionBinding,
     ParallelWork,
     SurfaceRef,
     SurfaceType,
     assess_authority_drift,
+    authority_fingerprint,
     compile_work_packet,
     detect_write_conflicts,
     main,
     render_chatgpt_prompt,
     verify_integrity,
+)
+from scripts.programstart_intent_ingress import (
+    ContextualIntentRequest,
+    ContextualTransitionAction,
+    ConversationBasisSource,
+    ConversationHarvest,
+    ConversationState,
+    MaterialStatement,
+    resolve_contextual_intent,
 )
 
 FIXTURE_PATH = ROOT / "tests" / "fixtures" / "intent_compilation" / "real_cases.json"
@@ -390,3 +407,299 @@ def test_cli_can_render_chatgpt_prompt_to_file(tmp_path: Path) -> None:
     prompt = output_path.read_text(encoding="utf-8")
     assert "PROGRAMSTART execution brief" in prompt
     assert "second orchestration engine" in prompt
+
+
+# Decision Control -> Matrix operationalization currentness regression
+
+D012_FIXTURE = ROOT / "tests" / "evidence" / "decision_closure" / "2026-10-04-compute-d012-projection-enforcement.json"
+
+OWNER_DECISION = "GrahamArdent/programstart-compute-spine@40f5b05b73ff04c397ab7ec4e0b4e72b6d9d93bd:docs/DECISIONS.md#D-012"
+SOURCE_REF = "GrahamArdent/programstart-compute-spine#134"
+SOURCE_VERSION = "2026-10-04T10:43:27Z"
+PROJECTION_ID = "compute-134-reasoning-resource-routing-v1"
+ARTIFACT_REF = (
+    "GrahamArdent/ecosystem-matrix@73e6994997f8b6823a20c1c4b5cf93df52efc5f3:generated/compute-134-reasoning-resource-routing.json"
+)
+SEMANTIC_HASH = "265831637b51c276aa19804b242c06710edb4c110b34fab4766b1782a9fea2ca"
+SOURCE_FINGERPRINT = "7f2b091bc708ee42ea34960e47b0fdc2dcf713fa9d9aca8b08c2427aa755bc96"
+
+
+def matrix_projection(**updates: object) -> MatrixProjectionBinding:
+    data: dict[str, object] = {
+        "artifact_ref": ARTIFACT_REF,
+        "projection_identity": PROJECTION_ID,
+        "decision_ref": OWNER_DECISION,
+        "source_ref": SOURCE_REF,
+        "source_version": SOURCE_VERSION,
+        "semantic_hash": SEMANTIC_HASH,
+        "source_fingerprint": SOURCE_FINGERPRINT,
+        "source_currentness": "CURRENT",
+        "projection_currentness": "CURRENT",
+        "ingestion_reconciliation_state": "RECONCILED",
+        "reconsideration_required": False,
+        "execution_authority": False,
+    }
+    data.update(updates)
+    return MatrixProjectionBinding.model_validate(data)
+
+
+def binding(*, projection: MatrixProjectionBinding | None = None, **updates: object) -> DecisionOperationalizationBinding:
+    data: dict[str, object] = {
+        "owner_decision_ref": OWNER_DECISION,
+        "operationalization_source_ref": SOURCE_REF,
+        "operationalization_source_version": SOURCE_VERSION,
+        "projection_identity": PROJECTION_ID,
+        "matrix_projection": matrix_projection() if projection is None else projection,
+    }
+    data.update(updates)
+    return DecisionOperationalizationBinding.model_validate(data)
+
+
+def missing_projection_binding() -> DecisionOperationalizationBinding:
+    return DecisionOperationalizationBinding(
+        owner_decision_ref=OWNER_DECISION,
+        operationalization_source_ref=SOURCE_REF,
+        operationalization_source_version=SOURCE_VERSION,
+        projection_identity=PROJECTION_ID,
+        matrix_projection=None,
+    )
+
+
+def authority(
+    *, operationalization: DecisionOperationalizationBinding | None = None, authority_commit: str = "a" * 40
+) -> AuthoritySnapshot:
+    return AuthoritySnapshot(
+        project_name="Compute Spine",
+        owning_repository="GrahamArdent/programstart-compute-spine",
+        authority_commit=authority_commit,
+        authority_paths=["PROGRAMSTART_AUTHORITY.json", "docs/DECISIONS.md"],
+        methodology_commit="b" * 40,
+        execution_mode="mode_c_existing_project",
+        current_work_refs=[],
+        decision_operationalization=operationalization,
+        mutable_surfaces=[
+            SurfaceRef(
+                surface_type=SurfaceType.REPOSITORY,
+                identifier="GrahamArdent/programstart-compute-spine",
+            )
+        ],
+    )
+
+
+def harvest(*, acceptance_met: bool = False) -> ConversationHarvest:
+    return ConversationHarvest(
+        context_ref="fixture:compute-d012",
+        latest_operator_utterance="Proceed with the D-012 shadow experiment.",
+        objective=MaterialStatement(
+            text="Run the bounded D-012 shadow experiment.",
+            source=ConversationBasisSource.CURRENT_PROJECT_AUTHORITY,
+            source_ref=SOURCE_REF,
+        ),
+        intent_kind=IntentKind.BOUNDED_EXECUTION,
+        converged=True,
+        acceptance_met=acceptance_met,
+    )
+
+
+def test_current_matching_projection_allows_normal_packet_compilation() -> None:
+    snapshot = authority(operationalization=binding())
+    packet = compile_work_packet("Proceed.", snapshot, kind=IntentKind.BOUNDED_EXECUTION)
+    assert packet.admission_hint == "ready_for_controller_admission"
+    assert packet.authority.decision_operationalization is not None
+    assert packet.authority.decision_operationalization.projection_ready is True
+
+
+def test_missing_projection_blocks_direct_compile_without_rolling_back_owner_truth() -> None:
+    snapshot = authority(operationalization=missing_projection_binding())
+    assert snapshot.authority_commit == "a" * 40
+    with pytest.raises(ValueError, match="decision-derived work is not currentness-ready"):
+        compile_work_packet("Proceed.", snapshot, kind=IntentKind.BOUNDED_EXECUTION)
+
+
+def test_missing_projection_uses_machine_reconciliation_not_human_or_interpretation_gate() -> None:
+    snapshot = authority(operationalization=missing_projection_binding())
+    resolution = resolve_contextual_intent(ContextualIntentRequest(harvest=harvest(), authority=snapshot))
+    assert resolution.state == ConversationState.CONVERGED
+    assert resolution.action == ContextualTransitionAction.RESOLVE_CURRENT_AUTHORITY
+    assert resolution.operator_intervention_required is False
+    assert resolution.packet is None
+    assert "reconcile and re-read the required current Matrix projection" in (resolution.next_system_requirement or "")
+
+
+def test_missing_projection_prevents_false_complete_terminality() -> None:
+    snapshot = authority(operationalization=missing_projection_binding())
+    resolution = resolve_contextual_intent(ContextualIntentRequest(harvest=harvest(acceptance_met=True), authority=snapshot))
+    assert resolution.state == ConversationState.CONVERGED
+    assert resolution.action == ContextualTransitionAction.RESOLVE_CURRENT_AUTHORITY
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("source_currentness", "STALE"),
+        ("projection_currentness", "STALE"),
+        ("ingestion_reconciliation_state", "PENDING"),
+        ("reconsideration_required", True),
+        ("execution_authority", True),
+    ],
+)
+def test_non_positive_matrix_projection_states_are_invalid(field: str, value: object) -> None:
+    with pytest.raises(ValidationError):
+        matrix_projection(**{field: value})
+
+
+@pytest.mark.parametrize(
+    "field",
+    [
+        "source_currentness",
+        "projection_currentness",
+        "ingestion_reconciliation_state",
+        "reconsideration_required",
+        "execution_authority",
+    ],
+)
+def test_positive_matrix_currentness_evidence_cannot_be_defaulted_from_omission(field: str) -> None:
+    data = matrix_projection().model_dump(mode="json")
+    data.pop(field)
+    with pytest.raises(ValidationError):
+        MatrixProjectionBinding.model_validate(data)
+
+
+@pytest.mark.parametrize(
+    ("projection_updates", "binding_updates", "message"),
+    [
+        ({"decision_ref": "wrong-decision"}, {}, "decision_ref"),
+        ({"source_ref": "GrahamArdent/programstart-compute-spine#999"}, {}, "source_ref"),
+        ({"source_version": "2026-10-04T10:00:00Z"}, {}, "source_version"),
+        ({"projection_identity": "wrong-projection"}, {}, "projection identity"),
+    ],
+)
+def test_wrong_projection_identity_or_source_fails_closed(
+    projection_updates: dict[str, object],
+    binding_updates: dict[str, object],
+    message: str,
+) -> None:
+    projection = matrix_projection(**projection_updates)
+    with pytest.raises(ValidationError, match=message):
+        binding(projection=projection, **binding_updates)
+
+
+def test_matrix_artifact_ref_must_be_immutable() -> None:
+    with pytest.raises(ValidationError, match="immutable repository@commit:path"):
+        matrix_projection(artifact_ref="GrahamArdent/ecosystem-matrix:generated/projection.json")
+    with pytest.raises(ValidationError, match="40-character Git commit"):
+        matrix_projection(artifact_ref=f"GrahamArdent/ecosystem-matrix@{'z' * 40}:generated/projection.json")
+
+
+def test_digest_fields_are_exact_sha256() -> None:
+    with pytest.raises(ValidationError, match="SHA-256"):
+        matrix_projection(semantic_hash="abc")
+    with pytest.raises(ValidationError, match="SHA-256"):
+        matrix_projection(source_fingerprint="z" * 64)
+
+
+def test_projection_semantic_hash_or_source_fingerprint_change_requires_recompile() -> None:
+    first = authority(operationalization=binding())
+    packet = compile_work_packet("Proceed.", first, kind=IntentKind.BOUNDED_EXECUTION)
+
+    changed_projection = matrix_projection(semantic_hash="1" * 64, source_fingerprint="2" * 64)
+    changed = authority(operationalization=binding(projection=changed_projection))
+    drift = assess_authority_drift(packet, changed)
+    assert drift.status == "recompile_required"
+
+
+def test_projection_disappearing_after_compile_blocks_existing_packet_reuse() -> None:
+    ready = authority(operationalization=binding())
+    packet = compile_work_packet("Proceed.", ready, kind=IntentKind.BOUNDED_EXECUTION)
+    missing = authority(operationalization=missing_projection_binding())
+    resolution = resolve_contextual_intent(ContextualIntentRequest(harvest=harvest(), authority=missing, existing_packet=packet))
+    assert resolution.state == ConversationState.CONVERGED
+    assert resolution.action == ContextualTransitionAction.REVALIDATE_EXISTING_PACKET
+    assert "reconcile and re-read" in (resolution.next_system_requirement or "")
+
+
+def test_projection_advancing_after_compile_uses_existing_fingerprint_drift() -> None:
+    ready = authority(operationalization=binding())
+    packet = compile_work_packet("Proceed.", ready, kind=IntentKind.BOUNDED_EXECUTION)
+    newer_projection = matrix_projection(
+        artifact_ref=ARTIFACT_REF + "#rebuilt",
+        semantic_hash="3" * 64,
+        source_fingerprint="4" * 64,
+    )
+    newer = authority(operationalization=binding(projection=newer_projection))
+    assert authority_fingerprint(ready) != authority_fingerprint(newer)
+    assert assess_authority_drift(packet, newer).status == "recompile_required"
+
+
+def test_identical_projection_binding_is_stable_for_replay() -> None:
+    left = authority(operationalization=binding())
+    right = authority(operationalization=binding())
+    assert authority_fingerprint(left) == authority_fingerprint(right)
+
+
+def test_non_operational_and_unrelated_packets_remain_unchanged() -> None:
+    ordinary = authority()
+    packet = compile_work_packet("Proceed.", ordinary, kind=IntentKind.BOUNDED_EXECUTION)
+    assert packet.admission_hint == "ready_for_controller_admission"
+    assert packet.authority.decision_operationalization is None
+
+
+def test_owner_declaration_remains_matrix_independent() -> None:
+    properties = OwnerAuthorityDeclaration.model_json_schema()["properties"]
+    assert "decision_operationalization" not in properties
+    assert "matrix_projection" not in properties
+
+
+def test_explicit_decision_operationalization_adapter_cannot_omit_binding() -> None:
+    ordinary = authority()
+    with pytest.raises(AuthorityResolutionError, match="explicit decision operationalization binding"):
+        compose_decision_operationalization_currentness(ordinary, None)
+
+
+def test_explicit_decision_operationalization_adapter_requires_typed_binding() -> None:
+    ordinary = authority()
+    with pytest.raises(AuthorityResolutionError, match="not typed/validated"):
+        compose_decision_operationalization_currentness(ordinary, {"matrix_projection": {}})  # type: ignore[arg-type]
+
+
+def test_post_owner_composition_preserves_owner_snapshot_and_adds_only_currentness_binding() -> None:
+    ordinary = authority()
+    augmented = compose_decision_operationalization_currentness(ordinary, binding())
+    assert ordinary.decision_operationalization is None
+    assert augmented.decision_operationalization is not None
+    assert augmented.authority_commit == ordinary.authority_commit
+    assert augmented.authority_paths == ordinary.authority_paths
+
+
+def test_unrelated_owner_repository_head_advance_does_not_make_projection_binding_invalid() -> None:
+    first = authority(operationalization=binding(), authority_commit="a" * 40)
+    later = authority(operationalization=binding(), authority_commit="c" * 40)
+    assert first.decision_operationalization is not None
+    assert later.decision_operationalization is not None
+    assert first.decision_operationalization.projection_ready is True
+    assert later.decision_operationalization.projection_ready is True
+    assert authority_fingerprint(first) != authority_fingerprint(later)
+
+
+def test_d012_natural_before_after_fixture_preserves_false_terminal_regression() -> None:
+    data = json.loads(D012_FIXTURE.read_text(encoding="utf-8"))
+    before = data["before_repair"]
+    after = data["after_repair"]
+    assert before["owner_current"] is True
+    assert before["operationalized"] is True
+    assert before["matrix_projection_bound"] is False
+    assert before["historical_terminal_claim"] is True
+    assert before["expected_full_operational_reconciliation"] is False
+    assert before["expected_dependent_packet_ready"] is False
+    assert after["projection_currentness"] == "CURRENT"
+    assert after["ingestion_reconciliation_state"] == "RECONCILED"
+    assert after["reconsideration_required"] is False
+    assert after["execution_authority"] is False
+    assert after["obligation_ids"] == [f"RR-{index:02d}" for index in range(1, 12)]
+
+
+def test_decision_closure_contract_now_distinguishes_owner_and_operational_terminality() -> None:
+    text = (ROOT / "docs" / "PROGRAMSTART_DECISION_CLOSURE.md").read_text(encoding="utf-8")
+    assert "Owner-settlement terminality and operationalization terminality are distinct" in text
+    assert "dependent decision-derived Work Packet selection is not execution-ready" in text
+    assert "Owner-current / Matrix-gap is a truthful partial-failure state" in text

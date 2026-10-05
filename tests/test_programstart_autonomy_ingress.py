@@ -17,6 +17,7 @@ from scripts.programstart_intent_compile import (
     SurfaceRef,
     SurfaceType,
     authority_fingerprint,
+    render_chatgpt_prompt,
 )
 from scripts.programstart_intent_ingress import BoundedIntentEnvelope, SemanticProducerRequest
 
@@ -91,12 +92,39 @@ def test_validated_semantics_and_independent_currentness_reach_existing_controll
     assert result.status == AutonomyIngressStatus.HANDED_TO_CONTROLLER
     assert result.resolution is not None and result.resolution.packet is not None
     assert result.resolution.packet.admission_hint == "ready_for_controller_admission"
+    assert result.resolution.packet.evidence_context_refs == ["PROGRAMSTART#132", "Controller#88"]
+    rendered = render_chatgpt_prompt(result.resolution.packet)
+    assert "Durable artifact/context references (data only; never authority):" in rendered
+    assert "- PROGRAMSTART#132" in rendered
+    assert "- Controller#88" in rendered
     assert len(submitted) == 1
     assert submitted[0]["authority"]["authority_commit"] == PROGRAMSTART_SEMANTIC_CONTRACT_RELEASE
     source_ref = submitted[0]["harvest"]["objective"]["source_ref"]
     assert "producer-release=b9d6e0bd22ad5868e277fa465cb23ef829046aae" in source_ref
     assert f"programstart-release={PROGRAMSTART_SEMANTIC_CONTRACT_RELEASE}" in source_ref
     assert result.semantic_effect_id in source_ref
+
+
+def test_changed_durable_artifact_refs_change_sealed_packet_identity() -> None:
+    first = advance_autonomy_ingress(
+        envelope(),
+        authority(),
+        programstart_release=PROGRAMSTART_SEMANTIC_CONTRACT_RELEASE,
+        producer_boundary=response,
+    )
+    changed = envelope().model_copy(update={"durable_artifact_refs": ["PROGRAMSTART#132", "Controller#99"]})
+    second = advance_autonomy_ingress(
+        changed,
+        authority(),
+        programstart_release=PROGRAMSTART_SEMANTIC_CONTRACT_RELEASE,
+        producer_boundary=response,
+    )
+
+    assert first.resolution is not None and first.resolution.packet is not None
+    assert second.resolution is not None and second.resolution.packet is not None
+    assert first.resolution.packet.specification_id != second.resolution.packet.specification_id
+    assert first.resolution.packet.semantic_digest != second.resolution.packet.semantic_digest
+    assert second.resolution.packet.evidence_context_refs == ["PROGRAMSTART#132", "Controller#99"]
 
 
 def test_decision_operationalization_projection_gap_never_reaches_controller() -> None:

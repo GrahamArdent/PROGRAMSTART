@@ -10,7 +10,14 @@ from scripts.programstart_autonomy_ingress import (
     AutonomyIngressStatus,
     advance_autonomy_ingress,
 )
-from scripts.programstart_intent_compile import AuthoritySnapshot, IntentKind, SurfaceRef, SurfaceType, authority_fingerprint
+from scripts.programstart_intent_compile import (
+    AuthoritySnapshot,
+    DecisionOperationalizationBinding,
+    IntentKind,
+    SurfaceRef,
+    SurfaceType,
+    authority_fingerprint,
+)
 from scripts.programstart_intent_ingress import BoundedIntentEnvelope, SemanticProducerRequest
 
 
@@ -90,6 +97,43 @@ def test_validated_semantics_and_independent_currentness_reach_existing_controll
     assert "producer-release=b9d6e0bd22ad5868e277fa465cb23ef829046aae" in source_ref
     assert f"programstart-release={PROGRAMSTART_SEMANTIC_CONTRACT_RELEASE}" in source_ref
     assert result.semantic_effect_id in source_ref
+
+
+def test_decision_operationalization_projection_gap_never_reaches_controller() -> None:
+    base = authority()
+    binding = DecisionOperationalizationBinding(
+        owner_decision_ref=(
+            f"GrahamArdent/PROGRAMSTART@{PROGRAMSTART_SEMANTIC_CONTRACT_RELEASE}:docs/PROGRAMSTART_DECISION_CLOSURE.md#9A"
+        ),
+        operationalization_source_ref="GrahamArdent/PROGRAMSTART#209",
+        operationalization_source_version="2026-10-05T16:36:52Z",
+        projection_identity="programstart-209-decision-matrix-enforcement-v1",
+        matrix_projection=None,
+    )
+    snapshot = base.snapshot.model_copy(update={"decision_operationalization": binding})
+    evidence = AuthorityResolutionEvidence(
+        snapshot=snapshot,
+        resolution_ref=base.resolution_ref,
+        observed_authority_commit=base.observed_authority_commit,
+        observed_methodology_commit=base.observed_methodology_commit,
+        observed_current_work_refs=list(snapshot.current_work_refs),
+        observed_authority_fingerprint=authority_fingerprint(snapshot),
+    )
+    submitted: list[dict[str, Any]] = []
+    result = advance_autonomy_ingress(
+        envelope(),
+        evidence,
+        programstart_release=PROGRAMSTART_SEMANTIC_CONTRACT_RELEASE,
+        producer_boundary=response,
+        controller_boundary=lambda payload: submitted.append(payload),
+    )
+
+    assert result.status == AutonomyIngressStatus.FAILED_CLOSED
+    assert result.failure == AutonomyIngressFailure.NOT_ADMISSION_READY
+    assert submitted == []
+    assert result.resolution is not None
+    assert result.resolution.packet is None
+    assert "required current Matrix projection" in (result.resolution.next_system_requirement or "")
 
 
 def test_stale_authority_never_invokes_producer_or_controller() -> None:

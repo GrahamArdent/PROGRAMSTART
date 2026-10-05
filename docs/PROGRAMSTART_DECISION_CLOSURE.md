@@ -180,7 +180,9 @@ The protected outcome and obligations are therefore derived from the **final cur
 
 A durable accepted decision that is not being operationalized now may stop at owner durability; do not manufacture current Matrix obligations merely to preserve history.
 
-When an accepted/current decision is being operationalized, use §10 only after the owner re-read and completeness Challenge.
+When an accepted/current decision is being operationalized, use §10 only after the owner re-read and completeness Challenge. **Owner-settlement terminality and operationalization terminality are distinct:** owner settlement may be complete while the operationalized consequence remains unreconciled.
+
+Full operational reconciliation requires a current matching Matrix projection to be re-read after decomposition. Until that projection is current and reconciled, dependent decision-derived Work Packet selection is not execution-ready. Unrelated work with independent current authority may continue.
 
 Owner settlement and Matrix projection are not a distributed transaction. If owner settlement succeeds and Matrix refresh fails, the truthful state is:
 
@@ -252,11 +254,15 @@ Do not project rejected/superseded/history-only outcomes as current obligations 
 
 Matrix projection does not select implementation by itself. Existing PROGRAMSTART Work Packet semantics derive the bounded current executable slice only after the current obligations have been reconciled into the operational view.
 
+For work derived from that operationalized decision, the Work Packet currentness input must bind the current owner decision, the exact operationalization source/version, and the exact current reconciled Matrix projection. Missing, stale, mismatched, reconsideration-required, or execution-authoritative projection evidence blocks only that dependent changed-scope packet; it does not roll back owner truth or globally block unrelated current-authority work.
+
 ### 10.5 Closure invariant
 
 Task or Work Packet completion is not sufficient parent closure.
 
 Before the parent outcome is considered fulfilled, re-evaluate the original `protected_outcome` against current acceptance evidence. If all known tasks are complete but the protected outcome remains false or materially unproven, the objective remains open and the decomposition must be challenged/reconciled rather than falsely terminalized.
+
+For an operationalized accepted/current decision, “fully reconciled” also requires the current matching Matrix projection described in §10.4. Owner-current / Matrix-gap is a truthful partial-failure state, not full operational closure.
 
 ### 10.6 Natural fixture
 

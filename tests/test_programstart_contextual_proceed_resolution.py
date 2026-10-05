@@ -339,9 +339,7 @@ def test_existing_packet_recompiles_when_nonempty_durable_refs_change() -> None:
     )
     harvest = _harvest(durable_artifact_refs=["artifact:new"])
 
-    resolution = resolve_contextual_intent(
-        ContextualIntentRequest(harvest=harvest, authority=authority, existing_packet=packet)
-    )
+    resolution = resolve_contextual_intent(ContextualIntentRequest(harvest=harvest, authority=authority, existing_packet=packet))
 
     assert resolution.action == ContextualTransitionAction.RECOMPILE_FOR_ADMISSION
     assert resolution.packet is not None
@@ -359,9 +357,7 @@ def test_empty_followup_refs_do_not_erase_existing_sealed_context() -> None:
     )
     harvest = _harvest()
 
-    resolution = resolve_contextual_intent(
-        ContextualIntentRequest(harvest=harvest, authority=authority, existing_packet=packet)
-    )
+    resolution = resolve_contextual_intent(ContextualIntentRequest(harvest=harvest, authority=authority, existing_packet=packet))
 
     assert resolution.action == ContextualTransitionAction.CONTINUE_EXISTING_PACKET
     assert resolution.packet is not None

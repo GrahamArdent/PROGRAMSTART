@@ -401,9 +401,8 @@ class ConversationHarvest(BaseModel):
             raise ValueError("context_ref must not be empty")
         if not self.latest_operator_utterance.strip():
             raise ValueError("latest_operator_utterance must not be empty")
-        if (
-            len(self.durable_artifact_refs) > 32
-            or any(not value.strip() or len(value) > 512 for value in self.durable_artifact_refs)
+        if len(self.durable_artifact_refs) > 32 or any(
+            not value.strip() or len(value) > 512 for value in self.durable_artifact_refs
         ):
             raise ValueError("durable_artifact_refs exceed the bounded mechanical-context contract")
         return self

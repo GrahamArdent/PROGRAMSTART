@@ -364,11 +364,7 @@ class CompiledWorkPacket(BaseModel):
 
     @property
     def evidence_context_refs(self) -> list[str]:
-        return [
-            item.detail
-            for item in self.provenance
-            if item.path == DURABLE_ARTIFACT_PROVENANCE_PATH
-        ]
+        return [item.detail for item in self.provenance if item.path == DURABLE_ARTIFACT_PROVENANCE_PATH]
 
 
 class DriftAssessment(BaseModel):
@@ -654,9 +650,8 @@ def compile_interpreted_work_packet(
     """Compile trusted semantic intent + current authority into a sealed packet."""
 
     context_refs = list(durable_artifact_refs or [])
-    if (
-        len(context_refs) > 32
-        or any(not isinstance(value, str) or not value.strip() or len(value) > 512 for value in context_refs)
+    if len(context_refs) > 32 or any(
+        not isinstance(value, str) or not value.strip() or len(value) > 512 for value in context_refs
     ):
         raise ValueError("durable_artifact_refs exceed the bounded mechanical-context contract")
 

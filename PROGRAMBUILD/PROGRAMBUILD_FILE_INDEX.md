@@ -13,7 +13,7 @@ A PROGRAMBUILD critical control file missing from this index is not recognized. 
 |---|---|---|---|---|
 | `PROGRAMBUILD_CANONICAL.md` | control | active | authority map and naming rules | document authority |
 | `PROGRAMBUILD_FILE_INDEX.md` | control | active | inventory of critical files | file inventory |
-| `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` | control | active | separates reusable methodology, project authority, non-authoritative idea preservation/promotion, active work, JIT context, blocker scope/safe-lane reasoning, adaptive decision/evidence routing, accepted-recommendation resolution, checklist activation, external-resource evidence continuity, and evidence reuse | planning-to-execution operating model |
+| `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` | control | active | separates reusable methodology, project authority, non-authoritative idea preservation/promotion, active work, JIT context, blocker scope/safe-lane reasoning, adaptive decision/evidence routing, accepted-recommendation resolution, convergence output/durable packet routing, checklist activation, external-resource evidence continuity, and evidence reuse | planning-to-execution operating model |
 | `PROGRAMBUILD_PORTFOLIO_CONTROL.md` | protocol | active | lightweight cross-project operator attention routing with external live-workspace boundary, bounded WIP, evidence freshness, and handoff back to project authority | reusable portfolio-attention semantics only — canonical for no project's state, scope, sequencing, or completion |
 | `PROGRAMBUILD_WORK_PACKET.md` | template/protocol | active | compact logical work-packet semantics, accepted-recommendation disposition/gate evidence, checklist completeness/closure, blocker/safe-lane fields, coordinated Mode-C lane selection with exclusive shared-mutation ownership when consequential resources overlap, task-scoped cross-repository dependency/authority evidence, operator/manual-gate handoff semantics including target/dependency-closure verification before exact human instructions, conditional Learning-Gate evaluation before close/handoff, plus optional persisted format | logical work-packet semantics |
 | `PROGRAMBUILD_ADR_TEMPLATE.md` | template | active | MADR 4.0 format, status lifecycle, decision-log linkage, and supersession hygiene | ADR structure |
@@ -26,7 +26,7 @@ A PROGRAMBUILD critical control file missing from this index is not recognized. 
 | `PROGRAMBUILD_SUBAGENTS.md` | catalog | active | optional specialist roles/prompts | subagent guidance |
 | `PROGRAMBUILD_CHECKLIST.md` | checklist | active | reusable execution checklist plus derived checklist activation/source/status/closure discipline, including Effective Autonomy alternative-actuation checks before operator transport | execution tracking |
 | `PROGRAMBUILD_IDEA_INTAKE.md` | protocol | active | 8-dimension idea/project-delta challenge; consumes captured/shelved idea evidence without treating capture as approval | idea intake |
-| `PROGRAMBUILD_CHALLENGE_GATE.md` | protocol | active | A–H risk controls plus variant/stage/risk-based gate-part selection | stage/convergence gates |
+| `PROGRAMBUILD_CHALLENGE_GATE.md` | protocol | active | A–H risk controls plus variant/stage/risk-based gate-part selection and material-delta re-Challenge convergence | stage/convergence gates |
 | `PROGRAMBUILD_GAMEPLAN.md` | playbook | active | canonical stage sequence and cross-stage validation without duplicating stage detail | execution sequencing |
 
 ---
@@ -66,6 +66,7 @@ A portfolio-wide `IDEA_LEDGER.md` instance belongs in the operator's planning wo
 
 | File | Type | Purpose |
 |---|---|---|
+| `.github/prompts/programstart-convergence-packet.prompt.md` | workflow guidance prompt | runs bounded Challenge/re-Challenge convergence and renders concise operator output plus a derived Markdown Convergence Packet with owner-routed durability |
 | `scripts/programstart_decision.py` | advisory tooling | routes a material decision to the minimum justified evidence/check/research depth; never a separate authority layer |
 | `scripts/programstart_orchestrate.py` | advisory tooling | derives environment/mode/authority/blocker-aware execution contracts, including safe-lane, evidence-continuity, task-scoped cross-repository dependency/authority, and operator/manual-boundary guidance; free-form recommendation acceptance remains authority-derived in the agent protocol rather than brittle CLI keyword parsing |
 | `docs/PROGRAMSTART_AUTHORITY_GAP_RECONCILIATION.md` | operational protocol | routes material derived findings that are absent from current owning authority through premise re-verification, real-owner selection, existing Mode-C authority reconciliation, return-to-origin behavior, and the existing Learning Gate; never an execution authority or new lifecycle |

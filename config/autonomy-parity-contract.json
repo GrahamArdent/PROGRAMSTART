@@ -25,7 +25,7 @@
     },
     {
       "path": "PROGRAMBUILD/PROGRAMBUILD_WORK_PACKET.md",
-      "sha256": "e53a41ce-5329-b565-3d83-ce34bfab859b-6e8da03d-014a-a87e-5f25-112cfe2c6385",
+      "sha256": "3844bc0377114b4af0b48ca580697ee3ffba28121d8ed15f0ffb8e93bc7bdb08",
       "role": "bounded packet semantics"
     },
     {

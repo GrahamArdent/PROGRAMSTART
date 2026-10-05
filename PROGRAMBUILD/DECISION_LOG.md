@@ -2,7 +2,7 @@
 
 Purpose: Running record of material project decisions, reversals, and rationale.
 Owner: Solo operator
-Last updated: 2026-08-24
+Last updated: 2026-10-05
 Depends on: FEASIBILITY.md, RESEARCH_SUMMARY.md, ARCHITECTURE.md
 Authority: Canonical for project decision history
 
@@ -47,6 +47,7 @@ Authority: Canonical for project decision history
 | DEC-020 | 2026-08-24 | inputs_and_mode_selection | Each real project keeps one strategic execution spine; non-trivial active work is narrowed into derived work packets with task-scoped authority, evidence reuse/invalidation triggers, targeted verification, and wider convergence checks | ACTIVE | — | Solo operator | docs/decisions/0023-use-one-strategic-execution-spine-with-bounded-work-packets.md |
 | DEC-021 | 2026-08-25 | inputs_and_mode_selection | In Mode C, current explicit operator decisions and designated project authority govern product direction over descriptive README/framework/prototype/legacy evidence; repository state remains evidence of current behavior | ACTIVE | — | Solo operator | docs/decisions/0024-rank-current-product-authority-over-legacy-repository-evidence.md |
 | DEC-022 | 2026-09-04 | inputs_and_mode_selection | Intent Ingress is an orthogonal pre-entry profile that resolves trusted semantics and authority/currentness before normal project-entry and Controller admission; it is not Mode D | ACTIVE | — | Solo operator | docs/decisions/0025-intent-ingress-precedes-project-entry-mode.md |
+| DEC-023 | 2026-10-05 | inputs_and_mode_selection | Material Challenge/convergence exercises use a concise operator result plus one complete Markdown Convergence Packet when warranted; packets remain derived and route durably by semantic ownership, and a materially revised candidate must be re-Challenged before the boundary is clear | ACTIVE | — | Solo operator | PROGRAMBUILD/PROGRAMBUILD_PLANNING_OPERATING_MODEL.md, PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md, .github/prompts/programstart-convergence-packet.prompt.md |
 
 ## Decision Details
 
@@ -187,3 +188,14 @@ Authority: Canonical for project decision history
 - Decision: Treat Intent Ingress as an orthogonal pre-entry profile that resolves trusted semantics and authority/currentness before normal project-entry and Controller admission; do not create Mode D.
 - Why: Preserve existing lifecycle authority while allowing low-friction natural-language ingress.
 - Related ADR: `docs/decisions/0025-intent-ingress-precedes-project-entry-mode.md`.
+
+---
+
+### DEC-023
+
+- Context: Repeated PROGRAMSTART design/planning conversations were producing useful Challenge-converged results, but the detailed reasoning often remained trapped in chat while attempts to centralize every result risked creating a shadow decision system. The operator also needs chat responses to stay compact when a complete artifact exists.
+- Decision: For material design/plan/recommendation/handoff convergence work, use a concise operator-facing result plus one complete Markdown Convergence Packet when the result has durable reuse value. Preserve only material Challenge-driven changes; route durable storage by semantic ownership; keep the packet derived/non-authoritative unless it is genuinely the recognized owner artifact. When a Challenge materially changes the candidate, re-Challenge the revised candidate before reporting the boundary clear. Stop on the first fresh clear current candidate rather than repeating identical passes.
+- Why: This makes results reconstructable and handoff-friendly without turning chat, PROGRAMSTART, Portfolio Operations, or a packet archive into a second project authority or backlog.
+- Alternatives considered: (1) Keep all detail in chat. (2) Store every packet in one PROGRAMSTART folder. (3) Create a new central packet repository/database. (4) Add mandatory artifact output to every workflow/operator prompt.
+- Consequences: Planning Operating Model owns packet/output/storage semantics; Challenge Gate owns material-delta re-Challenge behavior; one dedicated guidance prompt renders the result; project-specific packets stay with projects, PROGRAMSTART-methodology packets use appropriate non-authoritative PROGRAMSTART evidence surfaces, genuine cross-project/operator packets may later use an external non-authoritative archive, and owner-unclear material continues through existing capture/reconciliation paths. Host-specific download behavior remains presentation, not methodology authority.
+

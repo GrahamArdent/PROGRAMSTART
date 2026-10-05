@@ -10,17 +10,21 @@ CHALLENGE = ROOT / "PROGRAMBUILD" / "PROGRAMBUILD_CHALLENGE_GATE.md"
 FILE_INDEX = ROOT / "PROGRAMBUILD" / "PROGRAMBUILD_FILE_INDEX.md"
 PROMPT = ROOT / ".github" / "prompts" / "programstart-convergence-packet.prompt.md"
 PROMPT_REGISTRY = ROOT / "config" / "registry" / "prompting.json"
+WORKSPACE_REGISTRY = ROOT / "config" / "registry" / "workspace.json"
 
 
 def _read(path: Path) -> str:
     return path.read_text(encoding="utf-8")
 
 
-def test_convergence_prompt_is_registered_and_owner_bound() -> None:
+def test_convergence_prompt_is_registered_distributed_and_owner_bound() -> None:
     registry = json.loads(_read(PROMPT_REGISTRY))
     prompts = registry["prompt_registry"]["workflow_prompt_files"]
-
     assert ".github/prompts/programstart-convergence-packet.prompt.md" in prompts
+
+    workspace = json.loads(_read(WORKSPACE_REGISTRY))
+    assets = workspace["workspace"]["bootstrap_assets"]
+    assert ".github/prompts/programstart-convergence-packet.prompt.md" in assets
 
     prompt = _read(PROMPT)
     assert "PROGRAMBUILD/PROGRAMBUILD_PLANNING_OPERATING_MODEL.md" in prompt

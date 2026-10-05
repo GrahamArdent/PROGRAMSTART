@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = json.loads((ROOT / "schemas" / "decision-operationalization-manifest.schema.json").read_text(encoding="utf-8"))
 
 
-def _manifest(role: str = "REFERENCE_PLAN") -> dict[str, object]:
+def _manifest(role: str = "REFERENCE_PLAN") -> dict[str, Any]:
     return {
         "contract_version": "1.0",
         "record_type": "decision_operationalization_manifest",

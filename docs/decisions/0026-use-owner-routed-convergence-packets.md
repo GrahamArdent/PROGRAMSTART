@@ -101,4 +101,3 @@ This decision is implemented when:
 - [Planning Operating Model](../../PROGRAMBUILD/PROGRAMBUILD_PLANNING_OPERATING_MODEL.md)
 - [Challenge Gate](../../PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md)
 - [Decision log](../../PROGRAMBUILD/DECISION_LOG.md)
-- [Implementation plan](../../devlog/notes/convergence-output-storage-implementation-plan.md)

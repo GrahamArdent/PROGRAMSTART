@@ -4,9 +4,9 @@
 
 Purpose: Reusable transition/convergence check that catches meaningful drift without turning every boundary into the same eight-part ceremony.
 Owner: Stage Owner (or Solo Operator)
-Last updated: 2026-08-28
+Last updated: 2026-10-05
 Depends on: `PROGRAMBUILD.md`, `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md`, `FEASIBILITY.md`, `REQUIREMENTS.md`, `DECISION_LOG.md`
-Authority: Canonical for stage-transition validation, risk-based gate selection, post-implementation adversarial closure review, and mid-stage convergence criteria.
+Authority: Canonical for stage-transition validation, risk-based gate selection, material-delta re-Challenge convergence, post-implementation adversarial closure review, and mid-stage convergence criteria.
 
 ---
 
@@ -79,6 +79,24 @@ The trigger is based on what the implementation actually changed, not merely wha
 A team MAY configure time/slice reminders, but elapsed time or a fixed feature count is never proof that convergence is required.
 
 ---
+
+
+### 2.2 Material-Delta Re-Challenge Convergence
+
+For a deliberate design, plan, recommendation, handoff, or other convergence review, the Challenge result applies to the **exact candidate that was challenged**.
+
+If the Challenge produces a material corrective delta that changes authority, objective/protected outcome, scope, consequential surface, architecture/contract assumptions, dependency order, execution mechanism, evidence/currentness requirements, verification, terminal condition, or another behavior-controlling part of the candidate:
+
+1. incorporate the material correction;
+2. treat the revised result as a new candidate;
+3. run a fresh applicable Challenge against that revised candidate before reporting the boundary clear.
+
+The Challenge that changes a candidate cannot simultaneously be the final clear result for the changed candidate.
+
+Stop on the first fresh Challenge of the current candidate that yields no new material corrective delta and no blocking unresolved finding for the declared scope. Do not repeat identical clear passes merely to accumulate review count. Re-enter only when the candidate or a material part of its authority/evidence/instruction/currentness basis changes, or when another existing stronger gate independently requires review.
+
+`CLEAR` is scoped convergence evidence, not owner acceptance, execution permission, or a new lifecycle state. Conversational shorthand such as “settled” must not collapse those boundaries.
+
 
 ## 3. Gate-Part Selection
 

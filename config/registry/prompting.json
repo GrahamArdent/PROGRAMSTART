@@ -19,6 +19,7 @@
       ".github/prompts/programstart-stage-transition.prompt.md",
       ".github/prompts/programstart-cross-stage-validation.prompt.md",
       ".github/prompts/programstart-what-next.prompt.md",
+      ".github/prompts/programstart-convergence-packet.prompt.md",
       ".github/prompts/userjourney-next-slice.prompt.md",
       ".github/prompts/product-jit-check.prompt.md",
       ".github/prompts/propagate-canonical-change.prompt.md"
@@ -213,17 +214,50 @@
   "prompt_generation": {
     "artifact_root": "outputs/generated-prompts",
     "managed_stage_prompts": [
-      { "stage": "inputs_and_mode_selection", "path": "outputs/generated-prompts/inputs_and_mode_selection.prompt.md" },
-      { "stage": "feasibility", "path": "outputs/generated-prompts/feasibility.prompt.md" },
-      { "stage": "research", "path": "outputs/generated-prompts/research.prompt.md" },
-      { "stage": "requirements_and_ux", "path": "outputs/generated-prompts/requirements_and_ux.prompt.md" },
-      { "stage": "architecture_and_risk_spikes", "path": "outputs/generated-prompts/architecture_and_risk_spikes.prompt.md" },
-      { "stage": "scaffold_and_guardrails", "path": "outputs/generated-prompts/scaffold_and_guardrails.prompt.md" },
-      { "stage": "test_strategy", "path": "outputs/generated-prompts/test_strategy.prompt.md" },
-      { "stage": "implementation_loop", "path": "outputs/generated-prompts/implementation_loop.prompt.md" },
-      { "stage": "release_readiness", "path": "outputs/generated-prompts/release_readiness.prompt.md" },
-      { "stage": "audit_and_drift_control", "path": "outputs/generated-prompts/audit_and_drift_control.prompt.md" },
-      { "stage": "post_launch_review", "path": "outputs/generated-prompts/post_launch_review.prompt.md" }
+      {
+        "stage": "inputs_and_mode_selection",
+        "path": "outputs/generated-prompts/inputs_and_mode_selection.prompt.md"
+      },
+      {
+        "stage": "feasibility",
+        "path": "outputs/generated-prompts/feasibility.prompt.md"
+      },
+      {
+        "stage": "research",
+        "path": "outputs/generated-prompts/research.prompt.md"
+      },
+      {
+        "stage": "requirements_and_ux",
+        "path": "outputs/generated-prompts/requirements_and_ux.prompt.md"
+      },
+      {
+        "stage": "architecture_and_risk_spikes",
+        "path": "outputs/generated-prompts/architecture_and_risk_spikes.prompt.md"
+      },
+      {
+        "stage": "scaffold_and_guardrails",
+        "path": "outputs/generated-prompts/scaffold_and_guardrails.prompt.md"
+      },
+      {
+        "stage": "test_strategy",
+        "path": "outputs/generated-prompts/test_strategy.prompt.md"
+      },
+      {
+        "stage": "implementation_loop",
+        "path": "outputs/generated-prompts/implementation_loop.prompt.md"
+      },
+      {
+        "stage": "release_readiness",
+        "path": "outputs/generated-prompts/release_readiness.prompt.md"
+      },
+      {
+        "stage": "audit_and_drift_control",
+        "path": "outputs/generated-prompts/audit_and_drift_control.prompt.md"
+      },
+      {
+        "stage": "post_launch_review",
+        "path": "outputs/generated-prompts/post_launch_review.prompt.md"
+      }
     ]
   },
   "gameplan_prompt_policy": {

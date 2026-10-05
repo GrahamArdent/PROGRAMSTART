@@ -10,9 +10,17 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = json.loads(
-    (ROOT / "schemas" / "decision-operationalization-manifest.schema.json").read_text(encoding="utf-8")
+    (ROOT / "schemas" / "decision-operationalization-manifest.schema.json").read_text(
+        encoding="utf-8"
+    )
 )
-FIXTURE = ROOT / "tests" / "fixtures" / "decision_closure" / "operationalization_manifest_reference.json"
+FIXTURE = (
+    ROOT
+    / "tests"
+    / "fixtures"
+    / "decision_closure"
+    / "operationalization_manifest_reference.json"
+)
 
 
 def _manifest() -> dict[str, Any]:
@@ -49,13 +57,15 @@ def test_association_relation_is_bounded_to_existing_matrix_vocabulary() -> None
 
 
 def test_methodology_requires_owner_reconstruction_before_cold_resumption() -> None:
-    planning = (ROOT / "PROGRAMBUILD" / "PROGRAMBUILD_PLANNING_OPERATING_MODEL.md").read_text(
+    planning = (
+        ROOT / "PROGRAMBUILD" / "PROGRAMBUILD_PLANNING_OPERATING_MODEL.md"
+    ).read_text(encoding="utf-8")
+    closure = (ROOT / "docs" / "PROGRAMSTART_DECISION_CLOSURE.md").read_text(
         encoding="utf-8"
     )
-    closure = (ROOT / "docs" / "PROGRAMSTART_DECISION_CLOSURE.md").read_text(encoding="utf-8")
-    prompt = (ROOT / ".github" / "prompts" / "programstart-convergence-packet.prompt.md").read_text(
-        encoding="utf-8"
-    )
+    prompt = (
+        ROOT / ".github" / "prompts" / "programstart-convergence-packet.prompt.md"
+    ).read_text(encoding="utf-8")
     assert "downloadable delivery alone is not reconstructable durability" in planning
     assert "REFERENCE_PLAN" in planning and "ACTIVE_OPERATIONALIZATION" in planning
     assert "REFERENCE_PLAN" in closure and "ACTIVE_OPERATIONALIZATION" in closure

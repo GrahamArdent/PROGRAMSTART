@@ -537,6 +537,8 @@ def _partial_harvest_changes_packet(harvest: ConversationHarvest, existing: Comp
         return True
     if harvest.intent_kind != IntentKind.UNKNOWN and harvest.intent_kind != existing.intent.kind:
         return True
+    if harvest.durable_artifact_refs and harvest.durable_artifact_refs != existing.evidence_context_refs:
+        return True
     existing_constraints = set(existing.intent.explicit_constraints)
     return any(value not in existing_constraints for value in _execution_constraints(harvest))
 
@@ -546,6 +548,8 @@ def _harvest_changes_packet(harvest: ConversationHarvest, existing: CompiledWork
 
     if _semantic_gap(harvest):
         return False
+    if harvest.durable_artifact_refs and harvest.durable_artifact_refs != existing.evidence_context_refs:
+        return True
     return _semantic_signature(_interpret_harvest(harvest)) != _semantic_signature(existing.intent)
 
 

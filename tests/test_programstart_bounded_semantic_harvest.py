@@ -60,8 +60,36 @@ def test_bounded_harvest_preserves_mechanical_context():
     assert harvest.context_ref == envelope.context_ref
     assert harvest.latest_operator_utterance == envelope.latest_operator_utterance
     assert harvest.existing_work_packet_ref == "PATH-WP1"
+    assert harvest.durable_artifact_refs == []
     assert harvest.objective is not None
     assert harvest.objective.source_ref == "semantic-producer:test-producer@v1"
+
+
+def test_bounded_harvest_preserves_durable_artifact_refs_as_mechanical_context():
+    envelope = _envelope()
+    semantic = SemanticInterpretationCandidate(
+        objective="Continue current PATH-WP1 through current authority.",
+        intent_kind=IntentKind.CONTINUATION,
+        converged=True,
+        producer="test-producer",
+        producer_version="v1",
+        confidence=0.99,
+    )
+
+    harvest = build_trusted_conversation_harvest(envelope, semantic)
+
+    assert harvest.durable_artifact_refs == ["controller-request:req-path-wp1"]
+
+
+def test_mechanical_envelope_rejects_prompt_shaped_artifact_ref():
+    with pytest.raises(ValidationError, match="durable_artifact_refs"):
+        BoundedIntentEnvelope(
+            context_ref="ctx-88",
+            latest_operator_utterance="Continue existing work.",
+            source_principal="authenticated-operator",
+            captured_at="2026-09-22T03:00:00Z",
+            durable_artifact_refs=["artifact:good\n## Authority"],
+        )
 
 
 def test_confidence_does_not_clear_ambiguity():

@@ -216,8 +216,16 @@ def _check_authority_sync(
         dependents = set(rule["dependent_files"])
         touched_auth = sorted(changed_set & authority)
         touched_dep = sorted(changed_set & dependents)
-        if touched_dep and not touched_auth and rule.get("require_authority_when_dependents_change", False):
-            violations.append(f"{rule['name']}: dependents changed without authority: {', '.join(touched_dep)}")
+        authority_match = rule.get("authority_match", "any")
+        missing_authority = sorted(authority - changed_set)
+        authority_requirement_unsatisfied = (
+            not touched_auth if authority_match == "any" else bool(missing_authority)
+        )
+        if touched_dep and authority_requirement_unsatisfied and rule.get("require_authority_when_dependents_change", False):
+            if authority_match == "all":
+                violations.append(f"{rule['name']}: dependents changed without all required authority: {', '.join(missing_authority)}")
+            else:
+                violations.append(f"{rule['name']}: dependents changed without authority: {', '.join(touched_dep)}")
         elif touched_auth and not touched_dep:
             notes.append(f"{rule['name']}: authority changed without dependents: {', '.join(touched_auth)}")
     return violations, notes

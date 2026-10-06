@@ -638,6 +638,10 @@ Route a durable packet by semantic ownership:
 
 A downloadable/ephemeral copy and a repository-persisted copy are delivery/reference views of the same result, not two independently maintained truths. When a durable copy is created, expose its durable reference when practical.
 
+For a material Convergence Packet that is intended to govern future implementation or handoff, **downloadable delivery alone is not reconstructable durability**. Before claiming the result can be resumed without the originating chat/session, the owning project MUST expose a durable machine-addressable owner record that preserves the material operationalization semantics. Use the reusable Decision Operationalization Manifest contract when structured reconstruction/Matrix projection is warranted. The owning project chooses its existing compatible durable surface; PROGRAMSTART does not impose a universal folder.
+
+A durable plan may be classified as `REFERENCE_PLAN` while implementation is deferred. That classification preserves reconstruction and associations without creating executable obligations. Only explicit current owner authority may advance the plan to `ACTIVE_OPERATIONALIZATION`.
+
 #### Reuse and retrieval
 
 Do not scan packet archives on every project turn. Retrieve a packet only when the current request, owner reference, handoff, or explicit revisit trigger makes it relevant.

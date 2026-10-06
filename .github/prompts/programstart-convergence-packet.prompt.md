@@ -22,6 +22,7 @@ This is a workflow guidance/task prompt.
 
 Follow:
 - `PROGRAMBUILD/PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` §9.9 for Convergence Packet output, authority labels, and durable routing;
+- when a material packet is intended to govern future implementation/handoff, require a durable owner reconstruction reference before claiming cold-resumable durability; use `schemas/decision-operationalization-manifest.schema.json` when structured Matrix reconstruction is warranted, and preserve `REFERENCE_PLAN` vs `ACTIVE_OPERATIONALIZATION`;
 - `PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md` for gate-part selection and material-delta re-Challenge convergence;
 - the owning project's current authority for substantive scope, decisions, sequencing, and execution permission.
 

@@ -8,6 +8,8 @@ from __future__ import annotations
 
 # ruff: noqa: I001
 
+from typing import Literal
+
 from pydantic import BaseModel, Field
 
 

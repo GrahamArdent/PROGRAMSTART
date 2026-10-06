@@ -167,7 +167,6 @@ def test_drift_check_passes_with_both_authority_and_dependent(capsys, monkeypatc
     assert "Drift check passed" in captured
 
 
-
 def test_all_authority_match_rejects_partial_companion_set() -> None:
     registry = {
         "sync_rules": [
@@ -186,9 +185,7 @@ def test_all_authority_match_rejects_partial_companion_set() -> None:
 
     violations, _ = evaluate_drift(registry, ["MODEL.md", "CANONICAL.md"])
 
-    assert violations == [
-        "complete_companions: dependent files changed without all required authority files: INDEX.md"
-    ]
+    assert violations == ["complete_companions: dependent files changed without all required authority files: INDEX.md"]
 
 
 def test_all_authority_match_accepts_complete_companion_set() -> None:
@@ -230,6 +227,7 @@ def test_default_any_authority_match_preserves_existing_rules() -> None:
     violations, _ = evaluate_drift(registry, ["D.md", "A.md"])
 
     assert violations == []
+
 
 def test_evaluate_drift_ignores_pyproject_metadata_only_change(monkeypatch) -> None:
     registry = {

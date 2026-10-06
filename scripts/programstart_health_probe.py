@@ -218,18 +218,11 @@ def _check_authority_sync(
         touched_dep = sorted(changed_set & dependents)
         authority_match = rule.get("authority_match", "any")
         missing_authority = sorted(authority - changed_set)
-        authority_requirement_unsatisfied = (
-            not touched_auth if authority_match == "any" else bool(missing_authority)
-        )
-        if (
-            touched_dep
-            and authority_requirement_unsatisfied
-            and rule.get("require_authority_when_dependents_change", False)
-        ):
+        authority_requirement_unsatisfied = not touched_auth if authority_match == "any" else bool(missing_authority)
+        if touched_dep and authority_requirement_unsatisfied and rule.get("require_authority_when_dependents_change", False):
             if authority_match == "all":
                 violations.append(
-                    f"{rule['name']}: dependents changed without all required authority: "
-                    f"{', '.join(missing_authority)}"
+                    f"{rule['name']}: dependents changed without all required authority: {', '.join(missing_authority)}"
                 )
             else:
                 violations.append(f"{rule['name']}: dependents changed without authority: {', '.join(touched_dep)}")

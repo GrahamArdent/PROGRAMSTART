@@ -145,7 +145,6 @@ def test_registry_pyproject_requirements_sync_rule_exists() -> None:
     )
 
 
-
 def test_sync_rule_authority_match_schema_accepts_only_any_or_all() -> None:
     """Sync-rule schema must bound companion-set authority matching to explicit semantics."""
     schema = json.loads((ROOT / "schemas" / "process-registry.schema.json").read_text(encoding="utf-8"))
@@ -158,6 +157,7 @@ def test_programbuild_control_inventory_requires_complete_authority_set() -> Non
     registry = load_registry()
     rule = next(rule for rule in registry["sync_rules"] if rule["name"] == "programbuild_control_inventory")
     assert rule["authority_match"] == "all"
+
 
 def test_commit_enforcement_alignment_excludes_entire_pre_commit_file() -> None:
     """Conventional Commits authority must not claim unrelated pre-commit hook edits."""

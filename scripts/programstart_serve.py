@@ -654,11 +654,21 @@ def build_drift_summary() -> dict[str, Any]:
         authority_requirement_unsatisfied = (
             not touched_authority if authority_match == "any" else bool(missing_authority)
         )
-        if touched_dependents and authority_requirement_unsatisfied and rule.get("require_authority_when_dependents_change", False):
+        if (
+            touched_dependents
+            and authority_requirement_unsatisfied
+            and rule.get("require_authority_when_dependents_change", False)
+        ):
             if authority_match == "all":
-                violations.append(f"{rule['name']}: dependent files changed without all required authority files: {', '.join(missing_authority)}")
+                violations.append(
+                    f"{rule['name']}: dependent files changed without all required authority files: "
+                    f"{', '.join(missing_authority)}"
+                )
             else:
-                violations.append(f"{rule['name']}: dependent files changed without authority files: {', '.join(touched_dependents)}")
+                violations.append(
+                    f"{rule['name']}: dependent files changed without authority files: "
+                    f"{', '.join(touched_dependents)}"
+                )
         elif touched_authority and not touched_dependents:
             if rule.get("name") == "pyproject_requirements_sync" and not pyproject_dependency_sync_required():
                 continue

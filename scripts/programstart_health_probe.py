@@ -221,9 +221,16 @@ def _check_authority_sync(
         authority_requirement_unsatisfied = (
             not touched_auth if authority_match == "any" else bool(missing_authority)
         )
-        if touched_dep and authority_requirement_unsatisfied and rule.get("require_authority_when_dependents_change", False):
+        if (
+            touched_dep
+            and authority_requirement_unsatisfied
+            and rule.get("require_authority_when_dependents_change", False)
+        ):
             if authority_match == "all":
-                violations.append(f"{rule['name']}: dependents changed without all required authority: {', '.join(missing_authority)}")
+                violations.append(
+                    f"{rule['name']}: dependents changed without all required authority: "
+                    f"{', '.join(missing_authority)}"
+                )
             else:
                 violations.append(f"{rule['name']}: dependents changed without authority: {', '.join(touched_dep)}")
         elif touched_auth and not touched_dep:

@@ -178,7 +178,9 @@ The protected outcome and obligations are therefore derived from the **final cur
 
 ### 9A.6 Operationalization and Matrix partial failure
 
-A durable accepted decision that is not being operationalized now may stop at owner durability; do not manufacture current Matrix obligations merely to preserve history.
+A durable accepted decision that is not being operationalized now may stop at owner durability; do not manufacture **active/executable** Matrix obligations merely to preserve history.
+
+When a material accepted plan must remain reconstructable for later implementation, owner durability includes a current owner-native Decision Operationalization Manifest (or semantically equivalent owner record) that preserves the material plan. Matrix may project that record as a non-executable `REFERENCE_PLAN` for reconstruction, impact/association visibility, and future resumption. A `REFERENCE_PLAN` is never Work-Packet-ready and cannot activate itself. Only explicit current owner authority may establish `ACTIVE_OPERATIONALIZATION`.
 
 When an accepted/current decision is being operationalized, use §10 only after the owner re-read and completeness Challenge. **Owner-settlement terminality and operationalization terminality are distinct:** owner settlement may be complete while the operationalized consequence remains unreconciled.
 
@@ -212,6 +214,12 @@ Rejected/not-accepted, unresolved, superseded, routine-excluded, or historical o
 ### 10.2 Derived handoff
 
 For each eligible material outcome being operationalized, derive the smallest sufficient handoff containing:
+
+When the accepted plan contains material future-execution detail beyond outcome obligations, preserve that detail in the current owner-native Decision Operationalization Manifest before Matrix projection. The manifest is a structured reconstruction contract, not a second decision authority. It carries the exact owner/source/version, convergence provenance, projection role, protected outcome, obligations, planned steps, impact scope, structured associations, gates, falsifiers, exclusions/non-goals/constraints, residuals, acceptance/terminal/invalidation/reconsideration semantics, challenged coverage evidence, and `execution_authority: false`.
+
+The Matrix/read-model projection MUST be rebuildable from current owner truth. Unknown associations remain explicit residuals; do not guess them.
+
+The outcome-decomposition handoff continues to contain:
 
 - `decision_ref` — stable reference to the settled Decision-Closure outcome or its durable owner record;
 - `protected_outcome` — observable result the accepted decision intends to make true;

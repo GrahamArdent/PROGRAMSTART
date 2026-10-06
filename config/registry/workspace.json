@@ -359,7 +359,9 @@
       "tests/test_programstart_target.py",
       "tests/test_programstart_target_cli.py",
       "tests/test_programstart_target_integration.py",
-      "tests/test_shape_idea_mode_c.py"
+      "tests/test_shape_idea_mode_c.py",
+      "schemas/decision-operationalization-manifest.schema.json",
+      "tests/test_decision_operationalization_manifest_contract.py"
     ],
     "userjourney_bootstrap_assets": [
       "tests/test_programstart_dashboard_userjourney.py",

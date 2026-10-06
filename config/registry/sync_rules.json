@@ -24,7 +24,8 @@
       ],
       "require_authority_when_dependents_change": true,
       "require_dependents_when_authority_changes": true,
-      "description": "Changes to Program Build control behavior should update the canonical and file index docs in the same change."
+      "description": "Changes to Program Build control behavior should update the canonical and file index docs in the same change.",
+      "authority_match": "all"
     },
     {
       "name": "programbuild_architecture_contracts",

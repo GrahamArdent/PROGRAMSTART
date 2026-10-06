@@ -167,6 +167,70 @@ def test_drift_check_passes_with_both_authority_and_dependent(capsys, monkeypatc
     assert "Drift check passed" in captured
 
 
+
+def test_all_authority_match_rejects_partial_companion_set() -> None:
+    registry = {
+        "sync_rules": [
+            {
+                "name": "complete_companions",
+                "system": "programbuild",
+                "authority_files": ["CANONICAL.md", "INDEX.md"],
+                "dependent_files": ["MODEL.md"],
+                "require_authority_when_dependents_change": True,
+                "authority_match": "all",
+            }
+        ],
+        "systems": {"programbuild": {}, "userjourney": {"optional": True, "root": "_missing"}},
+        "workspace": {"repo_role": "template_repo"},
+    }
+
+    violations, _ = evaluate_drift(registry, ["MODEL.md", "CANONICAL.md"])
+
+    assert violations == [
+        "complete_companions: dependent files changed without all required authority files: INDEX.md"
+    ]
+
+
+def test_all_authority_match_accepts_complete_companion_set() -> None:
+    registry = {
+        "sync_rules": [
+            {
+                "name": "complete_companions",
+                "system": "programbuild",
+                "authority_files": ["CANONICAL.md", "INDEX.md"],
+                "dependent_files": ["MODEL.md"],
+                "require_authority_when_dependents_change": True,
+                "authority_match": "all",
+            }
+        ],
+        "systems": {"programbuild": {}, "userjourney": {"optional": True, "root": "_missing"}},
+        "workspace": {"repo_role": "template_repo"},
+    }
+
+    violations, _ = evaluate_drift(registry, ["MODEL.md", "CANONICAL.md", "INDEX.md"])
+
+    assert violations == []
+
+
+def test_default_any_authority_match_preserves_existing_rules() -> None:
+    registry = {
+        "sync_rules": [
+            {
+                "name": "legacy_any",
+                "system": "programbuild",
+                "authority_files": ["A.md", "B.md"],
+                "dependent_files": ["D.md"],
+                "require_authority_when_dependents_change": True,
+            }
+        ],
+        "systems": {"programbuild": {}, "userjourney": {"optional": True, "root": "_missing"}},
+        "workspace": {"repo_role": "template_repo"},
+    }
+
+    violations, _ = evaluate_drift(registry, ["D.md", "A.md"])
+
+    assert violations == []
+
 def test_evaluate_drift_ignores_pyproject_metadata_only_change(monkeypatch) -> None:
     registry = {
         "sync_rules": [

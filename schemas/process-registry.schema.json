@@ -72,6 +72,7 @@
           "authority_files": { "type": "array", "items": { "type": "string" } },
           "dependent_files": { "type": "array", "items": { "type": "string" } },
           "require_authority_when_dependents_change": { "type": "boolean" },
+          "authority_match": { "type": "string", "enum": ["any", "all"], "default": "any" },
           "require_dependents_when_authority_changes": { "type": "boolean" },
           "description": { "type": "string" }
         },

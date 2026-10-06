@@ -8,6 +8,8 @@ from __future__ import annotations
 
 # ruff: noqa: I001
 
+from typing import Literal
+
 from pydantic import BaseModel, Field
 
 
@@ -384,6 +386,7 @@ class SyncRule(BaseModel):
     authority_files: list[str] = Field(default_factory=list)
     dependent_files: list[str] = Field(default_factory=list)
     require_authority_when_dependents_change: bool = False
+    authority_match: Literal["any", "all"] = "any"
     require_dependents_when_authority_changes: bool = False
     description: str = ""
 

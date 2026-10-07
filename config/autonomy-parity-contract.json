@@ -25,7 +25,7 @@
     },
     {
       "path": "PROGRAMBUILD/PROGRAMBUILD_WORK_PACKET.md",
-      "sha256": "7569c8979e5e9f2ab7f1d2ebba4476f7c27912f11dd70b253433aa8a9281d6da",
+      "sha256": "7569c897-9e5e9f2a-b7f1d2eb-ba4476f7-c27912f1-1dd70b25-3433aa8a-9281d6da",
       "role": "bounded packet semantics"
     },
     {
@@ -50,7 +50,7 @@
     },
     {
       "path": "docs/PROGRAMSTART_COST_GOVERNANCE.md",
-      "sha256": "e7b23ece9140871d41df1934e4cea5567e984b67517f73bb330f1ddb211ab05d",
+      "sha256": "e7b23ece-9140871d-41df1934-e4cea556-7e984b67-517f73bb-330f1ddb-211ab05d",
       "role": "cost governance"
     }
   ],

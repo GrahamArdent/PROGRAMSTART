@@ -19,7 +19,9 @@ from enum import StrEnum
 from pathlib import Path
 from typing import Literal
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, model_serializer, model_validator
+
+from .programstart_resource_preflight import ResourcePreflight
 
 SCHEMA_VERSION = "programstart.compiled-work-packet.v0.1"
 COMPILER_VERSION = "programstart-intent-compiler.v0.1"
@@ -200,6 +202,9 @@ class AuthoritySnapshot(BaseModel):
     execution_mode: str
     current_work_refs: list[str] = Field(default_factory=list)
     decision_operationalization: DecisionOperationalizationBinding | None = None
+    resource_preflight_required: bool = False
+    resource_preflight_path: str | None = None
+    resource_preflight: ResourcePreflight | None = None
 
     mutable_surfaces: list[SurfaceRef] = Field(default_factory=list)
     read_only_surfaces: list[SurfaceRef] = Field(default_factory=list)
@@ -216,6 +221,14 @@ class AuthoritySnapshot(BaseModel):
     stop_conditions: list[str] = Field(default_factory=list)
     parallel_work: list[ParallelWork] = Field(default_factory=list)
 
+    @model_serializer(mode="wrap")
+    def preserve_legacy_snapshot(self, handler):
+        data = handler(self)
+        if not self.resource_preflight_required and self.resource_preflight_path is None and self.resource_preflight is None:
+            for key in ("resource_preflight_required", "resource_preflight_path", "resource_preflight"):
+                data.pop(key, None)
+        return data
+
     @model_validator(mode="after")
     def validate_authority_snapshot(self) -> AuthoritySnapshot:
         if not self.project_name.strip() or not self.owning_repository.strip():
@@ -223,6 +236,8 @@ class AuthoritySnapshot(BaseModel):
         if not self.authority_commit.strip() or not self.methodology_commit.strip():
             raise ValueError("authority snapshot requires project and methodology commit references")
 
+        if not self.resource_preflight_required and (self.resource_preflight_path or self.resource_preflight):
+            raise ValueError("resource preparation cannot be attached to an inactive owner gate")
         mutable = {_surface_key(surface) for surface in self.mutable_surfaces}
         read_only = {_surface_key(surface) for surface in self.read_only_surfaces}
         overlap = sorted(mutable & read_only)
@@ -658,6 +673,18 @@ def compile_interpreted_work_packet(
         for value in context_refs
     ):
         raise ValueError("durable_artifact_refs exceed the bounded mechanical-context contract")
+
+    if authority.resource_preflight_required:
+        plan = authority.resource_preflight
+        if plan is None or not authority.resource_preflight_path:
+            raise ValueError("required reasoning/token resource preflight is missing")
+        if plan.work_ref not in authority.current_work_refs:
+            raise ValueError("resource preflight does not bind current owner work")
+        expected_policy = (
+            f"{authority.methodology_repository}@{authority.methodology_commit}:docs/PROGRAMSTART_COST_GOVERNANCE.md"
+        )
+        if plan.policy_ref != expected_policy:
+            raise ValueError("resource preflight policy is stale; revalidate against current methodology")
 
     if not authority.decision_operationalization_ready:
         binding = authority.decision_operationalization

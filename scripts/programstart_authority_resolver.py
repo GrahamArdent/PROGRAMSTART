@@ -8,6 +8,7 @@ snapshot is produced.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import subprocess
@@ -34,6 +35,7 @@ from .programstart_intent_ingress import (
     resolve_contextual_intent,
     validate_semantic_producer_response,
 )
+from .programstart_resource_preflight import ResourcePreflight
 
 OWNER_AUTHORITY_PATHS = (
     ".programstart/authority.json",
@@ -70,6 +72,8 @@ class OwnerAuthorityDeclaration(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     schema_version: Literal["programstart.owner-authority.v1"]
+    resource_preflight_required: bool = False
+    resource_preflight_path: str | None = None
     project_name: str
     owning_repository: str
     execution_mode: str
@@ -92,6 +96,8 @@ class OwnerAuthorityDeclaration(BaseModel):
     def declaration_must_be_unambiguous(self) -> OwnerAuthorityDeclaration:
         if any(not value.strip() for value in (self.project_name, self.owning_repository, self.execution_mode)):
             raise ValueError("owner authority requires project, repository, and execution mode")
+        if self.resource_preflight_path and not self.resource_preflight_required:
+            raise ValueError("resource preflight path requires an active owner gate")
         refs = [*self.authority_paths, *self.current_work_refs]
         refs.extend(work.evidence_ref for work in self.parallel_work)
         if any(not ref.strip() for ref in refs):
@@ -198,7 +204,33 @@ def resolve_repository_authority(observation: RepositoryAuthorityObservation) ->
     if current_packet_entry and "CURRENT_WORK_PACKET.md" not in declaration.current_work_refs:
         raise AuthorityResolutionError("current owner Work Packet exists but is not explicitly declared")
 
+    resource_plan = None
+    if declaration.resource_preflight_required:
+        if not declaration.resource_preflight_path:
+            raise AuthorityResolutionError("required reasoning/token resource preflight is missing")
+        raw_plan = _blob(root, observed, declaration.resource_preflight_path)
+        if len(raw_plan.encode("utf-8")) > 16384:
+            raise AuthorityResolutionError("resource preflight exceeds bounded size")
+        try:
+            resource_plan = ResourcePreflight.model_validate_json(raw_plan)
+        except (ValidationError, json.JSONDecodeError) as exc:
+            raise AuthorityResolutionError("resource preflight is invalid") from exc
+        if resource_plan.work_ref not in declaration.current_work_refs:
+            raise AuthorityResolutionError("resource preflight must bind declared current work")
+        _blob(root, observed, resource_plan.work_ref)  # validate regular, safe owner artifact
+        work_bytes = subprocess.run(
+            ["git", "-C", str(root), "show", f"{observed}:{resource_plan.work_ref}"],
+            check=True,
+            capture_output=True,
+        ).stdout
+        if hashlib.sha256(work_bytes).hexdigest() != resource_plan.work_sha256:
+            raise AuthorityResolutionError("resource preflight work digest is stale")
+        policy_ref = f"GrahamArdent/PROGRAMSTART@{observation.methodology_commit}:docs/PROGRAMSTART_COST_GOVERNANCE.md"
+        if resource_plan.policy_ref != policy_ref:
+            raise AuthorityResolutionError("resource preflight methodology is stale")
+
     return AuthoritySnapshot(
+        resource_preflight=resource_plan,
         **declaration.model_dump(exclude={"schema_version", "authority_paths"}),
         authority_paths=[declarations[0], *declaration.authority_paths],
         authority_commit=observed,

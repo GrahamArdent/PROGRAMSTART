@@ -8,7 +8,7 @@
 - Controller observation baseline: GrahamArdent/programstart-autonomous-controller@c95372bd5640110cf13791546ae1930cd0abb240
 - Durable reference: GrahamArdent/PROGRAMSTART#143
 - Fingerprinted source files: 8
-- Required source obligations covered: 423
+- Required source obligations covered: 425
 - Parity behaviors: 49
 - Accepted conversation decisions reconciled: 28
 - Material hop instances: 37

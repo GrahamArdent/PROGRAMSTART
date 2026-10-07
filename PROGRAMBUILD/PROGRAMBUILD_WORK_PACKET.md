@@ -586,7 +586,7 @@ A packet is complete when:
 
 ## Reasoning/token prerequisite for major work
 
-When current owner/operator authority requires resource preparation before major work, activate the existing Cost Governance gate using the owner declaration's `resource_preflight_required` and committed `resource_preflight_path`. Derive the bounded plan described in `docs/PROGRAMSTART_COST_GOVERNANCE.md` section 13 from current work, approved capabilities and utilization evidence. Do not opt out merely because the request can be split into smaller tasks: preserve the parent prerequisite on dependent packets until accepted closure releases it.
+When current owner/operator authority requires resource preparation before major work, activate the existing Cost Governance gate using the owner declaration's `resource_preflight_required` and committed `resource_preflight_path`. Derive the bounded plan described in `docs/PROGRAMSTART_COST_GOVERNANCE.md` section 14 from current work, approved capabilities and utilization evidence. Do not opt out merely because the request can be split into smaller tasks: preserve the parent prerequisite on dependent packets until accepted closure releases it.
 
 The packet stays unavailable for execution-ready compilation until valid exact-work/current-methodology preparation is present. Read-only diagnosis and bounded work required to implement or satisfy this prerequisite retain their own owner authority; they are not blanket permission to resume the dependent backlog. Cold recovery must reconstruct the hold and its release evidence without the originating chat.
 

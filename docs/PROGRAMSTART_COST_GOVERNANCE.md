@@ -213,7 +213,7 @@ Cost governance is working when projects:
 - preserve security/reliability boundaries;
 - can explain **why this cost exists now** and **what would make it change**.
 
-## 13. Reasoning locality and required resource preparation
+## 14. Reasoning locality and required resource preparation
 
 Model strength and reasoning effort belong to the smallest unresolved decision, not the whole objective. Use deterministic tooling for mechanical retrieval, hashing, tests, status extraction and measurement. Use the least costly already-approved profile sufficient for bounded reasoning. Escalate only for observable novel inference, conflicting evidence, consequential design, authority/security uncertainty, or demonstrated insufficiency of a cheaper path. Record the evidence and the condition that ends escalation; step down for subsequent mechanical work. Capability, credential, network and permission gaps are returned to their existing owner, not treated as reasons for stronger models.
 

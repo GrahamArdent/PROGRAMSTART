@@ -40,3 +40,6 @@ Fresh review of the corrected candidate found no remaining blocker for this repo
 5. If actual model switching is required but unsupported, resolve through existing Compute #134's experiment/owner promotion, not by claiming the preflight routes models.
 6. Update the derived priority report and owner records with exact acceptance/release evidence.
 Until these are accepted, major audit implementation remains held.
+
+## Integration reconciliation
+Hosted validation exposed expected source-fingerprint and bootstrap asset drift from the added methodology/module. Updated the existing parity obligation inventory (423 to 425, preserving all closure classifications), generated view, and bootstrap assets; full structural validation now passes. Type narrowing was added to tests after hosted Pyright rejected optional access. No required gates were waived.

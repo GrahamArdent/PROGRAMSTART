@@ -100,7 +100,7 @@ Optional preservation / execution aids:
 | planning-to-execution separation, idea capture/promotion semantics, proportional rigor, blocker scope/safe-lane reasoning, adaptive decision/evidence routing, accepted-recommendation resolution, checklist activation rules, context loading, and evidence reuse | `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` |
 | logical work-packet semantics, accepted-recommendation disposition evidence, checklist completeness/closure, blocker/safe-lane fields, coordinated Mode-C lane view and shared-mutation ownership, cross-repository dependency/authority fields, operator/manual-gate handoff semantics, conditional Learning-Gate evaluation before close/handoff, and optional persisted packet format | `PROGRAMBUILD_WORK_PACKET.md` |
 | derived-finding Authority-Gap detection, owner routing, pre-execution reconciliation, return-to-origin behavior, and reusable-learning handoff | `docs/PROGRAMSTART_AUTHORITY_GAP_RECONCILIATION.md` |
-| PROGRAMSTART decision-scoped cost governance, Cost Envelope semantics, cost-evidence freshness, cap/reuse/pay-when rules, and anti-registry boundary | `docs/PROGRAMSTART_COST_GOVERNANCE.md` |
+| PROGRAMSTART decision-scoped cost governance, Cost Envelope semantics, cost-evidence freshness, cap/reuse/pay-when rules, reasoning locality and owner-required exact-work resource preflight, and anti-registry boundary | `docs/PROGRAMSTART_COST_GOVERNANCE.md` |
 | PROGRAMSTART acceptance-learning triggers, observation/rollup semantics, maturity rules, and future-retest routing | `docs/PROGRAMSTART_LEARNING_LOOP.md` |
 | conditional product/system Learning Architecture Gate, owner-routed operational learning, learning-data boundaries, evaluation/promotion/rollback discipline, and authority-safe adaptive improvement | `docs/PROGRAMSTART_LEARNING_ARCHITECTURE.md` |
 | ADR structure, decision-log linkage, and supersession hygiene | `PROGRAMBUILD_ADR_TEMPLATE.md` |
@@ -196,3 +196,5 @@ A product/system learning observation, adaptive recommendation, experiment resul
 ---
 
 Last updated: 2026-09-03
+
+Owner-selected reasoning/token prerequisites activate the existing Cost Governance resource preflight before major work. Missing or stale required preparation blocks execution-ready compilation; the exact owner tree and existing packet fingerprints bind the plan. Compute retains approved profile selection inside Controller admission. A preflight does not grant model, provider, budget, or execution authority.

@@ -212,3 +212,25 @@ Cost governance is working when projects:
 - refresh volatile price evidence only when it could change a decision;
 - preserve security/reliability boundaries;
 - can explain **why this cost exists now** and **what would make it change**.
+
+## 14. Reasoning locality and required resource preparation
+
+Model strength and reasoning effort belong to the smallest unresolved decision, not the whole objective. Use deterministic tooling for mechanical retrieval, hashing, tests, status extraction and measurement. Use the least costly already-approved profile sufficient for bounded reasoning. Escalate only for observable novel inference, conflicting evidence, consequential design, authority/security uncertainty, or demonstrated insufficiency of a cheaper path. Record the evidence and the condition that ends escalation; step down for subsequent mechanical work. Capability, credential, network and permission gaps are returned to their existing owner, not treated as reasons for stronger models.
+
+For an operator-selected major-work prerequisite, the owner MUST activate `resource_preflight_required=true` in its existing owner declaration and name a committed `resource_preflight_path`. Missing preparation fails closed before execution-ready compilation. This is conditional owner adoption, not a claim that all historical owners or already-running effects have been retrofitted.
+
+The preflight uses `programstart.resource-preflight.v1` and binds:
+- one declared current work document and the SHA-256 of its exact Git blob bytes;
+- the exact installed PROGRAMSTART Cost Governance revision;
+- a bounded working set, reusable evidence and invalidation triggers;
+- small execution steps, deterministic mechanical work, existing approved profile references for reasoning, and evidence/step-down conditions for stronger reasoning or independent review;
+- stop-and-reorient for repeated no-progress; capability-gap classification instead of model escalation;
+- a durable usage/outcome sink, missing telemetry as unknown, preserved required verification and execution_authority=false.
+
+The owner-local resolver reads the preflight from the same exact committed tree as authority. It rejects missing, malformed, oversized, unsafe, stale-work or stale-methodology evidence. The compiler refuses missing required preparation. Existing packet fingerprints/digests cover the plan; changes require normal recompile/readmission. A plan is not runtime proof: actual profile selection and approval remain inside Compute D-012's admitted executor envelope. A profile reference does not create or approve a model, spending envelope, provider permission or switching capability.
+
+Retain provider-reported input, cached input, output and reasoning telemetry when available, alongside wall time, material tool payload, retries, termination reason, accepted outcome and observed step-down. Derive fresh input only from compatible reported counts; never fabricate missing values or add reasoning tokens twice. A default/no-model-control environment must report that limitation rather than claim a switch occurred. Prefer compact receipts and targeted evidence deltas; retain full raw evidence in its existing owner location and expand only when needed.
+
+Acceptance of an activated major-work gate requires: missing plan blocks; stale work/policy blocks; mechanical premium misuse and capability-gap escalation fail; a valid owner-approved plan passes; replay/cold reconstruction preserves bindings; actual execution evidence shows the admitted profile/telemetry behavior or accurately reports a remaining capability gap. Repository tests or a merged policy alone do not prove shared-runtime activation or measured savings.
+
+Compute #134's shadow/replay comparison remains separate from activation. Exact model/effort mappings and thresholds require evidence and owner acceptance. Reuse Controller #176's existing compact semantic receipt and measured baseline. PROGRAMSTART #166 remains the parent utilization objective. This section adopts the reasoning-locality substance proposed in PR #185 without claiming its historical lesson has earned promotion.

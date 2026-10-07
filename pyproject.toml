@@ -193,6 +193,7 @@ source = [
   "scripts.programstart_autonomy_parity",
   "scripts.programstart_bootstrap_methodology",
   "scripts.programstart_intent_compile",
+  "scripts.programstart_resource_preflight",
   "scripts.programstart_intent_ingress",
   "scripts.programstart_objective_continuation",
   "scripts.programstart_owner_handoff_intake",

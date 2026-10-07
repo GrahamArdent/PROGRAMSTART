@@ -75,6 +75,7 @@ def test_current_owner_preflight_compiles_and_cold_reconstructs(tmp_path):
     assert verify_integrity(packet)
     assert packet.semantic_digest == replay.semantic_digest
     assert packet.scope.allowed_effects == first.allowed_effects
+    assert packet.authority.resource_preflight is not None
     assert packet.authority.resource_preflight.execution_authority is False
 
 
@@ -166,8 +167,10 @@ def test_preflight_tampering_changes_fingerprint_and_invalidates_packet(tmp_path
     authority = resolve_repository_authority(_observation(root, head))
     packet = compile_work_packet("Continue", authority, kind=IntentKind.CONTINUATION)
     changed = authority.model_copy(deep=True)
+    assert changed.resource_preflight is not None
     changed.resource_preflight.telemetry_sink_ref = "owner/product#2"
     assert assess_authority_drift(packet, changed).status == "recompile_required"
+    assert packet.authority.resource_preflight is not None
     packet.authority.resource_preflight.telemetry_sink_ref = "owner/product#2"
     assert not verify_integrity(packet)
 

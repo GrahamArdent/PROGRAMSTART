@@ -72,3 +72,12 @@ This is not a sunk-cost rule and does not make previously passing components imm
 This gate now covers both pre-escalation capability discovery and post-discovery mutation admission. It reuses existing PROGRAMSTART evidence/currentness and Paths composition knowledge; it does not create another evidence engine, graph authority, orchestrator, or execution plane.
 
 This is targeted retrieval, not a requirement to load the Paths corpus for every task.
+
+
+## Material reusable capability preflight
+
+Before `new_capability_required`, `CapabilityDiscoveryDecision.reuse_preflight` must retain coverage for Paths registry, blueprint and composition and each explicitly relevant producer owner's issues, merged PRs and code. Each search records the query, observation time, exact source commit, complete/failed/truncated coverage, durable result reference/hash, and matched capability references. The same owner's sources must agree on currentness. Retain raw bounded search results with these receipts and reverify hashes at ingestion; the validator checks receipt shape/coverage and does not authenticate arbitrary caller claims or run remote searches.
+
+`NEW` is rejected when any source finds a relevant existing capability, even if Paths has no registered edge. Reconcile `REUSE`, `EXTEND` or `COMPOSE` first. Missing/failed/truncated coverage is `DISCOVERY_INCOMPLETE`. Genuinely novel material capabilities may pass complete empty searches; routine nonmaterial status changes use `NONMATERIAL` without a corpus scan. Existing admission and owner-currentness gates remain independent.
+
+Regression: EN #362 exists in merged owner-native PR evidence while registry/blueprint/composition return empty. `NEW` fails; `COMPOSE` remains possible after complete source comparison. This prevents the original receipt-level miss. It does not claim hosted ChatGPT internals or every independent consumer is mechanically bound to this function.

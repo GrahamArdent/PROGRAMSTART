@@ -196,12 +196,13 @@ def test_new_capability_passes_only_after_genuinely_new_path_receipt():
         classification="GENUINELY_NEW_PATH_REQUIRED",
         reason_code="NO_REGISTERED_EFFECT_TARGET_EDGE",
     )
-    validate_capability_discovery(
-        CapabilityDiscoveryDecision(
-            conclusion=CapabilityConclusion.NEW_CAPABILITY_REQUIRED,
-            discovery=ev(result=result),
+    with pytest.raises(ValueError, match="DISCOVERY_INCOMPLETE"):
+        validate_capability_discovery(
+            CapabilityDiscoveryDecision(
+                conclusion=CapabilityConclusion.NEW_CAPABILITY_REQUIRED,
+                discovery=ev(result=result),
+            )
         )
-    )
 
 
 def test_true_typed_edge_gap_can_be_automation_gap():
@@ -416,3 +417,4 @@ def test_existing_capability_failure_assessment_rejects_genuinely_new_path_disco
     discovery = ev(result=result)
     with pytest.raises(ValidationError, match="conflicts with GENUINELY_NEW_PATH_REQUIRED"):
         localized_failure(discovery=discovery)
+

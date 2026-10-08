@@ -2,23 +2,40 @@ import pytest
 
 from scripts.programstart_capability_discovery_gate import DiscoverySearchReceipt, ReusePreflight, validate_reuse_preflight
 
-
 OWNER = "GrahamArdent/execution-node-control"
 
 
 def receipts(found=False):
     pairs = [("GrahamArdent/paths", k) for k in ("registry", "blueprint", "composition")]
     pairs += [(OWNER, k) for k in ("issues", "merged_prs", "code")]
-    return tuple(DiscoverySearchReceipt(
-        repository=repo, source_kind=kind, source_commit_sha="a" * 40,
-        query="codex_usage_diagnostic rate_limits usageLimitExceeded", observed_at="2026-10-08T20:00:00Z",
-        coverage="complete", result_ref=f"evidence/{kind}.json", result_sha256="b" * 64,
-        matched_capability_refs=("GrahamArdent/execution-node-control#362",) if found and kind == "merged_prs" else (),
-    ) for repo, kind in pairs)
+    return tuple(
+        DiscoverySearchReceipt.model_validate(
+            {
+                "repository": repo,
+                "source_kind": kind,
+                "source_commit_sha": "a" * 40,
+                "query": "codex_usage_diagnostic rate_limits usageLimitExceeded",
+                "observed_at": "2026-10-08T20:00:00Z",
+                "coverage": "complete",
+                "result_ref": f"evidence/{kind}.json",
+                "result_sha256": "b" * 64,
+                "matched_capability_refs": ("GrahamArdent/execution-node-control#362",) if found and kind == "merged_prs" else (),
+            }
+        )
+        for repo, kind in pairs
+    )
 
 
 def preflight(searches=None, decision="NEW"):
-    return ReusePreflight(material_reusable_delta=True, required_owner_repositories=(OWNER,), searches=receipts() if searches is None else searches, decision=decision, rationale="compare existing source capabilities")
+    return ReusePreflight.model_validate(
+        {
+            "material_reusable_delta": True,
+            "required_owner_repositories": (OWNER,),
+            "searches": receipts() if searches is None else searches,
+            "decision": decision,
+            "rationale": "compare existing source capabilities",
+        }
+    )
 
 
 def test_registry_miss_does_not_hide_merged_en362():
@@ -53,4 +70,6 @@ def test_genuinely_novel_effect_can_pass():
 
 
 def test_nonmaterial_change_needs_no_corpus_search():
-    validate_reuse_preflight(ReusePreflight(material_reusable_delta=False, decision="NONMATERIAL", rationale="routine status only"))
+    validate_reuse_preflight(
+        ReusePreflight(material_reusable_delta=False, decision="NONMATERIAL", rationale="routine status only")
+    )

@@ -417,4 +417,3 @@ def test_existing_capability_failure_assessment_rejects_genuinely_new_path_disco
     discovery = ev(result=result)
     with pytest.raises(ValidationError, match="conflicts with GENUINELY_NEW_PATH_REQUIRED"):
         localized_failure(discovery=discovery)
-

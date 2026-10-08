@@ -140,7 +140,7 @@ class PathsDiscoveryEvidence(BaseModel):
 class CapabilityDiscoveryDecision(BaseModel):
     conclusion: CapabilityConclusion
     discovery: PathsDiscoveryEvidence | None = None
-    reuse_preflight: "ReusePreflight | None" = None
+    reuse_preflight: ReusePreflight | None = None
 
 
 def validate_capability_discovery(decision: CapabilityDiscoveryDecision) -> None:
@@ -421,7 +421,9 @@ def validate_reuse_preflight(preflight: ReusePreflight) -> None:
     required.update((repo, k) for repo in owners for k in ("issues", "merged_prs", "code"))
     covered = {(s.repository, s.source_kind) for s in preflight.searches if s.coverage == "complete"}
     if required - covered:
-        raise ValueError("DISCOVERY_INCOMPLETE: registry/blueprint/composition and owner issues/merged PRs/code coverage required")
+        raise ValueError(
+            "DISCOVERY_INCOMPLETE: registry/blueprint/composition and owner issues/merged PRs/code coverage required"
+        )
     for repo in {*owners, "GrahamArdent/paths"}:
         relevant = [s for s in preflight.searches if s.repository == repo and (repo, s.source_kind) in required]
         if len({s.source_commit_sha for s in relevant}) != 1:
@@ -433,4 +435,3 @@ def validate_reuse_preflight(preflight: ReusePreflight) -> None:
 
 
 CapabilityDiscoveryDecision.model_rebuild()
-

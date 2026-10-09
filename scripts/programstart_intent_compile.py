@@ -19,7 +19,7 @@ from enum import StrEnum
 from pathlib import Path
 from typing import Literal
 
-from pydantic import BaseModel, Field, model_serializer, model_validator
+from pydantic import BaseModel, Field, ValidationError, model_serializer, model_validator
 
 from .programstart_resource_preflight import ResourcePreflight
 
@@ -187,7 +187,16 @@ class DecisionOperationalizationBinding(BaseModel):
 
     @property
     def projection_ready(self) -> bool:
-        return self.matrix_projection is not None
+        if self.matrix_projection is None:
+            return False
+        # Typed instances may have been copied or updated since validation.
+        # Revalidate serialized evidence at the readiness boundary rather than
+        # treating the presence of a previously valid projection as currentness.
+        try:
+            DecisionOperationalizationBinding.model_validate(self.model_dump(mode="python"))
+        except ValidationError:
+            return False
+        return True
 
 
 class AuthoritySnapshot(BaseModel):

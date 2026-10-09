@@ -637,6 +637,56 @@ def test_identical_projection_binding_is_stable_for_replay() -> None:
     assert authority_fingerprint(left) == authority_fingerprint(right)
 
 
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("projection_currentness", "STALE"),
+        ("source_currentness", "STALE"),
+        ("ingestion_reconciliation_state", "PENDING"),
+        ("reconsideration_required", True),
+        ("execution_authority", True),
+        ("source_version", "superseded-source"),
+        ("decision_ref", "wrong-owner-decision"),
+        ("projection_identity", "wrong-projection"),
+    ],
+)
+def test_copied_projection_drift_cannot_compile_reuse_or_false_complete(field: str, value: object) -> None:
+    ready = authority(operationalization=binding())
+    packet = compile_work_packet("Proceed.", ready, kind=IntentKind.BOUNDED_EXECUTION)
+    changed_binding = binding()
+    changed = authority(operationalization=changed_binding)
+    assert changed_binding.matrix_projection is not None
+    changed_binding.matrix_projection = changed_binding.matrix_projection.model_copy(update={field: value})
+
+    assert changed.authority_commit == ready.authority_commit
+    with pytest.raises(ValueError, match="decision-derived work is not currentness-ready"):
+        compile_work_packet("Proceed.", changed, kind=IntentKind.BOUNDED_EXECUTION)
+
+    for existing in (None, packet):
+        resolution = resolve_contextual_intent(
+            ContextualIntentRequest(harvest=harvest(acceptance_met=True), authority=changed, existing_packet=existing)
+        )
+        assert resolution.state == ConversationState.CONVERGED
+        assert resolution.action == (
+            ContextualTransitionAction.RESOLVE_CURRENT_AUTHORITY
+            if existing is None
+            else ContextualTransitionAction.REVALIDATE_EXISTING_PACKET
+        )
+        assert resolution.operator_intervention_required is False
+        assert "reconcile and re-read" in (resolution.next_system_requirement or "")
+
+    with pytest.raises(AuthorityResolutionError, match="no longer valid"):
+        compose_decision_operationalization_currentness(authority(), changed_binding)
+
+
+def test_in_place_projection_drift_is_revalidated_at_readiness() -> None:
+    changed_binding = binding()
+    assert changed_binding.matrix_projection is not None
+    changed_binding.matrix_projection.execution_authority = True  # type: ignore[assignment]
+    with pytest.raises(ValueError, match="decision-derived work is not currentness-ready"):
+        compile_work_packet("Proceed.", authority(operationalization=changed_binding), kind=IntentKind.BOUNDED_EXECUTION)
+
+
 def test_non_operational_and_unrelated_packets_remain_unchanged() -> None:
     ordinary = authority()
     packet = compile_work_packet("Proceed.", ordinary, kind=IntentKind.BOUNDED_EXECUTION)

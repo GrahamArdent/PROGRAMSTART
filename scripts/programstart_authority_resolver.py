@@ -250,6 +250,10 @@ def compose_decision_operationalization_currentness(
         )
     if not isinstance(binding, DecisionOperationalizationBinding):
         raise AuthorityResolutionError("decision operationalization currentness binding is not typed/validated")
+    try:
+        binding = DecisionOperationalizationBinding.model_validate(binding.model_dump(mode="python"))
+    except ValidationError as exc:
+        raise AuthorityResolutionError("decision operationalization currentness binding is no longer valid") from exc
     if authority.decision_operationalization is not None and authority.decision_operationalization != binding:
         raise AuthorityResolutionError("resolved authority already carries a different decision operationalization binding")
     return authority.model_copy(update={"decision_operationalization": binding})

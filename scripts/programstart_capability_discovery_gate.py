@@ -140,6 +140,7 @@ class PathsDiscoveryEvidence(BaseModel):
 class CapabilityDiscoveryDecision(BaseModel):
     conclusion: CapabilityConclusion
     discovery: PathsDiscoveryEvidence | None = None
+    reuse_preflight: ReusePreflight | None = None
 
 
 def validate_capability_discovery(decision: CapabilityDiscoveryDecision) -> None:
@@ -160,6 +161,11 @@ def validate_capability_discovery(decision: CapabilityDiscoveryDecision) -> None
     if decision.conclusion == CapabilityConclusion.NEW_CAPABILITY_REQUIRED:
         if result.classification != "GENUINELY_NEW_PATH_REQUIRED":
             raise ValueError("new_capability_required requires Paths classification GENUINELY_NEW_PATH_REQUIRED")
+        if decision.reuse_preflight is None:
+            raise ValueError("DISCOVERY_INCOMPLETE: NEW requires owner-native reuse preflight")
+        validate_reuse_preflight(decision.reuse_preflight)
+        if decision.reuse_preflight.decision != "NEW" or not decision.reuse_preflight.material_reusable_delta:
+            raise ValueError("new_capability_required requires a material NEW reuse decision")
 
     if decision.conclusion == CapabilityConclusion.HUMAN_REQUIRED:
         if not evidence.owner_native_verification_refs:
@@ -370,3 +376,62 @@ def validate_failure_localization(decision: FailureLocalizationDecision) -> None
         return
 
     raise ValueError(f"unsupported failure-localization action: {action}")
+
+
+class DiscoverySearchReceipt(BaseModel):
+    source_kind: Literal["registry", "blueprint", "composition", "issues", "merged_prs", "code"]
+    repository: str = Field(pattern=r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
+    source_commit_sha: str = Field(pattern=r"^[0-9a-f]{40}$")
+    query: str = Field(min_length=1)
+    observed_at: str = Field(min_length=1)
+    coverage: Literal["complete", "failed", "truncated"]
+    result_ref: str = Field(min_length=1)
+    result_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    matched_capability_refs: tuple[str, ...] = ()
+
+    @model_validator(mode="after")
+    def normalized(self) -> DiscoverySearchReceipt:
+        values = (self.query, self.observed_at, self.result_ref, *self.matched_capability_refs)
+        if any(not value.strip() or value != value.strip() for value in values):
+            raise ValueError("discovery search receipt values must be normalized")
+        if len(self.matched_capability_refs) != len(set(self.matched_capability_refs)):
+            raise ValueError("matched capability references must be unique")
+        return self
+
+
+class ReusePreflight(BaseModel):
+    material_reusable_delta: bool
+    required_owner_repositories: tuple[str, ...] = ()
+    searches: tuple[DiscoverySearchReceipt, ...] = ()
+    decision: Literal["REUSE", "EXTEND", "COMPOSE", "NEW", "NONMATERIAL"]
+    rationale: str = Field(min_length=1)
+    authorization_inferred: Literal[False] = False
+
+
+def validate_reuse_preflight(preflight: ReusePreflight) -> None:
+    """Coverage gate, not a search engine or proof that caller receipts are truthful."""
+    if not preflight.material_reusable_delta:
+        if preflight.decision != "NONMATERIAL":
+            raise ValueError("nonmaterial changes require NONMATERIAL disposition")
+        return
+    owners = preflight.required_owner_repositories
+    if not owners or len(owners) != len(set(owners)):
+        raise ValueError("DISCOVERY_INCOMPLETE: unique relevant producer owners required")
+    required = {("GrahamArdent/paths", k) for k in ("registry", "blueprint", "composition")}
+    required.update((repo, k) for repo in owners for k in ("issues", "merged_prs", "code"))
+    covered = {(s.repository, s.source_kind) for s in preflight.searches if s.coverage == "complete"}
+    if required - covered:
+        raise ValueError(
+            "DISCOVERY_INCOMPLETE: registry/blueprint/composition and owner issues/merged PRs/code coverage required"
+        )
+    for repo in {*owners, "GrahamArdent/paths"}:
+        relevant = [s for s in preflight.searches if s.repository == repo and (repo, s.source_kind) in required]
+        if len({s.source_commit_sha for s in relevant}) != 1:
+            raise ValueError("DISCOVERY_INCOMPLETE: source currentness differs within an owner")
+    if preflight.decision == "NONMATERIAL":
+        raise ValueError("material delta cannot use NONMATERIAL disposition")
+    if preflight.decision == "NEW" and any(s.matched_capability_refs for s in preflight.searches):
+        raise ValueError("EXISTING_CAPABILITY_FOUND: NEW rejected; reconcile REUSE/EXTEND/COMPOSE")
+
+
+CapabilityDiscoveryDecision.model_rebuild()

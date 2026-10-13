@@ -227,6 +227,10 @@ Select only the lenses relevant to the actual change. Common lenses are:
 - **false success** — can the system report success before the required durable/observable outcome exists?
 - **false suppression** — can unfinished or failed work be mistaken for already-completed work and suppressed?
 
+For material cross-system acceptance, challenge test-authority confusion, effects outside START/STOP, participant capture of foreign closure, and false chat independence. A real originating release dependency must remain blocking even when its work is handed off. An evidence owner must not mint execution or universal acceptance authority.
+
+For consequential control/recovery acceptance, distinguish process liveness from useful end-to-end transaction/progress. Identify shared normal/recovery process, state, credential, network and consumer-loop failure domains. Recovery must not depend exclusively on the mechanism it must repair. Test the relevant failure boundary when required by the accepted consequence; name unavoidable shared host/kernel/network dependencies as residuals. Structural health or a green component test cannot certify stronger recovery behavior.
+
 The reviewer should prefer the smallest counterexample set that covers the material invariants. One strong realistic sequence is better than ten generic hypotheticals.
 
 If a counterexample exposes a plausible invariant violation:

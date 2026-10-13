@@ -343,6 +343,12 @@ Agents SHOULD prefer retrieval and just-in-time loading over repeatedly stuffing
 
 ---
 
+### 7.1 Objective-level convergence
+
+JIT context remains anchored to an authority-derived terminal condition. At a material transition, ask which part of that condition the next action advances or protects. Load context for current uncertainty, dependency, consequence or proof, and classify discoveries as blocking, required dependency, non-blocking relevant or unrelated. Continue authorized machine-safe dependencies through existing Work Packet lifecycle; locally green intermediate artifacts are not completion. Route useful non-blocking findings without abandoning the objective. Authority/evidence may legitimately revise the condition, and stronger gates still govern their exact consequence. Anti-drift does not authorize unrelated cleanup or a new continuation engine.
+
+---
+
 ## 8. Evidence Reuse And Re-Verification
 
 Verified evidence SHOULD be reused until something material could have invalidated it.

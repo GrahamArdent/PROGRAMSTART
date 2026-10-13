@@ -118,6 +118,10 @@ PROGRAMSTART has no interactive user login flow. The dominant end-to-end validat
 - **Dashboard smoke** (`programstart_dashboard_smoke.py`): Lightweight HTTP-level smoke against the running server.
 - Smoke scripts are orchestrated by `noxfile.py` sessions and CI workflows (`process-guardrails.yml`, `full-ci-gate.yml`).
 
+### Cross-system and chat-detachment claims
+
+For chat-detachment acceptance, admit the semantic objective durably before detachment. Continuing process activity alone does not prove independent useful progression. Verify bounded backend continuation from admitted authority without later chat-carried command, target, polling state or resume data. Required later chat relay falsifies that claim; a reconnecting display alone need not. Apply the Work Packet cross-system envelope per proposition and keep provider/runtime/secret effects within independent execution authority.
+
 ## Fixture Strategy
 
 | Fixture type | Purpose | Owner |

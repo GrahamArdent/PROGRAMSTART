@@ -103,6 +103,15 @@ TARGETED_VERIFICATION:
 DURABLE_UPDATES_IF_NEEDED:
 ```
 
+Conditional objective-convergence fields — use when a non-trivial packet has material intermediate outcomes or discoveries:
+
+```text
+TERMINAL_CONDITION: authority-derived observable completion condition
+DISCOVERY_DISPOSITION: [none | blocking | required_dependency | non_blocking_relevant | unrelated] + owner/route when applicable
+```
+
+These fields describe the selected objective; they cannot invent its scope or permissions. A blocking finding invalidates a required premise or prevents truthful closure. A required dependency must be satisfied or reach an authority-permitted disposition before parent closure. Non-blocking relevant findings may be preserved/routed; unrelated findings stay outside this packet. Existing lifecycle dependency continuation remains authoritative. Omit these fields for trivial work when acceptance criteria already express the terminal condition without ambiguity.
+
 Conditional shared-mutation ownership fields — include only when coordinated/current lanes can mutate the same consequential external/runtime/provider/device/deployment resource:
 
 ```text
@@ -327,6 +336,34 @@ Closure statuses:
 An unchecked/forgotten required item is not equivalent to `not applicable` or `deferred`.
 
 Do not create a universal persisted checklist registry. Do not convert checklists into a second Master. Reuse existing checklists when applicable and discard/close derived slice checklists with the packet.
+
+---
+
+### 3.5 Material cross-system test envelope
+
+A material cross-system test has exactly one TEST_AUTHORITY per behavioral proposition. Goal authority owns the desired outcome; execution authority permits effects; test authority owns the proposition, bounded START/STOP and verdict criteria; evidence authority validates provenance, binding and currentness; acceptance authority decides whether the declared claim is satisfied. Evidence coherence and test ownership grant no execution authority. Nested participant-local propositions may have their own test owners.
+
+For a proposition crossing repository/runtime/provider/device/authority boundaries where ownership is materially ambiguous, retain only the useful envelope:
+
+```text
+BEHAVIOR_UNDER_TEST:
+TEST_AUTHORITY:
+GOAL_AUTHORITY:
+EXECUTION_AUTHORITY:
+EVIDENCE_AUTHORITY:
+ACCEPTANCE_AUTHORITY:
+PARTICIPATING_SYSTEMS: owner-local input/output/evidence contracts
+START_CONDITION:
+AUTHORIZED_TEST_EFFECTS:
+PROHIBITED_TEST_EFFECTS:
+STOP_CONDITION:
+VERDICT_CRITERIA:
+OWNER_HANDOFFS:
+```
+
+Ordinary unit/component tests need no envelope. Participation does not transfer backlog or closure ownership. Route foreign findings to their owning authority; a foreign outcome blocks the origin only when current originating product/release authority genuinely requires it.
+
+Recommendation accountability and foreign implementation are distinct. For a material multi-part accepted recommendation, reuse the existing activated checklist to account for each independently dispositionable obligation as implemented-and-accepted, rejected-with-evidence, superseded-by-accepted-solution, or explicitly-deferred-to-owner. Deferral disposes the origin's recommendation-accountability obligation only; it neither proves foreign completion nor releases a genuinely required product/release dependency. Preserve the exact owner, dependency, acceptance evidence and invalidation needed for that disposition. Do not create a global obligation registry or new lifecycle.
 
 ---
 

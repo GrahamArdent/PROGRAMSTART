@@ -6968,9 +6968,17 @@
         "owner_handoff",
         "exact_machine_currentness_binding"
       ],
-      "instance_status": "unproven",
+      "instance_status": "proven",
       "evidence_refs": [
-        "GrahamArdent/PROGRAMSTART#147"
+        "GrahamArdent/PROGRAMSTART#147",
+        "GrahamArdent/programstart-compute-spine@1f40df1a8f12cbfdfc6e1607109e3e3042ccdf6d:control/controller-requests/req-controller-hop036-native-reconcile-1791857930701.json",
+        "GrahamArdent/programstart-compute-spine:control/controller-results/req-controller-hop036-native-reconcile-1791857930701/result.json",
+        "GrahamArdent/programstart-compute-spine:control/controller-results/req-controller-hop036-postrestart-replay-1791858067203/result.json",
+        "GrahamArdent/programstart-autonomous-controller#373",
+        "GrahamArdent/programstart-autonomous-controller#374",
+        "GrahamArdent/execution-node-control#425",
+        "GrahamArdent/secrets-control-plane#163",
+        "GrahamArdent/secrets-control-plane#166"
       ],
       "invalidation": [
         "Decision Lifecycle authority, repository admission, lifecycle schema, target intake, or owner role changes."

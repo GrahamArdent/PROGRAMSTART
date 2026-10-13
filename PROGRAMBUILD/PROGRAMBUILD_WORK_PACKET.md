@@ -363,6 +363,8 @@ OWNER_HANDOFFS:
 
 Ordinary unit/component tests need no envelope. Participation does not transfer backlog or closure ownership. Route foreign findings to their owning authority; a foreign outcome blocks the origin only when current originating product/release authority genuinely requires it.
 
+For chat-detachment acceptance, admit the semantic objective durably before detachment. Continuing process activity alone does not prove independent useful progression. Verify bounded backend continuation from admitted authority without later chat-carried command, target, polling state or resume data. Required later chat relay falsifies that claim; a reconnecting display alone need not. Keep provider/runtime/secret effects within independent execution authority.
+
 Recommendation accountability and foreign implementation are distinct. For a material multi-part accepted recommendation, reuse the existing activated checklist to account for each independently dispositionable obligation as implemented-and-accepted, rejected-with-evidence, superseded-by-accepted-solution, or explicitly-deferred-to-owner. Deferral disposes the origin's recommendation-accountability obligation only; it neither proves foreign completion nor releases a genuinely required product/release dependency. Preserve the exact owner, dependency, acceptance evidence and invalidation needed for that disposition. Do not create a global obligation registry or new lifecycle.
 
 ---

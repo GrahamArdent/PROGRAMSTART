@@ -1,7 +1,7 @@
 # Verification Economics Promotion — 2026-09-13
 
-**Classification:** systemic methodology learning / promotion evidence  
-**Maturity result:** `implemented`  
+**Classification:** systemic methodology learning / promotion evidence
+**Maturity result:** `implemented`
 **Owner:** PROGRAMSTART verification / Challenge / Cost Governance surfaces
 
 ## Real evidence
@@ -46,7 +46,7 @@ This behavior is materially distinct from generic Cost Governance (`PSL-014`) an
 
 A dedicated rollup lesson is therefore earned.
 
-**Proposed rollup:** `PSL-023 — verification economics / evidence-invalidated hosted acceptance`  
+**Proposed rollup:** `PSL-023 — verification economics / evidence-invalidated hosted acceptance`
 **Maturity:** `implemented`
 
 It is not yet `validated` as generic methodology merely because the four pilots preceded promotion. Validation requires a natural project to consume the now-current PROGRAMSTART protocol and demonstrate that:

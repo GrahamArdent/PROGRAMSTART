@@ -2,7 +2,7 @@
 
 Status: subordinate historical-evidence reconciliation; not an execution spine, maturity promotion, runtime proof or authority grant.
 
-This record preserves seven unique observations from open proposals against PROGRAMSTART main `9c02c169920b852de5538435931308f7ea3ba7c7`. Original observation bytes are retained, including historical IDs/maturity. Current canonical policy and the current Learning Ledger govern interpretation. Historical statements of IMPLEMENTED/VALIDATED below do not automatically apply to current runtime or every path.
+This record preserves seven unique observations from open proposals against PROGRAMSTART main `9c02c169920b852de5538435931308f7ea3ba7c7`. Original observation content is retained, including historical IDs/maturity. Current canonical policy and the current Learning Ledger govern interpretation. Historical statements of IMPLEMENTED/VALIDATED below do not automatically apply to current runtime or every path.
 
 ## Current disposition
 
@@ -37,7 +37,7 @@ This record preserves seven unique observations from open proposals against PROG
 
 ## Verification and Challenge
 
-All seven source blobs were freshly read by exact proposal head and compared with the prior audit inventory; current main's complete recursive tree contained none of these exact paths. The successor tree reuses those existing Git blobs without edits. Hosted PR validation is required before any old container closes. Exact accepted main readback must match each source blob.
+All seven source blobs were freshly read by exact proposal head and compared with the prior audit inventory; current main's complete recursive tree contained none of these exact paths. Six observations reuse existing Git blobs without edits. #112's observation has trailing whitespace removed to satisfy the unchanged required repository hook; substantive content is unchanged and original exact bytes remain available at its recorded source head. Initial PR validation38338108952 rejected that whitespace, and its failed receipt is preserved. Hosted PR validation is required before any old container closes. Accepted main readback must match each source blob or, for #112, exactly its documented trailing-whitespace normalization.
 
 Challenge result: CLEAR for evidence preservation only. Historical evidence can contain superseded interpretation; this index explicitly subordinates it to current owners. No claim of fresh product execution, gate triggering, runtime acceptance, usage savings or complete global audit is made. Remaining semantic/test candidates keep their independent acceptance obligations.
 

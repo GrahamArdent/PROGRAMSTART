@@ -188,6 +188,8 @@ For proof-bearing PROGRAMSTART evidence:
 - a green validator is not durable proof when the asserted checks were not actually executable or otherwise independently shown to run;
 - methodology changes implementing this invariant receive no exemption: their own proof must satisfy the same durability gate before merge.
 
+For live/runtime/provider proof, retain canonical effect identity, current owner binding, the independently executable proof mechanism, a meaningful persistence boundary, an executable falsifier/negative-control reference, a non-sensitive retest recipe and invalidation conditions. A historical PASS alone does not prove present live durability. Independently verify the accepted property after its original acceptance using the owner-admitted replay, postcondition or bounded failure test appropriate to that property; do not blindly repeat an irreversible effect merely to reproduce it. Historical acceptance, pending durability, current durable proof and invalidation are evidence distinctions, not new runtime lifecycle/schema states.
+
 This invariant constrains proof consumption; it does not turn every observation into durable state or broaden project authority.
 
 ## 10. Safety and Privacy

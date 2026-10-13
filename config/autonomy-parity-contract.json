@@ -25,17 +25,17 @@
     },
     {
       "path": "PROGRAMBUILD/PROGRAMBUILD_WORK_PACKET.md",
-      "sha256": "7569c897-9e5e9f2a-b7f1d2eb-ba4476f7-c27912f1-1dd70b25-3433aa8a-9281d6da",
+      "sha256": "3ee39444-5ef42e84-b70c450c-84aeeae3-93eada14-f4ac9924-a72002fc-d74138ed",
       "role": "bounded packet semantics"
     },
     {
       "path": "PROGRAMBUILD/PROGRAMBUILD_PLANNING_OPERATING_MODEL.md",
-      "sha256": "4ca4825aa77f4f2f867c23e75aaeabaed2dd9615b55dd46a8234e81e70bf56e5",
+      "sha256": "ef96bc9d-3d713548-f3336eee-cebb6f41-53d6ae66-f790ed73-21bf992d-a4050ee3",
       "role": "planning and adaptive decision semantics"
     },
     {
       "path": "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
-      "sha256": "333e3be825b9e21cd806ba8ee1e8ba70b9a4e8b907d05e8bac27e26254eeef33",
+      "sha256": "8c124c5a-06098dae-61e6bddc-a6c1f338-a62de7e7-f7e8b19a-aeab0a6c-8cb00698",
       "role": "Challenge contract"
     },
     {
@@ -45,7 +45,7 @@
     },
     {
       "path": "docs/PROGRAMSTART_LEARNING_LOOP.md",
-      "sha256": "618ec42f-470066d0-03ee7b51-1afc624d-7e3357f1-d22dab2e-b9d59c63-ca695374",
+      "sha256": "b179533b-aa6d6ba3-22e1ce58-6e683df6-5d7e7fc7-2760a7fb-2711c6ba-c6245352",
       "role": "Learning Gate"
     },
     {
@@ -3214,6 +3214,55 @@
       "required": true,
       "kind": "prompt_contract_schema",
       "section": "PROGRAMSTART Learning Gate"
+    },
+    {
+      "id": "reconciliation.objective_fields",
+      "source_path": "PROGRAMBUILD/PROGRAMBUILD_WORK_PACKET.md",
+      "anchor": "Conditional objective-convergence fields",
+      "required": true,
+      "kind": "semantic_clause"
+    },
+    {
+      "id": "reconciliation.test_authority",
+      "source_path": "PROGRAMBUILD/PROGRAMBUILD_WORK_PACKET.md",
+      "anchor": "A material cross-system test has exactly one TEST_AUTHORITY per behavioral proposition.",
+      "required": true,
+      "kind": "semantic_clause"
+    },
+    {
+      "id": "reconciliation.recommendation_accountability",
+      "source_path": "PROGRAMBUILD/PROGRAMBUILD_WORK_PACKET.md",
+      "anchor": "Recommendation accountability and foreign implementation are distinct.",
+      "required": true,
+      "kind": "semantic_clause"
+    },
+    {
+      "id": "reconciliation.jit_convergence",
+      "source_path": "PROGRAMBUILD/PROGRAMBUILD_PLANNING_OPERATING_MODEL.md",
+      "anchor": "JIT context remains anchored to an authority-derived terminal condition.",
+      "required": true,
+      "kind": "semantic_clause"
+    },
+    {
+      "id": "reconciliation.control_failure_domains",
+      "source_path": "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
+      "anchor": "For consequential control/recovery acceptance, distinguish process liveness from useful end-to-end transaction/progress.",
+      "required": true,
+      "kind": "semantic_clause"
+    },
+    {
+      "id": "reconciliation.cross_system_challenge",
+      "source_path": "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
+      "anchor": "For material cross-system acceptance, challenge test-authority confusion, effects outside START/STOP, participant capture of foreign closure, and false chat independence.",
+      "required": true,
+      "kind": "semantic_clause"
+    },
+    {
+      "id": "reconciliation.live_durability",
+      "source_path": "docs/PROGRAMSTART_LEARNING_LOOP.md",
+      "anchor": "For live/runtime/provider proof, retain canonical effect identity",
+      "required": true,
+      "kind": "semantic_clause"
     }
   ],
   "pending_methodology_deltas": [],
@@ -3350,7 +3399,8 @@
         "prompt.prose.019",
         "prompt.prose.020",
         "prompt.prose.039",
-        "prompt.schema.001"
+        "prompt.schema.001",
+        "reconciliation.jit_convergence"
       ],
       "trigger": [
         "when the covered autonomy obligation is active"
@@ -3726,7 +3776,8 @@
         "prompt.prose.049",
         "prompt.prose.050",
         "prompt.prose.054",
-        "prompt.schema.002"
+        "prompt.schema.002",
+        "reconciliation.recommendation_accountability"
       ],
       "trigger": [
         "when the covered autonomy obligation is active"
@@ -3886,7 +3937,8 @@
         "support.work_packet.07",
         "support.challenge.10",
         "prompt.normative.017",
-        "prompt.prose.026"
+        "prompt.prose.026",
+        "reconciliation.test_authority"
       ],
       "trigger": [
         "when the covered autonomy obligation is active"
@@ -4662,7 +4714,9 @@
         "support.challenge.10",
         "support.challenge.11",
         "support.challenge.12",
-        "prompt.normative.030"
+        "prompt.normative.030",
+        "reconciliation.control_failure_domains",
+        "reconciliation.cross_system_challenge"
       ],
       "trigger": [
         "when the covered autonomy obligation is active"
@@ -5222,7 +5276,8 @@
         "prompt.normative.097",
         "prompt.normative.098",
         "prompt.normative.099",
-        "prompt.normative.100"
+        "prompt.normative.100",
+        "reconciliation.objective_fields"
       ],
       "trigger": [
         "when the covered autonomy obligation is active"
@@ -5269,7 +5324,8 @@
         "support.work_packet.17",
         "support.work_packet.25",
         "support.planning.15",
-        "prompt.prose.068"
+        "prompt.prose.068",
+        "reconciliation.live_durability"
       ],
       "trigger": [
         "when the covered autonomy obligation is active"

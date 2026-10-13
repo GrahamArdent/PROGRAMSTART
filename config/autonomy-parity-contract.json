@@ -6803,10 +6803,14 @@
         "owner_handoff",
         "exact_machine_currentness_binding"
       ],
-      "instance_status": "partial",
+      "instance_status": "proven",
       "evidence_refs": [
         "GrahamArdent/repo-watchtower#16",
-        "GrahamArdent/execution-node-control#188"
+        "GrahamArdent/execution-node-control#188",
+        "GrahamArdent/programstart-compute-spine:control/controller-results/req-controller-hop027-native-acceptance-1791870276698/result.json",
+        "GrahamArdent/programstart-compute-spine:control/controller-results/req-controller-hop027-postrestart-replay-1791870427318/result.json",
+        "GrahamArdent/execution-node-control#427",
+        "GrahamArdent/programstart-autonomous-controller#377"
       ],
       "invalidation": [
         "Watchtower authority, schema/runtime release, provider admission, owner-intake, or sensor/consumer contract changes."
@@ -6875,9 +6879,14 @@
         "owner_handoff",
         "exact_machine_currentness_binding"
       ],
-      "instance_status": "unproven",
+      "instance_status": "proven",
       "evidence_refs": [
-        "GrahamArdent/PROGRAMSTART#147"
+        "GrahamArdent/PROGRAMSTART#147",
+        "GrahamArdent/programstart-compute-spine:control/controller-results/req-controller-hop030-native-acceptance-1791869573470/result.json",
+        "GrahamArdent/programstart-compute-spine:control/controller-results/req-controller-hop030-postrestart-replay-1791869700075/result.json",
+        "GrahamArdent/secrets-control-plane#169",
+        "GrahamArdent/secrets-control-plane#170",
+        "GrahamArdent/programstart-autonomous-controller#376"
       ],
       "invalidation": [
         "Dependency-intelligence authority, repository admission, target intake, or role in the convergence chain changes."

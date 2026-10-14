@@ -6779,10 +6779,19 @@
         "owner_handoff",
         "exact_machine_currentness_binding"
       ],
-      "instance_status": "partial",
+      "instance_status": "proven",
       "evidence_refs": [
         "GrahamArdent/execution-node-control#218",
-        "GrahamArdent/programstart-autonomous-controller#88"
+        "GrahamArdent/programstart-autonomous-controller#88",
+        "GrahamArdent/mission-control#29",
+        "GrahamArdent/secrets-control-plane#172",
+        "GrahamArdent/execution-node-control#433",
+        "GrahamArdent/programstart-compute-spine#166",
+        "GrahamArdent/programstart-compute-spine#167",
+        "GrahamArdent/programstart-autonomous-controller#388",
+        "GrahamArdent/programstart-autonomous-controller#389",
+        "GrahamArdent/programstart-compute-spine@8c6fa6ecab21160520ae7fb432211940dc23cdeb:control/controller-results/req-controller-hop026-envelope-recovered-acceptance-1791935292171/result.json",
+        "GrahamArdent/programstart-compute-spine@8c6fa6ecab21160520ae7fb432211940dc23cdeb:control/controller-results/req-controller-hop026-postrestart-replay-1791935380819/result.json"
       ],
       "invalidation": [
         "Mission-Control authority, private repository admission, deployed release, objective transport, or target intake changes."

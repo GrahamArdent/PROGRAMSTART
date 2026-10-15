@@ -43,10 +43,12 @@ def comment(number=1, payload=None, *, user_id=42):
 def snapshot():
     return {
         "methodology_sha": POLICY,
+        "target_ref": "refs/heads/main",
+        "target_sha": "c" * 40,
         "repository": {"full_name": REPO, "owner": {"id": 42, "login": "GrahamArdent"}},
         "pull": {
             "number": 7,
-            "base": {"repo": {"full_name": REPO}, "sha": "c" * 40},
+            "base": {"repo": {"full_name": REPO}, "ref": "main", "sha": "c" * 40},
             "head": {"sha": HEAD},
             "draft": False,
             "state": "open",
@@ -306,7 +308,8 @@ def test_late_same_head_blocker_prevents_effect():
 def merged(value):
     result = copy.deepcopy(value)
     result["pull"].update(state="closed", merged=True, merge_commit_sha="f" * 40)
-    result["merge_parent_shas"] = [value["pull"]["base"]["sha"]]
+    result["merge_parent_shas"] = [value["target_sha"]]
+    result["target_sha"] = "f" * 40
     return result
 
 
@@ -356,7 +359,7 @@ def test_unrelated_authority_or_base_advance_is_not_normalized(change):
     elif change == "parent":
         after["merge_parent_shas"] = ["e" * 40]
     else:
-        after["pull"]["base"]["sha"] = "e" * 40
+        after["target_sha"] = "e" * 40
     reads = iter([value, value, after])
     result = guarded_merge(lambda: next(reads), lambda _: {"merged": True, "sha": "f" * 40}, REPO, 7, HEAD, POLICY)
     assert result["status"] == "MERGED_BUT_UNACCEPTED"
@@ -403,3 +406,58 @@ def test_no_silent_truncation_at_full_api_page(monkeypatch):
     monkeypatch.setattr(github, "api", api)
     assert len(github.pages("repos/OWNER/REPO/issues/7/comments")) == 101
     assert calls[-1].endswith("page=2")
+
+
+def test_old_pr_base_metadata_does_not_replace_live_target_ref():
+    value = snapshot()
+    value["pull"]["base"]["sha"] = "d" * 40
+    reads = iter([value, value, merged(value)])
+    result = guarded_merge(lambda: next(reads), lambda _: {"merged": True, "sha": "f" * 40}, REPO, 7, HEAD, POLICY)
+    assert result["status"] == "MERGED_REQUIRES_OWNER_RECONCILIATION"
+
+
+def test_target_moves_between_reads_no_effect_even_if_pr_base_stays_old():
+    before = snapshot()
+    after = copy.deepcopy(before)
+    after["target_sha"] = "d" * 40
+    effects = []
+    reads = iter([before, after])
+    with pytest.raises(AdmissionDenied, match="evidence changed"):
+        guarded_merge(lambda: next(reads), lambda h: effects.append(h), REPO, 7, HEAD, POLICY)
+    assert effects == []
+
+
+@pytest.mark.parametrize("change", [{"target_ref": "refs/heads/foreign"}, {"target_sha": None}, {"target_sha": "bad"}])
+def test_missing_or_foreign_live_target_denies(change):
+    value = snapshot()
+    value.update(change)
+    with pytest.raises(AdmissionDenied):
+        check(value)
+
+
+def test_api_adapter_reads_actual_named_target_reference(monkeypatch):
+    github = adapter.GitHub()
+    value = snapshot()
+    value["pull"]["base"]["sha"] = "d" * 40
+    value["target_sha"] = POLICY
+    calls = []
+
+    def api(path):
+        calls.append(path)
+        if path.endswith("/pulls/7"):
+            return value["pull"]
+        if path.endswith("/git/ref/heads/main") and path.startswith("repos/" + REPO):
+            return {"ref": "refs/heads/main", "object": {"type": "commit", "sha": POLICY}}
+        if path == "repos/GrahamArdent/PROGRAMSTART/git/ref/heads/main":
+            return {"object": {"sha": POLICY}}
+        if path == "repos/" + REPO:
+            return value["repository"]
+        raise AssertionError(path)
+
+    monkeypatch.setattr(github, "api", api)
+    monkeypatch.setattr(github, "pages", lambda path: value["comments"] if "/comments" in path else [])
+    actual = github.snapshot(REPO, 7)
+    assert actual["target_sha"] == POLICY
+    assert actual["pull"]["base"]["sha"] == "d" * 40
+    assert check(actual) == check(value)
+    assert "repos/" + REPO + "/git/ref/heads/main" in calls

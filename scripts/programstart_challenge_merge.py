@@ -16,6 +16,7 @@ import subprocess
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
+from urllib.parse import quote
 
 MARKER = "PROGRAMSTART_CHALLENGE_DISPOSITION_V1\n"
 WITHDRAWAL_MARKER = "PROGRAMSTART_CHALLENGE_CLEAR_WITHDRAWAL_V1\n"
@@ -143,11 +144,16 @@ def admit(
     _require(pull["number"] == pr and pull["base"]["repo"]["full_name"] == repository, "PR mismatch")
     _require(pull["head"]["sha"] == head, "candidate changed")
     _require(not pull["draft"], "draft PR")
+    target_ref = snapshot.get("target_ref")
+    target_sha = snapshot.get("target_sha")
+    _require(isinstance(pull["base"].get("ref"), str) and bool(pull["base"]["ref"]), "target branch unavailable")
+    _require(target_ref == "refs/heads/" + pull["base"]["ref"], "target reference mismatch")
+    _require(isinstance(target_sha, str) and SHA.fullmatch(target_sha) is not None, "target reference SHA unavailable")
     if after_merge:
         _require(pull["state"] == "closed" and pull["merged"] is True, "merge poststate unavailable")
         _require(admitted_base is not None, "admitted base missing")
         _require(snapshot["merge_parent_shas"] == [admitted_base], "squash merge parent differs from admitted base")
-        _require(pull["base"]["sha"] in {admitted_base, pull["merge_commit_sha"]}, "base advanced beyond observed effect")
+        _require(target_sha in {admitted_base, pull["merge_commit_sha"]}, "base advanced beyond observed effect")
     else:
         _require(pull["state"] == "open" and not pull["merged"], "PR is not open and unmerged")
         _require(pull["mergeable"] is True and pull["mergeable_state"] == "clean", "native merge readiness unavailable")
@@ -233,7 +239,8 @@ def admit(
         "owner": owner,
         "pr": pr,
         "head": head,
-        "base": admitted_base if after_merge else pull["base"]["sha"],
+        "base": admitted_base if after_merge else target_sha,
+        "target_ref": target_ref,
         "reviews": snapshot["reviews"],
         "comments": comments,
     }
@@ -280,6 +287,9 @@ class GitHub:
     def snapshot(self, repository: str, pr: int) -> dict[str, Any]:
         base = f"repos/{repository}"
         pull = self.api(f"{base}/pulls/{pr}")
+        branch = pull["base"].get("ref")
+        _require(isinstance(branch, str) and bool(branch), "target branch unavailable")
+        target = self.api(f"{base}/git/ref/heads/{quote(branch, safe='')}")
         parents = []
         if pull.get("merged"):
             commit = pull.get("merge_commit_sha")
@@ -289,6 +299,8 @@ class GitHub:
             "methodology_sha": self.api("repos/GrahamArdent/PROGRAMSTART/git/ref/heads/main")["object"]["sha"],
             "repository": self.api(base),
             "pull": pull,
+            "target_ref": target.get("ref"),
+            "target_sha": (target.get("object") or {}).get("sha"),
             "merge_parent_shas": parents,
             "reviews": self.pages(f"{base}/pulls/{pr}/reviews"),
             "comments": self.pages(f"{base}/issues/{pr}/comments"),
@@ -326,9 +338,7 @@ def guarded_merge(
     try:
         observed = read()
         _require(observed["pull"].get("merge_commit_sha") == result.get("sha"), "merge receipt mismatch")
-        after = admit(
-            observed, repository, pr, head, methodology, after_merge=True, admitted_base=confirmation["pull"]["base"]["sha"]
-        )
+        after = admit(observed, repository, pr, head, methodology, after_merge=True, admitted_base=confirmation["target_sha"])
         _require(after == current, "Challenge evidence changed during merge")
     except (AdmissionDenied, KeyError, TypeError, OSError, subprocess.SubprocessError, ValueError):
         return {

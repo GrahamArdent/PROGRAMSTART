@@ -60,7 +60,32 @@ explicitly dismissed through GitHub's existing authorized review process.
 The adapter never dismisses a review or publishes its own clearance.
 
 Append dispositions rather than editing them. Edited or malformed recognized
-owner records fail closed. GitHub comments are mutable by privileged actors:
+owner records fail closed. To revoke a structured positive assertion, or recover
+from its invalid positive metadata, append an authenticated owner withdrawal:
+
+```text
+PROGRAMSTART_CHALLENGE_CLEAR_WITHDRAWAL_V1
+{"repository":"OWNER/REPO","pr":123,"comment_id":456,"body_sha256":"SHA256_OF_EXACT_ORIGINAL_COMMENT_BODY_UTF8","reason":"ACTUAL_WITHDRAWAL_REASON","evidence_refs":["ACTUAL_CORRECTION_OR_REVOCATION_EVIDENCE"]}
+```
+
+The original record must remain present and unedited, match both provider owner
+identity and work item, and have the V1 fields with `result: clear`, empty
+findings, merge scope and valid head/methodology SHAs. Invalid resolutions in
+that positive record need not be interpreted before withdrawal. Unknown/edited
+targets, wrong hashes, forward references, arbitrary malformed bodies, blocked
+records and legacy prose blockers cannot be withdrawn this way. The withdrawal
+itself must remain unedited with nonempty reason and proof references.
+
+Withdrawal removes the named positive assertion and its resolutions, so the
+original blockers survive/reappear. It also invalidates earlier same-head CLEARs
+at that point in history: an older positive record cannot silently revive after
+revocation. A new later exact-head/current-methodology CLEAR must explicitly
+resolve every retained blocker. Withdrawals confer no acceptance or permission,
+and never withdraw negative evidence. They participate in the existing evidence
+digest/re-read/postmerge checks; a late observed withdrawal prohibits acceptance
+or activation just as an observed new blocker does.
+
+GitHub comments are mutable by privileged actors:
 this is not a cryptographically append-only ledger, and deletion before a
 first read cannot be detected by this adapter. Existing trusted owner evidence
 must retain required history. Do not use this path when stronger immutable

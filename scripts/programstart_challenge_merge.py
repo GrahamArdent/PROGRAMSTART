@@ -18,9 +18,11 @@ from pathlib import Path
 from typing import Any
 
 MARKER = "PROGRAMSTART_CHALLENGE_DISPOSITION_V1\n"
+WITHDRAWAL_MARKER = "PROGRAMSTART_CHALLENGE_CLEAR_WITHDRAWAL_V1\n"
 SHA = re.compile(r"^[0-9a-f]{40}$")
 REPOSITORY = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
 FIELDS = {"repository", "pr", "head_sha", "methodology_sha", "scope", "result", "findings", "resolutions", "evidence_refs"}
+WITHDRAWAL_FIELDS = {"repository", "pr", "comment_id", "body_sha256", "reason", "evidence_refs"}
 
 
 class AdmissionDenied(ValueError):
@@ -47,6 +49,73 @@ def _unique(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
         _require(key not in result, "duplicate disposition field")
         result[key] = value
     return result
+
+
+def _is_owner(comment: dict[str, Any], owner: dict[str, Any]) -> bool:
+    user = comment.get("user") or {}
+    return user.get("id") == owner["id"] and user.get("login") == owner["login"]
+
+
+def _clear_withdrawals(comments, owner, repository, pr):
+    """Append-only revocation of positive assertions; never erase a blocker.
+
+    Preprocess references so an invalid positive record can be withdrawn before
+    its invalid resolutions are interpreted. Original body/author/order remain
+    authenticated and hashed. At the withdrawal event a same-head CLEAR barrier
+    is applied, so falling back to an older CLEAR cannot undo revocation.
+    """
+    by_id = {comment["id"]: comment for comment in comments}
+    withdrawn = set()
+    barriers = {}
+    for comment in sorted(comments, key=lambda item: item["id"]):
+        body = comment.get("body") or ""
+        if not _is_owner(comment, owner) or not body.startswith(WITHDRAWAL_MARKER):
+            continue
+        _require(comment.get("created_at") == comment.get("updated_at"), "withdrawal was edited")
+        try:
+            record = json.loads(body[len(WITHDRAWAL_MARKER) :], object_pairs_hook=_unique)
+            _require(isinstance(record, dict) and set(record) == WITHDRAWAL_FIELDS, "invalid withdrawal fields")
+            _require(
+                record["repository"] == repository and type(record["pr"]) is int and record["pr"] == pr,
+                "withdrawal work item mismatch",
+            )
+            target_id = record["comment_id"]
+            _require(type(target_id) is int and 0 < target_id < comment["id"], "invalid withdrawal reference")
+            _require(
+                isinstance(record["reason"], str) and bool(record["reason"].strip()) and len(record["reason"]) <= 1024,
+                "withdrawal reason missing",
+            )
+            _require(_strings(record["evidence_refs"], nonempty=True), "withdrawal proof missing")
+            target = by_id.get(target_id)
+            if target is None:
+                raise AdmissionDenied("withdrawal target is unavailable")
+            _require(_is_owner(target, owner), "withdrawal target is foreign")
+            _require(target.get("created_at") == target.get("updated_at"), "withdrawal target was edited")
+            target_body = target.get("body") or ""
+            _require(target_body.startswith(MARKER), "only structured positive dispositions can be withdrawn")
+            _require(
+                record["body_sha256"] == hashlib.sha256(target_body.encode("utf-8")).hexdigest(),
+                "withdrawal body identity mismatch",
+            )
+            positive = json.loads(target_body[len(MARKER) :], object_pairs_hook=_unique)
+            _require(isinstance(positive, dict) and set(positive) == FIELDS, "withdrawal target shape is unknown")
+            _require(
+                positive["repository"] == repository and type(positive["pr"]) is int and positive["pr"] == pr,
+                "withdrawal target work item mismatch",
+            )
+            _require(
+                positive["result"] == "clear" and positive["findings"] == [] and positive["scope"] == "repository_merge",
+                "withdrawal cannot erase negative evidence",
+            )
+            _require(
+                all(isinstance(positive[k], str) and SHA.fullmatch(positive[k]) for k in ("head_sha", "methodology_sha")),
+                "withdrawal target candidate is unknown",
+            )
+        except (TypeError, ValueError, KeyError) as exc:
+            raise AdmissionDenied("invalid authenticated CLEAR withdrawal") from exc
+        withdrawn.add(target_id)
+        barriers[comment["id"]] = positive["head_sha"]
+    return withdrawn, barriers
 
 
 def admit(
@@ -93,12 +162,18 @@ def admit(
     latest: dict[str, Any] | None = None
     comments = snapshot["comments"]
     _require(len({c["id"] for c in comments}) == len(comments), "duplicate API comment")
+    withdrawn, barriers = _clear_withdrawals(comments, owner, repository, pr)
     for comment in sorted(comments, key=lambda item: item["id"]):
+        if comment["id"] in barriers:
+            if barriers[comment["id"]] == head:
+                latest = None
+            continue
+        if comment["id"] in withdrawn:
+            continue
         body = comment.get("body") or ""
-        user = comment.get("user") or {}
         # Login text in the body, author_association and reviewer labels confer
         # no authority. Bind both provider identity and login to the API owner.
-        if user.get("id") != owner["id"] or user.get("login") != owner["login"]:
+        if not _is_owner(comment, owner):
             continue
         if not body.startswith(MARKER):
             # A structured CLEAR cannot erase an existing owner prose blocker.

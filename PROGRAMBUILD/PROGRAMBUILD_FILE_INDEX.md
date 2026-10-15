@@ -26,7 +26,7 @@ A PROGRAMBUILD critical control file missing from this index is not recognized. 
 | `PROGRAMBUILD_SUBAGENTS.md` | catalog | active | optional specialist roles/prompts | subagent guidance |
 | `PROGRAMBUILD_CHECKLIST.md` | checklist | active | reusable execution checklist plus derived checklist activation/source/status/closure discipline, including Effective Autonomy alternative-actuation checks before operator transport | execution tracking |
 | `PROGRAMBUILD_IDEA_INTAKE.md` | protocol | active | 8-dimension idea/project-delta challenge; consumes captured/shelved idea evidence without treating capture as approval | idea intake |
-| `PROGRAMBUILD_CHALLENGE_GATE.md` | protocol | active | A–H risk controls, cross-system ownership and useful-progress/recovery failure-domain lenses, plus variant/stage/risk-based gate-part selection and material-delta re-Challenge convergence | stage/convergence gates |
+| `PROGRAMBUILD_CHALLENGE_GATE.md` | protocol | active | A–H risk controls, cross-system ownership and useful-progress/recovery failure-domain lenses, plus variant/stage/risk-based gate-part selection and material-delta re-Challenge convergence, named cycle-challenge invocation and explicit legacy log dispositions | stage/convergence gates |
 | `PROGRAMBUILD_GAMEPLAN.md` | playbook | active | canonical stage sequence and cross-stage validation without duplicating stage detail | execution sequencing |
 
 ---
@@ -66,7 +66,7 @@ A portfolio-wide `IDEA_LEDGER.md` instance belongs in the operator's planning wo
 
 | File | Type | Purpose |
 |---|---|---|
-| `.github/prompts/programstart-convergence-packet.prompt.md` | workflow guidance prompt | runs bounded Challenge/re-Challenge convergence and renders concise operator output plus a derived Markdown Convergence Packet with owner-routed durability |
+| `.github/prompts/programstart-convergence-packet.prompt.md` | workflow guidance prompt | binds the program start cycle challenge phrase, reviews corrected plan/prompt pairs, runs bounded Challenge/re-Challenge convergence and renders concise operator output plus a derived Markdown Convergence Packet with owner-routed durability |
 | `scripts/programstart_decision.py` | advisory tooling | routes a material decision to the minimum justified evidence/check/research depth; never a separate authority layer |
 | `scripts/programstart_orchestrate.py` | advisory tooling | derives environment/mode/authority/blocker-aware execution contracts, including safe-lane, evidence-continuity, task-scoped cross-repository dependency/authority, and operator/manual-boundary guidance; free-form recommendation acceptance remains authority-derived in the agent protocol rather than brittle CLI keyword parsing |
 | `docs/PROGRAMSTART_AUTHORITY_GAP_RECONCILIATION.md` | operational protocol | routes material derived findings that are absent from current owning authority through premise re-verification, real-owner selection, existing Mode-C authority reconciliation, return-to-origin behavior, and the existing Learning Gate; never an execution authority or new lifecycle |

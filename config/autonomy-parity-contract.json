@@ -20,7 +20,7 @@
     },
     {
       "path": ".github/instructions/source-of-truth.instructions.md",
-      "sha256": "14ee71a6-ba58b670-0c95e4d1-bd7ab334-d605b3a7-89f97939-be936d7f-1c40bc9e",
+      "sha256": "cd33f13b-1aff9e7d-049b0bed-81b43d10-9cf8d9fe-d1b274da-b233747c-404ea27b",
       "role": "JIT source-of-truth contract"
     },
     {
@@ -35,7 +35,7 @@
     },
     {
       "path": "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
-      "sha256": "8c124c5a-06098dae-61e6bddc-a6c1f338-a62de7e7-f7e8b19a-aeab0a6c-8cb00698",
+      "sha256": "daf8910d-4f455790-8d93564c-06c56975-9963bd1a-9354c15a-9455b5bc-0751894f",
       "role": "Challenge contract"
     },
     {

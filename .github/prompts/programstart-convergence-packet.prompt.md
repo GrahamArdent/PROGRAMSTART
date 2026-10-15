@@ -3,10 +3,15 @@ description: "Challenge a material design, plan, recommendation, or handoff unti
 name: "PROGRAMSTART Convergence Packet"
 argument-hint: "Describe the candidate/result to challenge and any requested response-length or persistence constraint"
 agent: "agent"
-version: "1.0"
+version: "1.1"
 ---
 
 Run a bounded PROGRAMSTART convergence review and produce one reconstructable Markdown result without creating a second authority.
+
+A direct request to run a **program start cycle challenge** (including PROGRAMSTART,
+hyphenation, and case variants) invokes this prompt under Challenge Gate §2.3.
+For a question about the phrase, explain the protocol without dispatching work.
+Quotations and historical mentions do not grant execution authorization.
 
 ## Data Grounding Rule
 
@@ -55,6 +60,12 @@ Run broad validation/drift only when a repository authority change is actually b
 5. Incorporate every material corrective delta.
 6. If the candidate changed materially, re-Challenge the revised candidate.
 7. Stop on the first fresh current-candidate Challenge that produces no new material corrective delta and no controlling unresolved blocker. Do not repeat identical clear passes for ceremony.
+   When the candidate contains a game plan and execution prompt, freshly review
+   the complete corrected pair after plan convergence. Align scope, authority,
+   dependency order, verification, continuation and terminal conditions. If that
+   combined review materially changes either artifact, freshly review the revised
+   pair before clearance. Retain exact identities and honest reviewer provenance;
+   a bare CLEAR label does not establish owner acceptance or action-gate enforcement.
 8. Render one Markdown Convergence Packet containing:
    - title/date/mode/declared scope;
    - convergence status;

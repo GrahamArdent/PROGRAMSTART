@@ -421,21 +421,31 @@ def challenge_gate_record_from_log(active_step: str) -> dict[str, Any] | None:
     headers = [cell.strip() for cell in table_lines[0].strip("|").split("|")]
     excluded_headers = {"From Stage", "To Stage", "Date", "Proceed?", "Notes"}
     wanted_stage = _normalise_stage_name(active_step)
-    for row in table_lines[2:]:
+    # Log rows are appended in review order; an old CLEAR must not hide a newer blocker.
+    for row in reversed(table_lines[2:]):
         values = [cell.strip() for cell in row.strip("|").split("|")]
-        if len(values) != len(headers):
-            continue
         entry = dict(zip(headers, values, strict=False))
         from_stage = _normalise_stage_name(entry.get("From Stage", ""))
         if from_stage != wanted_stage:
             continue
+        if len(values) != len(headers):
+            return {
+                "source": "challenge_gate_log",
+                "from_stage": entry.get("From Stage", "").strip(),
+                "to_stage": entry.get("To Stage", "").strip(),
+                "date": entry.get("Date", "").strip(),
+                "proceed": "",
+                "result": "blocked",
+                "notes": "Latest matching Challenge Gate row is malformed; reconcile it before advancing.",
+                "checks": {},
+            }
 
         checks = {header: value for header, value in entry.items() if header not in excluded_headers and value}
         proceed = _normalise_gate_proceed(entry.get("Proceed?", ""))
         blocking_checks = any("❌" in value for value in checks.values())
         warning_checks = any("⚠" in value for value in checks.values())
         result = "clear"
-        if proceed == "no" or blocking_checks:
+        if not proceed or proceed == "no" or blocking_checks:
             result = "blocked"
         elif proceed == "conditional" or warning_checks:
             result = "warning"

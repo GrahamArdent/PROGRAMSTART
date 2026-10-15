@@ -53,6 +53,11 @@ Do not read the documentation tree up front.
 
 ## Work Packets
 
+A direct request to run a **program start cycle challenge** invokes the existing
+`.github/prompts/programstart-convergence-packet.prompt.md` and canonical
+Challenge Gate §§2.2–2.3. Explain questions about the phrase without dispatching
+work; the phrase does not grant new execution or release authority.
+
 `PROGRAMBUILD/PROGRAMBUILD_WORK_PACKET.md` defines packet semantics.
 
 Use the compact logical packet by default. Persist `CURRENT_WORK_PACKET.md` only when multi-session/multi-agent coordination, risk, dependencies/blockers, or resumability makes persistence useful. A packet never becomes strategic authority.

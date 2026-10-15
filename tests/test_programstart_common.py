@@ -740,3 +740,55 @@ def test_challenge_gate_record_from_log_skips_mismatched_columns(tmp_path: Path,
     result = challenge_gate_record_from_log("discovery")
     assert result is not None
     assert result["result"] == "clear"
+
+
+@pytest.mark.parametrize("proceed", ["", "maybe", "CLEAR", "unknown"])
+def test_challenge_log_does_not_infer_clear_from_unknown_decision(tmp_path, monkeypatch, proceed):
+    gate = tmp_path / "PROGRAMBUILD" / "PROGRAMBUILD_CHALLENGE_GATE.md"
+    gate.parent.mkdir()
+    gate.write_text(
+        "### Challenge Gate Log\n\n"
+        "| From Stage | To Stage | Date | Proceed? | Notes |\n"
+        "|---|---|---|---|---|\n"
+        f"| discovery | requirements | 2026-10-15 | {proceed} | pending |\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr("scripts.programstart_common.workspace_path", lambda rel: tmp_path / rel)
+    record = challenge_gate_record_from_log("discovery")
+    assert record is not None
+    assert record["result"] == "blocked"
+
+
+def test_challenge_log_uses_latest_appended_stage_disposition(tmp_path, monkeypatch):
+    gate = tmp_path / "PROGRAMBUILD" / "PROGRAMBUILD_CHALLENGE_GATE.md"
+    gate.parent.mkdir()
+    gate.write_text(
+        "### Challenge Gate Log\n\n"
+        "| From Stage | To Stage | Date | Proceed? | Notes |\n"
+        "|---|---|---|---|---|\n"
+        "| discovery | requirements | 2026-10-14 | Yes | old |\n"
+        "| discovery | requirements | 2026-10-15 | No | counterexample |\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr("scripts.programstart_common.workspace_path", lambda rel: tmp_path / rel)
+    record = challenge_gate_record_from_log("discovery")
+    assert record is not None
+    assert record["result"] == "blocked"
+    assert record["notes"] == "counterexample"
+
+
+def test_challenge_log_malformed_latest_matching_row_does_not_resurrect_clear(tmp_path, monkeypatch):
+    gate = tmp_path / "PROGRAMBUILD" / "PROGRAMBUILD_CHALLENGE_GATE.md"
+    gate.parent.mkdir()
+    gate.write_text(
+        "### Challenge Gate Log\n\n"
+        "| From Stage | To Stage | Date | Proceed? | Notes |\n"
+        "|---|---|---|---|---|\n"
+        "| discovery | requirements | 2026-10-14 | Yes | old |\n"
+        "| discovery | requirements | 2026-10-15 | No | broken | extra |\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr("scripts.programstart_common.workspace_path", lambda rel: tmp_path / rel)
+    record = challenge_gate_record_from_log("discovery")
+    assert record is not None
+    assert record["result"] == "blocked"

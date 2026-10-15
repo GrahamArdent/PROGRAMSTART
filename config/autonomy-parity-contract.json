@@ -6926,13 +6926,20 @@
         "exact_machine_currentness_binding",
         "credential_human_enablement_leverage"
       ],
-      "instance_status": "partial",
+      "instance_status": "proven",
       "evidence_refs": [
         "GrahamArdent/secrets-control-plane#69",
-        "GrahamArdent/secrets-control-plane#78"
+        "GrahamArdent/secrets-control-plane#78",
+        "GrahamArdent/secrets-control-plane#180",
+        "GrahamArdent/programstart-autonomous-controller#442",
+        "https://github.com/GrahamArdent/execution-node-control/blob/c35c37fcd9c410506d9c4cec2b17be3a005d9ced/results/req-spine-3e7053e14b1125d0a09b-repository-owner-handoff-intake/result.json",
+        "https://github.com/GrahamArdent/programstart-compute-spine/blob/main/control/controller-results/req-controller-hop031-actual-cold-1-continue-v1/result.json",
+        "https://github.com/GrahamArdent/programstart-compute-spine/blob/main/control/controller-results/req-controller-hop031-actual-cold-2-observe-v1/result.json",
+        "https://github.com/GrahamArdent/execution-node-control/blob/main/results/req-hop031-attributed-cleanup-native-v1/result.json"
       ],
       "invalidation": [
-        "Secrets authority, identity allocation, repository admission, credential profile, or provider capability changes."
+        "Secrets authority, identity allocation, repository admission, credential profile, or provider capability changes.",
+        "Material handoff/source-policy/result lookup, installed release/methodology or custody changes require proportional revalidation; this exact historical acceptance grants no fresh effect authority."
       ],
       "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
     },

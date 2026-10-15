@@ -423,7 +423,7 @@ def test_target_moves_between_reads_no_effect_even_if_pr_base_stays_old():
     effects = []
     reads = iter([before, after])
     with pytest.raises(AdmissionDenied, match="evidence changed"):
-        guarded_merge(lambda: next(reads), lambda h: effects.append(h), REPO, 7, HEAD, POLICY)
+        guarded_merge(lambda: next(reads), lambda h: effects.append(h) or {"merged": False}, REPO, 7, HEAD, POLICY)
     assert effects == []
 
 

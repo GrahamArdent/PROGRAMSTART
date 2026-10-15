@@ -49,7 +49,16 @@ def _unique(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
     return result
 
 
-def admit(snapshot: dict[str, Any], repository: str, pr: int, head: str, methodology: str, *, after_merge: bool = False) -> str:
+def admit(
+    snapshot: dict[str, Any],
+    repository: str,
+    pr: int,
+    head: str,
+    methodology: str,
+    *,
+    after_merge: bool = False,
+    admitted_base: str | None = None,
+) -> str:
     """Consume a live authenticated API snapshot, not a caller-supplied CLEAR.
 
     The API adapter is the trust boundary. Offline JSON is useful for tests but
@@ -57,13 +66,19 @@ def admit(snapshot: dict[str, Any], repository: str, pr: int, head: str, methodo
     """
     pull = snapshot["pull"]
     owner = snapshot["repository"]["owner"]
-    _require(snapshot["methodology_sha"] == methodology, "accepted methodology changed")
+    own_methodology_advance = (
+        after_merge and repository == "GrahamArdent/PROGRAMSTART" and snapshot["methodology_sha"] == pull.get("merge_commit_sha")
+    )
+    _require(snapshot["methodology_sha"] == methodology or own_methodology_advance, "accepted methodology changed")
     _require(snapshot["repository"]["full_name"] == repository, "repository mismatch")
     _require(pull["number"] == pr and pull["base"]["repo"]["full_name"] == repository, "PR mismatch")
     _require(pull["head"]["sha"] == head, "candidate changed")
     _require(not pull["draft"], "draft PR")
     if after_merge:
         _require(pull["state"] == "closed" and pull["merged"] is True, "merge poststate unavailable")
+        _require(admitted_base is not None, "admitted base missing")
+        _require(snapshot["merge_parent_shas"] == [admitted_base], "squash merge parent differs from admitted base")
+        _require(pull["base"]["sha"] in {admitted_base, pull["merge_commit_sha"]}, "base advanced beyond observed effect")
     else:
         _require(pull["state"] == "open" and not pull["merged"], "PR is not open and unmerged")
         _require(pull["mergeable"] is True and pull["mergeable_state"] == "clean", "native merge readiness unavailable")
@@ -143,7 +158,7 @@ def admit(snapshot: dict[str, Any], repository: str, pr: int, head: str, methodo
         "owner": owner,
         "pr": pr,
         "head": head,
-        "base": pull["base"]["sha"],
+        "base": admitted_base if after_merge else pull["base"]["sha"],
         "reviews": snapshot["reviews"],
         "comments": comments,
     }
@@ -189,10 +204,17 @@ class GitHub:
 
     def snapshot(self, repository: str, pr: int) -> dict[str, Any]:
         base = f"repos/{repository}"
+        pull = self.api(f"{base}/pulls/{pr}")
+        parents = []
+        if pull.get("merged"):
+            commit = pull.get("merge_commit_sha")
+            _require(isinstance(commit, str) and SHA.fullmatch(commit) is not None, "invalid merged commit identity")
+            parents = [parent["sha"] for parent in self.api(f"{base}/git/commits/{commit}")["parents"]]
         return {
             "methodology_sha": self.api("repos/GrahamArdent/PROGRAMSTART/git/ref/heads/main")["object"]["sha"],
             "repository": self.api(base),
-            "pull": self.api(f"{base}/pulls/{pr}"),
+            "pull": pull,
+            "merge_parent_shas": parents,
             "reviews": self.pages(f"{base}/pulls/{pr}/reviews"),
             "comments": self.pages(f"{base}/issues/{pr}/comments"),
         }
@@ -213,20 +235,25 @@ def guarded_merge(
     Post-read failure is UNKNOWN/UNACCEPTED, never permission to activate/retry.
     """
     before = admit(read(), repository, pr, head, methodology)
-    current = admit(read(), repository, pr, head, methodology)
+    confirmation = read()
+    current = admit(confirmation, repository, pr, head, methodology)
     _require(current == before, "admission evidence changed; reorient before merge")
     try:
         result = merge(head)
     except (AdmissionDenied, OSError, subprocess.SubprocessError, ValueError):
         return {"status": "UNKNOWN", "activation_permitted": False, "retry_merge": False}
-    if not result.get("merged"):
+    if not isinstance(result, dict) or type(result.get("merged")) is not bool:
+        return {"status": "UNKNOWN", "activation_permitted": False, "retry_merge": False}
+    if result["merged"] is False:
         return {"status": "MERGE_REFUSED", "activation_permitted": False, "retry_merge": False}
     if not isinstance(result.get("sha"), str) or SHA.fullmatch(result["sha"]) is None:
         return {"status": "UNKNOWN", "activation_permitted": False, "retry_merge": False}
     try:
         observed = read()
         _require(observed["pull"].get("merge_commit_sha") == result.get("sha"), "merge receipt mismatch")
-        after = admit(observed, repository, pr, head, methodology, after_merge=True)
+        after = admit(
+            observed, repository, pr, head, methodology, after_merge=True, admitted_base=confirmation["pull"]["base"]["sha"]
+        )
         _require(after == current, "Challenge evidence changed during merge")
     except (AdmissionDenied, KeyError, TypeError, OSError, subprocess.SubprocessError, ValueError):
         return {

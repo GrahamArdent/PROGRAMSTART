@@ -78,6 +78,10 @@ Missing, edited, malformed, stale, conflicting or unresolved required evidence
 denies admission. A blocker observed on the second read prevents the merge.
 The evidence digest binds repository/owner, PR, head, base, reviews and comments.
 An altered evidence snapshot requires reorientation instead of a blind retry.
+Post-effect reconciliation verifies that the squash merge's sole parent is the
+admitted base. Only that exact merge's expected base advancement, and its own
+PROGRAMSTART methodology advancement when applicable, are normalized. This
+preserves the incumbent review binding without blessing an unrelated advance.
 
 GitHub's merge endpoint accepts a head guard, but no comment/review-version
 compare-and-merge. A new same-head blocker arriving after the last GET can race

@@ -155,6 +155,7 @@ def test_late_same_head_blocker_prevents_effect():
 def merged(value):
     result = copy.deepcopy(value)
     result["pull"].update(state="closed", merged=True, merge_commit_sha="f" * 40)
+    result["merge_parent_shas"] = [value["pull"]["base"]["sha"]]
     return result
 
 
@@ -185,6 +186,31 @@ def test_blocker_in_remote_get_put_gap_is_merged_but_unaccepted():
     assert result["retry_merge"] is False
 
 
+def test_own_merge_methodology_and_base_advance_do_not_self_invalidate():
+    value = snapshot()
+    after = merged(value)
+    after["methodology_sha"] = "f" * 40
+    after["pull"]["base"]["sha"] = "f" * 40
+    reads = iter([value, value, after])
+    result = guarded_merge(lambda: next(reads), lambda _: {"merged": True, "sha": "f" * 40}, REPO, 7, HEAD, POLICY)
+    assert result["status"] == "MERGED_REQUIRES_OWNER_RECONCILIATION"
+
+
+@pytest.mark.parametrize("change", ["methodology", "parent", "base"])
+def test_unrelated_authority_or_base_advance_is_not_normalized(change):
+    value = snapshot()
+    after = merged(value)
+    if change == "methodology":
+        after["methodology_sha"] = "e" * 40
+    elif change == "parent":
+        after["merge_parent_shas"] = ["e" * 40]
+    else:
+        after["pull"]["base"]["sha"] = "e" * 40
+    reads = iter([value, value, after])
+    result = guarded_merge(lambda: next(reads), lambda _: {"merged": True, "sha": "f" * 40}, REPO, 7, HEAD, POLICY)
+    assert result["status"] == "MERGED_BUT_UNACCEPTED"
+
+
 def test_lost_effect_response_remains_unknown_without_retry():
     value = snapshot()
     calls = []
@@ -195,6 +221,13 @@ def test_lost_effect_response_remains_unknown_without_retry():
 
     result = guarded_merge(lambda: value, merge, REPO, 7, HEAD, POLICY)
     assert calls == [HEAD]
+    assert result == {"status": "UNKNOWN", "activation_permitted": False, "retry_merge": False}
+
+
+@pytest.mark.parametrize("payload", [{}, {"merged": None}, {"merged": True}, {"merged": True, "sha": "invalid"}])
+def test_incomplete_merge_response_is_unknown_not_refusal(payload):
+    value = snapshot()
+    result = guarded_merge(lambda: value, lambda _: payload, REPO, 7, HEAD, POLICY)
     assert result == {"status": "UNKNOWN", "activation_permitted": False, "retry_merge": False}
 
 

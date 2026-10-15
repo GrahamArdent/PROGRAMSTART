@@ -119,6 +119,20 @@ A bare CLEAR label or a parsable record does not establish trusted owner
 acceptance or mechanical merge/activation enforcement. Known relevant blockers
 remain controlling until their owner reconciles them with applicable proof.
 
+For the bounded GitHub CLI merge path, `scripts/programstart_challenge_merge.py`
+consumes an explicit repository-owner disposition from authenticated GitHub API
+metadata, the exact head and methodology identity, retained finding proofs, and
+native blocking reviews. Run the adapter from an accepted methodology checkout,
+not candidate-controlled code. Its interface and limits are documented in
+`docs/CHALLENGE_MERGE_ADAPTER.md`. It does not run semantic review or confer
+independent-review provenance. Its two reads and expected-head merge guard do
+not atomically fence a new same-head disposition at GitHub's mutation boundary.
+Use it only within existing merge authorization and record degraded coverage;
+it cannot satisfy a contract requiring an atomic disposition fence. Any merged
+result remains ineligible for activation until the actual release owner accepts
+the composed release. This adapter does not close issue113 or replace its
+merge/activation-currentness acceptance requirements.
+
 
 ## 3. Gate-Part Selection
 

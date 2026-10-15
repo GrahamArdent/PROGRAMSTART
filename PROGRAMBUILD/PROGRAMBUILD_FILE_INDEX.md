@@ -26,7 +26,7 @@ A PROGRAMBUILD critical control file missing from this index is not recognized. 
 | `PROGRAMBUILD_SUBAGENTS.md` | catalog | active | optional specialist roles/prompts | subagent guidance |
 | `PROGRAMBUILD_CHECKLIST.md` | checklist | active | reusable execution checklist plus derived checklist activation/source/status/closure discipline, including Effective Autonomy alternative-actuation checks before operator transport | execution tracking |
 | `PROGRAMBUILD_IDEA_INTAKE.md` | protocol | active | 8-dimension idea/project-delta challenge; consumes captured/shelved idea evidence without treating capture as approval | idea intake |
-| `PROGRAMBUILD_CHALLENGE_GATE.md` | protocol | active | A–H risk controls, cross-system ownership and useful-progress/recovery failure-domain lenses, plus variant/stage/risk-based gate-part selection and material-delta re-Challenge convergence, named cycle-challenge invocation and explicit legacy log dispositions | stage/convergence gates |
+| `PROGRAMBUILD_CHALLENGE_GATE.md` | protocol | active | A–H risk controls, cross-system ownership and useful-progress/recovery failure-domain lenses, plus variant/stage/risk-based gate-part selection and material-delta re-Challenge convergence, named cycle-challenge invocation, explicit legacy log dispositions and bounded authenticated merge-adapter limits | stage/convergence gates |
 | `PROGRAMBUILD_GAMEPLAN.md` | playbook | active | canonical stage sequence and cross-stage validation without duplicating stage detail | execution sequencing |
 
 ---

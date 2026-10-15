@@ -155,6 +155,7 @@ source = [
   "scripts.programstart_closeout",
   "scripts.programstart_command_registry",
   "scripts.programstart_common",
+  "scripts.programstart_challenge_merge",
   "scripts.programstart_validate",
   "scripts.programstart_validate_core",
   "scripts.programstart_bootstrap",

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import base64
 import copy
+import hashlib
 import json
 from pathlib import Path
 
@@ -60,6 +61,156 @@ def snapshot():
 
 def check(value):
     return admit(value, REPO, 7, HEAD, POLICY)
+
+
+def withdrawal(target, number=3, **overrides):
+    payload = {
+        "repository": REPO,
+        "pr": 7,
+        "comment_id": target["id"],
+        "body_sha256": hashlib.sha256(target["body"].encode()).hexdigest(),
+        "reason": "withdraw positive assertion; append a corrected review",
+        "evidence_refs": ["proof://actual-owner-correction"],
+    }
+    payload.update(overrides)
+    value = comment(number)
+    value["body"] = adapter.WITHDRAWAL_MARKER + json.dumps(payload)
+    return value
+
+
+def test_malformed_positive_record_requires_exact_owner_withdrawal_then_new_clear():
+    value = snapshot()
+    bad = comment(2, record(resolutions=[{"finding_id": "unknown", "evidence_refs": ["proof://unretained"]}]))
+    value["comments"] = [comment(), bad]
+    with pytest.raises(AdmissionDenied):
+        check(value)
+    value["comments"].append(withdrawal(bad))
+    with pytest.raises(AdmissionDenied, match="no authenticated exact-head CLEAR"):
+        check(value)  # older CLEAR must not silently revive
+    value["comments"].append(comment(4))
+    assert check(value)
+
+
+def test_withdrawing_clear_restores_its_resolved_blockers():
+    value = snapshot()
+    block = comment(1, record(result="blocked", findings=["F1"]))
+    clear = comment(2, record(resolutions=[{"finding_id": "F1", "evidence_refs": ["proof://actual"]}]))
+    value["comments"] = [block, clear]
+    assert check(value)
+    value["comments"].extend([withdrawal(clear), comment(4)])
+    with pytest.raises(AdmissionDenied, match="retained"):
+        check(value)
+    value["comments"][-1] = comment(4, record(resolutions=[{"finding_id": "F1", "evidence_refs": ["proof://fresh"]}]))
+    assert check(value)
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        lambda w: w["user"].update(id=666),
+        lambda w: w["user"].update(login="other"),
+        lambda w: w.update(updated_at="2026-10-15T19:00:00Z"),
+    ],
+)
+def test_forged_or_edited_withdrawal_never_cures_bad_positive(mutation):
+    value = snapshot()
+    bad = comment(1, record(resolutions=[{"finding_id": "unknown", "evidence_refs": ["proof://x"]}]))
+    w = withdrawal(bad, 2)
+    mutation(w)
+    value["comments"] = [bad, w, comment(3)]
+    with pytest.raises(AdmissionDenied):
+        check(value)
+
+
+@pytest.mark.parametrize(
+    "overrides",
+    [
+        {"comment_id": True},
+        {"comment_id": 4},
+        {"comment_id": 999},
+        {"body_sha256": "0" * 64},
+        {"repository": "foreign/repo"},
+        {"pr": True},
+        {"reason": ""},
+        {"evidence_refs": []},
+    ],
+)
+def test_unknown_moved_or_unbound_withdrawal_denies(overrides):
+    value = snapshot()
+    target = value["comments"][0]
+    value["comments"].extend([withdrawal(target, 2, **overrides), comment(3)])
+    with pytest.raises(AdmissionDenied):
+        check(value)
+
+
+@pytest.mark.parametrize("legacy", [False, True])
+def test_blocked_or_legacy_negative_record_cannot_be_withdrawn(legacy):
+    value = snapshot()
+    target = comment(1, record(result="blocked", findings=["F1"]))
+    if legacy:
+        target["body"] = "CHANGES REQUIRED. Actual material blocker."
+    value["comments"] = [target, withdrawal(target, 2), comment(3)]
+    with pytest.raises(AdmissionDenied):
+        check(value)
+
+
+def test_revocation_after_another_clear_requires_a_still_later_clear():
+    value = snapshot()
+    first = comment()
+    value["comments"] = [first, comment(2), withdrawal(first, 3)]
+    with pytest.raises(AdmissionDenied):
+        check(value)
+    value["comments"].append(comment(4))
+    assert check(value)
+
+
+def test_revocation_on_confirmation_read_holds_the_effect():
+    before = snapshot()
+    confirmation = copy.deepcopy(before)
+    confirmation["comments"].append(withdrawal(before["comments"][0], 2))
+    reads = iter([before, confirmation])
+    calls = []
+
+    def merge(head):
+        calls.append(head)
+        return {"merged": True, "sha": "f" * 40}
+
+    with pytest.raises(AdmissionDenied):
+        guarded_merge(lambda: next(reads), merge, REPO, 7, HEAD, POLICY)
+    assert calls == []
+
+
+def test_revocation_in_remote_gap_is_merged_but_unaccepted():
+    before = snapshot()
+    after = merged(before)
+    after["comments"].append(withdrawal(before["comments"][0], 2))
+    reads = iter([before, before, after])
+    calls = []
+
+    def merge(head):
+        calls.append(head)
+        return {"merged": True, "sha": "f" * 40}
+
+    result = guarded_merge(lambda: next(reads), merge, REPO, 7, HEAD, POLICY)
+    assert calls == [HEAD]
+    assert result["status"] == "MERGED_BUT_UNACCEPTED"
+    assert result["activation_permitted"] is False and result["retry_merge"] is False
+
+
+def test_edited_or_deleted_target_and_duplicate_json_cannot_be_withdrawn():
+    for change in ("edited", "deleted", "duplicate"):
+        value = snapshot()
+        target = value["comments"][0]
+        w = withdrawal(target, 2)
+        if change == "edited":
+            target["updated_at"] = "2026-10-15T19:00:00Z"
+        elif change == "deleted":
+            value["comments"].clear()
+        else:
+            w["body"] = w["body"].replace("{", '{"pr": 7,', 1)
+        value["comments"].extend([w, comment(3)])
+        with pytest.raises(AdmissionDenied):
+            check(value)
 
 
 def test_authenticated_exact_candidate_clear():

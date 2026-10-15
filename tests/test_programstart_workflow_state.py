@@ -1526,3 +1526,23 @@ def test_main_rollback_restores_snapshot_and_creates_backup(tmp_path: Path, caps
     assert ("save", "programbuild") in calls
     assert ("save", "userjourney") in calls
     assert "Rollback applied" in out
+
+
+@pytest.mark.parametrize("result_label", ["clear", "warning"])
+def test_advance_label_cannot_override_current_blocking_log(capsys, monkeypatch, result_label):
+    active = "inputs_and_mode_selection"
+    state = _make_advance_state(active, "feasibility")
+    monkeypatch.setattr("scripts.programstart_workflow_state.load_workflow_state", lambda _r, _s: state)
+    monkeypatch.setattr("scripts.programstart_workflow_state.workflow_active_step", lambda *_a: active)
+    monkeypatch.setattr("scripts.programstart_workflow_state.workflow_steps", lambda *_a: [active, "feasibility"])
+    monkeypatch.setattr(
+        "scripts.programstart_workflow_state.challenge_gate_record_from_log",
+        lambda _step: {"result": "blocked", "proceed": "no", "notes": "unresolved counterexample"},
+    )
+    writes = []
+    monkeypatch.setattr("scripts.programstart_workflow_state.save_workflow_state", lambda *_a: writes.append(True))
+    monkeypatch.setattr("sys.argv", ["ws", "advance", "--system", "programbuild", "--dry-run", "--gate-result", result_label])
+    assert main() == 1
+    assert "blocking" in capsys.readouterr().out.lower()
+    assert writes == []
+    assert state["stages"][active]["status"] == "in_progress"

@@ -111,7 +111,7 @@ Optional preservation / execution aids:
 | subagent definitions and prompt templates | `PROGRAMBUILD_SUBAGENTS.md` |
 | reusable execution-checklist form and checklist status discipline | `PROGRAMBUILD_CHECKLIST.md` |
 | 8-dimension idea decomposition and pre-feasibility challenge | `PROGRAMBUILD_IDEA_INTAKE.md` |
-| stage transition/convergence risk controls and gate-part selection | `PROGRAMBUILD_CHALLENGE_GATE.md` |
+| stage transition/convergence risk controls, program start cycle challenge invocation, and gate-part selection | `PROGRAMBUILD_CHALLENGE_GATE.md` |
 | execution sequencing and cross-stage validation | `PROGRAMBUILD_GAMEPLAN.md` |
 | project viability decision | `FEASIBILITY.md` |
 | material project decisions and reversals | `DECISION_LOG.md` |

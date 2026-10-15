@@ -58,3 +58,13 @@ def test_convergence_contract_rejects_shadow_authority_and_ceremonial_repeats() 
     assert "not a queue, backlog, priority source, currentness source, or execution authority" in planning
     assert "Do not repeat identical clear passes merely to accumulate review count" in challenge
     assert "Do not create a new repository, queue, global packet registry, lifecycle state, or second Challenge Gate" in prompt
+
+
+def test_cycle_challenge_invocation_reuses_protocol_and_requires_combined_review():
+    challenge = _read(CHALLENGE)
+    prompt = _read(PROMPT)
+    assert "### 2.3 Program Start Cycle Challenge Invocation" in challenge
+    assert "program start cycle challenge" in prompt
+    assert "corrected pair" in prompt
+    assert "Quotations and historical mentions" in prompt
+    assert "parsable record does not establish trusted owner" in challenge

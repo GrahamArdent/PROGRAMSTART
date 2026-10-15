@@ -97,6 +97,9 @@ After the slice:
 - record material decisions in the correct durable authority;
 - update requirements/architecture/status only when the result actually changes them;
 - record verification evidence once;
+- retain the exact candidate/protocol/owner binding and fresh review provenance
+  for a requested program start cycle challenge; a supplied CLEAR label cannot
+  erase a current blocking owner disposition;
 - close/replace the packet instead of accumulating a second planning hierarchy.
 
 ## 7. Never do these

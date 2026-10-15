@@ -97,6 +97,28 @@ Stop on the first fresh Challenge of the current candidate that yields no new ma
 
 `CLEAR` is scoped convergence evidence, not owner acceptance, execution permission, or a new lifecycle state. Conversational shorthand such as “settled” must not collapse those boundaries.
 
+### 2.3 Program Start Cycle Challenge Invocation
+
+A direct operator request to run a **program start cycle challenge**, including
+PROGRAMSTART and hyphenated/case variants, invokes this existing protocol and
+§2.2 through `.github/prompts/programstart-convergence-packet.prompt.md`.
+An explanation question, quotation, or historical mention does not dispatch work.
+The invocation inherits the requested review scope and existing execution
+authorization; it does not grant merge, release, provider, or credential authority.
+
+When the candidate includes both a game plan and an execution prompt, challenge
+the complete corrected pair after the plan converges. Check matching scope,
+authority, dependency order, verification, continuation, and terminal conditions.
+A material correction in that combined review requires a fresh review of the
+corrected pair before reporting it clear.
+
+Retain exact candidate and protocol/owner identities, material findings and
+corrections, fresh-review provenance/result, applicable combined review, evidence
+references, and invalidation conditions in the existing owner evidence surface.
+A bare CLEAR label or a parsable record does not establish trusted owner
+acceptance or mechanical merge/activation enforcement. Known relevant blockers
+remain controlling until their owner reconciles them with applicable proof.
+
 
 ## 3. Gate-Part Selection
 
@@ -316,6 +338,13 @@ programstart advance --system programbuild --gate-result <clear|warning|blocked>
 ```
 
 Compatible fallback: add a row to the Challenge Gate Log, then run `programstart advance --system programbuild`.
+
+Append log dispositions in review order; the last matching stage row is current.
+Its `Proceed?` value must explicitly be Yes, Conditional, or No. Missing or
+unrecognized decisions block rather than imply CLEAR. A supplied CLI clear or
+warning cannot override a current blocking log disposition; reconcile the log
+after the required remediation/review first. These legacy stage records remain
+operator attestations, not authenticated candidate-bound merge/release receipts.
 
 For a triggered post-implementation adversarial closure review that does not advance a lifecycle stage, retain the smallest useful result in the PR/work packet/owning project evidence surface: trigger reason, challenged invariant/failure sequence, result, and targeted proof/fix if any.
 

@@ -535,6 +535,11 @@ def main() -> int:
             gate_notes = str(getattr(args, "gate_notes", "") or "")
             gate_date = str(getattr(args, "gate_date", "") or date.today().isoformat())
             if gate_result:
+                current_log = challenge_gate_record_from_log(active_step)
+                if current_log is not None and current_log.get("result") == "blocked":
+                    print("Advance blocked:")
+                    print("- Current Challenge Gate log is blocking; reconcile its findings before supplying a new label.")
+                    return 1
                 gate_record = _challenge_gate_record_from_args(active_step, next_step, gate_result, gate_date, gate_notes)
                 if gate_record["result"] == "blocked":
                     print("Advance blocked:")

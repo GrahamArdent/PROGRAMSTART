@@ -128,3 +128,6 @@ merge tool or manual GitHub path is intercepted by this script. Do not claim
 global enforcement or close113 from its tests. The remaining implementation must
 compose trusted disposition production/revocation with the actual serialized
 merge/release consumers and prove the natural acceptance case.
+
+
+Target currentness uses the provider's actual `git/ref/heads/<PR base ref>` response, bound to that exact branch and included in both pre-effect digests. The PR object's `base.sha` can retain older metadata while mailbox traffic advances the branch; it is not the effect-parent authority. After merge, the actual squash parent must equal the admitted live target SHA and the live target must still be that parent or the returned merge commit. An intervening target advance denies before effect or yields MERGED_BUT_UNACCEPTED after effect. No atomic provider fence is claimed; ambiguous effects are never retried.

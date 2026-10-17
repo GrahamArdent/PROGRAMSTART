@@ -42,7 +42,11 @@ def comment(number=1, payload=None, *, user_id=42):
 
 def snapshot():
     return {
-        "objective_proof": {"coverage": "UNENROLLED", "objective_complete": False},
+        "objective_proof": {
+            "coverage": "UNENROLLED",
+            "objective_complete": False,
+            "research_admission": {"coverage": "UNENROLLED", "product_admitted": False},
+        },
         "methodology_sha": POLICY,
         "target_ref": "refs/heads/main",
         "target_sha": "c" * 40,
@@ -400,10 +404,16 @@ def test_candidate_modified_consumer_does_not_match_accepted_source(monkeypatch)
             {
                 "encoding": "base64",
                 "content": base64.b64encode(
-                    Path(adapter.__file__).with_name("programstart_objective_proof.py").read_bytes()
+                    Path(adapter.__file__)
+                    .with_name(
+                        "programstart_research_admission.py"
+                        if "programstart_research_admission.py" in path
+                        else "programstart_objective_proof.py"
+                    )
+                    .read_bytes()
                 ).decode(),
             }
-            if "programstart_objective_proof.py" in path
+            if "programstart_objective_proof.py" in path or "programstart_research_admission.py" in path
             else remote
         ),
     )

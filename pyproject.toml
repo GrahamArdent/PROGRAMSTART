@@ -157,6 +157,7 @@ source = [
   "scripts.programstart_common",
   "scripts.programstart_challenge_merge",
   "scripts.programstart_objective_proof",
+  "scripts.programstart_research_admission",
   "scripts.programstart_validate",
   "scripts.programstart_validate_core",
   "scripts.programstart_bootstrap",

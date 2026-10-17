@@ -377,6 +377,12 @@ def write_project_agent_entry(
     """
     # Project-owned discovery records: preserve even during a force bootstrap.
     objective_defaults = {
+        "PROGRAMBUILD/RESEARCH_EVIDENCE.json": {
+            "version": 1,
+            "owner_ref": "UNSELECTED",
+            "status": "UNACCEPTED_DISCOVERY",
+            "questions": [],
+        },
         "PROGRAMBUILD/OBJECTIVES.json": {
             "version": 1,
             "owner_ref": "UNSELECTED",
@@ -435,6 +441,8 @@ This file is project-owned orientation, not product acceptance or execution perm
 - PROGRAMBUILD/DECISION_LOG.md owns material decisions; PROGRAMBUILD/TEST_STRATEGY.md owns proof.
 - Use PROGRAMBUILD/PROGRAMBUILD_IDEA_INTAKE.md (Outcome and information foundation)
   before dependent design. Empty output stubs are not completed discovery.
+- PROGRAMBUILD/RESEARCH_EVIDENCE.json preserves material prerequisite evidence and native accepted scope.
+  Populate and reconcile it before dependent architecture/implementation admission.
 - PROGRAMBUILD/OBJECTIVES.json preserves owner-accepted outcomes; OUTCOME_PROOF.json
   traces every outcome. Unaccepted bootstrap records block dependent implementation.
   Slice tests cannot establish full completion. The trusted methodology's advance,

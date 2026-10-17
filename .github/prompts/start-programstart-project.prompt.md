@@ -466,3 +466,7 @@ Before declaring the orchestration slice complete, confirm:
 30. detailed learning evidence, when warranted, lives in an observation record while the main ledger remains a concise maturity rollup;
 31. product completion/next action remains independent from whether PROGRAMSTART learning persistence was possible;
 32. the next executable product slice, selected lane, exact operator gate, cost decision, or narrowly scoped blocker is explicit.
+
+## Research admission before dependent product work
+
+Preserve the project's accepted objectives and populate the generated unaccepted `PROGRAMBUILD/RESEARCH_EVIDENCE.json` placeholder from actual source research. Follow `docs/RESEARCH_ADMISSION_ENFORCEMENT.md`: bind current instructions, decisions, captures, expiry and accepted work scope. Use Paths and admitted typed GitHub/native/local tools when a hosted route fails; a transport failure is not a task-wide blocker while an authorized alternative remains. Continue through verification and owner reconciliation within authority. Research-only or isolated experiment success cannot close the parent product objective. Qualify the installed runtime and actual consumers; do not equate source availability with enforcement.

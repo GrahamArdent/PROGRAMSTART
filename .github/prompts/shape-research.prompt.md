@@ -117,7 +117,21 @@ uv run programstart drift
 
 Both MUST pass. All reported issues must be resolved before advancing.
 
-> **Note**: There is no automated validation check for research quality. Research completeness is evaluated through the Challenge Gate protocol at stage transition. Research should be time-boxed — if a question cannot be resolved within reasonable effort, record it as a known unknown and move forward.
+Research quality still requires owner review and the Challenge Gate. For enrolled
+projects, also populate `PROGRAMBUILD/RESEARCH_EVIDENCE.json` using
+`docs/RESEARCH_ADMISSION_ENFORCEMENT.md` and run
+the research admission check:
+
+```bash
+programstart validate --check research-admission
+```
+
+Bind current root instructions,
+objective contract, research, decision and dated source captures. Obtain current
+native acceptance of the exact record and scope. Unsupported or unknown required
+prerequisites block their dependent product boundary; time boxing does not waive it.
+An explicitly accepted isolated experiment remains distinct from product admission.
+Report UNENROLLED or old runtimes honestly and qualify them before relying on enforcement.
 
 ## Next Steps
 

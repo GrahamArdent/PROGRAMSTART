@@ -51,12 +51,21 @@ jobs:
           if ! git cat-file -e "$OBJECTIVE_BASE:scripts/programstart_objective_proof.py"; then
             # First policy introduction cannot self-install as trusted authority.
             if git cat-file -e "$OBJECTIVE_BASE:PROGRAMBUILD/OBJECTIVES.json" 2>/dev/null || \
-               git cat-file -e "$OBJECTIVE_HEAD:PROGRAMBUILD/OBJECTIVES.json" 2>/dev/null; then
+               git cat-file -e "$OBJECTIVE_HEAD:PROGRAMBUILD/OBJECTIVES.json" 2>/dev/null || \
+               git cat-file -e "$OBJECTIVE_BASE:PROGRAMBUILD/RESEARCH_EVIDENCE.json" 2>/dev/null || \
+               git cat-file -e "$OBJECTIVE_HEAD:PROGRAMBUILD/RESEARCH_EVIDENCE.json" 2>/dev/null; then
               echo "BLOCKED: enroll only after the accepted base provides objective policy."
               exit 1
             fi
             echo "UNENROLLED: no objective completion is certified by this bootstrap PR."
             exit 0
+          fi
+          if git cat-file -e "$OBJECTIVE_BASE:scripts/programstart_research_admission.py" 2>/dev/null; then
+            git show "$OBJECTIVE_BASE:scripts/programstart_research_admission.py" > "$policy_dir/programstart_research_admission.py"
+          elif git cat-file -e "$OBJECTIVE_BASE:PROGRAMBUILD/RESEARCH_EVIDENCE.json" 2>/dev/null || \
+               git cat-file -e "$OBJECTIVE_HEAD:PROGRAMBUILD/RESEARCH_EVIDENCE.json" 2>/dev/null; then
+            echo "BLOCKED: research enrollment requires accepted policy first."
+            exit 1
           fi
           git show "$OBJECTIVE_BASE:scripts/programstart_objective_proof.py" > "$policy_dir/programstart_objective_proof.py"
           git show "$OBJECTIVE_BASE:scripts/programstart_challenge_merge.py" > "$policy_dir/programstart_challenge_merge.py"

@@ -1,0 +1,269 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Research prerequisite evidence (runtime adds native authority, byte bindings and phase checks)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "owner_ref",
+    "objective_contract_sha256",
+    "research_path",
+    "decision_ref",
+    "entrypoints",
+    "bindings",
+    "work",
+    "questions"
+  ],
+  "properties": {
+    "version": {
+      "const": 1,
+      "type": "integer"
+    },
+    "owner_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "objective_contract_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "research_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "decision_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "id"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "entrypoints": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "bindings": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "sha256"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      }
+    },
+    "work": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "phase",
+        "objective_ids",
+        "allowed_paths",
+        "excluded_claims",
+        "parent_terminal_condition"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "product",
+            "experiment"
+          ]
+        },
+        "phase": {
+          "enum": [
+            "research",
+            "architecture",
+            "implementation",
+            "release"
+          ]
+        },
+        "objective_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "allowed_paths": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "excluded_claims": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "parent_terminal_condition": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "questions": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "objective_ids",
+          "question",
+          "required_before",
+          "status",
+          "finding",
+          "next_action",
+          "invalidation",
+          "evidence"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "objective_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "question": {
+            "type": "string",
+            "minLength": 1
+          },
+          "required_before": {
+            "enum": [
+              "architecture",
+              "implementation",
+              "release"
+            ]
+          },
+          "status": {
+            "enum": [
+              "supported",
+              "unsupported",
+              "unknown",
+              "not_applicable"
+            ]
+          },
+          "finding": {
+            "type": "string",
+            "minLength": 1
+          },
+          "next_action": {
+            "type": "string",
+            "minLength": 1
+          },
+          "invalidation": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "path",
+                "sha256",
+                "source_url",
+                "kind",
+                "observed_at",
+                "valid_until",
+                "observed_capability",
+                "limitations"
+              ],
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "source_url": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "kind": {
+                  "enum": [
+                    "primary",
+                    "observation",
+                    "derived"
+                  ]
+                },
+                "observed_at": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "valid_until": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "observed_capability": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "limitations": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

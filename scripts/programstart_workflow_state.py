@@ -30,10 +30,13 @@ try:
         workflow_entry_key,
         workflow_state_path,
         workflow_steps,
+        workspace_path,
     )
+    from .programstart_objective_proof import workflow_problems
 except ImportError:  # pragma: no cover - standalone script execution fallback
     import programstart_drift_check
     import programstart_validate_core
+    from programstart_objective_proof import workflow_problems
 
     from programstart_common import (
         challenge_gate_record_from_log,
@@ -55,6 +58,7 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
         workflow_entry_key,
         workflow_state_path,
         workflow_steps,
+        workspace_path,
     )
 
 
@@ -516,6 +520,12 @@ def main() -> int:
         current_index = steps.index(active_step)
         next_step = steps[current_index + 1] if current_index + 1 < len(steps) else None
         dry_run: bool = getattr(args, "dry_run", False)
+        # This objective gate is independent of both legacy skip flags and dry-run.
+        if system == "programbuild":
+            objective_problems = workflow_problems(workspace_path("."), active_step, terminal=next_step is None)
+            if objective_problems:
+                print("Advance blocked:\n" + "\n".join(objective_problems))
+                return 1
         if not dry_run and not getattr(args, "skip_preflight", False):
             problems = preflight_problems(registry, system, active_step)
             if problems:

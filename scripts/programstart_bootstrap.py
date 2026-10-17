@@ -375,6 +375,25 @@ def write_project_agent_entry(
     Existing instructions (including symlinks) are preserved even on force bootstrap.
     Commands describe methodology control, not an invented application stack.
     """
+    # Project-owned discovery records: preserve even during a force bootstrap.
+    objective_defaults = {
+        "PROGRAMBUILD/OBJECTIVES.json": {
+            "version": 1,
+            "owner_ref": "UNSELECTED",
+            "protected_outcome": "",
+            "objectives": [],
+            "proof_workflow": "UNSELECTED",
+        },
+        "PROGRAMBUILD/OUTCOME_PROOF.json": {"version": 1, "contract_sha256": "UNACCEPTED", "claim": "slice", "objectives": []},
+    }
+    for relative, payload in objective_defaults.items():
+        target = destination_root / relative
+        if not target.exists() and not target.is_symlink():
+            if dry_run:
+                print(f"CREATE {target} (unaccepted discovery record)")
+            else:
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
     destination = destination_root / "AGENTS.md"
     if destination.exists() or destination.is_symlink():
         print(f"PRESERVE {destination} (project-owned instructions)")
@@ -416,6 +435,10 @@ This file is project-owned orientation, not product acceptance or execution perm
 - PROGRAMBUILD/DECISION_LOG.md owns material decisions; PROGRAMBUILD/TEST_STRATEGY.md owns proof.
 - Use PROGRAMBUILD/PROGRAMBUILD_IDEA_INTAKE.md (Outcome and information foundation)
   before dependent design. Empty output stubs are not completed discovery.
+- PROGRAMBUILD/OBJECTIVES.json preserves owner-accepted outcomes; OUTCOME_PROOF.json
+  traces every outcome. Unaccepted bootstrap records block dependent implementation.
+  Slice tests cannot establish full completion. The trusted methodology's advance,
+  dashboard and enrolled merge paths enforce the objective gate; raw writes do not.
 
 ## Work with the smallest current context
 

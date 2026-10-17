@@ -207,7 +207,8 @@ def test_hydrate_starter_env_example_returns_none_when_no_env(tmp_path: Path) ->
     assert result is None
 
 
-def test_create_github_repo_dry_run_prints_command(tmp_path: Path, capsys) -> None:
+def test_create_github_repo_dry_run_prints_command(tmp_path: Path, capsys, monkeypatch) -> None:
+    monkeypatch.setattr(create_core.shutil, "which", lambda _: "/usr/bin/gh")  # Dry-run argv test, no CLI is executed.
     """dry_run=True prints command instead of running subprocess (line 528)."""
     create_core.create_github_repo(
         destination_root=tmp_path,

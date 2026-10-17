@@ -6,10 +6,12 @@ import argparse
 
 try:
     from . import programstart_validate_core as validate_core
-    from .programstart_common import load_registry, warn_direct_script_invocation
+    from .programstart_common import load_registry, warn_direct_script_invocation, workspace_path
+    from .programstart_objective_proof import workflow_problems
 except ImportError:  # pragma: no cover - standalone script execution fallback
     import programstart_validate_core as validate_core
-    from programstart_common import load_registry, warn_direct_script_invocation
+    from programstart_common import load_registry, warn_direct_script_invocation, workspace_path
+    from programstart_objective_proof import workflow_problems
 
 # ---------------------------------------------------------------------------
 # Re-export every public name from validate_core so that existing consumers
@@ -117,6 +119,7 @@ def main(argv: list[str] | None = None) -> int:
             "post-launch-review",
             "coverage-source",
             "file-hygiene",
+            "objective-proof",
         ],
         default="all",
     )
@@ -137,7 +140,18 @@ def main(argv: list[str] | None = None) -> int:
     warnings: list[str] = []
 
     sf = args.system
-    if args.check == "all":
+    if args.check == "objective-proof":
+        problems.extend(workflow_problems(workspace_path("."), "release_readiness"))
+    elif args.check == "all":
+        if sf != "userjourney":
+            try:
+                state = validate_core.load_workflow_state(registry, "programbuild")
+                active = validate_core.workflow_active_step(registry, "programbuild", state)
+                steps = validate_core.workflow_steps(registry, "programbuild")
+                if active != "inputs_and_mode_selection":
+                    problems.extend(workflow_problems(workspace_path("."), active, terminal=bool(steps) and active == steps[-1]))
+            except (KeyError, OSError, ValueError) as exc:
+                problems.append(f"Objective workflow state unavailable: {exc}")
         problems.extend(validate_core.validate_registry(registry))
         problems.extend(validate_core.validate_required_files(registry, sf))
         problems.extend(validate_core.validate_metadata(registry, sf))

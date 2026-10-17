@@ -509,6 +509,7 @@ def test_impact_cli_handles_programbuild_only_repo(tmp_path: Path, monkeypatch, 
 
 
 def test_advance_preflight_blocks_when_problems(capsys, monkeypatch) -> None:
+    monkeypatch.setattr("scripts.programstart_workflow_state.workflow_problems", lambda *a, **k: [])
     state = {
         "active_stage": "inputs_and_mode_selection",
         "stages": {
@@ -538,6 +539,8 @@ def test_advance_preflight_blocks_when_problems(capsys, monkeypatch) -> None:
 
 
 def test_advance_skip_preflight_allows_progress(capsys, monkeypatch) -> None:
+    # Skip legacy content preflight only; objective acceptance remains a separate precondition.
+    monkeypatch.setattr("scripts.programstart_workflow_state.workflow_problems", lambda *a, **k: [])
     saved: dict[str, object] = {}
     state = {
         "active_stage": "inputs_and_mode_selection",

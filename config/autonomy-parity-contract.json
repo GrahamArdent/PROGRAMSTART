@@ -6753,13 +6753,21 @@
         "owner_handoff",
         "exact_machine_currentness_binding"
       ],
-      "instance_status": "partial",
+      "instance_status": "proven",
       "evidence_refs": [
         "GrahamArdent/programstart-compute-spine#72",
-        "GrahamArdent/programstart-compute-spine#75"
+        "GrahamArdent/programstart-compute-spine#75",
+        "GrahamArdent/programstart-compute-spine#198",
+        "GrahamArdent/programstart-autonomous-controller#474",
+        "GrahamArdent/execution-node-control#503",
+        "GrahamArdent/secrets-control-plane#193",
+        "https://github.com/GrahamArdent/programstart-compute-spine/blob/main/control/controller-results/req-controller-hop024-native-20261017t152944334z/result.json",
+        "https://github.com/GrahamArdent/programstart-compute-spine/blob/main/control/controller-results/req-controller-hop024-cold-replay-20261017t153725736z/result.json",
+        "https://github.com/GrahamArdent/execution-node-control/blob/main/results/req-hop024-original-staging-observe-20261017t153657065z/result.json"
       ],
       "invalidation": [
-        "Compute owner authority, bridge/repository policy, current release, or owner-intake semantics change."
+        "Compute owner authority, bridge/repository policy, current release, or owner-intake semantics change.",
+        "Material owner snapshot/non-mailbox source, original handoff/result binding, protected resource dependency, EN-local read identity or accepted installed composition changes require scoped revalidation; no new D012/provider/target effect is granted."
       ],
       "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
     },

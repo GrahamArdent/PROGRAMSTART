@@ -6576,10 +6576,15 @@
       "instance_status": "partial",
       "evidence_refs": [
         "GrahamArdent/execution-node-control#225",
-        "GrahamArdent/PROGRAMSTART#147"
+        "GrahamArdent/PROGRAMSTART#147",
+        "GrahamArdent/execution-node-control#490",
+        "GrahamArdent/PROGRAMSTART#158:issuecomment-6229222974",
+        "docs/acceptance/observations/2026-10-17-hop017-evidence-reconciliation.md",
+        "GrahamArdent/paths:evidence/EN490-REPOSITORY-CAPABILITY-2026-10-16.md"
       ],
       "invalidation": [
-        "GitHub App/CLI identity, scopes, repository installation/access, provider policy, or broker capability changes."
+        "GitHub App/CLI identity, scopes, repository installation/access, provider policy, or broker capability changes.",
+        "EN490 accepted exact-target creation/readback/replay does not by itself prove clean candidate publication. Retain partial until an actual execution-fabric publication is bound to its required preparation/validation and accepted provider result; reference-only Card Vault baseline existence is insufficient. Preserve dated receipts and per-client scope; fresh effects require current owner/actor/release/custody admission."
       ],
       "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
     },

@@ -6785,10 +6785,16 @@
         "owner_handoff",
         "exact_machine_currentness_binding"
       ],
-      "instance_status": "partial",
+      "instance_status": "proven",
       "evidence_refs": [
         "GrahamArdent/execution-node-control#180",
-        "GrahamArdent/PROGRAMSTART#147"
+        "GrahamArdent/PROGRAMSTART#147",
+        "GrahamArdent/execution-node-control#510",
+        "GrahamArdent/programstart-compute-spine#202",
+        "GrahamArdent/programstart-autonomous-controller#479",
+        "GrahamArdent/programstart-compute-spine:control/controller-results/req-controller-hop025-exact-native-20261017t172422024z/result.json",
+        "GrahamArdent/programstart-compute-spine:control/controller-results/req-controller-hop025-cold-replay-v2-20261017t173826251z/result.json",
+        "GrahamArdent/execution-node-control:results/req-hop025-selected-cleanup-20261017t174104195z/result.json"
       ],
       "invalidation": [
         "Execution Node strategic authority, repository admission, installed release, shared mutation ownership, or release path changes."

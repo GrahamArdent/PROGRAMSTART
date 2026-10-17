@@ -102,3 +102,11 @@ Decision: go / limited spike / no-go
 Reasoning:
 
 ---
+
+
+### Foundation delta feasibility — owner issue #235
+
+The bounded reusable source change reuses existing bootstrap, canonical intake, managed
+prompts and sync. It needs no new production runtime, provider, credential, paid model
+trial or Matrix service. This is source-level feasibility for FR-002/FR-003, not product
+value evidence or approval to instantiate every conditional concern in generated programs.

@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 """Lean greenfield bootstrap for projects that need PROGRAMBUILD methodology, not the factory toolchain.
 
 The normal PROGRAMSTART bootstrap remains available for projects that intentionally want the
@@ -7,6 +5,8 @@ self-contained dashboard, scripts, tests, and workflow tooling. This path reuses
 PROGRAMBUILD controls/state/output stubs while keeping those factory-development assets in the
 PROGRAMSTART repository where they belong.
 """
+
+from __future__ import annotations
 
 import argparse
 from pathlib import Path
@@ -17,6 +17,7 @@ try:
         ensure_external_project_repo,
         initialize_git_repository,
         write_file,
+        write_project_agent_entry,
     )
     from .programstart_common import load_registry, warn_direct_script_invocation
     from .programstart_target import prepare_target_control_plane
@@ -26,9 +27,11 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
         ensure_external_project_repo,
         initialize_git_repository,
         write_file,
+        write_project_agent_entry,
     )
-    from programstart_common import load_registry, warn_direct_script_invocation
     from programstart_target import prepare_target_control_plane
+
+    from programstart_common import load_registry, warn_direct_script_invocation
 
 
 def write_methodology_readme(destination_root: Path, project_name: str, variant: str, dry_run: bool) -> None:
@@ -49,7 +52,8 @@ def write_methodology_readme(destination_root: Path, project_name: str, variant:
         "\n"
         "The project owns its application stack, tests, CI, security configuration, and deployment choices. "
         "PROGRAMSTART can operate on this checkout from its central runtime with "
-        "`programstart target --repo <path> <command>`. Keep one project execution spine and load PROGRAMBUILD context just in time.\n"
+        "`programstart target --repo <path> <command>`. Keep one project execution spine "
+        "and load PROGRAMBUILD context just in time.\n"
     )
     write_file(destination_root / "README.md", readme_content, dry_run)
 
@@ -75,6 +79,9 @@ def bootstrap_methodology_repository(
         variant=variant,
         mode="methodology_only_greenfield",
         dry_run=dry_run,
+    )
+    write_project_agent_entry(
+        destination_root, project_name=project_name, variant=variant, external_runtime=True, dry_run=dry_run
     )
     initialize_git_repository(destination_root, dry_run)
 

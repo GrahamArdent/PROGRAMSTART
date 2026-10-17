@@ -79,6 +79,19 @@ Adapt the protocol steps below to fit the confirmed shape.
    - `PROGRAMBUILD/REQUIREMENTS.md` — the requirements table and user stories template
    - `PROGRAMBUILD/USER_FLOWS.md` — the flows template
 
+2a. **Work backward from outcomes to information and interactions.** Apply
+   `PROGRAMBUILD_IDEA_INTAKE.md` "Outcome and information foundation" before dependent
+   design. Record desired outcomes and success measurements; justify material information
+   by an outcome/decision/constraint/proof. Distinguish observations, derived values,
+   assumptions and unknowns, and proposed versus verified sources. Trace producers,
+   consumers, shared identity/units/state, transformations, freshness and safe missing/
+   invalid/conflicting behavior. Assess minimization/access/retention where material.
+   Use existing owner artifacts; do not invent a database or global ledger. Challenge
+   unnecessary collection and omitted handoffs. A correction must reach a later report,
+   not merely pass independent component checks. Resolve only current decision-changing
+   gaps before dependent work; preserve justified deferrals. Drafts do not become
+   accepted Matrix obligations. Derive acceptance assertions before implementation.
+
 3. **Derive requirements.** For each capability implied by the problem statement, research findings, and success metric:
    - Assign a unique ID (`FR-001`, `FR-002`, ...) for functional requirements
    - Assign a unique ID (`NFR-001`, `NFR-002`, ...) for non-functional requirements

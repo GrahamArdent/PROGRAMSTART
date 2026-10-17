@@ -49,3 +49,13 @@ Exit:
 - interaction
 
 ---
+
+
+### Flow: Bootstrap foundation and resume discovery
+
+Covers: FR-002, FR-003. Enter through either greenfield bootstrap. Resolve current
+project owners using the generated entry point; run the available methodology status/
+guide command, then apply the canonical outcome/information pass before dependent design.
+Exit with justified information and accepted/deferred decisions in existing owner outputs,
+not a claimed working product. Nonempty targets require explicit force; existing agent
+instructions are preserved. Missing runtime/host proof remains an explicit boundary.

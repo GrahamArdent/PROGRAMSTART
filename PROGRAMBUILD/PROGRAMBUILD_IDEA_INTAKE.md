@@ -328,3 +328,79 @@ Do not be polite at the expense of accuracy. A killed idea at this stage costs l
 ```
 
 ---
+
+## Outcome and information foundation
+
+Before dependent design, work backward from each material desired outcome and observable
+success criterion. Use the existing project requirements, flows, architecture, decisions
+and test strategy; a new central catalogue or mandatory document set is not required.
+
+At bootstrap establish purpose, constraints, current owners, one spine and effective agent
+orientation. During discovery/design establish sufficient outcomes, relationships,
+information and proof for the next decision. Before delivery demonstrate implemented
+journeys and relevant safety/recovery. A blank scaffold is not completed discovery.
+
+Consider these common capabilities proportionally: purpose/success/non-goals; effective
+agent entry; canonical ownership and one spine; outcome/interactions; material decisions
+and unknowns; capability discovery/reuse; information and state contracts; outcome proof;
+change impact/invalidation; reproducible setup; safety/resources; durable handoff and
+usable delivery. This is a coverage lens, not a fixed count, scoring system or feature list.
+A local utility need not acquire UI/auth/cloud/LLM features. Assess UI/accessibility,
+persistent-data/migration/restore, multi-user/trust, asynchronous retry/ordering/recovery,
+external dependencies, AI evaluation and deployed-service concerns only when applicable.
+
+### Work backward to justified information
+
+For each material outcome identify information needed to accomplish it, choose a decision,
+or prove success. Record only useful, decision-relevant detail:
+
+| Information question | Destination / assertion |
+|---|---|
+| What outcome, decision, constraint or proof requires it? | Requirement / acceptance reference and necessity |
+| Is it observed/supplied, derived, assumed, unknown, or a success measurement? | Explicit epistemic status; a model suggestion is not a fact |
+| Where does it come from, and is that source verified/available? | Producer, provenance and unresolved source gap |
+| What does it mean? | Stable identity, units, representation, validation and transformation rules |
+| Who consumes or changes it? | Complete journey, shared state, ownership and access boundary |
+| How current/trustworthy must it be? | Confidence/freshness, allowed uncertainty and invalidation |
+| What if it is missing, wrong, stale or contradictory? | Safe error/defer/block behavior and relevant negative assertion |
+| Is collection/retention justified? | Minimization, sensitivity, access and retention/deletion where material |
+
+Classify necessary-now, justified-optional, hypothesis, safely-deferred and unnecessary
+needs through existing owner vocabulary. Do not collect everything potentially useful.
+Resolve machine-discoverable facts before asking the operator. An impermissibly unknown
+required value blocks only dependent work; UNKNOWN must not masquerade as success.
+Information models evolve with outcomes/evidence; do not predesign every future field.
+
+### Trace interactions and challenge sufficiency
+
+Connect outcomes, capabilities and journeys, including producer/consumer handoffs, shared
+identities/rules/state, prerequisites, conflicts and failure propagation. For an
+import -> correction -> report journey, stable identity and the accepted correction/version
+rule must reach the report. Independently assert the corrected final value and unit;
+three successful component responses do not prove the composed result.
+
+Preserve assumptions and drafts at their project owners. Only current owner-accepted
+material may be projected as accepted Matrix obligations. REFERENCE_PLAN cannot activate
+itself; owner-native acceptance/currentness and required admission remain separate.
+Local discovery does not need a new Matrix service. Reuse existing relation/projection
+contracts and leave unknown associations explicit rather than guessing edges.
+
+Before deriving the next work packet ask: could all listed obligations/tests pass while
+the protected outcome remains materially false? Challenge missing outcomes and missing
+joins as well as unnecessary information. Schema/field presence checks cannot answer
+semantic sufficiency. Record meaningful final-state assertions, negative cases, exact
+proof versions and affected-evidence invalidation in the current test strategy.
+
+### Agent orientation and controlled evolution
+
+Greenfield bootstrap creates a project-owned AGENTS.md entry point where absent. It links
+canonical owners and methodology commands, pins its source identity, and distinguishes
+unselected application commands from executable methodology commands. Existing instructions
+are preserved, including on force bootstrap. It is not in the managed sync set; deliberately
+reconcile project adaptations/upgrades rather than overwriting local decisions.
+
+A host may use another instruction surface or inherit stronger instructions. Observe its
+effective loading/precedence before claiming host adoption. A deterministic cold process
+proves retrieval, not instruction-following. Keep the material evidence and this limitation
+visible. Existing projects use their current authority/adoption path; bootstrap does not
+authorize automatic upgrades or implementation of proposed product features.

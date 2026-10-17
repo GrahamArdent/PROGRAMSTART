@@ -146,3 +146,13 @@ PROGRAMSTART is a CLI-driven planning automation tool. It has no server, no depl
 - metrics
 - alerts
 ---
+
+
+## Project-owned agent-entry generation
+
+FR-002 is implemented by the existing full and methodology-only bootstrap entry points.
+A shared exclusive-create writer produces project-specific AGENTS.md with source identity
+and correct runtime-mode guidance. Existing entry files/symlinks remain untouched, even
+when force is selected. The file stays outside template-managed sync to preserve local
+customization. Its existence is not host-behavior acceptance. FR-003 remains the canonical
+intake/requirements semantic protocol, not a new inference/validation service.

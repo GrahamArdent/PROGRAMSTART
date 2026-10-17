@@ -1,0 +1,6 @@
+{
+  "classification": "SYNTHETIC_CONTRACT_ILLUSTRATION_NOT_A_PRODUCT",
+  "input": {"id": "record-1", "quantity": 4, "unit": "items", "source": "fixture:observation-1", "kind": "observed", "version": 1},
+  "correction": {"id": "record-1", "quantity": 7, "unit": "items", "source": "fixture:correction-2", "kind": "observed", "version": 2},
+  "expected_report": {"id": "record-1", "quantity": 7, "unit": "items", "source": "fixture:correction-2", "kind": "observed", "version": 2}
+}

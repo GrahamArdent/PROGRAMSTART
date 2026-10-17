@@ -119,3 +119,11 @@ Prompts live in `.github/prompts/`, are registered in the process registry, and 
 - Index PROGRAMSTART support protocols/artifacts here when the orchestration system depends on them for discoverability/authority routing.
 - Mark files as active/deprecated/replaced/derived as applicable.
 - Do not create synonyms for the same purpose.
+
+
+### Foundation integration locations
+
+The existing `PROGRAMBUILD_IDEA_INTAKE.md` control contains "Outcome and information
+foundation"; no new required project output is introduced. Greenfield AGENTS.md is a
+project-owned, generated navigation file, not canonical concern authority. The existing
+bootstrap implementations generate it and preserve local edits; managed sync excludes it.

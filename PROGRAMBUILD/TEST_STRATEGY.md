@@ -225,3 +225,11 @@ journeys (e.g. correction appears in final report with correct identity/units), 
 unknown handling, scoped invalidation and unsupported-fact rejection. A hand-authored
 example or parser returning green is not a semantic discovery engine or product proof.
 Record unearned semantic/host acceptance rather than claiming it from fixture presence.
+
+
+PT-FR-002-002: runtime doctor regressions distinguish runtime-required uv from
+factory-only pre-commit/Playwright and reject unknown profiles. Fresh isolated
+locked runtime setup must bootstrap a lean target and execute status/guide and
+runtime doctor from the source checkout without global programstart. Retain exact
+source/lock/tool identities and cache/platform limits; this does not certify
+application dependency selection, empty-cache acquisition or installed activation.

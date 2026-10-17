@@ -349,6 +349,27 @@ A local utility need not acquire UI/auth/cloud/LLM features. Assess UI/accessibi
 persistent-data/migration/restore, multi-user/trust, asynchronous retry/ordering/recovery,
 external dependencies, AI evaluation and deployed-service concerns only when applicable.
 
+### Reproducible environment and execution paths
+
+Select dependencies from the actual project shape. Record required versus optional
+tools, purpose, supported versions/platform, approved install source, manifest,
+lockfile and configuration owners, and exact setup/format/lint/test/build commands
+in existing requirements, architecture, decisions and test strategy. Distinguish
+central methodology runtime from application runtime and factory development tools.
+Python, Node, Prettier and other conveniences are conditional choices, not universal
+bootstrap requirements. Retain a fresh-environment check, missing-required-tool
+negative result, dependency identities and any platform/cache limits with evidence.
+A lockfile or a tool on PATH alone does not prove reproducible application behavior.
+
+Before treating transport failure as an objective blocker, inspect current Paths,
+capability discovery and admitted alternatives with their prerequisites. Use an
+available authorized local/CLI/API route when appropriate. Retain the failing
+route's evidence and the selected alternative. Preserve effect, resource, permission
+and repository boundaries; a fixed probe does not authorize arbitrary commands.
+Do not repeatedly retry an exhausted hosted service or label all routes blocked
+from that single failure. Continue the smallest legitimate dependency chain and
+escalate only the precise unresolved gate after machine-solvable options are used.
+
 ### Work backward to justified information
 
 For each material outcome identify information needed to accomplish it, choose a decision,

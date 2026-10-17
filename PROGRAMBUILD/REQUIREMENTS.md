@@ -24,7 +24,9 @@ Note: Every P0 requirement must have at least one purpose test in `TEST_STRATEGY
   with valid canonical links, source identity and truthful methodology commands, without
   replacing existing project-owned instructions. Dry-run creates no files; lean bootstrap
   does not vendor factory runtime, dashboard or tests. A generated file does not certify
-  host loading or product readiness.
+  host loading or product readiness. Lean README supplies pinned source-runtime
+  setup and commands without assuming a global CLI. Runtime doctor omits factory
+  tools while preserving required-tool failures and existing development defaults.
 - FR-003 (P0, semantic protocol): Requirements discovery applies outcome-led information
   and interaction analysis before dependent design through the canonical intake control.
   Explicitly retain unknowns and meaningful final-state assertions. Structural validation

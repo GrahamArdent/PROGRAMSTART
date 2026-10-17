@@ -220,7 +220,7 @@ class TestMain:
             "scripts.programstart_doctor.run_checks",
             lambda: [(True, "check 1 ok"), (True, "check 2 ok")],
         )
-        result = main()
+        result = main([])
         assert result == 0
         captured = capsys.readouterr()
         assert "All checks passed" in captured.out
@@ -230,7 +230,7 @@ class TestMain:
             "scripts.programstart_doctor.run_checks",
             lambda: [(True, "ok"), (False, "something failed")],
         )
-        result = main()
+        result = main([])
         assert result == 1
         captured = capsys.readouterr()
         assert "Some checks failed" in captured.out
@@ -240,7 +240,32 @@ class TestMain:
             "scripts.programstart_doctor.run_checks",
             lambda: [(True, "uv ok"), (False, "playwright not found on PATH")],
         )
-        main()
+        main([])
         captured = capsys.readouterr()
         assert "uv ok" in captured.out
         assert "playwright not found on PATH" in captured.out
+
+
+def test_runtime_profile_does_not_require_factory_tools(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr("scripts.programstart_doctor.shutil.which", lambda name: "/bin/uv" if name == "uv" else None)
+    results = run_checks("runtime")
+    assert (True, "uv") in results
+    assert not any("playwright" in message or "pre-commit" in message for _, message in results)
+    development = run_checks()
+    assert (False, "pre-commit not found on PATH") in development
+    assert (False, "playwright not found on PATH") in development
+
+
+def test_runtime_profile_missing_uv_fails(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr("scripts.programstart_doctor.shutil.which", lambda name: None)
+    assert (False, "uv not found on PATH") in run_checks("runtime")
+
+
+def test_unknown_profile_rejected() -> None:
+    with pytest.raises(ValueError, match="Unknown doctor profile"):
+        run_checks("application")
+
+
+def test_runtime_profile_missing_git_executable_fails(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr("scripts.programstart_doctor.shutil.which", lambda name: "/bin/uv" if name == "uv" else None)
+    assert (False, "git not found on PATH") in run_checks("runtime")

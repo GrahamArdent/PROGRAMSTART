@@ -462,10 +462,15 @@ def write_bootstrap_readme(destination_root: Path, project_name: str, variant: s
         "- Repo boundary: this repo is separate from PROGRAMSTART and should own its own remote/infrastructure\n"
         "\n"
         "Recommended first-time setup:\n\n"
-        "- uv sync --extra dev\n"
+        "- uv sync --frozen --extra dev\n"
         "- pre-commit install\n"
         "- python -m playwright install chromium\n"
         "- nox\n"
+        "\nThis full bootstrap carries PROGRAMSTART factory development tooling. "
+        "Record platform and Python/uv versions with the existing lockfile identity. "
+        "Application dependencies and format/lint/test/build commands remain project-owned; "
+        "select them through the reproducible environment guidance in "
+        "PROGRAMBUILD/PROGRAMBUILD_IDEA_INTAKE.md.\n"
     )
     write_file(destination_root / "README.md", readme_content, dry_run)
 

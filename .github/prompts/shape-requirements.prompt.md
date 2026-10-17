@@ -92,6 +92,15 @@ Adapt the protocol steps below to fit the confirmed shape.
    gaps before dependent work; preserve justified deferrals. Drafts do not become
    accepted Matrix obligations. Derive acceptance assertions before implementation.
 
+Before deriving dependent implementation requirements, apply the intake's
+   reproducible-environment and execution-path guidance. Select required/optional
+   dependencies by actual stack, retain version/platform/install and lock/config
+   ownership, exact setup/format/lint/test/build commands and fresh-environment
+   proof in existing owners. Separate methodology runtime from factory and app
+   dependencies; do not impose Python, Node or Prettier universally. On a route
+   failure inspect current Paths and admitted alternatives before declaring the
+   objective blocked, preserving permissions and retaining route-specific evidence.
+
 3. **Derive requirements.** For each capability implied by the problem statement, research findings, and success metric:
    - Assign a unique ID (`FR-001`, `FR-002`, ...) for functional requirements
    - Assign a unique ID (`NFR-001`, `NFR-002`, ...) for non-functional requirements

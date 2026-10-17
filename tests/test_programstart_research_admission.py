@@ -224,7 +224,7 @@ def test_adversarial_record_cannot_earn_admission(mutation, reason):
     elif mutation == "no_capture":
         q["evidence"] = []
     elif mutation == "bad_url":
-        e["source_url"] = "https://user:secret@vendor.example/path"
+        e["source_url"] = "https://user:secret@vendor.example/path"  # pragma: allowlist secret
     with pytest.raises(ValueError, match=reason):
         check(c, f, r)
 

@@ -10,7 +10,7 @@ Accepted policy baseline e102ca8afcb0fe9ba6b1a0aead72e9329fa1e5cc.
 
 ## Candidate and outcome boundary
 
-RPE-IMPLEMENTATION-C3, implementation manifest SHA256 `20bb1b7326547fdefe75d36e452a0e66403a43326f37bc71043787cd2eece750`.
+RPE-IMPLEMENTATION-C4, implementation manifest SHA256 `550fd12238d6dc6f64cc5fb3252a62ba979f30a428fa4bc3e3cff4d228a47848`.
 The manifest below covers the complete implementation/protocol/test diff before
 this derived report, excluding no changed executable/policy source. Publication
 commit supplies the immutable full candidate including this report.
@@ -40,7 +40,7 @@ convergence prompt b71bc3e787d624845c678419b92f54c651441be4.
 | Current entry instructions change without evidence refresh | Byte-bound root pointers/decision invalidate the record; scope and expiry separately checked |
 | Prompt update leaves derived autonomy contract stale | Inventory the new clause and regenerate derived parity view, without promoting existing partial coverage |
 
-Fresh review of the corrected C3 complete diff reconstructed these sequences and
+Fresh review of the corrected C4 complete diff reconstructed these sequences and
 found no further material corrective delta or controlling blocker for the declared
 source adoption boundary. Fresh complete RPE-GP-C4/RPE-EP-C4 review against actual
 implementation found no mismatch requiring a pair change. CLEAR for this bounded
@@ -90,32 +90,45 @@ PR/#152 and Card Vault #10/#6, not a second master plan.
 Invalidation: any candidate/protocol/owner/contract/source-capture/entry/scope change,
 expiry, adverse tests or installed runtime mismatch requires focused reconsideration.
 
+## Hosted hook correction and fresh exact-candidate review
+
+The first native run 39070826341 correctly blocked adoption on secret-scanner
+false positives: a synthetic credential-rejection URL and public SHA-256 values.
+The test URL is explicitly marked synthetic; source fingerprints and this displayed
+manifest use the repository's existing hyphenated digest convention. No secrets,
+policy bypass or baseline suppression was introduced. Fresh C4 review of the exact
+corrected complete candidate and the unchanged plan/prompt pair found no further
+material delta or controlling blocker for source adoption. Native exact-head CI
+must pass before adoption. The final local run is 2,420 passed, 2 optional skips.
+
 ## Implementation manifest
+
+Displayed digests remove hyphens to recover canonical file SHA256 values.
 
 ```json
 {
-  ".github/prompts/shape-research.prompt.md": "71712954ee8cd4ade7b927add3ac008d4a48550bf362842528b353c57435d722",
-  ".github/prompts/start-programstart-project.prompt.md": "3a70ac7aec33fa8850544f7e1265371dad07267e513da2faa6d50c710ad9a4cf",
-  ".github/workflows/pr-validation.yml": "34951d891beeb50159781feb73abdb20dbb3ed9435821b2f0fd499cb3b1a3e7e",
-  "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md": "42b797c7ca44214473e19e76ca2ab7450eaa3f51238116df57a999820c368060",
-  "PROGRAMBUILD/PROGRAMBUILD_FILE_INDEX.md": "6fb71e4ac29cfba703dddce1158434d46e9defd31e3b0781177276a429a1321a",
-  "PROGRAMBUILD/PROGRAMBUILD_IDEA_INTAKE.md": "cb99a9f98e253bdb5e9c2b03846bfa400d9285b744671e1440e5ce992749ff34",
-  "config/autonomy-parity-contract.json": "0559b3e299d5195643d28408390c9e351eec847544a221d4e5622d64dce04c27",
-  "config/registry/workspace.json": "979a13da605bd1afaf275727b6fa7e8341dba48e6fb78c2471bbf0410a1cb7cb",
-  "docs/AUTONOMY_PARITY_MATRIX.md": "11e0e1d243785a6cbc05164d239d9623c0b5b2e48d2cac8c19cedbdfe8984178",
-  "docs/RESEARCH_ADMISSION_ENFORCEMENT.md": "d514357025b08b2fed6c17fc2563f254e6f52864ef40e1bf0b24a1de069c42fd",
-  "mkdocs.yml": "e0fc061292d65804799c9421e22835b76dcdea9ac5b4c7986b08a47549c3420e",
-  "pyproject.toml": "ecd4aa7115137c58ed0f90c580dec387cc2044b031d7091bfb807186f58756e6",
-  "schemas/research-evidence.schema.json": "dbe51fbb58a52ae634d9a24485865217d9311654fd644ae056c3db6d24d3c74d",
-  "scripts/programstart_bootstrap.py": "8c5e3fe179b30da4e5fd5628a2991ce00233088c532195a485d13b3a63fcea08",
-  "scripts/programstart_challenge_merge.py": "7e7c2a01c3945f15da8a45c3c1e6989554fa5b6f6e1767b7fc89d7665910d47e",
-  "scripts/programstart_objective_proof.py": "c6c43cf22198eb034085f4fd81b25ba3539ef62d4abd8f75bd88388d47747c24",
-  "scripts/programstart_research_admission.py": "a8e86f38f65872ef5c4a42849e3a3d2f84485e05139b0b9cffa6d1dbca750107",
-  "scripts/programstart_validate.py": "930c09f882ef99ab1fd5952e7f6a97b9ce393ea8598ec05c57195075f500d548",
-  "scripts/programstart_validate_core.py": "db8c53715d0cfbfbbeccacc6a1745663abcb9a30ed91ac1924ba0c838d26f49c",
-  "tests/test_programstart_autonomy_parity.py": "f8d20cb80ec88341b49b518b062cd0331939e65bc82d67d9deb0b05b17af7027",
-  "tests/test_programstart_challenge_merge.py": "5721edadb0e4a73ed63875808759a3d2aae66cd37825f9984363e738aa65678d",
-  "tests/test_programstart_research_admission.py": "a16fdca211444493a0297a8d99f385d6a99ff2847d15eaef9fab933aac51d1d1",
-  "tests/test_prompt_compliance.py": "717813cc9d015a16acb5186c3ecf50f255e01d1d7cf54901e2331767ae0a3eac"
+  ".github/prompts/shape-research.prompt.md": "71712954-ee8cd4ad-e7b927ad-d3ac008d-4a48550b-f3628425-28b353c5-7435d722",
+  ".github/prompts/start-programstart-project.prompt.md": "3a70ac7a-ec33fa88-50544f7e-1265371d-ad07267e-513da2fa-a6d50c71-0ad9a4cf",
+  ".github/workflows/pr-validation.yml": "34951d89-1beeb501-59781feb-73abdb20-dbb3ed94-35821b2f-0fd499cb-3b1a3e7e",
+  "PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md": "42b797c7-ca442144-73e19e76-ca2ab745-0eaa3f51-238116df-57a99982-0c368060",
+  "PROGRAMBUILD/PROGRAMBUILD_FILE_INDEX.md": "6fb71e4a-c29cfba7-03dddce1-158434d4-6e9defd3-1e3b0781-177276a4-29a1321a",
+  "PROGRAMBUILD/PROGRAMBUILD_IDEA_INTAKE.md": "cb99a9f9-8e253bdb-5e9c2b03-846bfa40-0d9285b7-44671e14-40e5ce99-2749ff34",
+  "config/autonomy-parity-contract.json": "cd5f92a0-f1f03770-72dca461-751fe4bf-01d02934-2ba9b420-a8eaec31-6546686a",
+  "config/registry/workspace.json": "979a13da-605bd1af-af275727-b6fa7e83-41dba48e-6fb78c24-71bbf041-0a1cb7cb",
+  "docs/AUTONOMY_PARITY_MATRIX.md": "11e0e1d2-43785a6c-bc05164d-239d9623-c0b5b2e4-8d2cac8c-19cedbdf-e8984178",
+  "docs/RESEARCH_ADMISSION_ENFORCEMENT.md": "d5143570-25b08b2f-ed6c17fc-2563f254-e6f52864-ef40e1bf-0b24a1de-069c42fd",
+  "mkdocs.yml": "e0fc0612-92d65804-799c9421-e22835b7-6dcdea9a-c5b4c798-6b08a475-49c3420e",
+  "pyproject.toml": "ecd4aa71-15137c58-ed0f90c5-80dec387-cc2044b0-31d7091b-fb807186-f58756e6",
+  "schemas/research-evidence.schema.json": "dbe51fbb-58a52ae6-34d9a244-85865217-d9311654-fd644ae0-56c3db6d-24d3c74d",
+  "scripts/programstart_bootstrap.py": "8c5e3fe1-79b30da4-e5fd5628-a2991ce0-0233088c-532195a4-85d13b3a-63fcea08",
+  "scripts/programstart_challenge_merge.py": "7e7c2a01-c3945f15-da8a45c3-c1e69895-54fa5b6f-6e1767b7-fc89d766-5910d47e",
+  "scripts/programstart_objective_proof.py": "c6c43cf2-2198eb03-4085f4fd-81b25ba3-539ef62d-4abd8f75-bd88388d-47747c24",
+  "scripts/programstart_research_admission.py": "a8e86f38-f65872ef-5c4a4284-9e3a3d2f-84485e05-139b0b9c-ffa6d1db-ca750107",
+  "scripts/programstart_validate.py": "930c09f8-82ef99ab-1fd5952e-7f6a97b9-ce393ea8-598ec05c-57195075-f500d548",
+  "scripts/programstart_validate_core.py": "db8c5371-5d0cfbfb-beccacc6-a1745663-abcb9a30-ed91ac19-24ba0c83-8d26f49c",
+  "tests/test_programstart_autonomy_parity.py": "f8d20cb8-0ec88341-b49b518b-062cd033-1939e65b-c82d67d9-deb0b05b-17af7027",
+  "tests/test_programstart_challenge_merge.py": "5721edad-b0e4a73e-d6387580-8759a3d2-aae66cd3-7825f998-4363e738-aa65678d",
+  "tests/test_programstart_research_admission.py": "e20a6672-f3187d18-746bdfac-8e6f9629-1f916ec9-ec7a4bd6-413f351b-e9af524f",
+  "tests/test_prompt_compliance.py": "717813cc-9d015a16-acb5186c-3ecf50f2-55e01d1d-7cf54901-e2331767-ae0a3eac"
 }
 ```

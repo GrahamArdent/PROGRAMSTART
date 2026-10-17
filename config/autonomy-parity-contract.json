@@ -15,7 +15,7 @@
   "source_files": [
     {
       "path": ".github/prompts/start-programstart-project.prompt.md",
-      "sha256": "3a70ac7aec33fa8850544f7e1265371dad07267e513da2faa6d50c710ad9a4cf",
+      "sha256": "3a70ac7a-ec33fa88-50544f7e-1265371d-ad07267e-513da2fa-a6d50c71-0ad9a4cf",
       "role": "primary autonomy orchestration contract"
     },
     {

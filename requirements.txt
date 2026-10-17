@@ -70,7 +70,7 @@ greenlet==3.3.2
     # via playwright
 humanize==4.15.0
     # via nox
-hypothesis==6.151.10
+hypothesis==6.156.1
     # via programstart-workflow
 identify==2.6.18
     # via pre-commit
@@ -150,7 +150,7 @@ pathspec==1.0.4
     # via
     #   mkdocs
     #   yamllint
-pillow==12.2.0
+pillow==12.3.0
     # via programstart-workflow
 pip==26.0.1
     # via pip-api

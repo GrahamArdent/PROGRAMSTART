@@ -32,5 +32,6 @@ nav:
   - Defaults Review: defaults-review.md
   - Toolchain: toolchain.md
   - Verification: verification.md
+  - Objective Proof: OBJECTIVE_PROOF_ENFORCEMENT.md
   - Decisions:
       - Index: decisions/README.md

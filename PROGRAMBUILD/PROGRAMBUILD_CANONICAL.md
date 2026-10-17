@@ -202,6 +202,13 @@ Owner-selected reasoning/token prerequisites activate the existing Cost Governan
 
 ### Outcome/information discovery and agent-entry boundary
 
+Objective preservation is mechanically checked by the shared objective-proof verifier
+at supported workflow, dashboard, validation, closeout and enrolled merge consumers.
+Project-owned `OBJECTIVES.json` and `OUTCOME_PROOF.json` remain subordinate to native
+owner acceptance; copying templates or passing a slice cannot close the parent goal.
+See `docs/OBJECTIVE_PROOF_ENFORCEMENT.md` for exact trust, enrollment, native-run,
+scope-change and uncovered-route semantics. This does not grant a new execution authority.
+
 `PROGRAMBUILD_IDEA_INTAKE.md` owns the reusable outcome-led information-needs and
 interaction discovery procedure. Project REQUIREMENTS/USER_FLOWS/ARCHITECTURE/DECISION_LOG/
 TEST_STRATEGY own the resulting facts and decisions under their existing concern map.

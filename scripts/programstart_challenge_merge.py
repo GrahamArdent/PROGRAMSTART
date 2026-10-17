@@ -135,6 +135,7 @@ def admit(
     is deliberately not exposed as a production CLI input.
     """
     pull = snapshot["pull"]
+    _require("objective_proof" in snapshot, "objective gate observation missing")
     owner = snapshot["repository"]["owner"]
     own_methodology_advance = (
         after_merge and repository == "GrahamArdent/PROGRAMSTART" and snapshot["methodology_sha"] == pull.get("merge_commit_sha")
@@ -243,6 +244,7 @@ def admit(
         "target_ref": target_ref,
         "reviews": snapshot["reviews"],
         "comments": comments,
+        "objective_proof": snapshot["objective_proof"],
     }
     return hashlib.sha256(json.dumps(evidence, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
@@ -283,8 +285,21 @@ class GitHub:
         _require(remote.get("encoding") == "base64", "accepted consumer source unavailable")
         accepted = base64.b64decode(remote["content"], validate=False)
         _require(accepted == Path(__file__).read_bytes(), "consumer differs from accepted methodology source")
+        objective_source = self.api(
+            f"repos/GrahamArdent/PROGRAMSTART/contents/scripts/programstart_objective_proof.py?ref={methodology}"
+        )
+        _require(objective_source.get("encoding") == "base64", "accepted objective consumer unavailable")
+        _require(
+            base64.b64decode(objective_source["content"])
+            == Path(__file__).with_name("programstart_objective_proof.py").read_bytes(),
+            "objective consumer differs from accepted methodology",
+        )
 
     def snapshot(self, repository: str, pr: int) -> dict[str, Any]:
+        try:
+            from .programstart_objective_proof import merge_objective_snapshot
+        except ImportError:  # pragma: no cover
+            from programstart_objective_proof import merge_objective_snapshot
         base = f"repos/{repository}"
         pull = self.api(f"{base}/pulls/{pr}")
         branch = pull["base"].get("ref")
@@ -304,6 +319,7 @@ class GitHub:
             "merge_parent_shas": parents,
             "reviews": self.pages(f"{base}/pulls/{pr}/reviews"),
             "comments": self.pages(f"{base}/issues/{pr}/comments"),
+            "objective_proof": merge_objective_snapshot(self, repository, target["object"]["sha"], pull["head"]["sha"]),
         }
 
 

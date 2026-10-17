@@ -7,6 +7,8 @@ on:
 
 permissions:
   contents: read
+  issues: read
+  actions: read
 
 concurrency:
   group: pr-validation-${{ github.event.pull_request.number }}
@@ -56,6 +58,45 @@ jobs:
 
       - name: Check lockfile integrity
         run: uv lock --check
+
+      - name: Check objective claims with accepted base policy
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OBJECTIVE_REPOSITORY: ${{ github.repository }}
+          OBJECTIVE_BASE: ${{ github.event.pull_request.base.sha }}
+          OBJECTIVE_HEAD: ${{ github.event.pull_request.head.sha }}
+        shell: bash
+        run: |
+          policy_dir="${{ runner.temp }}/objective-policy"
+          mkdir -p "$policy_dir"
+          git cat-file -e "$OBJECTIVE_BASE^{commit}"
+          git cat-file -e "$OBJECTIVE_HEAD^{commit}"
+          if ! git cat-file -e "$OBJECTIVE_BASE:scripts/programstart_objective_proof.py"; then
+            # First policy introduction cannot self-install as trusted authority.
+            if git cat-file -e "$OBJECTIVE_BASE:PROGRAMBUILD/OBJECTIVES.json" 2>/dev/null || \
+               git cat-file -e "$OBJECTIVE_HEAD:PROGRAMBUILD/OBJECTIVES.json" 2>/dev/null; then
+              echo "BLOCKED: enroll only after the accepted base provides objective policy."
+              exit 1
+            fi
+            echo "UNENROLLED: no objective completion is certified by this bootstrap PR."
+            exit 0
+          fi
+          git show "$OBJECTIVE_BASE:scripts/programstart_objective_proof.py" > "$policy_dir/programstart_objective_proof.py"
+          git show "$OBJECTIVE_BASE:scripts/programstart_challenge_merge.py" > "$policy_dir/programstart_challenge_merge.py"
+          export OBJECTIVE_POLICY_DIR="$policy_dir"
+          python -I - <<'PY'
+          import json
+          import os
+          import sys
+          sys.path.insert(0, os.environ['OBJECTIVE_POLICY_DIR'])
+          from programstart_challenge_merge import GitHub
+          from programstart_objective_proof import merge_objective_snapshot
+          result = merge_objective_snapshot(
+              GitHub(), os.environ['OBJECTIVE_REPOSITORY'],
+              os.environ['OBJECTIVE_BASE'], os.environ['OBJECTIVE_HEAD'],
+          )
+          print(json.dumps(result, sort_keys=True))
+          PY
 
       - name: Collect pull request changes
         shell: bash

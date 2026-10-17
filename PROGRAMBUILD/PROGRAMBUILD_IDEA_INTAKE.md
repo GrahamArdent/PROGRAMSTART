@@ -331,6 +331,13 @@ Do not be polite at the expense of accuracy. A killed idea at this stage costs l
 
 ## Outcome and information foundation
 
+Preserve the discovered objectives in project-owned `PROGRAMBUILD/OBJECTIVES.json`
+and trace every objective in `PROGRAMBUILD/OUTCOME_PROOF.json` before dependent
+implementation. Reconcile accepted baseline/scope changes at the existing native owner.
+Pending/deferred outcomes retain reasons and resume conditions; a successful slice
+does not replace them. Full completion requires current composed proof and native
+acceptance through supported consumers; see `docs/OBJECTIVE_PROOF_ENFORCEMENT.md`.
+
 Before dependent design, work backward from each material desired outcome and observable
 success criterion. Use the existing project requirements, flows, architecture, decisions
 and test strategy; a new central catalogue or mandatory document set is not required.

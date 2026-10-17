@@ -70,6 +70,7 @@ try:
         extract_startup_sections,
         extract_subagents,
     )
+    from .programstart_objective_proof import workflow_problems
 except ImportError:  # pragma: no cover - standalone script execution fallback
     from programstart_command_registry import dashboard_allowed_commands
     from programstart_health_probe import probe_target as _probe_target
@@ -82,6 +83,7 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
         extract_startup_sections,
         extract_subagents,
     )
+    from programstart_objective_proof import workflow_problems
 
     from programstart_common import (
         challenge_gate_record_from_log,
@@ -547,6 +549,10 @@ def advance_workflow_with_signoff(
     notes_value = sanitize_markdown_table_cell(notes.strip())
     current_index = steps.index(active_step)
     next_step = steps[current_index + 1] if current_index + 1 < len(steps) else None
+    if system == "programbuild":
+        objective_problems = workflow_problems(workspace_path("."), active_step, terminal=next_step is None)
+        if objective_problems:
+            return {"output": "\n".join(objective_problems), "exit_code": 1}
     gate_date_value = gate_date.strip() or date.today().isoformat()
     gate_notes_value = sanitize_markdown_table_cell(gate_notes.strip())
     gate_record: dict[str, Any] | None = None
@@ -602,6 +608,13 @@ def advance_workflow_with_signoff(
         entries = cast(dict[str, Any], state[entry_key])
         current_entry = cast(dict[str, Any], entries[active_step])
 
+        # Revalidate the actual state under its mutation lock, not the earlier read.
+        current_index = steps.index(active_step)
+        next_step = steps[current_index + 1] if current_index + 1 < len(steps) else None
+        if system == "programbuild":
+            objective_problems = workflow_problems(workspace_path("."), active_step, terminal=next_step is None)
+            if objective_problems:
+                return {"output": "\n".join(objective_problems), "exit_code": 1}
         advance_record = {
             "decision": decision_value,
             "date": date_value,

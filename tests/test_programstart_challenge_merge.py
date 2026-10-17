@@ -42,6 +42,7 @@ def comment(number=1, payload=None, *, user_id=42):
 
 def snapshot():
     return {
+        "objective_proof": {"coverage": "UNENROLLED", "objective_complete": False},
         "methodology_sha": POLICY,
         "target_ref": "refs/heads/main",
         "target_sha": "c" * 40,
@@ -392,6 +393,20 @@ def test_candidate_modified_consumer_does_not_match_accepted_source(monkeypatch)
     with pytest.raises(AdmissionDenied, match="differs from accepted"):
         github.verify_consumer(POLICY)
     remote["content"] = base64.b64encode(Path(adapter.__file__).read_bytes()).decode()
+    monkeypatch.setattr(
+        github,
+        "api",
+        lambda path: (
+            {
+                "encoding": "base64",
+                "content": base64.b64encode(
+                    Path(adapter.__file__).with_name("programstart_objective_proof.py").read_bytes()
+                ).decode(),
+            }
+            if "programstart_objective_proof.py" in path
+            else remote
+        ),
+    )
     github.verify_consumer(POLICY)
 
 
@@ -452,6 +467,8 @@ def test_api_adapter_reads_actual_named_target_reference(monkeypatch):
             return {"object": {"sha": POLICY}}
         if path == "repos/" + REPO:
             return value["repository"]
+        if "/contents?ref=" in path:
+            return []  # This legacy adapter fixture is explicitly unenrolled.
         raise AssertionError(path)
 
     monkeypatch.setattr(github, "api", api)

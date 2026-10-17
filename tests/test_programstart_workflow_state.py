@@ -37,6 +37,12 @@ def test_preflight_problems_returns_list() -> None:
     assert isinstance(result, list)
 
 
+@pytest.fixture(autouse=True)
+def accepted_objective_precondition_for_state_plumbing(monkeypatch):
+    """Legacy state tests isolate plumbing; real gate integration has its own suite."""
+    monkeypatch.setattr("scripts.programstart_workflow_state.workflow_problems", lambda *a, **k: [])
+
+
 def test_system_is_optional_and_absent(monkeypatch) -> None:
     registry = load_registry()
     monkeypatch.setattr("scripts.programstart_common.workspace_path", lambda _relative: ROOT / "_missing_optional")
@@ -479,6 +485,7 @@ def test_cross_stage_advisory_not_shown_at_early_stages(capsys, monkeypatch) -> 
 
 
 def test_cross_stage_advisory_shown_at_stage_3(capsys, monkeypatch) -> None:
+    monkeypatch.setattr("scripts.programstart_workflow_state.workflow_problems", lambda *a, **k: [])
     """Stage 3 (requirements_and_ux) should show the advisory."""
     active = "requirements_and_ux"
     state = _make_advance_state(active, "architecture_and_risk_spikes")
@@ -500,6 +507,7 @@ def test_cross_stage_advisory_shown_at_stage_3(capsys, monkeypatch) -> None:
 
 
 def test_cross_stage_advisory_suppressed_by_flag(capsys, monkeypatch) -> None:
+    monkeypatch.setattr("scripts.programstart_workflow_state.workflow_problems", lambda *a, **k: [])
     """--skip-cross-stage-check should suppress the advisory."""
     active = "requirements_and_ux"
     state = _make_advance_state(active, "architecture_and_risk_spikes")
@@ -919,6 +927,7 @@ def test_check_challenge_gate_log_oserror(monkeypatch, tmp_path) -> None:
 
 
 def test_advance_final_step(capsys, monkeypatch) -> None:
+    monkeypatch.setattr("scripts.programstart_workflow_state.workflow_problems", lambda *a, **k: [])
     saved: dict[str, Any] = {}
     state = {
         "active_stage": "post_launch_review",
@@ -946,6 +955,7 @@ def test_advance_final_step(capsys, monkeypatch) -> None:
 
 
 def test_advance_dry_run_final_step(capsys, monkeypatch) -> None:
+    monkeypatch.setattr("scripts.programstart_workflow_state.workflow_problems", lambda *a, **k: [])
     state = {
         "active_stage": "post_launch_review",
         "stages": {

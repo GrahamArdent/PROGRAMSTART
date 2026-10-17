@@ -1,0 +1,29 @@
+[
+  {
+    "case": "green-slice",
+    "consumer": "supported standalone workflow-state CLI / explicit task workspace",
+    "exit_code": 1,
+    "state_unchanged": true,
+    "expected_gate_reason": "slice success cannot close",
+    "stdout": "Advance blocked:\nObjective proof gate blocked: slice success cannot close the objective\n",
+    "stderr": "Direct script invocation is deprecated and will be removed in a future release. Use 'uv run programstart state' or 'pb state' instead.\n"
+  },
+  {
+    "case": "fake-full-completion",
+    "consumer": "supported standalone workflow-state CLI / explicit task workspace",
+    "exit_code": 1,
+    "state_unchanged": true,
+    "expected_gate_reason": "required objective O1 is pending",
+    "stdout": "Advance blocked:\nObjective proof gate blocked: required objective O1 is pending\n",
+    "stderr": "Direct script invocation is deprecated and will be removed in a future release. Use 'uv run programstart state' or 'pb state' instead.\n"
+  },
+  {
+    "case": "omitted-objectives",
+    "consumer": "supported standalone workflow-state CLI / explicit task workspace",
+    "exit_code": 1,
+    "state_unchanged": true,
+    "expected_gate_reason": "objective coverage omitted",
+    "stdout": "Advance blocked:\nObjective proof gate blocked: objective coverage omitted, duplicated or added\n",
+    "stderr": "Direct script invocation is deprecated and will be removed in a future release. Use 'uv run programstart state' or 'pb state' instead.\n"
+  }
+]

@@ -14,12 +14,15 @@ try:
         git_changed_files,
         load_registry,
         warn_direct_script_invocation,
+        workspace_path,
         write_json,
     )
     from .programstart_drift_check import evaluate_drift
+    from .programstart_objective_proof import workflow_problems
     from .programstart_validate import validate_adr_coherence, validate_adr_coverage, validate_authority_sync
 except ImportError:  # pragma: no cover - standalone script execution fallback
     from programstart_drift_check import evaluate_drift
+    from programstart_objective_proof import workflow_problems
     from programstart_validate import validate_adr_coherence, validate_adr_coverage, validate_authority_sync
 
     from programstart_common import (
@@ -28,6 +31,7 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
         git_changed_files,
         load_registry,
         warn_direct_script_invocation,
+        workspace_path,
         write_json,
     )
 
@@ -63,6 +67,7 @@ def build_evidence(
     adr_result: str,
     adr_ids: list[str],
     notes: str,
+    objective_complete: bool = False,
 ) -> dict[str, Any]:
     registry = load_registry()
     changed_files = git_changed_files()
@@ -71,18 +76,27 @@ def build_evidence(
     authority_sync_problems = validate_authority_sync(registry)
     drift_violations, drift_notes = evaluate_drift(registry, changed_files)
 
-    failed = bool(adr_coverage_warnings or adr_coherence_problems or authority_sync_problems or drift_violations)
+    objective_problems = workflow_problems(workspace_path("."), "post_launch_review") if objective_complete else []
+    failed = bool(
+        adr_coverage_warnings or adr_coherence_problems or authority_sync_problems or drift_violations or objective_problems
+    )
     status = "failed" if failed else ("passed_with_notes" if drift_notes else "passed")
 
     return {
         "label": label,
         "timestamp_utc": datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
         "status": status,
+        "scope": "objective_complete" if objective_complete else "checkpoint",
+        "objective_complete": objective_complete and not failed,
         "adr_result": adr_result,
         "adr_ids": adr_ids,
         "notes": notes,
         "changed_files": changed_files,
         "checks": {
+            "objective_proof": {
+                "status": "failed" if objective_problems else ("passed" if objective_complete else "not_claimed"),
+                "problems": objective_problems,
+            },
             "adr_coverage": {
                 "status": "failed" if adr_coverage_warnings else "passed",
                 "warnings": adr_coverage_warnings,
@@ -105,7 +119,7 @@ def build_evidence(
 
 
 def print_summary(evidence: dict[str, Any], output_path: Path) -> None:
-    print(f"Close-out {evidence['status']}.")
+    print(f"Close-out {evidence['status']}. Scope={evidence['scope']}; objective_complete={evidence['objective_complete']}.")
     for check_name, result in evidence["checks"].items():
         print(f"- {check_name}: {result['status']}")
         for warning in result.get("warnings", []):
@@ -126,6 +140,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--adr-id", action="append", default=[], help="ADR id(s) when triage created or updated ADRs.")
     parser.add_argument("--notes", default="", help="Optional close-out notes stored in the evidence file.")
     parser.add_argument(
+        "--objective-complete",
+        action="store_true",
+        help="Claim full objective completion; requires accepted exact-head objective proof.",
+    )
+    parser.add_argument(
         "--output",
         default=None,
         help="Optional output path. Defaults to outputs/governance/<timestamp>_<label>.json",
@@ -144,6 +163,7 @@ def main(argv: list[str] | None = None) -> int:
         adr_result=args.adr_result,
         adr_ids=list(args.adr_id),
         notes=args.notes,
+        objective_complete=args.objective_complete,
     )
     output_path = Path(args.output) if args.output else default_output_path(args.label)
     write_json(output_path, evidence)

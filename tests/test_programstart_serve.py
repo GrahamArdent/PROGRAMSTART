@@ -6,11 +6,21 @@ from pathlib import Path
 from typing import Any
 from unittest.mock import patch
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from scripts import programstart_serve
+
+
+@pytest.fixture(autouse=True)
+def accepted_objective_precondition_for_dashboard_plumbing(monkeypatch):
+    """Legacy dashboard tests isolate plumbing; real gate integration has its own suite."""
+    monkeypatch.setattr(programstart_serve, "workflow_problems", lambda *a, **k: [])
+
+
 from scripts.programstart_serve import (
     ALLOWED_COMMANDS,
     advance_workflow_with_signoff,
@@ -492,6 +502,7 @@ def test_load_dashboard_html_returns_fallback_when_index_html_missing(monkeypatc
 
 
 def test_advance_workflow_with_signoff_dry_run_final_step_shows_completion(monkeypatch, tmp_path: Path) -> None:
+    monkeypatch.setattr(programstart_serve, "workflow_problems", lambda *a, **k: [])
     """Lines 572-576: dry_run=True with no next step → '[dry-run] Would mark final ...' message."""
     state = {
         "active_stage": "release",
@@ -963,6 +974,7 @@ def test_advance_blocked_gate_result_payload_returns_error(monkeypatch, tmp_path
 
 
 def test_advance_final_step_completes(monkeypatch, tmp_path: Path) -> None:
+    monkeypatch.setattr(programstart_serve, "workflow_problems", lambda *a, **k: [])
     """Advancing the last step with no next_step sets completed message (line 632)."""
     saved: dict[str, Any] = {}
     state = {

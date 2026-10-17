@@ -89,6 +89,7 @@ VALID_CHECKS: frozenset[str] = frozenset(
         "coverage-source",
         "file-hygiene",
         "objective-proof",
+        "research-admission",
     }
 )
 

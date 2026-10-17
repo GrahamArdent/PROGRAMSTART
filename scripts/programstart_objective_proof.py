@@ -289,7 +289,9 @@ def read_api_file(adapter: Any, repository: str, ref: str, path: str, *, optiona
 
 
 def workflow_problems(root: Path, stage: str, *, terminal: bool = False) -> list[str]:
-    if not terminal and stage not in IMPLEMENTATION_STAGES | COMPLETION_STAGES:
+    if not terminal and stage not in IMPLEMENTATION_STAGES | COMPLETION_STAGES | {"research", "research_and_unknowns"}:
+        return []
+    if stage in {"research", "research_and_unknowns"} and not (root / "PROGRAMBUILD/RESEARCH_EVIDENCE.json").exists():
         return []
     try:
         contract = parse((root / CONTRACT).read_bytes())
@@ -333,6 +335,11 @@ def workflow_problems(root: Path, stage: str, *, terminal: bool = False) -> list
             "comments": adapter.pages(f"repos/{repository}/issues/{issue}/comments"),
         }
         head = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True, timeout=15).strip()
+        try:
+            from .programstart_research_admission import local_check
+        except ImportError:  # pragma: no cover
+            from programstart_research_admission import local_check
+        local_check(root, stage, adapter, repository, base_sha, head, terminal=terminal)
         if complete:
             load_proof_runs(adapter, repository, authority)
             require(
@@ -355,10 +362,15 @@ def workflow_problems(root: Path, stage: str, *, terminal: bool = False) -> list
 
 def merge_objective_snapshot(adapter: Any, repository: str, target: str, head: str) -> dict[str, Any]:
     """Enrolled merge preflight: no full-completion inference from a slice PR."""
+    try:
+        from .programstart_research_admission import merge_snapshot
+    except ImportError:  # pragma: no cover
+        from programstart_research_admission import merge_snapshot
+    research = merge_snapshot(adapter, repository, target, head)
     base = read_api_file(adapter, repository, target, CONTRACT, optional=True)
     candidate = read_api_file(adapter, repository, head, CONTRACT, optional=True)
     if base is None and candidate is None:
-        return {"coverage": "UNENROLLED", "objective_complete": False}
+        return {"coverage": "UNENROLLED", "objective_complete": False, "research_admission": research}
     if candidate is None:
         raise ObjectiveDenied("candidate removed the accepted objective contract")
     contract = parse(candidate)
@@ -390,6 +402,7 @@ def merge_objective_snapshot(adapter: Any, repository: str, target: str, head: s
     )
     return {
         "coverage": "ENROLLED",
+        "research_admission": research,
         "objective_complete": complete,
         "contract_sha256": digest(contract),
         "proof_sha256": digest(proof),

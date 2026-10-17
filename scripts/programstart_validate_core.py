@@ -593,6 +593,12 @@ def validate_implementation_entry_criteria(registry: dict) -> list[str]:
     problems.extend(validate_test_strategy_complete(registry))
     problems.extend(validate_risk_spikes(registry))
     problems.extend(validate_risk_spike_resolution(registry))
+    if workspace_path("PROGRAMBUILD/OBJECTIVES.json").exists() or workspace_path("PROGRAMBUILD/RESEARCH_EVIDENCE.json").exists():
+        try:
+            from .programstart_objective_proof import workflow_problems
+        except ImportError:  # pragma: no cover
+            from programstart_objective_proof import workflow_problems
+        problems.extend(workflow_problems(workspace_path("."), "scaffold_and_guardrails"))
     return problems
 
 

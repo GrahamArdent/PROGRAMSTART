@@ -85,6 +85,10 @@ A portfolio-wide `IDEA_LEDGER.md` instance belongs in the operator's planning wo
 | `templates/portfolio/PORTFOLIO_HISTORY.md` | workspace template | meaningful attention transitions only; does not mirror repository history |
 | `PROGRAMBUILD/OBJECTIVES.json` | project-owned enrollment record | accepted protected outcome and complete objective inventory; not a reusable Markdown output template |
 | `PROGRAMBUILD/OUTCOME_PROOF.json` | derived project proof record | current source-bound requirements, implementation, composed scenario, environment and evidence for every objective |
+| `PROGRAMBUILD/RESEARCH_EVIDENCE.json` | project-owned enrollment record | material prerequisite evidence, current entry bindings and native accepted work scope |
+| `scripts/programstart_research_admission.py` | enforcement | shared evidence integrity, currentness, scope and dependent phase admission |
+| `schemas/research-evidence.schema.json` | schema | companion record shape; runtime additionally checks native acceptance and bytes |
+| `docs/RESEARCH_ADMISSION_ENFORCEMENT.md` | enforcement contract | research admission, semantic review and installed coverage limits |
 | `scripts/programstart_objective_proof.py` | enforcement | fail-closed objective preservation and proof admission shared by workflow, validation, closure and merge consumers |
 | `docs/OBJECTIVE_PROOF_ENFORCEMENT.md` | enforcement contract | objective record schema, owner acceptance, source/run bindings, trust boundaries and migration limits |
 | `scripts/check_commit_msg.py` | enforcement | validates Conventional Commits |

@@ -214,3 +214,10 @@ interaction discovery procedure. Project REQUIREMENTS/USER_FLOWS/ARCHITECTURE/DE
 TEST_STRATEGY own the resulting facts and decisions under their existing concern map.
 Generated AGENTS.md is project-owned orientation, not a second authority or managed sync
 asset. Host loading and semantic outcome adequacy require evidence beyond file existence.
+
+Material research prerequisites use the companion project-owned
+`RESEARCH_EVIDENCE.json` record. Bind independent evidence, current instructions,
+objective/decision and native accepted scope before the dependent product boundary.
+Unknown/unsupported prerequisites cannot be waived by a mock, experiment label or
+green slice. See `docs/RESEARCH_ADMISSION_ENFORCEMENT.md` for shared callers,
+evidence-review limits and per-installation qualification.

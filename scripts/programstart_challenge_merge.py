@@ -136,6 +136,7 @@ def admit(
     """
     pull = snapshot["pull"]
     _require("objective_proof" in snapshot, "objective gate observation missing")
+    _require("research_admission" in snapshot["objective_proof"], "research gate observation missing")
     owner = snapshot["repository"]["owner"]
     own_methodology_advance = (
         after_merge and repository == "GrahamArdent/PROGRAMSTART" and snapshot["methodology_sha"] == pull.get("merge_commit_sha")
@@ -293,6 +294,16 @@ class GitHub:
             base64.b64decode(objective_source["content"])
             == Path(__file__).with_name("programstart_objective_proof.py").read_bytes(),
             "objective consumer differs from accepted methodology",
+        )
+
+        research_source = self.api(
+            f"repos/GrahamArdent/PROGRAMSTART/contents/scripts/programstart_research_admission.py?ref={methodology}"
+        )
+        _require(research_source.get("encoding") == "base64", "accepted research consumer unavailable")
+        _require(
+            base64.b64decode(research_source["content"])
+            == Path(__file__).with_name("programstart_research_admission.py").read_bytes(),
+            "research consumer differs from accepted methodology",
         )
 
     def snapshot(self, repository: str, pr: int) -> dict[str, Any]:

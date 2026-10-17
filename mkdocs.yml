@@ -33,5 +33,6 @@ nav:
   - Toolchain: toolchain.md
   - Verification: verification.md
   - Objective Proof: OBJECTIVE_PROOF_ENFORCEMENT.md
+  - Research Admission: RESEARCH_ADMISSION_ENFORCEMENT.md
   - Decisions:
       - Index: decisions/README.md

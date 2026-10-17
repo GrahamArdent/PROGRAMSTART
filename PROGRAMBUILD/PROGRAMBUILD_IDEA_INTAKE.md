@@ -432,3 +432,10 @@ effective loading/precedence before claiming host adoption. A deterministic cold
 proves retrieval, not instruction-following. Keep the material evidence and this limitation
 visible. Existing projects use their current authority/adoption path; bootstrap does not
 authorize automatic upgrades or implementation of proposed product features.
+
+For material research prerequisites, project-owned
+`PROGRAMBUILD/RESEARCH_EVIDENCE.json` preserves question-to-objective coverage,
+source captures, disposition, next action, expiry and native accepted scope.
+Use `docs/RESEARCH_ADMISSION_ENFORCEMENT.md`; public-source research can proceed
+while physical observations remain unknown, but unresolved prerequisites block
+their dependent product boundary. An isolated experiment does not complete the parent.

@@ -120,6 +120,7 @@ def main(argv: list[str] | None = None) -> int:
             "coverage-source",
             "file-hygiene",
             "objective-proof",
+            "research-admission",
         ],
         default="all",
     )
@@ -140,7 +141,12 @@ def main(argv: list[str] | None = None) -> int:
     warnings: list[str] = []
 
     sf = args.system
-    if args.check == "objective-proof":
+    if args.check == "research-admission":
+        if not workspace_path("PROGRAMBUILD/RESEARCH_EVIDENCE.json").exists():
+            problems.append("Research admission is UNENROLLED; no prerequisite acceptance is certified")
+        else:
+            problems.extend(workflow_problems(workspace_path("."), "requirements_and_ux"))
+    elif args.check == "objective-proof":
         problems.extend(workflow_problems(workspace_path("."), "release_readiness"))
     elif args.check == "all":
         if sf != "userjourney":

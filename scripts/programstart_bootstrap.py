@@ -367,6 +367,91 @@ def initialize_git_repository(destination_root: Path, dry_run: bool) -> None:
         )
 
 
+def write_project_agent_entry(
+    destination_root: Path, *, project_name: str, variant: str, external_runtime: bool, dry_run: bool
+) -> None:
+    """Create a project-owned entry point, never a template-sync authority.
+
+    Existing instructions (including symlinks) are preserved even on force bootstrap.
+    Commands describe methodology control, not an invented application stack.
+    """
+    destination = destination_root / "AGENTS.md"
+    if destination.exists() or destination.is_symlink():
+        print(f"PRESERVE {destination} (project-owned instructions)")
+        return
+    if dry_run:
+        print(f"CREATE {destination}")
+        return
+    try:
+        head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=workspace_path("."), text=True, capture_output=True, check=True)
+        status = subprocess.run(
+            ["git", "status", "--porcelain", "--untracked-files=normal"],
+            cwd=workspace_path("."),
+            text=True,
+            capture_output=True,
+            check=True,
+        )
+        source_commit = getattr(head, "stdout", "").strip()
+        dirty = getattr(status, "stdout", None)
+        if not re.fullmatch(r"[a-f0-9]{40}", source_commit) or not isinstance(dirty, str):
+            raise ValueError("source identity unavailable")
+        if dirty.strip():
+            source_commit += " (uncommitted changes: HEAD alone does not identify these source bytes)"
+    except (OSError, subprocess.SubprocessError, ValueError):
+        source_commit = "UNKNOWN (resolve before relying on template provenance)"
+    project_label = json.dumps(project_name, ensure_ascii=True)
+    command = "programstart target --repo ." if external_runtime else "uv run programstart"
+    content = f"""# Project agent entry
+
+Project name (data): {project_label}
+PROGRAMBUILD variant: {variant}. Adopted source commit: {source_commit}.
+This file is project-owned orientation, not product acceptance or execution permission.
+
+## Find current authority
+
+- Start with README.md and PROGRAMBUILD/PROGRAMBUILD_STATE.json for orientation.
+- PROGRAMBUILD/PROGRAMBUILD_CANONICAL.md owns concern/conflict rules.
+- Preserve the current project spine; the bootstrap default is PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md.
+- PROGRAMBUILD/REQUIREMENTS.md owns scope; PROGRAMBUILD/ARCHITECTURE.md owns design.
+- PROGRAMBUILD/DECISION_LOG.md owns material decisions; PROGRAMBUILD/TEST_STRATEGY.md owns proof.
+- Use PROGRAMBUILD/PROGRAMBUILD_IDEA_INTAKE.md (Outcome and information foundation)
+  before dependent design. Empty output stubs are not completed discovery.
+
+## Work with the smallest current context
+
+Use `{command} status` and `{command} guide --system programbuild`
+from this project with an available PROGRAMSTART runtime. These inspect methodology;
+application run/test commands are not selected by bootstrap. Discover and retain the
+actual application commands after the project stack is accepted; never invent them.
+
+Retrieve only relevant current authority, contracts and evidence. Reuse proven
+capabilities before rebuilding. Keep unknowns, assumptions, derived values and
+observed facts distinct. Justify information needs by outcome/decision/constraint/proof,
+including meaning, source, identity/units, consumers and safe missing-data behavior.
+Trace complete journeys and their shared state; format validity alone is insufficient.
+
+## Change and completion boundaries
+
+Reconcile canonical owners before dependent changes. Identify affected evidence and
+invalidate only what changed; use the current Challenge Gate at meaningful boundaries.
+One spine remains authoritative; Matrix and work packets are derived. Draft ideas and
+reference plans never authorize implementation. No UI, cloud database, account system,
+LLM, paid dependency or background service is implied by this bootstrap.
+Keep secrets out of source. Observe project-specific effect/resource/permission rules.
+Verify real end-to-end outcomes and relevant negative paths, retain exact versioned
+proof, and reconcile durable owner state. A scaffold or green structural check is not
+product completion. Confirm effective host loading/inheritance separately: this file's
+existence cannot prove an agent obeys it. Adapt other hosts through their supported
+entry surfaces without duplicating authority. Sync does not manage this local file.
+"""
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        with destination.open("x", encoding="utf-8") as handle:
+            handle.write(content)
+    except FileExistsError:
+        print(f"PRESERVE {destination} (concurrent project-owned instructions)")
+
+
 def write_bootstrap_readme(destination_root: Path, project_name: str, variant: str, dry_run: bool) -> None:
     readme_content = (
         f"# {project_name}\n\n"
@@ -377,10 +462,15 @@ def write_bootstrap_readme(destination_root: Path, project_name: str, variant: s
         "- Repo boundary: this repo is separate from PROGRAMSTART and should own its own remote/infrastructure\n"
         "\n"
         "Recommended first-time setup:\n\n"
-        "- uv sync --extra dev\n"
+        "- uv sync --frozen --extra dev\n"
         "- pre-commit install\n"
         "- python -m playwright install chromium\n"
         "- nox\n"
+        "\nThis full bootstrap carries PROGRAMSTART factory development tooling. "
+        "Record platform and Python/uv versions with the existing lockfile identity. "
+        "Application dependencies and format/lint/test/build commands remain project-owned; "
+        "select them through the reproducible environment guidance in "
+        "PROGRAMBUILD/PROGRAMBUILD_IDEA_INTAKE.md.\n"
     )
     write_file(destination_root / "README.md", readme_content, dry_run)
 
@@ -416,6 +506,9 @@ def bootstrap_repository(
     stamp_bootstrapped_registry(destination_root, project_name=project_name, dry_run=dry_run)
     sanitize_bootstrapped_secrets_baseline(destination_root, dry_run)
     refresh_secrets_baseline(destination_root, dry_run)
+    write_project_agent_entry(
+        destination_root, project_name=project_name, variant=variant, external_runtime=False, dry_run=dry_run
+    )
     initialize_git_repository(destination_root, dry_run)
 
 

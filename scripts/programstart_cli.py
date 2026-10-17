@@ -265,7 +265,7 @@ def dispatch(command: str, arguments: list[str], parser: argparse.ArgumentParser
     if command == "health":
         return run_passthrough(programstart_health_probe.main, "programstart health", arguments)
     if command == "doctor":
-        return run_passthrough(programstart_doctor.main, "programstart doctor", arguments)
+        return programstart_doctor.main(arguments)
     if command == "prompt-build":
         return run_passthrough(programstart_prompt_build.main, "programstart prompt-build", arguments)
     if command == "mutation-edit-hook":

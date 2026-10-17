@@ -209,3 +209,27 @@ Use this matrix when planning or reviewing a project repo. The test case IDs are
 - Browser smoke and golden screenshot comparisons run outside pytest (nox sessions, CI). They are not counted in the 400+ pytest test total. Integrating them as pytest-marked tests (e.g. `@pytest.mark.playwright`) would give unified reporting.
 
 ---
+
+
+## Foundation acceptance scope — FR-002 / FR-003
+
+PT-FR-002-001: `tests/test_foundation_bootstrap.py` runs actual lean bootstrap across
+small-tool, interactive-stateful and service/async profiles, checks current owner links,
+central-runtime commands and no factory leakage; full bootstrap exercises its own command
+mode. Preserve/dry-run/conflict tests protect project instructions. These are real
+bootstrap outcome tests, not working-product or host instruction-following tests.
+
+FR-003 requires semantic acceptance beyond structural checks: fix outcome/input facts
+and independent or adjudicated expected meaning before inspecting outputs; verify complete
+journeys (e.g. correction appears in final report with correct identity/units), required
+unknown handling, scoped invalidation and unsupported-fact rejection. A hand-authored
+example or parser returning green is not a semantic discovery engine or product proof.
+Record unearned semantic/host acceptance rather than claiming it from fixture presence.
+
+
+PT-FR-002-002: runtime doctor regressions distinguish runtime-required uv from
+factory-only pre-commit/Playwright and reject unknown profiles. Fresh isolated
+locked runtime setup must bootstrap a lean target and execute status/guide and
+runtime doctor from the source checkout without global programstart. Retain exact
+source/lock/tool identities and cache/platform limits; this does not certify
+application dependency selection, empty-cache acquisition or installed activation.

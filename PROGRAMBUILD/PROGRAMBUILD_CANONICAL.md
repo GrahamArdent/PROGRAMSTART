@@ -198,3 +198,12 @@ A product/system learning observation, adaptive recommendation, experiment resul
 Last updated: 2026-09-03
 
 Owner-selected reasoning/token prerequisites activate the existing Cost Governance resource preflight before major work. Missing or stale required preparation blocks execution-ready compilation; the exact owner tree and existing packet fingerprints bind the plan. Compute retains approved profile selection inside Controller admission. A preflight does not grant model, provider, budget, or execution authority.
+
+
+### Outcome/information discovery and agent-entry boundary
+
+`PROGRAMBUILD_IDEA_INTAKE.md` owns the reusable outcome-led information-needs and
+interaction discovery procedure. Project REQUIREMENTS/USER_FLOWS/ARCHITECTURE/DECISION_LOG/
+TEST_STRATEGY own the resulting facts and decisions under their existing concern map.
+Generated AGENTS.md is project-owned orientation, not a second authority or managed sync
+asset. Host loading and semantic outcome adequacy require evidence beyond file existence.

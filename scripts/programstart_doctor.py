@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import json
 import shutil
 import subprocess
@@ -75,20 +76,28 @@ def _check_state_files() -> tuple[bool, str]:
     return True, "state files valid JSON"
 
 
-def run_checks() -> list[tuple[bool, str]]:
-    return [
+def run_checks(profile: str = "development") -> list[tuple[bool, str]]:
+    if profile not in {"runtime", "development"}:
+        raise ValueError(f"Unknown doctor profile: {profile}")
+    results = [
         _check_python_version(),
         _check_tool_installed("uv"),
-        _check_tool_installed("pre-commit"),
-        _check_playwright(),
         _check_git_repo(),
         _check_registry_schema(),
         _check_state_files(),
     ]
+    if profile == "runtime":
+        results.append(_check_tool_installed("git"))
+    if profile == "development":
+        results.extend([_check_tool_installed("pre-commit"), _check_playwright()])
+    return results
 
 
-def main() -> int:
-    results = run_checks()
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Check PROGRAMSTART environment readiness.")
+    parser.add_argument("--profile", choices=["development", "runtime"], default="development")
+    args = parser.parse_args([] if argv is None else argv)
+    results = run_checks() if args.profile == "development" else run_checks(args.profile)
     all_ok = True
     for ok, message in results:
         icon = "\u2705" if ok else "\u274c"
@@ -105,4 +114,4 @@ def main() -> int:
 
 if __name__ == "__main__":  # pragma: no cover
     warn_direct_script_invocation("'uv run programstart doctor' or 'pb doctor'")
-    raise SystemExit(main())
+    raise SystemExit(main(sys.argv[1:]))

@@ -1,0 +1,79 @@
+{
+  "record_type": "foundation_execution_receipt",
+  "packet_id": "PS-FOUNDATION-20261016",
+  "dispatch_id": "CLOUD-PS-FOUNDATION-C3-20261017-0200-001",
+  "owner": "GrahamArdent/PROGRAMSTART",
+  "owner_ref": "https://github.com/GrahamArdent/PROGRAMSTART/issues/235",
+  "source_base": "cc62006181b95eee08bc184ddcb8b6b0e01caab3",
+  "authority_boundary": "Operator authorized bounded source changes and reviewable publication; implementation acceptance and host adoption remain separate.",
+  "execution_authority": false,
+  "status": "PREPARED_CANDIDATE_OWNER_ACCEPTANCE_PENDING",
+  "protected_outcome": "New programs can discover outcomes/interactions/information needs and recover project-specific canonical orientation without new central authority.",
+  "packet_ref": "https://chatgpt.com/api/library/files/libfile_1cccf70285488191b3b0831f9f6b8323/download",
+  "plan_sha256": "63232e807413043bbb9314a3e2257631be572df67cc295f3743e4e475d8c93de",
+  "prompt_sha256": "7441a8e0a647572b350b008132ccf4c55889d1ccc516ce8a0df0dcbba5a07957",
+  "steps": [
+    "Currentness/deduplication and owner record",
+    "Fit analysis and information-needs pass",
+    "Minimal bootstrap/canonical integration",
+    "Synthetic acceptance and inherited Matrix proof",
+    "Actual-diff Challenge and prepared publication",
+    "Remote readback and cold reconstruction",
+    "Scoped acceptance and comparison readiness without dispatch"
+  ],
+  "proof_paths": [
+    "tests/test_foundation_bootstrap.py",
+    "tests/fixtures/foundation/expected.json",
+    "tests/fixtures/foundation/workflow.py"
+  ],
+  "source_sha256": {
+    "scripts/programstart_bootstrap.py": "35e8c935b6d25e841a745c6ae5c906e214ebbe1dafbaccb5039e497c4285e558",
+    "scripts/programstart_bootstrap_methodology.py": "1a2c72293b39463b3e6509b2c4210c4a1729e1effb5232e2c0989c58ee922624",
+    "tests/test_foundation_bootstrap.py": "99ac5d3c9b4c1ddbf0c403485d2491a500f9f71c103af4e8c49f7269b35f5192",
+    "tests/fixtures/foundation/workflow.py": "83d34a18eda6d7dd0f24f137be5b957cb1f19b1c9f8c7808c6c16eeefcb2966b",
+    "tests/fixtures/foundation/expected.json": "11280acef3d0aab7fcca5596ea2a8b00ca6accc811d1c3ec650b0c28449397e6",
+    "PROGRAMBUILD/PROGRAMBUILD_IDEA_INTAKE.md": "e1be6a811eb4d4ca97aa0a191aa49634eebfa2e5674b0477e4fc38863ace4d0b",
+    ".github/prompts/shape-requirements.prompt.md": "dd17553294a03cc9eb543f475b8ac25c811900a5a1328a295aaf1e501ddd4652"
+  },
+  "information_requirements": [
+    "outcome/decision/constraint/proof justification",
+    "observed/derived/assumed/unknown/measurement classification",
+    "verified source and availability",
+    "producer/consumer and complete journey",
+    "identity/units/transformations/validation",
+    "freshness/uncertainty/invalid or missing behavior",
+    "minimization/access/retention when material"
+  ],
+  "acceptance_conditions": [
+    "Real lean/full bootstrap and target commands work",
+    "Local entry instructions preserved and not managed by sync",
+    "Meaningful synthetic final-state and negative assertions",
+    "Existing Matrix ownership/currentness behavior reused",
+    "Required source checks and exact-head review",
+    "Immutable remote readback and fresh-process reconstruction",
+    "Actual owner acceptance before adopted-source claim; P9 independently earned before host-adoption claim"
+  ],
+  "residuals": [
+    "P9 actual agent-host loading/precedence unproven: no new model trial was authorized",
+    "No semantic discovery engine or real product generated; synthetic fixture is an explicit contract illustration",
+    "Owner PR acceptance and independent remote verification remain pending at this prepared snapshot"
+  ],
+  "terminal_condition": "Scoped owner acceptance plus required current proof; otherwise retain exact prepared/unproven boundary without claiming full foundation adoption.",
+  "invalidation_conditions": [
+    "changed owner permission/source head/collision",
+    "changed instruction inheritance/host",
+    "changed required contracts/semantic fixtures",
+    "unknown or stale proof",
+    "new paid/runtime/product effects"
+  ],
+  "exclusions": [
+    "production runtime/provider/credential changes",
+    "new model trial or paid capacity",
+    "Card Vault/application build",
+    "new global registry/service/queue/scheduler",
+    "automatic child migration",
+    "full workflow comparison dispatch"
+  ],
+  "review_provenance": "same assistant, fresh opposition; no independent agent/model/human review",
+  "comparison_readiness": "Prepare later full-lifecycle design only after this source and host scope is assessed; do not dispatch."
+}

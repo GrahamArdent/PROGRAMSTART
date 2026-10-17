@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 """Lean greenfield bootstrap for projects that need PROGRAMBUILD methodology, not the factory toolchain.
 
 The normal PROGRAMSTART bootstrap remains available for projects that intentionally want the
@@ -7,6 +5,8 @@ self-contained dashboard, scripts, tests, and workflow tooling. This path reuses
 PROGRAMBUILD controls/state/output stubs while keeping those factory-development assets in the
 PROGRAMSTART repository where they belong.
 """
+
+from __future__ import annotations
 
 import argparse
 from pathlib import Path
@@ -17,6 +17,7 @@ try:
         ensure_external_project_repo,
         initialize_git_repository,
         write_file,
+        write_project_agent_entry,
     )
     from .programstart_common import load_registry, warn_direct_script_invocation
     from .programstart_target import prepare_target_control_plane
@@ -26,9 +27,11 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
         ensure_external_project_repo,
         initialize_git_repository,
         write_file,
+        write_project_agent_entry,
     )
-    from programstart_common import load_registry, warn_direct_script_invocation
     from programstart_target import prepare_target_control_plane
+
+    from programstart_common import load_registry, warn_direct_script_invocation
 
 
 def write_methodology_readme(destination_root: Path, project_name: str, variant: str, dry_run: bool) -> None:
@@ -49,8 +52,55 @@ def write_methodology_readme(destination_root: Path, project_name: str, variant:
         "\n"
         "The project owns its application stack, tests, CI, security configuration, and deployment choices. "
         "PROGRAMSTART can operate on this checkout from its central runtime with "
-        "`programstart target --repo <path> <command>`. Keep one project execution spine and load PROGRAMBUILD context just in time.\n"
+        "`programstart target --repo <path> <command>`. Keep one project execution spine "
+        "and load PROGRAMBUILD context just in time.\n"
     )
+    readme_content += """
+
+## Reproduce the methodology runtime
+
+Use an accepted PROGRAMSTART source checkout pinned to its full commit SHA; retain
+that SHA in the project decision log. The source checkout supplies the methodology
+assets as well as the CLI. A bare `programstart` command on PATH is not required.
+Use the Python version in that checkout's `.python-version` (currently 3.12), Git,
+and a recorded uv version from an approved installation source. Record platform,
+Python/uv versions and the `uv.lock` identity with setup evidence.
+
+Replace both absolute paths below with your actual runtime and project locations:
+
+```bash
+export PROGRAMSTART_RUNTIME=/absolute/path/to/pinned/PROGRAMSTART
+export PROJECT_ROOT=/absolute/path/to/this/project
+(cd "$PROGRAMSTART_RUNTIME" && uv sync --frozen --no-dev)
+(cd "$PROGRAMSTART_RUNTIME" && uv run --frozen --no-dev programstart doctor --profile runtime)
+(cd "$PROGRAMSTART_RUNTIME" && uv run --frozen --no-dev programstart target --repo "$PROJECT_ROOT" status)
+(cd "$PROGRAMSTART_RUNTIME" && uv run --frozen --no-dev programstart target --repo "$PROJECT_ROOT" guide --system programbuild)
+```
+
+Run from the runtime checkout as shown; do not infer runtime location from the
+project's working directory. Runtime doctor checks the methodology environment,
+not application readiness. The default development profile additionally checks
+PROGRAMSTART factory tools. A missing required tool fails readiness; fix the
+reported prerequisite through the approved setup route and repeat the check.
+
+## Project environment contract
+
+Before implementation, retain the selected application environment in existing
+REQUIREMENTS, ARCHITECTURE, DECISION_LOG and TEST_STRATEGY owners. For each needed
+tool record purpose, required/optional status, supported platform/version,
+installation source, manifest/lock/config owner, and exact setup and verification
+commands. Verify a fresh environment and retain results. Lock dependencies and
+formatter settings where the selected ecosystem supports them; record exceptions.
+Python and Node are application choices. Prettier applies when the chosen stack
+needs it; Python format/lint tools apply when Python is selected. Do not add tools,
+a package manifest or services merely because they are available. Application
+format/lint/test/build commands remain unselected until the project owns them.
+
+If a route fails, inspect current Paths and admitted alternatives, including local
+execution when available. Record route-specific prerequisites and failure evidence;
+preserve permission, effect and repository boundaries when rerouting. A hosted
+quota failure alone does not prove the objective is blocked on every route.
+"""
     write_file(destination_root / "README.md", readme_content, dry_run)
 
 
@@ -75,6 +125,9 @@ def bootstrap_methodology_repository(
         variant=variant,
         mode="methodology_only_greenfield",
         dry_run=dry_run,
+    )
+    write_project_agent_entry(
+        destination_root, project_name=project_name, variant=variant, external_runtime=True, dry_run=dry_run
     )
     initialize_git_repository(destination_root, dry_run)
 

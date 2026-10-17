@@ -198,3 +198,17 @@ Authority: Canonical for project decision history
 - Why: This makes results reconstructable and handoff-friendly without turning chat, PROGRAMSTART, Portfolio Operations, or a packet archive into a second project authority or backlog.
 - Alternatives considered: (1) Keep all detail in chat. (2) Store every packet in one PROGRAMSTART folder. (3) Create a new central packet repository/database. (4) Add mandatory artifact output to every workflow/operator prompt.
 - Consequences: Planning Operating Model owns packet/output/storage semantics; Challenge Gate owns material-delta re-Challenge behavior; one dedicated guidance prompt renders the result; project-specific packets stay with projects, PROGRAMSTART-methodology packets use appropriate non-authoritative PROGRAMSTART evidence surfaces, genuine cross-project/operator packets may later use an external non-authoritative archive, and owner-unclear material continues through existing capture/reconciliation paths. Host-specific download behavior remains presentation, not methodology authority.\n- Related ADR: `docs/decisions/0026-use-owner-routed-convergence-packets.md`.
+
+### DEC-024 — Project-owned agent entry and outcome-led information groundwork
+
+- Context: Owner issue #235 records Graham's bounded C3 foundation instruction. Greenfield
+  bootstrap created controls/prompts but no root agent entry; requirements guidance needed
+  an explicit outcome/information/interaction pass.
+- Decision: Generate AGENTS.md only when absent, with project identity, source provenance,
+  current concern owners and runtime-mode commands; preserve local files/symlinks and leave
+  the entry outside managed sync. Extend canonical intake and requirements guidance rather
+  than create a catalogue, semantic engine, global service or new authority.
+- Rationale: Make discovery usable and recoverable while preserving customization and the
+  distinction between structural correctness, semantic outcome proof and host adoption.
+- Boundary: Source implementation/review is authorized; production/host adoption and normal
+  PR acceptance are separate. Existing product decisions and original Lab results remain.

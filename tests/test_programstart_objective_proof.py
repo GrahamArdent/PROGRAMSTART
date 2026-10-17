@@ -394,3 +394,13 @@ def test_local_workflow_positive_acceptance_binds_real_git_bytes(tmp_path, monke
 def test_intake_transition_and_renamed_terminal_stage_are_not_bypasses(tmp_path):
     assert gate.workflow_problems(tmp_path, "inputs_and_mode_selection")
     assert gate.workflow_problems(tmp_path, "custom-finished", terminal=True)
+
+
+def test_ci_policy_precedes_candidate_installation():
+    import yaml
+
+    workflow = yaml.safe_load((ROOT / ".github/workflows/pr-validation.yml").read_text())
+    steps = workflow["jobs"]["required-pr-gate"]["steps"]
+    index = next(i for i, step in enumerate(steps) if step.get("name") == "Check objective claims with accepted base policy")
+    assert all("uses" in step and "run" not in step for step in steps[:index])
+    assert index < next(i for i, step in enumerate(steps) if step.get("name") == "Sync development environment")

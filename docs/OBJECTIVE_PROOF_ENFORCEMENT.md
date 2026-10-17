@@ -83,6 +83,15 @@ other bypass/admin configuration is not established. The required workflow runs 
 accepted-base objective policy after adoption. This does not establish coverage on
 other repositories or unregistered projects.
 
+Run the accepted-base CI policy before any candidate package installation. Otherwise
+candidate build hooks could tamper with its runtime. Even correct step ordering does
+not make a pull-request-owned workflow immutable: deleting/rewriting the check itself
+requires independent protected-workflow/CODEOWNERS policy or the accepted external
+merge consumer. The existing status context alone is not proof of that protection.
+GitHub-backed acceptance currently requires existing gh/Git and read-authorized contents,
+issues and Actions metadata. Offline/non-GitHub owner adapters are not implemented;
+do not silently promise provider-independent completion or create an account/key.
+
 Use accepted methodology source. Merge adapter verifies its own code and this verifier
 against accepted PROGRAMSTART main; candidate code cannot self-install to approve itself.
 Source/CI acceptance, project enrollment and installed operational proof are distinct.

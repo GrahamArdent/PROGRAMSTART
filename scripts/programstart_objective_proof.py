@@ -272,15 +272,20 @@ def read_api_file(adapter: Any, repository: str, ref: str, path: str, *, optiona
     listing = adapter.api(f"repos/{repository}/contents/{quote(parent, safe='/')}?ref={ref}") if parent else root_listing
     require(isinstance(listing, list), "objective directory unavailable")
     require(len(listing) < 1000, "objective directory listing may be truncated")
-    if not any(x.get("name") == name for x in listing):
+    entry = next((x for x in listing if x.get("name") == name), None)
+    if entry is None:
         require(optional, f"missing objective contract: {path}")
         return None
+    require(entry.get("type") == "file", "objective path is not a regular directory entry")
     item = adapter.api(f"repos/{repository}/contents/{quote(path, safe='/')}?ref={ref}")
     require(
         item.get("encoding") == "base64" and item.get("type") == "file" and "target" not in item,
         "objective file bytes unavailable or not regular",
     )
-    return base64.b64decode(item["content"], validate=False)
+    raw = base64.b64decode(item["content"], validate=False)
+    blob = hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()
+    require(entry.get("sha") == item.get("sha") == blob, "objective directory/blob identity mismatch")
+    return raw
 
 
 def workflow_problems(root: Path, stage: str, *, terminal: bool = False) -> list[str]:

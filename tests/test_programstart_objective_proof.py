@@ -313,9 +313,21 @@ class NativeAPI:
             rel = path.split("/contents", 1)[1].split("?", 1)[0].strip("/")
             data = {gate.CONTRACT: json.dumps(self.contract).encode(), gate.PROOF: json.dumps(self.proof).encode(), **self.files}
             if rel in data:
-                return {"type": "file", "encoding": "base64", "content": base64.b64encode(data[rel]).decode()}
+                return {
+                    "type": "file",
+                    "sha": blob_sha(data[rel]),
+                    "encoding": "base64",
+                    "content": base64.b64encode(data[rel]).decode(),
+                }
             prefix = rel + "/" if rel else ""
-            return [{"name": n} for n in sorted({p[len(prefix) :].split("/")[0] for p in data if p.startswith(prefix)})]
+            return [
+                {
+                    "name": n,
+                    "type": "file" if prefix + n in data else "dir",
+                    "sha": blob_sha(data[prefix + n]) if prefix + n in data else "0" * 40,
+                }
+                for n in sorted({p[len(prefix) :].split("/")[0] for p in data if p.startswith(prefix)})
+            ]
         if path == f"repos/{REPO}":
             return authority(self.contract, self.proof)["repository"]
         if path == f"repos/{REPO}/issues/6":
@@ -404,3 +416,29 @@ def test_ci_policy_precedes_candidate_installation():
     index = next(i for i, step in enumerate(steps) if step.get("name") == "Check objective claims with accepted base policy")
     assert all("uses" in step and "run" not in step for step in steps[:index])
     assert index < next(i for i, step in enumerate(steps) if step.get("name") == "Sync development environment")
+
+
+def blob_sha(raw):
+    return hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()
+
+
+@pytest.mark.parametrize("kind", ["symlink", "foreign-blob", "changed-bytes"])
+def test_native_contents_cannot_substitute_link_or_blob(kind):
+    c, p, files = fixture()
+
+    class Changed(NativeAPI):
+        def api(self, path):
+            result = super().api(path)
+            if isinstance(result, list) and "contents/PROGRAMBUILD?" in path:
+                for entry in result:
+                    if entry["name"] == "OBJECTIVES.json":
+                        if kind == "symlink":
+                            entry["type"] = "symlink"
+                        if kind == "foreign-blob":
+                            entry["sha"] = "0" * 40
+            if isinstance(result, dict) and "contents/PROGRAMBUILD/OBJECTIVES.json?" in path and kind == "changed-bytes":
+                result["content"] = base64.b64encode(b"{}").decode()
+            return result
+
+    with pytest.raises(gate.ObjectiveDenied, match="regular directory entry|directory/blob identity"):
+        gate.merge_objective_snapshot(Changed(c, p, files), REPO, "b" * 40, HEAD)

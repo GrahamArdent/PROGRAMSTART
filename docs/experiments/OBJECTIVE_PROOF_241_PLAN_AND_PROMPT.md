@@ -50,3 +50,10 @@ Fresh corrected plan and complete plan/prompt review: scope, authority, dependen
 proof, continuation and uncovered raw-write/install routes align. CLEAR for implementation,
 tests and publication, not universal operational enforcement. Actual-source closure
 review/results remain required; material findings trigger corrected fresh review.
+
+Actual-source opposition found two further boundaries. CI policy must precede candidate
+package installation (OP-241-CI-ORDER). Native contents may dereference links; require
+a regular directory entry and matching directory/returned/computed Git blob identities
+(OP-241-CONTENTS-LINK). Negative tests cover symlink, substituted blob and changed bytes.
+The canonical index keeps JSON enrollment records outside its Markdown-template table.
+Fresh review must bind these corrections and successful checks to the final head.

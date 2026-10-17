@@ -40,6 +40,8 @@ These are standard project artifacts. In PROGRAMSTART they remain reusable templ
 | `FEASIBILITY.md` | output | standard | go/no-go and kill criteria | project viability |
 | `DECISION_LOG.md` | output | standard | material decisions, reversals, rationale | project decision history |
 | `RESEARCH_SUMMARY.md` | output | standard | market/technical research evidence | research findings |
+| `OBJECTIVES.json` | project-owned contract | required for objective enrollment | accepted protected outcome and complete objective inventory; owner-native acceptance required | objective scope |
+| `OUTCOME_PROOF.json` | derived proof record | required for enrolled gates | source-bound requirements, implementation, scenarios, environment and evidence per objective | none — native owner and execution evidence determine acceptance |
 | `REQUIREMENTS.md` | output | standard | scope and requirements | product scope |
 | `USER_FLOWS.md` | output | standard | primary workflows/state behavior where applicable | UX/flow behavior |
 | `ARCHITECTURE.md` | output | standard | contracts, topology, data/trust model | technical architecture |
@@ -83,6 +85,8 @@ A portfolio-wide `IDEA_LEDGER.md` instance belongs in the operator's planning wo
 | `templates/portfolio/PROJECT_REGISTRY.yaml` | workspace template | reusable external live-registry schema; filled project state belongs outside PROGRAMSTART |
 | `templates/portfolio/PORTFOLIO_STATUS.md` | workspace template | concise operator attention/status view with one primary build plus optional operator gate/fallback |
 | `templates/portfolio/PORTFOLIO_HISTORY.md` | workspace template | meaningful attention transitions only; does not mirror repository history |
+| `scripts/programstart_objective_proof.py` | enforcement | fail-closed objective preservation and proof admission shared by workflow, validation, closure and merge consumers |
+| `docs/OBJECTIVE_PROOF_ENFORCEMENT.md` | enforcement contract | objective record schema, owner acceptance, source/run bindings, trust boundaries and migration limits |
 | `scripts/check_commit_msg.py` | enforcement | validates Conventional Commits |
 | `.github/instructions/conventional-commits.instructions.md` | instruction | commit message rules |
 | `.gitlint` | spec-reference | commit-message enforcement spec |
@@ -124,6 +128,7 @@ Prompts live in `.github/prompts/`, are registered in the process registry, and 
 ### Foundation integration locations
 
 The existing `PROGRAMBUILD_IDEA_INTAKE.md` control contains "Outcome and information
-foundation"; no new required project output is introduced. Greenfield AGENTS.md is a
+foundation"; project objective enrollment now adds `OBJECTIVES.json` and `OUTCOME_PROOF.json`
+as specified in `docs/OBJECTIVE_PROOF_ENFORCEMENT.md`. Greenfield AGENTS.md is a
 project-owned, generated navigation file, not canonical concern authority. The existing
 bootstrap implementations generate it and preserve local edits; managed sync excludes it.

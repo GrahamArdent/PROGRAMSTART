@@ -10,7 +10,7 @@ Accepted policy baseline e102ca8afcb0fe9ba6b1a0aead72e9329fa1e5cc.
 
 ## Candidate and outcome boundary
 
-RPE-IMPLEMENTATION-C4, implementation manifest SHA256 `550fd12238d6dc6f64cc5fb3252a62ba979f30a428fa4bc3e3cff4d228a47848`.
+RPE-IMPLEMENTATION-C5, implementation manifest SHA256 `9419e8f1dd1e50bf0822a5d1709ade26fca73a64372813df32321b8a32926344`.
 The manifest below covers the complete implementation/protocol/test diff before
 this derived report, excluding no changed executable/policy source. Publication
 commit supplies the immutable full candidate including this report.
@@ -40,7 +40,7 @@ convergence prompt b71bc3e787d624845c678419b92f54c651441be4.
 | Current entry instructions change without evidence refresh | Byte-bound root pointers/decision invalidate the record; scope and expiry separately checked |
 | Prompt update leaves derived autonomy contract stale | Inventory the new clause and regenerate derived parity view, without promoting existing partial coverage |
 
-Fresh review of the corrected C4 complete diff reconstructed these sequences and
+Fresh review of the corrected C5 complete diff reconstructed these sequences and
 found no further material corrective delta or controlling blocker for the declared
 source adoption boundary. Fresh complete RPE-GP-C4/RPE-EP-C4 review against actual
 implementation found no mismatch requiring a pair change. CLEAR for this bounded
@@ -96,10 +96,22 @@ The first native run 39070826341 correctly blocked adoption on secret-scanner
 false positives: a synthetic credential-rejection URL and public SHA-256 values.
 The test URL is explicitly marked synthetic; source fingerprints and this displayed
 manifest use the repository's existing hyphenated digest convention. No secrets,
-policy bypass or baseline suppression was introduced. Fresh C4 review of the exact
+policy bypass or baseline suppression was introduced. Fresh C5 review of the exact
 corrected complete candidate and the unchanged plan/prompt pair found no further
 material delta or controlling blocker for source adoption. Native exact-head CI
 must pass before adoption. The final local run is 2,420 passed, 2 optional skips.
+
+## Actual-registry correction
+
+The last caller inventory exposed a material identifier mismatch: the actual
+registry names Stage 2 `research`, not `research_and_unknowns`. The earlier alias
+alone would miss research exit. Native C4 disposition was blocked as
+RPE-REGISTRY-RESEARCH-ID before adoption. C5 maps the actual registry identifier,
+retains the alias, exercises both through actual CLI/dashboard skip/dry-run denial,
+and adds an assertion that all actual dependent registry stages are mapped.
+Fresh review of the complete corrected implementation and unchanged plan/prompt
+pair found no further material correction or controlling blocker for source adoption.
+The native blocker must be explicitly resolved against the exact C5 head after tests.
 
 ## Implementation manifest
 
@@ -122,13 +134,13 @@ Displayed digests remove hyphens to recover canonical file SHA256 values.
   "schemas/research-evidence.schema.json": "dbe51fbb-58a52ae6-34d9a244-85865217-d9311654-fd644ae0-56c3db6d-24d3c74d",
   "scripts/programstart_bootstrap.py": "8c5e3fe1-79b30da4-e5fd5628-a2991ce0-0233088c-532195a4-85d13b3a-63fcea08",
   "scripts/programstart_challenge_merge.py": "7e7c2a01-c3945f15-da8a45c3-c1e69895-54fa5b6f-6e1767b7-fc89d766-5910d47e",
-  "scripts/programstart_objective_proof.py": "c6c43cf2-2198eb03-4085f4fd-81b25ba3-539ef62d-4abd8f75-bd88388d-47747c24",
-  "scripts/programstart_research_admission.py": "a8e86f38-f65872ef-5c4a4284-9e3a3d2f-84485e05-139b0b9c-ffa6d1db-ca750107",
+  "scripts/programstart_objective_proof.py": "bdd7bfc6-c095b932-76bfa091-ba39ab63-aa4ef9cc-d269badc-e02d7a97-16473320",
+  "scripts/programstart_research_admission.py": "320cd79c-275f1bf4-f68c6846-7a03dd11-01d81d87-a3cb57d2-b5a0b3fd-800902ca",
   "scripts/programstart_validate.py": "930c09f8-82ef99ab-1fd5952e-7f6a97b9-ce393ea8-598ec05c-57195075-f500d548",
   "scripts/programstart_validate_core.py": "db8c5371-5d0cfbfb-beccacc6-a1745663-abcb9a30-ed91ac19-24ba0c83-8d26f49c",
   "tests/test_programstart_autonomy_parity.py": "f8d20cb8-0ec88341-b49b518b-062cd033-1939e65b-c82d67d9-deb0b05b-17af7027",
   "tests/test_programstart_challenge_merge.py": "5721edad-b0e4a73e-d6387580-8759a3d2-aae66cd3-7825f998-4363e738-aa65678d",
-  "tests/test_programstart_research_admission.py": "e20a6672-f3187d18-746bdfac-8e6f9629-1f916ec9-ec7a4bd6-413f351b-e9af524f",
+  "tests/test_programstart_research_admission.py": "296b73a7-bd4f2135-d36afac5-9df26b7b-1737b39d-087b6090-226b4dd9-cf0ae378",
   "tests/test_prompt_compliance.py": "717813cc-9d015a16-acb5186c-3ecf50f2-55e01d1d-7cf54901-e2331767-ae0a3eac"
 }
 ```

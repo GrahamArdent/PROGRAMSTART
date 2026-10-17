@@ -43,6 +43,7 @@ RECORD = "PROGRAMBUILD/RESEARCH_EVIDENCE.json"
 MARKER = "PROGRAMSTART_RESEARCH_ADMISSION_V1\n"
 PHASES = {"research": 0, "architecture": 1, "implementation": 2, "release": 3}
 STAGES = {
+    "research": "architecture",
     "research_and_unknowns": "architecture",
     "requirements_and_ux": "architecture",
     "architecture_and_risk_spikes": "architecture",

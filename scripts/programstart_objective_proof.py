@@ -289,9 +289,9 @@ def read_api_file(adapter: Any, repository: str, ref: str, path: str, *, optiona
 
 
 def workflow_problems(root: Path, stage: str, *, terminal: bool = False) -> list[str]:
-    if not terminal and stage not in IMPLEMENTATION_STAGES | COMPLETION_STAGES | {"research_and_unknowns"}:
+    if not terminal and stage not in IMPLEMENTATION_STAGES | COMPLETION_STAGES | {"research", "research_and_unknowns"}:
         return []
-    if stage == "research_and_unknowns" and not (root / "PROGRAMBUILD/RESEARCH_EVIDENCE.json").exists():
+    if stage in {"research", "research_and_unknowns"} and not (root / "PROGRAMBUILD/RESEARCH_EVIDENCE.json").exists():
         return []
     try:
         contract = parse((root / CONTRACT).read_bytes())

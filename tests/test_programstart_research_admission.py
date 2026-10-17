@@ -360,7 +360,7 @@ def test_real_git_local_phase_and_uncommitted_research_fail_closed(tmp_path):
         gate.local_check(tmp_path, "test_strategy", api, REPO, head, head)
 
 
-@pytest.mark.parametrize("stage", ["requirements_and_ux", "research_and_unknowns"])
+@pytest.mark.parametrize("stage", ["requirements_and_ux", "research", "research_and_unknowns"])
 def test_cli_skip_and_dashboard_do_not_advance_unresolved_product(tmp_path, monkeypatch, capsys, stage):
     from scripts import programstart_serve as dashboard
     from scripts import programstart_workflow_state as cli
@@ -439,3 +439,11 @@ def test_documented_schema_matches_runtime_record():
         jsonschema.validate(r, schema)
     with pytest.raises(ValueError, match="fields"):
         check(c, f, r)
+
+
+def test_admission_stage_names_cover_the_actual_workflow_registry():
+    from scripts.programstart_common import load_registry, workflow_steps
+
+    actual = set(workflow_steps(load_registry(), "programbuild"))
+    assert "research" in actual
+    assert actual - {"inputs_and_mode_selection", "feasibility"} <= set(gate.STAGES)

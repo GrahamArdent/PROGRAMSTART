@@ -6573,18 +6573,27 @@
         "clean_candidate_publication",
         "verification_claim_truthfulness"
       ],
-      "instance_status": "partial",
+      "instance_status": "proven",
       "evidence_refs": [
         "GrahamArdent/execution-node-control#225",
         "GrahamArdent/PROGRAMSTART#147",
         "GrahamArdent/execution-node-control#490",
         "GrahamArdent/PROGRAMSTART#158:issuecomment-6229222974",
         "docs/acceptance/observations/2026-10-17-hop017-evidence-reconciliation.md",
-        "GrahamArdent/paths:evidence/EN490-REPOSITORY-CAPABILITY-2026-10-16.md"
+        "GrahamArdent/paths:evidence/EN490-REPOSITORY-CAPABILITY-2026-10-16.md",
+        "GrahamArdent/programstart-compute-spine#184",
+        "GrahamArdent/programstart-autonomous-controller#454",
+        "GrahamArdent/execution-node-control#476",
+        "GrahamArdent/PROGRAMSTART#158:issuecomment-6229894101",
+        "https://github.com/GrahamArdent/programstart-autonomous-controller/blob/073cc39d4985164f141a16fbb4235a78d3b731cc/docs/evidence/ORDINARY184_COMPLETION.json",
+        "https://github.com/GrahamArdent/execution-node-control/blob/main/results/req-spine-f5bcf0576aaab3b315c9-repository-work-profile/result.json",
+        "https://github.com/GrahamArdent/execution-node-control/blob/main/results/req-spine-fc0aca18b4bcf60001fc-repository-workspace-publish/result.json",
+        "https://github.com/GrahamArdent/programstart-autonomous-controller/actions/runs/38924361358",
+        "https://github.com/GrahamArdent/programstart-compute-spine/blob/main/control/controller-results/req-controller-op184-postclose-replay-v1/result.json"
       ],
       "invalidation": [
         "GitHub App/CLI identity, scopes, repository installation/access, provider policy, or broker capability changes.",
-        "EN490 accepted exact-target creation/readback/replay does not by itself prove clean candidate publication. Retain partial until an actual execution-fabric publication is bound to its required preparation/validation and accepted provider result; reference-only Card Vault baseline existence is insufficient. Preserve dated receipts and per-client scope; fresh effects require current owner/actor/release/custody admission."
+        "Accepted scoped EN490 creation/readback/replay and ordinary184 native prepared publication/hosted acceptance establish this concrete fabric-to-GitHub boundary, not arbitrary targets, all GitHub operations or every-client fresh creation. Preserve exact dated owner/actor/source/release/custody/candidate/preparation/publication/receipt bindings; relevant policy, broker, runtime, identity, admission or provider changes require proportional revalidation before a fresh effect. Card Vault baseline preparation is not inferred from ordinary184 proof."
       ],
       "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
     },

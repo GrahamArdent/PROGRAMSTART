@@ -1,3 +1,50 @@
+# HOP017 scoped GitHub effect acceptance — recovered ordinary184 publication
+
+2026-10-17 UTC. PROGRAMSTART158 selection6229894101, existing plan/prompt231285da. This supersedes only the PARTIAL disposition below after recovering an already accepted useful publication. No publication, provider request, runtime activation, credential change or repeat experiment was performed by this reconciliation.
+
+## Acceptance conclusion
+
+HOP017 is **PROVEN for its concrete execution-fabric → GitHub effects/observation boundary**, combining EN490 exact-target creation/readback/replay with ordinary184 actual prepared publication and independently hosted acceptance. Canonical37rows:26proven/11partial/0unproven; only017status/evidence/invalidation and generated row change. All other36rows/432obligations/49behavior classifications remain unchanged. General mechanism proof alone does not satisfy the row: the original native WORK and PUBLISH receipts, exact hosted run and owner-accepted cold lifecycle do.
+
+The earlier Card Vault-only search missed the separate Compute184 / Controller454 / EN476 accepted publication. Its missing Card Vault preparation provenance remains unknown and is not retroactively supplied by this different transaction. No additional publication was needed; the owning contract allows retained evidence from another genuinely useful owner-admitted publication. HOP017 does not require arbitrary GitHub operations, all repositories or fresh creation through every client.
+
+| Required behavior | Exact accepted instance evidence | Limits |
+|---|---|---|
+| external_connection_surface_inventory | Existing Paths PF06/ER017–021 distinguish native/direct-cloud/local-CLI/Compute/Controller and protected GitHub custody. Ordinary184 adds an actual existing typed broker publication to the Controller repository. | Shared EN host/kernel/GitHub/custody/state domains; no MCP/arbitrary API/new identity or private-carriage claim. |
+| runtime_capability_declaration | EN490 dated exact-target native/parent receipts; ordinary184 native subject binds repository, workspace/prepare attempt, owner, target branch, candidate, parent, complete3paths, executor/checker/consumer/contract/installer/toolchain and resource witness. | Declaration/proof does not authorize another project/effect; current live actor/admission/release gates still apply. |
+| clean_candidate_publication | Native WORK0c476a44 completes three owner-admitted static checks before PUBLISH65b68d73; exact candidateca45819b and parent50733d50, same original prepare attempt/workspace/complete paths. Publisher revalidates before publication and returns publicationPASS/published_commitca45819b. Independent hosted38924361358 succeeds for exact same SHA and workflow; installed default-client readback29c014a0 preserves native receipt. | Static checks are bounded advisory preparation, not full local CI or semantic/security completeness. Hosted acceptance remains distinct. No claim local API hooks ran. |
+| verification_claim_truthfulness | Owner completion5ffd538d, original WORK/PUBLISH, actual provider workflow metadata, installed-client readback and postclose/cold replayfd79a52a agree. Original3attempts retained; newchecks0/newpublications0 during replay. EN490 nativeNOT_EVALUATED and ControllerPASS retained separately. | Upper bounds are not measured global counters; source merge is not runtime adoption. Immutable pending-adoption flag is historical, satisfied by separate actual client adoption/readback and final owner closure. |
+
+## Publication receipt identity
+
+Repository: GrahamArdent/programstart-autonomous-controller; branch programstart/issue202-conformance. Original root root-10e96c3489fbe1d2a3eef65f / run intent-ordinary184-v3. Parent50733d50a9f3e645045b1edbb6a2daa5e63b2300; candidateca45819bcffc314ef3ff05258f1b24a20cd423cb. Exactly .github/workflows/ordinary-preflight.yml, controller/compute_spine_repository_client.py and tests/test_compute_spine_repository_client.py; pathsSHA25647192ce00f3f951a5b2e9de622a74925825f24ab0995207df018bc6c6925a3e5. Original prepare req-spine-eaf1ef3100afa4e67bb3-repository-workspace-prepare; workspace7b6dfc63da9abf92156523e870a1e3b7af0a123863d29f071c179f343f5d913e.
+
+| Native owner path | Immutable fetched Git blob | Meaning |
+|---|---|---|
+| EN results/req-spine-f5bcf0576aaab3b315c9-repository-work-profile/result.json |0c476a44b3a5179b9fd3a11e8fdeb23beced6788|15:29:03Z PASS; python_syntax/authority_consumer/release_filesPASS, candidate executionfalse, no credential export. |
+| EN results/req-spine-fc0aca18b4bcf60001fc-repository-workspace-publish/result.json |65b68d730150212ef4f63c063305757df33f053f|15:29:30Z PASS, exact published SHA, candidate_revalidated_before_publishtrue, force_with_lease, previous remote exact parent, no privileged workspace config. |
+| Compute control/controller-results/req-controller-op184-installed-client-review-v1/result.json |29c014a063f6c6056b7acdf79c41850cbb673813|15:38:35Z actual installedba8e client readback, normal_client_preservedtrue, original receipt/attempt3, no new checks/publication. |
+| Compute control/controller-results/req-controller-op184-postclose-replay-v1/result.json |fd79a52a20249b49b68fe320cdd56c70a6759559|15:51:00Z terminal original replay, same candidate/original attempts and signed hosted evidence, no new check/publication; distinct cold consumers186607:394482849 →190691:394513118. |
+| Controller073cc39d docs/evidence/ORDINARY184_COMPLETION.json |5ffd538dc7573f345641d7636d2bfd7d1bf05592|Accepted owner scope, installed-client adoption, quiet claims, cleanup/limits and failed histories. |
+
+The original hosted run38924361358 independently read from GitHub reports push / ordinary-preflight / success / ca45819bcffc314ef3ff05258f1b24a20cd423cb. Original Controller receipt retains signed Watchtower evidence mev-de83075c13a7731e349cc734, delivery7c71c230-c976-11f1-9f31-d8ab48f24f76, digest4b086b7c46cdac56f1081230aac3896564284ac3c8da97f01aacb55c02a9dc6a. This reconciliation does not recreate a signature or claim JSON alone authenticates it; existing owner admission/verification consumed the signed event, and fresh provider metadata confirms exact subject/result.
+
+## Currentness and invalidation
+
+Producing ENd61a2accb8470407eb9df7be710b3a668ac63066, Compute2862906091a3f63ff01a3eddbd37d003836c859c, methodology2771ce09481c64acbca18fd841f149242bcb337e; actual default client adoptedba8e259b45870ce4f06bc31bf3445ac34804a00e, final owner closeout installed073cc39d4985164f141a16fbb4235a78d3b731cc. These are dated actual proof, not claims of present daemon health.
+
+Seven relevant EN modules are byte-identical between producingd61a2acc and later accepted installed7661c99bcaa5ed00ecaff38bfaab9155761e6b34: repository_actions607d9716, repository_brokere083c34b, repository_ordinary184_candidate5ccbf4c2, repository_publication_contractcac34841, repository_static_preflight7c00aaa2, repository_static_preflight_broker7f42c226, repository_static_preflight_contract968c6f59. Later source/policy/provider changes do not erase accepted history but require proportional revalidation of affected future effects. No new current capability invocation is selected. Existing owner454/184/476 are closed; do not rerun their original work or restore pointers. Current Controller pointer selects no new task; ComputeD012 remains independent.
+
+## Corrected-candidate Challenge and validation
+
+Current Challenge053d528d/planning8baaa601/convergenceb71bc3e7 fetched unchanged. Same-assistant review B/C/E/F/G/H, no independent reviewer. Material correction C1: Card Vault baseline cannot fill missing preparation; use separate actual prepared publication, without rewriting Card Vault provenance. Fresh C2 opposition: reject source JSON as signature verification, compare every original binding, distinguish bounded staticPASS from product/CI completeness, preserve immutable pending-adoption flag and consume separate actual adoption proof, do not interpret replay/new-source/owner closure as fresh effect authority. Exact native/provider/owner receipts resolve these cases; no further material corrective delta for bounded HOP017 acceptance. Complete current plan/prompt231285da permits another accepted useful publication, preserves P0selection/claims/gates and independent continuation; no scope mismatch or new runtime consequence. Implementation/evidence candidate must pass exact hosted validation before canonical acceptance.
+
+Only017changes; no underlying behavior-wide promotion, all-repository authority, fleet rollout, private-carriage/independent-host proof, production action or benefit claim. No new reusable methodology lesson: apply existing cross-owner evidence discovery before declaring a missing workload.
+
+---
+
+## Historical partial mapping — superseded disposition, retained evidence
+
 # HOP017 retained-evidence reconciliation — 2026-10-17
 
 Acceptance owner: PROGRAMSTART158 / material-hop policy147. Effect owner: EN490, with Secrets187 and existing Paths PF06. Operator continuation recorded in158comment6229222974. Reference pair7cc227d6a557920c76542018d2416e4d6ccdfc8135833e05893421ef77fca603 preserves HOP009 complete and selects this evidence-only slice. No provider/runtime/credential/create/delete/release operation was dispatched by this reconciliation.

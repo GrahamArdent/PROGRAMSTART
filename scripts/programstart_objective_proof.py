@@ -283,7 +283,7 @@ def read_api_file(adapter: Any, repository: str, ref: str, path: str, *, optiona
         "objective file bytes unavailable or not regular",
     )
     raw = base64.b64decode(item["content"], validate=False)
-    blob = hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()
+    blob = hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw, usedforsecurity=False).hexdigest()
     require(entry.get("sha") == item.get("sha") == blob, "objective directory/blob identity mismatch")
     return raw
 

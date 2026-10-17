@@ -6886,7 +6886,7 @@
       "class": "owner_instance",
       "source": "Controller owner-handoff / execution fabric",
       "target": "GrahamArdent/portfolio-operations",
-      "purpose": "Resolve portfolio-level owner authority for bounded detached/project operations and return disposition.",
+      "purpose": "Resolve Portfolio-owned derived reference/currentness and test-record routing, then return disposition to the actual execution owner. Portfolio does not acquire global project or detached-continuation authority.",
       "general_mechanism": "owner-specific repository admission and target-owned intake",
       "required_behavior_refs": [
         "cross_repository_dependency_graph",
@@ -6898,10 +6898,11 @@
       "instance_status": "partial",
       "evidence_refs": [
         "GrahamArdent/portfolio-operations#43",
-        "GrahamArdent/PROGRAMSTART#147"
+        "GrahamArdent/PROGRAMSTART#147",
+        "GrahamArdent/portfolio-operations@04a33b8a43f005cc6dabad14d92038935de4955d:AGENTS.md"
       ],
       "invalidation": [
-        "Portfolio strategic authority, repository admission, detached-objective contract, or target intake changes."
+        "Portfolio derived-reference/currentness or test-record contract, repository admission, Controller detached-continuation authority, actual execution owner, or target intake changes."
       ],
       "path_authority_ref": "Paths / owning project live path authority (referenced, not copied)"
     },

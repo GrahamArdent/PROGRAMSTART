@@ -148,11 +148,41 @@ compiler pass with authority acquired first from a real Git fixture. Two prelimi
 wheel harness attempts failed (missing fixture parent; following the venv Python
 symlink to the bare interpreter without dependencies); corrected the harness,
 not application code. Current read-only dashboard API/HTML smoke passes6 checks.
-The broader nox gate remains in progress at this checkpoint; no browser success
-or broad green gate is inferred. Exact-head hosted results supersede draft runs.
+The broad nox run completed: typecheck/tests/validate/docs pass; its initial lint
+failure (unstaged deterministic baseline) is resolved by a successful nox lint
+rerun. smoke_readonly fails because Playwright receives an invalid/truncated
+Chromium ZIP. No installed Chromium/Chrome alternative was found locally. The
+read-only API/HTML smoke passes separately; it does not replace browser/golden
+proof. The broad gate is not green. No browser retry/waiver, credential change or
+manual-convergence workflow substitution is introduced. The exposed GitHub tools
+have no workflow-dispatch operation, and no gh CLI is installed here. Native
+manual-convergence remains the owner route for stronger browser acceptance; this
+source PR does not manufacture that clearance. Exact-head hosted results supersede
+draft runs.
 
 Matrix50 hosted source run39438171653 passed at
 0eeb2872198150566586d4441cbd7dc971be9c25; retained artifact
 coverage-0eeb2872198150566586d4441cbd7dc971be9c25 (id12271523326).
 Its100% floor passed in the existing source workflow. Source tests are independent
 execution, not independent semantic approval or production acceptance.
+
+## Final source disposition
+
+Bounded implementation is prepared in PROGRAMSTART251 and Matrix50. No merge or
+runtime effect performed. Source review and deterministic coverage improvement
+are distinct from merge readiness; browser convergence remains an explicit
+external verification residual. Next coverage slice is the now-visible intake
+negative/CLI paths (51 statements/33 branches), then inherited authority guards.
+Do not lower the floor, hide missing modules or erase retained failed attempts.
+
+Fresh final full-pair review reused unchanged owner contracts and opposed three
+failure sequences: missing configured module falsely inflates coverage (actual
+workflow consumer test rejects it); copied rich bindings bypass reconstruction
+(actual compiler rejects corrupted bookkeeping/hash); all-terminal plan creates
+work (native resolver rejects no-selected-frontier). Legacy unselection is
+explicitly preserved. Matrix native tests independently cover the exact unchanged
+pinned bytes. No further material corrective delta remains for the bounded
+source/test/config boundary. This is same-assistant review, not independent
+semantic approval, merge admission or a claim of repository100%.
+
+Final plan body SHA256:e3dd573ff4216a867791ee84b1dbe5e474e42e607e75c9f91e0a1231a023c9b3; execution body SHA256:1631f20e8a2ed6410924ba8fdd5d884a8a39b0f3b77cb8cfa83b60ceca3e682d; pair SHA256:1ad9ca3007bbe2bf56ec56410f806a917373df1161eaa597c99404afe80b2c35. Bodies are exact UTF8 substrings after their headings and before the next named heading above.

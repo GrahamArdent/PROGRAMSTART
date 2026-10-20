@@ -619,8 +619,11 @@ def resolve_contextual_intent(request: ContextualIntentRequest) -> ContextualInt
 
     if authority is not None and not authority.decision_operationalization_ready:
         binding = authority.decision_operationalization
-        if binding is None:
-            raise AssertionError("decision operationalization readiness is inconsistent")
+        source = (
+            f"{binding.owner_decision_ref} / {binding.operationalization_source_ref}"
+            if binding is not None
+            else "the current owner-selected operationalization"
+        )
         return ContextualIntentResolution(
             state=ConversationState.CONVERGED,
             action=(
@@ -632,7 +635,7 @@ def resolve_contextual_intent(request: ContextualIntentRequest) -> ContextualInt
             packet=existing,
             next_system_requirement=(
                 "reconcile and re-read the required current Matrix projection for "
-                f"{binding.owner_decision_ref} / {binding.operationalization_source_ref}, "
+                f"{source}, "
                 "then re-resolve Work Packet currentness"
             ),
             notes=[

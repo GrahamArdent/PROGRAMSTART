@@ -264,6 +264,17 @@ Matrix projection does not select implementation by itself. Existing PROGRAMSTAR
 
 For work derived from that operationalized decision, the Work Packet currentness input must bind the current owner decision, the exact operationalization source/version, and the exact current reconciled Matrix projection. Missing, stale, mismatched, reconsideration-required, or execution-authoritative projection evidence blocks only that dependent changed-scope packet; it does not roll back owner truth or globally block unrelated current-authority work.
 
+The paired source implementation uses the current owner declaration's explicit
+`decision_operationalization_path` and exact current owner Git evidence, plus an
+immutable comprehensive Matrix artifact. The real compiler re-reads full ACTIVE
+manifest/graph/reconstruction content; coverage strings or hashes alone do not
+establish acceptance. Thin legacy projections remain historical/limited and do
+not satisfy decision-derived compilation. Unrelated independent-authority routes
+remain valid. See `docs/MATRIX_PROJECTION_BINDING.md` for the bounded acquisition,
+applicability and consumer contract; source implementation is not installed or
+live-delivery acceptance.
+
+
 ### 10.5 Closure invariant
 
 Task or Work Packet completion is not sufficient parent closure.

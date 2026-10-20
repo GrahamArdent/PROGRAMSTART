@@ -501,8 +501,15 @@ def harvest(*, acceptance_met: bool = False) -> ConversationHarvest:
     )
 
 
-def test_current_matching_projection_allows_normal_packet_compilation() -> None:
-    snapshot = authority(operationalization=binding())
+def rich_ready(tmp_path):
+    from test_rich_operationalization import build
+
+    *_, snapshot, bound, _ = build(tmp_path)
+    return snapshot.model_copy(update={"decision_operationalization": bound})
+
+
+def test_current_matching_projection_allows_normal_packet_compilation(tmp_path) -> None:
+    snapshot = rich_ready(tmp_path)
     packet = compile_work_packet("Proceed.", snapshot, kind=IntentKind.BOUNDED_EXECUTION)
     assert packet.admission_hint == "ready_for_controller_admission"
     assert packet.authority.decision_operationalization is not None
@@ -598,8 +605,8 @@ def test_digest_fields_are_exact_sha256() -> None:
         matrix_projection(source_fingerprint="z" * 64)
 
 
-def test_projection_semantic_hash_or_source_fingerprint_change_requires_recompile() -> None:
-    first = authority(operationalization=binding())
+def test_projection_semantic_hash_or_source_fingerprint_change_requires_recompile(tmp_path) -> None:
+    first = rich_ready(tmp_path)
     packet = compile_work_packet("Proceed.", first, kind=IntentKind.BOUNDED_EXECUTION)
 
     changed_projection = matrix_projection(semantic_hash="1" * 64, source_fingerprint="2" * 64)
@@ -608,18 +615,21 @@ def test_projection_semantic_hash_or_source_fingerprint_change_requires_recompil
     assert drift.status == "recompile_required"
 
 
-def test_projection_disappearing_after_compile_blocks_existing_packet_reuse() -> None:
-    ready = authority(operationalization=binding())
+def test_projection_disappearing_after_compile_blocks_existing_packet_reuse(tmp_path) -> None:
+    ready = rich_ready(tmp_path)
     packet = compile_work_packet("Proceed.", ready, kind=IntentKind.BOUNDED_EXECUTION)
-    missing = authority(operationalization=missing_projection_binding())
+    assert ready.decision_operationalization is not None
+    missing = ready.model_copy(
+        update={"decision_operationalization": ready.decision_operationalization.model_copy(update={"matrix_projection": None})}
+    )
     resolution = resolve_contextual_intent(ContextualIntentRequest(harvest=harvest(), authority=missing, existing_packet=packet))
     assert resolution.state == ConversationState.CONVERGED
     assert resolution.action == ContextualTransitionAction.REVALIDATE_EXISTING_PACKET
     assert "reconcile and re-read" in (resolution.next_system_requirement or "")
 
 
-def test_projection_advancing_after_compile_uses_existing_fingerprint_drift() -> None:
-    ready = authority(operationalization=binding())
+def test_projection_advancing_after_compile_uses_existing_fingerprint_drift(tmp_path) -> None:
+    ready = rich_ready(tmp_path)
     packet = compile_work_packet("Proceed.", ready, kind=IntentKind.BOUNDED_EXECUTION)
     newer_projection = matrix_projection(
         artifact_ref=ARTIFACT_REF + "#rebuilt",
@@ -650,11 +660,12 @@ def test_identical_projection_binding_is_stable_for_replay() -> None:
         ("projection_identity", "wrong-projection"),
     ],
 )
-def test_copied_projection_drift_cannot_compile_reuse_or_false_complete(field: str, value: object) -> None:
-    ready = authority(operationalization=binding())
+def test_copied_projection_drift_cannot_compile_reuse_or_false_complete(field: str, value: object, tmp_path) -> None:
+    ready = rich_ready(tmp_path)
     packet = compile_work_packet("Proceed.", ready, kind=IntentKind.BOUNDED_EXECUTION)
-    changed_binding = binding()
-    changed = authority(operationalization=changed_binding)
+    assert ready.decision_operationalization is not None
+    changed_binding = ready.decision_operationalization.model_copy(deep=True)
+    changed = ready.model_copy(update={"decision_operationalization": changed_binding})
     assert changed_binding.matrix_projection is not None
     changed_binding.matrix_projection = changed_binding.matrix_projection.model_copy(update={field: value})
 
@@ -721,14 +732,27 @@ def test_post_owner_composition_preserves_owner_snapshot_and_adds_only_currentne
     assert augmented.authority_paths == ordinary.authority_paths
 
 
-def test_unrelated_owner_repository_head_advance_does_not_make_projection_binding_invalid() -> None:
-    first = authority(operationalization=binding(), authority_commit="a" * 40)
-    later = authority(operationalization=binding(), authority_commit="c" * 40)
-    assert first.decision_operationalization is not None
-    assert later.decision_operationalization is not None
-    assert first.decision_operationalization.projection_ready is True
-    assert later.decision_operationalization.projection_ready is True
-    assert authority_fingerprint(first) != authority_fingerprint(later)
+def test_unrelated_owner_head_advance_reuses_semantics_after_owner_reread(tmp_path) -> None:
+    from test_rich_operationalization import build, commit
+
+    from scripts.programstart_authority_resolver import resolve_operationalization_binding
+
+    owner, matrix, *_, snapshot, bound, observe = build(tmp_path)
+    assert bound.projection_ready
+    (owner / "unrelated.md").write_text("Unrelated owner note")
+    commit(owner)
+    assert not bound.projection_ready  # old acquisition is no longer current
+    later = observe()
+    rebound = resolve_operationalization_binding(later, matrix)
+    assert rebound.projection_ready
+    assert rebound.matrix_projection is not None and bound.matrix_projection is not None
+    assert rebound.matrix_projection.semantic_hash == bound.matrix_projection.semantic_hash
+    assert authority_fingerprint(snapshot) != authority_fingerprint(later)
+
+
+def test_thin_current_labels_alone_cannot_compile() -> None:
+    with pytest.raises(ValueError, match="not currentness-ready"):
+        compile_work_packet("Proceed.", authority(operationalization=binding()), kind=IntentKind.BOUNDED_EXECUTION)
 
 
 def test_d012_natural_before_after_fixture_preserves_false_terminal_regression() -> None:

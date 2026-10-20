@@ -15,14 +15,18 @@ import subprocess
 from pathlib import Path, PurePosixPath
 from typing import Any, Literal
 
+import jsonschema
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
 from .programstart_intent_compile import (
     AuthoritySnapshot,
     CompiledWorkPacket,
     DecisionOperationalizationBinding,
+    MatrixProjectionBinding,
+    OperationalizationEvidence,
     ParallelWork,
     SurfaceRef,
+    _digest,
 )
 from .programstart_intent_ingress import (
     BoundedIntentEnvelope,
@@ -72,6 +76,7 @@ class OwnerAuthorityDeclaration(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     schema_version: Literal["programstart.owner-authority.v1"]
+    decision_operationalization_path: str | None = None
     resource_preflight_required: bool = False
     resource_preflight_path: str | None = None
     project_name: str
@@ -229,13 +234,18 @@ def resolve_repository_authority(observation: RepositoryAuthorityObservation) ->
         if resource_plan.policy_ref != policy_ref:
             raise AuthorityResolutionError("resource preflight methodology is stale")
 
-    return AuthoritySnapshot(
+    snapshot = AuthoritySnapshot(
+        owner_repository_root=str(root) if declaration.decision_operationalization_path else None,
         resource_preflight=resource_plan,
-        **declaration.model_dump(exclude={"schema_version", "authority_paths"}),
+        **declaration.model_dump(exclude={"schema_version", "authority_paths", "decision_operationalization_path"}),
         authority_paths=[declarations[0], *declaration.authority_paths],
         authority_commit=observed,
         methodology_commit=observation.methodology_commit,
     )
+
+    # Projection acquisition needs an explicit separately supplied trusted Matrix checkout.
+    # Keep the snapshot nonready until the caller binds that evidence through the adapter.
+    return snapshot
 
 
 def compose_decision_operationalization_currentness(
@@ -257,6 +267,207 @@ def compose_decision_operationalization_currentness(
     if authority.decision_operationalization is not None and authority.decision_operationalization != binding:
         raise AuthorityResolutionError("resolved authority already carries a different decision operationalization binding")
     return authority.model_copy(update={"decision_operationalization": binding})
+
+
+def _json_artifact(root: Path, commit: str, path: str) -> dict[str, Any]:
+    def unique(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+        result: dict[str, Any] = {}
+        for key, value in pairs:
+            if key in result:
+                raise AuthorityResolutionError("duplicate JSON key in owner evidence")
+            result[key] = value
+        return result
+
+    text = _blob(root, commit, path)
+    if len(text.encode()) > 1_048_576:
+        raise AuthorityResolutionError("operationalization evidence exceeds bounded size")
+    result = json.loads(text, object_pairs_hook=unique)
+    if not isinstance(result, dict):
+        raise AuthorityResolutionError("operationalization artifact must be an object")
+    return result
+
+
+def _owner_selection(root: Path, repository: str, commit: str) -> str | None:
+    if _git(root, "rev-parse", "HEAD") != commit:
+        raise AuthorityResolutionError("operationalization owner head is stale")
+    paths = [path for path in OWNER_AUTHORITY_PATHS if _git(root, "ls-tree", commit, "--", path)]
+    if len(paths) != 1:
+        raise AuthorityResolutionError("exact owner authority declaration required")
+    declaration = OwnerAuthorityDeclaration.model_validate(_json_artifact(root, commit, paths[0]))
+    if declaration.owning_repository != repository:
+        raise AuthorityResolutionError("operationalization owner repository mismatch")
+    return declaration.decision_operationalization_path
+
+
+def resolve_operationalization_binding(
+    authority: AuthoritySnapshot,
+    matrix_repository_root: Path,
+) -> DecisionOperationalizationBinding:
+    """Reconstruct evidence from an explicitly selected current owner Git contract.
+
+    Repositories must be obtained through the caller's authenticated acquisition
+    path, as for RepositoryAuthorityObservation. A local path is not provenance.
+    """
+    if not authority.owner_repository_root:
+        raise AuthorityResolutionError("owner-resolved repository evidence required")
+    root = Path(authority.owner_repository_root)
+    selected = _owner_selection(root, authority.owning_repository, authority.authority_commit)
+    if not selected:
+        raise AuthorityResolutionError("owner has not selected a decision operationalization")
+    evidence = OperationalizationEvidence(
+        owner_repository_root=str(root.resolve()),
+        owner_repository=authority.owning_repository,
+        owner_commit=authority.authority_commit,
+        descriptor_path=selected,
+        matrix_repository_root=str(matrix_repository_root.resolve()),
+    )
+    return _reconstruct_binding(evidence)
+
+
+def _reconstruct_binding(evidence: OperationalizationEvidence) -> DecisionOperationalizationBinding:
+    from .matrix_projection_dependency.operationalization import (
+        project_operationalization,
+        reconstruct_operationalization,
+        validate_manifest,
+    )
+    from .matrix_projection_dependency.root_frontier import root_frontier
+
+    root = Path(evidence.owner_repository_root)
+    selected = _owner_selection(root, evidence.owner_repository, evidence.owner_commit)
+    if not selected or selected != evidence.descriptor_path:
+        raise AuthorityResolutionError("owner-selected operationalization descriptor mismatch")
+    descriptor = _json_artifact(root, evidence.owner_commit, selected)
+    if descriptor.get("contract_version") != "programstart.accepted-operationalization.v1":
+        raise AuthorityResolutionError("unsupported owner operationalization contract")
+    manifest = _json_artifact(root, evidence.owner_commit, descriptor["manifest_path"])
+    validate_manifest(manifest)
+    if (
+        manifest["contract_version"] != "1.0"
+        or manifest["projection_role"] != "ACTIVE_OPERATIONALIZATION"
+        or descriptor["accepted_manifest_sha256"] != _digest(manifest)
+        or descriptor["owner_decision_ref"] not in manifest["decision_refs"]
+    ):
+        raise AuthorityResolutionError("accepted ACTIVE full owner manifest required")
+    if manifest["source_ref"] != f"{evidence.owner_repository}:{descriptor['manifest_path']}":
+        raise AuthorityResolutionError("operationalization source must bind the exact current owner manifest file")
+    for ref in (manifest["owner"], manifest["source_ref"]):
+        if ref.split("@", 1)[0].split("#", 1)[0].split(":", 1)[0] != evidence.owner_repository:
+            raise AuthorityResolutionError("manifest owner/source repository mismatch")
+    repository_version, path = descriptor["projection_ref"].split(":", 1)
+    repository, commit = repository_version.rsplit("@", 1)
+    if repository != "GrahamArdent/ecosystem-matrix" or re.fullmatch(r"[0-9a-f]{40}", commit) is None:
+        raise AuthorityResolutionError("immutable Matrix-owned projection required")
+    artifact = _json_artifact(Path(evidence.matrix_repository_root), commit, path)
+    recovered = reconstruct_operationalization(artifact)
+    graph = _json_artifact(root, evidence.owner_commit, descriptor["readiness_path"])
+    receipt = _json_artifact(root, evidence.owner_commit, descriptor["reconstruction_path"])
+    source = artifact["source_binding"]
+    if (
+        artifact.get("artifact_version") != "2.0"
+        or artifact.get("artifact_type") != "ecosystem_matrix.operationalization_projection"
+        or artifact.get("execution_authority") is not False
+        or source
+        != {
+            "owner": evidence.owner_repository,
+            "ref": manifest["source_ref"],
+            "version": manifest["source_version"],
+            "currentness": "CURRENT",
+        }
+        or recovered != manifest
+        or artifact.get("root_task_id") != descriptor["root_task_id"]
+    ):
+        raise AuthorityResolutionError("projection is thin or mismatches current full owner semantics")
+    bookkeeping = artifact["matrix_bookkeeping"]
+    if bookkeeping != {
+        "projection_currentness": "CURRENT",
+        "ingestion_reconciliation_state": "RECONCILED",
+        "reconsideration_required": False,
+    }:
+        raise AuthorityResolutionError("projection is not reconciled/current")
+    expected_artifact = project_operationalization(
+        manifest,
+        source_owner=evidence.owner_repository,
+        source_ref=manifest["source_ref"],
+        source_version=manifest["source_version"],
+        readiness_graph=graph,
+        root_task_id=descriptor["root_task_id"],
+        projection_identity=artifact["projection_identity"],
+    )
+    if expected_artifact != artifact:
+        raise AuthorityResolutionError("projection differs from current native owner reconstruction")
+    frontier = root_frontier(graph, descriptor["root_task_id"])
+    if frontier != artifact["frontier"] or frontier["selected_task_id"] is None or frontier["readiness_blocker_ids"]:
+        raise AuthorityResolutionError("material owner graph is not ready")
+    semantic = _digest({key: artifact[key] for key in ("owner_manifest", "readiness_graph", "root_task_id")})
+    if artifact["semantic_hash"] != semantic:
+        raise AuthorityResolutionError("comprehensive semantic hash mismatch")
+    if receipt != {
+        "record_type": "matrix.operationalization_reconstruction.v1",
+        "execution_authority": False,
+        "projection_sha256": _digest(artifact),
+        "reconstructed_manifest": manifest,
+        "reconstructed_manifest_sha256": _digest(manifest),
+    }:
+        raise AuthorityResolutionError("actual full reconstruction evidence mismatch")
+    if _owner_selection(root, evidence.owner_repository, evidence.owner_commit) != selected:
+        raise AuthorityResolutionError("owner operationalization changed during reconstruction")
+    projection = MatrixProjectionBinding(
+        artifact_version="2.0",
+        projection_role="ACTIVE_OPERATIONALIZATION",
+        artifact_ref=descriptor["projection_ref"],
+        projection_identity=artifact["projection_identity"],
+        decision_ref=descriptor["owner_decision_ref"],
+        source_ref=manifest["source_ref"],
+        source_version=manifest["source_version"],
+        semantic_hash=semantic,
+        source_fingerprint=_digest({"owner": source["owner"], "ref": source["ref"], "version": source["version"]}),
+        source_currentness="CURRENT",
+        projection_currentness="CURRENT",
+        ingestion_reconciliation_state="RECONCILED",
+        reconsideration_required=False,
+        execution_authority=False,
+    )
+    return DecisionOperationalizationBinding(
+        owner_decision_ref=descriptor["owner_decision_ref"],
+        operationalization_source_ref=manifest["source_ref"],
+        operationalization_source_version=manifest["source_version"],
+        projection_identity=artifact["projection_identity"],
+        matrix_projection=projection,
+        reconstruction_evidence=evidence,
+    )
+
+
+def verify_bound_operationalization(binding: DecisionOperationalizationBinding) -> bool:
+    try:
+        evidence = binding.reconstruction_evidence
+        return evidence is not None and _reconstruct_binding(evidence).model_dump() == binding.model_dump()
+    except (ValueError, KeyError, TypeError, OSError, AttributeError, jsonschema.ValidationError):
+        return False
+
+
+def verify_authority_operationalization(authority: AuthoritySnapshot) -> bool:
+    binding = authority.decision_operationalization
+    try:
+        if authority.owner_repository_root:
+            selected = _owner_selection(
+                Path(authority.owner_repository_root), authority.owning_repository, authority.authority_commit
+            )
+            if selected and (binding is None or binding.reconstruction_evidence is None):
+                return False
+        if binding is not None:
+            evidence = binding.reconstruction_evidence
+            return bool(
+                evidence is not None
+                and evidence.owner_repository == authority.owning_repository
+                and evidence.owner_commit == authority.authority_commit
+                and (
+                    authority.owner_repository_root is None
+                    or Path(evidence.owner_repository_root).resolve() == Path(authority.owner_repository_root).resolve()
+                )
+            )
+        return True
+    except (ValueError, KeyError, TypeError, OSError, AttributeError, jsonschema.ValidationError):
+        return False
 
 
 def compose_owner_local_intent(

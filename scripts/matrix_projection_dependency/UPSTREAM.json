@@ -1,0 +1,12 @@
+{
+  "source_repository": "GrahamArdent/ecosystem-matrix",
+  "source_commit": "9238ae74d1e1bad052852cd4a7a0464202cf0ed6",
+  "source_path": "src/ecosystem_matrix",
+  "files": {
+    "root_frontier.py": "b7fea2af7ea927552c447e53f1d9d552b36d7701fe28df038a55a4871facb0f5",
+    "operationalization.py": "3436e577c24df7e659b25d8afaecc18c65eaec8814aec62892ae1d0f27e5190a",
+    "decision-operationalization-manifest.schema.json": "7a0b60fdbb2e9830d45b7466ece6b3a1d62a6ac10418654bee7078fc6bb8e091"
+  },
+  "schema_owner": "GrahamArdent/PROGRAMSTART",
+  "schema_blob": "788a0ef06168ed6c60df9d35a0dc8ca089228302"
+}

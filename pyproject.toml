@@ -10,6 +10,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
   "filelock>=3.0",
+  "jsonschema>=4.26,<5",
   "pydantic>=2.0",
 ]
 keywords = ["planning", "workflow", "automation", "PROGRAMBUILD", "stage-gate"]
@@ -79,7 +80,7 @@ programstart-doctor = "scripts.programstart_doctor:main"
 programstart-prompt-build = "scripts.programstart_prompt_build:main"
 
 [tool.setuptools]
-packages = ["scripts"]
+packages = ["scripts", "scripts.matrix_projection_dependency"]
 
 [tool.ruff]
 target-version = "py312"
@@ -217,3 +218,6 @@ fail_under = 90
 dev = [
     "mutmut>=3.5.0",
 ]
+
+[tool.setuptools.package-data]
+"scripts.matrix_projection_dependency" = ["*.json"]

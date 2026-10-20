@@ -19,7 +19,7 @@ from enum import StrEnum
 from pathlib import Path
 from typing import Literal
 
-from pydantic import BaseModel, Field, ValidationError, model_serializer, model_validator
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_serializer, model_validator
 
 from .programstart_resource_preflight import ResourcePreflight
 
@@ -103,9 +103,23 @@ class EffectReadinessRule(BaseModel):
         return self
 
 
+class OperationalizationEvidence(BaseModel):
+    """Mechanical locations for exact owner-native evidence; not acceptance assertions."""
+
+    model_config = ConfigDict(extra="forbid")
+    owner_repository_root: str
+    owner_repository: str
+    owner_commit: str
+    descriptor_path: str
+    matrix_repository_root: str
+
+
 class MatrixProjectionBinding(BaseModel):
     """Positive-current Matrix projection evidence; never owner or execution authority."""
 
+    model_config = ConfigDict(extra="forbid")
+    artifact_version: Literal["2.0"] | None = None
+    projection_role: Literal["ACTIVE_OPERATIONALIZATION"] | None = None
     artifact_ref: str
     projection_identity: str
     decision_ref: str
@@ -161,6 +175,7 @@ class DecisionOperationalizationBinding(BaseModel):
     operationalization_source_version: str
     projection_identity: str
     matrix_projection: MatrixProjectionBinding | None = None
+    reconstruction_evidence: OperationalizationEvidence | None = None
 
     @model_validator(mode="after")
     def validate_decision_projection_consistency(self) -> DecisionOperationalizationBinding:
@@ -187,7 +202,7 @@ class DecisionOperationalizationBinding(BaseModel):
 
     @property
     def projection_ready(self) -> bool:
-        if self.matrix_projection is None:
+        if self.matrix_projection is None or self.reconstruction_evidence is None:
             return False
         # Typed instances may have been copied or updated since validation.
         # Revalidate serialized evidence at the readiness boundary rather than
@@ -196,7 +211,9 @@ class DecisionOperationalizationBinding(BaseModel):
             DecisionOperationalizationBinding.model_validate(self.model_dump(mode="python"))
         except ValidationError:
             return False
-        return True
+        from .programstart_authority_resolver import verify_bound_operationalization
+
+        return verify_bound_operationalization(self)
 
 
 class AuthoritySnapshot(BaseModel):
@@ -211,6 +228,7 @@ class AuthoritySnapshot(BaseModel):
     execution_mode: str
     current_work_refs: list[str] = Field(default_factory=list)
     decision_operationalization: DecisionOperationalizationBinding | None = None
+    owner_repository_root: str | None = None
     resource_preflight_required: bool = False
     resource_preflight_path: str | None = None
     resource_preflight: ResourcePreflight | None = None
@@ -233,6 +251,8 @@ class AuthoritySnapshot(BaseModel):
     @model_serializer(mode="wrap")
     def preserve_legacy_snapshot(self, handler):
         data = handler(self)
+        if self.owner_repository_root is None:
+            data.pop("owner_repository_root", None)
         if not self.resource_preflight_required and self.resource_preflight_path is None and self.resource_preflight is None:
             for key in ("resource_preflight_required", "resource_preflight_path", "resource_preflight"):
                 data.pop(key, None)
@@ -257,7 +277,9 @@ class AuthoritySnapshot(BaseModel):
     @property
     def decision_operationalization_ready(self) -> bool:
         binding = self.decision_operationalization
-        return binding is None or binding.projection_ready
+        from .programstart_authority_resolver import verify_authority_operationalization
+
+        return verify_authority_operationalization(self) and (binding is None or binding.projection_ready)
 
 
 class IntentInterpretation(BaseModel):
@@ -432,8 +454,21 @@ TRANSFORMATION_RULE_CATALOG: dict[str, str] = {
 }
 
 
+def _semantic_evidence(value: object) -> object:
+    # Acquisition locations are mechanically revalidated, not planning meaning.
+    if isinstance(value, dict):
+        return {
+            key: _semantic_evidence(item)
+            for key, item in value.items()
+            if key not in {"owner_repository_root", "matrix_repository_root"}
+        }
+    if isinstance(value, list):
+        return [_semantic_evidence(item) for item in value]
+    return value
+
+
 def authority_fingerprint(authority: AuthoritySnapshot) -> str:
-    return _digest(authority.model_dump(mode="json"))
+    return _digest(_semantic_evidence(authority.model_dump(mode="json")))
 
 
 def interpret_intent(
@@ -698,7 +733,7 @@ def compile_interpreted_work_packet(
     if not authority.decision_operationalization_ready:
         binding = authority.decision_operationalization
         if binding is None:
-            raise AssertionError("decision operationalization readiness is inconsistent")
+            raise ValueError("owner-selected decision operationalization binding is missing")
         raise ValueError(
             "decision-derived work is not currentness-ready: reconcile and re-read the required "
             f"Matrix projection for {binding.owner_decision_ref} / {binding.operationalization_source_ref}"
@@ -748,7 +783,7 @@ def compile_interpreted_work_packet(
         mode="json",
         exclude={"specification_id", "semantic_digest"},
     )
-    semantic_digest = _digest(semantic_body)
+    semantic_digest = _digest(_semantic_evidence(semantic_body))
     packet.specification_id = f"WPK-{semantic_digest[:16]}"
     packet.semantic_digest = semantic_digest
     return packet
@@ -787,7 +822,7 @@ def verify_integrity(packet: CompiledWorkPacket) -> bool:
         mode="json",
         exclude={"specification_id", "semantic_digest"},
     )
-    digest = _digest(body)
+    digest = _digest(_semantic_evidence(body))
     return packet.semantic_digest == digest and packet.specification_id == f"WPK-{digest[:16]}"
 
 
@@ -797,7 +832,7 @@ def assess_authority_drift(
 ) -> DriftAssessment:
     previous = packet.evidence.authority_fingerprint
     current = authority_fingerprint(current_authority)
-    if previous == current:
+    if previous == current and current_authority.decision_operationalization_ready:
         return DriftAssessment(
             status="unchanged",
             previous_authority_fingerprint=previous,

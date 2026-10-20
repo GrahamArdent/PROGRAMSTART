@@ -186,3 +186,146 @@ source/test/config boundary. This is same-assistant review, not independent
 semantic approval, merge admission or a claim of repository100%.
 
 Final plan body SHA256:e3dd573ff4216a867791ee84b1dbe5e474e42e607e75c9f91e0a1231a023c9b3; execution body SHA256:1631f20e8a2ed6410924ba8fdd5d884a8a39b0f3b77cb8cfa83b60ceca3e682d; pair SHA256:1ad9ca3007bbe2bf56ec56410f806a917373df1161eaa597c99404afe80b2c35. Bodies are exact UTF8 substrings after their headings and before the next named heading above.
+
+## Intake continuation authorization and plan — 2026-10-20 11:53 EDT
+
+Graham explicitly selected the next recommendation with writes. Recovering the
+same PR251 head306191e19e1c9d88c444d42a0528c80bc039cb45; main6bbb129 is unchanged.
+Current open PRs have no intake overlap. Existing Matrix50/coverage results,
+terminal L1 and broader browser-gate residual are preserved, not reopened.
+
+### Intake game plan
+
+Test real envelope/packet/handoff negatives, authority-path containment and regular
+files, real Git HEAD success/failure, and CLI byte-size/encoding/JSON/return-code
+boundaries. Add the tests to the existing intake test module. Correct only defects
+actually reproduced within this boundary and remove demonstrably shadowed checks
+rather than mocking validators or constants to reach them. Preserve needs_gate,
+delivery_is_acceptance=false, mutation_performed=false, stable replay and valid
+legacy fixtures. Reuse valid prior verification; run focused/full relevant tests,
+coverage, hygiene/type/package validation, applicable actual-diff Challenge, then
+publish to the same exact-head PR and finish hosted checks/accounting.
+
+### Intake execution prompt
+
+Continue the existing source coverage repair in an isolated checkout of PR251.
+Read current owner rules/write sets and stop duplicate work before mutation. Use
+real disposable repositories/filesystem paths and real CLI stdin/stdout where they
+settle the behavior. A test must grade its intended rejection or protected positive,
+not merely any exception. Do not add exclusions or change admission semantics to
+improve the number. Simplify only redundant checks after their earlier protection
+has been proven. Preserve failed attempts and re-Challenge corrected source and
+this complete plan/prompt. Finish the bounded source/tests and exact-head hosted
+verification without another generic Proceed; retain an exact residual for any
+external gate. Writes are intake source/tests, this evidence and necessary
+hygiene only. No new PR/lifecycle/experiment, Matrix pin/CI-policy edits, merge,
+provider/credential/runtime effects, HOP reopening, enrollment or P3–P7 scope.
+
+### Intake pre-implementation Challenge
+
+Same-assistant opposition using unchanged accepted protocol blobs above. Parts
+B/C/D/E/F/H: source trust and CLI/filesystem behavior justify actual-diff closure
+review. Candidate correction: a later guard may be unreachable because a real
+upstream guard already rejects the input; prove that composition rather than
+replacing its validator. A symlink cannot be considered safe merely because its
+resolved destination is a file; test the actual lexical reference and containment.
+Fresh corrected pair review found no further material corrective delta for this
+bounded test-and-necessary-repair scope. Review does not create merge authority.
+
+
+### Intake actual-diff findings and corrections
+
+First regression run:60 passed/1 failed, proving an internal final-file symlink
+was accepted after resolve erased its link identity. The source now checks the
+lexical final target before resolve; parent-directory escapes, missing paths and
+non-files remain rejected. Two real symlink-loop regressions then failed with
+uncaught pathlib RuntimeError (authority path and CLI repo-root). Both now return
+bounded FAILED JSON rather than a traceback; path failures become IntakeError.
+A later malformed-wire counterexample proved schema_version=true compared equal
+to1. Boolean schema versions now fail; ordinary version1 fixtures remain valid.
+
+Before simplification, focused coverage reached97% with exactly3 missed raises:
+post-integrity missing/mismatched authority checks and membership of the fixed
+literal needs_gate in an exported constant vocabulary. Actual prior integrity
+validation already requires dict authority matching packet owner, followed by
+packet owner matching the fixed intake target. Real malformed/foreign packet
+tests protect both upstream checks. The duplicate later checks were removed;
+the fixed literal has no caller-selected disposition. An integrity-valid packet
+requesting accepted still returns needs_gate with both authority/effect flagsfalse.
+No validator or allowed-token constant was monkeypatched to hit impossible states.
+The exported vocabulary itself remains compatible.
+
+The CLI is exercised in a real child process on success and failure, in addition
+to direct main tests for exact/over-limit bytes, invalid UTF8/JSON, missing targets,
+loops and actual owner HEAD drift. Coverage uses genuine coverage.py child trace
+data and its standard data.update API when a parent collector is active; normal
+pytest runs the actual CLI without that tracing. No synthetic hits or exclusions.
+The first traced test wrote its trace inside the observed Git fixture and correctly
+failed the no-mutation assertion. The harness now writes traces outside that target;
+actual intake never writes the observed repository.
+
+Source/test-only boundary: actual Git/filesystem checks here are read-only and
+needs_gate, not atomic release/currentness admission. A supplied Python payload
+must remain caller-owned during synchronous evaluation; the CLI parses its own
+payload. No concurrent-payload, live dispatch, installed cross-platform or stronger
+runtime guarantee is newly claimed. Existing HOP031 acceptance stays historical.
+The Linux CLI still owns its existing /usr/bin/git transport; no new machine path.
+
+Fresh same-assistant opposition against the corrected diff: wrong owner, valid
+hash with changed packet/handoff identity, stale real HEAD, path escape/alias/loop,
+boolean version and caller-selected acceptance all fail at the intended boundary
+or retain needs_gate as appropriate. Positive replay and regular-file evidence
+remain valid. After the boolean correction, a fresh actual-diff review found no
+further material corrective delta for this bounded synchronous source contract.
+Fresh review of the complete intake game-plan/execution-prompt pair above retains
+matching authority, scope, ordering, verification and stopping rules. This is not
+independent semantic review, merge admission or a browser-gate waiver.
+
+The frozen focused suite has68 passing cases (prior6). Earlier full run2520/2 was
+before final boundary additions and is historical only. Final full-suite/head
+checks must supersede it. No source, schema, dependency, CI policy or Matrix pins
+outside the stated intake write set were changed.
+
+Intake final plan body SHA256:990b64ea1e8ad5cfaa367e605364b8efb0a573b75e9cf146b4986a115b513897; prompt body SHA256:d89277e4fe7fe490fd034ed923261a9ce79d3ae8e67780943c0c1d5096d292f7; pair SHA256:14f6a8a9f3116be51c3abf1b48d4275c1f2f03ea19b5f48704f2bb97d097e6dc. Exact bodies exclude their heading and end at the next named heading.
+
+
+### Intake closure verification checkpoint
+
+Final source and tests froze before the broad run collected2527items (2525 tests
+plus2 context-index-dependent skips). Native gate lint/typecheck pass; tests and
+remaining gate parts are recorded by exact observed results in the PR receipt.
+No configured coverage source or exclusion was changed. A later all-file hook
+attempt saw this evidence file being edited during pyright and correctly reported
+files modified despite zero type errors. That attempt is not a clean gate pass;
+rerun the existing hooks after freezing the evidence. This was operator/harness
+coordination, not a source defect or permission waiver.
+
+The intake plan/prompt hashes above identify the unchanged complete pair. This
+closure checkpoint adds evidence only. Corrected actual-diff review checks the
+real malformed-wire, lexical path, bounded-failure, owner/Git and no-authority
+invariants described above; no further material correction is selected.
+
+### Final intake local result
+
+Frozen broad native run:2525 passed/2 skipped. Intake:100% statement and branch
+coverage,157 statements/66 branch exits, zero exclusions. Whole measured repository:
+92.29% combined,94.11% statement,87.47% branch coverage;786 missing statements and
+629 missing branch exits in this local environment. The earlier broader module
+scope/313 exclusions are unchanged. Numerical coverage did not by itself expose
+the boolean wire-type defect; the adversarial input did.
+
+All-file hooks, typecheck, strict validation/drift/docs, final wheel build and
+extracted-wheel real CLI positive/boolean-negative checks pass. Native gate_safe
+was actually invoked:lint/typecheck/tests/validate/docs pass, browser smoke fails
+at the same truncated Chromium download. The wrapper's success notification does
+not make the composite gate green. Separate read-only API/HTML smoke passes6.
+The full tests reported the existing PACKAGE_ROOT fixture warning and two upstream
+pytest fixture-deprecation warnings; no test failure is relabelled. No installed
+browser/live cross-platform proof or new merge disposition is inferred.
+
+Exact-head hosted checks must verify this source publication. Subsequent receipts
+on PR251 own the observed run/artifact IDs without changing source just to embed
+its own final commit hash. Existing Matrix50 and original paired-repair evidence
+remain valid for their unchanged bytes. Same-assistant final actual-diff and
+complete-pair review has no additional material corrective delta for this bounded
+source/test result. No merge, rollout or owner acceptance is claimed.

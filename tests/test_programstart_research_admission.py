@@ -449,3 +449,14 @@ def test_admission_stage_names_cover_the_actual_workflow_registry():
     actual = set(workflow_steps(load_registry(), "programbuild"))
     assert "research" in actual
     assert actual - {"inputs_and_mode_selection", "feasibility"} <= set(gate.STAGES)
+
+
+def test_first_accepted_research_has_no_prior_baseline():
+    c, p, files, record = fixture()
+    api = API(c, p, files, record)
+    gate.accept(record, REPO, gate.authority(api, REPO, record), None)
+
+
+def test_unmapped_stage_does_not_claim_product_admission(tmp_path):
+    result = gate.local_check(tmp_path, "custom-navigation", None, REPO, BASE, HEAD)
+    assert result == {"coverage": "NOT_REQUIRED", "product_admitted": False}

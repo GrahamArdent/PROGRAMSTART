@@ -173,3 +173,19 @@ def test_impact_causes_without_graph_contains_only_direct_changes() -> None:
     assert tuple(causes) == ("a", "b")
     assert causes["a"][0].path == ("a",)
     assert causes["b"][0].path == ("b",)
+
+
+def test_duplicate_triggers_and_cyclic_diamond_produce_unique_causes():
+    graph = DependencyGraph(
+        [
+            _relation("left", "root"),
+            _relation("right", "root"),
+            _relation("leaf", "left"),
+            _relation("leaf", "right"),
+            _relation("root", "leaf"),
+        ]
+    )
+    result = impact_causes(["root", "root", "left"], graph=graph)
+    for causes in result.values():
+        assert len(causes) == len(set(causes))
+    assert {cause.trigger for cause in result["leaf"]} == {"root", "left"}

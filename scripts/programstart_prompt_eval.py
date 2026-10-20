@@ -12,7 +12,7 @@ try:
     from .programstart_health_probe import probe_target
     from .programstart_recommend import build_recommendation
     from .programstart_starter_scaffold import build_starter_scaffold_plan
-except ImportError:  # pragma: no cover - standalone script execution fallback
+except ImportError:
     from programstart_create import default_github_repo_name, render_factory_plan
     from programstart_health_probe import probe_target
     from programstart_recommend import build_recommendation
@@ -334,6 +334,6 @@ def main(argv: list[str] | None = None) -> int:
     return 0 if payload["failed"] == 0 else 1
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     warn_direct_script_invocation("'uv run programstart prompt-eval' or 'pb prompt-eval'")
     raise SystemExit(main())

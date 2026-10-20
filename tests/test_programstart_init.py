@@ -223,3 +223,23 @@ def test_main_calls_stamp_owner_when_owner_provided(tmp_path: Path) -> None:
     mock_stamp.assert_called_once()
     args, kwargs = mock_stamp.call_args
     assert kwargs.get("owner") == "Alice" or args[1] == "Alice"
+
+
+@pytest.mark.parametrize("source", [None, "USERJOURNEY"])
+def test_init_dry_run_attachment_never_writes_destination(tmp_path, source, capsys):
+    target = tmp_path / "project"
+    args = ["--dest", str(target), "--project-name", "Fixture", "--product-shape", "web app", "--attach-userjourney", "--dry-run"]
+    if source:
+        args.extend(["--attachment-source", source])
+    assert init_script.main(args) == 0
+    assert "ATTACH USERJOURNEY" in capsys.readouterr().out
+    assert not target.exists()
+
+
+def test_real_init_missing_attachment_source_refuses_attachment(tmp_path):
+    target = tmp_path / "fixture"
+    with pytest.raises(SystemExit, match="attachment-source is required"):
+        init_script.main(
+            ["--dest", str(target), "--project-name", "Fixture", "--product-shape", "web app", "--attach-userjourney"]
+        )
+    assert not (target / "USERJOURNEY").exists()

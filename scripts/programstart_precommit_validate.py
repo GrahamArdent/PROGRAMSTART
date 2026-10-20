@@ -4,7 +4,7 @@ try:
     from . import programstart_validate
     from .programstart_common import load_registry, warn_direct_script_invocation
     from .programstart_prompt_build import ROOT, sync_managed_prompts
-except ImportError:  # pragma: no cover - standalone script execution fallback
+except ImportError:
     import programstart_validate
     from programstart_prompt_build import ROOT, sync_managed_prompts
 

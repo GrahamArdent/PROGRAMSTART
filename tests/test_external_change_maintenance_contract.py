@@ -116,3 +116,105 @@ def test_required_pr_gate_is_a_no_new_debt_gate_not_full_convergence() -> None:
     assert "nox -s ci" not in pr_gate
     assert "workflow_dispatch:" in full_gate
     assert "uv run nox -s ci" in full_gate
+
+
+def test_required_gate_rejects_a_configured_module_missing_from_real_report(tmp_path) -> None:
+    import json
+    import os
+    import subprocess
+    import sys
+
+    import yaml
+
+    workflow = yaml.safe_load(_read(PR_VALIDATION))
+    step = next(
+        s for s in workflow["jobs"]["required-pr-gate"]["steps"] if s.get("name") == "Run head tests and reject new failures"
+    )
+    script = step["run"].split("python - <<'PY'\n", 1)[1].rsplit("\nPY", 1)[0]
+    (tmp_path / "pyproject.toml").write_text('[tool.coverage.run]\nsource = ["scripts.example"]\n')
+    for name in ["base-tests.xml", "head-tests.xml"]:
+        (tmp_path / name).write_text("<testsuite/>")
+    env = {**os.environ, "RUNNER_TEMP": str(tmp_path)}
+    report = tmp_path / "coverage.json"
+    report.write_text(json.dumps({"files": {}}))
+    missing = subprocess.run([sys.executable, "-c", script], cwd=tmp_path, env=env, capture_output=True, text=True)
+    assert missing.returncode != 0
+    assert "Configured coverage modules missing from report: ['scripts/example.py']" in missing.stderr
+    report.write_text(json.dumps({"files": {"scripts/example.py": {"summary": {"missing_lines": 0, "missing_branches": 0}}}}))
+    complete = subprocess.run([sys.executable, "-c", script], cwd=tmp_path, env=env, capture_output=True, text=True)
+    assert complete.returncode == 0, complete.stdout + complete.stderr
+    assert "Base failing tests: 0" in complete.stdout
+    for field in ["missing_lines", "missing_branches"]:
+        summary = {"missing_lines": 0, "missing_branches": 0, "percent_covered_display": "100"}
+        summary[field] = 1
+        report.write_text(json.dumps({"files": {"scripts/example.py": {"summary": summary}}}))
+        partial = subprocess.run([sys.executable, "-c", script], cwd=tmp_path, env=env, capture_output=True, text=True)
+        assert partial.returncode != 0
+        assert "branch exits remain uncovered" in partial.stderr
+
+
+def test_local_nox_gate_requires_present_and_raw_complete_modules(tmp_path, monkeypatch):
+    import json
+    import runpy
+
+    namespace = runpy.run_path(str(ROOT / "noxfile.py"))
+    callback = namespace["tests"].func
+    monkeypatch.setitem(callback.__globals__, "ROOT", tmp_path)
+    (tmp_path / "pyproject.toml").write_text('[tool.coverage.run]\nsource = ["scripts.example"]\n')
+
+    class Session:
+        report: dict[str, object] = {}
+
+        def install(self, *_):
+            pass
+
+        def create_tmp(self):
+            return str(tmp_path)
+
+        def run(self, *args):
+            if args[:2] == ("coverage", "json"):
+                Path(args[-1]).write_text(json.dumps(self.report))
+
+        def error(self, message):
+            raise RuntimeError(message)
+
+    session = Session()
+    for files, diagnostic in [
+        ({}, "missing from coverage report"),
+        ({"scripts/example.py": {"summary": {"missing_lines": 1, "missing_branches": 0}}}, "uncovered statements"),
+        ({"scripts/example.py": {"summary": {"missing_lines": 0, "missing_branches": 1}}}, "uncovered statements"),
+    ]:
+        session.report = {"files": files}
+        try:
+            callback(session)
+        except RuntimeError as exc:
+            assert diagnostic in str(exc)
+        else:
+            raise AssertionError("incomplete production report was admitted")
+    session.report = {"files": {"scripts/example.py": {"summary": {"missing_lines": 0, "missing_branches": 0}}}}
+    callback(session)
+
+
+def test_manual_cache_paths_are_runtime_absolute_and_outside_generated_repositories(tmp_path):
+    import subprocess
+
+    import yaml
+
+    workflow = yaml.safe_load(_read(MANUAL_CONVERGENCE))
+    assert "runner.temp" not in str(workflow.get("env", {}))
+    steps = workflow["jobs"]["convergence"]["steps"]
+    setup = next(i for i, step in enumerate(steps) if step.get("name") == "Set absolute convergence cache paths")
+    command = steps[setup]["run"]
+    for name in ["UV_CACHE_DIR", "PRE_COMMIT_HOME"]:
+        assert f"{name}=$RUNNER_TEMP/" in command
+    assert command.count('>> "$GITHUB_ENV"') == 2
+    assert setup < next(i for i, step in enumerate(steps) if step.get("name") == "Cache uv packages")
+    assert setup < next(i for i, step in enumerate(steps) if step.get("name") == "Cache pre-commit hooks")
+    environment_file = tmp_path / "github env"
+    runner_temp = tmp_path / "runner temp"
+    subprocess.run(
+        ["bash", "-eu", "-c", command], env={"RUNNER_TEMP": str(runner_temp), "GITHUB_ENV": str(environment_file)}, check=True
+    )
+    values = dict(line.split("=", 1) for line in environment_file.read_text().splitlines())
+    assert set(values) == {"UV_CACHE_DIR", "PRE_COMMIT_HOME"}
+    assert all(Path(value).is_absolute() and Path(value).parent == runner_temp for value in values.values())

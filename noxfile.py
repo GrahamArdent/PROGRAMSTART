@@ -8,6 +8,7 @@ import stat
 import subprocess
 import tempfile
 import time
+import tomllib
 from pathlib import Path
 
 import nox
@@ -195,6 +196,21 @@ def tests(session: nox.Session) -> None:
     install_dev(session)
     session.run("coverage", "run", "-m", "pytest")
     session.run("coverage", "report", "-m")
+    report_path = Path(session.create_tmp()) / "coverage.json"
+    session.run("coverage", "json", "-o", str(report_path))
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    sources = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["tool"]["coverage"]["run"]["source"]
+    expected = {module.replace(".", "/") + ".py" for module in sources}
+    missing = sorted(expected - set(report["files"]))
+    if missing:
+        session.error("Configured production modules missing from coverage report: " + ", ".join(missing))
+    incomplete = [
+        path
+        for path, detail in report["files"].items()
+        if detail["summary"]["missing_lines"] or detail["summary"]["missing_branches"]
+    ]
+    if incomplete:
+        session.error("Production coverage has uncovered statements or branch exits: " + ", ".join(incomplete))
 
 
 @nox.session(reuse_venv=True)

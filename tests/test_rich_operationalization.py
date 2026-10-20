@@ -11,6 +11,7 @@ import pytest
 
 from scripts.matrix_projection_dependency.operationalization import digest, project_operationalization, reconstruction_receipt
 from scripts.programstart_authority_resolver import (
+    AuthorityResolutionError,
     RepositoryAuthorityObservation,
     compose_decision_operationalization_currentness,
     resolve_operationalization_binding,
@@ -347,3 +348,143 @@ def test_reconstruction_uses_packaged_schema_without_checkout_schema_path(tmp_pa
     monkeypatch.setattr(resolver, "__file__", str(tmp_path / "installed/scripts/programstart_authority_resolver.py"))
     bound = resolve_operationalization_binding(snapshot, matrix)
     assert bound.projection_ready
+
+
+@pytest.mark.parametrize(
+    "change,reason",
+    [
+        ("oversize", "exceeds bounded size"),
+        ("non-object", "must be an object"),
+        ("no-declaration", "exact owner authority declaration required"),
+        ("two-declarations", "exact owner authority declaration required"),
+        ("wrong-owner", "owner repository mismatch"),
+        ("no-selection", "has not selected"),
+        ("unsupported-contract", "unsupported owner operationalization contract"),
+        ("foreign-manifest-owner", "manifest owner/source repository mismatch"),
+        ("foreign-projection", "immutable Matrix-owned projection required"),
+        ("mutable-projection", "immutable Matrix-owned projection required"),
+    ],
+)
+def test_owner_file_rejections_are_specific(tmp_path, change, reason):
+    owner, matrix, manifest, _, _, descriptor, snapshot, prior_binding, _ = build(tmp_path)
+    declaration = json.loads((owner / "PROGRAMSTART_AUTHORITY.json").read_text())
+    if change == "oversize":
+        (owner / "operationalization.json").write_text("{" + " " * 1_048_577 + "}")
+    elif change == "non-object":
+        write(owner, "operationalization.json", [])
+    elif change == "no-declaration":
+        (owner / "PROGRAMSTART_AUTHORITY.json").unlink()
+    elif change == "two-declarations":
+        write(owner, ".programstart/authority.json", declaration)
+    elif change in {"wrong-owner", "no-selection"}:
+        if change == "wrong-owner":
+            declaration["owning_repository"] = "foreign/owner"
+        else:
+            declaration.pop("decision_operationalization_path")
+        write(owner, "PROGRAMSTART_AUTHORITY.json", declaration)
+    elif change == "foreign-manifest-owner":
+        manifest["owner"] = "foreign/owner#1"
+        write(owner, "manifest.json", manifest)
+        descriptor["accepted_manifest_sha256"] = digest(manifest)
+        write(owner, "operationalization.json", descriptor)
+    else:
+        if change == "unsupported-contract":
+            descriptor["contract_version"] = "unsupported"
+        elif change == "foreign-projection":
+            descriptor["projection_ref"] = descriptor["projection_ref"].replace("GrahamArdent/ecosystem-matrix@", "foreign/repo@")
+        else:
+            descriptor["projection_ref"] = "GrahamArdent/ecosystem-matrix@main:projection.json"
+        write(owner, "operationalization.json", descriptor)
+    head = commit(owner)
+    # This intentionally copied snapshot is untrusted. Both entry points must
+    # reread actual Git evidence rather than trusting its positive labels.
+    current = snapshot.model_copy(update={"authority_commit": head})
+    with pytest.raises(AuthorityResolutionError, match=reason):
+        resolve_operationalization_binding(current, matrix)
+    if change == "no-selection":
+        # Explicit current owner unselection retains the independent-authority
+        # route, but cannot reuse evidence for its former selected decision.
+        assert compile(current).authority.decision_operationalization is None
+        with pytest.raises(ValueError, match="currentness-ready"):
+            compile(current.model_copy(update={"decision_operationalization": prior_binding}))
+    else:
+        with pytest.raises(ValueError, match="missing"):
+            compile(current)
+
+
+def test_owner_evidence_cannot_be_invented_or_retargeted(tmp_path):
+    from scripts.programstart_authority_resolver import _reconstruct_binding
+
+    _, matrix, *_, snapshot, binding, _ = build(tmp_path)
+    with pytest.raises(AuthorityResolutionError, match="owner-resolved repository evidence required"):
+        resolve_operationalization_binding(snapshot.model_copy(update={"owner_repository_root": None}), matrix)
+    assert binding.reconstruction_evidence is not None
+    changed = binding.reconstruction_evidence.model_copy(update={"descriptor_path": "foreign.json"})
+    with pytest.raises(AuthorityResolutionError, match="descriptor mismatch"):
+        _reconstruct_binding(changed)
+    assert binding.matrix_projection is not None
+    conflicting = binding.model_copy(
+        update={
+            "projection_identity": "different-projection",
+            "matrix_projection": binding.matrix_projection.model_copy(update={"projection_identity": "different-projection"}),
+        }
+    )
+    bound = compose_decision_operationalization_currentness(snapshot, binding)
+    with pytest.raises(AuthorityResolutionError, match="different decision operationalization binding"):
+        compose_decision_operationalization_currentness(bound, conflicting)
+
+
+@pytest.mark.parametrize("change", ["bookkeeping", "hash"])
+def test_native_reconstruction_rejects_inconsistent_artifact_at_compiler(tmp_path, change):
+    owner, matrix, _, _, artifact, descriptor, _, prior_binding, authority = build(tmp_path)
+    if change == "bookkeeping":
+        artifact["matrix_bookkeeping"]["projection_currentness"] = "STALE"
+    else:
+        artifact["semantic_hash"] = "0" * 64
+    write(matrix, "projection.json", artifact)
+    head = commit(matrix)
+    descriptor["projection_ref"] = f"GrahamArdent/ecosystem-matrix@{head}:projection.json"
+    write(owner, "operationalization.json", descriptor)
+    commit(owner)
+    current = authority()
+    with pytest.raises(ValueError, match="content/currentness/frontier/hash inconsistent"):
+        resolve_operationalization_binding(current, matrix)
+    assert prior_binding.reconstruction_evidence is not None and prior_binding.matrix_projection is not None
+    copied = prior_binding.model_copy(
+        update={
+            "reconstruction_evidence": prior_binding.reconstruction_evidence.model_copy(
+                update={"owner_commit": current.authority_commit}
+            ),
+            "matrix_projection": prior_binding.matrix_projection.model_copy(
+                update={"artifact_ref": descriptor["projection_ref"]}
+            ),
+        }
+    )
+    with pytest.raises(ValueError, match="currentness-ready"):
+        compile(current.model_copy(update={"decision_operationalization": copied}))
+
+
+def test_valid_terminal_projection_cannot_create_executable_packet(tmp_path):
+    owner, matrix, manifest, graph, _, descriptor, _, _, authority = build(tmp_path)
+    for task in graph["tasks"]:
+        task["owner_disposition"] = "SATISFIED"
+    artifact = project_operationalization(
+        manifest,
+        source_owner="fixture/owner",
+        source_ref=manifest["source_ref"],
+        source_version=manifest["source_version"],
+        readiness_graph=graph,
+        root_task_id="ISO-01",
+        projection_identity="fixture-rich-plan",
+    )
+    assert artifact["frontier"]["selected_task_id"] is None
+    write(matrix, "projection.json", artifact)
+    head = commit(matrix)
+    descriptor["projection_ref"] = f"GrahamArdent/ecosystem-matrix@{head}:projection.json"
+    write(owner, "operationalization.json", descriptor)
+    write(owner, "graph.json", graph)
+    write(owner, "receipt.json", reconstruction_receipt(artifact))
+    commit(owner)
+    current = authority()
+    with pytest.raises(AuthorityResolutionError, match="material owner graph is not ready"):
+        resolve_operationalization_binding(current, matrix)

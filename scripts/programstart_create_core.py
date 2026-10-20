@@ -15,7 +15,7 @@ try:
     from .programstart_common import generated_outputs_root, load_registry, workspace_path
     from .programstart_recommend import ProjectRecommendation
     from .programstart_starter_scaffold import StarterScaffoldPlan
-except ImportError:  # pragma: no cover - standalone script execution fallback
+except ImportError:
     from programstart_recommend import ProjectRecommendation
     from programstart_starter_scaffold import StarterScaffoldPlan
 

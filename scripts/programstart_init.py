@@ -11,7 +11,7 @@ try:
     from .programstart_attach import attach_userjourney, resolve_attachment_source
     from .programstart_bootstrap import bootstrap_repository, refresh_secrets_baseline, stamp_owner_and_dates
     from .programstart_common import warn_direct_script_invocation
-except ImportError:  # pragma: no cover - standalone script execution fallback
+except ImportError:
     from programstart_attach import attach_userjourney, resolve_attachment_source
     from programstart_bootstrap import (
         bootstrap_repository,
@@ -148,7 +148,7 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     warn_direct_script_invocation(
         "'uv run programstart init --dest <folder> --project-name <name> --product-shape <shape>' or 'pb init ...'"
     )

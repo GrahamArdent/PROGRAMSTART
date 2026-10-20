@@ -14,7 +14,7 @@ try:
     )
     from .programstart_recommend import ProjectRecommendation
     from .programstart_starter_scaffold import StarterScaffoldPlan
-except ImportError:  # pragma: no cover - standalone script execution fallback
+except ImportError:
     from programstart_context import load_knowledge_base
     from programstart_create_core import (
         knowledge_base_entries_by_name,

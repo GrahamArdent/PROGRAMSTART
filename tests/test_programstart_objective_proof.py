@@ -357,7 +357,8 @@ def test_authenticated_reads_fail_closed_instead_of_legacy_downgrade():
         gate.merge_objective_snapshot(Outage(), REPO, "b" * 40, HEAD)
 
 
-def test_local_workflow_positive_acceptance_binds_real_git_bytes(tmp_path, monkeypatch):
+@pytest.mark.parametrize("raw,complete", [(False, True), (True, True), (True, False)])
+def test_local_workflow_positive_acceptance_binds_real_git_bytes(tmp_path, monkeypatch, raw, complete):
     from scripts.programstart_challenge_merge import GitHub
 
     c, p, files = fixture()
@@ -398,9 +399,21 @@ def test_local_workflow_positive_acceptance_binds_real_git_bytes(tmp_path, monke
     rows[1] = comment(acceptance(c, p, claim="completion", head=head), 2)
     monkeypatch.setattr(GitHub, "api", read)
     monkeypatch.setattr(GitHub, "pages", lambda *_: rows)
-    assert gate.workflow_problems(tmp_path, "post_launch_review") == []
+    check = gate.workflow_problems
+    if raw:
+        import importlib
+        import runpy
+
+        namespace = runpy.run_path(str(Path(gate.__file__)), run_name="standalone_probe")
+        raw_github = importlib.import_module("programstart_challenge_merge").GitHub
+        monkeypatch.setattr(raw_github, "api", read)
+        monkeypatch.setattr(raw_github, "pages", lambda *_: rows)
+        check = namespace["workflow_problems"]
+        assert namespace["merge_objective_snapshot"](api, REPO, "b" * 40, HEAD)["objective_complete"] is True
+    stage = "post_launch_review" if complete else "requirements_and_ux"
+    assert check(tmp_path, stage) == []
     (tmp_path / "environment.json").write_text("changed runtime")
-    assert "stale or tampered" in gate.workflow_problems(tmp_path, "post_launch_review")[0]
+    assert "stale or tampered" in check(tmp_path, stage)[0]
 
 
 def test_intake_transition_and_renamed_terminal_stage_are_not_bypasses(tmp_path):
@@ -442,3 +455,73 @@ def test_native_contents_cannot_substitute_link_or_blob(kind):
 
     with pytest.raises(gate.ObjectiveDenied, match="regular directory entry|directory/blob identity"):
         gate.merge_objective_snapshot(Changed(c, p, files), REPO, "b" * 40, HEAD)
+
+
+def test_owner_acceptance_rejects_invalid_owner_before_provider_lookup():
+    c, p, _ = fixture()
+    a = authority(c, p)
+    c["owner_ref"] = "https://example.invalid/forged"
+    with pytest.raises(gate.ObjectiveDenied, match="invalid owner"):
+        gate.accept_owner_records(c, p, a, HEAD, complete=False)
+
+
+def test_revoked_prior_baseline_and_noncompletion_owner_comments_are_not_proof():
+    c, p, files = fixture()
+    a = authority(c, p)
+    revoked = acceptance(c, p, result="rejected", previous=gate.digest(c), reason="withdrawn")
+    a["comments"].append(comment(revoked, 3))
+    with pytest.raises(gate.ObjectiveDenied, match="unaccepted or revoked"):
+        gate.accept_owner_records(c, p, a, HEAD, complete=False)
+    baseline_only = authority(c, p)
+    baseline_only["comments"] = baseline_only["comments"][:1]
+    gate.load_proof_runs(NativeAPI(c, p, files), REPO, baseline_only)
+    assert baseline_only["proof_runs"] == {}
+
+
+def test_research_without_enrollment_is_nonterminal_not_proof(tmp_path):
+    assert gate.workflow_problems(tmp_path, "research") == []
+
+
+def test_symlinked_local_evidence_cannot_escape_workspace(tmp_path):
+    c, p, files = fixture()
+    for name, data in {**files, gate.CONTRACT: json.dumps(c).encode(), gate.PROOF: json.dumps(p).encode()}.items():
+        target = tmp_path / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(data)
+    target = tmp_path / "requirements.md"
+    target.unlink()
+    target.symlink_to(tmp_path / "implementation.py")
+    assert "evidence escapes workspace" in gate.workflow_problems(tmp_path, "release_readiness")[0]
+
+
+def test_optional_contract_cannot_be_removed_by_candidate():
+    c, p, files = fixture()
+
+    class Removed(NativeAPI):
+        def api(self, path):
+            if f"ref={HEAD}" in path and "/contents/PROGRAMBUILD?" in path:
+                return []
+            return super().api(path)
+
+    with pytest.raises(gate.ObjectiveDenied, match="removed the accepted objective"):
+        gate.merge_objective_snapshot(Removed(c, p, files), REPO, "b" * 40, HEAD)
+
+
+def test_unenrolled_merge_reports_no_completion():
+    class Empty:
+        def api(self, path):
+            return []
+
+    assert gate.merge_objective_snapshot(Empty(), REPO, "b" * 40, HEAD)["objective_complete"] is False
+
+
+def test_noncompletion_owner_comment_does_not_create_proof_run():
+    c, p, files = fixture()
+    a = authority(c, p)
+    a["comments"].append({"id": 3, "user": {"id": 0}, "body": "untrusted prose"})
+    gate.load_proof_runs(NativeAPI(c, p, files), REPO, a)
+    assert set(a["proof_runs"]) == {"123"}
+
+
+def test_unmapped_nonterminal_stage_never_claims_completion(tmp_path):
+    assert gate.workflow_problems(tmp_path, "owner-custom-navigation") == []

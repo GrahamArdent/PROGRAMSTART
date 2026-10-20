@@ -6,7 +6,7 @@ from pathlib import Path
 
 try:
     from .programstart_recommend import ProjectRecommendation
-except ImportError:  # pragma: no cover - standalone script execution fallback
+except ImportError:
     from programstart_recommend import ProjectRecommendation
 
 

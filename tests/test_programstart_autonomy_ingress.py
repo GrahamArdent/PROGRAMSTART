@@ -261,3 +261,12 @@ def test_ambiguity_and_controller_transport_failure_fail_closed() -> None:
     )
     assert result.failure == AutonomyIngressFailure.CONTROLLER_FAILURE
     assert result.controller_request is not None
+
+
+def test_incomplete_harvest_provenance_binding_does_not_invent_objective():
+    from scripts.programstart_autonomy_ingress import _bind_semantic_provenance
+    from scripts.programstart_intent_ingress import ConversationHarvest
+
+    harvest = ConversationHarvest(context_ref="chat:incomplete", latest_operator_utterance="Continue")
+    _bind_semantic_provenance(harvest, effect_id="effect:fixture", programstart_release=PROGRAMSTART_SEMANTIC_CONTRACT_RELEASE)
+    assert harvest.objective is None

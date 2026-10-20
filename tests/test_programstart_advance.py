@@ -93,3 +93,22 @@ def test_defer_preserves_state_engine_bypass_without_completion_preflight(monkey
 
     assert result == 0
     assert delegated == [["--system", "programbuild", "--defer", "--notes", "pause for external input"]]
+
+
+def test_real_invalid_workspace_preflight_prevents_delegate(tmp_path, monkeypatch, capsys):
+    import copy
+
+    from scripts import programstart_validate_core as core
+
+    registry = copy.deepcopy(advance.load_registry())
+    registry["systems"]["programbuild"]["control_files"] = ["missing.md"]
+    registry["systems"]["programbuild"]["output_files"] = []
+    (tmp_path / "state.json").write_text('{"current_stage":"research","variant":"product"}')
+    original_path = core.workspace_path
+    monkeypatch.setattr(core, "workspace_path", lambda p: tmp_path / p if p == "missing.md" else original_path(p))
+    monkeypatch.setattr(advance, "load_registry", lambda: registry)
+    monkeypatch.setattr(advance, "load_workflow_state", lambda *_: {"current_stage": "research"})
+    monkeypatch.setattr(advance, "workflow_active_step", lambda *_: "research")
+    monkeypatch.setattr(advance.programstart_drift_check, "git_changed_files", lambda: ["unrelated.md"])
+    assert advance.main(["--system", "programbuild"]) == 1
+    assert "Advance preflight failed" in capsys.readouterr().out

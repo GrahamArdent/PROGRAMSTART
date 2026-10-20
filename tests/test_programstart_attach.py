@@ -390,3 +390,50 @@ def test_main_programbuild_uses_dest_variant_and_project_name(tmp_path: Path) ->
     assert args[0] == destination.resolve()
     assert kwargs["variant"] == "enterprise"
     assert kwargs["project_name"] == "Orchestra Agent"
+
+
+def test_bootstrap_asset_preservation_and_collision_are_distinct(tmp_path, capsys):
+    template, registry = make_programbuild_template(tmp_path)
+    target = tmp_path / "dest"
+    target.mkdir()
+    (target / "README.md").write_text("host readme")
+    with patch.object(attach, "workspace_path", side_effect=lambda relative: template / relative):
+        attach._copy_programbuild_bootstrap_assets(target, registry, dry_run=True)
+        assert "PRESERVE" in capsys.readouterr().out
+        (target / "pyproject.toml").write_text("host configuration")
+        with pytest.raises(FileExistsError, match="pyproject.toml"):
+            attach._copy_programbuild_bootstrap_assets(target, registry)
+    assert (target / "pyproject.toml").read_text() == "host configuration"
+
+
+def test_cli_requires_attachment_source_before_copy(tmp_path, monkeypatch):
+    monkeypatch.setattr(sys, "argv", ["attach", "userjourney", "--dest", str(tmp_path)])
+    with pytest.raises(SystemExit, match="2"):
+        attach.main()
+
+
+def test_missing_optional_prompt_assets_are_skipped(tmp_path, monkeypatch):
+    registry = attach.load_registry()
+    assert attach._attached_userjourney_prompt_assets(registry)
+    monkeypatch.setattr(attach, "workspace_path", lambda relative: tmp_path / "absent" / relative)
+    attach._copy_userjourney_prompt_assets(tmp_path / "target", registry)
+    assert not (tmp_path / "target").exists()
+
+
+def test_programbuild_cli_dry_run_uses_real_attachment_without_writes(tmp_path):
+    target = tmp_path / "fixture"
+    assert attach.main(["programbuild", "--dest", str(target), "--dry-run"]) == 0
+    assert not target.exists()
+
+
+def test_repeated_journey_registry_reconciliation_does_not_duplicate_paths(tmp_path):
+    import json
+
+    registry = attach.load_registry()
+    path = tmp_path / "config/process-registry.json"
+    path.parent.mkdir()
+    path.write_text(json.dumps(registry))
+    attach._sync_attached_userjourney_registry(tmp_path, registry)
+    first = json.loads(path.read_text())
+    attach._sync_attached_userjourney_registry(tmp_path, registry)
+    assert json.loads(path.read_text()) == first

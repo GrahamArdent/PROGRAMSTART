@@ -225,6 +225,8 @@ nox -s gate_safe
 nox -s ci
 ```
 
+The test gate requires zero missing production statements and branch exits in every declared coverage module. It rejects omitted modules and rounded100 reports with nonzero raw gaps; the explicit coverage floor is100. The reviewed exclusion ledger is in `docs/MATRIX_COVERAGE_REPAIR_2026-10-20.md`.
+
 PROGRAMSTART also has `.github/workflows/manual-convergence.yml`, intentionally `workflow_dispatch`-only. Use it when a meaningful full-repository convergence gate is warranted.
 
 Generated projects receive a manual-only Full CI Gate template by default. Add automatic PR/push/schedule triggers only when that project's actual operating needs justify the cost/noise.

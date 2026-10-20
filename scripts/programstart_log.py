@@ -20,7 +20,7 @@ try:
         workflow_entry_key,
         workflow_steps,
     )
-except ImportError:  # pragma: no cover - standalone script execution fallback
+except ImportError:
     from programstart_common import (
         clr_bold,
         clr_cyan,
@@ -95,6 +95,6 @@ def main() -> int:
     return 0
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     warn_direct_script_invocation("'uv run programstart log' or 'pb log'")
     raise SystemExit(main())

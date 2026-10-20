@@ -22,7 +22,7 @@ try:
         workspace_path,
         write_json,
     )
-except ImportError:  # pragma: no cover - standalone script execution fallback
+except ImportError:
     from programstart_attach import MANIFEST_FILENAME
     from programstart_bootstrap import (
         bootstrap_programbuild,
@@ -231,6 +231,6 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     warn_direct_script_invocation("'uv run programstart-adopt --dest <path>'")
     raise SystemExit(main())

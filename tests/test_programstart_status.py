@@ -374,3 +374,27 @@ def test_latest_activity_date_no_dates_returns_none() -> None:
 
     entries = {"step_a": {"signoff": {}}}
     assert _latest_activity_date(entries) is None
+
+
+def test_invalid_activity_dates_do_not_make_status_current():
+    from scripts.programstart_status import _latest_activity_date
+
+    assert _latest_activity_date({"research": {"signoff": {"date": "not-a-date"}}}) is None
+
+
+def test_lite_conditional_outputs_are_reported_without_becoming_required(monkeypatch):
+    from scripts import programstart_status as status
+
+    registry = load_registry()
+    state = status.load_workflow_state(registry, "programbuild")
+    state["variant"] = "lite"
+    monkeypatch.setattr(status, "load_workflow_state", lambda *_: state)
+    lines = summarize_programbuild(registry)
+    assert any("conditional outputs active:" in line for line in lines)
+    assert any("conditional artifacts activate when used" in line for line in lines)
+
+
+def test_explicit_staleness_suppression_applies_to_journey(monkeypatch, capsys):
+    monkeypatch.setattr(sys, "argv", ["status", "--system", "userjourney", "--skip-staleness-check"])
+    assert main() == 0
+    assert "USERJOURNEY" in capsys.readouterr().out

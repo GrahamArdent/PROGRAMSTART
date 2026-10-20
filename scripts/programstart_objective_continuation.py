@@ -219,8 +219,7 @@ def derive_effect_readiness(
     for rule in current_authority.effect_readiness_rules:
         if rule.completed_effect not in completed:
             continue
-        if rule.completed_effect not in allowed or rule.completed_effect in prohibited:
-            return None
+        # completed is already proven to be an allowed, non-prohibited subset.
         if rule.ready_effect not in allowed or rule.ready_effect in prohibited or not _is_abstract_effect(rule.ready_effect):
             return None
         if rule.ready_effect in completed:

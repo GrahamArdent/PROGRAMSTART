@@ -5,7 +5,7 @@ from typing import Any
 
 try:
     from .programstart_common import load_workflow_state, workspace_path
-except ImportError:  # pragma: no cover - standalone script execution fallback
+except ImportError:
     from programstart_common import load_workflow_state, workspace_path
 
 

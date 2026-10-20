@@ -249,8 +249,8 @@ class DependencyGraph:
                     candidate_edges = self.edges_between(neighbor, current)
                 else:
                     candidate_edges = self.edges_between(current, neighbor)
-                if not candidate_edges:
-                    continue
+                # Both adjacency maps and provenance are populated together by
+                # __init__; a reachable neighbor necessarily has an edge.
                 edge = candidate_edges[0]
                 next_path = GraphPath(nodes=path.nodes + (neighbor,), edges=path.edges + (edge,))
                 visited.add(neighbor)

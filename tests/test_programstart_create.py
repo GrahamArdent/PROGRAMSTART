@@ -517,3 +517,67 @@ def test_main_dry_run_create_github_repo(tmp_path: Path) -> None:
         )
     assert result == 0
     assert dry_run_calls == [True]
+
+
+def test_factory_dry_run_force_json_uses_real_recommendation_and_writes_nothing(tmp_path, capsys):
+    target = tmp_path / "fixture"
+    assert (
+        create.main(
+            [
+                "--dest",
+                str(target),
+                "--project-name",
+                "Fixture",
+                "--product-shape",
+                "api service",
+                "--force",
+                "--dry-run",
+                "--json",
+            ]
+        )
+        == 0
+    )
+    output = capsys.readouterr().out
+    assert '"product_shape": "api service"' in output and "Factory create complete" in output
+    assert not target.exists()
+
+
+def test_factory_missing_provider_scope_reports_failure_after_local_scaffold(tmp_path, monkeypatch, capsys):
+    for key in ["SUPABASE_ORGANIZATION_ID", "SUPABASE_ACCESS_TOKEN", "NEON_API_KEY", "VERCEL_ACCESS_TOKEN"]:
+        monkeypatch.delenv(key, raising=False)
+    target = tmp_path / "fixture"
+    result = create.main(
+        [
+            "--dest",
+            str(target),
+            "--project-name",
+            "Fixture",
+            "--product-shape",
+            "api service",
+            "--service",
+            "Supabase",
+            "--provision-services",
+            "--no-starter-scaffold",
+        ]
+    )
+    assert result == 1
+    assert "required to provision" in capsys.readouterr().out
+    assert (target / "PROGRAMBUILD").is_dir()
+
+
+def test_factory_cli_without_services_has_no_environment_hydration(tmp_path, capsys):
+    target = tmp_path / "fixture"
+    assert (
+        create.main(["--dest", str(target), "--project-name", "Fixture", "--product-shape", "cli tool", "--provision-services"])
+        == 0
+    )
+    output = capsys.readouterr().out
+    assert "Wrote provisioning state" in output and "Hydrated starter env" not in output
+
+
+def test_factory_web_dry_run_keeps_attachment_source_unselected(tmp_path, capsys):
+    assert (
+        create.main(["--dest", str(tmp_path / "fixture"), "--project-name", "Fixture", "--product-shape", "web app", "--dry-run"])
+        == 0
+    )
+    assert "ATTACH USERJOURNEY" in capsys.readouterr().out

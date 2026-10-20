@@ -33,7 +33,7 @@ try:
         workspace_path,
     )
     from .programstart_objective_proof import workflow_problems
-except ImportError:  # pragma: no cover - standalone script execution fallback
+except ImportError:
     import programstart_drift_check
     import programstart_validate_core
     from programstart_objective_proof import workflow_problems
@@ -659,6 +659,6 @@ def main() -> int:
     return 0
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     warn_direct_script_invocation("'uv run programstart state' or 'pb state'")
     raise SystemExit(main())

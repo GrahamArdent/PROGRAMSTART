@@ -216,13 +216,15 @@ def write_json(path: Path, content: dict[str, Any]) -> None:
     with tempfile.NamedTemporaryFile("w", encoding="utf-8", delete=False, dir=path.parent) as handle:
         handle.write(payload)
         temp_path = Path(handle.name)
-    for attempt in range(3):
+    attempt = 0
+    while True:
         try:
             temp_path.replace(path)
             return
         except PermissionError:
             if attempt == 2:
                 raise
+            attempt += 1
             time.sleep(0.05)
 
 

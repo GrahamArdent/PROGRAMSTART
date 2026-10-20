@@ -17,7 +17,7 @@ try:
         workflow_state_config,
         workflow_steps,
     )
-except ImportError:  # pragma: no cover - standalone script execution fallback
+except ImportError:
     from programstart_common import (
         git_changed_files,
         load_registry,
@@ -167,6 +167,6 @@ def main() -> int:
     return 0
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     warn_direct_script_invocation("'uv run programstart drift' or 'pb drift'")
     raise SystemExit(main())

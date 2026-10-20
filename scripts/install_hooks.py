@@ -84,5 +84,5 @@ def main(argv: list[str] | None = None) -> int:
     return install_hooks(dry_run=args.dry_run)
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     raise SystemExit(main())

@@ -239,3 +239,18 @@ def test_referenced_authority_protocols_are_managed_and_bootstrapped() -> None:
 
     assert required <= support_files
     assert required <= bootstrap_assets
+
+
+def test_manifest_only_refresh_does_not_claim_file_content_changes(tmp_path, capsys):
+    template, dest = _setup(tmp_path)
+    with patch.object(sync, "_template_head_hash", return_value="newsha"):
+        assert sync.sync(dest, confirm=True, template_root=template) == 0
+        path = dest / ".programstart-manifest.json"
+        manifest = json.loads(path.read_text())
+        manifest["source_commit"] = "oldsha"
+        path.write_text(json.dumps(manifest))
+        capsys.readouterr()
+        assert sync.sync(dest, template_root=template) == 0
+    output = capsys.readouterr().out
+    assert "managed-set/provenance-refresh" in output
+    assert "managed file(s) need attention" not in output

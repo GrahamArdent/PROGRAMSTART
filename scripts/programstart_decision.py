@@ -133,10 +133,10 @@ def _select_research_depth(context: DecisionContext) -> ResearchDepth:
 
     # Any remaining decision-relevant uncertainty should be retired with the
     # smallest bounded research delta rather than a broad knowledge sweep.
-    if evidence != "sufficient" or context.uncertainty == "high":
-        return "targeted"
-
-    return "none"
+    # All supported sufficient/low and sufficient/medium cases returned above.
+    # Unclassified API input must also remain conservative, never earn execution
+    # merely by falling through the typed uncertainty vocabulary.
+    return "targeted"
 
 
 def _evidence_action(context: DecisionContext, depth: ResearchDepth) -> str:
@@ -373,5 +373,5 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     raise SystemExit(main())

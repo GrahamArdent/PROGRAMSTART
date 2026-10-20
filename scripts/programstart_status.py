@@ -21,7 +21,7 @@ try:
         workflow_steps,
         workspace_path,
     )
-except ImportError:  # pragma: no cover - standalone script execution fallback
+except ImportError:
     from programstart_artifact_profiles import active_conditional_outputs, conditional_output_files, core_output_files
 
     from programstart_common import (
@@ -239,8 +239,6 @@ def cross_system_health_warning(registry: dict) -> list[str]:
     uj_state = load_workflow_state(registry, "userjourney")
     pb_active = workflow_active_step(registry, "programbuild", pb_state)
     uj_active = workflow_active_step(registry, "userjourney", uj_state)
-    if pb_active is None or uj_active is None:
-        return []
     pb_steps = workflow_steps(registry, "programbuild")
     uj_steps = workflow_steps(registry, "userjourney")
     pb_idx = pb_steps.index(pb_active) if pb_active in pb_steps else 0
@@ -294,6 +292,6 @@ def main() -> int:
     return 0
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     warn_direct_script_invocation("'uv run programstart status' or 'pb status'")
     raise SystemExit(main())

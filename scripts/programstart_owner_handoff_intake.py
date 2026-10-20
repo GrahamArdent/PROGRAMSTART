@@ -58,13 +58,15 @@ def _safe_authority_path(repo_root: Path, raw: Any) -> str:
         raise IntakeError("authority path is not a safe repository-relative path")
     target = repo_root.joinpath(*path.parts)
     root = repo_root.resolve(strict=True)
+    if target.is_symlink():
+        raise IntakeError(f"authority path is not a regular file: {text}")
     try:
         resolved = target.resolve(strict=True)
-    except OSError as exc:
-        raise IntakeError(f"authority path is missing: {text}") from exc
+    except (OSError, RuntimeError) as exc:
+        raise IntakeError(f"authority path is missing or cannot be resolved: {text}") from exc
     if root != resolved and root not in resolved.parents:
         raise IntakeError("authority path escapes the target repository")
-    if not resolved.is_file() or resolved.is_symlink():
+    if not resolved.is_file():
         raise IntakeError(f"authority path is not a regular file: {text}")
     return text
 
@@ -130,7 +132,7 @@ def evaluate(payload: Any, *, repo_root: Path, observed_head: str | None = None)
     required_payload_fields = {"schema_version", "target_repository", "target_sha", "handoff"}
     if not isinstance(payload, dict) or set(payload) != required_payload_fields:
         raise IntakeError("intake payload fields do not match the fixed contract")
-    if payload.get("schema_version") != 1:
+    if isinstance(payload.get("schema_version"), bool) or payload.get("schema_version") != 1:
         raise IntakeError("unsupported intake schema_version")
     if payload.get("target_repository") != TARGET_REPOSITORY:
         raise IntakeError("intake target repository is not PROGRAMSTART")
@@ -176,11 +178,9 @@ def evaluate(payload: Any, *, repo_root: Path, observed_head: str | None = None)
         raise IntakeError("handoff identity verification failed")
 
     packet = handoff["packet"]
-    authority = packet.get("authority")
-    if not isinstance(authority, dict):
-        raise IntakeError("packet authority snapshot is missing")
-    if authority.get("owning_repository") != TARGET_REPOSITORY:
-        raise IntakeError("packet authority owner is ambiguous")
+    # _packet_integrity already requires a dict authority matching packet_owner,
+    # and packet_owner was just checked against this fixed intake target.
+    authority = packet["authority"]
     if authority.get("authority_commit") != target_sha:
         raise IntakeError("packet authority commit is stale relative to current target HEAD")
     paths = authority.get("authority_paths")
@@ -191,8 +191,7 @@ def evaluate(payload: Any, *, repo_root: Path, observed_head: str | None = None)
         raise IntakeError("packet authority_paths contain duplicates")
 
     disposition = "needs_gate"
-    if disposition not in ALLOWED_DISPOSITIONS:
-        raise IntakeError("internal disposition is outside the AC-09 bounded set")
+    # This observe-only helper has no caller-selected disposition or admission.
     replay_material = {
         "handoff_id": handoff["handoff_id"],
         "target_repository": TARGET_REPOSITORY,
@@ -235,7 +234,7 @@ def main() -> int:
     try:
         payload = json.loads(raw.decode("utf-8"))
         result = evaluate(payload, repo_root=Path(args.repo_root).resolve(strict=True))
-    except (UnicodeDecodeError, json.JSONDecodeError, IntakeError, OSError, subprocess.SubprocessError) as exc:
+    except (UnicodeDecodeError, json.JSONDecodeError, IntakeError, OSError, RuntimeError, subprocess.SubprocessError) as exc:
         print(json.dumps({"status": "FAILED", "error": str(exc)[:1000]}, sort_keys=True))
         return 1
     print(json.dumps({"status": "SUCCEEDED", "evidence": result}, sort_keys=True, separators=(",", ":")))

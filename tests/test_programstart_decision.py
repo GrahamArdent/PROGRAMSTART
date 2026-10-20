@@ -283,9 +283,5 @@ def test_unified_cli_decide_dispatch(monkeypatch) -> None:
         return 0
 
     monkeypatch.setattr(programstart_cli.programstart_decision, "main", fake_decision_main)
-    assert programstart_cli.main(
-        ["decide", "--decision", "Choose next step", "--evidence", "sufficient"]
-    ) == 0
-    assert captured == [
-        ["programstart decide", "--decision", "Choose next step", "--evidence", "sufficient"]
-    ]
+    assert programstart_cli.main(["decide", "--decision", "Choose next step", "--evidence", "sufficient"]) == 0
+    assert captured == [["programstart decide", "--decision", "Choose next step", "--evidence", "sufficient"]]

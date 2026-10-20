@@ -17,6 +17,7 @@ from scripts.programstart_dashboard_golden import (
     count_different_pixels,
     default_artifact_dir,
     default_golden_dir,
+    golden_platform,
 )
 
 
@@ -26,7 +27,9 @@ def test_capture_specs_include_modal_only_for_attached() -> None:
 
 
 def test_default_golden_dir_points_into_tests_assets() -> None:
-    assert default_golden_dir() == ROOT / "tests" / "golden" / "dashboard"
+    expected = ROOT / "tests" / "golden" / "dashboard" / golden_platform()
+    fallback = ROOT / "tests" / "golden" / "dashboard"
+    assert default_golden_dir() == (expected if expected.exists() else fallback)
 
 
 def test_default_artifact_dir_points_into_outputs() -> None:

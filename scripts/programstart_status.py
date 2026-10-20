@@ -23,6 +23,7 @@ try:
     )
 except ImportError:  # pragma: no cover - standalone script execution fallback
     from programstart_artifact_profiles import active_conditional_outputs, conditional_output_files, core_output_files
+
     from programstart_common import (
         extract_numbered_items,
         load_registry,
@@ -111,7 +112,9 @@ def summarize_programbuild(registry: dict) -> list[str]:
     guide_command = f"programstart guide --system programbuild --stage {active_stage}"
     lines.append(f"- next action: run '{guide_command}' and keep PROGRAMBUILD_STATE.json current")
     if conditional_outputs:
-        lines.append("- status: all required PROGRAMBUILD controls and core outputs are present; conditional artifacts activate when used")
+        lines.append(
+            "- status: all required PROGRAMBUILD controls and core outputs are present; conditional artifacts activate when used"
+        )
     else:
         lines.append("- status: all standard PROGRAMBUILD control and output files are present")
     return lines
@@ -209,14 +212,14 @@ def staleness_warnings(
     lines: list[str] = []
     if gap > 56:
         lines.append(
-            f"\033[33m⚠  Last {system} state change was {gap} days ago. "
+            f"\033[33mWARN: Last {system} state change was {gap} days ago. "
             "Strongly consider checking whether the Re-Entry Protocol "
             "(PROGRAMBUILD_CHALLENGE_GATE.md) is warranted because evidence, assumptions, dependencies, "
             "or project context may have changed. Elapsed time alone does not invalidate otherwise current evidence.\033[0m"
         )
     elif gap > 28:
         lines.append(
-            f"\033[33m⚠  Last {system} state change was {gap} days ago. "
+            f"\033[33mWARN: Last {system} state change was {gap} days ago. "
             "Consider running the Re-Entry Protocol (PROGRAMBUILD_CHALLENGE_GATE.md) only if evidence, assumptions, "
             "dependencies, or project context may have changed. "
             "Elapsed time alone does not invalidate otherwise current evidence.\033[0m"
@@ -247,12 +250,12 @@ def cross_system_health_warning(registry: dict) -> list[str]:
         return []
     if pb_idx > uj_idx:
         return [
-            f"\033[33m⚠  Ordinal-distance heuristic: PROGRAMBUILD is at stage {pb_idx + 1} ({pb_active}) but "
+            f"\033[33mWARN: Ordinal-distance heuristic: PROGRAMBUILD is at stage {pb_idx + 1} ({pb_active}) but "
             f"USERJOURNEY is at phase {uj_idx + 1} ({uj_active}) — "
             "consider advancing USERJOURNEY if the current PROGRAMBUILD work actually depends on it.\033[0m"
         ]
     return [
-        f"\033[33m⚠  Ordinal-distance heuristic: USERJOURNEY is at phase {uj_idx + 1} ({uj_active}) but "
+        f"\033[33mWARN: Ordinal-distance heuristic: USERJOURNEY is at phase {uj_idx + 1} ({uj_active}) but "
         f"PROGRAMBUILD is at stage {pb_idx + 1} ({pb_active}) — "
         "consider advancing PROGRAMBUILD if the current USERJOURNEY work actually depends on it.\033[0m"
     ]

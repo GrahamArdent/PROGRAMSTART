@@ -30,26 +30,32 @@ def test_lean_greenfield_repo_is_operable_from_central_runtime(tmp_path: Path) -
 
     assert run_target_command(destination, ["status", "--system", "programbuild"]) == 0
     assert run_target_command(destination, ["guide", "--system", "programbuild"]) == 0
-    assert run_target_command(
-        destination,
-        ["validate", "--check", "required-files", "--system", "programbuild"],
-    ) == 0
-    assert run_target_command(
-        destination,
-        [
-            "decide",
-            "--decision",
-            "Choose the next bounded implementation slice",
-            "--mode",
-            "c",
-            "--impact",
-            "medium",
-            "--uncertainty",
-            "low",
-            "--evidence",
-            "sufficient",
-        ],
-    ) == 0
+    assert (
+        run_target_command(
+            destination,
+            ["validate", "--check", "required-files", "--system", "programbuild"],
+        )
+        == 0
+    )
+    assert (
+        run_target_command(
+            destination,
+            [
+                "decide",
+                "--decision",
+                "Choose the next bounded implementation slice",
+                "--mode",
+                "c",
+                "--impact",
+                "medium",
+                "--uncertainty",
+                "low",
+                "--evidence",
+                "sufficient",
+            ],
+        )
+        == 0
+    )
 
 
 def test_target_project_cannot_shadow_central_programstart_package(tmp_path: Path) -> None:

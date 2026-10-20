@@ -1824,6 +1824,7 @@ def validate_workflow_state(registry: dict, system_filter: str | None = None) ->
 
 
 ALLOWED_ROOT_MD = {
+    "AGENTS.md",
     "README.md",
     "CHANGELOG.md",
     "CONTRIBUTING.md",

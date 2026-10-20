@@ -97,7 +97,7 @@ def test_main_status_json_emits_report(capsys) -> None:
 
 
 def test_main_status_fail_on_due_returns_one(capsys) -> None:
-    result = programstart_research_delta.main(["--status", "--date", "2026-05-05", "--fail-on-due", "--json"])
+    result = programstart_research_delta.main(["--status", "--date", "2099-05-05", "--fail-on-due", "--json"])
     payload = json.loads(capsys.readouterr().out)
 
     assert result == 1
@@ -231,7 +231,7 @@ def test_main_fail_on_due_in_template_mode(tmp_path: Path) -> None:
             "--track",
             "Python runtime and packaging",
             "--date",
-            "2026-05-05",
+            "2099-05-05",
             "--output",
             str(tmp_path / "delta.md"),
             "--fail-on-due",

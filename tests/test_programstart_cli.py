@@ -102,9 +102,11 @@ def test_bootstrap_helpers_copy_core_assets(tmp_path: Path) -> None:
     assert (destination / "scripts" / "programstart_impact.py").exists()
     assert (destination / "scripts" / "programstart_dashboard_golden.py").exists()
     assert (destination / "scripts" / "programstart_context.py").exists()
-    assert (destination / "tests" / "golden" / "dashboard" / "absent-shell.png").exists()
-    assert (destination / "tests" / "golden" / "dashboard" / "attached-shell.png").exists()
-    assert (destination / "tests" / "golden" / "dashboard" / "attached-signoff-modal.png").exists()
+    for platform in ("linux", "windows"):
+        golden_dir = destination / "tests" / "golden" / "dashboard" / platform
+        assert (golden_dir / "absent-shell.png").exists()
+        assert (golden_dir / "attached-shell.png").exists()
+        assert (golden_dir / "attached-signoff-modal.png").exists()
     assert (destination / "tests" / "test_programstart_mutation_edit_hook.py").exists()
     assert (destination / "tests" / "test_programstart_mutation_loop.py").exists()
     assert (destination / "PROGRAMBUILD" / "PROGRAMBUILD.md").exists()

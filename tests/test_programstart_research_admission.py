@@ -7,7 +7,7 @@ import copy
 import hashlib
 import json
 import subprocess
-from datetime import date, timedelta
+from datetime import UTC, date, datetime, timedelta
 
 import pytest
 from test_programstart_objective_proof import authority as objective_authority
@@ -208,7 +208,9 @@ def test_adversarial_record_cannot_earn_admission(mutation, reason):
     elif mutation == "expired":
         e["valid_until"] = (date.today() - timedelta(days=1)).isoformat()
     elif mutation == "future":
-        e["observed_at"] = (date.today() + timedelta(days=1)).isoformat()
+        # Match the validator's documented UTC clock. Using local date.today()
+        # becomes nondeterministic around midnight in non-UTC environments.
+        e["observed_at"] = (datetime.now(UTC).date() + timedelta(days=1)).isoformat()
     elif mutation == "binding":
         f["capture.txt"] = b"changed source"
     elif mutation == "entry":

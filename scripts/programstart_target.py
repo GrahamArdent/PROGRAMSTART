@@ -18,6 +18,7 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
     from programstart_adopt import _adopted_registry, _git_head_hash, _managed_prompt_assets
     from programstart_attach import MANIFEST_FILENAME
     from programstart_bootstrap import copy_file
+
     from programstart_common import load_registry, warn_direct_script_invocation, workspace_path, write_json
 
 # External control starts deliberately narrow. These commands are either read-only,
@@ -86,9 +87,7 @@ def _copy_managed_prompts(destination_root: Path, prompt_assets: tuple[str, ...]
             except OSError:
                 identical = False
             if not identical:
-                raise FileExistsError(
-                    f"External control preparation would overwrite existing project file: {relative_path}"
-                )
+                raise FileExistsError(f"External control preparation would overwrite existing project file: {relative_path}")
             if dry_run:
                 print(f"PRESERVE {destination}")
             continue
@@ -105,9 +104,7 @@ def _write_control_manifest(
     mode: str,
 ) -> None:
     state_file = registry["workflow_state"]["programbuild"]["state_file"]
-    managed_controls = [
-        path for path in registry["systems"]["programbuild"]["control_files"] if path != state_file
-    ]
+    managed_controls = [path for path in registry["systems"]["programbuild"]["control_files"] if path != state_file]
     manifest = {
         "programstart_version": "1.0.0",
         "source_commit": _git_head_hash(),
@@ -199,16 +196,13 @@ def _validate_target_command(arguments: list[str]) -> None:
     command = arguments[0]
     if command not in TARGET_COMMANDS:
         allowed = ", ".join(sorted(TARGET_COMMANDS))
-        raise ValueError(
-            f"Command '{command}' is not allowed through the external target control plane. Allowed: {allowed}"
-        )
+        raise ValueError(f"Command '{command}' is not allowed through the external target control plane. Allowed: {allowed}")
 
     if command == "state":
         if len(arguments) < 2 or arguments[1] not in TARGET_STATE_COMMANDS:
             allowed = ", ".join(sorted(TARGET_STATE_COMMANDS))
             raise ValueError(
-                "External target state mutation is intentionally disabled in this slice. "
-                f"Allowed state operations: {allowed}"
+                f"External target state mutation is intentionally disabled in this slice. Allowed state operations: {allowed}"
             )
 
     if command == "validate":
@@ -224,10 +218,7 @@ def _validate_target_command(arguments: list[str]) -> None:
         check_name = arguments[index + 1]
         if check_name not in TARGET_VALIDATE_CHECKS:
             allowed = ", ".join(sorted(TARGET_VALIDATE_CHECKS))
-            raise ValueError(
-                f"Validation check '{check_name}' is not target-local. "
-                f"Allowed through external control: {allowed}"
-            )
+            raise ValueError(f"Validation check '{check_name}' is not target-local. Allowed through external control: {allowed}")
 
 
 def run_target_command(destination_root: Path, arguments: list[str]) -> int:

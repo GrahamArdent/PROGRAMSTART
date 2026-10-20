@@ -1,8 +1,8 @@
 # Learning Observation — Portfolio Attention Control Self-Hosting
 
-**Date:** 2026-08-29  
-**System:** PROGRAMSTART self-hosting + bounded live portfolio sweep  
-**Classification:** systemic / implementation evidence  
+**Date:** 2026-08-29
+**System:** PROGRAMSTART self-hosting + bounded live portfolio sweep
+**Classification:** systemic / implementation evidence
 **Candidate lesson:** multi-project operator attention needs a lightweight external derived control surface, distinct from both project execution authority and repository/change history.
 
 ## Trigger

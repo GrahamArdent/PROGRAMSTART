@@ -222,6 +222,12 @@ class TestPreCommitParity:
 
 
 class TestFileHygiene:
+    def test_validate_file_hygiene_allows_project_agent_entry(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        (tmp_path / "AGENTS.md").write_text("# Project instructions\n", encoding="utf-8")
+        monkeypatch.setattr("scripts.programstart_validate_core.workspace_path", lambda p: tmp_path / p)
+
+        assert validate_file_hygiene({}) == []
+
     def test_validate_file_hygiene_passes_clean_repo(self) -> None:
         # The current repo should pass (assuming no stray files)
         problems = validate_file_hygiene({})

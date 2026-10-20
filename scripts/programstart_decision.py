@@ -190,9 +190,7 @@ def _activated_checks(context: DecisionContext, depth: ResearchDepth) -> tuple[A
         checks.append(
             ActivatedCheck(
                 "simplicity",
-                "Challenge unnecessary architecture or resource cost before adding complexity: "
-                + ", ".join(simplicity)
-                + ".",
+                "Challenge unnecessary architecture or resource cost before adding complexity: " + ", ".join(simplicity) + ".",
             )
         )
 
@@ -200,8 +198,7 @@ def _activated_checks(context: DecisionContext, depth: ResearchDepth) -> tuple[A
         checks.append(
             ActivatedCheck(
                 "mode-c-delta",
-                "Reuse the existing execution spine, authority, contracts, and valid evidence; "
-                "evaluate only the new delta.",
+                "Reuse the existing execution spine, authority, contracts, and valid evidence; evaluate only the new delta.",
             )
         )
 
@@ -279,8 +276,7 @@ def route_decision(context: DecisionContext) -> DecisionRoute:
         reasons.append("Stale/time-sensitive evidence triggers a freshness delta, not automatic deep research.")
     if context.mode == "c":
         reasons.append(
-            "Mode C preserves current project authority and returns to the existing execution spine after the "
-            "delta is resolved."
+            "Mode C preserves current project authority and returns to the existing execution spine after the delta is resolved."
         )
     if context.reversibility == "easy" and context.impact == "low":
         reasons.append("Cheap reversibility lowers the amount of rigor the decision must earn.")

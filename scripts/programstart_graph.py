@@ -147,11 +147,7 @@ class DependencyGraph:
     def eligible_nodes(self, *, completed: Iterable[str]) -> tuple[str, ...]:
         """Return incomplete graph nodes whose direct prerequisites are complete."""
         completed_set = set(completed)
-        return tuple(
-            node
-            for node in self.nodes
-            if node not in completed_set and self.is_eligible(node, completed=completed_set)
-        )
+        return tuple(node for node in self.nodes if node not in completed_set and self.is_eligible(node, completed=completed_set))
 
     def topological_order(self, nodes: Iterable[str] | None = None) -> tuple[str, ...]:
         """Return a stable prerequisite-before-dependent order or raise with a cycle path."""
@@ -160,8 +156,7 @@ class DependencyGraph:
             return ()
 
         indegree = {
-            node: sum(1 for prerequisite in self._dependencies.get(node, set()) if prerequisite in selected)
-            for node in selected
+            node: sum(1 for prerequisite in self._dependencies.get(node, set()) if prerequisite in selected) for node in selected
         }
         ready = [node for node, degree in indegree.items() if degree == 0]
         heapify(ready)

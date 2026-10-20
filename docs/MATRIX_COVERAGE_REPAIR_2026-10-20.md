@@ -662,3 +662,12 @@ corrected nox consumer and newly added consumer regression. This is explicitly n
 a green local composite gate, authenticated merge disposition or live installed
 operational proof. The source and plan/prompt review is settled; overall execution
 closure remains contingent on the final exact-head hosted receipts.
+
+Hosted correction after9e91be351911ebb02ffc64ab88c01427a0892c68: run39490149984
+failed workflow validation before any job, because runner.temp is unavailable in
+workflow-level env expressions. Absolute caches now initialize in an early Bash
+step using RUNNER_TEMP and GITHUB_ENV, before either cache restore. The new
+regression checks scope, ordering and both absolute paths. This corrects the
+mechanism without changing the complete plan/prompt pair, production bytes or
+coverage boundary. Re-Challenge the corrected workflow and require fresh hosted
+source/full-convergence receipts; the failed run is not verification.

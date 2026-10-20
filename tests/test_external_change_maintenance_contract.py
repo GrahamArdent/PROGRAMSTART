@@ -193,3 +193,28 @@ def test_local_nox_gate_requires_present_and_raw_complete_modules(tmp_path, monk
             raise AssertionError("incomplete production report was admitted")
     session.report = {"files": {"scripts/example.py": {"summary": {"missing_lines": 0, "missing_branches": 0}}}}
     callback(session)
+
+
+def test_manual_cache_paths_are_runtime_absolute_and_outside_generated_repositories(tmp_path):
+    import subprocess
+
+    import yaml
+
+    workflow = yaml.safe_load(_read(MANUAL_CONVERGENCE))
+    assert "runner.temp" not in str(workflow.get("env", {}))
+    steps = workflow["jobs"]["convergence"]["steps"]
+    setup = next(i for i, step in enumerate(steps) if step.get("name") == "Set absolute convergence cache paths")
+    command = steps[setup]["run"]
+    for name in ["UV_CACHE_DIR", "PRE_COMMIT_HOME"]:
+        assert f"{name}=$RUNNER_TEMP/" in command
+    assert command.count('>> "$GITHUB_ENV"') == 2
+    assert setup < next(i for i, step in enumerate(steps) if step.get("name") == "Cache uv packages")
+    assert setup < next(i for i, step in enumerate(steps) if step.get("name") == "Cache pre-commit hooks")
+    environment_file = tmp_path / "github env"
+    runner_temp = tmp_path / "runner temp"
+    subprocess.run(
+        ["bash", "-eu", "-c", command], env={"RUNNER_TEMP": str(runner_temp), "GITHUB_ENV": str(environment_file)}, check=True
+    )
+    values = dict(line.split("=", 1) for line in environment_file.read_text().splitlines())
+    assert set(values) == {"UV_CACHE_DIR", "PRE_COMMIT_HOME"}
+    assert all(Path(value).is_absolute() and Path(value).parent == runner_temp for value in values.values())

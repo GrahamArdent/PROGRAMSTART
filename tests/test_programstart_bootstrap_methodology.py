@@ -69,3 +69,17 @@ def test_methodology_readme_dry_run_does_not_create_file(tmp_path: Path, capsys:
     captured = capsys.readouterr()
     assert "CREATE" in captured.out
     assert not (tmp_path / "README.md").exists()
+
+
+def test_methodology_cli_dry_run_and_existing_destination(tmp_path, capsys, monkeypatch):
+    target = tmp_path / "project"
+    monkeypatch.setattr(sys, "argv", ["bootstrap", "--dest", str(target), "--project-name", "Fixture", "--dry-run"])
+    assert methodology.main() == 0
+    assert "Methodology-only bootstrap complete" in capsys.readouterr().out
+    assert not target.exists()
+    target.mkdir()
+    (target / "keep.txt").write_text("keep")
+    monkeypatch.setattr(sys, "argv", ["bootstrap", "--dest", str(target), "--project-name", "Fixture"])
+    assert methodology.main() == 1
+    assert "--force" in capsys.readouterr().out
+    assert (target / "keep.txt").read_text() == "keep"

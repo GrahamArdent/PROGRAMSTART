@@ -10,7 +10,7 @@ try:
     from . import programstart_drift_check, programstart_validate_core, programstart_workflow_state
     from .programstart_artifact_profiles import stage_check_required
     from .programstart_common import load_registry, load_workflow_state, workflow_active_step
-except ImportError:  # pragma: no cover - standalone script execution fallback
+except ImportError:
     import programstart_drift_check
     import programstart_validate_core
     import programstart_workflow_state
@@ -108,5 +108,5 @@ def main(argv: list[str] | None = None) -> int:
     return _delegate([*arguments, "--skip-preflight"])
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     raise SystemExit(main())

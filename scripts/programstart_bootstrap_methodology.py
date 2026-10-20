@@ -21,7 +21,7 @@ try:
     )
     from .programstart_common import load_registry, warn_direct_script_invocation
     from .programstart_target import prepare_target_control_plane
-except ImportError:  # pragma: no cover - standalone script execution fallback
+except ImportError:
     from programstart_bootstrap import (
         bootstrap_programbuild,
         ensure_external_project_repo,
@@ -160,6 +160,6 @@ def main() -> int:
     return 0
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     warn_direct_script_invocation("'python scripts/programstart_bootstrap_methodology.py'")
     raise SystemExit(main())

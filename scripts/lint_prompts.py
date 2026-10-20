@@ -12,7 +12,7 @@ from pathlib import Path
 
 try:
     from .programstart_common import load_registry_from_path
-except ImportError:  # pragma: no cover - standalone script execution fallback
+except ImportError:
     from programstart_common import load_registry_from_path
 
 REQUIRED_FIELDS = {"description", "name", "agent"}
@@ -167,5 +167,5 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     raise SystemExit(main())

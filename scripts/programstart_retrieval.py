@@ -20,7 +20,7 @@ try:
     )
     from .programstart_context import build_context_index, default_index_path
     from .programstart_models import ContextIndex, RAGQueryResponse
-except ImportError:  # pragma: no cover - standalone script execution fallback
+except ImportError:
     from programstart_common import (
         generated_outputs_root,
         warn_direct_script_invocation,
@@ -918,25 +918,23 @@ def main(argv: list[str] | None = None) -> int:
             _print_rag_response(response)
         return 0
 
-    if args.command == "validate":
-        try:
-            validated = load_validated_index(args.index)
-            print("Context index validated successfully.")
-            print(f"  Version:    {validated.version}")
-            print(f"  Documents:  {len(validated.documents)}")
-            print(f"  Concerns:   {len(validated.concerns)}")
-            print(f"  KB stacks:  {len(validated.knowledge_base.stacks)}")
-            print(f"  KB patterns:{len(validated.knowledge_base.integration_patterns)}")
-            print(f"  Routes:     {len(validated.routes)}")
-            print(f"  Relations:  {len(validated.relations)}")
-            return 0
-        except (FileNotFoundError, json.JSONDecodeError, ValueError, KeyError) as e:
-            print(f"Validation failed: {e}")
-            return 1
-
-    return 1
+    # argparse admits only search, ask and validate; the first two returned above.
+    try:
+        validated = load_validated_index(args.index)
+        print("Context index validated successfully.")
+        print(f"  Version:    {validated.version}")
+        print(f"  Documents:  {len(validated.documents)}")
+        print(f"  Concerns:   {len(validated.concerns)}")
+        print(f"  KB stacks:  {len(validated.knowledge_base.stacks)}")
+        print(f"  KB patterns:{len(validated.knowledge_base.integration_patterns)}")
+        print(f"  Routes:     {len(validated.routes)}")
+        print(f"  Relations:  {len(validated.relations)}")
+        return 0
+    except (FileNotFoundError, json.JSONDecodeError, ValueError, KeyError) as e:
+        print(f"Validation failed: {e}")
+        return 1
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     warn_direct_script_invocation("'uv run programstart retrieval <subcommand>' or 'pb retrieval <subcommand>'")
     raise SystemExit(main())

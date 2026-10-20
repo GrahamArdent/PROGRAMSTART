@@ -22,7 +22,7 @@ try:
         workflow_steps,
         workspace_path,
     )
-except ImportError:  # pragma: no cover - standalone script execution fallback
+except ImportError:
     from programstart_common import (
         extract_numbered_items,
         has_required_metadata,
@@ -596,7 +596,7 @@ def validate_implementation_entry_criteria(registry: dict) -> list[str]:
     if workspace_path("PROGRAMBUILD/OBJECTIVES.json").exists() or workspace_path("PROGRAMBUILD/RESEARCH_EVIDENCE.json").exists():
         try:
             from .programstart_objective_proof import workflow_problems
-        except ImportError:  # pragma: no cover
+        except ImportError:
             from programstart_objective_proof import workflow_problems
         problems.extend(workflow_problems(workspace_path("."), "scaffold_and_guardrails"))
     return problems
@@ -1174,7 +1174,7 @@ def validate_prompt_generation_boundary(registry: dict) -> list[str]:
 
     try:
         from .programstart_prompt_build import build_prompt
-    except ImportError:  # pragma: no cover - standalone script execution fallback
+    except ImportError:
         from programstart_prompt_build import build_prompt
 
     seen_paths: set[str] = set()
@@ -1567,8 +1567,7 @@ def validate_adr_coherence(registry: dict) -> list[str]:
             and dec_id not in decision_row_by_id
             and not (repo_role == "project_repo" and adr_path.name not in decision_row_by_adr_name)
         ):
-            if dec_id:
-                problems.append(f"ADR references unknown DECISION_LOG entry {dec_id}: {adr_path.name}")
+            problems.append(f"ADR references unknown DECISION_LOG entry {dec_id}: {adr_path.name}")
         if is_legacy_pre_register and adr_path.name in decision_row_by_adr_name:
             problems.append(
                 "legacy pre-register ADR is referenced by "

@@ -13,7 +13,7 @@ try:
         warn_direct_script_invocation,
         workflow_active_step,
     )
-except ImportError:  # pragma: no cover - standalone script execution fallback
+except ImportError:
     from programstart_artifact_profiles import filter_stage_files
 
     from programstart_common import (
@@ -195,9 +195,8 @@ def main() -> int:
     parser.error(
         "Provide --kickoff, --operator, or select a --system; stage and phase can be omitted when state files are current"
     )
-    return 1  # pragma: no cover
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     warn_direct_script_invocation("'uv run programstart guide' or 'pb guide'")
     raise SystemExit(main())

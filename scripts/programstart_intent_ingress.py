@@ -15,7 +15,7 @@ from __future__ import annotations
 import hashlib
 import json
 from enum import StrEnum
-from typing import Any, Literal
+from typing import Any, Literal, cast
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
@@ -327,9 +327,9 @@ def validate_semantic_producer_response(
             semantic_effect_id=effect_id,
             rejection=SemanticProducerRejection.PROVIDER_FAILURE,
         )
-    candidate = response.candidate
-    if candidate is None:  # Defensive: the response model already enforces this.
-        raise AssertionError("validated success response has no candidate")
+    # The freshly validated SUCCEEDED model requires a candidate and forbids a
+    # provider failure; it has not crossed another caller boundary since validation.
+    candidate = cast(SemanticInterpretationCandidate, response.candidate)
     if candidate.unresolved_material_ambiguities or not candidate.converged:
         return SemanticProducerValidation(
             accepted=False,

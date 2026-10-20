@@ -18,7 +18,7 @@ try:
         Volatility,
         route_decision,
     )
-except ImportError:  # pragma: no cover - standalone script execution fallback
+except ImportError:
     from programstart_decision import (
         CONCERNS,
         RISK_FLAGS,
@@ -850,6 +850,6 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     warn_direct_script_invocation("'uv run programstart orchestrate --request <goal>'")
     raise SystemExit(main())

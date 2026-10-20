@@ -23,7 +23,7 @@ try:
         write_json,
     )
     from .programstart_models import ContextIndex, KnowledgeBase
-except ImportError:  # pragma: no cover - standalone script execution fallback
+except ImportError:
     from programstart_command_registry import CLI_COMMANDS, dashboard_allowed_commands
     from programstart_common import (
         generated_outputs_root,
@@ -669,6 +669,6 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     warn_direct_script_invocation("'uv run programstart context <subcommand>' or 'pb context <subcommand>'")
     raise SystemExit(main())

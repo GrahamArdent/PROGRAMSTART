@@ -225,3 +225,23 @@ def test_main_with_relative_output_dir(capsys, monkeypatch, tmp_path: Path) -> N
         import shutil
 
         shutil.rmtree(ROOT / "relative_out", ignore_errors=True)
+
+
+def test_no_backup_baseline_is_reported_without_fabricating_comparison(tmp_path, monkeypatch, capsys):
+    from scripts import programstart_refresh_integrity as refresh
+
+    registry = {
+        "workspace": {"bootstrap_assets": []},
+        "systems": {
+            "programbuild": {"root": "PROGRAMBUILD", "control_files": [], "output_files": []},
+            "userjourney": {"core_files": []},
+        },
+        "integrity": {"baselines": []},
+    }
+    (tmp_path / "PROGRAMBUILD").mkdir()
+    monkeypatch.setattr(refresh, "workspace_path", lambda relative: tmp_path / relative)
+    monkeypatch.setattr(refresh, "load_registry", lambda: registry)
+    monkeypatch.setattr(sys, "argv", ["integrity", "--date", "2026-10-20", "--output-dir", str(tmp_path / "report")])
+    assert refresh.main() == 0
+    report = next((tmp_path / "report").glob("VERIFICATION_REPORT_*.md")).read_text()
+    assert "0" in report and "PROGRAMBUILD" in report

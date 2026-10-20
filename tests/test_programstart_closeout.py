@@ -117,3 +117,15 @@ def test_closeout_summary_prints_warnings_and_notes(tmp_path: Path, monkeypatch,
     assert result == 1  # adr_coverage warning → failed
     assert "warning: warn1" in out
     assert "note: drift-note-1" in out
+
+
+def test_summary_keeps_all_blocking_problem_and_violation_details(tmp_path, capsys):
+    evidence = {
+        "status": "failed",
+        "scope": "checkpoint",
+        "objective_complete": False,
+        "checks": {"policy": {"status": "failed", "problems": ["owner unavailable"], "violations": ["unpaired change"]}},
+    }
+    closeout.print_summary(evidence, tmp_path / "evidence.json")
+    text = capsys.readouterr().out
+    assert "problem: owner unavailable" in text and "violation: unpaired change" in text

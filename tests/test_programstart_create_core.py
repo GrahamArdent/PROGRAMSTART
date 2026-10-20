@@ -240,3 +240,66 @@ def test_provision_neon_missing_token_raises(monkeypatch) -> None:
     monkeypatch.delenv("NEON_API_KEY", raising=False)
     with pytest.raises(RuntimeError, match="NEON_API_KEY"):
         create_core.provision_neon_project(project_name="test", organization_id="", region="aws-us-east-1", pg_version=16)
+
+
+def test_provider_payload_scopes_are_explicit_and_transport_only(monkeypatch):
+    calls = []
+
+    def request(**kwargs):
+        calls.append(kwargs)
+        return {"id": "fixture", "project": {"id": "fixture"}, "databases": []}
+
+    monkeypatch.setattr(create_core, "http_json_request", request)
+    monkeypatch.setenv("VERCEL_ACCESS_TOKEN", "test-only-token")
+    monkeypatch.setenv("NEON_API_KEY", "test-only-token")
+    create_core.provision_vercel_project(project_name="Fixture", team_id="team-fixture", team_slug="fixture")
+    assert "teamId=team-fixture" in calls[0]["url"]
+    create_core.provision_neon_project(
+        project_name="Fixture", organization_id="org-fixture", region="aws-us-east-1", pg_version=17
+    )
+    assert calls[1]["payload"]["project"]["org_id"] == "org-fixture"
+    assert (
+        create_core.first_connection_uri({"connection_uris": [{}, {"connection_uri": "postgres://host/db"}]})
+        == "postgres://host/db"
+    )
+    assert create_core.first_connection_uri({"connection_uris": []}) == ""
+    assert create_core.sanitize_connection_uri("postgres://host/db") == "postgres://host/db"
+
+
+def test_provider_preconditions_reject_before_external_effect(tmp_path, monkeypatch):
+    monkeypatch.delenv("SUPABASE_ORGANIZATION_ID", raising=False)
+    with pytest.raises(RuntimeError, match="Supabase provisioning requires"):
+        create_core.provision_requested_services(
+            project_name="Fixture",
+            services=["Supabase"],
+            supabase_org_id="",
+            supabase_region="",
+            supabase_plan="",
+            vercel_team_id="",
+            vercel_team_slug="",
+            neon_org_id="",
+            neon_region="",
+            neon_pg_version=17,
+        )
+    monkeypatch.setattr(create_core.shutil, "which", lambda _: None)
+    with pytest.raises(RuntimeError, match="GitHub CLI"):
+        create_core.create_github_repo(
+            destination_root=tmp_path, github_repo="owner/fixture", github_visibility="private", dry_run=False
+        )
+
+
+def test_provisioning_state_without_services_preserves_unknown_payload(tmp_path):
+    import json
+
+    path = create_core.write_provisioning_state(tmp_path, {"note": "no service operation requested"})
+    assert json.loads(path.read_text())["note"] == "no service operation requested"
+
+
+def test_duplicate_manual_steps_remain_single_operator_action():
+    result = create_core.summarize_provisioning_results(
+        [
+            {"name": "One", "status": "manual_only", "reason": "Confirm owner scope"},
+            {"name": "Two", "status": "manual_only", "reason": "Confirm owner scope"},
+        ]
+    )
+    assert result["next_steps"] == ["Confirm owner scope"]

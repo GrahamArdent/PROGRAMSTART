@@ -8,7 +8,7 @@ from typing import Any
 
 try:
     from .programstart_common import load_registry, system_is_optional_and_absent, workflow_state_path, workspace_path
-except ImportError:  # pragma: no cover - standalone script execution fallback
+except ImportError:
     from programstart_common import load_registry, system_is_optional_and_absent, workflow_state_path, workspace_path
 
 
@@ -142,14 +142,11 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     registry = load_registry()
 
-    if args.command == "create":
-        destination = create_backup(registry, label=args.label)
-        print(f"Backup created: {destination}")
-        return 0
-
-    parser.error(f"Unknown backup command: {args.command}")
-    return 1  # pragma: no cover
+    # The required subparser accepts only create; invalid commands never reach here.
+    destination = create_backup(registry, label=args.label)
+    print(f"Backup created: {destination}")
+    return 0
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     raise SystemExit(main())

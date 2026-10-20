@@ -16,7 +16,7 @@ try:
         warn_direct_script_invocation,
         workspace_path,
     )
-except ImportError:  # pragma: no cover - standalone script execution fallback
+except ImportError:
     from programstart_common import (
         collect_registry_integrity_files,
         display_workspace_path,
@@ -224,6 +224,6 @@ def main() -> int:
     return 0 if core_folders_present else 1
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     warn_direct_script_invocation("'uv run programstart refresh' or 'pb refresh'")
     raise SystemExit(main())

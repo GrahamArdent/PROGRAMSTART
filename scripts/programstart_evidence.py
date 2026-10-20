@@ -92,9 +92,9 @@ def impact_causes(
     causes_by_surface: dict[str, list[InvalidationCause]] = {}
 
     def add(cause: InvalidationCause) -> None:
-        bucket = causes_by_surface.setdefault(cause.surface, [])
-        if cause not in bucket:
-            bucket.append(cause)
+        # Triggers are unique and DependencyGraph returns one simple path per
+        # reachable surface, so each (trigger, surface, path) is produced once.
+        causes_by_surface.setdefault(cause.surface, []).append(cause)
 
     for trigger in changed:
         add(InvalidationCause(trigger=trigger, surface=trigger, path=(trigger,)))

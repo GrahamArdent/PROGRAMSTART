@@ -17,7 +17,7 @@ try:
         workspace_path,
         write_json,
     )
-except ImportError:  # pragma: no cover - standalone script execution fallback
+except ImportError:
     from programstart_common import (
         create_default_workflow_state,
         load_registry,
@@ -71,13 +71,10 @@ def _extract_file_header(source: Path) -> str:
 
     lines = text.splitlines(keepends=True)
     header_lines: list[str] = []
-    separator_count = 0
     for line in lines:
         header_lines.append(line)
         if line.strip() == "---":
-            separator_count += 1
-            if separator_count >= 1:
-                break
+            break
 
     return "".join(header_lines)
 
@@ -569,6 +566,6 @@ def main() -> int:
     return 0
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     warn_direct_script_invocation("'uv run programstart bootstrap' or 'pb bootstrap'")
     raise SystemExit(main())

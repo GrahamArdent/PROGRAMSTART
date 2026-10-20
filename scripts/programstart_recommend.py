@@ -13,7 +13,7 @@ from typing import Any
 try:
     from .programstart_common import load_registry, warn_direct_script_invocation, workspace_path
     from .programstart_context import load_knowledge_base
-except ImportError:  # pragma: no cover - standalone script execution fallback
+except ImportError:
     from programstart_common import load_registry, warn_direct_script_invocation, workspace_path
     from programstart_context import load_knowledge_base
 
@@ -589,11 +589,12 @@ def select_triggered_entries(
             continue
         selected_names.append(name)
         evidence.append({"name": name, "score": int(candidate["score"]), "reasons": list(candidate.get("reasons", []))[:4]})
-        entry = next((entry for entry in entries if str(entry.get("name", "")).strip() == name), None)
-        if entry:
-            for note in list_of_strings(entry.get("notes", [])):
-                if note not in notes:
-                    notes.append(note)
+        # Every selected name came from these entries; retain first-entry note
+        # semantics for duplicate names without a second impossible absence case.
+        entry = next(entry for entry in entries if str(entry.get("name", "")).strip() == name)
+        for note in list_of_strings(entry.get("notes", [])):
+            if note not in notes:
+                notes.append(note)
 
     return selected_names, notes, evidence, alternatives
 
@@ -750,9 +751,8 @@ def build_stack_candidates(
 
     stack_evidence: list[dict[str, Any]] = []
     for name in selected_stack_names:
-        candidate = candidate_lookup.get(name)
-        if not candidate:
-            continue
+        # Both selection loops only append names present in candidate_lookup.
+        candidate = candidate_lookup[name]
         evidence_reasons = list(candidate.get("reasons", []))
         related_decisions = [
             str(item.get("decision", ""))
@@ -1063,8 +1063,8 @@ def build_recommendation(
     rationale = [
         f"Recommendation is scored from KB stack fit, coverage domains, and explicit relationships for {product_shape}.",
     ]
-    if matched_domains:
-        rationale.append(f"Most relevant KB domains: {', '.join(matched_domains)}.")
+    # Every shape profile, including the fallback, supplies at least one domain.
+    rationale.append(f"Most relevant KB domains: {', '.join(matched_domains)}.")
     if coverage_warnings:
         rationale.append("Some matched domains are not fully mature; review the coverage warnings before locking the stack.")
     if rule_evidence:
@@ -1462,6 +1462,6 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     warn_direct_script_invocation("'uv run programstart recommend' or 'pb recommend'")
     raise SystemExit(main())

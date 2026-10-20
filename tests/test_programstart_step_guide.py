@@ -112,3 +112,57 @@ def test_userjourney_unknown_phase_errors(monkeypatch) -> None:
     monkeypatch.setattr("sys.argv", ["programstart_step_guide.py", "--system", "userjourney", "--phase", "unknown"])
     with pytest.raises(SystemExit):
         main()
+
+
+@pytest.mark.parametrize(
+    "args,kind", [(["--operator"], "operator"), (["--kickoff"], "kickoff"), (["--system", "programbuild"], "programbuild")]
+)
+def test_json_guidance_matches_selected_public_surface(args, kind, monkeypatch, capsys):
+    import json
+
+    monkeypatch.setattr(sys, "argv", ["guide", *args, "--json"])
+    assert main() == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["type"] == kind
+
+
+def test_unregistered_prompt_filter_preserves_input():
+    from scripts.programstart_step_guide import filter_workflow_prompts
+
+    assert filter_workflow_prompts({}, ["fixture.prompt.md"]) == ["fixture.prompt.md"]
+
+
+@pytest.mark.parametrize("attached", [False, True])
+def test_optional_journey_json_obeys_attachment(attached, monkeypatch, capsys):
+    import copy
+    import json
+
+    from scripts import programstart_step_guide as guide
+
+    registry = copy.deepcopy(load_registry())
+    registry["systems"]["userjourney"]["optional"] = True
+    registry.setdefault("workflow_guidance", {})["userjourney"] = {"phase_0": {"files": ["flow.md"]}}
+    monkeypatch.setattr(guide, "load_registry", lambda: registry)
+    monkeypatch.setattr(guide, "system_is_attached", lambda *_: attached)
+    monkeypatch.setattr(sys, "argv", ["guide", "--system", "userjourney", "--phase", "phase_0", "--json"])
+    assert guide.main() == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["attached"] is attached
+    if attached:
+        assert payload["files"] == ["flow.md"]
+
+
+def test_cross_cutting_prompt_already_on_stage_is_not_duplicated(monkeypatch, capsys):
+    import copy
+    import json
+
+    from scripts import programstart_step_guide as guide
+
+    registry = copy.deepcopy(load_registry())
+    prompt = registry["prompt_registry"]["workflow_prompt_files"][0]
+    registry["workflow_guidance"]["cross_cutting_workflow_prompts"] = [prompt]
+    registry["workflow_guidance"]["programbuild"]["feasibility"]["prompts"] = [prompt]
+    monkeypatch.setattr(guide, "load_registry", lambda: registry)
+    monkeypatch.setattr(sys, "argv", ["guide", "--system", "programbuild", "--stage", "feasibility", "--json"])
+    assert guide.main() == 0
+    assert json.loads(capsys.readouterr().out)["prompts"].count(prompt) == 1

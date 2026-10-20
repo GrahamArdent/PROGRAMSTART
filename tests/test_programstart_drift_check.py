@@ -472,3 +472,53 @@ def test_strict_exits_0_when_no_notes(capsys, monkeypatch) -> None:
     out = capsys.readouterr().out
     assert result == 0
     assert "Drift check passed" in out
+
+
+import pytest
+
+
+@pytest.mark.parametrize(
+    "changed,strict,expected", [(["authority.md"], False, 0), (["authority.md"], True, 1), (["dependent.md"], False, 1)]
+)
+def test_drift_json_preserves_strict_note_and_violation_semantics(changed, strict, expected, monkeypatch, capsys):
+    import json
+
+    registry = {
+        "workspace": {"repo_role": "template_repo"},
+        "systems": {"programbuild": {}, "userjourney": {"optional": True, "root": "_missing"}},
+        "sync_rules": [
+            {
+                "name": "pair",
+                "authority_files": ["authority.md"],
+                "dependent_files": ["dependent.md"],
+                "require_authority_when_dependents_change": True,
+            }
+        ],
+    }
+    monkeypatch.setattr("scripts.programstart_drift_check.load_registry", lambda: registry)
+    monkeypatch.setattr(sys, "argv", ["drift", *changed, "--json", *(["--strict"] if strict else [])])
+    assert main() == expected
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["status"] == ("fail" if expected else "pass")
+    assert bool(payload["violations"]) == (changed == ["dependent.md"])
+
+
+def test_drift_failure_keeps_other_rule_notes(monkeypatch, capsys):
+    registry = {
+        "workspace": {"repo_role": "template_repo"},
+        "systems": {"programbuild": {}, "userjourney": {"optional": True, "root": "_missing"}},
+        "sync_rules": [
+            {
+                "name": "block",
+                "authority_files": ["a"],
+                "dependent_files": ["b"],
+                "require_authority_when_dependents_change": True,
+            },
+            {"name": "note", "authority_files": ["c"], "dependent_files": ["d"]},
+        ],
+    }
+    monkeypatch.setattr("scripts.programstart_drift_check.load_registry", lambda: registry)
+    monkeypatch.setattr(sys, "argv", ["drift", "b", "c"])
+    assert main() == 1
+    output = capsys.readouterr().out
+    assert "Notes:" in output and "note:" in output and "block:" in output

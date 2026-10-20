@@ -314,3 +314,9 @@ def test_slugify_collapses_consecutive_dashes() -> None:
     """slugify should replace repeated dashes from consecutive non-alnum chars with a single dash."""
     result = programstart_research_delta.slugify("hello  world")
     assert result == "hello-world"
+
+
+def test_new_template_with_no_due_research_is_successful(tmp_path):
+    output = tmp_path / "delta.md"
+    assert programstart_research_delta.main(["--date", "2020-01-01", "--output", str(output), "--fail-on-due"]) == 0
+    assert output.exists()

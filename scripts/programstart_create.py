@@ -14,7 +14,7 @@ try:
     from .programstart_init import main as init_main
     from .programstart_recommend import build_generated_prompt, build_recommendation
     from .programstart_starter_scaffold import build_starter_scaffold_plan, write_starter_scaffold
-except ImportError:  # pragma: no cover - standalone script execution fallback
+except ImportError:
     import programstart_create_core as create_core
     import programstart_create_output as create_output
     from programstart_common import warn_direct_script_invocation
@@ -285,6 +285,6 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     warn_direct_script_invocation("'uv run programstart create --dest <folder> --project-name <name> --product-shape <shape>'")
     raise SystemExit(main())

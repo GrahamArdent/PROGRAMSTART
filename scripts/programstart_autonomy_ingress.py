@@ -19,7 +19,6 @@ from .programstart_intent_ingress import (
     BoundedIntentEnvelope,
     ContextualIntentRequest,
     ContextualIntentResolution,
-    ContextualTransitionAction,
     ConversationHarvest,
     SemanticInterpretationCandidate,
     SemanticProducerRequest,
@@ -220,18 +219,9 @@ def advance_autonomy_ingress(
         existing_packet=existing_packet,
     )
     resolution = resolve_contextual_intent(contextual_request)
-    if resolution.action in {
-        ContextualTransitionAction.COMPILE_OWNER_HANDOFF,
-        ContextualTransitionAction.RECOMPILE_OWNER_HANDOFF,
-    }:
-        return AutonomyIngressResult(
-            status=AutonomyIngressStatus.FAILED_CLOSED,
-            failure=AutonomyIngressFailure.OWNER_HANDOFF_REQUIRED,
-            replay_receipt=receipt,
-            harvest=harvest,
-            resolution=resolution,
-            **common,
-        )
+    # This boundary constructs an owner-local request (current_repository is
+    # empty); the resolver cannot select a foreign-repository handoff. Admission
+    # readiness below still fails closed for every non-ready resolution.
     if resolution.packet is None or resolution.packet.admission_hint != "ready_for_controller_admission":
         return AutonomyIngressResult(
             status=AutonomyIngressStatus.FAILED_CLOSED,

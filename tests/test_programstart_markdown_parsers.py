@@ -166,3 +166,8 @@ class TestSystemIsAttached:
     def test_returns_false_for_empty_root(self) -> None:
         registry = {"systems": {"test": {"root": ""}}}
         assert system_is_attached(registry, "test") is False
+
+
+def test_report_prose_does_not_become_a_report_requirement():
+    result = extract_subagents("Every subagent report should contain:\nexplanatory prose\n- evidence\n---\n")
+    assert result[1] == ["evidence"]

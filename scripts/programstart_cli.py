@@ -43,7 +43,7 @@ try:
     )
     from .programstart_common import load_registry, warn_direct_script_invocation
     from .programstart_command_registry import CLI_COMMANDS
-except ImportError:  # pragma: no cover - standalone script execution fallback
+except ImportError:
     import programstart_advance
     import programstart_attach
     import programstart_backup
@@ -290,6 +290,6 @@ def main(argv: list[str] | None = None) -> int:
     return dispatch(args.command, arguments, parser)
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     warn_direct_script_invocation("'uv run programstart <command>' or 'pb <command>'")
     raise SystemExit(main())

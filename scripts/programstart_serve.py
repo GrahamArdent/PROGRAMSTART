@@ -71,7 +71,7 @@ try:
         extract_subagents,
     )
     from .programstart_objective_proof import workflow_problems
-except ImportError:  # pragma: no cover - standalone script execution fallback
+except ImportError:
     from programstart_command_registry import dashboard_allowed_commands
     from programstart_health_probe import probe_target as _probe_target
     from programstart_markdown_parsers import (
@@ -956,13 +956,15 @@ def main() -> int:
         server.serve_forever()
     except KeyboardInterrupt:
         print("\n  Dashboard stopped.")
+    finally:
+        server.server_close()
     return 0
 
 
 if __name__ == "__main__":
     try:
         from .programstart_common import warn_direct_script_invocation  # noqa: PLC0415
-    except ImportError:  # pragma: no cover - standalone script execution fallback
+    except ImportError:
         from programstart_common import warn_direct_script_invocation  # noqa: PLC0415
 
     warn_direct_script_invocation("'uv run programstart serve' or 'pb serve'")

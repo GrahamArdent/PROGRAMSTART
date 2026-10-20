@@ -186,6 +186,13 @@ jobs:
           missing = sorted(expected - set(report["files"]))
           if missing:
               raise SystemExit(f"Configured coverage modules missing from report: {missing}")
+          incomplete = sorted(
+              path for path in expected
+              if report["files"][path]["summary"]["missing_lines"]
+              or report["files"][path]["summary"]["missing_branches"]
+          )
+          if incomplete:
+              raise SystemExit(f"Production statements or branch exits remain uncovered: {incomplete}")
 
           def failed_tests(path: Path) -> set[str]:
               tree = ET.parse(path)

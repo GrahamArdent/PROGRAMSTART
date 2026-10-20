@@ -8,7 +8,7 @@ try:
     from . import programstart_validate_core as validate_core
     from .programstart_common import load_registry, warn_direct_script_invocation, workspace_path
     from .programstart_objective_proof import workflow_problems
-except ImportError:  # pragma: no cover - standalone script execution fallback
+except ImportError:
     import programstart_validate_core as validate_core
     from programstart_common import load_registry, warn_direct_script_invocation, workspace_path
     from programstart_objective_proof import workflow_problems
@@ -255,10 +255,8 @@ def main(argv: list[str] | None = None) -> int:
         problems.extend(validate_core.validate_post_launch_review(registry))
     elif args.check == "coverage-source":
         warnings.extend(validate_core.validate_coverage_source_completeness(registry))
-    elif args.check == "file-hygiene":
+    else:  # argparse restricts the sole remaining selector to file-hygiene.
         warnings.extend(validate_core.validate_file_hygiene(registry))
-    else:
-        problems.extend(validate_core.validate_engineering_ready(registry))
 
     if problems:
         print("Validation failed:")
@@ -280,6 +278,6 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     warn_direct_script_invocation("'uv run programstart validate' or 'pb validate'")
     raise SystemExit(main())

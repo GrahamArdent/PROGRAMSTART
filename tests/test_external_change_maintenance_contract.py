@@ -140,7 +140,56 @@ def test_required_gate_rejects_a_configured_module_missing_from_real_report(tmp_
     missing = subprocess.run([sys.executable, "-c", script], cwd=tmp_path, env=env, capture_output=True, text=True)
     assert missing.returncode != 0
     assert "Configured coverage modules missing from report: ['scripts/example.py']" in missing.stderr
-    report.write_text(json.dumps({"files": {"scripts/example.py": {}}}))
+    report.write_text(json.dumps({"files": {"scripts/example.py": {"summary": {"missing_lines": 0, "missing_branches": 0}}}}))
     complete = subprocess.run([sys.executable, "-c", script], cwd=tmp_path, env=env, capture_output=True, text=True)
     assert complete.returncode == 0, complete.stdout + complete.stderr
     assert "Base failing tests: 0" in complete.stdout
+    for field in ["missing_lines", "missing_branches"]:
+        summary = {"missing_lines": 0, "missing_branches": 0, "percent_covered_display": "100"}
+        summary[field] = 1
+        report.write_text(json.dumps({"files": {"scripts/example.py": {"summary": summary}}}))
+        partial = subprocess.run([sys.executable, "-c", script], cwd=tmp_path, env=env, capture_output=True, text=True)
+        assert partial.returncode != 0
+        assert "branch exits remain uncovered" in partial.stderr
+
+
+def test_local_nox_gate_requires_present_and_raw_complete_modules(tmp_path, monkeypatch):
+    import json
+    import runpy
+
+    namespace = runpy.run_path(str(ROOT / "noxfile.py"))
+    callback = namespace["tests"].func
+    monkeypatch.setitem(callback.__globals__, "ROOT", tmp_path)
+    (tmp_path / "pyproject.toml").write_text('[tool.coverage.run]\nsource = ["scripts.example"]\n')
+
+    class Session:
+        report: dict[str, object] = {}
+
+        def install(self, *_):
+            pass
+
+        def create_tmp(self):
+            return str(tmp_path)
+
+        def run(self, *args):
+            if args[:2] == ("coverage", "json"):
+                Path(args[-1]).write_text(json.dumps(self.report))
+
+        def error(self, message):
+            raise RuntimeError(message)
+
+    session = Session()
+    for files, diagnostic in [
+        ({}, "missing from coverage report"),
+        ({"scripts/example.py": {"summary": {"missing_lines": 1, "missing_branches": 0}}}, "uncovered statements"),
+        ({"scripts/example.py": {"summary": {"missing_lines": 0, "missing_branches": 1}}}, "uncovered statements"),
+    ]:
+        session.report = {"files": files}
+        try:
+            callback(session)
+        except RuntimeError as exc:
+            assert diagnostic in str(exc)
+        else:
+            raise AssertionError("incomplete production report was admitted")
+    session.report = {"files": {"scripts/example.py": {"summary": {"missing_lines": 0, "missing_branches": 0}}}}
+    callback(session)

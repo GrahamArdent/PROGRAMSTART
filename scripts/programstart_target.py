@@ -14,7 +14,7 @@ try:
     from .programstart_attach import MANIFEST_FILENAME
     from .programstart_bootstrap import copy_file
     from .programstart_common import load_registry, warn_direct_script_invocation, workspace_path, write_json
-except ImportError:  # pragma: no cover - standalone script execution fallback
+except ImportError:
     from programstart_adopt import _adopted_registry, _git_head_hash, _managed_prompt_assets
     from programstart_attach import MANIFEST_FILENAME
     from programstart_bootstrap import copy_file
@@ -293,6 +293,6 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     warn_direct_script_invocation("'uv run programstart target --repo <path> <command>'")
     raise SystemExit(main())

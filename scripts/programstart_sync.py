@@ -19,7 +19,7 @@ try:
         copy_file,
     )
     from .programstart_common import load_registry_from_path, warn_direct_script_invocation, workspace_path, write_json
-except ImportError:  # pragma: no cover - standalone script execution fallback
+except ImportError:
     from programstart_adopt import _adopted_registry, _managed_prompt_assets
     from programstart_attach import MANIFEST_FILENAME, PROGRAMBUILD_PRESERVE_EXISTING_FILES
     from programstart_bootstrap import (
@@ -346,12 +346,13 @@ def sync(
             print(f"  SKIP {relative_path} (removed from template — delete manually if desired)")
             skipped += 1
             continue
-        if reason in {"changed", "missing-in-dest", "new-managed"}:
-            source = _template_source_path(template_root, relative_path)
-            destination = destination_root / relative_path
-            copy_file(source, destination, dry_run=False)
-            copied += 1
-            print(f"  SYNC {relative_path} ({reason})")
+        # Conflict reasons have already blocked reconciliation, and removed
+        # template files were handled above; every remaining reason is copyable.
+        source = _template_source_path(template_root, relative_path)
+        destination = destination_root / relative_path
+        copy_file(source, destination, dry_run=False)
+        copied += 1
+        print(f"  SYNC {relative_path} ({reason})")
 
     alignment_issues: list[tuple[str, str]] = []
     if lean_overlay and file_filter is None:
@@ -432,6 +433,6 @@ def main(argv: list[str] | None = None) -> int:
     )
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     warn_direct_script_invocation("'uv run programstart sync --dest <path>'")
     raise SystemExit(main())

@@ -17,8 +17,8 @@ concurrency:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  UV_CACHE_DIR: .cache/uv
-  PRE_COMMIT_HOME: .cache/pre-commit
+  UV_CACHE_DIR: ${{ runner.temp }}/programstart-convergence-uv
+  PRE_COMMIT_HOME: ${{ runner.temp }}/programstart-convergence-pre-commit
 
 jobs:
   convergence:

@@ -24,7 +24,7 @@ try:
         require,
         text,
     )
-except ImportError:  # pragma: no cover
+except ImportError:
     from programstart_objective_proof import (
         CONTRACT,
         HEX,

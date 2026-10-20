@@ -11,7 +11,7 @@ from pathlib import Path
 try:
     from .programstart_common import generated_outputs_root, load_json, warn_direct_script_invocation, workspace_path, write_json
     from .programstart_models import KnowledgeBase, ResearchTrack
-except ImportError:  # pragma: no cover - standalone script execution fallback
+except ImportError:
     from programstart_common import generated_outputs_root, load_json, warn_direct_script_invocation, workspace_path, write_json
     from programstart_models import KnowledgeBase, ResearchTrack
 
@@ -388,6 +388,6 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     warn_direct_script_invocation("'uv run programstart research' or 'pb research'")
     raise SystemExit(main())

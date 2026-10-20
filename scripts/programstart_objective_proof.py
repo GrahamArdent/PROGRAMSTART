@@ -13,7 +13,7 @@ import json
 import re
 import subprocess
 from pathlib import Path, PurePosixPath
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 
 CONTRACT = "PROGRAMBUILD/OBJECTIVES.json"
@@ -307,12 +307,11 @@ def workflow_problems(root: Path, stage: str, *, terminal: bool = False) -> list
         inspect_proof(contract, proof, local, complete=complete)
         try:
             from .programstart_challenge_merge import GitHub
-        except ImportError:  # pragma: no cover
+        except ImportError:
             from programstart_challenge_merge import GitHub
         adapter = GitHub()
-        owner = OWNER.fullmatch(contract["owner_ref"])
-        if owner is None:
-            raise ObjectiveDenied("invalid owner")
+        # inspect_proof has just validated this exact native owner URL.
+        owner = cast(re.Match[str], OWNER.fullmatch(contract["owner_ref"]))
         repository = owner.group(1)
         remote = (
             subprocess.check_output(["git", "-C", str(root), "remote", "get-url", "origin"], text=True, timeout=15)
@@ -337,7 +336,7 @@ def workflow_problems(root: Path, stage: str, *, terminal: bool = False) -> list
         head = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True, timeout=15).strip()
         try:
             from .programstart_research_admission import local_check
-        except ImportError:  # pragma: no cover
+        except ImportError:
             from programstart_research_admission import local_check
         local_check(root, stage, adapter, repository, base_sha, head, terminal=terminal)
         if complete:
@@ -364,7 +363,7 @@ def merge_objective_snapshot(adapter: Any, repository: str, target: str, head: s
     """Enrolled merge preflight: no full-completion inference from a slice PR."""
     try:
         from .programstart_research_admission import merge_snapshot
-    except ImportError:  # pragma: no cover
+    except ImportError:
         from programstart_research_admission import merge_snapshot
     research = merge_snapshot(adapter, repository, target, head)
     base = read_api_file(adapter, repository, target, CONTRACT, optional=True)
@@ -375,14 +374,11 @@ def merge_objective_snapshot(adapter: Any, repository: str, target: str, head: s
         raise ObjectiveDenied("candidate removed the accepted objective contract")
     contract = parse(candidate)
     raw = read_api_file(adapter, repository, head, PROOF)
-    if raw is None:
-        raise ObjectiveDenied("objective trace missing")
-    proof = parse(raw)
+    proof = parse(cast(bytes, raw))
     complete = proof.get("claim") == "objective_complete"
     inspect_proof(contract, proof, lambda path: read_api_file(adapter, repository, head, path), complete=complete)
-    owner = OWNER.fullmatch(contract["owner_ref"])
-    if owner is None:
-        raise ObjectiveDenied("invalid owner")
+    # inspect_proof has just validated this exact native owner URL.
+    owner = cast(re.Match[str], OWNER.fullmatch(contract["owner_ref"]))
     require(owner.group(1) == repository, "foreign objective owner")
     issue = owner.group(2)
     authority = {

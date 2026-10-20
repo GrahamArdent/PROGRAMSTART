@@ -232,8 +232,7 @@ def admit(
         all(binding == (head, methodology) for binding in retained.values()),
         "retained Challenge blockers remain unresolved for current candidate",
     )
-    _require(latest is not None and latest["result"] == "clear", "no authenticated exact-head CLEAR")
-    if latest is None:
+    if latest is None or latest["result"] != "clear":
         raise AdmissionDenied("no authenticated exact-head CLEAR")
     _require(latest["methodology_sha"] == methodology, "Challenge methodology changed")
     evidence = {
@@ -309,7 +308,7 @@ class GitHub:
     def snapshot(self, repository: str, pr: int) -> dict[str, Any]:
         try:
             from .programstart_objective_proof import merge_objective_snapshot
-        except ImportError:  # pragma: no cover
+        except ImportError:
             from programstart_objective_proof import merge_objective_snapshot
         base = f"repos/{repository}"
         pull = self.api(f"{base}/pulls/{pr}")

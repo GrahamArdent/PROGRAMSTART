@@ -329,3 +329,336 @@ its own final commit hash. Existing Matrix50 and original paired-repair evidence
 remain valid for their unchanged bytes. Same-assistant final actual-diff and
 complete-pair review has no additional material corrective delta for this bounded
 source/test result. No merge, rollout or owner acceptance is claimed.
+
+
+## Selected full-remainder execution (2026-10-20)
+
+This continuation supersedes the earlier slice-only stopping rule above. Graham
+explicitly selected execution of the complete challenged remainder prompt, through
+source coverage, browser convergence, actual-diff Challenge and owner accounting.
+The selected reference is PR251 comment6297413303 and the complete paired packet
+`PROGRAMSTART_REMAINDER_GAME_PLAN_AND_PROMPT_2026-10-20.md` (pair SHA256
+`daeba298e23cf00dd5ddece70e3975fab2f0c7ab5eacd85e61f982a78e4d2af9`).
+This is still DERIVED_FROM_CURRENT_AUTHORITY, not a new master plan or merge
+acceptance. PR251 owns the implementation and append-only final CI receipts.
+Matrix PR50 remains a separate native two-module result; no Matrix code or pin
+was changed by this continuation. Lab47 remains terminal NO_GO_CANDIDATE.
+
+### Corrected final game plan
+
+1. Freeze the same 67-module production inventory, including pinned consumer
+   modules; review all313 old exclusions and preserve actual owner boundaries.
+2. Exercise public inputs, real temporary Git/filesystem state, bounded external
+   transport faults, and supported standalone/package modes. Simplify impossible
+   internal branches only with the producing invariant and rejection proof.
+3. Demand zero raw missing statements and exits in every module. Retain source
+   presence checks, enable the100 floor, and reject rounded-but-incomplete reports
+   in both Required PR Gate and nox tests. Preserve the PR no-new-failure contract.
+4. Run clean source tests, hooks/typecheck, strict validation/drift/docs, packaging
+   and installed-wheel CLI proof. Run local gate_safe truthfully; use the admitted
+   authenticated GitHub manual workflow for full browser/golden/isolation proof
+   when the local Chromium route fails. Fix its concrete defects and repeat.
+5. Challenge the actual implementation, then freshly review this complete corrected
+   plan/prompt pair. Correct material findings before clearance. Publish only the
+   executable validated candidate using a current branch lease. Require final-head
+   hosted source and complete manual convergence success, with retained artifacts.
+6. Reconcile exact results in this owner record and PR251 completion receipt;
+   update the existing delivery views. Complete at reviewable, verified source PRs.
+   Do not merge or select HOP, P3–P7, provider/credential work or runtime enrollment.
+
+### Corrected final execution prompt
+
+Execute the selected coverage remainder on PR251's existing lane. Preserve current
+owner truth, foreign work and immutable pins. Continue through machine-solvable
+failures without converting an environment defect into a human permission gate.
+Use meaningful behavior assertions and real child traces; never fabricate hits,
+combine different producer bytes, shrink the denominator, add coverage exclusions,
+or label an incomplete composite gate green. A successful local subset or rounded
+percentage is nonterminal. Fix every material implementation/verification defect,
+repeat affected checks, and freshly challenge the corrected candidate and complete
+plan/prompt pair. Stop successfully only after all67 production modules have zero
+missing statements/exits, all exclusions have explicit dispositions, the final
+candidate has required hosted source checks plus full browser/golden/isolation
+proof, and owner evidence is reconstructable. Revalidate after candidate/authority
+movement. Report exact nonterminal evidence if an actually controlling external
+owner gate remains; never claim a background continuation that is not registered.
+This prompt does not authorize a merge, release or expanded live consequence.
+
+### Implementation and adversarial evidence
+
+Tests cover real Git identity drift, invalid and integrity-valid foreign data,
+projection/frontier invariants, malformed schemas/types, denied admission, missing
+files, overlay preservation, API pagination/faults, real loopback HTTP/socket
+lifecycle, retrieval batching/ranking and CLI mode parity. External service
+transports use synthetic fixtures and make no provider requests. Existing
+acceptance fixtures are labelled synthetic, never authenticated owner acceptance.
+
+Concrete fixes: the dashboard listener is now closed in a finally block after
+shutdown (the regression reproduced an open socket beforehand); unknown uncertainty
+with otherwise sufficient decision evidence now conservatively requests targeted
+research. Manual convergence originally passed read-only browser/golden smoke but
+failed isolated bootstrap: relative pre-commit/uv cache paths created staged cache
+repositories inside the generated project. Its caches now live under runner.temp.
+Run39484220558 at predecessor6d9063a is failed historical evidence, not final proof.
+
+Redundant internal branches were simplified in graph traversal, recommendation
+lookup/domain rationale, completed-effect validation, freshly validated semantic
+candidate access, fixed-choice CLI dispatch, bounded retry exhaustion, ADR linkage,
+objective owner parsing, exact-head CLEAR admission, and sync copy reasons.
+Their retained invariants are respectively atomic graph provenance, candidate-origin
+keys and nonempty shape domains, earlier completed-set checks, fresh model validation,
+argparse required choices, return-or-third-error retry termination, preceding nonempty
+DEC ID checks, immediate contract validation/required-file reads, one equivalent
+fail-closed admission condition, and conflict rejection before copying. Adversarial
+near-neighbor tests preserve upstream rejection and final currentness checks.
+The retry remains exactly three attempts, with two waits on PermissionError.
+
+Same-assistant review provenance applies throughout; hosted checks are independent
+execution, not independent semantic review. Actual-diff Parts B/C/D/E/G/H apply to
+measurement, inherited trust/currentness and concurrency. Realistic attacks include
+rounded100 with a missing exit, absent configured modules, cached traces from other
+source bytes, baseline-only proof passed as exact-head proof, duplicate/cyclic graph
+causes, invalid native owner URLs, owner-head drift and enrollment appearing between
+preflight and locked mutation. These are rejected or bounded by the preserved
+checks/tests. The locked enrollment regression creates the new evidence file under
+the real lock and confirms the state bytes remain unchanged.
+
+Material Challenge corrections already incorporated: count fallback/main execution
+instead of hiding it; preserve conservative routing for unknown uncertainty; close
+the owned socket; move convergence caches out of generated projects; require raw
+per-module counts rather than a rounded display; extend the executable CI consumer
+regression to reject both missing-statement and missing-exit reports displaying100.
+Every such correction is a new candidate, requiring a fresh final review. Final
+review/check receipts on PR251 identify the exact published commit; this pre-publication
+record does not purport to contain a future CI result or authenticated merge CLEAR.
+
+### Coverage boundary and reproduction
+
+The local complete source measurement is13,614 statements and5,054 branch exits,
+zero missing in every declared module,4 reviewed excluded lines. The initial broad
+run had one obsolete synthetic workflow-report fixture failure after raw-count
+validation was strengthened; corrected its fixture to contain real summary fields
+and exercised both partial-report rejections. The subsequent focused run on unchanged
+production bytes completes the local trace union. A clean full gate run and final
+hosted artifact control the final completion claim; their receipts are retained on
+PR251, not inferred from this checkpoint. Optional context-index tests may skip when
+no generated index exists; record actual hosted skips separately.
+
+Reproduce with Python3.12 and frozen uv.lock: `uv sync --frozen --extra dev`,
+`uv run coverage run -m pytest`, `uv run coverage report -m`,
+`uv run coverage json -o coverage.json`, `uv run nox -s gate_safe` and the existing
+Manual Convergence Gate (`uv run nox -s ci`). Check every report file's raw
+missing_lines/missing_branches and the configured-source set. Standalone tests launch
+real child interpreters with branch tracing limited to exactly the67 source paths,
+then merge their actual data into the current parent trace. Temporary child data
+lives outside the repository; no synthetic line/arc insertion is used.
+
+Production file SHA256 aggregate (sorted path-to-SHA256 JSON):
+`9b9aa8bae46601e6f435b7193ac25d3d457b2c953d5553cc6d159651982cf94e`. The implementation commit/tree and exact-head hosted coverage
+artifact/run identity belong to the PR251 receipt. A changed production file,
+coverage configuration, lock/toolchain, command mode, protocol/owner identity or
+relevant workflow invalidates affected proof. Reuse unaffected checks; a final
+commit still needs its own Required PR Gate and full-convergence identity.
+
+### Exclusion ledger (all313 original lines)
+
+Original ranges below refer to predecessor6d9063af8f6b975e6909e9252d60b7d980baa12d.
+Restored fallback/main ranges are measured through
+`tests/test_supported_script_invocations.py` and the feature boundary suites;
+inner raw import modes are exercised by validation, objective-proof, merge and CLI
+fixtures. The missing-jsonschema path is a real isolated import failure diagnostic.
+307 original excluded runtime lines now receive measurement;4 are retained.
+Two unreachable post-parser returns were deleted (backup151 and step_guide198),
+not excluded. All other restored executable lines are measured. No new exclusion
+or no-branch marker was added.
+
+| Source | Original excluded lines | Disposition / proof |
+|---|---|---|
+| `scripts/check_process_registry_schema.py` | 7–8, 12–13, 23–25 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/install_hooks.py` | 87–88 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/lint_prompts.py` | 15–16, 170–171 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_adopt.py` | 25–27, 35, 234–236 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_advance.py` | 13–17, 19, 111–112 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_artifact_profiles.py` | 8–9 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_attach.py` | 30–31, 44, 305–306, 310 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_authority_resolver.py` | 482–483 | Retain2: internal candidate-is-None tripwire immediately after successful validated model; public missing-candidate model rejection tests retained. |
+| `scripts/programstart_backup.py` | 11–12, 151, 154–155 | Restore measurement; real supported script/import and feature-boundary traces. Delete unreachable post-parser return as described above. |
+| `scripts/programstart_bootstrap.py` | 20–21, 572–574 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_bootstrap_methodology.py` | 24–25, 32, 34, 163–165 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_challenge_merge.py` | 312–313 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_checklist_progress.py` | 8–9, 65–67 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_clean.py` | 9–10, 91–93 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_cli.py` | 46–78, 80, 82, 293–295 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_closeout.py` | 23–26, 28, 179–181 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_common.py` | 19–20 | Retain2: TYPE_CHECKING guard/import are static typing only; never runtime behavior. |
+| `scripts/programstart_context.py` | 26–28, 38, 672–674 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_create.py` | 17–23, 288–290 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_create_core.py` | 18–20, 22 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_create_output.py` | 17–19, 25–26, 28 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_dashboard.py` | 24–25, 246–248 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_decision.py` | 376–377 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_doctor.py` | 11–12, 115–117 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_drift_check.py` | 20–21, 170–172 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_health_probe.py` | 26–27, 630–632 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_impact.py` | 14–16, 22, 216–218 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_init.py` | 14–16, 21, 151–152, 155 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_intent_compile.py` | 1027–1028 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_log.py` | 23–24, 98–100 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_mutation_edit_hook.py` | 21–22, 24, 820–822 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_mutation_loop.py` | 14–15, 286–288 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_objective_proof.py` | 310–311, 340–341, 367–368 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_orchestrate.py` | 21–22, 34, 853–855 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_precommit_validate.py` | 7–9, 11 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_prompt_build.py` | 28–29, 481–482 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_prompt_eval.py` | 15–19, 21, 337–339 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_recommend.py` | 16–18, 1465–1467 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_refresh_integrity.py` | 19–20, 227–229 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_repo_clean_check.py` | 20–21 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_research_admission.py` | 27–28 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_research_delta.py` | 14–16, 391–393 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_retrieval.py` | 23–24, 29–30, 940–942 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_serve.py` | 74–77, 86, 88, 965–966 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_starter_scaffold.py` | 9–10 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_status.py` | 24–25, 27, 297–299 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_step_guide.py` | 16–17, 19, 198, 201–203 | Restore measurement; real supported script/import and feature-boundary traces. Delete unreachable post-parser return as described above. |
+| `scripts/programstart_sync.py` | 22–25, 31, 435–437 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_target.py` | 17–20, 22, 296–298 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_validate.py` | 11–14, 283–285 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_validate_core.py` | 25–26, 599–600, 1177–1178 | Restore measurement; real supported script/import and feature-boundary traces. |
+| `scripts/programstart_workflow_state.py` | 36–39, 41, 662–664 | Restore measurement; real supported script/import and feature-boundary traces. |
+
+The final4 exclusions are exactly common.py19–20 and authority_resolver.py482–483.
+The retained defensive tripwire is not an untested external input boundary: a fresh
+accepted result model enforces candidate presence; missing/failed producer responses
+are explicitly tested at public models. This qualified source claim does not mean
+all repository scripts, all environments or exhaustive correctness. Smoke harnesses,
+package initializers, smoke helpers and golden drivers retain their declared harness
+role outside the production denominator; the complete hosted convergence tests them.
+
+### Per-module local raw counts
+
+| Declared production source | Statements | Branch exits | Missing statements / exits |
+|---|---:|---:|---:|
+| `scripts/check_commit_msg.py` | 43 | 22 | 0 / 0 |
+| `scripts/check_process_registry_schema.py` | 18 | 2 | 0 / 0 |
+| `scripts/install_hooks.py` | 63 | 24 | 0 / 0 |
+| `scripts/lint_prompts.py` | 108 | 62 | 0 / 0 |
+| `scripts/matrix_projection_dependency/operationalization.py` | 105 | 48 | 0 / 0 |
+| `scripts/matrix_projection_dependency/root_frontier.py` | 84 | 40 | 0 / 0 |
+| `scripts/programstart_adopt.py` | 111 | 30 | 0 / 0 |
+| `scripts/programstart_advance.py` | 65 | 14 | 0 / 0 |
+| `scripts/programstart_artifact_profiles.py` | 67 | 18 | 0 / 0 |
+| `scripts/programstart_attach.py` | 174 | 62 | 0 / 0 |
+| `scripts/programstart_authority_resolver.py` | 263 | 110 | 0 / 0 |
+| `scripts/programstart_autonomy_ingress.py` | 113 | 26 | 0 / 0 |
+| `scripts/programstart_autonomy_parity.py` | 319 | 206 | 0 / 0 |
+| `scripts/programstart_backup.py` | 101 | 26 | 0 / 0 |
+| `scripts/programstart_bootstrap.py` | 296 | 72 | 0 / 0 |
+| `scripts/programstart_bootstrap_methodology.py` | 44 | 4 | 0 / 0 |
+| `scripts/programstart_capability_discovery_gate.py` | 294 | 120 | 0 / 0 |
+| `scripts/programstart_challenge_merge.py` | 236 | 56 | 0 / 0 |
+| `scripts/programstart_checklist_progress.py` | 51 | 14 | 0 / 0 |
+| `scripts/programstart_clean.py` | 53 | 28 | 0 / 0 |
+| `scripts/programstart_cli.py` | 206 | 92 | 0 / 0 |
+| `scripts/programstart_closeout.py` | 83 | 26 | 0 / 0 |
+| `scripts/programstart_command_registry.py` | 11 | 0 | 0 / 0 |
+| `scripts/programstart_common.py` | 407 | 170 | 0 / 0 |
+| `scripts/programstart_context.py` | 231 | 90 | 0 / 0 |
+| `scripts/programstart_create.py` | 154 | 30 | 0 / 0 |
+| `scripts/programstart_create_core.py` | 265 | 102 | 0 / 0 |
+| `scripts/programstart_create_output.py` | 109 | 10 | 0 / 0 |
+| `scripts/programstart_dashboard.py` | 147 | 54 | 0 / 0 |
+| `scripts/programstart_decision.py` | 189 | 70 | 0 / 0 |
+| `scripts/programstart_doctor.py` | 85 | 28 | 0 / 0 |
+| `scripts/programstart_drift_check.py` | 113 | 58 | 0 / 0 |
+| `scripts/programstart_evidence.py` | 73 | 10 | 0 / 0 |
+| `scripts/programstart_graph.py` | 174 | 56 | 0 / 0 |
+| `scripts/programstart_health_probe.py` | 415 | 158 | 0 / 0 |
+| `scripts/programstart_impact.py` | 123 | 66 | 0 / 0 |
+| `scripts/programstart_init.py` | 71 | 12 | 0 / 0 |
+| `scripts/programstart_intent_compile.py` | 474 | 122 | 0 / 0 |
+| `scripts/programstart_intent_ingress.py` | 375 | 108 | 0 / 0 |
+| `scripts/programstart_log.py` | 55 | 20 | 0 / 0 |
+| `scripts/programstart_markdown_parsers.py` | 178 | 102 | 0 / 0 |
+| `scripts/programstart_models.py` | 365 | 0 | 0 / 0 |
+| `scripts/programstart_mutation_edit_hook.py` | 171 | 30 | 0 / 0 |
+| `scripts/programstart_mutation_loop.py` | 152 | 46 | 0 / 0 |
+| `scripts/programstart_objective_continuation.py` | 212 | 86 | 0 / 0 |
+| `scripts/programstart_objective_proof.py` | 245 | 52 | 0 / 0 |
+| `scripts/programstart_orchestrate.py` | 293 | 90 | 0 / 0 |
+| `scripts/programstart_owner_handoff_intake.py` | 157 | 66 | 0 / 0 |
+| `scripts/programstart_precommit_validate.py` | 18 | 4 | 0 / 0 |
+| `scripts/programstart_prompt_build.py` | 266 | 82 | 0 / 0 |
+| `scripts/programstart_prompt_eval.py` | 187 | 102 | 0 / 0 |
+| `scripts/programstart_recommend.py` | 737 | 354 | 0 / 0 |
+| `scripts/programstart_refresh_integrity.py` | 85 | 22 | 0 / 0 |
+| `scripts/programstart_repo_clean_check.py` | 41 | 18 | 0 / 0 |
+| `scripts/programstart_research_admission.py` | 208 | 38 | 0 / 0 |
+| `scripts/programstart_research_delta.py` | 202 | 58 | 0 / 0 |
+| `scripts/programstart_resource_preflight.py` | 56 | 24 | 0 / 0 |
+| `scripts/programstart_retrieval.py` | 435 | 136 | 0 / 0 |
+| `scripts/programstart_serve.py` | 556 | 180 | 0 / 0 |
+| `scripts/programstart_starter_scaffold.py` | 231 | 98 | 0 / 0 |
+| `scripts/programstart_status.py` | 169 | 56 | 0 / 0 |
+| `scripts/programstart_step_guide.py` | 101 | 38 | 0 / 0 |
+| `scripts/programstart_sync.py` | 252 | 106 | 0 / 0 |
+| `scripts/programstart_target.py` | 146 | 54 | 0 / 0 |
+| `scripts/programstart_validate.py` | 212 | 92 | 0 / 0 |
+| `scripts/programstart_validate_core.py` | 1159 | 668 | 0 / 0 |
+| `scripts/programstart_workflow_state.py` | 412 | 186 | 0 / 0 |
+
+### Owner reconciliation and terminal rule
+
+Source coverage implementation is locally complete at this checkpoint; publication,
+final hosted verification and final Challenge receipt are required before overall
+closure. The append-only PR251 completion receipt supplies final commit/tree,
+source/report/tool identities, hosted run/artifact digests, browser/golden/isolation
+results, actual skips, final same-assistant review and GO/NO-GO. The PR and this owner
+document form one evidence chain; downloadable packets are delivery views. No merge,
+activation, credential creation, provider provisioning, HOP reopening or P3–P7 is
+selected. Native Matrix100 applies only to its separate two-module boundary.
+
+Final preparation corrections: the existing drift contract required paired gate
+navigation documentation and composed-registry authority. QUICKSTART now states the
+raw-zero coverage contract; config/process-registry.json version is2026-10-20 for
+the expanded registered test inventory. The schema itself is unchanged. Nox tasks,
+source-of-truth instructions and copilot guidance were reviewed: their command and
+JIT/publication semantics remain aligned, so no gratuitous edits were made there.
+The first hook/gate lint failure is retained rather than waived. Offline isolated
+build dependency resolution lacked cached setuptools; using the available build
+backend without isolation produced the wheel and sdist without changing dependencies.
+
+The first clean nox source run also caught an incomplete new requirements fixture:
+it expected no errors without supplying USER_FLOWS.md. The corrected fixture includes
+a real heading and REQ-001 reference; no validator or assertion was weakened.
+Coverage subprocess data suffixes are ignored as generated artifacts, alongside
+.coverage; this does not omit production source or change trace collection.
+The installed wheel was additionally exercised from outside the source checkout
+with PYTHONPATH removed and an isolated import proving scripts came from the wheel
+venv; all10 installed CLI smoke commands succeeded.
+
+Actual-diff opposition found one further material gap: nox raw-count validation
+needed its own explicit configured-module report-presence check, in addition to
+Required PR Gate and registry source completeness. Added that same expected-source
+comparison locally. Fresh review of the corrected consumer and complete plan/prompt
+pair is required; the earlier review does not clear this correction automatically.
+
+### Fresh corrected-candidate review
+
+Same-assistant fresh opposition after the local report-presence correction found no
+new material corrective delta in the source architecture or complete corrected
+plan/prompt pair. Corrected pair SHA256 is
+`5306b8d48aa8264d425ba94c937542afaca698c93bf40e29b05c24ba9b02bc68`.
+The executable nox consumer regression rejects omitted modules, missing statements
+and missing exits, and accepts a complete report; the real CI consumer regression
+also rejects reports that display100 while retaining a raw gap. Required PR Gate
+still compares base/head failure sets and retains exact-head coverage artifacts.
+No browser workload was added to it. Full browser/golden/isolation convergence
+remains a separate final-head workflow requirement, with the actual result retained
+in the PR completion receipt. Local gate_safe ran: lint, typecheck, all3103 collected
+tests (2 optional context-index skips), validation and docs passed; its browser
+session alone failed on Chromium acquisition. A final tests-only run executes the
+corrected nox consumer and newly added consumer regression. This is explicitly not
+a green local composite gate, authenticated merge disposition or live installed
+operational proof. The source and plan/prompt review is settled; overall execution
+closure remains contingent on the final exact-head hosted receipts.

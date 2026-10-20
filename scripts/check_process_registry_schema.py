@@ -4,12 +4,12 @@ import json
 
 try:
     import jsonschema
-except ImportError as exc:  # pragma: no cover - environment issue
+except ImportError as exc:
     raise SystemExit(f"jsonschema is required to validate the process registry: {exc}") from exc
 
 try:
     from .programstart_common import load_registry_from_path, warn_direct_script_invocation, workspace_path
-except ImportError:  # pragma: no cover - standalone script execution fallback
+except ImportError:
     from programstart_common import load_registry_from_path, warn_direct_script_invocation, workspace_path
 
 
@@ -20,6 +20,6 @@ def main() -> int:
     return 0
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     warn_direct_script_invocation("'uv run python scripts/check_process_registry_schema.py'")
     raise SystemExit(main())

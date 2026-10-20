@@ -280,11 +280,12 @@
         "pyproject.toml"
       ],
       "dependent_files": [
-        "requirements.txt"
+        "requirements.txt",
+        "uv.lock"
       ],
       "require_authority_when_dependents_change": false,
       "require_dependents_when_authority_changes": true,
-      "description": "requirements.txt is auto-generated from pyproject.toml via 'uv export --extra dev'. pyproject.toml is the authority for dependency declarations. When pyproject.toml changes, regenerate requirements.txt with: uv export --format requirements-txt --extra dev --no-hashes -o requirements.txt"
+      "description": "uv.lock and requirements.txt are generated dependency artifacts governed by pyproject.toml. When dependency declarations change, refresh uv.lock with 'uv lock' and regenerate requirements.txt with: uv export --format requirements-txt --extra dev --no-hashes -o requirements.txt"
     },
     {
       "name": "process_registry_schema_enforcement",

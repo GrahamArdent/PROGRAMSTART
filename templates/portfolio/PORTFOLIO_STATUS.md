@@ -6,26 +6,26 @@
 
 ## Operator gate now
 
-**Project:** `<project or none>`  
-**Exact action:** `<small human/device/provider action>`  
-**Why now:** `<unlock/closure value>`  
-**Return evidence:** `<what proves the action happened>`  
+**Project:** `<project or none>`
+**Exact action:** `<small human/device/provider action>`
+**Why now:** `<unlock/closure value>`
+**Return evidence:** `<what proves the action happened>`
 **Resume at:** `<owning project authority / packet>`
 
 ## Primary build now
 
-**Project:** `<exactly one project>`  
-**Strategic state:** `<project-owned phase/milestone>`  
-**Immediate bounded objective:** `<one coherent slice>`  
-**Why now:** `<value + readiness + leverage + risk rationale>`  
-**Authority to load:** `<exact project authority>`  
-**Blocker / stop condition:** `<if any>`  
+**Project:** `<exactly one project>`
+**Strategic state:** `<project-owned phase/milestone>`
+**Immediate bounded objective:** `<one coherent slice>`
+**Why now:** `<value + readiness + leverage + risk rationale>`
+**Authority to load:** `<exact project authority>`
+**Blocker / stop condition:** `<if any>`
 **Verification / convergence gate:** `<targeted proof>`
 
 ## Secondary ready
 
-**Project:** `<project or none>`  
-**Why it is the fallback:** `<reason>`  
+**Project:** `<project or none>`
+**Why it is the fallback:** `<reason>`
 **Switch when:** `<primary blocked/completed/deferred condition>`
 
 ## Explicit no-action set

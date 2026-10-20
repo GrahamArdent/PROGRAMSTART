@@ -1,8 +1,8 @@
 # PROGRAMSTART Learning Observation — Portfolio Attention Startup Wiring
 
-Date: 2026-08-29  
-Related lesson: `PSL-018` — Portfolio Attention Control  
-Classification: systemic implementation correction / supporting evidence  
+Date: 2026-08-29
+Related lesson: `PSL-018` — Portfolio Attention Control
+Classification: systemic implementation correction / supporting evidence
 Maturity effect: **none — remains implemented pending a natural later portfolio retest**
 
 ## Trigger

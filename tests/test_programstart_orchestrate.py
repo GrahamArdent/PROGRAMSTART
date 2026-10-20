@@ -160,9 +160,7 @@ def test_calendar_companion_dependency_is_derived_without_becoming_cross_project
             "Dedication PR #46 is open; hosted Calendar contract is deployed and Supabase verification is green.",
             "Calendar Bridge PR #5 is open and Verify Bridge is green.",
         ),
-        dependency_invalidation=(
-            "Dedication PR #46 changes, merges, closes, or the hosted Calendar contract changes.",
-        ),
+        dependency_invalidation=("Dedication PR #46 changes, merges, closes, or the hosted Calendar contract changes.",),
         manual_boundary="Google OAuth credentials plus real initial and restart/incremental Calendar smoke.",
         closure_control="Calendar Bridge B5 credential gate",
     )
@@ -271,19 +269,22 @@ def test_render_text_exposes_authority_blocker_evidence_handoff_and_completion()
 
 
 def test_cli_json_output_is_machine_readable(capsys: pytest.CaptureFixture[str]) -> None:
-    assert main(
-        [
-            "--request",
-            "Continue safe preparation",
-            "--repository",
-            "owner/project",
-            "--mode",
-            "c",
-            "--blocker-scope",
-            "mutation_gate",
-            "--json",
-        ]
-    ) == 0
+    assert (
+        main(
+            [
+                "--request",
+                "Continue safe preparation",
+                "--repository",
+                "owner/project",
+                "--mode",
+                "c",
+                "--blocker-scope",
+                "mutation_gate",
+                "--json",
+            ]
+        )
+        == 0
+    )
 
     payload = json.loads(capsys.readouterr().out)
     assert payload["request"] == "Continue safe preparation"
@@ -301,23 +302,26 @@ def test_cli_json_output_is_machine_readable(capsys: pytest.CaptureFixture[str])
 def test_single_repository_manual_boundary_cli_json_is_machine_readable(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
-    assert main(
-        [
-            "--request",
-            "Activate Gmail after operator provisioning",
-            "--repository",
-            "GrahamArdent/Dedication-Email-Bridge",
-            "--mode",
-            "c",
-            "--execution-spine",
-            "PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md",
-            "--blocker-scope",
-            "release",
-            "--manual-boundary",
-            "Secure Google/deployment provisioning and controlled live mailbox smoke.",
-            "--json",
-        ]
-    ) == 0
+    assert (
+        main(
+            [
+                "--request",
+                "Activate Gmail after operator provisioning",
+                "--repository",
+                "GrahamArdent/Dedication-Email-Bridge",
+                "--mode",
+                "c",
+                "--execution-spine",
+                "PROGRAMBUILD/PROGRAMBUILD_GAMEPLAN.md",
+                "--blocker-scope",
+                "release",
+                "--manual-boundary",
+                "Secure Google/deployment provisioning and controlled live mailbox smoke.",
+                "--json",
+            ]
+        )
+        == 0
+    )
 
     payload = json.loads(capsys.readouterr().out)
     assert payload["related_repositories"] == []
@@ -329,35 +333,38 @@ def test_single_repository_manual_boundary_cli_json_is_machine_readable(
 
 
 def test_cross_repository_cli_json_output_is_machine_readable(capsys: pytest.CaptureFixture[str]) -> None:
-    assert main(
-        [
-            "--request",
-            "Continue Calendar convergence",
-            "--repository",
-            "GrahamArdent/Dedication-Calendar-Bridge",
-            "--mode",
-            "c",
-            "--blocker-scope",
-            "milestone",
-            "--related-repository",
-            "GrahamArdent/Dedication",
-            "--relationship-type",
-            "product_contract",
-            "--related-authority",
-            "product contract/runtime authority",
-            "--dependency-state",
-            "partial",
-            "--dependency-evidence",
-            "Dedication contract deployed; companion PR still open.",
-            "--dependency-invalidation",
-            "Companion PR or hosted contract changes.",
-            "--manual-boundary",
-            "Google credentials and live smoke.",
-            "--closure-control",
-            "Calendar B5 credential gate",
-            "--json",
-        ]
-    ) == 0
+    assert (
+        main(
+            [
+                "--request",
+                "Continue Calendar convergence",
+                "--repository",
+                "GrahamArdent/Dedication-Calendar-Bridge",
+                "--mode",
+                "c",
+                "--blocker-scope",
+                "milestone",
+                "--related-repository",
+                "GrahamArdent/Dedication",
+                "--relationship-type",
+                "product_contract",
+                "--related-authority",
+                "product contract/runtime authority",
+                "--dependency-state",
+                "partial",
+                "--dependency-evidence",
+                "Dedication contract deployed; companion PR still open.",
+                "--dependency-invalidation",
+                "Companion PR or hosted contract changes.",
+                "--manual-boundary",
+                "Google credentials and live smoke.",
+                "--closure-control",
+                "Calendar B5 credential gate",
+                "--json",
+            ]
+        )
+        == 0
+    )
 
     payload = json.loads(capsys.readouterr().out)
     assert payload["request"] == "Continue Calendar convergence"

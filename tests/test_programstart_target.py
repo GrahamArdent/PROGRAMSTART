@@ -67,13 +67,9 @@ def test_prepare_links_existing_methodology_repo_without_touching_programbuild(
     target.prepare_target_control_plane(destination, project_name="Email Bridge")
 
     assert control.read_text(encoding="utf-8") == "# Existing Project Control\n"
-    assert (destination / ".github" / "prompts" / "stage.prompt.md").read_text(encoding="utf-8") == (
-        "# Stage Prompt\n"
-    )
+    assert (destination / ".github" / "prompts" / "stage.prompt.md").read_text(encoding="utf-8") == ("# Stage Prompt\n")
 
-    project_registry = json.loads(
-        (destination / "config" / "process-registry.json").read_text(encoding="utf-8")
-    )
+    project_registry = json.loads((destination / "config" / "process-registry.json").read_text(encoding="utf-8"))
     assert project_registry["workspace"]["repo_role"] == "managed_project_repo"
     assert project_registry["workspace"]["runtime_mode"] == "external_control_plane"
     assert project_registry["workspace"]["provisioning_scope"] == "external_programstart_control_plane"

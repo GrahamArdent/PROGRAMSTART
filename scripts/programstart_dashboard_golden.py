@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import platform
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -23,7 +24,10 @@ PYTHON = sys.executable
 SERVER = ROOT / "scripts" / "programstart_serve.py"
 
 VIEWPORT: ViewportSize = {"width": 1440, "height": 1400}
-MAX_DIFF_PIXELS = 20
+# Chromium patch releases can move a small number of antialiased edge pixels
+# without changing layout or content. This remains below 0.15% of the smallest
+# checked capture while rejecting structural or textual drift.
+MAX_DIFF_PIXELS = 200
 FREEZE_STYLE = """
 *, *::before, *::after {
   animation: none !important;
@@ -78,8 +82,13 @@ def capture_specs(attached: bool) -> list[CaptureSpec]:
     return specs
 
 
+def golden_platform() -> str:
+    return "windows" if platform.system() == "Windows" else "linux"
+
+
 def default_golden_dir() -> Path:
-    return ROOT / "tests" / "golden" / "dashboard"
+    platform_dir = ROOT / "tests" / "golden" / "dashboard" / golden_platform()
+    return platform_dir if platform_dir.exists() else ROOT / "tests" / "golden" / "dashboard"
 
 
 def default_artifact_dir() -> Path:
@@ -261,7 +270,10 @@ def open_and_normalize_modal(page) -> None:
           modalFrame.innerHTML = '';
           modalFrame.style.display = 'grid';
           modalFrame.style.justifyItems = 'center';
-          modalFrame.style.paddingTop = '24px';
+          // Keep the cloned modal at the frame origin. Parent padding can be
+          // included in element screenshots by newer Chromium builds, which
+          // shifts the pixels while leaving the UI itself unchanged.
+          modalFrame.style.paddingTop = '0';
           modalFrame.style.background = '#f3f4ee';
           if (modal) {
             const clone = modal.cloneNode(true);
@@ -273,6 +285,10 @@ def open_and_normalize_modal(page) -> None:
             modalFrame.appendChild(clone);
           }
           document.body.prepend(modalFrame);
+          // Remove the live fixed-position overlay after cloning. Chromium can
+          // otherwise composite it behind the cloned element capture, shifting
+          // the apparent modal contents and clipping the action row.
+          if (overlay) overlay.remove();
         }
         """
     )

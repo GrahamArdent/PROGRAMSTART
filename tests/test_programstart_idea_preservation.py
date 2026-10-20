@@ -2,16 +2,13 @@ from __future__ import annotations
 
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
 PLANNING = ROOT / "PROGRAMBUILD" / "PROGRAMBUILD_PLANNING_OPERATING_MODEL.md"
 CANONICAL = ROOT / "PROGRAMBUILD" / "PROGRAMBUILD_CANONICAL.md"
 IDEA_INTAKE = ROOT / "PROGRAMBUILD" / "PROGRAMBUILD_IDEA_INTAKE.md"
 IDEA_LEDGER = ROOT / "PROGRAMBUILD" / "IDEA_LEDGER.md"
 FILE_INDEX = ROOT / "PROGRAMBUILD" / "PROGRAMBUILD_FILE_INDEX.md"
-ORCHESTRATION_PROMPT = (
-    ROOT / ".github" / "prompts" / "start-programstart-project.prompt.md"
-)
+ORCHESTRATION_PROMPT = ROOT / ".github" / "prompts" / "start-programstart-project.prompt.md"
 PROGRAMBUILD_REGISTRY = ROOT / "config" / "registry" / "systems" / "programbuild.json"
 
 

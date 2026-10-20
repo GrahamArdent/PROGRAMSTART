@@ -37,4 +37,6 @@ Generated operational artifacts now default to `outputs/`: dashboard refresh wri
 
 Dashboard visual regression coverage now includes purpose-based Playwright goldens. Run `uv run python scripts/programstart_dashboard_golden.py --update --expect-userjourney attached` to refresh the attached baselines intentionally, and regenerate the absent baseline from a bootstrapped PROGRAMBUILD-only repo when the dashboard visuals are intentionally changed.
 
+Golden baselines are platform-specific when an accepted `tests/golden/dashboard/<platform>/` directory exists. This keeps Linux CI and Windows operator rendering independently reviewable instead of treating font-metric differences as product regressions. A new platform baseline must be visually inspected before it is committed; `--update` alone is not acceptance.
+
 CI now uploads any mismatch screenshots from `outputs/golden-failures/` in both the template repo and the bootstrapped repo. That means a failed `process-guardrails` run preserves the actual rendered captures needed to inspect a visual regression without reproducing it locally first.

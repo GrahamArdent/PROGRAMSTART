@@ -35,7 +35,7 @@ dev = [
   "nox>=2025.10.16",
   "pip-audit>=2.9.0",
   "pillow>=11.2.1",
-  "playwright>=1.54.0",
+  "playwright==1.58.0",
   "pre-commit>=4.5.0",
   "pyright>=1.1.403",
   "pytest>=8.4.1",

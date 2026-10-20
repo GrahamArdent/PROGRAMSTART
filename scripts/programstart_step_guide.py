@@ -15,6 +15,7 @@ try:
     )
 except ImportError:  # pragma: no cover - standalone script execution fallback
     from programstart_artifact_profiles import filter_stage_files
+
     from programstart_common import (
         load_registry,
         load_workflow_state,

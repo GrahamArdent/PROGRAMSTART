@@ -19,7 +19,6 @@ try:
         route_decision,
     )
 except ImportError:  # pragma: no cover - standalone script execution fallback
-    from programstart_common import warn_direct_script_invocation
     from programstart_decision import (
         CONCERNS,
         RISK_FLAGS,
@@ -31,6 +30,8 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
         Volatility,
         route_decision,
     )
+
+    from programstart_common import warn_direct_script_invocation
 
 Environment = Literal["local", "connected-tools"]
 EnvironmentInput = Literal["auto", "local", "connected-tools"]
@@ -214,7 +215,8 @@ def _orientation(
         ]
         if related is not None:
             actions.append(
-                f"Inspect related repository {related.repository} independently; do not treat a local target command as multi-repo authority."
+                f"Inspect related repository {related.repository} independently; "
+                "do not treat a local target command as multi-repo authority."
             )
         return tuple(actions)
     return (

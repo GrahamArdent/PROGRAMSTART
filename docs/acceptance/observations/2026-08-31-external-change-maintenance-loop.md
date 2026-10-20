@@ -1,8 +1,8 @@
 # PROGRAMSTART Learning Observation — External Change Maintenance Loop
 
-Date: 2026-08-31  
-Related lesson: `PSL-019` — External change monitoring should terminate in governed maintenance rather than routine operator relay  
-Classification: systemic workflow friction / implementation  
+Date: 2026-08-31
+Related lesson: `PSL-019` — External change monitoring should terminate in governed maintenance rather than routine operator relay
+Classification: systemic workflow friction / implementation
 Maturity effect: **implemented on this methodology branch; real autonomous maintenance retest remains open**
 
 ## Trigger

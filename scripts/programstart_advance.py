@@ -14,8 +14,8 @@ except ImportError:  # pragma: no cover - standalone script execution fallback
     import programstart_drift_check
     import programstart_validate_core
     import programstart_workflow_state
-
     from programstart_artifact_profiles import stage_check_required
+
     from programstart_common import load_registry, load_workflow_state, workflow_active_step
 
 
@@ -64,9 +64,7 @@ def variant_aware_preflight(
     problems.extend(programstart_validate_core.validate_workflow_state(registry, "programbuild"))
     problems.extend(programstart_validate_core.validate_authority_sync(registry))
 
-    changed_files = programstart_drift_check.load_changed_files(
-        argparse.Namespace(changed_file_list=None, files=None)
-    )
+    changed_files = programstart_drift_check.load_changed_files(argparse.Namespace(changed_file_list=None, files=None))
     if changed_files:
         drift_problems, _ = programstart_drift_check.evaluate_drift(registry, changed_files, "programbuild")
         problems.extend(drift_problems)

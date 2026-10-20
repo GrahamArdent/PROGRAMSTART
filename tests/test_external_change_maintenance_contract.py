@@ -116,3 +116,31 @@ def test_required_pr_gate_is_a_no_new_debt_gate_not_full_convergence() -> None:
     assert "nox -s ci" not in pr_gate
     assert "workflow_dispatch:" in full_gate
     assert "uv run nox -s ci" in full_gate
+
+
+def test_required_gate_rejects_a_configured_module_missing_from_real_report(tmp_path) -> None:
+    import json
+    import os
+    import subprocess
+    import sys
+
+    import yaml
+
+    workflow = yaml.safe_load(_read(PR_VALIDATION))
+    step = next(
+        s for s in workflow["jobs"]["required-pr-gate"]["steps"] if s.get("name") == "Run head tests and reject new failures"
+    )
+    script = step["run"].split("python - <<'PY'\n", 1)[1].rsplit("\nPY", 1)[0]
+    (tmp_path / "pyproject.toml").write_text('[tool.coverage.run]\nsource = ["scripts.example"]\n')
+    for name in ["base-tests.xml", "head-tests.xml"]:
+        (tmp_path / name).write_text("<testsuite/>")
+    env = {**os.environ, "RUNNER_TEMP": str(tmp_path)}
+    report = tmp_path / "coverage.json"
+    report.write_text(json.dumps({"files": {}}))
+    missing = subprocess.run([sys.executable, "-c", script], cwd=tmp_path, env=env, capture_output=True, text=True)
+    assert missing.returncode != 0
+    assert "Configured coverage modules missing from report: ['scripts/example.py']" in missing.stderr
+    report.write_text(json.dumps({"files": {"scripts/example.py": {}}}))
+    complete = subprocess.run([sys.executable, "-c", script], cwd=tmp_path, env=env, capture_output=True, text=True)
+    assert complete.returncode == 0, complete.stdout + complete.stderr
+    assert "Base failing tests: 0" in complete.stdout

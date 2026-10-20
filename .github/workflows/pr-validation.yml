@@ -166,13 +166,26 @@ jobs:
           fi
 
           uv run coverage report -m
+          uv run coverage json -o coverage.json
+          uv run coverage report -m > coverage.txt
+          git rev-parse HEAD > coverage-checkout-sha.txt
+          echo '${{ github.event.pull_request.head.sha }}' > coverage-head-sha.txt
 
           python - <<'PY'
+          import json
           import os
+          import tomllib
           import xml.etree.ElementTree as ET
           from pathlib import Path
 
           root = Path(os.environ["RUNNER_TEMP"])
+
+          report = json.loads(Path("coverage.json").read_text())
+          sources = tomllib.loads(Path("pyproject.toml").read_text())["tool"]["coverage"]["run"]["source"]
+          expected = {module.replace(".", "/") + ".py" for module in sources}
+          missing = sorted(expected - set(report["files"]))
+          if missing:
+              raise SystemExit(f"Configured coverage modules missing from report: {missing}")
 
           def failed_tests(path: Path) -> set[str]:
               tree = ET.parse(path)
@@ -204,6 +217,18 @@ jobs:
 
           print("PASS: this PR introduces no new test failures relative to its base.")
           PY
+
+      - name: Retain head coverage reports
+        if: always() && hashFiles('coverage.json') != ''
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7
+        with:
+          name: coverage-${{ github.event.pull_request.head.sha }}
+          path: |
+            coverage.json
+            coverage.txt
+            coverage-checkout-sha.txt
+            coverage-head-sha.txt
+          if-no-files-found: error
 
       - name: Restore tracked files after tests
         run: git reset --hard HEAD

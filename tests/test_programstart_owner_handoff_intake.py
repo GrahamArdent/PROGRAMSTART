@@ -1,17 +1,12 @@
 from __future__ import annotations
 
 import hashlib
-import importlib.util
 import json
 import tempfile
 import unittest
 from pathlib import Path
 
-MODULE_PATH = Path(__file__).parents[1] / "scripts" / "programstart_owner_handoff_intake.py"
-SPEC = importlib.util.spec_from_file_location("owner_intake", MODULE_PATH)
-assert SPEC is not None and SPEC.loader is not None
-mod = importlib.util.module_from_spec(SPEC)
-SPEC.loader.exec_module(mod)
+from scripts import programstart_owner_handoff_intake as mod
 
 TARGET_SHA = "a" * 40
 

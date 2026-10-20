@@ -201,6 +201,8 @@ source = [
   "scripts.programstart_intent_ingress",
   "scripts.programstart_objective_continuation",
   "scripts.programstart_owner_handoff_intake",
+  "scripts.matrix_projection_dependency.operationalization",
+  "scripts.matrix_projection_dependency.root_frontier",
   "scripts.lint_prompts",
   "scripts.install_hooks",
   "scripts.programstart_research_delta",

@@ -388,7 +388,8 @@
       "scripts/matrix_projection_dependency/root_frontier.py",
       "tests/test_rich_operationalization.py",
       "scripts/matrix_projection_dependency/UPSTREAM.json",
-      "docs/MATRIX_P12_SOURCE_EVIDENCE_2026-10-19.md"
+      "docs/MATRIX_P12_SOURCE_EVIDENCE_2026-10-19.md",
+      "docs/MATRIX_COVERAGE_REPAIR_2026-10-20.md"
     ],
     "userjourney_bootstrap_assets": [
       "tests/test_programstart_dashboard_userjourney.py",

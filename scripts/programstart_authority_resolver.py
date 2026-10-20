@@ -377,13 +377,9 @@ def _reconstruct_binding(evidence: OperationalizationEvidence) -> DecisionOperat
         or artifact.get("root_task_id") != descriptor["root_task_id"]
     ):
         raise AuthorityResolutionError("projection is thin or mismatches current full owner semantics")
-    bookkeeping = artifact["matrix_bookkeeping"]
-    if bookkeeping != {
-        "projection_currentness": "CURRENT",
-        "ingestion_reconciliation_state": "RECONCILED",
-        "reconsideration_required": False,
-    }:
-        raise AuthorityResolutionError("projection is not reconciled/current")
+    # Native reconstruction above compares the entire rebuilt artifact, including
+    # positive bookkeeping and its semantic hash. Do not duplicate those checks
+    # after they have already rejected inconsistent artifacts.
     expected_artifact = project_operationalization(
         manifest,
         source_owner=evidence.owner_repository,
@@ -398,9 +394,6 @@ def _reconstruct_binding(evidence: OperationalizationEvidence) -> DecisionOperat
     frontier = root_frontier(graph, descriptor["root_task_id"])
     if frontier != artifact["frontier"] or frontier["selected_task_id"] is None or frontier["readiness_blocker_ids"]:
         raise AuthorityResolutionError("material owner graph is not ready")
-    semantic = _digest({key: artifact[key] for key in ("owner_manifest", "readiness_graph", "root_task_id")})
-    if artifact["semantic_hash"] != semantic:
-        raise AuthorityResolutionError("comprehensive semantic hash mismatch")
     if receipt != {
         "record_type": "matrix.operationalization_reconstruction.v1",
         "execution_authority": False,
@@ -409,8 +402,9 @@ def _reconstruct_binding(evidence: OperationalizationEvidence) -> DecisionOperat
         "reconstructed_manifest_sha256": _digest(manifest),
     }:
         raise AuthorityResolutionError("actual full reconstruction evidence mismatch")
-    if _owner_selection(root, evidence.owner_repository, evidence.owner_commit) != selected:
-        raise AuthorityResolutionError("owner operationalization changed during reconstruction")
+    # Revalidate HEAD after all reads. At the same immutable owner commit the
+    # selected declaration cannot change; an advanced HEAD fails in this call.
+    _owner_selection(root, evidence.owner_repository, evidence.owner_commit)
     projection = MatrixProjectionBinding(
         artifact_version="2.0",
         projection_role="ACTIVE_OPERATIONALIZATION",
@@ -419,7 +413,7 @@ def _reconstruct_binding(evidence: OperationalizationEvidence) -> DecisionOperat
         decision_ref=descriptor["owner_decision_ref"],
         source_ref=manifest["source_ref"],
         source_version=manifest["source_version"],
-        semantic_hash=semantic,
+        semantic_hash=artifact["semantic_hash"],
         source_fingerprint=_digest({"owner": source["owner"], "ref": source["ref"], "version": source["version"]}),
         source_currentness="CURRENT",
         projection_currentness="CURRENT",

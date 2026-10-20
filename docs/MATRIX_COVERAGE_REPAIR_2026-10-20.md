@@ -35,7 +35,9 @@ Current sources and Matrix AGENTS/read-order contracts were read before changes.
    exact-head hosted checks. Record unresolved environment gates honestly.
 
 Write sets: PROGRAMSTART pyproject coverage config, intake tests, resolver and rich
-tests, PR coverage-report steps and this evidence; Matrix native tests, scoped
+tests, PR coverage-report steps and their existing workflow contract test,
+bootstrap registration for this evidence and deterministic secrets-baseline
+hygiene; Matrix native tests, scoped
 coverage config, its source workflow and evidence. Existing source dependency
 pins, schemas, generated projections, owner live state and other lanes excluded.
 
@@ -66,3 +68,91 @@ reconstruction rejection proof before removing redundant checks. Fresh review
 of this corrected full plan/prompt found no further material corrective delta
 for this source-only scope. Excluded lines and inherited repository gaps remain
 deferred, not hidden or declared complete. Prior green tests are baseline only.
+
+## Implementation and measured results
+
+Matrix source PR50: 170 native tests, 100% statements and branches for the two
+modules (189 statements/88 branch exits, zero exclusions). This adds30 tests to
+the native baseline; Matrix implementation and schema bytes did not change.
+The first version-negative test disproved the assumption that schema validation
+already rejects nonempty unsupported versions. It now asserts the real version
+guard without mocking validation; a displaced pre-existing material identity
+assertion was restored. No production guard was removed from Matrix.
+
+PROGRAMSTART local full suite:2463 passed/2 skipped, compared with2448/2 baseline.
+Expanded corrected scope:91.83% combined,93.73% statement and86.80% branch coverage.
+There are837 missing statements and663 missing branch exits across the declared
+repository scope;100% repository coverage is not claimed. The former92.32% used
+a smaller denominator, omitting Matrix dependencies and owner intake. Do not
+compare those percentages as a test regression. No configured module is now
+missing; CI executes the actual report check and retains JSON/text/commit files.
+A new executable workflow test proves absent configured modules fail, while a
+complete report preserves the existing base-relative test comparison.
+
+The resolver module improves from84.46% to91.96% combined. All remaining16 missed
+statements/14 branch exits are inherited authority/declaration validation paths;
+no added/edited resolver executable statement or branch origin is uncovered.
+The compiler and ingress retain their prior module-wide inherited gaps.
+Owner intake now appears honestly at63.64%, with51 statements/33 branches missing.
+It is the smallest next owner-local test slice; larger inherited gaps remain in
+autonomy_parity, validate_core, capability_discovery, challenge_merge and others
+listed by the prior audit. This continuation does not silently select a broad
+repository test campaign.
+
+The denominator is the existing explicit production-module list plus two pinned
+Matrix implementations. Existing validator policy excludes package initializers,
+smoke-driver scripts and smoke helpers/golden harnesses. Existing313 excluded
+lines remain visible and unchanged; no new exclusion or coverage suppression.
+This is not all executable tooling, browser/remote proof or a mutation score.
+
+## Actual-diff review and retained corrections
+
+Same-assistant opposition under the same protocol; hosted execution is independent
+verification, not independent semantic review. Counterexamples: stale bookkeeping
+or a forged semantic hash could bypass deleted downstream duplicate checks.
+Actual native reconstruction rejects both before binding, and composed compiler
+tests reject copied updated positive bindings. The final owner-head recheck is
+retained; its concurrent-owner regression remains in the suite. An all-terminal
+valid projection cannot create work. Missing/foreign/oversize/non-object and
+mutable-source Git evidence now have reason-specific negative tests.
+
+Only duplicate bookkeeping/hash comparisons after full native reconstruction were
+removed. Semantic hash now comes from the artifact already verified by that
+reconstructor. The final immutable selection comparison was replaced by the same
+owner selection call that checks HEAD and declaration. Source identity, accepted
+ACTIVE role, root material readiness, receipt equality and legacy routes remain.
+
+Failed attempts retained: the first refactor left a removed local variable in
+the returned model; corrected to the verified artifact hash. Two tests assumed
+owner unselection must block independent work and used a nonexistent binding
+field; corrected to preserve legitimate independent work and test a real typed
+conflict. First full suite had6 bootstrap failures because this evidence doc was
+not registered; registered it rather than weakening validation. First all-file
+hooks refreshed secrets-baseline ordering, line offsets and an obsolete Windows
+path entry; no new secret or verification exemption was added. Staging that
+reviewed deterministic result is required by the hook, not a semantic waiver.
+
+Fresh corrected actual-diff review and complete plan/prompt review: no further
+material corrective delta for the declared source boundary. No source pin change,
+new platform, replay experiment or live operationalization is introduced. Source
+PR preparation is authorized; merge and runtime admission remain separate.
+Local broad-gate and exact-head hosted outcomes are recorded below when observed;
+they are not inferred from a helper test or this review label.
+
+## Local publication verification
+
+All-file deterministic hooks pass after staging their reviewed baseline refresh;
+standalone nox lint rerun passes. Typecheck, strict validation/drift, strict docs
+build and wheel build pass. The extracted-wheel real native reconstruction and
+compiler pass with authority acquired first from a real Git fixture. Two preliminary
+wheel harness attempts failed (missing fixture parent; following the venv Python
+symlink to the bare interpreter without dependencies); corrected the harness,
+not application code. Current read-only dashboard API/HTML smoke passes6 checks.
+The broader nox gate remains in progress at this checkpoint; no browser success
+or broad green gate is inferred. Exact-head hosted results supersede draft runs.
+
+Matrix50 hosted source run39438171653 passed at
+0eeb2872198150566586d4441cbd7dc971be9c25; retained artifact
+coverage-0eeb2872198150566586d4441cbd7dc971be9c25 (id12271523326).
+Its100% floor passed in the existing source workflow. Source tests are independent
+execution, not independent semantic approval or production acceptance.

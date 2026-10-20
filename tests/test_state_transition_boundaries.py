@@ -109,3 +109,31 @@ def test_completed_status_does_not_invent_commit_when_git_is_unavailable(local_s
     assert invoke(monkeypatch, "set", "--system", "userjourney", "--step", step, "--status", "completed") == 0
     result = common.load_workflow_state(registry, "userjourney")
     assert not result["phases"][step]["signoff"].get("commit_hash")
+
+
+def test_preflight_rejects_sync_drift_from_an_explicit_git_worktree(tmp_path, monkeypatch):
+    import subprocess
+
+    registry = common.load_registry()
+    registry["sync_rules"] = [
+        {
+            "name": "fixture_authority_pair",
+            "system": "programbuild",
+            "authority_files": ["authority.md"],
+            "dependent_files": ["dependent.md"],
+            "require_dependents_when_authority_changes": True,
+        }
+    ]
+    subprocess.run(["git", "init", "--quiet", str(tmp_path)], check=True)
+    (tmp_path / "authority.md").write_text("Changed authority requires its dependent update.\n")
+
+    def changed_fixture_files():
+        with monkeypatch.context() as scoped:
+            scoped.setattr(common, "ROOT", tmp_path)
+            changed = common.git_changed_files()
+        assert changed == ["authority.md"]
+        return changed
+
+    monkeypatch.setattr(state.programstart_drift_check, "git_changed_files", changed_fixture_files)
+    problems = state.preflight_problems(registry, "programbuild", active_step="owner_custom_stage")
+    assert any("fixture_authority_pair: authority files changed without dependent files" in problem for problem in problems)

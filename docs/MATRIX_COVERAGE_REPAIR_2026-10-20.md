@@ -671,3 +671,12 @@ regression checks scope, ordering and both absolute paths. This corrects the
 mechanism without changing the complete plan/prompt pair, production bytes or
 coverage boundary. Re-Challenge the corrected workflow and require fresh hosted
 source/full-convergence receipts; the failed run is not verification.
+
+Clean-worktree variance found by full convergence39490580778: all3105 tests passed,
+but coverage missed workflow_state.py135–136 and one branch because a preflight
+regression relied on incidental dirty source files. Required PR Gate's generated
+changed_files.txt had concealed this fixture dependence. A dedicated temporary Git
+repository now supplies a real changed authority file; public preflight must report
+its unpaired dependent as a drift violation. Production bytes and denominator are
+unchanged. Verify the corrected tests in a clean checkout and require new final-head
+hosted source/full-convergence receipts. No99% run is relabelled complete.

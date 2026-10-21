@@ -1347,6 +1347,7 @@ def validate_rule_enforcement(registry: dict) -> list[str]:
     instruction_files = [
         ".github/instructions/programbuild.instructions.md",
         ".github/instructions/userjourney.instructions.md",
+        ".github/instructions/repository-creation.instructions.md",
     ]
     for path in instruction_files:
         if not workspace_path(path).exists():

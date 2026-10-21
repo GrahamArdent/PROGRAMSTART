@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "kind": "derived_agent_discovery_reference",
+  "execution_authority": false,
+  "arbitrary_target_admission": false,
+  "entrypoint": "AGENTS.md",
+  "instruction": ".github/instructions/repository-creation.instructions.md",
+  "discovery_owner": "GrahamArdent/paths",
+  "operation_owner": "GrahamArdent/execution-node-control#557",
+  "owner_contract": {
+    "repository": "GrahamArdent/execution-node-control",
+    "path": "docs/EN557_GITHUB_MEDIATED_JOYHUB_REPO_PACKET_2026-10-20.md",
+    "refresh_before_use": true
+  },
+  "local_factory": {
+    "command": "programstart create",
+    "opt_in_flags": ["--github-repo", "--create-github-repo"],
+    "requires_current_authorized_execution_surface": true
+  },
+  "native_mailbox": {
+    "repository": "GrahamArdent/execution-node-control",
+    "branch": "main",
+    "request_path_template": "requests/<request_id>.json",
+    "result_path_template": "results/<request_id>/result.json",
+    "action": "github_private_repository_create_v1",
+    "entry_tools": ["GitHub.create_file", "GitHub.fetch_file", "GitHub.get_repo"],
+    "repository_evidence_path": "dispatcher.evidence.repository_creation",
+    "historical_envelope_example": "requests/req-en557-joyhub-create-20261021t011330z.json",
+    "copy_historical_runtime_values": false,
+    "requires_current_owner_admission": true,
+    "requires_verified_installed_release": true,
+    "requires_independent_target_readback": true,
+    "completed_effect_route": "read_only_status_or_reconciliation",
+    "unknown_effect_route": "recover_existing_effect_without_provider_retry",
+    "new_target_route": "existing_owner_review_release_admission",
+    "requires_hosted_desktop_commander": false,
+    "requires_windows": false,
+    "requires_controller_compute": false
+  },
+  "acceptance": {
+    "static_contract_tests": "tests/test_repository_creation_discovery.py",
+    "independent_fresh_chat_test_required": true,
+    "static_tests_prove_live_execution": false
+  }
+}

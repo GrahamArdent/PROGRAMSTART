@@ -83,6 +83,7 @@ def test_static_checks_cannot_be_reported_as_fresh_chat_acceptance() -> None:
     assert acceptance["independent_fresh_chat_test_required"] is True
     assert acceptance["static_tests_prove_live_execution"] is False
 
+
 def test_project_owned_agent_entry_is_not_bootstrapped() -> None:
     workspace = json.loads((ROOT / "config/registry/workspace.json").read_text(encoding="utf-8"))
     assets = workspace["workspace"]["bootstrap_assets"]

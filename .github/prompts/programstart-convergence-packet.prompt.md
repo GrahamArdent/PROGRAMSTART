@@ -62,9 +62,16 @@ Run broad validation/drift only when a repository authority change is actually b
 7. Stop on the first fresh current-candidate Challenge that produces no new material corrective delta and no controlling unresolved blocker. Do not repeat identical clear passes for ceremony.
    When the candidate contains a game plan and execution prompt, freshly review
    the complete corrected pair after plan convergence. Align scope, authority,
-   dependency order, verification, continuation and terminal conditions. If that
-   combined review materially changes either artifact, freshly review the revised
-   pair before clearance. Retain exact identities and honest reviewer provenance;
+   dependency order, verification, continuation and terminal conditions. For any
+   material ecosystem effect, challenge whether the pair requires the first
+   actually callable connected tool, current Paths/owner admission, original
+   result lookup, same-attempt unknown-result recovery, eligible alternatives,
+   and independent target readback. A failed lookup that yields a generic
+   operator-retry or global-unavailability claim is a corrective finding.
+   A mailbox read-effect request remains a control-plane write; never invent
+   a callable action merely to complete the plan. If the combined review
+   materially changes either artifact, freshly review the corrected pair
+   before clearance. Retain exact identities and honest reviewer provenance;
    a bare CLEAR label does not establish owner acceptance or action-gate enforcement.
 8. Render one Markdown Convergence Packet containing:
    - title/date/mode/declared scope;

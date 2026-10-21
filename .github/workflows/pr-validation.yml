@@ -139,9 +139,21 @@ jobs:
         run: |
           base_dir="${{ runner.temp }}/programstart-base"
           git worktree add --detach "$base_dir" "origin/${{ github.base_ref }}"
+          # The historical base lacks tests/__init__.py. In an isolated worktree,
+          # a third-party 'tests' package can shadow local test-helper imports,
+          # causing pytest collection to exit 2 before baseline comparison.
+          # Add only the namespace marker in this disposable baseline worktree.
+          # Do not skip tests, change assertions, or classify collection errors
+          # as inherited test failures.
+          if [[ ! -e "$base_dir/tests/__init__.py" ]]; then
+            printf '"""Local test helper imports for baseline validation."""\n' > "$base_dir/tests/__init__.py"
+          fi
           (
             cd "$base_dir"
             uv sync --extra dev
+            # Historical tests import both tests.* and bare fixture helpers.
+            # Make both canonical repository paths visible for collection.
+            export PYTHONPATH="$PWD/tests:$PWD"
             set +e
             uv run pytest -q --junitxml="${{ runner.temp }}/base-tests.xml"
             status=$?
@@ -156,6 +168,8 @@ jobs:
       - name: Run head tests and reject new failures
         shell: bash
         run: |
+          # Use the same helper import search order as the baseline worktree.
+          export PYTHONPATH="$PWD/tests:$PWD"
           set +e
           uv run coverage run -m pytest -q --junitxml="${{ runner.temp }}/head-tests.xml"
           head_status=$?

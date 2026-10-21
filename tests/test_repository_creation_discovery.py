@@ -82,3 +82,14 @@ def test_static_checks_cannot_be_reported_as_fresh_chat_acceptance() -> None:
     assert acceptance["static_contract_tests"] == "tests/test_repository_creation_discovery.py"
     assert acceptance["independent_fresh_chat_test_required"] is True
     assert acceptance["static_tests_prove_live_execution"] is False
+
+def test_project_owned_agent_entry_is_not_bootstrapped() -> None:
+    workspace = json.loads((ROOT / "config/registry/workspace.json").read_text(encoding="utf-8"))
+    assets = workspace["workspace"]["bootstrap_assets"]
+    assert "AGENTS.md" not in assets
+    assert "config/repository-creation-routing.json" in assets
+    assert ROUTE["instruction"] in assets
+    assert "tests/test_repository_creation_discovery.py" in assets
+    source_entry = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+    assert "uv run programstart status" in source_entry
+    assert "project-owned file" in source_entry

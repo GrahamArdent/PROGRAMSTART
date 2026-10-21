@@ -28,6 +28,7 @@ def test_operator_excluded_provider_stays_out_of_startup_route_candidates() -> N
     assert "The operator will handle uninstallation" in guidance
     assert "other" in guidance
 
+
 def test_registry_and_context_stage_prompts_keep_recovery_rules() -> None:
     for output in (
         build_prompt("implementation_loop"),

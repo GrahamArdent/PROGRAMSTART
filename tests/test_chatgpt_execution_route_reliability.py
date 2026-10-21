@@ -60,7 +60,8 @@ def test_unresolved_entry_mode_does_not_drop_continuation() -> None:
 
 
 def test_sealed_chatgpt_prompt_preserves_effect_route_and_scope() -> None:
-    cases = json.loads((ROOT / "tests/fixtures/intent_compilation/real_cases.json").read_text(encoding="utf-8"))["cases"]
+    fixture = ROOT / "tests/fixtures/intent_compilation/real_cases.json"
+    cases = json.loads(fixture.read_text(encoding="utf-8"))["cases"]
     case = next(c for c in cases if c["name"] == "resume_creator_parallel_safe_continuation")
     authority = AuthoritySnapshot.model_validate(case["authority"])
     packet = compile_work_packet(case["intent"], authority, kind=IntentKind.CONTINUATION)

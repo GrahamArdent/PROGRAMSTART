@@ -560,8 +560,15 @@ def _execution_handoff(
     target: str,
     related: RelatedRepository | None,
 ) -> tuple[str, ...]:
+    route_checks = (
+        "For material ecosystem effects, bind authorized actor/effect/exact target to current Paths discovery and owner-native JIT admission.",
+        "Inspect tools actually connected in this chat; name the first callable action, current invocation contract, original result and independent target readback. Do not mandate a transport.",
+        "When a lookup fails, record the concrete error and bounded alternative attempts. Apply the current Paths continuation gate when callable; DIAGNOSE_LOOKUP_FAILURE is diagnosis, not a generic operator retry, and ESCALATION_NOT_PRECLUDED_BY_PATHS does not prove all routes are unavailable.",
+        "Distinguish absent, pending, denied, corrupt and unknown; recover an uncertain previous effect by original identity without blind redispatch. A mailbox status query writes control-plane state, even for a read-only business effect.",
+        "Verify the actual target, not just a plan, PR, request-file commit or generic acceptance label. Respect denials and read-only scope.",
+    )
     if mode == "unresolved":
-        return ("Resolve entry mode from live evidence before implementation.",)
+        return ("Resolve entry mode from live evidence before implementation.", *route_checks)
     if environment == "connected-tools":
         handoff = [
             "Use connected repository or runtime tools directly for the bounded slice.",
@@ -573,13 +580,14 @@ def _execution_handoff(
                 "Treat related repositories as independent authority surfaces; "
                 "cross-repository reads do not authorize coordinated mutation."
             )
-        return tuple(handoff)
+        return (*handoff, *route_checks)
     if mode == "c":
         return (
             f"Use the central PROGRAMSTART target control plane against {target} for supported operations.",
             "Keep remote advance, closeout, state mutation, and full template validation blocked.",
+            *route_checks,
         )
-    return ("Use the normal PROGRAMSTART kickoff or factory path after the current gate is satisfied.",)
+    return ("Use the normal PROGRAMSTART kickoff or factory path after the current gate is satisfied.", *route_checks)
 
 
 def build_plan(

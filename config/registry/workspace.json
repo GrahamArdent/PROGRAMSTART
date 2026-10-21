@@ -36,7 +36,6 @@
       "SECURITY.md",
       "requirements.txt",
       "QUICKSTART.md",
-      "AGENTS.md",
       "config/process-registry.json",
       "config/repository-creation-routing.json",
       "config/registry/workspace.json",

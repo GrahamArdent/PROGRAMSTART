@@ -25,7 +25,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v6
         with:
           fetch-depth: 0
 
@@ -36,7 +36,7 @@ jobs:
           echo "PRE_COMMIT_HOME=$RUNNER_TEMP/programstart-convergence-pre-commit" >> "$GITHUB_ENV"
 
       - name: Set up Python
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v6
         with:
           python-version: '3.12'
 
@@ -44,14 +44,14 @@ jobs:
         run: python -m pip install uv
 
       - name: Cache uv packages
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7  # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v5
         with:
           path: ${{ env.UV_CACHE_DIR }}
           key: uv-manual-convergence-${{ runner.os }}-${{ hashFiles('uv.lock') }}
           restore-keys: uv-manual-convergence-${{ runner.os }}-
 
       - name: Cache pre-commit hooks
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7  # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v5
         with:
           path: ${{ env.PRE_COMMIT_HOME }}
           key: pre-commit-manual-${{ runner.os }}-${{ hashFiles('.pre-commit-config.yaml') }}
@@ -71,7 +71,7 @@ jobs:
 
       - name: Upload golden failures
         if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7
         with:
           name: manual-convergence-golden-failures
           path: |
@@ -81,7 +81,7 @@ jobs:
 
       - name: Upload distribution artifacts
         if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7
         with:
           name: manual-convergence-dist
           path: dist/*

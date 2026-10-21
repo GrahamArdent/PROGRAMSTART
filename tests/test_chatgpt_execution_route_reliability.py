@@ -8,7 +8,10 @@ import json
 from pathlib import Path
 
 from scripts.programstart_intent_compile import (
-    AuthoritySnapshot, IntentKind, compile_work_packet, render_chatgpt_prompt,
+    AuthoritySnapshot,
+    IntentKind,
+    compile_work_packet,
+    render_chatgpt_prompt,
 )
 from scripts.programstart_orchestrate import build_plan, render_text
 from scripts.programstart_prompt_build import build_context_prompt, build_prompt
@@ -36,7 +39,8 @@ def test_connected_orchestration_includes_real_lookup_continuation() -> None:
     plan = build_plan(
         request="Verify the existing JoyHub repo publication",
         repository="GrahamArdent/joyhub-research",
-        environment="connected-tools", mode="c",
+        environment="connected-tools",
+        mode="c",
     )
     output = render_text(plan)
     assert "actor/effect/exact target" in output

@@ -941,6 +941,36 @@ def render_chatgpt_prompt(packet: CompiledWorkPacket) -> str:
         "Temporary automation gaps (do not relabel these as human judgment gates):",
         bullets(packet.autonomy.temporary_automation_gaps),
         "",
+        "## Callable effect route and lookup-failure continuation",
+        (
+            "- For each material external effect, resolve actor/effect/exact target, "
+            "current Paths discovery and owner-native permission, admission and release. "
+            "Inspect this chat's actually connected tools, name the first callable action "
+            "and current owner invocation contract before use. No transport is universal."
+        ),
+        (
+            "- If the actual callable action cannot yet be named, keep route selection "
+            "unresolved; do not invent a tool or claim ecosystem-wide capability absence "
+            "from one failed lookup or missing direct tool."
+        ),
+        (
+            "- After a lookup failure, preserve concrete error, attempted eligible reads "
+            "and the current Paths continuation disposition when callable. "
+            "DIAGNOSE_LOOKUP_FAILURE is same-scope diagnosis, not an operator-retry "
+            "request. ESCALATION_NOT_PRECLUDED_BY_PATHS does not establish exhaustion."
+        ),
+        (
+            "- Distinguish absent/pending/denied/corrupt/unknown results; recover uncertain "
+            "effects by original identity rather than resubmitting. Respect genuine "
+            "denials. Mailbox status dispatch is a control-plane write even for a "
+            "read-only business effect."
+        ),
+        (
+            "- Record selected actual tool, bounded alternatives, original receipt "
+            "and independent target readback. A plan, PR or request-file commit "
+            "is not the completed user outcome."
+        ),
+        "",
         "## Evidence and completion",
         "Required evidence:",
         bullets(packet.evidence.requirements),

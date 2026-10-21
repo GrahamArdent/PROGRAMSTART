@@ -19,6 +19,15 @@ from scripts.programstart_prompt_build import build_context_prompt, build_prompt
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def test_operator_excluded_provider_stays_out_of_startup_route_candidates() -> None:
+    """Guard an operator preference; not a substitute for live pre-call admission."""
+    guidance = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+    assert "TinyFish is excluded by the operator" in guidance
+    assert "EXCLUDED_BY_OPERATOR" in guidance
+    assert "Never use, suggest, or choose TinyFish" in guidance
+    assert "The operator will handle uninstallation" in guidance
+    assert "other" in guidance
+
 def test_registry_and_context_stage_prompts_keep_recovery_rules() -> None:
     for output in (
         build_prompt("implementation_loop"),

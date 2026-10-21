@@ -12,6 +12,8 @@ For an authorized repository-creation task, read `.github/instructions/repositor
 
 The existing local factory and the connected-GitHub Execution Node mailbox are separate clients. A missing direct create-repository tool, unavailable local shell, or hosted Desktop Commander quota is not proof that the mailbox is unavailable. Use the narrowest currently eligible route; do not require Windows or Controller when the native mailbox suffices.
 
+On a failed lookup, diagnose and retry only eligible read-only discovery within current Paths constraints before claiming an access blocker. Do not ask for a generic operator retry, infer permission from transport, or submit a second create when the original effect remains uncertain.
+
 Creation requires authorization for the exact target and visibility plus current owner admission. Merely saying PROGRAMSTART grants neither. For a completed effect, use read-only status/reconciliation, not another create request. A plan commit is not dispatch; a request commit is not success. Require the operation result and independent repository verification, then separately verify any authorized content publication.
 
 Do not claim that these repository instructions install a connector, change ChatGPT account/project settings, or prove independent fresh-chat acceptance. Preserve all existing owner, review, release, custody, replay, and unknown-effect controls.

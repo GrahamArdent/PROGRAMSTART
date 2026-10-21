@@ -73,6 +73,41 @@ def _find_sync_rules(registry: dict[str, Any], stage_name: str) -> list[dict[str
     return rules
 
 
+def _render_effect_execution_guidance() -> str:
+    """Conditional route guidance, not a tool inventory or authority grant."""
+    return textwrap.dedent("""\
+        ## Material ecosystem operations: callable route and continuation
+
+        When a step requires a repository, provider, runtime, or external effect:
+        - Resolve the actor, effect, exact target, and authorized scope. Check
+          current `GrahamArdent/paths` actor/effect/target discovery and the
+          producing owner's contract and JIT admission for this particular effect.
+        - Inspect tools actually connected in this execution session. Name the
+          first callable tool/action, relevant prerequisites/currentness, result
+          location, same-attempt recovery and independent target readback.
+          If not yet found, route selection is unresolved; a missing direct
+          tool or failed lookup is not proof of unavailable capability.
+          Never invent a tool or reuse historical IDs, TTLs, releases or grants.
+        - Prefer the narrowest eligible direct action. Do not globally require
+          Desktop Commander, a mailbox, Controller or a custom MCP tunnel.
+          Resolve authorized machine-solvable prerequisites and resume.
+        - On lookup failure, record exact tool, operation, error class, evidence
+          and bounded attempts. Apply the Paths continuation gate when callable.
+          CONTINUE_DIRECT and CONTINUE_RECOVERY_JIT_REQUIRED require current
+          owner validation; DIAGNOSE_LOOKUP_FAILURE means bounded same-scope
+          diagnosis, not a generic operator-retry request.
+          ESCALATION_NOT_PRECLUDED_BY_PATHS does not prove route exhaustion.
+        - Distinguish absent, pending, denied, corrupt, and unknown outcomes.
+          Recover an uncertain prior effect by original identity; do not
+          blindly resubmit. Respect real denials and read-only scope.
+          A mailbox status request is a control-plane write, even when the
+          requested business operation is read-only.
+        - Independently verify the actual target. A plan, PR, request-file
+          commit or dispatch receipt alone is not completion.
+        These steps apply only when the task has a material ecosystem effect.
+    """)
+
+
 def _human_name(stage_name: str) -> str:
     return stage_name.replace("_", " ").title()
 
@@ -203,6 +238,8 @@ def _render_body(
         for s in scripts:
             lines.append(f"- `{s}`\n")
 
+    lines.append(_render_effect_execution_guidance())
+
     # Output Ordering
     lines.append("\n## Output Ordering\n")
     lines.append("Write files in authority-before-dependent order per `config/process-registry.json` `sync_rules`")
@@ -306,6 +343,8 @@ def _render_context_body(context: dict[str, str]) -> str:
     )
     lines.append("3. **Record decisions.** Document any architectural or design decisions made during this stage.\n")
     lines.append("4. **Write outputs.** Produce the primary deliverable for this stage.\n")
+
+    lines.append(_render_effect_execution_guidance())
 
     # Verification
     lines.append("\n## Verification\n")

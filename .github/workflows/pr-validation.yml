@@ -151,6 +151,9 @@ jobs:
           (
             cd "$base_dir"
             uv sync --extra dev
+            # Historical tests import both tests.* and bare fixture helpers.
+            # Make both canonical repository paths visible for collection.
+            export PYTHONPATH="$PWD/tests:$PWD"
             set +e
             uv run pytest -q --junitxml="${{ runner.temp }}/base-tests.xml"
             status=$?
@@ -165,6 +168,8 @@ jobs:
       - name: Run head tests and reject new failures
         shell: bash
         run: |
+          # Use the same helper import search order as the baseline worktree.
+          export PYTHONPATH="$PWD/tests:$PWD"
           set +e
           uv run coverage run -m pytest -q --junitxml="${{ runner.temp }}/head-tests.xml"
           head_status=$?

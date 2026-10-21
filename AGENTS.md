@@ -4,6 +4,8 @@ Use this entry point when the operator invokes PROGRAMSTART or "program start" f
 
 Read `.github/copilot-instructions.md` for the existing startup/JIT, authority, work-packet, Challenge Gate, repository-boundary, and publication contracts. Load only the current task's relevant authority; conversational memory is not authority. This file is an entry point, not a new strategic execution spine or grant of permissions.
 
+For a local PROGRAMSTART checkout, `uv run programstart status` is a read-only status entry point. In a ChatGPT session without an authorized shell, use available connected read actions instead; do not invent command access. New projects own their generated `AGENTS.md`; this repository entry is not a replacement for that project-owned file.
+
 ## Repository creation is part of PROGRAMSTART
 
 For an authorized repository-creation task, read `.github/instructions/repository-creation.instructions.md` and `config/repository-creation-routing.json`. Check current Paths and the operation owner's callable contract before declaring the operation unavailable.

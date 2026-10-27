@@ -1,0 +1,2208 @@
+{
+  "source_head": "83e22aadbb07f07b39badda1a2b7a914c058dc21",
+  "original_source_mutated": false,
+  "backbone_execution": false,
+  "baseline": [
+    {
+      "id": "baseline_unit",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts",
+        "-p",
+        "test_controlled_lookup_read.py",
+        "-v"
+      ],
+      "started_at": "2026-10-27T19:49:31.368042+00:00",
+      "elapsed_seconds": 2.427,
+      "returncode": 0,
+      "reported_methods": 31,
+      "log_path": "evidence/baseline_unit.log",
+      "log_sha256": "dae14a673e2125192f54e63dc5e16cb3c7a4df861bc8ff321ab2e55a0cdcfdbc",
+      "scope": "Local source fixture observation; not authenticated owner acceptance"
+    },
+    {
+      "id": "baseline_parity",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts",
+        "-p",
+        "test_real_paths_gate_parity.py",
+        "-v"
+      ],
+      "started_at": "2026-10-27T19:49:33.795163+00:00",
+      "elapsed_seconds": 1.203,
+      "returncode": 0,
+      "reported_methods": 4,
+      "log_path": "evidence/baseline_parity.log",
+      "log_sha256": "cfd1c94dfb6f7bd8626b142e3150d682b7aeb00395a45f557b14f9a22e207ade",
+      "scope": "Local source fixture observation; not authenticated owner acceptance"
+    },
+    {
+      "id": "baseline_ci",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_ci210_workflows.py",
+        "-v"
+      ],
+      "started_at": "2026-10-27T19:49:34.998547+00:00",
+      "elapsed_seconds": 0.135,
+      "returncode": 0,
+      "reported_methods": 2,
+      "log_path": "evidence/baseline_ci.log",
+      "log_sha256": "f4380aba6fe050b60341810d0336a8ea3bae6eaa9993ea91046b6a1f050cf3ea",
+      "scope": "Local source fixture observation; not authenticated owner acceptance"
+    },
+    {
+      "id": "baseline_probes",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts",
+        "-p",
+        "challenge_probes.py",
+        "-v"
+      ],
+      "started_at": "2026-10-27T19:49:35.137316+00:00",
+      "elapsed_seconds": 0.26,
+      "returncode": 0,
+      "reported_methods": 2,
+      "log_path": "evidence/baseline_probes.log",
+      "log_sha256": "329f2e0649b280a274ac1a32e5b73307d09f53f01c7a1a10b4696556e1a59981",
+      "scope": "Local source fixture observation; not authenticated owner acceptance"
+    }
+  ],
+  "behavioral_mutations": [
+    {
+      "id": "M01_quota",
+      "obligation": "PO03",
+      "existing_unit": {
+        "id": "M01_quota_unit",
+        "argv": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "scripts",
+          "-p",
+          "test_controlled_lookup_read.py",
+          "-v"
+        ],
+        "started_at": "2026-10-27T19:49:35.401037+00:00",
+        "elapsed_seconds": 2.68,
+        "returncode": 1,
+        "reported_methods": 31,
+        "log_path": "evidence/M01_quota_unit.log",
+        "log_sha256": "0fd1f06b0c3ba6045e329571a79477f6a909a8739b0f710bafc2a097f4a016c6",
+        "scope": "Local source fixture observation; not authenticated owner acceptance"
+      },
+      "detected_by_existing_unit": true,
+      "mutation_sha256": "6b457701b7a596c39a459e3a42440e4be509ab7de53def2bc84be37eb8a55b85"
+    },
+    {
+      "id": "M02_target",
+      "obligation": "PO02",
+      "existing_unit": {
+        "id": "M02_target_unit",
+        "argv": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "scripts",
+          "-p",
+          "test_controlled_lookup_read.py",
+          "-v"
+        ],
+        "started_at": "2026-10-27T19:49:38.085372+00:00",
+        "elapsed_seconds": 2.749,
+        "returncode": 1,
+        "reported_methods": 31,
+        "log_path": "evidence/M02_target_unit.log",
+        "log_sha256": "be44b4e39202a37767f9fc97e67451f5c82392944f1f69678cb0d3a7c94928d1",
+        "scope": "Local source fixture observation; not authenticated owner acceptance"
+      },
+      "detected_by_existing_unit": true,
+      "mutation_sha256": "6df970591cd9e7c9b358ccf93118ef59c09a9bcc3db78fe86960d7133f7cbc0d"
+    },
+    {
+      "id": "M03_revocation",
+      "obligation": "PO01",
+      "existing_unit": {
+        "id": "M03_revocation_unit",
+        "argv": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "scripts",
+          "-p",
+          "test_controlled_lookup_read.py",
+          "-v"
+        ],
+        "started_at": "2026-10-27T19:49:40.837580+00:00",
+        "elapsed_seconds": 2.62,
+        "returncode": 1,
+        "reported_methods": 31,
+        "log_path": "evidence/M03_revocation_unit.log",
+        "log_sha256": "5e827ec4dd9f736ab8e337516f70b308df8bf6c8354b9bc062b3bd87090a161f",
+        "scope": "Local source fixture observation; not authenticated owner acceptance"
+      },
+      "detected_by_existing_unit": true,
+      "mutation_sha256": "f6884bc3a4f0dc0d8b6af42d69f198decac9c2c245a9d9718a20b661edb887e9"
+    },
+    {
+      "id": "M04_pending",
+      "obligation": "PO07",
+      "existing_unit": {
+        "id": "M04_pending_unit",
+        "argv": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "scripts",
+          "-p",
+          "test_controlled_lookup_read.py",
+          "-v"
+        ],
+        "started_at": "2026-10-27T19:49:43.462712+00:00",
+        "elapsed_seconds": 2.331,
+        "returncode": 1,
+        "reported_methods": 31,
+        "log_path": "evidence/M04_pending_unit.log",
+        "log_sha256": "526565080e51d8f13fe25322cb7d70e73a2e7e836721c9df40e7712a36d4d7c6",
+        "scope": "Local source fixture observation; not authenticated owner acceptance"
+      },
+      "detected_by_existing_unit": true,
+      "mutation_sha256": "d4cf694ab29250120a3b4ed958503156244454ee7ec517fdd3742ae630568699"
+    },
+    {
+      "id": "M05_availability",
+      "obligation": "PO03",
+      "existing_unit": {
+        "id": "M05_availability_unit",
+        "argv": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "scripts",
+          "-p",
+          "test_controlled_lookup_read.py",
+          "-v"
+        ],
+        "started_at": "2026-10-27T19:49:45.798402+00:00",
+        "elapsed_seconds": 6.829,
+        "returncode": 0,
+        "reported_methods": 31,
+        "log_path": "evidence/M05_availability_unit.log",
+        "log_sha256": "0aa07bf0c9e86a928cbacd7877eb79d79469974c64e8eb496a38bf7b5b6040e5",
+        "scope": "Local source fixture observation; not authenticated owner acceptance"
+      },
+      "detected_by_existing_unit": false,
+      "mutation_sha256": "cf688243d10cc060f712f45e5bf5f640baefb8f3d018d0433cdd3f1235e97199",
+      "existing_parity": {
+        "id": "M05_availability_parity",
+        "argv": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "scripts",
+          "-p",
+          "test_real_paths_gate_parity.py",
+          "-v"
+        ],
+        "started_at": "2026-10-27T19:49:52.628182+00:00",
+        "elapsed_seconds": 0.673,
+        "returncode": 0,
+        "reported_methods": 4,
+        "log_path": "evidence/M05_availability_parity.log",
+        "log_sha256": "7a1ff2f7932dd1e2d24b6cd1de0d0c68ffb08a6308076716db1d9b02dd6e6ae7",
+        "scope": "Local source fixture observation; not authenticated owner acceptance"
+      },
+      "challenge_probes": {
+        "id": "M05_availability_probes",
+        "argv": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "scripts",
+          "-p",
+          "challenge_probes.py",
+          "-v"
+        ],
+        "started_at": "2026-10-27T19:49:53.301843+00:00",
+        "elapsed_seconds": 0.248,
+        "returncode": 1,
+        "reported_methods": 2,
+        "log_path": "evidence/M05_availability_probes.log",
+        "log_sha256": "10dd39d78b15b62d7383dd7f430032ba4129dc893a9f91ef94b37aab928d7f81",
+        "scope": "Local source fixture observation; not authenticated owner acceptance"
+      },
+      "detected_by_added_probe": true
+    },
+    {
+      "id": "M06_payload",
+      "obligation": "PO08",
+      "existing_unit": {
+        "id": "M06_payload_unit",
+        "argv": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "scripts",
+          "-p",
+          "test_controlled_lookup_read.py",
+          "-v"
+        ],
+        "started_at": "2026-10-27T19:49:53.553577+00:00",
+        "elapsed_seconds": 2.432,
+        "returncode": 0,
+        "reported_methods": 31,
+        "log_path": "evidence/M06_payload_unit.log",
+        "log_sha256": "d45284e89223122cb34849035813deb78012e6af64eac39723e97cadd053e896",
+        "scope": "Local source fixture observation; not authenticated owner acceptance"
+      },
+      "detected_by_existing_unit": false,
+      "mutation_sha256": "f68a9e649a7e15778758203fc7fc796c9a195fc5db311e5b59522837cb993756",
+      "existing_parity": {
+        "id": "M06_payload_parity",
+        "argv": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "scripts",
+          "-p",
+          "test_real_paths_gate_parity.py",
+          "-v"
+        ],
+        "started_at": "2026-10-27T19:49:55.986177+00:00",
+        "elapsed_seconds": 0.758,
+        "returncode": 0,
+        "reported_methods": 4,
+        "log_path": "evidence/M06_payload_parity.log",
+        "log_sha256": "d820b27562f10a8b714c5f776932d57e45abd7ae5676643094eb75e6cd60fe56",
+        "scope": "Local source fixture observation; not authenticated owner acceptance"
+      },
+      "challenge_probes": {
+        "id": "M06_payload_probes",
+        "argv": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "scripts",
+          "-p",
+          "challenge_probes.py",
+          "-v"
+        ],
+        "started_at": "2026-10-27T19:49:56.744692+00:00",
+        "elapsed_seconds": 0.256,
+        "returncode": 1,
+        "reported_methods": 2,
+        "log_path": "evidence/M06_payload_probes.log",
+        "log_sha256": "e2f27e75c81c885d4a8a20c5f0ffca79e8b5b17ba27f0fbad78c920ea95c2d32",
+        "scope": "Local source fixture observation; not authenticated owner acceptance"
+      },
+      "detected_by_added_probe": true
+    }
+  ],
+  "selector_mutations": [
+    {
+      "id": "S01_drop_guard_suites",
+      "existing_workflow_tests": {
+        "id": "S01_drop_guard_suites_existing_ci",
+        "argv": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "tests",
+          "-p",
+          "test_ci210_workflows.py",
+          "-v"
+        ],
+        "started_at": "2026-10-27T19:49:57.102958+00:00",
+        "elapsed_seconds": 0.1,
+        "returncode": 0,
+        "reported_methods": 2,
+        "log_path": "evidence/S01_drop_guard_suites_existing_ci.log",
+        "log_sha256": "22961f15c875bc6033cd57573039cf0728355be33011149715891aa56b282092",
+        "scope": "Local source fixture observation; not authenticated owner acceptance"
+      },
+      "existing_tests_detected": false,
+      "independent_missed_obligations": 28,
+      "matrix": [
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "scripts/controlled_lookup_read.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "scripts/test_controlled_lookup_read.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "scripts/test_real_paths_gate_parity.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "scripts/check_continuation_gate.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "scripts/check_pre_escalation.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "scripts/composition_reuse_model.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "scripts/find_recovery_recipe.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "registry/capabilities.json"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "registry/effect-reachability.json"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "registry/paths/PF-08-fixture-change.json"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "tests/fixtures/OBS-009-continuation-gate.json"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "requirements-mcp.txt"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            ".github/workflows/paths-mcp.yml"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "tests/test_ci210_workflows.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "scripts/controlled_lookup_read.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "scripts/test_controlled_lookup_read.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "scripts/test_real_paths_gate_parity.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "scripts/check_continuation_gate.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "scripts/check_pre_escalation.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "scripts/composition_reuse_model.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "scripts/find_recovery_recipe.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "registry/capabilities.json"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "registry/effect-reachability.json"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "registry/paths/PF-08-fixture-change.json"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "tests/fixtures/OBS-009-continuation-gate.json"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "requirements-mcp.txt"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            ".github/workflows/paths-mcp.yml"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "tests/test_ci210_workflows.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "feature/pilot",
+          "changed": [
+            "scripts/controlled_lookup_read.py"
+          ],
+          "expected": [],
+          "actual": [],
+          "meets_obligation": true
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "README.md"
+          ],
+          "expected": [],
+          "actual": [],
+          "meets_obligation": true
+        },
+        {
+          "event": "workflow_dispatch",
+          "branch": "main",
+          "changed": [
+            "scripts/controlled_lookup_read.py"
+          ],
+          "expected": [],
+          "actual": [],
+          "meets_obligation": true
+        },
+        {
+          "event": "issue_comment",
+          "branch": "main",
+          "changed": [
+            "scripts/controlled_lookup_read.py"
+          ],
+          "expected": [],
+          "actual": [],
+          "meets_obligation": true
+        }
+      ],
+      "mutated_workflow": "name: Paths MCP continuation contract\non:\n  pull_request:\n    paths: [\"scripts/**\", \"registry/**\", \"tests/fixtures/**\", \"tests/test_ci210_workflows.py\", \"requirements-mcp.txt\", \".github/workflows/paths-mcp.yml\"]\n  push:\n    branches: [main]\n    paths: [\"scripts/**\", \"registry/**\", \"tests/fixtures/**\", \"tests/test_ci210_workflows.py\", \"requirements-mcp.txt\", \".github/workflows/paths-mcp.yml\"]\nconcurrency:\n  group: paths-mcp-${{ github.event.pull_request.number || github.sha }}\n  cancel-in-progress: ${{ github.event_name == 'pull_request' }}\npermissions:\n  contents: read\njobs:\n  stdio-contract:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n        with:\n          ref: ${{ github.event.pull_request.head.sha || github.sha }}\n      - uses: actions/setup-python@v5\n        with:\n          python-version: \"3.12\"\n      - run: python -m pip install -r requirements-mcp.txt\n      - run: python -m unittest discover -s tests -p test_ci210_workflows.py -v\n      - run: python scripts/test_paths_mcp_server.py\n      - run: python scripts/validate_registry.py\n\n"
+    },
+    {
+      "id": "S02_drop_script_trigger",
+      "existing_workflow_tests": {
+        "id": "S02_drop_script_trigger_existing_ci",
+        "argv": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "tests",
+          "-p",
+          "test_ci210_workflows.py",
+          "-v"
+        ],
+        "started_at": "2026-10-27T19:49:57.318617+00:00",
+        "elapsed_seconds": 0.102,
+        "returncode": 0,
+        "reported_methods": 2,
+        "log_path": "evidence/S02_drop_script_trigger_existing_ci.log",
+        "log_sha256": "22961f15c875bc6033cd57573039cf0728355be33011149715891aa56b282092",
+        "scope": "Local source fixture observation; not authenticated owner acceptance"
+      },
+      "existing_tests_detected": false,
+      "independent_missed_obligations": 14,
+      "matrix": [
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "scripts/controlled_lookup_read.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "scripts/test_controlled_lookup_read.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "scripts/test_real_paths_gate_parity.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "scripts/check_continuation_gate.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "scripts/check_pre_escalation.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "scripts/composition_reuse_model.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "scripts/find_recovery_recipe.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "registry/capabilities.json"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "meets_obligation": true
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "registry/effect-reachability.json"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "meets_obligation": true
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "registry/paths/PF-08-fixture-change.json"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "meets_obligation": true
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "tests/fixtures/OBS-009-continuation-gate.json"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "meets_obligation": true
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "requirements-mcp.txt"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "meets_obligation": true
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            ".github/workflows/paths-mcp.yml"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "meets_obligation": true
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "tests/test_ci210_workflows.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "meets_obligation": true
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "scripts/controlled_lookup_read.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "scripts/test_controlled_lookup_read.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "scripts/test_real_paths_gate_parity.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "scripts/check_continuation_gate.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "scripts/check_pre_escalation.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "scripts/composition_reuse_model.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "scripts/find_recovery_recipe.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "registry/capabilities.json"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "meets_obligation": true
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "registry/effect-reachability.json"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "meets_obligation": true
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "registry/paths/PF-08-fixture-change.json"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "meets_obligation": true
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "tests/fixtures/OBS-009-continuation-gate.json"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "meets_obligation": true
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "requirements-mcp.txt"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "meets_obligation": true
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            ".github/workflows/paths-mcp.yml"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "meets_obligation": true
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "tests/test_ci210_workflows.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "meets_obligation": true
+        },
+        {
+          "event": "push",
+          "branch": "feature/pilot",
+          "changed": [
+            "scripts/controlled_lookup_read.py"
+          ],
+          "expected": [],
+          "actual": [],
+          "meets_obligation": true
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "README.md"
+          ],
+          "expected": [],
+          "actual": [],
+          "meets_obligation": true
+        },
+        {
+          "event": "workflow_dispatch",
+          "branch": "main",
+          "changed": [
+            "scripts/controlled_lookup_read.py"
+          ],
+          "expected": [],
+          "actual": [],
+          "meets_obligation": true
+        },
+        {
+          "event": "issue_comment",
+          "branch": "main",
+          "changed": [
+            "scripts/controlled_lookup_read.py"
+          ],
+          "expected": [],
+          "actual": [],
+          "meets_obligation": true
+        }
+      ],
+      "mutated_workflow": "name: Paths MCP continuation contract\non:\n  pull_request:\n    paths: [\"registry/**\", \"tests/fixtures/**\", \"tests/test_ci210_workflows.py\", \"requirements-mcp.txt\", \".github/workflows/paths-mcp.yml\"]\n  push:\n    branches: [main]\n    paths: [\"registry/**\", \"tests/fixtures/**\", \"tests/test_ci210_workflows.py\", \"requirements-mcp.txt\", \".github/workflows/paths-mcp.yml\"]\nconcurrency:\n  group: paths-mcp-${{ github.event.pull_request.number || github.sha }}\n  cancel-in-progress: ${{ github.event_name == 'pull_request' }}\npermissions:\n  contents: read\njobs:\n  stdio-contract:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n        with:\n          ref: ${{ github.event.pull_request.head.sha || github.sha }}\n      - uses: actions/setup-python@v5\n        with:\n          python-version: \"3.12\"\n      - run: python -m pip install -r requirements-mcp.txt\n      - run: python -m unittest discover -s tests -p test_ci210_workflows.py -v\n      - run: python scripts/test_paths_mcp_server.py\n      - name: First-call lookup admission and authentic Paths gates\n        run: |\n          PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -s scripts -p 'test_controlled_lookup_read.py' -v\n          PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -s scripts -p 'test_real_paths_gate_parity.py' -v\n      - run: python scripts/validate_registry.py\n\n"
+    },
+    {
+      "id": "S03_disable_contract_job",
+      "existing_workflow_tests": {
+        "id": "S03_disable_contract_job_existing_ci",
+        "argv": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "tests",
+          "-p",
+          "test_ci210_workflows.py",
+          "-v"
+        ],
+        "started_at": "2026-10-27T19:49:57.553149+00:00",
+        "elapsed_seconds": 0.104,
+        "returncode": 0,
+        "reported_methods": 2,
+        "log_path": "evidence/S03_disable_contract_job_existing_ci.log",
+        "log_sha256": "22961f15c875bc6033cd57573039cf0728355be33011149715891aa56b282092",
+        "scope": "Local source fixture observation; not authenticated owner acceptance"
+      },
+      "existing_tests_detected": false,
+      "independent_missed_obligations": 28,
+      "matrix": [
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "scripts/controlled_lookup_read.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "scripts/test_controlled_lookup_read.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "scripts/test_real_paths_gate_parity.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "scripts/check_continuation_gate.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "scripts/check_pre_escalation.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "scripts/composition_reuse_model.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "scripts/find_recovery_recipe.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "registry/capabilities.json"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "registry/effect-reachability.json"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "registry/paths/PF-08-fixture-change.json"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "tests/fixtures/OBS-009-continuation-gate.json"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "requirements-mcp.txt"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            ".github/workflows/paths-mcp.yml"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "tests/test_ci210_workflows.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "scripts/controlled_lookup_read.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "scripts/test_controlled_lookup_read.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "scripts/test_real_paths_gate_parity.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "scripts/check_continuation_gate.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "scripts/check_pre_escalation.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "scripts/composition_reuse_model.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "scripts/find_recovery_recipe.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "registry/capabilities.json"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "registry/effect-reachability.json"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "registry/paths/PF-08-fixture-change.json"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "tests/fixtures/OBS-009-continuation-gate.json"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "requirements-mcp.txt"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            ".github/workflows/paths-mcp.yml"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "main",
+          "changed": [
+            "tests/test_ci210_workflows.py"
+          ],
+          "expected": [
+            "test_controlled_lookup_read.py",
+            "test_real_paths_gate_parity.py"
+          ],
+          "actual": [],
+          "meets_obligation": false
+        },
+        {
+          "event": "push",
+          "branch": "feature/pilot",
+          "changed": [
+            "scripts/controlled_lookup_read.py"
+          ],
+          "expected": [],
+          "actual": [],
+          "meets_obligation": true
+        },
+        {
+          "event": "pull_request",
+          "branch": "feature/pilot",
+          "changed": [
+            "README.md"
+          ],
+          "expected": [],
+          "actual": [],
+          "meets_obligation": true
+        },
+        {
+          "event": "workflow_dispatch",
+          "branch": "main",
+          "changed": [
+            "scripts/controlled_lookup_read.py"
+          ],
+          "expected": [],
+          "actual": [],
+          "meets_obligation": true
+        },
+        {
+          "event": "issue_comment",
+          "branch": "main",
+          "changed": [
+            "scripts/controlled_lookup_read.py"
+          ],
+          "expected": [],
+          "actual": [],
+          "meets_obligation": true
+        }
+      ],
+      "mutated_workflow": "name: Paths MCP continuation contract\non:\n  pull_request:\n    paths: [\"scripts/**\", \"registry/**\", \"tests/fixtures/**\", \"tests/test_ci210_workflows.py\", \"requirements-mcp.txt\", \".github/workflows/paths-mcp.yml\"]\n  push:\n    branches: [main]\n    paths: [\"scripts/**\", \"registry/**\", \"tests/fixtures/**\", \"tests/test_ci210_workflows.py\", \"requirements-mcp.txt\", \".github/workflows/paths-mcp.yml\"]\nconcurrency:\n  group: paths-mcp-${{ github.event.pull_request.number || github.sha }}\n  cancel-in-progress: ${{ github.event_name == 'pull_request' }}\npermissions:\n  contents: read\njobs:\n  stdio-contract:\n    if: ${{ false }}\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n        with:\n          ref: ${{ github.event.pull_request.head.sha || github.sha }}\n      - uses: actions/setup-python@v5\n        with:\n          python-version: \"3.12\"\n      - run: python -m pip install -r requirements-mcp.txt\n      - run: python -m unittest discover -s tests -p test_ci210_workflows.py -v\n      - run: python scripts/test_paths_mcp_server.py\n      - name: First-call lookup admission and authentic Paths gates\n        run: |\n          PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -s scripts -p 'test_controlled_lookup_read.py' -v\n          PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -s scripts -p 'test_real_paths_gate_parity.py' -v\n      - run: python scripts/validate_registry.py\n\n"
+    }
+  ],
+  "selector_limits": [
+    "known positive glob subset only",
+    "changed-file list supplied as fixture",
+    "no native GitHub event/diff/required-check execution",
+    "workflow enablement and branch protection not observed"
+  ],
+  "owner_acceptance": "NOT_ESTABLISHED",
+  "selector_baseline": [
+    {
+      "event": "pull_request",
+      "branch": "feature/pilot",
+      "changed": [
+        "scripts/controlled_lookup_read.py"
+      ],
+      "expected": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "actual": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "meets_obligation": true
+    },
+    {
+      "event": "pull_request",
+      "branch": "feature/pilot",
+      "changed": [
+        "scripts/test_controlled_lookup_read.py"
+      ],
+      "expected": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "actual": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "meets_obligation": true
+    },
+    {
+      "event": "pull_request",
+      "branch": "feature/pilot",
+      "changed": [
+        "scripts/test_real_paths_gate_parity.py"
+      ],
+      "expected": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "actual": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "meets_obligation": true
+    },
+    {
+      "event": "pull_request",
+      "branch": "feature/pilot",
+      "changed": [
+        "scripts/check_continuation_gate.py"
+      ],
+      "expected": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "actual": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "meets_obligation": true
+    },
+    {
+      "event": "pull_request",
+      "branch": "feature/pilot",
+      "changed": [
+        "scripts/check_pre_escalation.py"
+      ],
+      "expected": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "actual": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "meets_obligation": true
+    },
+    {
+      "event": "pull_request",
+      "branch": "feature/pilot",
+      "changed": [
+        "scripts/composition_reuse_model.py"
+      ],
+      "expected": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "actual": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "meets_obligation": true
+    },
+    {
+      "event": "pull_request",
+      "branch": "feature/pilot",
+      "changed": [
+        "scripts/find_recovery_recipe.py"
+      ],
+      "expected": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "actual": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "meets_obligation": true
+    },
+    {
+      "event": "pull_request",
+      "branch": "feature/pilot",
+      "changed": [
+        "registry/capabilities.json"
+      ],
+      "expected": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "actual": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "meets_obligation": true
+    },
+    {
+      "event": "pull_request",
+      "branch": "feature/pilot",
+      "changed": [
+        "registry/effect-reachability.json"
+      ],
+      "expected": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "actual": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "meets_obligation": true
+    },
+    {
+      "event": "pull_request",
+      "branch": "feature/pilot",
+      "changed": [
+        "registry/paths/PF-08-fixture-change.json"
+      ],
+      "expected": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "actual": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "meets_obligation": true
+    },
+    {
+      "event": "pull_request",
+      "branch": "feature/pilot",
+      "changed": [
+        "tests/fixtures/OBS-009-continuation-gate.json"
+      ],
+      "expected": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "actual": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "meets_obligation": true
+    },
+    {
+      "event": "pull_request",
+      "branch": "feature/pilot",
+      "changed": [
+        "requirements-mcp.txt"
+      ],
+      "expected": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "actual": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "meets_obligation": true
+    },
+    {
+      "event": "pull_request",
+      "branch": "feature/pilot",
+      "changed": [
+        ".github/workflows/paths-mcp.yml"
+      ],
+      "expected": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "actual": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "meets_obligation": true
+    },
+    {
+      "event": "pull_request",
+      "branch": "feature/pilot",
+      "changed": [
+        "tests/test_ci210_workflows.py"
+      ],
+      "expected": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "actual": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "meets_obligation": true
+    },
+    {
+      "event": "push",
+      "branch": "main",
+      "changed": [
+        "scripts/controlled_lookup_read.py"
+      ],
+      "expected": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "actual": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "meets_obligation": true
+    },
+    {
+      "event": "push",
+      "branch": "main",
+      "changed": [
+        "scripts/test_controlled_lookup_read.py"
+      ],
+      "expected": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "actual": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "meets_obligation": true
+    },
+    {
+      "event": "push",
+      "branch": "main",
+      "changed": [
+        "scripts/test_real_paths_gate_parity.py"
+      ],
+      "expected": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "actual": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "meets_obligation": true
+    },
+    {
+      "event": "push",
+      "branch": "main",
+      "changed": [
+        "scripts/check_continuation_gate.py"
+      ],
+      "expected": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "actual": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "meets_obligation": true
+    },
+    {
+      "event": "push",
+      "branch": "main",
+      "changed": [
+        "scripts/check_pre_escalation.py"
+      ],
+      "expected": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "actual": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "meets_obligation": true
+    },
+    {
+      "event": "push",
+      "branch": "main",
+      "changed": [
+        "scripts/composition_reuse_model.py"
+      ],
+      "expected": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "actual": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "meets_obligation": true
+    },
+    {
+      "event": "push",
+      "branch": "main",
+      "changed": [
+        "scripts/find_recovery_recipe.py"
+      ],
+      "expected": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "actual": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "meets_obligation": true
+    },
+    {
+      "event": "push",
+      "branch": "main",
+      "changed": [
+        "registry/capabilities.json"
+      ],
+      "expected": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "actual": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "meets_obligation": true
+    },
+    {
+      "event": "push",
+      "branch": "main",
+      "changed": [
+        "registry/effect-reachability.json"
+      ],
+      "expected": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "actual": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "meets_obligation": true
+    },
+    {
+      "event": "push",
+      "branch": "main",
+      "changed": [
+        "registry/paths/PF-08-fixture-change.json"
+      ],
+      "expected": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "actual": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "meets_obligation": true
+    },
+    {
+      "event": "push",
+      "branch": "main",
+      "changed": [
+        "tests/fixtures/OBS-009-continuation-gate.json"
+      ],
+      "expected": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "actual": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "meets_obligation": true
+    },
+    {
+      "event": "push",
+      "branch": "main",
+      "changed": [
+        "requirements-mcp.txt"
+      ],
+      "expected": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "actual": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "meets_obligation": true
+    },
+    {
+      "event": "push",
+      "branch": "main",
+      "changed": [
+        ".github/workflows/paths-mcp.yml"
+      ],
+      "expected": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "actual": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "meets_obligation": true
+    },
+    {
+      "event": "push",
+      "branch": "main",
+      "changed": [
+        "tests/test_ci210_workflows.py"
+      ],
+      "expected": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "actual": [
+        "test_controlled_lookup_read.py",
+        "test_real_paths_gate_parity.py"
+      ],
+      "meets_obligation": true
+    },
+    {
+      "event": "push",
+      "branch": "feature/pilot",
+      "changed": [
+        "scripts/controlled_lookup_read.py"
+      ],
+      "expected": [],
+      "actual": [],
+      "meets_obligation": true
+    },
+    {
+      "event": "pull_request",
+      "branch": "feature/pilot",
+      "changed": [
+        "README.md"
+      ],
+      "expected": [],
+      "actual": [],
+      "meets_obligation": true
+    },
+    {
+      "event": "workflow_dispatch",
+      "branch": "main",
+      "changed": [
+        "scripts/controlled_lookup_read.py"
+      ],
+      "expected": [],
+      "actual": [],
+      "meets_obligation": true
+    },
+    {
+      "event": "issue_comment",
+      "branch": "main",
+      "changed": [
+        "scripts/controlled_lookup_read.py"
+      ],
+      "expected": [],
+      "actual": [],
+      "meets_obligation": true
+    }
+  ],
+  "counts": {
+    "existing_methods_run_baseline": 37,
+    "additional_probes": 2,
+    "behavior_mutations": 6,
+    "behavior_mutations_detected_by_unit": 4,
+    "selector_cases": 32,
+    "selector_baseline_matches": 32,
+    "selector_mutations": 3,
+    "selector_mutations_detected_by_existing_tests": 0
+  }
+}

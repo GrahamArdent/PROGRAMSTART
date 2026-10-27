@@ -333,6 +333,7 @@
       "docs/PROGRAMSTART_VERIFICATION_ECONOMICS.md",
       "docs/decisions/0025-intent-ingress-precedes-project-entry-mode.md",
       "docs/decisions/0026-use-owner-routed-convergence-packets.md",
+      "docs/decisions/0027-incubate-backbone-assurance-reference.md",
       "schemas/decision-closure.schema.json",
       "schemas/backbone-lineage.schema.json",
       "scripts/programstart_authority_resolver.py",

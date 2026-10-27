@@ -1,0 +1,13 @@
+Control ID,Subject,Measurement,Protection to retain,Journey,Baseline,Savings,Disposition,Retirement
+LC01,Workflow/event amplification,"Measure starts, jobs, cancellations and minutes separately",Keep required-check truth and valid throughput,J09,NOT_MEASURED,NOT_MEASURED,NOT_MEASURED,NOT_SELECTED
+LC02,Duplicate tests,"Compare same contract, environment and fault detection",Preserve unique historical regressions,J11,NOT_MEASURED,NOT_MEASURED,NOT_MEASURED,NOT_SELECTED
+LC03,Orphan services and schedules,Compare runtime units with owners and actual consumers,Include rare/monthly/emergency dependencies,J11,NOT_MEASURED,NOT_MEASURED,NOT_MEASURED,NOT_SELECTED
+LC04,Repeated polling and retries,Count per-layer attempts per original useful outcome,Preserve bounded recovery and fair progress,J09,NOT_MEASURED,NOT_MEASURED,NOT_MEASURED,NOT_SELECTED
+LC05,Active prompt/history size,Measure current instructions and superseded retrieval exposure,Keep original evidence linked and resumable,J15,NOT_MEASURED,NOT_MEASURED,NOT_MEASURED,NOT_SELECTED
+LC06,Unadopted patch accumulation,Measure qualified-to-installed lag per consumer,Do not install superseded or unaccepted experiments,J14,NOT_MEASURED,NOT_MEASURED,NOT_MEASURED,NOT_SELECTED
+LC07,Evidence/log storage growth,"Measure bytes, growth, retention and restore needs",Preserve audit and original-effect continuity,J10,NOT_MEASURED,NOT_MEASURED,NOT_MEASURED,NOT_SELECTED
+LC08,Idle host resources,"Measure CPU, RSS, I/O and shared-resource interference",Protect always-on control and recovery workloads,J09,NOT_MEASURED,NOT_MEASURED,NOT_MEASURED,NOT_SELECTED
+LC09,Duplicate adapters or stores,Map distinct contracts and failure domains,Do not collapse useful trust/isolation boundaries,J14,NOT_MEASURED,NOT_MEASURED,NOT_MEASURED,NOT_SELECTED
+LC10,Unused capabilities and credentials,Inventory scopes and actual consumers without secret values,Retain separately justified recovery identities,J07,NOT_MEASURED,NOT_MEASURED,NOT_MEASURED,NOT_SELECTED
+LC11,Monitoring overhead and blind spots,"Measure signal value, coverage and independent self-health",Do not optimize by hiding uncovered surfaces,J16,NOT_MEASURED,NOT_MEASURED,NOT_MEASURED,NOT_SELECTED
+LC12,Platform fixture cost,Compare required native proof with cheaper component checks,Do not substitute mocks for required native behavior,J06,NOT_MEASURED,NOT_MEASURED,NOT_MEASURED,NOT_SELECTED

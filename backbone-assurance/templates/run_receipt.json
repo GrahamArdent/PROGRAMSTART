@@ -1,0 +1,23 @@
+{
+  "_template_notice": "UNFILLED: not evidence; local lint never grants acceptance.",
+  "id": null,
+  "case_id": null,
+  "execution_binding_id": null,
+  "result": null,
+  "source_identity": null,
+  "test_identity": null,
+  "environment_identity": null,
+  "raw_log_ref": null,
+  "raw_log_sha256": null,
+  "started_at": null,
+  "ended_at": null,
+  "original_request_id": null,
+  "attempt_id": null,
+  "effect_id": null,
+  "observed_oracle": null,
+  "substituted_boundaries": null,
+  "inventory_accounting": null,
+  "cleanup_outcome": null,
+  "independent_verifier_ref": null,
+  "owner_acceptance": "NOT_AUTOMATIC"
+}

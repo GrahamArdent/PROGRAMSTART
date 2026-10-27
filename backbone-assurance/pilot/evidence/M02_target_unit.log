@@ -1,0 +1,47 @@
+test_404_search_then_exact (test_controlled_lookup_read.GuardTest.test_404_search_then_exact) ... ok
+test_bad_gate_response_cannot_admit_fallback (test_controlled_lookup_read.GuardTest.test_bad_gate_response_cannot_admit_fallback) ... ok
+test_committed_malformed_catalog_fails_closed (test_controlled_lookup_read.GuardTest.test_committed_malformed_catalog_fails_closed) ... ok
+test_denial_not_bypassed (test_controlled_lookup_read.GuardTest.test_denial_not_bypassed) ... ok
+test_dirty_capability_catalog_fails_before_first_callback (test_controlled_lookup_read.GuardTest.test_dirty_capability_catalog_fails_before_first_callback) ... ok
+test_dirty_script_before_call (test_controlled_lookup_read.GuardTest.test_dirty_script_before_call) ... ok
+test_forged_accepted_true_is_not_an_owner_grant (test_controlled_lookup_read.GuardTest.test_forged_accepted_true_is_not_an_owner_grant) ... ok
+test_guard_precedes_first_provider_and_excludes_quota (test_controlled_lookup_read.GuardTest.test_guard_precedes_first_provider_and_excludes_quota) ... ok
+test_lookup_fail_actual_scripts_then_bounded_alternative (test_controlled_lookup_read.GuardTest.test_lookup_fail_actual_scripts_then_bounded_alternative) ... ok
+test_missing_capability_registry_fails_closed_before_any_provider (test_controlled_lookup_read.GuardTest.test_missing_capability_registry_fails_closed_before_any_provider) ... ok
+test_missing_script_before_call (test_controlled_lookup_read.GuardTest.test_missing_script_before_call) ... ok
+test_owner_checker_denial_before_any_transport (test_controlled_lookup_read.GuardTest.test_owner_checker_denial_before_any_transport) ... ok
+test_owner_checker_error_fails_closed (test_controlled_lookup_read.GuardTest.test_owner_checker_error_fails_closed) ... ok
+test_owner_checker_failure_after_lookup_blocks_fallback (test_controlled_lookup_read.GuardTest.test_owner_checker_failure_after_lookup_blocks_fallback) ... ok
+test_owner_revoked_after_lookup_blocks_fallback (test_controlled_lookup_read.GuardTest.test_owner_revoked_after_lookup_blocks_fallback) ... ok
+test_owner_revoked_before_first_call (test_controlled_lookup_read.GuardTest.test_owner_revoked_before_first_call) ... ok
+test_paths_changed_by_failed_provider_is_not_executed (test_controlled_lookup_read.GuardTest.test_paths_changed_by_failed_provider_is_not_executed) ... ok
+test_pending_no_second_call_preserves_original (test_controlled_lookup_read.GuardTest.test_pending_no_second_call_preserves_original) ... ok
+test_provider_integrity_error_no_fallback (test_controlled_lookup_read.GuardTest.test_provider_integrity_error_no_fallback) ... ok
+test_quota_only_precise_no_call (test_controlled_lookup_read.GuardTest.test_quota_only_precise_no_call) ... ok
+test_registry_registration_does_not_admit_general_windows_commands (test_controlled_lookup_read.GuardTest.test_registry_registration_does_not_admit_general_windows_commands) ... ok
+test_stale_revision_before_call (test_controlled_lookup_read.GuardTest.test_stale_revision_before_call) ... ok
+test_successful_provider_callback_is_not_final_owner_readback (test_controlled_lookup_read.GuardTest.test_successful_provider_callback_is_not_final_owner_readback) ... ok
+test_unadmitted_never_called (test_controlled_lookup_read.GuardTest.test_unadmitted_never_called) ... ok
+test_unapproved_owner_before_call (test_controlled_lookup_read.GuardTest.test_unapproved_owner_before_call) ... ok
+test_unregistered_read_with_no_route_does_not_create_new_authority (test_controlled_lookup_read.GuardTest.test_unregistered_read_with_no_route_does_not_create_new_authority) ... ok
+test_untracked_file_before_call (test_controlled_lookup_read.GuardTest.test_untracked_file_before_call) ... ok
+test_windows_probe_registration_requires_action_lookup_not_shell (test_controlled_lookup_read.GuardTest.test_windows_probe_registration_requires_action_lookup_not_shell) ... ok
+test_wrong_actor_never_called (test_controlled_lookup_read.GuardTest.test_wrong_actor_never_called) ... ok
+test_wrong_effect_never_promotes_probe_to_general_command (test_controlled_lookup_read.GuardTest.test_wrong_effect_never_promotes_probe_to_general_command) ... ok
+test_wrong_target_never_uses_other_host_read (test_controlled_lookup_read.GuardTest.test_wrong_target_never_uses_other_host_read) ... FAIL
+
+======================================================================
+FAIL: test_wrong_target_never_uses_other_host_read (test_controlled_lookup_read.GuardTest.test_wrong_target_never_uses_other_host_read)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/paths-selector-pilot-xqwc1gwy/M02_target/scripts/test_controlled_lookup_read.py", line 233, in test_wrong_target_never_uses_other_host_read
+    self.assertEqual(r['status'], 'NO_ELIGIBLE_ROUTE_PROVEN')
+AssertionError: 'VERIFIED_READ_RESULT_REQUIRES_OWNER_READBACK' != 'NO_ELIGIBLE_ROUTE_PROVEN'
+- VERIFIED_READ_RESULT_REQUIRES_OWNER_READBACK
++ NO_ELIGIBLE_ROUTE_PROVEN
+
+
+----------------------------------------------------------------------
+Ran 31 tests in 2.632s
+
+FAILED (failures=1)

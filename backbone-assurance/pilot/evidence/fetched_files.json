@@ -1,0 +1,47 @@
+[
+  {
+    "path": "scripts/controlled_lookup_read.py",
+    "blob": "d4aa23f9058927106b3c82aa9d38a099a7028628",
+    "url": "https://github.com/GrahamArdent/paths/blob/83e22aadbb07f07b39badda1a2b7a914c058dc21/scripts/controlled_lookup_read.py"
+  },
+  {
+    "path": "scripts/test_controlled_lookup_read.py",
+    "blob": "1b1ef3e305b8269db605e0181b7073e1f8757ecf",
+    "url": "https://github.com/GrahamArdent/paths/blob/83e22aadbb07f07b39badda1a2b7a914c058dc21/scripts/test_controlled_lookup_read.py"
+  },
+  {
+    "path": ".github/workflows/paths-mcp.yml",
+    "blob": "a5af6bea8393a142d676c8a87b456ccf60af36cf",
+    "url": "https://github.com/GrahamArdent/paths/blob/83e22aadbb07f07b39badda1a2b7a914c058dc21/.github/workflows/paths-mcp.yml"
+  },
+  {
+    "path": ".github/workflows/validate-paths-registry.yml",
+    "blob": "b7442f5925d482eabb4eb79e2d218d83adf53e53",
+    "url": "https://github.com/GrahamArdent/paths/blob/83e22aadbb07f07b39badda1a2b7a914c058dc21/.github/workflows/validate-paths-registry.yml"
+  },
+  {
+    "path": "scripts/test_real_paths_gate_parity.py",
+    "blob": "92adacbc5370311232e959697f6b71058680e590",
+    "url": "https://github.com/GrahamArdent/paths/blob/83e22aadbb07f07b39badda1a2b7a914c058dc21/scripts/test_real_paths_gate_parity.py"
+  },
+  {
+    "path": "scripts/check_continuation_gate.py",
+    "blob": "7b9131ae49ebf356ed539b648d852b5c1cb997f4",
+    "url": "https://github.com/GrahamArdent/paths/blob/83e22aadbb07f07b39badda1a2b7a914c058dc21/scripts/check_continuation_gate.py"
+  },
+  {
+    "path": "scripts/check_pre_escalation.py",
+    "blob": "d9604016e6e0194870dc4d078a77c4b542471185",
+    "url": "https://github.com/GrahamArdent/paths/blob/83e22aadbb07f07b39badda1a2b7a914c058dc21/scripts/check_pre_escalation.py"
+  },
+  {
+    "path": "tests/test_ci210_workflows.py",
+    "blob": "edbb7224c6c6e27be75b35d991fca23724ec63ee",
+    "url": "https://github.com/GrahamArdent/paths/blob/83e22aadbb07f07b39badda1a2b7a914c058dc21/tests/test_ci210_workflows.py"
+  },
+  {
+    "path": "AGENTS.md",
+    "blob": "1e6e172ed7e39d90bfb7efb91dff9d34fb1954c4",
+    "url": "https://github.com/GrahamArdent/paths/blob/main/AGENTS.md"
+  }
+]

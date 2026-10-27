@@ -1,0 +1,4 @@
+__pycache__/
+views/workbook_data.json
+evidence/previews/
+*.xlsx

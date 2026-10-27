@@ -1,0 +1,123 @@
+{
+  "date": "2026-10-27",
+  "scope": "Cross-project reference preparation, four views and testing plan/brief; no ecosystem execution or release acceptance",
+  "candidate_revision": "candidate-3",
+  "register_sha256": "8d966939425419ae48f0cfb634810799517269385580ac94584aad9a14fb2e93",
+  "plan_sha256": "c6e636bf8a4571948dbf0fbcb85a13bcf494dc4fa15ef849206384ba8031dde6",
+  "execution_brief_sha256": "a8537e4584a46f522118e737eafbdf2e564114a162bf351c1c5678d92531d6d8",
+  "protocol_sources": [
+    {
+      "id": "P01",
+      "url": "https://github.com/GrahamArdent/PROGRAMSTART/blob/main/PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
+      "git_blob": "053d528d0b9f81e41c29276c9c082123842eea11",
+      "retrieved_text_sha256": "d2d83f68a6bc43087fd07ab61ee8b7d7edb120a4371bd7fdc88a55f8994f81b2"
+    },
+    {
+      "id": "P02",
+      "url": "https://github.com/GrahamArdent/PROGRAMSTART/blob/main/PROGRAMBUILD/PROGRAMBUILD_PLANNING_OPERATING_MODEL.md",
+      "git_blob": "8baaa601008efde6c05342ba23e20c9d9abd3952",
+      "retrieved_text_sha256": "ef96bc9d3d713548f3336eeecebb6f4153d6ae66f790ed7321bf992da4050ee3"
+    },
+    {
+      "id": "P03",
+      "url": "https://github.com/GrahamArdent/PROGRAMSTART/blob/main/.github/prompts/programstart-convergence-packet.prompt.md",
+      "git_blob": "5ee2122f186593d9d69f01905bdf4cc7d9b7a782",
+      "retrieved_text_sha256": "460b3599c55c870a318ca4b0a83c418d38e07b83060edeb43a8c11dcadaef637"
+    }
+  ],
+  "reviewer": "Same assistant; fresh opposition review. No independent agent, model, human or authenticated owner review claimed.",
+  "parts": [
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+  ],
+  "not_applicable": "Part A/stage advance: no project feasibility kill criterion or lifecycle transition is being changed or certified.",
+  "corrective_history": [
+    {
+      "candidate": "Original ten-journey outline",
+      "classification": "MATERIAL_CORRECTIVE_DELTA",
+      "correction": "Split restoration/retirement and add seven distinct families; preserve original obligations and conditional human-gate admission."
+    },
+    {
+      "candidate": "Expanded draft",
+      "classification": "MATERIAL_CORRECTIVE_DELTA",
+      "correction": "Add seven explicit fault scenarios, provider-identity boundary B19, source-only evidence labels and unresolved selector/runtime fields. Resolve actual method inventory without execution credit."
+    }
+  ],
+  "fresh_candidate_review": {
+    "result": "CLEAR",
+    "meaning": "No new material corrective delta or controlling blocker for reference preparation; runtime and owner adoption remain unresolved.",
+    "counterexamples": [
+      {
+        "attempt": "Green source definitions are mistaken for live end-to-end proof",
+        "resolution": "All 84 cases NOT_RUN; 86 methods DEFINITION_READ; only17 partial source links; bindings/runs empty; E1-E6 unqualified."
+      },
+      {
+        "attempt": "Known positive-verifier or ABA blockers disappear under a new audit pass",
+        "resolution": "F02/F08, J03/J04/J13 and X01 retain them; local structural validator explicitly cannot authenticate success."
+      },
+      {
+        "attempt": "Minimal test count removes rare recovery or historical compatibility protection",
+        "resolution": "J10/J11, LC02/LC03/LC07 and retirement conditions retain rare readers, negative controls, recovery and rollback; savings null."
+      },
+      {
+        "attempt": "Failure/expiry in one component loses truth during a fresh context or human resume",
+        "resolution": "J08/J15/J17/J18 and X02/X04/X06 preserve current authority, original effects, durable decisions and no automatic reissue."
+      },
+      {
+        "attempt": "Reference archive silently becomes new project authority",
+        "resolution": "Packet labels derived scope, explicit owner reconstruction gap, GO for source mapping only and owner-scoped dependent execution."
+      }
+    ]
+  },
+  "fresh_complete_pair_review": {
+    "result": "CLEAR",
+    "new_material_delta": false,
+    "checks": [
+      "matching scope and owner limits",
+      "W0 before unresolved execution",
+      "actual callable tools and no imports during source mapping",
+      "original-result lookup and same-attempt recovery",
+      "eligible scoped alternatives and independent target readback",
+      "continued independent safe work without dissolving real owner gates",
+      "bounded completion and evidence retention"
+    ]
+  },
+  "retention": {
+    "known_inventory_count": 40,
+    "mapped_count": 40,
+    "universal_retention_claim": false,
+    "baseline_sha256": "b12369896b8692977330ee432a6df998f1d662b4e4c31de449ca5779179e6da7",
+    "negative_controls": [
+      "missing required retention item rejected",
+      "altered baseline bytes rejected"
+    ],
+    "semantic_review": "Known material scope, useful-work liveness, authority, proof levels, recovery, conditional gate and retirement protections retained."
+  },
+  "validation": {
+    "register_checks": 17,
+    "result": "PASS_FOR_ARTIFACT_CHECKS_ONLY",
+    "runtime_runs": 0,
+    "native_excel_observed": false
+  },
+  "remaining_conditions": [
+    "Owner reconstruction and adoption are not established",
+    "Full source/workflow inventory is incomplete",
+    "No runtime identity observed",
+    "No execution binding admitted",
+    "Native/installed/provider/E2E proof not established"
+  ],
+  "invalidation": [
+    "Material owner or source correction",
+    "Changed source/test/checker/environment/dependency identity",
+    "New boundary or uncovered consumer",
+    "Changed outcome/admission/verification/terminal semantics"
+  ],
+  "owner_acceptance": "NOT_ESTABLISHED",
+  "stage_advance": "NOT_REQUESTED",
+  "repository_mutations": false
+}

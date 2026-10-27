@@ -1,0 +1,21 @@
+{
+  "_template_notice": "UNFILLED: not an execution admission; do not append until resolved and owner-scoped.",
+  "id": null,
+  "case_id": null,
+  "environment_id": null,
+  "callable_tool": null,
+  "tool_arguments": null,
+  "owner_admission_ref": null,
+  "source_identity": null,
+  "test_identity": null,
+  "checker_identity": null,
+  "environment_identity": null,
+  "isolation": null,
+  "limits": null,
+  "cleanup": null,
+  "result_destination": null,
+  "original_identity_rule": null,
+  "original_result_lookup": null,
+  "independent_oracle": null,
+  "substituted_boundaries": null
+}

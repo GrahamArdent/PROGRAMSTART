@@ -1,0 +1,22 @@
+{
+  "_template_notice": "UNFILLED: definition count is not selected/executed coverage.",
+  "repository": null,
+  "source_identity": null,
+  "owner_ref": null,
+  "configuration_refs": null,
+  "entrypoint": null,
+  "event_and_path_filters": null,
+  "matrix_and_shards": null,
+  "markers_include_exclude": null,
+  "required_checks": null,
+  "skip_xfail_quarantine": null,
+  "retry_policy": null,
+  "test_identities": null,
+  "discovered_count": null,
+  "selected_count": null,
+  "executed_count": null,
+  "asserted_count": null,
+  "omission_dispositions": null,
+  "environment_requirements": null,
+  "independent_result_ref": null
+}

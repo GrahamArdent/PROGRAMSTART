@@ -1,0 +1,9 @@
+test_authentic_scripts_permission_denial_stops_without_calling_gates (test_real_paths_gate_parity.ActualGateEntrypointParity.test_authentic_scripts_permission_denial_stops_without_calling_gates) ... ok
+test_authenticated_gate_missing_fails_pre_first_transport (test_real_paths_gate_parity.ActualGateEntrypointParity.test_authenticated_gate_missing_fails_pre_first_transport) ... ok
+test_lookup_drives_actual_paths_gate_entrypoints_and_continues (test_real_paths_gate_parity.ActualGateEntrypointParity.test_lookup_drives_actual_paths_gate_entrypoints_and_continues) ... ok
+test_unknown_lookup_result_only_diagnosis_no_retry_handoff (test_real_paths_gate_parity.ActualGateEntrypointParity.test_unknown_lookup_result_only_diagnosis_no_retry_handoff) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 1.016s
+
+OK

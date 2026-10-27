@@ -1,0 +1,22 @@
+test_distinctive_callback_payload_is_preserved_but_not_final (challenge_probes.OutcomeProbes.test_distinctive_callback_payload_is_preserved_but_not_final)
+PO08: preserving this fixture value does not verify a real remote target. ... FAIL
+test_unavailable_route_has_no_callback (challenge_probes.OutcomeProbes.test_unavailable_route_has_no_callback)
+PO03: availability is a prerequisite even with a valid owner grant. ... ok
+
+======================================================================
+FAIL: test_distinctive_callback_payload_is_preserved_but_not_final (challenge_probes.OutcomeProbes.test_distinctive_callback_payload_is_preserved_but_not_final)
+PO08: preserving this fixture value does not verify a real remote target.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/paths-selector-pilot-xqwc1gwy/M06_payload/scripts/challenge_probes.py", line 31, in test_distinctive_callback_payload_is_preserved_but_not_final
+    self.assertEqual(result.get('value'),expected)
+AssertionError: {'readback': 'CORRUPTED'} != {'repository': 'GrahamArdent/joyhub-research'[126 chars] 9]}}
+- {'readback': 'CORRUPTED'}
++ {'content': {'sentinel': 'AUDIT-PAYLOAD-20261027', 'sequence': [7, 2, 9]},
++  'repository': 'GrahamArdent/joyhub-research',
++  'revision': 'ffffffffffffffffffffffffffffffffffffffff'}
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.127s
+
+FAILED (failures=1)

@@ -1,0 +1,16 @@
+{
+  "all_original_source_bytes_unchanged": true,
+  "mutation_failures_are_assertion_failures_not_setup_errors": true,
+  "source_scope": "9 exact fetched files; partial source reconstruction, not full checkout or hosted run",
+  "counts": {
+    "existing_methods_run_baseline": 37,
+    "additional_probes": 2,
+    "behavior_mutations": 6,
+    "behavior_mutations_detected_by_unit": 4,
+    "selector_cases": 32,
+    "selector_baseline_matches": 32,
+    "selector_mutations": 3,
+    "selector_mutations_detected_by_existing_tests": 0
+  },
+  "remaining": "No trusted positive release verifier, installed consumer, MCP wire suite, full registry suite or native GitHub dispatch observed"
+}

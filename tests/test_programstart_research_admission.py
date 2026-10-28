@@ -10,11 +10,11 @@ import subprocess
 from datetime import UTC, date, datetime, timedelta
 
 import pytest
-from test_programstart_objective_proof import authority as objective_authority
-from test_programstart_objective_proof import fixture as objective_fixture
 
 from scripts import programstart_objective_proof as objective
 from scripts import programstart_research_admission as gate
+from tests.test_programstart_objective_proof import authority as objective_authority
+from tests.test_programstart_objective_proof import fixture as objective_fixture
 
 REPO = "GrahamArdent/card-vault"
 BASE, HEAD = "b" * 40, "a" * 40

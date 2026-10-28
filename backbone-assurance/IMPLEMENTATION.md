@@ -25,6 +25,10 @@ This expands the earlier partial-source pilot. It establishes selected local Lin
 
 Hosted qualification remains unobserved and the existing hosted hold is preserved. Publication uses `[skip ci]` under that hold; this is not a waiver of required release checks. The current Paths owner checkpoint still requires installed first-call trace, admission/currentness, actual target readback and cold original-ID recovery. Source correctness cannot close those boundaries.
 
+## Subsequent PROGRAMSTART validation repairs
+
+The [next-three-step validation record](VALIDATION_NEXT_THREE.md) closes the local import, knowledge freshness and browser qualification findings. The full local gate passes with 3,127 tests, zero skips and zero raw coverage gaps across 67 configured production modules. Help is side-effect-free; first-run context retrieval has an explicit outcome test. All ten KB tracks have a source-backed decision review. This does not alter the Paths publication, existing hosted hold or owner-bound continuation below.
+
 ## Current continuation
 
 1. Reuse the published source and receipts. Refresh only current owner/head/environment facts controlling the selected next action; do not repeat N04 as unfinished source work.

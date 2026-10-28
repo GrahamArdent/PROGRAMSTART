@@ -1,5 +1,7 @@
 # Validation and remaining repository findings — 27 October 2026
 
+**Historical baseline.** The subsequent [validation repairs and successful local gate](VALIDATION_NEXT_THREE.md) supersede the open local A-G01/A-G02/A-G03 dispositions below. Original failures and logs remain preserved; hosted and installed acceptance are still separate.
+
 The Paths repair and the audit artifact checks pass for their declared local scope. **PROGRAMSTART's full local confidence gate failed.** This candidate is retained as a source-only audit draft for the operator's requested durability/review; it is not merge-ready, accepted, installed or a waiver of the failed gate. Normal required remote/owner acceptance remains outstanding.
 
 ## Subject and commands

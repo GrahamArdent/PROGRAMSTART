@@ -210,9 +210,8 @@ def test_native_consumer_negatives(tmp_path, change):
 
 
 def test_missing_binding_ingress_routes_machine_reconciliation(tmp_path):
-    from test_programstart_intent_compile import harvest
-
     from scripts.programstart_intent_ingress import ContextualIntentRequest, resolve_contextual_intent
+    from tests.test_programstart_intent_compile import harvest
 
     *_, snapshot, _, _ = build(tmp_path)
     result = resolve_contextual_intent(ContextualIntentRequest(harvest=harvest(), authority=snapshot))

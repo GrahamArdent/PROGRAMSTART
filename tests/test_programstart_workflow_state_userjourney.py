@@ -16,9 +16,8 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from conftest import requires_userjourney
-
 from scripts.programstart_workflow_state import main, print_state
+from tests.conftest import requires_userjourney
 
 pytestmark = requires_userjourney
 

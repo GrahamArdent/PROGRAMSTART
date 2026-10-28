@@ -28,7 +28,7 @@ nox.options.sessions = [
 
 
 def install_dev(session: nox.Session) -> None:
-    session.install(".[dev]")
+    session.install("-r", "requirements.txt")
 
 
 def _on_rm_error(func, path: str, _exc_info) -> None:
@@ -194,6 +194,7 @@ def typecheck(session: nox.Session) -> None:
 @nox.session(reuse_venv=True)
 def tests(session: nox.Session) -> None:
     install_dev(session)
+    session.run("programstart", "context", "build")
     session.run("coverage", "run", "-m", "pytest")
     session.run("coverage", "report", "-m")
     report_path = Path(session.create_tmp()) / "coverage.json"
@@ -234,7 +235,7 @@ def validate(session: nox.Session) -> None:
 def smoke_readonly(session: nox.Session) -> None:
     """Read-only root-workspace smoke — safe to run anytime, no mutations."""
     install_dev(session)
-    session.run("python", "-m", "playwright", "install", "chromium")
+    session.run("python", "-m", "playwright", "install", "--only-shell", "chromium")
     session.run("python", "scripts/programstart_dashboard_smoke_readonly.py")
     session.run(
         "python",
@@ -249,7 +250,7 @@ def smoke_readonly(session: nox.Session) -> None:
 def smoke_isolated(session: nox.Session) -> None:
     """Mutating smoke in bootstrapped temp workspaces — exercises POST routes and factory."""
     install_dev(session)
-    session.run("python", "-m", "playwright", "install", "chromium")
+    session.run("python", "-m", "playwright", "install", "--only-shell", "chromium")
 
     destination = external_temp_path("PROGRAMSTART_NOX_BOOTSTRAP_DIR", "programstart_nox_bootstrap")
     if destination.exists():

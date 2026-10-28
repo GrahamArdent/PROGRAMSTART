@@ -1,9 +1,11 @@
 import copy
+import csv
 import json
 import tempfile
 import unittest
 from pathlib import Path
 
+from render_views import views
 from validate_register import validate
 
 ROOT = Path(__file__).parent
@@ -19,6 +21,14 @@ class RegisterChecks(unittest.TestCase):
 
     def test_baseline(self):
         self.assertEqual(validate(self.d, ROOT), [])
+
+    def test_committed_views_match_register(self):
+        expected = views(self.d)
+        for name, (columns, rows) in expected.items():
+            with self.subTest(view=name):
+                with (ROOT / "views" / f"{name}.csv").open(newline="") as stream:
+                    actual = list(csv.reader(stream))
+                self.assertEqual(actual, [["" if value is None else str(value) for value in row] for row in [columns, *rows]])
 
     def test_duplicate_case(self):
         self.rejects(lambda d: d["cases"].append(copy.deepcopy(d["cases"][0])))

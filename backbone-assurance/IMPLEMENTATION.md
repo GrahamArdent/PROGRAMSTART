@@ -39,3 +39,7 @@ The operator-supplied [ten-step plan](TEN_STEP_PLAN.md) preserves the requested 
 4. Keep the audit under PROGRAMSTART while ownership and maintenance needs are measured. Extract a separate repository only on the concrete criteria in REPOSITORY_PLACEMENT.md.
 
 The repository-placement decision, source correction and evidence retention complete this requested slice. They do not complete the ecosystem audit, qualify all environments or make the audit a new runtime/acceptance authority.
+
+## Steps 4–6 checkpoint
+
+[The execution record](STEPS_04_06.md) retains automatic audit enforcement, independent review, current native result identities, the failed Windows MCP boundary, EN/Compute obligations and Compute PR215 recovery correction. Steps4/5 remain gated; step6 is a bounded source/test audit with explicit gaps. No hosted hold, owner admission or installed acceptance is waived.

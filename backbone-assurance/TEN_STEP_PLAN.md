@@ -5,7 +5,7 @@ This is the exact ten-step recommendation supplied by Graham in the conversation
 ## Progress and resumption
 
 - Steps **1–3: completed for the documented local scope** in PROGRAMSTART PR257, commit `c98d9d21f8d5c5d16b546474c2bd2db13b56f9d6`. See [validation evidence](VALIDATION_NEXT_THREE.md): 3,127 passing tests, zero skips, zero raw coverage gaps across 67 configured production modules; ten-track knowledge review; qualified browser environment.
-- Steps **4–6: next authorized tranche**, requested by Graham after completion of steps 1–3. They remain open. A draft PR or local gate is not review/owner acceptance or installed proof.
+- Steps **4–6: executed to the recorded boundaries**; see [source, native and audit results](STEPS_04_06.md). Step4 has review and automatic audit enforcement, with hosted/owner acceptance still held. Step5 has fresh native status and a failed fixed probe; installed guard journey remains unproven. Step6 has the scoped EN/Compute obligation map and a reproduced Compute repair in draft PR215. Steps4/5 remain open; a draft PR or local gate is not acceptance.
 - Steps **7–10: pending**.
 - Resume from this file and [implementation status](IMPLEMENTATION.md). Preserve the numbering below when reporting progress. Update this progress section with evidence as work completes; preserve the original recommendation.
 - The earlier `N01`–`N04` identifiers in the register are pilot/action IDs, not this ten-step numbering.

@@ -146,6 +146,36 @@
       "retrieved_text_sha256": "1a6184558726dc643e6dd5b14521d5949da59b830319dc7b96802e8b4471544d",
       "retrieved_text_bytes": 3780,
       "observed_on": "2026-10-27"
+    },
+    {
+      "id": "LIVE01",
+      "title": "EN bounded status: installed release, not whole-node acceptance",
+      "url": "https://github.com/GrahamArdent/execution-node-control/blob/main/results/req-backbone-audit-status-20261028t004506121z/result.json",
+      "git_blob": "cb867bb9293df817418e0a829b7beba67b85a499",
+      "kind": "owner-native-result",
+      "retrieved_text_sha256": "cb3762762279de14e3fb5336c061ef7f870b40d32d4be8db888d0ea0ff418440",
+      "retrieved_text_bytes": 60073,
+      "observed_on": "2026-10-27"
+    },
+    {
+      "id": "LIVE02",
+      "title": "EN545 fixed live probe: MCP_INITIALIZE TIMEOUT",
+      "url": "https://github.com/GrahamArdent/execution-node-control/blob/main/results/req-backbone-localdc-probe-20261028t004859611z/result.json",
+      "git_blob": "d3c1e090be888bdf33c131952e9afd6546dfb7d1",
+      "kind": "owner-native-result",
+      "retrieved_text_sha256": "5feef00684ae2cdb4352a27ccb5e4f788a551b1b96333451a81b23c72623e628",
+      "retrieved_text_bytes": 1471,
+      "observed_on": "2026-10-27"
+    },
+    {
+      "id": "FIX01",
+      "title": "Compute durable state source repair; draft and uninstalled",
+      "url": "https://github.com/GrahamArdent/programstart-compute-spine/blob/8c2431d99d94693cf8b48e6d553dc4ba885c87cd/evidence/BACKBONE_STATE_REPAIR_2026-10-28.md",
+      "git_blob": "19d6d82c6e848838fe3685e71f85dc4982ac0edc",
+      "kind": "owner-source-candidate",
+      "retrieved_text_sha256": "6a3210094e906db824203a1249ab45be3e5295fe93c813fb80c616b61800ca8c",
+      "retrieved_text_bytes": 3693,
+      "observed_on": "2026-10-27"
     }
   ],
   "components": [
@@ -198,11 +228,12 @@
       "purpose": "Worker and host control",
       "owner": "GrahamArdent/execution-node-control",
       "source_refs": [
-        "L02"
+        "L02",
+        "LIVE01"
       ],
-      "runtime_state": "NOT_OBSERVED_THIS_PACKET",
-      "installed_identity": null,
-      "next_observation": "Installed executor, source transport, platform profiles",
+      "runtime_state": "BOUNDED_STATUS_OBSERVED_NOT_ACCEPTED",
+      "installed_identity": "EN control 97e67a5faecfaca46733c6e643b5c7f9cc2bc99e",
+      "next_observation": "Owner review of native health findings and installed Paths consumer admission",
       "in_scope": true
     },
     {
@@ -325,11 +356,12 @@
       "owner": "GrahamArdent/execution-node-control",
       "source_refs": [
         "L01",
-        "L02"
+        "L02",
+        "LIVE01"
       ],
-      "runtime_state": "NOT_OBSERVED_THIS_PACKET",
-      "installed_identity": null,
-      "next_observation": "Resolve exact owner-native read-only inventory and current configuration",
+      "runtime_state": "BOUNDED_STATUS_OBSERVED_NOT_ACCEPTED",
+      "installed_identity": "EN control 97e67a5faecfaca46733c6e643b5c7f9cc2bc99e",
+      "next_observation": "Owner review of native health findings and installed Paths consumer admission",
       "in_scope": true
     },
     {
@@ -355,11 +387,12 @@
       "owner": "GrahamArdent/execution-node-control",
       "source_refs": [
         "L01",
-        "L02"
+        "L02",
+        "LIVE02"
       ],
-      "runtime_state": "NOT_OBSERVED_THIS_PACKET",
-      "installed_identity": null,
-      "next_observation": "Resolve exact owner-native read-only inventory and current configuration",
+      "runtime_state": "FIXED_PROBE_FAILED_MCP_INITIALIZE_TIMEOUT",
+      "installed_identity": "Pinned EN545 client via EN control 97e67a5faecfaca46733c6e643b5c7f9cc2bc99e; Windows liveness not established",
+      "next_observation": "EN545 finite diagnostic continuation; preserve original failed probe and SSH trust",
       "in_scope": true
     },
     {
@@ -6544,6 +6577,40 @@
       "source_stage": "RECORDED",
       "runtime_stage": "NOT_ESTABLISHED_HERE",
       "next_action": "Keep until current contract and replacement fault detection justify retirement",
+      "closure_evidence": []
+    },
+    {
+      "id": "F13",
+      "title": "Compute corrupt durable state repair is source-only",
+      "journey_ids": [
+        "J09",
+        "J13"
+      ],
+      "owner": "programstart-compute-spine",
+      "status": "SOURCE_REPAIR_PUBLISHED_DRAFT",
+      "evidence_refs": [
+        "FIX01"
+      ],
+      "source_stage": "DRAFT_REVIEWED_LOCAL_SELECTED_TESTS_PASS",
+      "runtime_stage": "NOT_INSTALLED_OR_ACCEPTED",
+      "next_action": "Preserve hosted hold; qualify full owner/integration checks, PR147 overlap and actual installed recovery before adoption",
+      "closure_evidence": []
+    },
+    {
+      "id": "F14",
+      "title": "Native EN status reports unresolved host-health and staging observations",
+      "journey_ids": [
+        "J12"
+      ],
+      "owner": "execution-node-control",
+      "status": "NEEDS_OWNER_TRIAGE",
+      "evidence_refs": [
+        "LIVE01",
+        "LIVE02"
+      ],
+      "source_stage": "OBSERVED_NATIVE_STATUS",
+      "runtime_stage": "WHOLE_NODE_ACCEPTANCE_NOT_EARNED",
+      "next_action": "Use existing operations owner to explain failed units, generic SSH state, recurring H2C sample and unattributed staging; do not infer MCP cause or perform global cleanup",
       "closure_evidence": []
     }
   ],

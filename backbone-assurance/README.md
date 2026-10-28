@@ -26,7 +26,7 @@ python3 -m unittest test_register -v
 python3 render_views.py
 ```
 
-These are manually invoked artifact checks; PROGRAMSTART's existing `testpaths = ["tests"]` does not discover this directory. They are not CI coverage. Ongoing enforcement belongs to the demonstrated maintenance decision. These commands validate and generate the audit artifacts. They do not run the ecosystem or authenticate acceptance. No scheduled sweep, hosted job, new service, credential or runtime controller is introduced by this area.
+The existing pytest selection now includes `backbone-assurance`, so the register checks and committed-view freshness check run in the normal Nox test session and existing PR validation. These are artifact checks, not ecosystem runtime coverage. PROGRAMSTART maintains this audit reference; component owners retain their tests and acceptance. The default-discovery guard uses the registry's template/project role: generated project repositories do not inherit the populated audit or its audit-selection obligation. These commands validate and generate the audit artifacts. They do not run the ecosystem or authenticate acceptance. No scheduled sweep, hosted job, new service, credential or runtime controller is introduced by this area.
 
 ## Extraction criterion
 

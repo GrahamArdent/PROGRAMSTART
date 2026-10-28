@@ -2,7 +2,7 @@ Component ID,Name,Purpose,Owner,Runtime observation,Installed identity,Next obse
 C01,PROGRAMSTART,Methodology and semantic contracts,GrahamArdent/PROGRAMSTART,NOT_OBSERVED_THIS_PACKET,UNKNOWN,Current owner requirements and compilation/closure rules,L01
 C02,programstart-autonomous-controller,Durable orchestration,GrahamArdent/programstart-autonomous-controller,NOT_OBSERVED_THIS_PACKET,UNKNOWN,"Claims, continuation, outcome acceptance and recovery",O02
 C03,programstart-compute-spine,Execution fabric,GrahamArdent/programstart-compute-spine,NOT_OBSERVED_THIS_PACKET,UNKNOWN,"Bounded workloads, transport, publication and receipts",O01
-C04,execution-node-control,Worker and host control,GrahamArdent/execution-node-control,NOT_OBSERVED_THIS_PACKET,UNKNOWN,"Installed executor, source transport, platform profiles",L02
+C04,execution-node-control,Worker and host control,GrahamArdent/execution-node-control,BOUNDED_STATUS_OBSERVED_NOT_ACCEPTED,EN control 97e67a5faecfaca46733c6e643b5c7f9cc2bc99e,Owner review of native health findings and installed Paths consumer admission,"L02, LIVE01"
 C05,paths,Effect and route discovery,GrahamArdent/paths,NOT_OBSERVED_THIS_PACKET,UNKNOWN,Actor/effect/target routes and eligible alternatives,L03
 C06,secrets-control-plane,Identity and custody,GrahamArdent/secrets-control-plane,NOT_OBSERVED_THIS_PACKET,UNKNOWN,"Protected capabilities, lifecycle and provider scope",L02
 C07,repo-watchtower,Sensing and incident evidence,GrahamArdent/repo-watchtower,NOT_OBSERVED_THIS_PACKET,UNKNOWN,"Installed coverage, detector, durable receiver delivery",L02
@@ -11,9 +11,9 @@ C09,ecosystem-matrix,Current-state projection,GrahamArdent/ecosystem-matrix,NOT_
 C10,mission-control,Operator surface,GrahamArdent/mission-control,NOT_OBSERVED_THIS_PACKET,UNKNOWN,Read/display scope; write/resume ingress remains gated,S01
 C11,ecosystem-lab,Isolated assurance,GrahamArdent/ecosystem-lab,NOT_OBSERVED_THIS_PACKET,UNKNOWN,"Experimental evidence, not production authority",L01
 C12,decision-lifecycle,Decision capture and adoption,GrahamArdent/decision-lifecycle,NOT_OBSERVED_THIS_PACKET,UNKNOWN,Implementation/runtime ownership needs discovery,L01
-C13,Ubuntu Execution Node,Worker host,GrahamArdent/execution-node-control,NOT_OBSERVED_THIS_PACKET,UNKNOWN,Resolve exact owner-native read-only inventory and current configuration,"L01, L02"
+C13,Ubuntu Execution Node,Worker host,GrahamArdent/execution-node-control,BOUNDED_STATUS_OBSERVED_NOT_ACCEPTED,EN control 97e67a5faecfaca46733c6e643b5c7f9cc2bc99e,Owner review of native health findings and installed Paths consumer admission,"L01, L02, LIVE01"
 C14,Ubuntu VPS,Persistent control substrate,GrahamArdent/programstart-compute-spine,NOT_OBSERVED_THIS_PACKET,UNKNOWN,Resolve exact owner-native read-only inventory and current configuration,"L01, L02"
-C15,Windows workstation,Eligible operator transport,GrahamArdent/execution-node-control,NOT_OBSERVED_THIS_PACKET,UNKNOWN,Resolve exact owner-native read-only inventory and current configuration,"L01, L02"
+C15,Windows workstation,Eligible operator transport,GrahamArdent/execution-node-control,FIXED_PROBE_FAILED_MCP_INITIALIZE_TIMEOUT,Pinned EN545 client via EN control 97e67a5faecfaca46733c6e643b5c7f9cc2bc99e; Windows liveness not established,EN545 finite diagnostic continuation; preserve original failed probe and SSH trust,"L01, L02, LIVE02"
 C16,GitHub Actions and mailbox,Provider triggers and request/result transport,GrahamArdent/programstart-compute-spine,NOT_OBSERVED_THIS_PACKET,UNKNOWN,Resolve exact owner-native read-only inventory and current configuration,"L01, L02"
 C17,Provider identity and webhook surface,"Capabilities, subscriptions and repository membership",GrahamArdent/secrets-control-plane,NOT_OBSERVED_THIS_PACKET,UNKNOWN,Resolve exact owner-native read-only inventory and current configuration,"L01, L02"
 C18,Durable state and backups,"Stores, receipts, locks, retained evidence and restoration",GrahamArdent/programstart-autonomous-controller,NOT_OBSERVED_THIS_PACKET,UNKNOWN,Resolve exact owner-native read-only inventory and current configuration,"L01, L02"

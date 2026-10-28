@@ -407,7 +407,8 @@ class TestReadonlyModeGuard:
     """When PROGRAMSTART_READONLY=1 every POST must return 405."""
 
     @pytest.fixture(scope="class")
-    def readonly_url(self, monkeypatch_class):
+    @classmethod
+    def readonly_url(cls):
         import scripts.programstart_serve as serve_mod
 
         original = serve_mod.READONLY_MODE
@@ -419,14 +420,6 @@ class TestReadonlyModeGuard:
         yield f"http://127.0.0.1:{port}"
         server.shutdown()
         serve_mod.READONLY_MODE = original
-
-    @pytest.fixture(scope="class")
-    def monkeypatch_class(self):
-        from _pytest.monkeypatch import MonkeyPatch
-
-        mp = MonkeyPatch()
-        yield mp
-        mp.undo()
 
     @pytest.mark.parametrize(
         "path",

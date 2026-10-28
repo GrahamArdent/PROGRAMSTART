@@ -1,0 +1,25 @@
+test_distinctive_callback_payload_is_preserved_but_not_final (challenge_probes.OutcomeProbes.test_distinctive_callback_payload_is_preserved_but_not_final)
+PO08: preserving this fixture value does not verify a real remote target. ... ok
+test_unavailable_route_has_no_callback (challenge_probes.OutcomeProbes.test_unavailable_route_has_no_callback)
+PO03: availability is a prerequisite even with a valid owner grant. ... FAIL
+
+======================================================================
+FAIL: test_unavailable_route_has_no_callback (challenge_probes.OutcomeProbes.test_unavailable_route_has_no_callback)
+PO03: availability is a prerequisite even with a valid owner grant.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/paths-selector-pilot-xqwc1gwy/M05_availability/scripts/challenge_probes.py", line 19, in test_unavailable_route_has_no_callback
+    self.assertEqual(calls,[])
+AssertionError: Lists differ: ['CALLED'] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+'CALLED'
+
+- ['CALLED']
++ []
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.142s
+
+FAILED (failures=1)

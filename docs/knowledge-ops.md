@@ -66,3 +66,7 @@ If a review does not change a recommendation, record that explicitly. "No change
 ## Why This Matters
 
 The KB is only useful if it keeps producing current decisions. Weekly research is justified because the AI, retrieval, and Python runtime landscape moves quickly, but only if the process stays bounded, reviewable, and tied to recommendations.
+
+## Recorded Review
+
+The [27 October 2026 decision review](research/2026-10-27-kb-review.md) records the source findings, changed and unchanged recommendations, bounded coverage and remaining follow-ups for all ten tracks. The seven-day freshness policy remains unchanged.

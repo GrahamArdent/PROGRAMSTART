@@ -19,7 +19,7 @@ from scripts import (
 
 ROOT = Path(__file__).resolve().parents[1]
 
-from conftest import requires_userjourney
+from tests.conftest import requires_userjourney
 
 pytestmark = requires_userjourney
 

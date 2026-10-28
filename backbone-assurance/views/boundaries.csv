@@ -1,0 +1,20 @@
+Boundary ID,Producer,Consumer,Meaning,Journeys,Coverage
+B01,C10,C01,Operator intent to semantic ingress,"J01, J18",DISCOVERY_REQUIRED
+B02,C01,C02,Compiler to admission and successor state,"J02, J17",DISCOVERY_REQUIRED
+B03,C02,C03,Authorized work to execution envelope,"J03, J12, J13",DISCOVERY_REQUIRED
+B04,C03,C04,Work profile to worker attempt,"J03, J04, J09",DISCOVERY_REQUIRED
+B05,C04,C16,Publication and request/result exchange,"J03, J04, J09",DISCOVERY_REQUIRED
+B06,C05,C04,Route discovery to actual invocation,"J01, J15, J17",DISCOVERY_REQUIRED
+B07,C06,C04,Scoped capability to protected consumer,"J07, J17",DISCOVERY_REQUIRED
+B08,C16,C07,Provider events to sensing intake,"J05, J16",DISCOVERY_REQUIRED
+B09,C07,C02,Durable incident to actual receiver,"J05, J16",DISCOVERY_REQUIRED
+B10,C04,C08,Machine evidence to lifecycle/acceptance,"J04, J08",DISCOVERY_REQUIRED
+B11,C08,C09,Owner evidence to composed current view,"J08, J14",DISCOVERY_REQUIRED
+B12,C09,C10,Current projection to operator display,"J08, J18",DISCOVERY_REQUIRED
+B13,C03,C13,Package/profile to installed executor,J06,DISCOVERY_REQUIRED
+B14,C18,C02,Persisted state to restored continuation,"J10, J13",DISCOVERY_REQUIRED
+B15,C01,C12,Accepted decision to lifecycle disposition,"J14, J15",DISCOVERY_REQUIRED
+B16,C11,C01,Experiment evidence to owner adoption,J14,DISCOVERY_REQUIRED
+B17,C14,C15,Pinned transport to eligible Windows effect,"J01, J06",DISCOVERY_REQUIRED
+B18,C18,C13,Schedule/startup state to actual runtime,"J11, J16",DISCOVERY_REQUIRED
+B19,C17,C06,Provider identity metadata to custody and consumer scope,"J07, J17",DISCOVERY_REQUIRED

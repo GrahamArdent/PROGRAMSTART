@@ -48,6 +48,7 @@ Authority: Canonical for project decision history
 | DEC-021 | 2026-08-25 | inputs_and_mode_selection | In Mode C, current explicit operator decisions and designated project authority govern product direction over descriptive README/framework/prototype/legacy evidence; repository state remains evidence of current behavior | ACTIVE | — | Solo operator | docs/decisions/0024-rank-current-product-authority-over-legacy-repository-evidence.md |
 | DEC-022 | 2026-09-04 | inputs_and_mode_selection | Intent Ingress is an orthogonal pre-entry profile that resolves trusted semantics and authority/currentness before normal project-entry and Controller admission; it is not Mode D | ACTIVE | — | Solo operator | docs/decisions/0025-intent-ingress-precedes-project-entry-mode.md |
 | DEC-023 | 2026-10-05 | inputs_and_mode_selection | Material Challenge/convergence exercises use a concise operator result plus one complete Markdown Convergence Packet when warranted; packets remain derived and route durably by semantic ownership, and a materially revised candidate must be re-Challenged before the boundary is clear | ACTIVE | — | Solo operator | docs/decisions/0026-use-owner-routed-convergence-packets.md |
+| DEC-025 | 2026-10-27 | inputs_and_mode_selection | Incubate the cross-project backbone assurance reference in PROGRAMSTART; keep component fixes/tests with owners and defer a standalone repository until maintenance or ownership needs justify it | ACTIVE | — | Solo operator | docs/decisions/0027-incubate-backbone-assurance-reference.md |
 
 ## Decision Details
 
@@ -212,3 +213,11 @@ Authority: Canonical for project decision history
   distinction between structural correctness, semantic outcome proof and host adoption.
 - Boundary: Source implementation/review is authorized; production/host adoption and normal
   PR acceptance are separate. Existing product decisions and original Lab results remain.
+
+### DEC-025 — Backbone assurance reference placement
+
+- Context: The operator requested durable documentation, immediate repair of demonstrated Paths test gaps, and Git publication alongside that work.
+- Decision: Host the audit reference under `backbone-assurance/`; keep component tests, Lab experiments, evidence ownership and Matrix projection responsibilities with their existing owners.
+- Rationale: Provide one versioned entry point without a new service, scheduler, acceptance authority or duplicated live-state inventory.
+- ADR triage: Bounded reference placement; no core execution/lifecycle contract change. ADR-0027 retains the explicit incubation boundary and satisfies the ACTIVE-decision linkage check. Revisit extraction only if demonstrated independent ownership, access, release cadence or coordination costs justify it.
+- Evidence and alternatives: `backbone-assurance/REPOSITORY_PLACEMENT.md`; source correction status in `backbone-assurance/IMPLEMENTATION.md`.

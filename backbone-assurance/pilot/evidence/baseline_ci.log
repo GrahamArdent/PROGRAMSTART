@@ -1,0 +1,7 @@
+test_registry_direct_python_commands_trigger_validation (test_ci210_workflows.CI210WorkflowTests.test_registry_direct_python_commands_trigger_validation) ... ok
+test_validation_events_and_exact_head (test_ci210_workflows.CI210WorkflowTests.test_validation_events_and_exact_head) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.005s
+
+OK

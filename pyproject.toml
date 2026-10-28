@@ -130,7 +130,7 @@ reportMissingTypeStubs = false
 
 [tool.pytest.ini_options]
 addopts = "-ra --strict-markers"
-testpaths = ["tests"]
+testpaths = ["tests", "backbone-assurance"]
 
 [tool.mutmut]
 paths_to_mutate = ["scripts/programstart_recommend.py"]

@@ -7,10 +7,9 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from conftest import requires_userjourney
-
 from scripts.programstart_common import load_registry, system_is_optional_and_absent
 from scripts.programstart_drift_check import evaluate_drift, load_changed_files, main
+from tests.conftest import requires_userjourney
 
 
 def test_system_is_optional_and_absent_programbuild() -> None:

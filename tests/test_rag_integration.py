@@ -239,3 +239,15 @@ def test_rag_assistant_custom_model() -> None:
     rag = _build_rag(_minimal_index())
     rag_custom = programstart_retrieval.RAGAssistant(rag.searcher, model="claude-sonnet-4-20250514")
     assert rag_custom.model == "claude-sonnet-4-20250514"
+
+
+def test_missing_index_builds_usable_workspace_context(tmp_path: Path) -> None:
+    """A first-run retrieval request works before any index artifact exists."""
+    missing_index = tmp_path / "context-index.json"
+    assert not missing_index.exists()
+
+    validated = programstart_retrieval.load_validated_index(str(missing_index))
+
+    assert isinstance(validated, ContextIndex)
+    assert {"README.md", "PROGRAMBUILD/ARCHITECTURE.md"} <= {doc.path for doc in validated.documents}
+    assert {"Next.js", "uv"} <= {stack.name for stack in validated.knowledge_base.stacks}

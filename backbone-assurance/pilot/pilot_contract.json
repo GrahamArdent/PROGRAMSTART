@@ -1,0 +1,25 @@
+{
+  "scope": "Paths J01 source-level test adequacy and CI selection pilot; no real provider, host, deployment or workflow dispatch",
+  "owner": "GrahamArdent/paths#56",
+  "candidate": "83e22aadbb07f07b39badda1a2b7a914c058dc21",
+  "main": "3c23450881a1e304d2477d49fbe0f2459a3ffb2a",
+  "authorization": "Operator instructed proceeding with the one-journey audit recommendation; local disposable source fixtures only",
+  "pre_run_review": "Read all executed source and imports; exact Git blobs verified. Tests use local subprocesses, temporary Git fixtures and in-memory route callbacks. No network client is imported by these selected suites.",
+  "limits": {"per_child_seconds": 45, "per_child_cpu_seconds": 35, "per_child_address_space_bytes": 1073741824, "per_child_file_bytes": 4194304, "parallel_children": 1},
+  "environment": "CaaS Python 3.12.14 and Git, scrubbed child environment, temporary work and fixture directories; not an admitted installed backbone runner",
+  "substitutions": ["route callbacks are test doubles", "unit gate scripts are synthetic", "parity suite uses actual pinned gate scripts but substitutes composition model and recipes", "owner checker is a local fixture", "no real target readback or durable consumer ledger"],
+  "obligations": [
+    {"id":"PO01","requirement":"Current owner admission precedes every selected callback, including fallback","basis":"Paths56 owner acceptance and J17","observable":"Revocation or failed owner validation produces zero subsequent callbacks"},
+    {"id":"PO02","requirement":"Actor, effect and target all match the admitted operation","basis":"PATH_CONTRACT and current Windows preference","observable":"Wrong actor/effect/target never invokes a callback"},
+    {"id":"PO03","requirement":"Unavailable, unadmitted or quota-exhausted routes are not selected","basis":"Current route preference and eligible-equivalent requirement","observable":"An unavailable-only route produces zero callbacks; an eligible route still works"},
+    {"id":"PO04","requirement":"The selected Paths subject is current, tracked and clean before use","basis":"Paths56 missing/stale/tampered gate acceptance","observable":"Changed revision or tracked gate rejects before callback"},
+    {"id":"PO05","requirement":"A lookup failure gets machine diagnosis and only eligible equivalent continuation","basis":"Paths56 protected outcome","observable":"Lookup failure invokes actual selected gate entrypoints and eligible fallback, without invented human retry"},
+    {"id":"PO06","requirement":"Permission denial cannot trigger an alternate bypass","basis":"Paths56 explicit no-bypass condition","observable":"Only the denying route is called"},
+    {"id":"PO07","requirement":"Unknown completion preserves original identity and prevents a second effect","basis":"Paths56 acceptance plus J04","observable":"Pending callback stops the call sequence; restart and ledger recovery require separate installed proof"},
+    {"id":"PO08","requirement":"Provider response is preserved and final target correctness is established separately","basis":"User requested actual target result; PATH_CONTRACT separates effect proof; J01","observable":"Distinctive nested callback payload survives exactly; wrapper result remains nonfinal; installed consumer independently checks real target"},
+    {"id":"PO09","requirement":"Every selected test has explicit real-versus-substituted boundary scope","basis":"Current owner56 checkpoint and testing foundation","observable":"Local fixture passes are never recorded as live E2E or release acceptance"},
+    {"id":"PO10","requirement":"Changes capable of breaking the selected guard activate its unit and gate integration checks","basis":"Derived from PO01-PO08 and actual dependency files, independently of current path filters","observable":"Representative dependency changes choose executable suite commands; removing either suites or trigger coverage is detected"}
+  ],
+  "completion": "Record baseline runs, independent outcome probes, bounded behavioral mutations and selector mutations; retain surviving faults and limits; update the preparation sequence without claiming runtime acceptance",
+  "owner_acceptance": "NOT_ESTABLISHED"
+}

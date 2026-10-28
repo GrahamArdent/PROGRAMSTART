@@ -1,0 +1,15 @@
+Finding ID,Finding,Journey,Owner,Disposition,Source stage,Runtime stage,Next action,Evidence refs
+F01,Morning CI failures partly repaired,J03,execution-node-control,CURRENT_RECONCILIATION,RECORDED,NOT_ESTABLISHED_HERE,Preserve PR579 repairs; complete missing qualification,O01
+F02,Independent positive CI verdict missing,J03,execution-node-control,OPEN,RECORDED,NOT_ESTABLISHED_HERE,Qualify trusted positive verifier outside candidate-controlled reporting,O01
+F03,Prepared source not installed acceptance,J06,programstart-compute-spine,OPEN,RECORDED,NOT_ESTABLISHED_HERE,"Map each fix through source, package, installed consumer and outcome",L02
+F04,Pointers do not prove material evidence use,J02,PROGRAMSTART,OPEN,RECORDED,NOT_ESTABLISHED_HERE,Bind actual source reader and independent semantic output oracle,O02
+F05,Whole-suite/native coverage incomplete,J06,programstart-compute-spine,OPEN,RECORDED,NOT_ESTABLISHED_HERE,Account for cases and qualify missing dependencies/platforms,L02
+F06,Lookup guard not installed/enforced proof,J01,paths,OPEN,RECORDED,NOT_ESTABLISHED_HERE,Qualify exact Paths candidate and actual invocation consumer,L03
+F07,Watchtower coverage and delivery gaps,J05,repo-watchtower,OPEN,RECORDED,NOT_ESTABLISHED_HERE,Refresh installed coverage and prove real receiver acknowledgement,L02
+F08,Publication continuity and ABA,J04,programstart-autonomous-controller,OPEN,RECORDED,NOT_ESTABLISHED_HERE,Qualify trustworthy original-effect continuity or accepted recovery semantics,O01
+F09,Custody reconstruction is source-only,J07,secrets-control-plane,OPEN,RECORDED,NOT_ESTABLISHED_HERE,Complete owner-native qualification and actual protected custody boundary,L02
+F10,Stale orientation documentation,J15,PROGRAMSTART,CANDIDATE,RECORDED,NOT_ESTABLISHED_HERE,Reconcile current entry points through existing owners,L01
+F11,Runtime inventory not refreshed,J11,paths,UNKNOWN,RECORDED,NOT_ESTABLISHED_HERE,Resolve admitted read-only inventory across all scoped surfaces,L01
+F12,Legacy compatibility tests retain value,J11,paths,KEEP_PENDING_REVIEW,RECORDED,NOT_ESTABLISHED_HERE,Keep until current contract and replacement fault detection justify retirement,L01
+F13,Compute corrupt durable state repair is source-only,"J09, J13",programstart-compute-spine,SOURCE_REPAIR_PUBLISHED_DRAFT,DRAFT_REVIEWED_LOCAL_SELECTED_TESTS_PASS,NOT_INSTALLED_OR_ACCEPTED,"Preserve hosted hold; qualify full owner/integration checks, PR147 overlap and actual installed recovery before adoption",FIX01
+F14,Native EN status reports unresolved host-health and staging observations,J12,execution-node-control,NEEDS_OWNER_TRIAGE,OBSERVED_NATIVE_STATUS,WHOLE_NODE_ACCEPTANCE_NOT_EARNED,"Use existing operations owner to explain failed units, generic SSH state, recurring H2C sample and unattributed staging; do not infer MCP cause or perform global cleanup","LIVE01, LIVE02"

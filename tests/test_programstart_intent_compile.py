@@ -502,7 +502,7 @@ def harvest(*, acceptance_met: bool = False) -> ConversationHarvest:
 
 
 def rich_ready(tmp_path):
-    from test_rich_operationalization import build
+    from tests.test_rich_operationalization import build
 
     *_, snapshot, bound, _ = build(tmp_path)
     return snapshot.model_copy(update={"decision_operationalization": bound})
@@ -733,9 +733,8 @@ def test_post_owner_composition_preserves_owner_snapshot_and_adds_only_currentne
 
 
 def test_unrelated_owner_head_advance_reuses_semantics_after_owner_reread(tmp_path) -> None:
-    from test_rich_operationalization import build, commit
-
     from scripts.programstart_authority_resolver import resolve_operationalization_binding
+    from tests.test_rich_operationalization import build, commit
 
     owner, matrix, *_, snapshot, bound, observe = build(tmp_path)
     assert bound.projection_ready

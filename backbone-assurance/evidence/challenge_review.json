@@ -1,0 +1,131 @@
+{
+  "date": "2026-10-27",
+  "scope": "Candidate-4 cross-project reference and completed local Paths test/selector pilot; no native/installed/release acceptance",
+  "candidate_revision": "candidate-4",
+  "register_sha256": "ccd17a50359bcef5b6190a6ea0aff6101a7721b6ca21ac0d75d94e51feab1721",
+  "plan_sha256": "82cb96e7488ca9d0adef490eb55fe908e10d7c33fc1c3ef1e9a6059e2d81bca1",
+  "execution_brief_sha256": "796eb479b5e0a732f4c645ae70c3368ee5aa2ae4729dc2af6c6ff36843b8de64",
+  "pilot_contract_sha256": "bc7d6429b9b7c58730adb966d6462be4abe9ecc40bf939c3c20e73292e97bb58",
+  "pilot_results_sha256": "79f33705f39f472d6eef9413e8ff3e903fc376c2d21f4bcc64a6f91529271055",
+  "pilot_report_sha256": "64bffd9b5cd0da977e4d33b4bd44dd0d9fc71f3e692919caa9db9bcee8a49ec1",
+  "protocol_sources": [
+    {
+      "id": "P01",
+      "url": "https://github.com/GrahamArdent/PROGRAMSTART/blob/main/PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
+      "git_blob": "053d528d0b9f81e41c29276c9c082123842eea11",
+      "retrieved_text_sha256": "d2d83f68a6bc43087fd07ab61ee8b7d7edb120a4371bd7fdc88a55f8994f81b2"
+    },
+    {
+      "id": "P02",
+      "url": "https://github.com/GrahamArdent/PROGRAMSTART/blob/main/PROGRAMBUILD/PROGRAMBUILD_PLANNING_OPERATING_MODEL.md",
+      "git_blob": "8baaa601008efde6c05342ba23e20c9d9abd3952",
+      "retrieved_text_sha256": "ef96bc9d3d713548f3336eeecebb6f4153d6ae66f790ed7321bf992da4050ee3"
+    },
+    {
+      "id": "P03",
+      "url": "https://github.com/GrahamArdent/PROGRAMSTART/blob/main/.github/prompts/programstart-convergence-packet.prompt.md",
+      "git_blob": "5ee2122f186593d9d69f01905bdf4cc7d9b7a782",
+      "retrieved_text_sha256": "460b3599c55c870a318ca4b0a83c418d38e07b83060edeb43a8c11dcadaef637"
+    }
+  ],
+  "reviewer": "Same assistant; fresh opposition review of corrected candidate and complete plan/brief pair. No independent agent, human or authenticated owner review claimed.",
+  "parts": [
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+  ],
+  "not_applicable": "Part A/stage advance: no project feasibility kill criterion or lifecycle transition is being changed or certified.",
+  "material_correction": "Existing selectors cannot define the required testing surface. Derive protected outcomes and expected observations first; then challenge test adequacy and selection independently.",
+  "fresh_candidate_review": {
+    "result": "CLEAR_FOR_DECLARED_PILOT_AND_REFERENCE_SCOPE",
+    "new_material_delta": false,
+    "counterexamples": [
+      {
+        "attempt": "32 matching selector scenarios imply CI is correct",
+        "resolution": "Report limits matrix to declared dependencies and supported literal configuration. Native event/diff/check state and enablement remain unobserved."
+      },
+      {
+        "attempt": "Passing local methods close J01 or qualify the general E1 environment",
+        "resolution": "All 84 scenarios remain NOT_RUN; PILOT01 is separate, with exact partial reconstruction and boundary substitutions. No journey run or accepted binding is fabricated."
+      },
+      {
+        "attempt": "Surviving deliberate faults are reported as production defects",
+        "resolution": "Report calls these missing regression protections and separates unchanged candidate behavior from mutated disposable copies."
+      },
+      {
+        "attempt": "Added probes are a trusted independent release verifier",
+        "resolution": "Expected zero callbacks and distinctive payload are independent assertions; shared fixtures and same-assistant operation remain explicit. Owner/release acceptance stays unestablished."
+      },
+      {
+        "attempt": "Updated workbook silently loses 55 unrun methods or six pilot methods",
+        "resolution": "Original 86 IDs retained; 31 get scoped observations, 55 remain NOT_RUN. Four parity and two workflow methods appear in the pilot ledger, outside the original catalog."
+      },
+      {
+        "attempt": "Reproduction overwrites historical evidence or silently needs unretained source",
+        "resolution": "README requires a working copy and exact source retrieval/verification from the retained manifest; original sources are not bundled as repository duplicates."
+      },
+      {
+        "attempt": "Archive grants owner authority or removes original recovery and verifier blockers",
+        "resolution": "Current owner constraints, J03/J04/J13, F02/F08, original-effect identity and no automatic acceptance remain retained. No runtime or publication effect performed."
+      }
+    ]
+  },
+  "fresh_complete_pair_review": {
+    "result": "CLEAR_FOR_DECLARED_SCOPE",
+    "new_material_delta": false,
+    "checks": [
+      "Same outcome-first order in wave plan and execution brief",
+      "N01 completed scope and N04 correction align",
+      "N02/N03 remain independent later mapping rather than implied completed work",
+      "Exact owner/head refresh before dependent new work",
+      "Bounded selected validation rather than uncontrolled suite/host dispatch",
+      "Original-result lookup, eligible alternatives and independent readback retained",
+      "Local observations never become native/installed/E2E acceptance",
+      "Concrete next correction, evidence and completion boundaries retained"
+    ]
+  },
+  "retention": {
+    "known_inventory_count": 40,
+    "mapped_count": 40,
+    "universal_retention_claim": false,
+    "baseline_sha256": "b12369896b8692977330ee432a6df998f1d662b4e4c31de449ca5779179e6da7",
+    "negative_controls": [
+      "missing required retention item rejected",
+      "altered baseline bytes rejected",
+      "local observation without pilot reference rejected",
+      "pilot scope promoted to E2E rejected"
+    ],
+    "semantic_review": "All original journeys, 84 scenarios, boundaries, adoption and lean records unchanged; outcome-first correction and pilot observations added separately. Byte/ID equality does not imply complete historical discovery."
+  },
+  "validation": {
+    "register_checks": 19,
+    "result": "PASS_FOR_ARTIFACT_CHECKS_ONLY",
+    "verified_pilot_log_hashes": 17,
+    "workbook_formula_count": 9,
+    "native_excel_observed": false,
+    "runtime_runs": 0,
+    "local_fixture_baseline_methods": 37,
+    "additional_probe_methods": 2
+  },
+  "remaining_conditions": [
+    "Owner adoption not established",
+    "Full source/workflow inventory incomplete",
+    "Native GitHub and required-check/enablement behavior unobserved",
+    "MCP wire/full registry suites unexecuted in pilot",
+    "Installed consumer, real target readback and durable restart recovery unproven",
+    "Independent positive publication verifier unresolved"
+  ],
+  "invalidation": [
+    "Material owner or source correction",
+    "Changed source/test/checker/environment/dependency identity",
+    "New boundary or uncovered consumer",
+    "Changed outcome/admission/verification/terminal semantics"
+  ],
+  "owner_acceptance": "NOT_ESTABLISHED",
+  "stage_advance": "NOT_REQUESTED",
+  "repository_mutations": false
+}

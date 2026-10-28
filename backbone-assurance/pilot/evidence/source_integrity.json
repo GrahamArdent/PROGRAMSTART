@@ -1,0 +1,162 @@
+[
+  {
+    "path": "scripts/controlled_lookup_read.py",
+    "blob": "d4aa23f9058927106b3c82aa9d38a099a7028628",
+    "url": "https://github.com/GrahamArdent/paths/blob/83e22aadbb07f07b39badda1a2b7a914c058dc21/scripts/controlled_lookup_read.py",
+    "bytes": 12216,
+    "sha256": "05ceab13ba78986c6b9a938a4b7ecd534b4940c2123c6f7841233fad44e80f09",
+    "git_blob_verified": true,
+    "imports": [
+      "from __future__ import annotations",
+      "from dataclasses import dataclass",
+      "from pathlib import Path",
+      "from typing import Callable, Any",
+      "import json",
+      "import os",
+      "import re",
+      "import subprocess"
+    ],
+    "test_methods": []
+  },
+  {
+    "path": "scripts/test_controlled_lookup_read.py",
+    "blob": "1b1ef3e305b8269db605e0181b7073e1f8757ecf",
+    "url": "https://github.com/GrahamArdent/paths/blob/83e22aadbb07f07b39badda1a2b7a914c058dc21/scripts/test_controlled_lookup_read.py",
+    "bytes": 15695,
+    "sha256": "7ea50147627d311146e7adc7319b4b0eab011f51783c61cdec60fa93c316478e",
+    "git_blob_verified": true,
+    "imports": [
+      "import json",
+      "import tempfile",
+      "import subprocess",
+      "import unittest",
+      "from pathlib import Path",
+      "from controlled_lookup_read import OwnerAdmission, DirectReadRoute, guarded_read, LookupFailure, PendingResult"
+    ],
+    "test_methods": [
+      "test_forged_accepted_true_is_not_an_owner_grant",
+      "test_owner_checker_denial_before_any_transport",
+      "test_owner_checker_error_fails_closed",
+      "test_guard_precedes_first_provider_and_excludes_quota",
+      "test_quota_only_precise_no_call",
+      "test_lookup_fail_actual_scripts_then_bounded_alternative",
+      "test_404_search_then_exact",
+      "test_denial_not_bypassed",
+      "test_pending_no_second_call_preserves_original",
+      "test_wrong_actor_never_called",
+      "test_unadmitted_never_called",
+      "test_stale_revision_before_call",
+      "test_dirty_script_before_call",
+      "test_missing_script_before_call",
+      "test_untracked_file_before_call",
+      "test_unapproved_owner_before_call",
+      "test_paths_changed_by_failed_provider_is_not_executed",
+      "test_bad_gate_response_cannot_admit_fallback",
+      "test_windows_probe_registration_requires_action_lookup_not_shell",
+      "test_registry_registration_does_not_admit_general_windows_commands",
+      "test_unregistered_read_with_no_route_does_not_create_new_authority",
+      "test_missing_capability_registry_fails_closed_before_any_provider",
+      "test_provider_integrity_error_no_fallback",
+      "test_owner_revoked_before_first_call",
+      "test_owner_revoked_after_lookup_blocks_fallback",
+      "test_owner_checker_failure_after_lookup_blocks_fallback",
+      "test_wrong_effect_never_promotes_probe_to_general_command",
+      "test_wrong_target_never_uses_other_host_read",
+      "test_dirty_capability_catalog_fails_before_first_callback",
+      "test_committed_malformed_catalog_fails_closed",
+      "test_successful_provider_callback_is_not_final_owner_readback"
+    ]
+  },
+  {
+    "path": ".github/workflows/paths-mcp.yml",
+    "blob": "a5af6bea8393a142d676c8a87b456ccf60af36cf",
+    "url": "https://github.com/GrahamArdent/paths/blob/83e22aadbb07f07b39badda1a2b7a914c058dc21/.github/workflows/paths-mcp.yml",
+    "bytes": 1395,
+    "sha256": "ad83e5074299d5bbbc020da195e9e979a34c419b5d3b793e61e7c34b17379ca3",
+    "git_blob_verified": true
+  },
+  {
+    "path": ".github/workflows/validate-paths-registry.yml",
+    "blob": "b7442f5925d482eabb4eb79e2d218d83adf53e53",
+    "url": "https://github.com/GrahamArdent/paths/blob/83e22aadbb07f07b39badda1a2b7a914c058dc21/.github/workflows/validate-paths-registry.yml",
+    "bytes": 8250,
+    "sha256": "fe9dd4ce50ed32fd4e8d393d12c00ad475b0614f8502bee446a7bd345cbd0bb7",
+    "git_blob_verified": true
+  },
+  {
+    "path": "scripts/test_real_paths_gate_parity.py",
+    "blob": "92adacbc5370311232e959697f6b71058680e590",
+    "url": "https://github.com/GrahamArdent/paths/blob/83e22aadbb07f07b39badda1a2b7a914c058dc21/scripts/test_real_paths_gate_parity.py",
+    "bytes": 5467,
+    "sha256": "e566f753716654e9a47abdded5afd8496bcd90f2577e41b5e93914538f6b2192",
+    "git_blob_verified": true,
+    "imports": [
+      "from __future__ import annotations",
+      "import shutil",
+      "import subprocess",
+      "import tempfile",
+      "import unittest",
+      "from pathlib import Path",
+      "from controlled_lookup_read import DirectReadRoute, LookupFailure, OwnerAdmission, guarded_read"
+    ],
+    "test_methods": [
+      "test_lookup_drives_actual_paths_gate_entrypoints_and_continues",
+      "test_authentic_scripts_permission_denial_stops_without_calling_gates",
+      "test_authenticated_gate_missing_fails_pre_first_transport",
+      "test_unknown_lookup_result_only_diagnosis_no_retry_handoff"
+    ]
+  },
+  {
+    "path": "scripts/check_continuation_gate.py",
+    "blob": "7b9131ae49ebf356ed539b648d852b5c1cb997f4",
+    "url": "https://github.com/GrahamArdent/paths/blob/83e22aadbb07f07b39badda1a2b7a914c058dc21/scripts/check_continuation_gate.py",
+    "bytes": 6406,
+    "sha256": "a072eb6297aab00008ab92ec6e2595403982e8f7c1402e1cb5f6bbeeb48bb08e",
+    "git_blob_verified": true,
+    "imports": [
+      "import argparse, json, re",
+      "from composition_reuse_model import load_model, classify",
+      "from find_recovery_recipe import find as find_recovery_recipe"
+    ],
+    "test_methods": []
+  },
+  {
+    "path": "scripts/check_pre_escalation.py",
+    "blob": "d9604016e6e0194870dc4d078a77c4b542471185",
+    "url": "https://github.com/GrahamArdent/paths/blob/83e22aadbb07f07b39badda1a2b7a914c058dc21/scripts/check_pre_escalation.py",
+    "bytes": 1489,
+    "sha256": "6cca40a24a6e8905da1159810805d11e94561b8d04359b73ccb3ba96fd0dba68",
+    "git_blob_verified": true,
+    "imports": [
+      "import argparse, json, sys",
+      "from composition_reuse_model import load_model, classify"
+    ],
+    "test_methods": []
+  },
+  {
+    "path": "tests/test_ci210_workflows.py",
+    "blob": "edbb7224c6c6e27be75b35d991fca23724ec63ee",
+    "url": "https://github.com/GrahamArdent/paths/blob/83e22aadbb07f07b39badda1a2b7a914c058dc21/tests/test_ci210_workflows.py",
+    "bytes": 2390,
+    "sha256": "0c5575f1df1a181bc47d1e3d498e021c9053fe94fc6623dc9cee7e7b9fc5c6b0",
+    "git_blob_verified": true,
+    "imports": [
+      "from pathlib import Path",
+      "import fnmatch",
+      "import re",
+      "import unittest"
+    ],
+    "test_methods": [
+      "test_validation_events_and_exact_head",
+      "test_registry_direct_python_commands_trigger_validation"
+    ]
+  },
+  {
+    "path": "AGENTS.md",
+    "blob": "1e6e172ed7e39d90bfb7efb91dff9d34fb1954c4",
+    "url": "https://github.com/GrahamArdent/paths/blob/main/AGENTS.md",
+    "bytes": 3741,
+    "sha256": "88f7fec5f3228797a38e8ead2e9d6870f2d27a54daf6f118f95c0222c77ed625",
+    "git_blob_verified": true
+  }
+]

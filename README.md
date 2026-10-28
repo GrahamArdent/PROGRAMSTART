@@ -409,9 +409,9 @@ The repository includes a hardened development and automation stack:
 
 ```powershell
 # Development setup (includes test tools, linting, hypothesis)
-uv sync --extra dev
+uv sync --locked --extra dev
 pre-commit install
-python -m playwright install chromium
+uv run python -m playwright install --with-deps --only-shell chromium
 
 # Full setup with RAG capabilities
 uv sync --extra dev --extra rag

@@ -225,6 +225,8 @@ nox -s gate_safe
 nox -s ci
 ```
 
+Nox installs the committed `requirements.txt` export of `uv.lock`, and the test session builds the local context index before pytest so the real-index checks run on a fresh checkout. Refresh the export deliberately when dependencies change. Headless dashboard checks require the Playwright-managed shell and system dependencies, including fonts; install full Chromium separately for `--headed` runs. See [the validation environment record](backbone-assurance/VALIDATION_NEXT_THREE.md) for reproduction and the observed download workaround.
+
 The test gate requires zero missing production statements and branch exits in every declared coverage module. It rejects omitted modules and rounded100 reports with nonzero raw gaps; the explicit coverage floor is100. The reviewed exclusion ledger is in `docs/MATRIX_COVERAGE_REPAIR_2026-10-20.md`.
 
 PROGRAMSTART also has `.github/workflows/manual-convergence.yml`, intentionally `workflow_dispatch`-only. Use it when a meaningful full-repository convergence gate is warranted.
@@ -304,9 +306,9 @@ uv run programstart target --repo "C:\Projects\ExistingApp" next
 ## 10. Toolchain Setup
 
 ```powershell
-uv sync --extra dev
+uv sync --locked --extra dev
 pre-commit install
-python -m playwright install chromium
+uv run python -m playwright install --with-deps --only-shell chromium
 uv run programstart validate --check bootstrap-assets
 uv run --extra dev pyright
 ```

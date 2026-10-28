@@ -1,0 +1,144 @@
+{
+  "date": "2026-10-27",
+  "candidate_revision": "candidate-5-git",
+  "scope": "Operator-authorized reference incubation and source-only Paths repair; no merge, hosted qualification, installed adoption or acceptance",
+  "reviewer": "Same assistant; not independent or authenticated owner acceptance",
+  "parts": [
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+  ],
+  "part_A": "Not a stage transition or feasibility decision",
+  "subject_sha256": {
+    "FOUNDATION.md": "3d933428c924c4325adb3015e45dd8ae7c46a6bd135b25827b7bb3d7728be9f9",
+    "IMPLEMENTATION.md": "ed7c0d3df4d0dcbcf4e021e59f83f52b6c369a9f82657d828ee9cd1ff7c59e14",
+    "REPOSITORY_PLACEMENT.md": "8a2244d1465c48a67786132cb25fd01c55632ab6b17dc6b9f5d18bc9e64f8c3d",
+    "data/register.json": "8b02a12cc34cf09254bf5dc3c82ea076e8cc52ba44a02b7feef702a61723cf71",
+    "VALIDATION.md": "bef8b5f63f1bb30f372b9aba05c817cd9ea99bb9d41d5626ae0b1d2d417f14a4"
+  },
+  "plan_sha256": "923c70bb3fc119b4c41eecc13f99a3b6bd90eef662c73dae2276ed7856f7ae63",
+  "execution_brief_sha256": "b1bc7aaf22a97e3900e4c86ba450993aa367b3982e4b6c58a86598366708ad94",
+  "protocol_sources": [
+    {
+      "id": "P01",
+      "url": "https://github.com/GrahamArdent/PROGRAMSTART/blob/main/PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
+      "git_blob": "053d528d0b9f81e41c29276c9c082123842eea11",
+      "retrieved_text_sha256": "d2d83f68a6bc43087fd07ab61ee8b7d7edb120a4371bd7fdc88a55f8994f81b2"
+    },
+    {
+      "id": "P02",
+      "url": "https://github.com/GrahamArdent/PROGRAMSTART/blob/main/PROGRAMBUILD/PROGRAMBUILD_PLANNING_OPERATING_MODEL.md",
+      "git_blob": "8baaa601008efde6c05342ba23e20c9d9abd3952",
+      "retrieved_text_sha256": "ef96bc9d3d713548f3336eeecebb6f4153d6ae66f790ed7321bf992da4050ee3"
+    },
+    {
+      "id": "P03",
+      "url": "https://github.com/GrahamArdent/PROGRAMSTART/blob/main/.github/prompts/programstart-convergence-packet.prompt.md",
+      "git_blob": "5ee2122f186593d9d69f01905bdf4cc7d9b7a782",
+      "retrieved_text_sha256": "460b3599c55c870a318ca4b0a83c418d38e07b83060edeb43a8c11dcadaef637"
+    }
+  ],
+  "material_corrections": [
+    "Original unit and selector blind spots are repaired in the owning Paths draft rather than counted as completed E2Es.",
+    "Broader validation found and repaired cross-effect recovery selection; preferred primary effect is required without granting admission.",
+    "Reference incubation records independent repository-extraction criteria; it does not create another runtime or acceptance owner.",
+    "Historical pilot continuation and partial-source limits are marked historical; current N04 completion and full-source local evidence are linked.",
+    "ACTIVE-decision linkage required ADR-0027; existing bootstrap/sync registrations retain that provenance without copying the audit into generated projects.",
+    "An unrelated root README pointer was removed instead of altering the knowledge-base drift rule or making a false authority edit."
+  ],
+  "fresh_candidate_review": {
+    "result": "CLEAR_FOR_DECLARED_DRAFT_REFERENCE_SCOPE_ONLY",
+    "new_material_delta": false,
+    "counterexamples": [
+      {
+        "attempt": "54 methods or 12 detected faults establish 84 ecosystem E2Es",
+        "resolution": "All 84 cases remain NOT_RUN; owner-local evidence states environment/substitutions and remaining installed proof."
+      },
+      {
+        "attempt": "The new workflow checker is native GitHub execution proof",
+        "resolution": "Literal configuration contract and nonempty discovery only; native event/check behavior remains unproven."
+      },
+      {
+        "attempt": "A new repo is required by external research or creates independence",
+        "resolution": "Research supports curated adequate testing layers, not repository layout. Extraction depends on demonstrated ownership and maintenance needs."
+      },
+      {
+        "attempt": "PROGRAMSTART becomes the canonical evidence or experiment service",
+        "resolution": "Owner contracts retained; repair evidence linked at exact Paths commit, historical pilot labeled; no services, schedules or authority grants."
+      },
+      {
+        "attempt": "Historical workbook and old pilot instructions silently override current work",
+        "resolution": "Git register is editable source; snapshots historical; IMPLEMENTATION governs current continuation."
+      },
+      {
+        "attempt": "A full-repository gate failure is concealed by the local audit tests",
+        "resolution": "Retain gate output and separate blockers in VALIDATION.md; no merge readiness or gate waiver inferred."
+      },
+      {
+        "attempt": "Manual artifact self-checks become silently credited as CI coverage",
+        "resolution": "README and VALIDATION explicitly record manual invocation; no new hosted job or pipeline coverage is claimed."
+      }
+    ]
+  },
+  "fresh_complete_pair_review": {
+    "result": "CLEAR_FOR_DECLARED_DRAFT_REFERENCE_SCOPE_ONLY",
+    "new_material_delta": false,
+    "checks": [
+      "Outcome obligations precede test/selector mapping",
+      "Both plan and prompt reuse completed N04 and preserve N02/N03 follow-on work",
+      "Installed/native owner proof remains separate",
+      "Exact effect identity and original-result lookup preserved",
+      "Current owner/head refresh is scoped to affected next action",
+      "No unbounded test dispatch, blanket legacy deletion or speculative acceptance",
+      "Repository extraction criteria do not supersede component ownership"
+    ]
+  },
+  "retention": {
+    "unchanged_register_sections": [
+      "sources",
+      "components",
+      "boundaries",
+      "environments",
+      "journeys",
+      "cases",
+      "existing_tests",
+      "adoption",
+      "lean",
+      "compound_sequences",
+      "retention",
+      "runs",
+      "execution_bindings",
+      "required_retention_ids",
+      "required_legacy_journey_ids",
+      "exclusions",
+      "pilot_observations"
+    ],
+    "changed_sections": [
+      "metadata",
+      "readiness",
+      "first_actions",
+      "retained_baseline"
+    ],
+    "baseline_sha256": "b12369896b8692977330ee432a6df998f1d662b4e4c31de449ca5779179e6da7",
+    "decompressed_bytes": 53502,
+    "known_retention_items": 40,
+    "universal_discovery_claim": false
+  },
+  "validation": "19 manually invoked artifact tests passed. The completed repository gate failed on KB freshness, seven test imports and browser installation; unchanged-base controls reproduce freshness/import failures. See VALIDATION.md; no merge readiness or full-suite pass claimed.",
+  "remaining_conditions": [
+    "Repository-wide gate FAILED; freshness/import fixes and browser qualification remain owner/environment work before merge readiness",
+    "Hosted hold preserved",
+    "Installed consumer/provider/Windows/recovery qualification unproven",
+    "Independent positive publication verifier and owner acceptance remain unresolved"
+  ],
+  "invalidation": [
+    "Changed protected outcome, owner contract or candidate identity",
+    "New consumer/dependency or fault not covered",
+    "Changed test/checker/environment/currentness basis",
+    "Changed placement, acceptance or execution semantics"
+  ]
+}

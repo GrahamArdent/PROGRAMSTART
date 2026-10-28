@@ -31,6 +31,8 @@ The [next-three-step validation record](VALIDATION_NEXT_THREE.md) closes the loc
 
 ## Current continuation
 
+The operator-supplied [ten-step plan](TEN_STEP_PLAN.md) preserves the requested order: steps 1–3 are locally complete; steps 4–6 are the next authorized tranche. The numbered items below describe existing component obligations, not replacements for that ten-step numbering.
+
 1. Reuse the published source and receipts. Refresh only current owner/head/environment facts controlling the selected next action; do not repeat N04 as unfinished source work.
 2. Within Paths #56's existing execution spine, qualify the remaining actual consumer/installed boundaries through an admitted route. Existing Windows EN545 fixed connectivity is not arbitrary test-runner permission. Preserve original effect identity and check eligible equivalent routes before escalation.
 3. N02/N03 remain independent audit mapping for EN and Compute. Begin with protected outcomes and independently expected observations, then test adequacy and selection. Hosted constraints do not freeze independent read-only work.

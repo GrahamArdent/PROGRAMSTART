@@ -47,6 +47,8 @@ The knowledge base is also now more explicit about how it makes decisions:
 - a weekly research cadence plus CI-visible freshness status and issue-based overdue alerts keeps recommendations current without turning the KB into an unbounded note dump
 - review dates advance only after the corresponding source-backed delta records changed/unchanged/blocked, confidence, KB impact, and follow-up; generated templates alone never establish freshness
 
+The [27 October source-backed review](docs/research/2026-10-27-kb-review.md) records the currently reused ten-track decisions and their remaining follow-ups; reuse preserves its review date and does not certify deployed versions.
+
 The root README summarizes that KB behavior; `docs/knowledge-ops.md` and `config/knowledge-base.json` remain authoritative for KB maintenance and refresh semantics.
 
 ## How It Works — The Complete Workflow

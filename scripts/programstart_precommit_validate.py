@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import argparse
+
 try:
     from . import programstart_validate
     from .programstart_common import load_registry, warn_direct_script_invocation
@@ -11,7 +13,9 @@ except ImportError:
     from programstart_common import load_registry, warn_direct_script_invocation
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Sync managed prompts and run strict repository validation.")
+    parser.parse_args(argv)
     registry = load_registry()
     written = sync_managed_prompts(registry)
     for path in written:

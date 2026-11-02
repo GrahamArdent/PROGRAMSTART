@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-19",
+  "version": "2026-10-27",
   "method": "Primary-source synthesis from official framework, platform, and tooling documentation. The KB is intentionally decision-oriented: it stores stack guidance, developer setup surfaces, reusable API profiles, explicit coverage domains, and weekly research freshness metadata so scope and staleness can be audited instead of guessed.",
   "stacks": [
     {
@@ -146,12 +146,14 @@
         "hybrid-rendering"
       ],
       "sources": [
-        "https://nextjs.org/docs/app/getting-started/project-structure"
+        "https://nextjs.org/docs/app/getting-started/project-structure",
+        "https://nextjs.org/docs/app/getting-started/upgrading",
+        "https://docs.npmjs.com/cli/v11/commands/npm-ci/"
       ],
       "scaffolding_notes": [
-        "Never pin an exact version in package.json (e.g. '14.2.3'). Use a semver range such as '^15'. Run 'npm show next version' to confirm the current major before writing the file.",
-        "Next.js has a history of security vulnerabilities in specific patch releases. Using '^<major>' ensures npm install always resolves to the latest patched version within the major.",
-        "Run 'npm install' immediately after writing package.json \u2014 do not leave it for the user."
+        "Choose a supported Next.js release using its upgrade guidance and security advisories. Use an explicit version policy and commit the package-manager lockfile.",
+        "A semver range does not update packages already recorded in a lockfile. Review patch updates deliberately; use npm ci (or the matching frozen-lockfile command) for repeatable CI installs.",
+        "Install dependencies when scaffolding and verify the resulting lockfile and build; do not leave dependency resolution to the user."
       ]
     },
     {
@@ -1459,7 +1461,11 @@
       ],
       "sources": [
         "https://docs.github.com/en/actions/writing-workflows/quickstart",
-        "https://docs.github.com/en/actions/security-for-github-actions/security-hardening-for-github-actions"
+        "https://docs.github.com/en/actions/security-for-github-actions/security-hardening-for-github-actions",
+        "https://docs.github.com/en/actions/reference/security/secure-use"
+      ],
+      "best_practices": [
+        "Pin third-party actions to reviewed full commit SHAs and maintain an explicit update process; mutable tags alone do not identify immutable action code. Keep workflow token permissions minimal."
       ]
     },
     {
@@ -1870,14 +1876,15 @@
       ],
       "best_practices": [
         "Use uv init to scaffold new projects with pyproject.toml and uv.lock.",
-        "Run uv sync to install exact locked dependencies; use uv lock to update the lockfile.",
+        "Use uv sync --locked --extra dev in CI to reject an out-of-date lockfile. Plain uv sync can update the lock; --frozen skips the freshness check. Review intentional dependency updates separately.",
         "Use uv run <command> instead of activating virtualenvs manually.",
         "Define optional dependency groups in pyproject.toml for dev/test/docs extras.",
         "Pin Python version with .python-version file for team consistency.",
         "Use uv tool install for global CLI tools (ruff, mkdocs) without polluting project environments."
       ],
       "sources": [
-        "https://docs.astral.sh/uv/getting-started/"
+        "https://docs.astral.sh/uv/getting-started/",
+        "https://docs.astral.sh/uv/concepts/projects/sync/"
       ]
     },
     {
@@ -2520,8 +2527,8 @@
         "File-based persistent DB or in-memory for ephemeral analytics sessions."
       ],
       "tradeoffs": [
-        "Not suitable for high-concurrency OLTP workloads; single-writer model limits write throughput.",
-        "No server mode; not appropriate as a shared remote database for multiple services.",
+        "Embedded native database mode allows one read/write process with multiple writer threads and optimistic conflicts; it is not a general high-concurrency OLTP service.",
+        "Remote and multi-process options are version-specific. Verify the selected engine, protocol and storage architecture before adopting shared service access.",
         "For very large distributed datasets, Polars streaming or a data warehouse may be needed."
       ],
       "best_for": [
@@ -2557,7 +2564,8 @@
         "Use EXPLAIN ANALYZE to inspect query plans and identify scan/join bottlenecks."
       ],
       "sources": [
-        "https://duckdb.org/docs/"
+        "https://duckdb.org/docs/",
+        "https://duckdb.org/docs/2.0/connect/concurrency"
       ]
     },
     {
@@ -3142,10 +3150,12 @@
       "best_practices": [
         "Treat schema migration and corruption recovery as part of the app lifecycle, not incidental implementation detail.",
         "Keep sync metadata and app-domain tables explicit so local-first behavior remains debuggable.",
-        "Test upgrade paths on real persisted datasets rather than only fresh-dev databases."
+        "Test upgrade paths on real persisted datasets rather than only fresh-dev databases.",
+        "Before using WAL with concurrent connections, verify the embedded engine includes the WAL-reset corruption fix: 3.51.3 or a documented backport such as 3.44.6 or 3.50.7. Check the actual engine, not only the application package version. WAL requires processes on the same host."
       ],
       "sources": [
-        "https://www.sqlite.org/docs.html"
+        "https://www.sqlite.org/docs.html",
+        "https://www.sqlite.org/wal.html"
       ]
     },
     {
@@ -3302,10 +3312,12 @@
       "best_practices": [
         "Treat topic design and schema evolution as platform contracts, not ad hoc implementation details.",
         "Use Kafka when replayability and stream retention matter, not just because the system is asynchronous.",
-        "Keep operational ownership explicit for partitions, retention, and consumer lag visibility."
+        "Keep operational ownership explicit for partitions, retention, and consumer lag visibility.",
+        "Kafka transactions can coordinate Kafka offsets and outputs; exactly-once effects in an external destination require that destination to cooperate. Test retries, duplicates and reconciliation at the effect boundary."
       ],
       "sources": [
-        "https://kafka.apache.org/documentation/"
+        "https://kafka.apache.org/documentation/",
+        "https://kafka.apache.org/41/design/design/"
       ]
     },
     {
@@ -4079,9 +4091,12 @@
         "Keep workspace and lockfile ownership explicit so monorepo tooling does not drift into package-manager confusion."
       ],
       "scaffolding_notes": [
-        "NEVER write exact pinned versions in package.json (e.g. '14.2.3'). Always use semver ranges such as '^15'. Run 'npm show <package> version' or 'pnpm show <package> version' to confirm the current major before writing the file.",
-        "Pinned exact versions prevent automatic pickup of security patches. JavaScript framework ecosystems (Next.js, Nuxt, Remix, SvelteKit, etc.) release security patches as patch versions within a major \u2014 a pinned version will never receive them.",
-        "Run 'pnpm install' immediately after writing package.json \u2014 do not leave it for the user."
+        "Choose explicit compatible dependency versions or ranges and commit the pnpm lockfile. Review upgrades deliberately instead of relying on range syntax for security patching.",
+        "A frozen install preserves locked resolutions; it does not automatically select newly released patches. Keep dependency updates and advisory review separate from reproducible CI.",
+        "Install dependencies when scaffolding, then use pnpm install --frozen-lockfile in CI."
+      ],
+      "sources": [
+        "https://pnpm.io/cli/install"
       ]
     },
     {
@@ -4125,9 +4140,12 @@
         "Prefer one package manager per repo; mixed npm and pnpm workflows create avoidable lockfile and CI drift."
       ],
       "scaffolding_notes": [
-        "NEVER write exact pinned versions in package.json (e.g. '14.2.3'). Always use semver ranges such as '^15'. Run 'npm show <package> version' to confirm the current major before writing the file.",
-        "Pinned exact versions prevent automatic pickup of security patches. JavaScript framework ecosystems (Next.js, Nuxt, Remix, SvelteKit, etc.) release security patches as patch versions within a major \u2014 a pinned version will never receive them.",
-        "Run 'npm install' immediately after writing package.json \u2014 do not leave it for the user."
+        "Choose explicit compatible dependency versions or ranges and commit the npm lockfile. Review upgrades deliberately instead of relying on range syntax for security patching.",
+        "A frozen install preserves locked resolutions; it does not automatically select newly released patches. Keep dependency updates and advisory review separate from reproducible CI.",
+        "Install dependencies when scaffolding, then use npm ci in CI."
+      ],
+      "sources": [
+        "https://docs.npmjs.com/cli/v11/commands/npm-ci/"
       ]
     },
     {
@@ -8203,7 +8221,7 @@
         "Use uv sync and uv run instead of layering pip, virtualenv, and ad hoc wrappers."
       ],
       "recommended_commands": [
-        "uv sync --extra dev",
+        "uv sync --locked --extra dev",
         "uv run pytest -q",
         "uv run programstart validate --check bootstrap-assets"
       ],
@@ -8760,11 +8778,12 @@
         "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY"
       ],
       "base_url": "https://api.stripe.com",
-      "docs_url": "https://docs.stripe.com/keys",
+      "docs_url": "https://docs.stripe.com/webhooks",
       "has_official_cli": true,
       "notes": [
         "Use test-mode keys first and separate webhook signing secrets from API keys.",
-        "Prefer restricted keys for scoped server integrations instead of broad secret keys when feasible."
+        "Prefer restricted keys for scoped server integrations instead of broad secret keys when feasible.",
+        "Verify webhook signatures against the raw request body, deduplicate processed events and tolerate out-of-order delivery; subscribe only to event types the integration handles."
       ]
     },
     {
@@ -9231,11 +9250,11 @@
       ],
       "public_env_vars": [],
       "base_url": "https://api.hubapi.com",
-      "docs_url": "https://developers.hubspot.com/docs/api/overview",
+      "docs_url": "https://developers.hubspot.com/changelog/legacy-apis-and-legacy-apps-whats-going-unsupported-and-when",
       "has_official_cli": false,
       "notes": [
         "HubSpot is a practical default when product and go-to-market systems need CRM, marketing, and customer data automation in one vendor surface.",
-        "Keep private app tokens and webhook verification server-side; CRM integrations need explicit field ownership and sync rules."
+        "Use Service Keys or the current Projects app model for new private integrations; legacy private-app creation ended for existing accounts on 2026-10-26. Inventory existing apps and API versions before planning migration. Keep credentials server-side with explicit CRM field ownership and sync rules."
       ]
     },
     {
@@ -9353,11 +9372,12 @@
       ],
       "public_env_vars": [],
       "base_url": "https://api.goshippo.com",
-      "docs_url": "https://docs.goshippo.com/shippoapi/public-api/",
+      "docs_url": "https://docs.goshippo.com/tracking/webhooks",
       "has_official_cli": false,
       "notes": [
         "Shippo is a pragmatic shipping abstraction when the product needs carrier labels, rates, and tracking without direct carrier-by-carrier integrations.",
-        "Treat address validation, label purchase, and webhook handling as operational flows, not just API calls."
+        "Treat address validation, label purchase, and webhook handling as operational flows, not just API calls.",
+        "Do not assume all webhook types retry: automations_label_resolved is sent once. Reconcile through GET of the original request and deduplicate by request_id before considering another label purchase."
       ]
     },
     {
@@ -9381,11 +9401,12 @@
       ],
       "public_env_vars": [],
       "base_url": "https://api.easypost.com/v2",
-      "docs_url": "https://docs.easypost.com/",
+      "docs_url": "https://docs.easypost.com/docs/webhooks",
       "has_official_cli": false,
       "notes": [
         "EasyPost is a strong fit when the product needs multi-carrier shipping workflows with programmable shipping objects and tracking surfaces.",
-        "Keep shipping-state ownership explicit because fulfillment failures are operational incidents, not only API retries."
+        "Keep shipping-state ownership explicit because fulfillment failures are operational incidents, not only API retries.",
+        "Configure webhook_secret and verify the HMAC signature using the official client. Monitor delivery failures and disabled endpoints instead of treating retries as proof of reconciliation."
       ]
     },
     {
@@ -10467,11 +10488,11 @@
         },
         {
           "area": "tooling-and-ops",
-          "summary": "3.14 improves operational surfaces with safer debugger hooks, asyncio introspection improvements, incremental GC, and compression.zstd in the stdlib, while 3.13 was more notable for runtime experiments than for operational ergonomics.",
+          "summary": "Python 3.14 adds debugger hooks, asyncio introspection and compression.zstd. Incremental GC applied only to 3.14.0 through 3.14.4; 3.14.5 restored generational GC after memory-pressure regressions. Evaluate the actual patch release rather than treating incremental GC as a general 3.14 benefit.",
           "option_a": "3.13: acceptable stable target where teams prioritize package support over newer ops features.",
           "option_b": "3.14: better for platform teams that value debugging, runtime introspection, and newer standard library surfaces.",
           "recommendation": "Prefer 3.14 for new platform and developer-experience investments after CI and packaging validation.",
-          "migration_risk": "Low to medium if your ecosystem is pure Python; higher with extension-heavy stacks."
+          "migration_risk": "Validate memory behavior, native extensions and deployment images against the selected patch release; no runtime upgrade is implied by this comparison."
         },
         {
           "area": "migration-risk",
@@ -10762,7 +10783,7 @@
       "Measure retrieval quality (precision/recall) separately from LLM generation quality (faithfulness/relevance).",
       "Use cosine similarity as the default distance metric for text embeddings; L2 for normalized-space workloads.",
       "Validate all LLM-generated outputs through typed schemas (Pydantic, JSON Schema) before acting on them.",
-      "Use structured outputs (JSON Schema with strict: true) to guarantee schema adherence rather than relying on prompt-only formatting instructions.",
+      "Use strict structured outputs for supported schema conformance, and handle refusals and incomplete responses before parsing or acting. A schema-valid result still needs semantic checks and effect authorization.",
       "Apply verification loops (correctness, grounding, formatting, safety) before finalizing high-impact LLM actions."
     ],
     "recommended_layers": [
@@ -11275,7 +11296,7 @@
         "cadence": "weekly",
         "owner": "platform",
         "freshness_days": 7,
-      "last_review_date": "2026-10-19",
+        "last_review_date": "2026-10-27",
         "scope": [
           "CPython release notes",
           "typing changes",
@@ -11304,7 +11325,7 @@
         "cadence": "weekly",
         "owner": "ai-platform",
         "freshness_days": 7,
-      "last_review_date": "2026-10-19",
+        "last_review_date": "2026-10-27",
         "scope": [
           "provider API changes",
           "retrieval framework guidance",
@@ -11331,7 +11352,7 @@
         "cadence": "weekly",
         "owner": "product-platform",
         "freshness_days": 7,
-      "last_review_date": "2026-10-19",
+        "last_review_date": "2026-10-27",
         "scope": [
           "framework release notes",
           "observability guidance",
@@ -11362,7 +11383,7 @@
         "cadence": "weekly",
         "owner": "mobile-platform",
         "freshness_days": 7,
-      "last_review_date": "2026-10-19",
+        "last_review_date": "2026-10-27",
         "scope": [
           "Expo and React Native release notes",
           "Flutter release notes",
@@ -11389,7 +11410,7 @@
         "cadence": "weekly",
         "owner": "data-platform",
         "freshness_days": 7,
-      "last_review_date": "2026-10-19",
+        "last_review_date": "2026-10-27",
         "scope": [
           "warehouse and OLAP releases",
           "orchestration guidance",
@@ -11415,7 +11436,7 @@
         "cadence": "weekly",
         "owner": "integrations-platform",
         "freshness_days": 7,
-      "last_review_date": "2026-10-19",
+        "last_review_date": "2026-10-27",
         "scope": [
           "payments and subscription tooling",
           "email and messaging providers",
@@ -11444,7 +11465,7 @@
         "cadence": "weekly",
         "owner": "desktop-platform",
         "freshness_days": 7,
-      "last_review_date": "2026-10-19",
+        "last_review_date": "2026-10-27",
         "scope": [
           "desktop shell releases",
           "local database and sync-engine changes",
@@ -11470,7 +11491,7 @@
         "cadence": "weekly",
         "owner": "developer-platform",
         "freshness_days": 7,
-      "last_review_date": "2026-10-19",
+        "last_review_date": "2026-10-27",
         "scope": [
           "node package-manager changes",
           "monorepo orchestration tooling",
@@ -11496,7 +11517,7 @@
         "cadence": "weekly",
         "owner": "platform-architecture",
         "freshness_days": 7,
-      "last_review_date": "2026-10-19",
+        "last_review_date": "2026-10-27",
         "scope": [
           "event broker releases",
           "managed realtime platform changes",
@@ -11523,7 +11544,7 @@
         "cadence": "weekly",
         "owner": "growth-platform",
         "freshness_days": 7,
-      "last_review_date": "2026-10-19",
+        "last_review_date": "2026-10-27",
         "scope": [
           "crm and support platform changes",
           "customer-data tooling",

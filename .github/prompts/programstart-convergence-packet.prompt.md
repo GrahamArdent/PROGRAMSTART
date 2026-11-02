@@ -3,7 +3,7 @@ description: "Challenge a material design, plan, recommendation, or handoff unti
 name: "PROGRAMSTART Convergence Packet"
 argument-hint: "Describe the candidate/result to challenge and any requested response-length or persistence constraint"
 agent: "agent"
-version: "1.1"
+version: "1.2"
 ---
 
 Run a bounded PROGRAMSTART convergence review and produce one reconstructable Markdown result without creating a second authority.
@@ -46,6 +46,34 @@ Before forming the candidate:
 5. if durable persistence is requested, determine the likely semantic owner before writing.
 
 Run broad validation/drift only when a repository authority change is actually being made. Do not run broad checks solely for a read-only convergence review.
+
+## Modular review and resume
+
+For a review that needs several units, use the existing compact Work Packet;
+do not create another schema, service or execution spine. Keep one shared
+header with the root objective, owner/permissions, complete review scope,
+candidate/source identities, controlling findings and terminal condition.
+Index each unit by its source sections, incoming obligations, reusable evidence
+and outgoing findings. Load details just in time without dropping unreviewed
+scope or mandatory gate parts. Mechanical results do not replace semantic
+Challenge. A unit's CLEAR does not clear the whole candidate.
+
+After unit review, reconcile cross-unit findings and apply the complete-pair
+review in Current Slice. Reuse valid evidence; material changes invalidate the
+affected units and interactions, not every unrelated result.
+
+When pause/handoff is needed, persist the shared header, unit coverage,
+findings and next action in the existing owner record. The receiving reviewer
+must rebind current candidate/authority, reconstruct that context and continue
+the actual review; parsing a saved file alone is not a resumed semantic review.
+Unknown bindings or controlling findings remain nonclear. Record the real
+receiving context and proof limits without inventing a run or acceptance.
+
+On scoped review completion, return the result and next root-objective action
+to the existing executor. Continue that action only under current authorization;
+a genuine target-owner gate remains a gate, and review CLEAR cannot close an
+unfinished root objective. Optional native assistance retains its own current
+admission and result-reconciliation contracts; a reducer is not a reviewer.
 
 ## Current Slice
 

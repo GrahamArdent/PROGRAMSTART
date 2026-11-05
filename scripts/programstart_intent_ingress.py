@@ -30,6 +30,13 @@ from .programstart_intent_compile import (
     render_chatgpt_prompt,
     verify_integrity,
 )
+from .programstart_required_context import (
+    MAX_REQUEST_BYTES,
+    RequiredContextDocument,
+    validate_required_context,
+    validate_required_context_strings,
+    validate_required_refs,
+)
 
 
 class IntentIngressStatus(StrEnum):
@@ -143,6 +150,28 @@ class BoundedIntentEnvelope(BaseModel):
         return self
 
 
+class RequiredContextIntentEnvelope(BoundedIntentEnvelope):
+    """Exact required evidence, supplied through the admitted owner boundary."""
+
+    required_context_refs: list[str]
+    context_documents: list[RequiredContextDocument]
+
+    @model_validator(mode="after")
+    def required_documents_must_match(self) -> RequiredContextIntentEnvelope:
+        validate_required_context_strings(self.model_dump(mode="json"))
+        validate_required_context(self.required_context_refs, self.context_documents, self.durable_artifact_refs)
+        return self
+
+
+def parse_bounded_intent_envelope(payload: dict[str, Any]) -> BoundedIntentEnvelope:
+    model = (
+        RequiredContextIntentEnvelope
+        if {"required_context_refs", "context_documents"} & payload.keys()
+        else BoundedIntentEnvelope
+    )
+    return model.model_validate(payload)
+
+
 class SemanticInterpretationCandidate(BaseModel):
     """Bounded semantic output from a trusted producer.
 
@@ -190,17 +219,37 @@ class SemanticProducerRequest(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    schema_version: Literal["programstart.semantic-producer.request.v1"] = SEMANTIC_PRODUCER_REQUEST_VERSION
+    schema_version: Literal["programstart.semantic-producer.request.v1", "programstart.semantic-producer.request.v2"] = (
+        SEMANTIC_PRODUCER_REQUEST_VERSION
+    )
     profile: Literal["bounded-codex-semantic-v1"] = BOUNDED_CODEX_SEMANTIC_PROFILE
-    envelope: BoundedIntentEnvelope
+    envelope: RequiredContextIntentEnvelope | BoundedIntentEnvelope
     semantic_effect_id: str
 
     @classmethod
     def from_envelope(cls, envelope: BoundedIntentEnvelope) -> SemanticProducerRequest:
-        return cls(envelope=envelope, semantic_effect_id=_semantic_effect_id(envelope))
+        version = (
+            "programstart.semantic-producer.request.v2"
+            if isinstance(envelope, RequiredContextIntentEnvelope)
+            else SEMANTIC_PRODUCER_REQUEST_VERSION
+        )
+        return cls(schema_version=version, envelope=envelope, semantic_effect_id=_semantic_effect_id(envelope))
 
     @model_validator(mode="after")
     def effect_id_must_match_mechanical_input(self) -> SemanticProducerRequest:
+        has_context = isinstance(self.envelope, RequiredContextIntentEnvelope)
+        if has_context != (self.schema_version == "programstart.semantic-producer.request.v2"):
+            raise ValueError("semantic request version does not match required-context envelope")
+        if isinstance(self.envelope, RequiredContextIntentEnvelope):
+            validate_required_context_strings(self.envelope.model_dump(mode="json"))
+            validate_required_context(
+                self.envelope.required_context_refs, self.envelope.context_documents, self.envelope.durable_artifact_refs
+            )
+            if (
+                len(json.dumps(self.model_dump(mode="json"), sort_keys=True, separators=(",", ":")).encode("utf-8"))
+                > MAX_REQUEST_BYTES
+            ):
+                raise ValueError("semantic request byte bound exceeded")
         if self.semantic_effect_id != _semantic_effect_id(self.envelope):
             raise ValueError("semantic_effect_id does not match the mechanical envelope")
         return self
@@ -368,6 +417,7 @@ def build_trusted_conversation_harvest(
         unresolved_material_ambiguities=ambiguities,
         existing_work_packet_ref=envelope.existing_work_packet_ref,
         durable_artifact_refs=list(envelope.durable_artifact_refs),
+        required_context_refs=list(getattr(envelope, "required_context_refs", [])),
     )
 
 
@@ -398,6 +448,7 @@ class ConversationHarvest(BaseModel):
     acceptance_met: bool = False
     existing_work_packet_ref: str = ""
     durable_artifact_refs: list[str] = Field(default_factory=list)
+    required_context_refs: list[str] = Field(default_factory=list)
     active_human_gate: HumanConsequenceGate | None = None
 
     @model_validator(mode="after")
@@ -411,6 +462,7 @@ class ConversationHarvest(BaseModel):
             for value in self.durable_artifact_refs
         ):
             raise ValueError("durable_artifact_refs exceed the bounded mechanical-context contract")
+        validate_required_refs(self.required_context_refs, self.durable_artifact_refs)
         return self
 
 
@@ -575,6 +627,7 @@ def _recompile_current_harvest(
         _interpret_harvest(request.harvest),
         authority,
         durable_artifact_refs=durable_refs,
+        required_context_refs=existing.required_context_refs,
     )
     handoff = _handoff_required(request, authority)
     return ContextualIntentResolution(
@@ -604,6 +657,9 @@ def resolve_contextual_intent(request: ContextualIntentRequest) -> ContextualInt
 
     if existing is not None and not verify_integrity(existing):
         raise ValueError("existing compiled Work Packet failed integrity verification")
+
+    if existing is not None and harvest.required_context_refs and harvest.required_context_refs != existing.required_context_refs:
+        raise ValueError("required context revision needs separately admitted material revision")
 
     if harvest.active_human_gate is not None:
         return ContextualIntentResolution(
@@ -774,6 +830,7 @@ def resolve_contextual_intent(request: ContextualIntentRequest) -> ContextualInt
         _interpret_harvest(harvest),
         authority,
         durable_artifact_refs=harvest.durable_artifact_refs,
+        required_context_refs=harvest.required_context_refs,
     )
     handoff = _handoff_required(request, authority)
     return ContextualIntentResolution(

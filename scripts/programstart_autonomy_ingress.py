@@ -14,7 +14,7 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from .programstart_intent_compile import AuthoritySnapshot, CompiledWorkPacket, authority_fingerprint
+from .programstart_intent_compile import AuthoritySnapshot, CompiledWorkPacket, authority_fingerprint, verify_integrity
 from .programstart_intent_ingress import (
     BoundedIntentEnvelope,
     ContextualIntentRequest,
@@ -94,6 +94,7 @@ class AutonomyIngressFailure(StrEnum):
     OWNER_HANDOFF_REQUIRED = "owner_handoff_required"
     NOT_ADMISSION_READY = "not_admission_ready"
     CONTROLLER_FAILURE = "controller_failure"
+    REQUIRED_CONTEXT_UNAVAILABLE = "required_context_unavailable"
 
 
 class AutonomyIngressResult(BaseModel):
@@ -159,6 +160,18 @@ def advance_autonomy_ingress(
         "programstart_authority_release": authority_evidence.observed_methodology_commit,
         "authority_resolution_ref": authority_evidence.resolution_ref,
     }
+    reference = envelope.existing_work_packet_ref
+    missing_or_wrong_packet = bool(reference and (existing_packet is None or reference != existing_packet.specification_id))
+    required_revision_changed = existing_packet is not None and (
+        not verify_integrity(existing_packet)
+        or getattr(envelope, "required_context_refs", []) != existing_packet.required_context_refs
+    )
+    if missing_or_wrong_packet or required_revision_changed:
+        return AutonomyIngressResult(
+            status=AutonomyIngressStatus.FAILED_CLOSED,
+            failure=AutonomyIngressFailure.REQUIRED_CONTEXT_UNAVAILABLE,
+            **common,
+        )
     if authority_evidence.observed_methodology_commit != programstart_release:
         return AutonomyIngressResult(
             status=AutonomyIngressStatus.FAILED_CLOSED,

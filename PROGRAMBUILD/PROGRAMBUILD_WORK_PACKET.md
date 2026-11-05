@@ -39,6 +39,15 @@ It answers:
 - does the actual completed change trigger PROGRAMBUILD's post-implementation adversarial Challenge Gate before merge-ready/closure?
 - what durable project state must be reconciled afterward?
 
+When a bounded semantic decision requires document content, distinguish those
+required immutable references from ordinary provenance links. The owner-specific
+semantic input binds exact supplied UTF-8 bytes to its effect identity, refuses
+missing/mismatched/empty required content before interpretation, and preserves
+the recorded required set through recovery/recompile. A changed required set
+needs separately admitted material revision. Such document evidence never grants
+execution or redistribution authority. The V2 source path uses existing private
+carriers only; Git fallback must stop before publishing document bytes.
+
 A work packet is **not**:
 
 - a new master plan;

@@ -199,6 +199,7 @@ source = [
   "scripts.programstart_intent_compile",
   "scripts.programstart_resource_preflight",
   "scripts.programstart_intent_ingress",
+  "scripts.programstart_required_context",
   "scripts.programstart_objective_continuation",
   "scripts.programstart_owner_handoff_intake",
   "scripts.matrix_projection_dependency.operationalization",

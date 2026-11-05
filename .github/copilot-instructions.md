@@ -72,6 +72,8 @@ Use the compact logical packet by default. Persist `CURRENT_WORK_PACKET.md` only
 
 ## Publication / Quality Gate
 
+KB track freshness is checked separately with `programstart validate --check kb-freshness`. Aggregate publication validation does not require the ten-track research refresh.
+
 Before publishing a commit, push, PR update, or equivalent remote mutation, follow the clean-candidate contract in `.github/instructions/source-of-truth.instructions.md`.
 
 - Use the owning repository's existing formatter/fixer/lint/type/test/build/guard commands; do not impose a universal toolchain.

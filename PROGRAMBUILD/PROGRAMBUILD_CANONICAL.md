@@ -221,3 +221,11 @@ objective/decision and native accepted scope before the dependent product bounda
 Unknown/unsupported prerequisites cannot be waived by a mock, experiment label or
 green slice. See `docs/RESEARCH_ADMISSION_ENFORCEMENT.md` for shared callers,
 evidence-review limits and per-installation qualification.
+
+The bounded semantic input distinguishes immutable provenance links from required
+document evidence. Its owner-specific request.v2 binds exact supplied UTF-8 bytes
+and required roles to the semantic effect; request.v1 retains its legacy shape.
+Missing/mismatched required bytes or unresolved referenced packets refuse the
+dependent interpretation. Hash integrity is not read permission. Source behavior
+and per-installation qualification remain separate; see
+`scripts/programstart_required_context.py` and the bounded P1 source evidence.

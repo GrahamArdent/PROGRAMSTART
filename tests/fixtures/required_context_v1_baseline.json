@@ -1,0 +1,483 @@
+{
+  "request": {
+    "schema_version": "programstart.semantic-producer.request.v1",
+    "profile": "bounded-codex-semantic-v1",
+    "envelope": {
+      "context_ref": "ctx-required",
+      "latest_operator_utterance": "Follow the supplied requirement.",
+      "source_principal": "authenticated-operator",
+      "captured_at": "2026-11-05T05:00:00Z",
+      "project_hint": "",
+      "existing_work_packet_ref": "",
+      "durable_artifact_refs": [
+        "fixture:requirements:sha256:7c1cba320befd313b5b64e8da6ef3121f624c2240820171faf287bf7a376fbc1"
+      ]
+    },
+    "semantic_effect_id": "sha256:02e4e1c788381d98419ed571106ba156e49c6666fcb3547d3949beb3f0e7bece"
+  },
+  "packet": {
+    "schema_version": "programstart.compiled-work-packet.v0.1",
+    "compiler_version": "programstart-intent-compiler.v0.1",
+    "intent_id": "INT-9de416ab1ba93640",
+    "specification_id": "WPK-27a09a0a4e2042d0",
+    "semantic_digest": "27a09a0a4e2042d0f4aec93a33320de035419ffc0e118c4130873de5e619b0e9",
+    "intent": {
+      "raw_intent": "Audit the baseline.",
+      "normalized_intent": "Audit the baseline.",
+      "kind": "audit",
+      "interpreted_objective": "Audit the baseline.",
+      "project_hint": "",
+      "explicit_constraints": [],
+      "unresolved_ambiguities": []
+    },
+    "owning_project": "Resume Creator V6",
+    "owning_repository": "GrahamArdent/resume-creator-v6",
+    "execution_mode": "Mode C",
+    "authority": {
+      "project_name": "Resume Creator V6",
+      "owning_repository": "GrahamArdent/resume-creator-v6",
+      "authority_commit": "d0ab72d",
+      "authority_paths": [
+        "docs/PRODUCTION_READINESS_GAMEPLAN_2026-03-24.md",
+        "PR #16 programstart/finish-line-rebaseline",
+        "PR #17 programstart/job-target-intake-v0-1"
+      ],
+      "methodology_repository": "GrahamArdent/PROGRAMSTART",
+      "methodology_commit": "330aa705",
+      "execution_mode": "Mode C",
+      "current_work_refs": [
+        "PR #16 rebaselines finish-line verification",
+        "PR #17 reconciles the accepted 2026-09-01 streamlined job-target intake delta"
+      ],
+      "decision_operationalization": null,
+      "mutable_surfaces": [
+        {
+          "surface_type": "repository",
+          "identifier": "GrahamArdent/resume-creator-v6",
+          "consequential": true
+        }
+      ],
+      "read_only_surfaces": [
+        {
+          "surface_type": "repository",
+          "identifier": "GrahamArdent/PROGRAMSTART",
+          "consequential": false
+        },
+        {
+          "surface_type": "repository",
+          "identifier": "GrahamArdent/evidence-spine",
+          "consequential": false
+        },
+        {
+          "surface_type": "repository",
+          "identifier": "GrahamArdent/programstart-autonomous-controller",
+          "consequential": false
+        },
+        {
+          "surface_type": "repository",
+          "identifier": "GrahamArdent/execution-node-control",
+          "consequential": false
+        },
+        {
+          "surface_type": "repository",
+          "identifier": "GrahamArdent/programstart-compute-spine",
+          "consequential": false
+        },
+        {
+          "surface_type": "repository",
+          "identifier": "GrahamArdent/secrets-control-plane",
+          "consequential": false
+        },
+        {
+          "surface_type": "repository",
+          "identifier": "GrahamArdent/repo-watchtower",
+          "consequential": false
+        },
+        {
+          "surface_type": "repository",
+          "identifier": "GrahamArdent/portfolio-operations",
+          "consequential": false
+        },
+        {
+          "surface_type": "repository",
+          "identifier": "GrahamArdent/mission-control",
+          "consequential": false
+        },
+        {
+          "surface_type": "repository",
+          "identifier": "GrahamArdent/Orchestra-Agent",
+          "consequential": false
+        }
+      ],
+      "allowed_effects": [
+        "repository-safe implementation in Resume Creator V6",
+        "tests and exact-head CI",
+        "existing runtime verification already authorized by the owning project"
+      ],
+      "prohibited_effects": [
+        "shared autonomy infrastructure mutation",
+        "automatic job application submission",
+        "new spend",
+        "destructive provider or security consequence"
+      ],
+      "effect_readiness_rules": [],
+      "human_gate_conditions": [
+        "job application submission",
+        "new spend",
+        "destructive provider or security consequence"
+      ],
+      "automation_gap_conditions": [
+        "mechanical GitHub Actions activation/retrigger when already authorized but no actuator is available"
+      ],
+      "evidence_requirements": [
+        "active PR #16/#17 authority and exact head",
+        "exact-head CI",
+        "realistic job-intake through tailored-resume acceptance evidence"
+      ],
+      "acceptance_conditions": [
+        "exact-head CI green",
+        "realistic end-to-end product acceptance for the admitted slice",
+        "post-implementation Challenge clear"
+      ],
+      "challenge_required": true,
+      "invalidation_triggers": [
+        "PR #16 or #17 head changes",
+        "PROGRAMSTART methodology commit changes",
+        "parallel infrastructure ownership changes"
+      ],
+      "stop_conditions": [
+        "authority mismatch",
+        "protected shared-surface mutation becomes necessary",
+        "genuine human consequence gate"
+      ],
+      "parallel_work": [
+        {
+          "name": "durable continuation / operator interaction / Evidence Spine infrastructure lane",
+          "owner": "parallel autonomy-infrastructure workstream",
+          "protected_surfaces": [
+            {
+              "surface_type": "repository",
+              "identifier": "GrahamArdent/PROGRAMSTART",
+              "consequential": false
+            },
+            {
+              "surface_type": "repository",
+              "identifier": "GrahamArdent/evidence-spine",
+              "consequential": false
+            },
+            {
+              "surface_type": "repository",
+              "identifier": "GrahamArdent/programstart-autonomous-controller",
+              "consequential": false
+            },
+            {
+              "surface_type": "repository",
+              "identifier": "GrahamArdent/execution-node-control",
+              "consequential": false
+            },
+            {
+              "surface_type": "repository",
+              "identifier": "GrahamArdent/programstart-compute-spine",
+              "consequential": false
+            },
+            {
+              "surface_type": "repository",
+              "identifier": "GrahamArdent/secrets-control-plane",
+              "consequential": false
+            },
+            {
+              "surface_type": "repository",
+              "identifier": "GrahamArdent/repo-watchtower",
+              "consequential": false
+            },
+            {
+              "surface_type": "repository",
+              "identifier": "GrahamArdent/portfolio-operations",
+              "consequential": false
+            },
+            {
+              "surface_type": "repository",
+              "identifier": "GrahamArdent/mission-control",
+              "consequential": false
+            },
+            {
+              "surface_type": "repository",
+              "identifier": "GrahamArdent/Orchestra-Agent",
+              "consequential": false
+            }
+          ],
+          "evidence_ref": "active parallel-work declaration plus current repository heads"
+        }
+      ]
+    },
+    "scope": {
+      "surfaces": [
+        {
+          "surface_type": "repository",
+          "identifier": "GrahamArdent/resume-creator-v6",
+          "access": "read_only",
+          "reason": "audit begins read-only until findings are reconciled",
+          "consequential": true
+        },
+        {
+          "surface_type": "repository",
+          "identifier": "GrahamArdent/PROGRAMSTART",
+          "access": "read_only",
+          "reason": "active parallel-work protection overrides mutation for this compilation",
+          "consequential": false
+        },
+        {
+          "surface_type": "repository",
+          "identifier": "GrahamArdent/evidence-spine",
+          "access": "read_only",
+          "reason": "active parallel-work protection overrides mutation for this compilation",
+          "consequential": false
+        },
+        {
+          "surface_type": "repository",
+          "identifier": "GrahamArdent/programstart-autonomous-controller",
+          "access": "read_only",
+          "reason": "active parallel-work protection overrides mutation for this compilation",
+          "consequential": false
+        },
+        {
+          "surface_type": "repository",
+          "identifier": "GrahamArdent/execution-node-control",
+          "access": "read_only",
+          "reason": "active parallel-work protection overrides mutation for this compilation",
+          "consequential": false
+        },
+        {
+          "surface_type": "repository",
+          "identifier": "GrahamArdent/programstart-compute-spine",
+          "access": "read_only",
+          "reason": "active parallel-work protection overrides mutation for this compilation",
+          "consequential": false
+        },
+        {
+          "surface_type": "repository",
+          "identifier": "GrahamArdent/secrets-control-plane",
+          "access": "read_only",
+          "reason": "active parallel-work protection overrides mutation for this compilation",
+          "consequential": false
+        },
+        {
+          "surface_type": "repository",
+          "identifier": "GrahamArdent/repo-watchtower",
+          "access": "read_only",
+          "reason": "active parallel-work protection overrides mutation for this compilation",
+          "consequential": false
+        },
+        {
+          "surface_type": "repository",
+          "identifier": "GrahamArdent/portfolio-operations",
+          "access": "read_only",
+          "reason": "active parallel-work protection overrides mutation for this compilation",
+          "consequential": false
+        },
+        {
+          "surface_type": "repository",
+          "identifier": "GrahamArdent/mission-control",
+          "access": "read_only",
+          "reason": "active parallel-work protection overrides mutation for this compilation",
+          "consequential": false
+        },
+        {
+          "surface_type": "repository",
+          "identifier": "GrahamArdent/Orchestra-Agent",
+          "access": "read_only",
+          "reason": "active parallel-work protection overrides mutation for this compilation",
+          "consequential": false
+        }
+      ],
+      "allowed_effects": [
+        "repository-safe implementation in Resume Creator V6",
+        "tests and exact-head CI",
+        "existing runtime verification already authorized by the owning project"
+      ],
+      "prohibited_effects": [
+        "shared autonomy infrastructure mutation",
+        "automatic job application submission",
+        "new spend",
+        "destructive provider or security consequence"
+      ],
+      "initial_posture": "read_only_until_findings_reconciled"
+    },
+    "autonomy": {
+      "human_gates": [
+        "job application submission",
+        "new spend",
+        "destructive provider or security consequence"
+      ],
+      "temporary_automation_gaps": [
+        "mechanical GitHub Actions activation/retrigger when already authorized but no actuator is available"
+      ],
+      "no_authority_expansion": true,
+      "broad_language_does_not_expand_authority": true
+    },
+    "dependencies": {
+      "active_parallel_work": [
+        {
+          "name": "durable continuation / operator interaction / Evidence Spine infrastructure lane",
+          "owner": "parallel autonomy-infrastructure workstream",
+          "protected_surfaces": [
+            {
+              "surface_type": "repository",
+              "identifier": "GrahamArdent/PROGRAMSTART",
+              "consequential": false
+            },
+            {
+              "surface_type": "repository",
+              "identifier": "GrahamArdent/evidence-spine",
+              "consequential": false
+            },
+            {
+              "surface_type": "repository",
+              "identifier": "GrahamArdent/programstart-autonomous-controller",
+              "consequential": false
+            },
+            {
+              "surface_type": "repository",
+              "identifier": "GrahamArdent/execution-node-control",
+              "consequential": false
+            },
+            {
+              "surface_type": "repository",
+              "identifier": "GrahamArdent/programstart-compute-spine",
+              "consequential": false
+            },
+            {
+              "surface_type": "repository",
+              "identifier": "GrahamArdent/secrets-control-plane",
+              "consequential": false
+            },
+            {
+              "surface_type": "repository",
+              "identifier": "GrahamArdent/repo-watchtower",
+              "consequential": false
+            },
+            {
+              "surface_type": "repository",
+              "identifier": "GrahamArdent/portfolio-operations",
+              "consequential": false
+            },
+            {
+              "surface_type": "repository",
+              "identifier": "GrahamArdent/mission-control",
+              "consequential": false
+            },
+            {
+              "surface_type": "repository",
+              "identifier": "GrahamArdent/Orchestra-Agent",
+              "consequential": false
+            }
+          ],
+          "evidence_ref": "active parallel-work declaration plus current repository heads"
+        }
+      ],
+      "conflicts": [],
+      "expected_write_set": [],
+      "serialization_policy": "Controller admission owns leases/fencing; the compiler only reports semantic overlap."
+    },
+    "evidence": {
+      "requirements": [
+        "active PR #16/#17 authority and exact head",
+        "exact-head CI",
+        "realistic job-intake through tailored-resume acceptance evidence"
+      ],
+      "authority_fingerprint": "4563bedc4c73e9b273ef24175a0eefff4bd5511aaa21866f7e10618461312d79",
+      "currentness_rule": "Recompile when material project/methodology authority or declared invalidation inputs change."
+    },
+    "completion": {
+      "acceptance_conditions": [
+        "exact-head CI green",
+        "realistic end-to-end product acceptance for the admitted slice",
+        "post-implementation Challenge clear"
+      ],
+      "challenge_required": true,
+      "stop_conditions": [
+        "authority mismatch",
+        "protected shared-surface mutation becomes necessary",
+        "genuine human consequence gate"
+      ],
+      "invalidation_triggers": [
+        "PR #16 or #17 head changes",
+        "PROGRAMSTART methodology commit changes",
+        "parallel infrastructure ownership changes"
+      ]
+    },
+    "interaction": {
+      "review_required_before_admission": false,
+      "notification_policy": "Informational by default; request operator action only for a genuine admitted human gate.",
+      "available_operator_actions": [
+        "run",
+        "edit",
+        "challenge",
+        "narrow_scope",
+        "inspect_evidence"
+      ]
+    },
+    "transformation_rules": [
+      "authority.no-expansion",
+      "automation-gap.not-human-gate",
+      "source-content.non-authority",
+      "drift.recompile",
+      "audit.inspect-first",
+      "parallel.protected-surfaces",
+      "challenge.inherit"
+    ],
+    "provenance": [
+      {
+        "path": "intent.raw_intent",
+        "origin": "explicit_user",
+        "detail": "operator request"
+      },
+      {
+        "path": "intent.kind",
+        "origin": "interpreted_intent",
+        "detail": "trusted semantic interpretation; producer/version binding remains an upstream ingress concern"
+      },
+      {
+        "path": "owning_repository",
+        "origin": "project_authority",
+        "detail": "resolved owner: GrahamArdent/resume-creator-v6@d0ab72d"
+      },
+      {
+        "path": "execution_mode",
+        "origin": "methodology_default",
+        "detail": "resolved with GrahamArdent/PROGRAMSTART@330aa705"
+      },
+      {
+        "path": "scope",
+        "origin": "project_authority",
+        "detail": "surface/effect boundaries come from the resolved authority snapshot"
+      },
+      {
+        "path": "autonomy.human_gates",
+        "origin": "project_authority",
+        "detail": "genuine consequence gates are inherited, not invented by the renderer"
+      },
+      {
+        "path": "autonomy.temporary_automation_gaps",
+        "origin": "evidence_inference",
+        "detail": "mechanical actuator gaps remain distinct from human judgment gates"
+      },
+      {
+        "path": "completion.challenge_required",
+        "origin": "methodology_default",
+        "detail": "inherited from current project/methodology risk posture"
+      },
+      {
+        "path": "dependencies.active_parallel_work",
+        "origin": "evidence_inference",
+        "detail": "current active mutation ownership supplied by authority/currentness resolution"
+      },
+      {
+        "path": "context.durable_artifact_refs",
+        "origin": "explicit_user",
+        "detail": "fixture:requirements:sha256:7c1cba320befd313b5b64e8da6ef3121f624c2240820171faf287bf7a376fbc1"
+      }
+    ],
+    "admission_hint": "ready_for_controller_admission"
+  }
+}

@@ -2224,3 +2224,11 @@ def test_validate_main_prompt_generation_passes(capsys, monkeypatch) -> None:
     out = capsys.readouterr().out
     assert result == 0
     assert "Validation passed" in out
+
+
+def test_all_publication_validation_does_not_require_kb_freshness(monkeypatch):
+    def forbidden(_registry):
+        raise AssertionError("KB freshness must be checked through its explicit maintenance command")
+
+    monkeypatch.setattr(validate_core, "validate_kb_freshness", forbidden)
+    assert validate.main(["--check", "all", "--strict"]) == 0

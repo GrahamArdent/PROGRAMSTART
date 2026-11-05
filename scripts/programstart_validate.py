@@ -183,7 +183,6 @@ def main(argv: list[str] | None = None) -> int:
         placeholder_problems, placeholder_warnings = validate_core.validate_placeholder_content(registry)
         problems.extend(placeholder_problems)
         warnings.extend(placeholder_warnings)
-        warnings.extend(validate_core.validate_kb_freshness(registry))
         warnings.extend(validate_core.validate_file_hygiene(registry))
     elif args.check == "required-files":
         problems.extend(validate_core.validate_registry(registry))

@@ -21,10 +21,12 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_serializer, model_validator
 
+from .programstart_required_context import REQUIRED_CONTEXT_PROVENANCE_PATH, validate_required_refs
 from .programstart_resource_preflight import ResourcePreflight
 
 SCHEMA_VERSION = "programstart.compiled-work-packet.v0.1"
 COMPILER_VERSION = "programstart-intent-compiler.v0.1"
+
 DURABLE_ARTIFACT_PROVENANCE_PATH = "context.durable_artifact_refs"
 
 
@@ -412,6 +414,10 @@ class CompiledWorkPacket(BaseModel):
     def evidence_context_refs(self) -> list[str]:
         return [item.detail for item in self.provenance if item.path == DURABLE_ARTIFACT_PROVENANCE_PATH]
 
+    @property
+    def required_context_refs(self) -> list[str]:
+        return [item.detail for item in self.provenance if item.path == REQUIRED_CONTEXT_PROVENANCE_PATH]
+
 
 class DriftAssessment(BaseModel):
     status: Literal["unchanged", "recompile_required"]
@@ -705,10 +711,13 @@ def compile_interpreted_work_packet(
     authority: AuthoritySnapshot,
     *,
     durable_artifact_refs: list[str] | None = None,
+    required_context_refs: list[str] | None = None,
 ) -> CompiledWorkPacket:
     """Compile trusted semantic intent + current authority into a sealed packet."""
 
     context_refs = list(durable_artifact_refs or [])
+    required_refs = list(required_context_refs or [])
+    validate_required_refs(required_refs, context_refs)
     if len(context_refs) > 32 or any(
         not isinstance(value, str)
         or not value.strip()
@@ -775,7 +784,11 @@ def compile_interpreted_work_packet(
         ),
         interaction=InteractionSpec(review_required_before_admission=unresolved),
         transformation_rules=_rule_ids(intent, authority),
-        provenance=_provenance(intent, authority, conflicts, context_refs),
+        provenance=_provenance(intent, authority, conflicts, context_refs)
+        + [
+            ProvenanceEntry(path=REQUIRED_CONTEXT_PROVENANCE_PATH, origin=FieldOrigin.EXPLICIT_USER, detail=ref)
+            for ref in required_refs
+        ],
         admission_hint="needs_interpretation" if unresolved else "ready_for_controller_admission",
     )
 
@@ -799,6 +812,7 @@ def compile_work_packet(
     explicit_constraints: list[str] | None = None,
     unresolved_ambiguities: list[str] | None = None,
     durable_artifact_refs: list[str] | None = None,
+    required_context_refs: list[str] | None = None,
 ) -> CompiledWorkPacket:
     """Developer convenience wrapper around explicit semantic interpretation + compile."""
 
@@ -814,6 +828,7 @@ def compile_work_packet(
         intent,
         authority,
         durable_artifact_refs=durable_artifact_refs,
+        required_context_refs=required_context_refs,
     )
 
 

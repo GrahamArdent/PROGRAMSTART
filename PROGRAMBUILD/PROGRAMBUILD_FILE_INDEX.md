@@ -91,6 +91,7 @@ A portfolio-wide `IDEA_LEDGER.md` instance belongs in the operator's planning wo
 | `docs/RESEARCH_ADMISSION_ENFORCEMENT.md` | enforcement contract | research admission, semantic review and installed coverage limits |
 | `scripts/programstart_objective_proof.py` | enforcement | fail-closed objective preservation and proof admission shared by workflow, validation, closure and merge consumers |
 | `docs/OBJECTIVE_PROOF_ENFORCEMENT.md` | enforcement contract | objective record schema, owner acceptance, source/run bindings, trust boundaries and migration limits |
+| `scripts/programstart_required_context.py` | enforcement | bounded exact required-document evidence for the existing semantic input; no fetch or authority grant |
 | `scripts/check_commit_msg.py` | enforcement | validates Conventional Commits |
 | `.github/instructions/conventional-commits.instructions.md` | instruction | commit message rules |
 | `.gitlint` | spec-reference | commit-message enforcement spec |

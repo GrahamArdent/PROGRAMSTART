@@ -137,3 +137,8 @@ After the slice:
 - Before intentionally creating new behavior that contradicts current authority, update the authority in the same coherent change first.
 - “Never from memory” means re-read the relevant current authority after session/context reset; it does **not** mean re-read the repository.
 - Existing verification remains usable until a documented invalidation trigger occurs or a required convergence boundary calls for broader proof.
+
+
+## Publication policy
+
+Operator decision, 5 November 2026. Knowledge-base track freshness is a maintenance diagnostic. PROGRAMSTART publication and the aggregate strict validation gate do not require a ten-track research refresh. Run `programstart validate --check kb-freshness` explicitly when reviewing knowledge-base maintenance.

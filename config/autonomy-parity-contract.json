@@ -20,7 +20,7 @@
     },
     {
       "path": ".github/instructions/source-of-truth.instructions.md",
-      "sha256": "6bccb8d0-8a590ed0-d5309285-605167d2-16657cb0-ad6eebed-538398a5-2d30243f",
+      "sha256": "1ec78265-cd62d538-911305f7-ea98f972-c23aa511-d55e31ab-aaaba913-e7c73117",
       "role": "JIT source-of-truth contract"
     },
     {

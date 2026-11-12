@@ -38,6 +38,7 @@ Legacy pre-register ADRs: `0001`-`0003` predate the current `DECISION_LOG.md` li
 | [0025](0025-intent-ingress-precedes-project-entry-mode.md) | Treat Intent Ingress as a Pre-Entry Profile, Not a New Project Mode | accepted | 2026-09-04 |
 | [0026](0026-use-owner-routed-convergence-packets.md) | Use Owner-Routed Convergence Packets for Material Challenge Results | accepted | 2026-10-05 |
 | [0027](0027-separate-observed-behavior-from-permission.md) | Separate Observed Behavior from Permission | accepted | 2026-11-12 |
+| [0028](0028-bound-dependency-reads-without-granting-foreign-mutations.md) | Bound Dependency Reads Without Granting Foreign Mutations | accepted | 2026-11-12 |
 
 ## Rules
 

@@ -13,6 +13,8 @@ Authority:
 - `PROGRAMBUILD_CHALLENGE_GATE.md` runs at every stage transition — all 8 parts required at all stages; approver sign-off required on each gate log entry
 - `PROGRAMBUILD_GAMEPLAN.md` defines the execution order with full cross-stage validation and retained evidence
 
+Dependency inspection and foreign mutation follow `PROGRAMBUILD_CANONICAL.md` rule 15: authorized task-scoped reads do not grant foreign writes, and a blocked consequence does not stop independent authorized work.
+
 ---
 
 ## When To Use

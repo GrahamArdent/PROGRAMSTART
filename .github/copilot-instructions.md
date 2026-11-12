@@ -102,8 +102,9 @@ Prefer registry-backed commands over freehand reconstruction of execution order.
 - All `.github/prompts/*.prompt.md` files must follow `.github/prompts/PROMPT_STANDARD.md`; internal build prompts are exempt where the standard says so.
 - Commit messages must use Conventional Commits.
 
-Repository boundary is explicit: do not inspect, edit, stage, commit, or push another repository unless the user explicitly names that repository and asks for that action.
-If the task may require work in another repository, stop and ask for express consent before proceeding.
+Repository boundary is explicit: distinguish necessary reads from mutations. Within an authorized cross-owner objective, bounded task-relevant dependency contract and evidence reads MAY proceed through an admitted read route. Record the owning repository and exact source binding. Shared ownership or history alone does not establish a dependency; unrelated exploration and secret access remain outside this exception.
+
+Foreign repository mutations require current authorization for the exact repository, effect and target, plus applicable native admission. A dependency read or repository relationship MUST NOT grant mutation permission. A blocked mutation MUST NOT stop independent authorized work. Editing, staging, committing, pushing, merging and deploying are mutations. If the precise required authority is missing, stop that consequence and request the missing decision; reuse approval already granted rather than asking for generic confirmation again.
 
 ## Success Test
 

@@ -41,6 +41,8 @@ The current slice must identify:
 
 A work packet never redefines strategy, requirements, architecture, or decision authority.
 
+Within an authorized cross-owner objective, bounded task-relevant dependency contract and evidence reads MAY proceed through an admitted read route. Record the owning repository and exact source binding. Shared ownership/history alone, unrelated exploration and secret access are excluded. Foreign repository mutations require current authorization for the exact repository, effect and target, plus applicable native admission. A dependency read or repository relationship MUST NOT grant mutation permission. A blocked mutation MUST NOT stop independent authorized work. These are instruction/validation rules; the target action consumer still owns actual mutation refusal.
+
 ## 3. Canonical before dependent
 
 When changing planning authority, registry/config policy, or another canonical process concern:

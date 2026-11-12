@@ -462,7 +462,7 @@ Required guardrails (select only those applicable):
 - route or endpoint contract layer with canonical, deprecated, and planned states
 - auth-aware client or trusted-caller boundary where applicable
 - service/handler registration pattern where applicable
-- repo-boundary consent rule for AI-assisted work: do not inspect, edit, stage, commit, or push another repository unless the user explicitly names another repo and asks for that action
+- Within an authorized cross-owner objective, bounded task-relevant dependency contract and evidence reads MAY proceed through an admitted read route. Record the dependency/source binding; unrelated exploration and secret access are excluded.
 - CI/local verification appropriate to the product's risk and active status
 - local bootstrap command with no tribal knowledge
 
@@ -712,7 +712,7 @@ Apply these proportionally rather than as universal ceremony:
 - Requirements traceability: ensure P0 outcomes and release-blocking tests have credible traceability.
 - Maintain `PROGRAMBUILD_FILE_INDEX.md` when a critical file is added/renamed/deprecated/replaced.
 - Update `PROGRAMBUILD_CANONICAL.md` when document authority changes.
-- Repository scope is explicit in AI-assisted workflows: keep work inside the current repo unless the user explicitly names another repo and asks for that action.
+- Foreign repository mutations require current authorization for the exact repository, effect and target, plus applicable native admission. A dependency read or repository relationship MUST NOT grant mutation permission. A blocked mutation MUST NOT stop independent authorized work.
 
 ---
 

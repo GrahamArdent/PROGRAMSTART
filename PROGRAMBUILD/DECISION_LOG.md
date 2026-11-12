@@ -49,6 +49,7 @@ Authority: Canonical for project decision history
 | DEC-022 | 2026-09-04 | inputs_and_mode_selection | Intent Ingress is an orthogonal pre-entry profile that resolves trusted semantics and authority/currentness before normal project-entry and Controller admission; it is not Mode D | ACTIVE | — | Solo operator | docs/decisions/0025-intent-ingress-precedes-project-entry-mode.md |
 | DEC-023 | 2026-10-05 | inputs_and_mode_selection | Material Challenge/convergence exercises use a concise operator result plus one complete Markdown Convergence Packet when warranted; packets remain derived and route durably by semantic ownership, and a materially revised candidate must be re-Challenged before the boundary is clear | ACTIVE | — | Solo operator | docs/decisions/0026-use-owner-routed-convergence-packets.md |
 | DEC-024 | 2026-11-12 | inputs_and_mode_selection | Clarify DEC-004 factual precedence: validated behavior resolves descriptive conflicts, but cannot grant permission, scope or privilege; unauthorized working behavior remains a defect under CANONICAL rule 1 | ACTIVE | — | Solo operator | docs/decisions/0027-separate-observed-behavior-from-permission.md |
+| DEC-025 | 2026-11-12 | inputs_and_mode_selection | Distinguish authorized bounded cross-owner dependency reads from exact-target foreign mutations; keep native admission and continue independent work across a scoped gate | ACTIVE | — | Solo operator | docs/decisions/0028-bound-dependency-reads-without-granting-foreign-mutations.md |
 
 ## Decision Details
 

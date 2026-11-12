@@ -11,7 +11,7 @@ A PROGRAMBUILD critical control file missing from this index is not recognized. 
 
 | File | Type | Status | Purpose | Canonical for |
 |---|---|---|---|---|
-| `PROGRAMBUILD_CANONICAL.md` | control | active | authority map and naming rules | document authority |
+| `PROGRAMBUILD_CANONICAL.md` | control | active | authority map, factual-versus-permission conflict boundary and naming rules | document authority |
 | `PROGRAMBUILD_FILE_INDEX.md` | control | active | inventory of critical files | file inventory |
 | `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` | control | active | separates reusable methodology, project authority, non-authoritative idea preservation/promotion, active work, authority-derived objective terminal/discovery representation, JIT context, blocker scope/safe-lane reasoning, adaptive decision/evidence routing, accepted-recommendation resolution, convergence output/durable packet routing including reconstructable owner-native operationalization and `REFERENCE_PLAN` vs `ACTIVE_OPERATIONALIZATION`, checklist activation, external-resource evidence continuity, and evidence reuse | planning-to-execution operating model |
 | `PROGRAMBUILD_PORTFOLIO_CONTROL.md` | protocol | active | lightweight cross-project operator attention routing with external live-workspace boundary, bounded WIP, evidence freshness, and handoff back to project authority | reusable portfolio-attention semantics only — canonical for no project's state, scope, sequencing, or completion |

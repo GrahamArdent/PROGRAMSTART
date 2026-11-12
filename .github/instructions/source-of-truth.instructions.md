@@ -133,7 +133,7 @@ After the slice:
 
 ## Temporal semantics
 
-- Validated behavior may reveal that planning documentation is stale; reconcile stale authority when discovered.
+- Validated behavior may reveal that descriptive planning documentation is stale. It establishes what happened, not what was permitted; apply `PROGRAMBUILD_CANONICAL.md` rule 1. Unauthorized working behavior remains a defect and MUST NOT become permission through a documentation update.
 - Before intentionally creating new behavior that contradicts current authority, update the authority in the same coherent change first.
 - “Never from memory” means re-read the relevant current authority after session/context reset; it does **not** mean re-read the repository.
 - Existing verification remains usable until a documented invalidation trigger occurs or a required convergence boundary calls for broader proof.

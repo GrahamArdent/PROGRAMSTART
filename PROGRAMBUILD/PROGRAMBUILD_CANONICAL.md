@@ -11,7 +11,7 @@ If two planning documents disagree, this file decides which one is authoritative
 
 The key words MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY in this section are interpreted as described in [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119).
 
-1. Validated code and validated tests MUST outrank any planning document when conflicts are discovered retroactively. However, developers MUST update the relevant authority document before introducing new code that would contradict it.
+1. Validated code and validated tests MUST outrank descriptive planning claims about observed behavior when conflicts are discovered retroactively. This factual precedence MUST NOT grant execution permission, expand scope or privilege, or override current operator, owner, provider, or platform restrictions. Unauthorized behavior MUST be classified as a defect even when it works or passes tests; reconcile the behavior and its owning authority rather than adopting it as permission. Developers MUST update the relevant authority document before intentionally introducing authorized new behavior that would contradict it.
 2. This file defines which planning document is authoritative for each concern.
 3. `PROGRAMBUILD_FILE_INDEX.md` is the official inventory of critical planning files.
 4. No duplicate authority is allowed. One concern, one primary owner. A file MUST NOT be canonical for more than one concern.
@@ -133,12 +133,14 @@ Optional preservation / execution aids:
 
 ## 4. Conflict Resolution
 
-When documents disagree, resolve in this order:
+When descriptive claims about implemented behavior disagree, resolve in this order (subject to rule 1's authorization boundary):
 
-1. validated code and tests
+1. validated code and tests as evidence of observed behavior
 2. `PROGRAMBUILD_CANONICAL.md`
 3. the file named in the authority map for that concern
 4. all other supporting files
+
+This order resolves factual/document conflicts; it does not rank executable behavior above permission. For example, a deployment API accepting a request without the required owner admission is an authorization defect, even if its happy-path test passes. Preserve the refusal requirement and repair the unauthorized path; do not rewrite permission to bless the observed deployment.
 
 If a conflict is found:
 - update the canonical owner first;

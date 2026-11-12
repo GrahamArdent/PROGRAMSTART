@@ -49,7 +49,7 @@ Do not read the documentation tree up front.
 - Existing/in-flight projects keep their current roadmap/game plan unless replacement is explicitly approved.
 - Update a concern's canonical owner before dependent representations.
 - If implementation would prospectively contradict `ARCHITECTURE.md`, update architecture/decision authority in the same coherent change first.
-- If validated behavior reveals stale documentation, reconcile the authority before further dependent work.
+- If validated behavior reveals stale descriptive documentation, reconcile it before further dependent work under `PROGRAMBUILD_CANONICAL.md` rule 1. Working code or passing tests cannot authorize a consequence; unauthorized behavior remains a defect, not a permission change.
 
 ## Work Packets
 

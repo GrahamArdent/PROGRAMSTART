@@ -20,7 +20,7 @@
     },
     {
       "path": ".github/instructions/source-of-truth.instructions.md",
-      "sha256": "d829cf2c-a09c6479-1409ce55-4d676c8c-aa595f2a-37bd170c-64268d97-38ddb531",
+      "sha256": "1ec78265-cd62d538-911305f7-ea98f972-c23aa511-d55e31ab-aaaba913-e7c73117",
       "role": "JIT source-of-truth contract"
     },
     {
@@ -30,7 +30,7 @@
     },
     {
       "path": "PROGRAMBUILD/PROGRAMBUILD_PLANNING_OPERATING_MODEL.md",
-      "sha256": "ef96bc9d-3d713548-f3336eee-cebb6f41-53d6ae66-f790ed73-21bf992d-a4050ee3",
+      "sha256": "55141d13-31e09080-eaa0bb25-98911293-6663cc8d-ac418cb4-9ef5f920-7375135e",
       "role": "planning and adaptive decision semantics"
     },
     {
@@ -387,7 +387,7 @@
     {
       "id": "jit.temporal.1",
       "source_path": ".github/instructions/source-of-truth.instructions.md",
-      "anchor": "Validated behavior may reveal that planning documentation is stale",
+      "anchor": "Validated behavior may reveal that descriptive planning documentation is stale",
       "required": true,
       "kind": "jit_temporal"
     },

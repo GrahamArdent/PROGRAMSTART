@@ -14,6 +14,8 @@ Authority:
 - `PROGRAMBUILD_CHALLENGE_GATE.md` runs at every stage transition — Parts A, C, and F are the Lite minimum; add B, D, E, G, or H when the change/risk makes them relevant
 - `PROGRAMBUILD_GAMEPLAN.md` defines the execution order with cross-stage validation
 
+Dependency inspection and foreign mutation follow `PROGRAMBUILD_CANONICAL.md` rule 15: authorized task-scoped reads do not grant foreign writes, and a blocked consequence does not stop independent authorized work.
+
 ---
 
 ## When To Use

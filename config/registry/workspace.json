@@ -333,6 +333,8 @@
       "docs/PROGRAMSTART_VERIFICATION_ECONOMICS.md",
       "docs/decisions/0025-intent-ingress-precedes-project-entry-mode.md",
       "docs/decisions/0026-use-owner-routed-convergence-packets.md",
+      "docs/decisions/0027-separate-observed-behavior-from-permission.md",
+      "docs/decisions/0028-bound-dependency-reads-without-granting-foreign-mutations.md",
       "schemas/decision-closure.schema.json",
       "schemas/backbone-lineage.schema.json",
       "scripts/programstart_authority_resolver.py",
@@ -440,22 +442,28 @@
       {
         "path": ".github/copilot-instructions.md",
         "must_contain": [
-          "Repository boundary is explicit: do not inspect, edit, stage, commit, or push another repository unless the user explicitly names that repository and asks for that action.",
-          "If the task may require work in another repository, stop and ask for express consent before proceeding."
+          "Within an authorized cross-owner objective, bounded task-relevant dependency contract and evidence reads MAY proceed through an admitted read route.",
+          "Foreign repository mutations require current authorization for the exact repository, effect and target, plus applicable native admission.",
+          "A dependency read or repository relationship MUST NOT grant mutation permission.",
+          "A blocked mutation MUST NOT stop independent authorized work."
         ]
       },
       {
         "path": "PROGRAMBUILD/PROGRAMBUILD.md",
         "must_contain": [
-          "repo-boundary consent rule for AI-assisted work: do not inspect, edit, stage, commit, or push another repository unless the user explicitly names another repo and asks for that action",
-          "Repository scope is explicit in AI-assisted workflows: keep work inside the current repo unless the user explicitly names another repo and asks for that action."
+          "Within an authorized cross-owner objective, bounded task-relevant dependency contract and evidence reads MAY proceed through an admitted read route.",
+          "Foreign repository mutations require current authorization for the exact repository, effect and target, plus applicable native admission.",
+          "A dependency read or repository relationship MUST NOT grant mutation permission.",
+          "A blocked mutation MUST NOT stop independent authorized work."
         ]
       },
       {
         "path": "QUICKSTART.md",
         "must_contain": [
-          "Repo boundary rule: PROGRAMSTART work stays inside this repo unless the user explicitly names another repo and asks you to work there.",
-          ".\\scripts\\pb.ps1 validate --check repo-boundary # cross-repo consent rule still enforced"
+          "Within an authorized cross-owner objective, bounded task-relevant dependency contract and evidence reads MAY proceed through an admitted read route.",
+          "Foreign repository mutations require current authorization for the exact repository, effect and target, plus applicable native admission.",
+          "A dependency read or repository relationship MUST NOT grant mutation permission.",
+          "A blocked mutation MUST NOT stop independent authorized work."
         ]
       }
     ]

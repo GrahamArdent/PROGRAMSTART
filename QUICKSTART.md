@@ -2,7 +2,7 @@
 
 > Start, resume, or improve a project without loading the whole methodology or creating duplicate planning authority.
 
-Repo boundary rule: PROGRAMSTART work stays inside this repo unless the user explicitly names another repo and asks you to work there.
+Repo boundary rule: Within an authorized cross-owner objective, bounded task-relevant dependency contract and evidence reads MAY proceed through an admitted read route. Foreign repository mutations require current authorization for the exact repository, effect and target, plus applicable native admission. A dependency read or repository relationship MUST NOT grant mutation permission. A blocked mutation MUST NOT stop independent authorized work.
 
 ---
 
@@ -159,7 +159,7 @@ Useful commands:
 ```powershell
 .\scripts\pb.ps1 drift
 .\scripts\pb.ps1 validate
-.\scripts\pb.ps1 validate --check repo-boundary # cross-repo consent rule still enforced
+.\scripts\pb.ps1 validate --check repo-boundary # bounded reads; foreign mutation admission retained
 ```
 
 Do not run broad checks because a session changed.

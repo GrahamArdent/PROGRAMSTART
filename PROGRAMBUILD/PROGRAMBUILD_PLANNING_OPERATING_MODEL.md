@@ -37,6 +37,8 @@ For idea preservation, use the equally important rule:
 
 ## 2. Authority Boundary
 
+Validated implementation establishes observed behavior; it does not grant execution permission. Apply `PROGRAMBUILD_CANONICAL.md` rule 1 when reconciling descriptive drift: unauthorized working behavior is a defect, and operator, owner, provider and platform restrictions remain controlling. Prospective authorized contradictions still require updating their owning authority before implementation.
+
 ### PROGRAMSTART / PROGRAMBUILD owns
 
 - reusable project-planning methodology

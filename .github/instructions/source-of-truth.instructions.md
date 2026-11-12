@@ -41,6 +41,8 @@ The current slice must identify:
 
 A work packet never redefines strategy, requirements, architecture, or decision authority.
 
+Within an authorized cross-owner objective, bounded task-relevant dependency contract and evidence reads MAY proceed through an admitted read route. Record the owning repository and exact source binding. Shared ownership/history alone, unrelated exploration and secret access are excluded. Foreign repository mutations require current authorization for the exact repository, effect and target, plus applicable native admission. A dependency read or repository relationship MUST NOT grant mutation permission. A blocked mutation MUST NOT stop independent authorized work. These are instruction/validation rules; the target action consumer still owns actual mutation refusal.
+
 ## 3. Canonical before dependent
 
 When changing planning authority, registry/config policy, or another canonical process concern:
@@ -133,7 +135,7 @@ After the slice:
 
 ## Temporal semantics
 
-- Validated behavior may reveal that planning documentation is stale; reconcile stale authority when discovered.
+- Validated behavior may reveal that descriptive planning documentation is stale. It establishes what happened, not what was permitted; apply `PROGRAMBUILD_CANONICAL.md` rule 1. Unauthorized working behavior remains a defect and MUST NOT become permission through a documentation update.
 - Before intentionally creating new behavior that contradicts current authority, update the authority in the same coherent change first.
 - “Never from memory” means re-read the relevant current authority after session/context reset; it does **not** mean re-read the repository.
 - Existing verification remains usable until a documented invalidation trigger occurs or a required convergence boundary calls for broader proof.

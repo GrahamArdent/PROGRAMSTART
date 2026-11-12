@@ -14,6 +14,8 @@ Authority:
 - `PROGRAMBUILD_CHALLENGE_GATE.md` runs at stage transitions using A/C/F plus the parts relevant to stage/risk; full A–H is required at release/whole-system Product convergence
 - `PROGRAMBUILD_GAMEPLAN.md` defines execution order and cross-stage reconciliation
 
+Dependency inspection and foreign mutation follow `PROGRAMBUILD_CANONICAL.md` rule 15: authorized task-scoped reads do not grant foreign writes, and a blocked consequence does not stop independent authorized work.
+
 ---
 
 ## When To Use

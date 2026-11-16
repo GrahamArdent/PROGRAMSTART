@@ -97,6 +97,37 @@ Stop on the first fresh Challenge of the current candidate that yields no new ma
 
 `CLEAR` is scoped convergence evidence, not owner acceptance, execution permission, or a new lifecycle state. Conversational shorthand such as “settled” must not collapse those boundaries.
 
+#### Walk through a materially changed execution path
+
+For a material plan/prompt change, the applicable review MUST walk through the
+next affected execution path before clearing that boundary. Use the actual
+helper/consumer contract and current owner evidence: required inputs and
+preconditions, dependency order, intended effects and unrelated state that must
+survive, interruption or UNKNOWN-result recovery, and observable completion.
+Select only relevant risks. A walkthrough is review, not permission to execute
+the operation or generate new product/model runs. If a controlling mechanism is
+not yet available, retain that exact uncertainty and its gate rather than invent
+behavior or claim the path verified.
+
+Record the concrete observations and source identities once in the existing
+owner evidence. Reuse a valid walkthrough while the candidate and its material
+basis remain unchanged; do not require a new walkthrough for every handoff,
+wording edit, or chat. Matching hashes, headings, or an obligation count cannot
+substitute for this semantic review.
+
+Classify proposed revisions by their effect on the protected outcome. A material
+corrective finding must be resolved and re-reviewed under §2.2. Optional cleanup
+or a nonmaterial observation MUST NOT by itself reopen acceptance, invalidate
+unaffected evidence, or force another plan/prompt version. Clearly labelled
+historical instructions are not active authority merely because their words
+remain present. A required safety, owner, or consequence gate is never optional
+cleanup.
+
+This requirement belongs to the existing Challenge review. It adds no lifecycle
+stage, checklist service, automatic tool interception, or universal enforcement
+claim. Entry prompts reference this requirement rather than maintain another
+copy of its procedure.
+
 ### 2.3 Program Start Cycle Challenge Invocation
 
 A direct operator request to run a **program start cycle challenge**, including

@@ -214,3 +214,23 @@ Authority: Canonical for project decision history
   distinction between structural correctness, semantic outcome proof and host adoption.
 - Boundary: Source implementation/review is authorized; production/host adoption and normal
   PR acceptance are separate. Existing product decisions and original Lab results remain.
+
+
+### DEC-025 — Concrete changed-path review without optional-cleanup churn
+
+- Context: Bounded qualification showed that structural prompt checks and exact
+  bindings can pass while an execution dependency is impossible or a setup helper
+  changes unrelated state. It also exposed a false positive: clearly labelled
+  historical instructions do not automatically require rewriting an active pair.
+- Decision: Clarify the existing Challenge Gate §2.2 review with a concrete
+  walkthrough of materially affected execution paths and an explicit distinction
+  between required corrections and optional cleanup. The convergence prompt
+  references that single owner; reuse valid review for unchanged work.
+- Why: Improve execution of the existing semantic review without introducing a
+  new gate service, acceptance authority, or recurring full-review requirement.
+- Authority: Explicit operator authorization on 2026-11-16 to complete this
+  bounded amendment through applicable repository gates.
+- ADR triage: No new ADR required. This operationalizes DEC-023 / ADR-0026's
+  existing material-delta convergence and evidence-reuse semantics; no new
+  lifecycle, schema, architecture, permission, or enforcement consumer is added.
+- Evidence: docs/acceptance/observations/2026-11-16-changed-path-walkthrough.md.

@@ -331,7 +331,7 @@
     {
       "id": "prompt.step.25",
       "source_path": ".github/prompts/start-programstart-project.prompt.md",
-      "anchor": "25. **Return the next slice.**",
+      "anchor": "25. **Return the next slice.** End with the product project's actual next executable action, selected lane, exact operator gate, cost decision needing approval/investigation, or narrowly scoped blocker. A captured/shelved/deferred idea or learning work must not replace the product's next-step authority. Apply Challenge Gate §2.2's substantive-session closeout: reconcile the existing plan/prompt/evidence before dispatch and return its challenged next assignment or stop disposition through the actual host's existing contract. Reuse valid review; do not claim delivery from reply text alone.",
       "required": true,
       "kind": "orchestration_step"
     },

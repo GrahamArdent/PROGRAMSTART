@@ -3,7 +3,7 @@ description: "Challenge a material design, plan, recommendation, or handoff unti
 name: "PROGRAMSTART Convergence Packet"
 argument-hint: "Describe the candidate/result to challenge and any requested response-length or persistence constraint"
 agent: "agent"
-version: "1.2"
+version: "1.3"
 ---
 
 Run a bounded PROGRAMSTART convergence review and produce one reconstructable Markdown result without creating a second authority.
@@ -89,8 +89,9 @@ admission and result-reconciliation contracts; a reducer is not a reviewer.
 6. If the candidate changed materially, re-Challenge the revised candidate.
 7. Stop on the first fresh current-candidate Challenge that produces no new material corrective delta and no controlling unresolved blocker. Do not repeat identical clear passes for ceremony.
    When the candidate contains a game plan and execution prompt, freshly review
-   the complete corrected pair after plan convergence. Align scope, authority,
-   dependency order, verification, continuation and terminal conditions. For any
+   the complete corrected pair after plan convergence. Apply Challenge Gate §2.2's changed-execution-path walkthrough and
+   material-versus-optional revision rules using the existing owner evidence. Align scope, authority, dependency
+   order, verification, continuation and terminal conditions. For any
    material ecosystem effect, challenge whether the pair requires the first
    actually callable connected tool, current Paths/owner admission, original
    result lookup, same-attempt unknown-result recovery, eligible alternatives,

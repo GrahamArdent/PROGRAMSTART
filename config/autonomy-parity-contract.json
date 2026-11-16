@@ -15,7 +15,7 @@
   "source_files": [
     {
       "path": ".github/prompts/start-programstart-project.prompt.md",
-      "sha256": "3a70ac7a-ec33fa88-50544f7e-1265371d-ad07267e-513da2fa-a6d50c71-0ad9a4cf",
+      "sha256": "15940ad6-783b2db8-4db6f469-29dfa385-0b8bd88d-37bba178-51015684-c5b5a682",
       "role": "primary autonomy orchestration contract"
     },
     {
@@ -35,7 +35,7 @@
     },
     {
       "path": "PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md",
-      "sha256": "1487af35-6bd36d9f-218e3f41-c1b47291-359d1c20-87b84a77-8a7b1a2f-92bc2f9d",
+      "sha256": "a63c2988-fea0857d-5957a75f-d9df37ec-df57985a-69088d75-66339ee1-2a33727e",
       "role": "Challenge contract"
     },
     {
@@ -331,7 +331,7 @@
     {
       "id": "prompt.step.25",
       "source_path": ".github/prompts/start-programstart-project.prompt.md",
-      "anchor": "25. **Return the next slice.**",
+      "anchor": "25. **Return the next slice.** End with the product project's actual next executable action, selected lane, exact operator gate, cost decision needing approval/investigation, or narrowly scoped blocker. A captured/shelved/deferred idea or learning work must not replace the product's next-step authority. Apply Challenge Gate §2.2's substantive-session closeout: reconcile the existing plan/prompt/evidence before dispatch and return its challenged next assignment or stop disposition through the actual host's existing contract. Reuse valid review; do not claim delivery from reply text alone.",
       "required": true,
       "kind": "orchestration_step"
     },

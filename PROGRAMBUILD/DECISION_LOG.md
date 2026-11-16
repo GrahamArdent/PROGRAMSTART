@@ -234,3 +234,19 @@ Authority: Canonical for project decision history
   existing material-delta convergence and evidence-reuse semantics; no new
   lifecycle, schema, architecture, permission, or enforcement consumer is added.
 - Evidence: docs/acceptance/observations/2026-11-16-changed-path-walkthrough.md.
+
+### DEC-026 — Reconciled producer closeout through existing continuation
+
+- Context: A valid three-field handoff does not establish that its next assignment
+  reflects current state, reviewed scope or a reconciled plan/prompt/evidence set.
+- Decision: Make substantive-session closeout explicit in existing Challenge
+  §2.2 and reference it from the two current producer entry prompts. Reuse valid
+  review, update changed artifacts only, and retain the existing consumer format.
+- Boundary: Producer guidance does not install a new runtime, prove semantic
+  compliance, grant target-owner admission or connect arbitrary chat replies to
+  a callback. Delivery and business acceptance retain their separate evidence.
+- Authority: Operator instruction on 2026-11-16 to implement this bounded
+  recommendation and launch a reviewed same-Project continuation.
+- ADR triage: Existing DEC-023 / ADR-0026 convergence and owner-routed durability
+  are operationalized; no new architecture, schema or authority is introduced.
+- Evidence: docs/acceptance/observations/2026-11-16-changed-path-walkthrough.md.

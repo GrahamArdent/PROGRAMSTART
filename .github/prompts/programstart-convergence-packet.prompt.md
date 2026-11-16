@@ -3,7 +3,7 @@ description: "Challenge a material design, plan, recommendation, or handoff unti
 name: "PROGRAMSTART Convergence Packet"
 argument-hint: "Describe the candidate/result to challenge and any requested response-length or persistence constraint"
 agent: "agent"
-version: "1.3"
+version: "1.4"
 ---
 
 Run a bounded PROGRAMSTART convergence review and produce one reconstructable Markdown result without creating a second authority.
@@ -116,7 +116,7 @@ admission and result-reconciliation contracts; a reducer is not a reviewer.
    - GO / NO-GO;
    - recommended next step;
    - durable owner/reconciliation references.
-9. Produce a concise operator summary when the complete packet is available. In ChatGPT-like hosts, target about 150 words or less unless the operator asks for another limit. Never omit a material blocker/safety/currentness qualification merely to hit a word count.
+9. Apply Challenge Gate §2.2's substantive-session closeout before handoff or final recommendation: reconcile the existing plan/prompt/evidence and use the actual host/consumer contract. Produce a concise operator summary when the complete packet is available. In ChatGPT-like hosts, target about 150 words or less unless the operator asks for another limit. Never omit a material blocker/safety/currentness qualification merely to hit a word count.
 10. Route persistence by semantic ownership:
     - project-specific -> owning project;
     - PROGRAMSTART methodology -> appropriate PROGRAMSTART non-authoritative evidence/design surface;

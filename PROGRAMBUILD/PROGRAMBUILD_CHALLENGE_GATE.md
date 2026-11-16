@@ -128,6 +128,43 @@ stage, checklist service, automatic tool interception, or universal enforcement
 claim. Entry prompts reference this requirement rather than maintain another
 copy of its procedure.
 
+#### Close a substantive working session from current state
+
+Before a substantive working session ends with a recommendation, handoff,
+milestone or blocker, the producer MUST reconcile the actual outcome and apply
+this existing Challenge to the proposed next action **or decision to stop**.
+This is a current-state closeout, not a full new review for every conversational
+reply. Reuse valid evidence and review; apply §2.2's fresh review only when a
+material delta or another existing trigger requires it.
+
+Before dispatch, reconcile the existing game plan, execution prompt and owner
+evidence for scope, authority, dependency order, verification, continuation and
+terminal conditions. Update only artifacts whose meaning or observed state
+changed; verify current bindings and retain completed work, original attempts
+and spent budgets. A stale or partly saved package is not ready to dispatch.
+Record the actual review basis/disposition and one exact next assignment or stop
+reason in the existing owner evidence. A blocked implementation may hand off an
+authorized review or recovery assignment, but MUST NOT be labelled cleared for
+implementation. Unknown effects require original-result reconciliation before
+any retry.
+
+Use the host/consumer's existing handoff contract. For the prepared-prompt
+continuation consumer, retain exactly `handoff_id`, `continue`, `prompt`:
+true selects a nonblank exact next assignment; false requires null and selects
+no launch. Neither value establishes business success or parent acceptance.
+The producer performs the applicable Challenge; the receiver checks currentness
+and executes the actual prepared assignment without routine duplicate review.
+New material discrepancies activate the existing review/recovery rules.
+A stable original identity and exact prompt must survive uncertain delivery.
+
+A visible chat reply is not evidence that a completion callback consumed it.
+Claim automatic continuation only for an admitted consumer with an observed
+receipt; a requested ChatGPT handoff additionally needs the verified target
+account/Project, original Send reconciliation and receiving conversation
+acknowledgment. Keep source guidance, consumer-format validation, actual delivery
+and business acceptance distinct. This rule adds no transport field, dispatcher,
+daemon, universal chat interception or mechanical semantic-review claim.
+
 ### 2.3 Program Start Cycle Challenge Invocation
 
 A direct operator request to run a **program start cycle challenge**, including

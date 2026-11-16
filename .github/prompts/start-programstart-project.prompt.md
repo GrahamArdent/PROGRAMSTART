@@ -3,7 +3,7 @@ description: "Orchestrate a new project, worthwhile captured idea, or existing-p
 name: "Orchestrate PROGRAMSTART Work"
 argument-hint: "Describe what you want to build/change, ask in ordinary language to save/capture/retain worthwhile ideas or suggestions from the current conversation, name an idea worth preserving, or optionally name the target repository, execution spine, companion dependency, known operator gate, blocked closure-control slice, material cost/provider decision, or accept the most recent concrete recommendation with natural language such as 'proceed'"
 agent: "agent"
-version: "2.11"
+version: "2.12"
 ---
 
 # Orchestrate PROGRAMSTART Work
@@ -296,7 +296,7 @@ Rules:
 22. **Reconcile durable state.** Update only the owning project's existing authority/decision/state mechanisms for accepted durable changes. If execution disproved a recommendation premise, reconcile actual evidence rather than forcing it. Record cost decisions only when material and where the owning project needs them; do not create a central vendor-price registry. Accepted ideas must point to their promoted authority; Idea Records never substitute for it.
 23. **Run the Learning Gate when triggered.** Evaluate whether the real project taught PROGRAMSTART something reusable. At a material/problematic checkpoint—especially a blocked close/handoff, disputed success, operator correction, Authority Gap, or cross-owner convergence—preserve the protected outcome/claim before classification: state what was supposed to become true, how far execution actually got, the first unproven/broken hop if any, any later operator/human correction that reveals premature completion, and what evidence would falsify the proposed reusable lesson. A current execution disposition such as `blocked` or `routed` is not by itself proof that the accepted end goal is terminal. `No reusable lesson` is a valid result when this causal check is quiet. Do not manufacture a methodology change or require this expanded causal projection for trivial successful packets.
 24. **Persist learning conditionally.** If a meaningful observation exists and `GrahamArdent/PROGRAMSTART` is writable, create/update a focused PROGRAMSTART learning branch/PR: append an observation record, update the maturity ledger only when maturity/summary/retest state changes, and keep product completion independent of the PROGRAMSTART write. If PROGRAMSTART is not writable, return a structured learning handoff instead.
-25. **Return the next slice.** End with the product project's actual next executable action, selected lane, exact operator gate, cost decision needing approval/investigation, or narrowly scoped blocker. A captured/shelved/deferred idea or learning work must not replace the product's next-step authority.
+25. **Return the next slice.** End with the product project's actual next executable action, selected lane, exact operator gate, cost decision needing approval/investigation, or narrowly scoped blocker. A captured/shelved/deferred idea or learning work must not replace the product's next-step authority. Apply Challenge Gate §2.2's substantive-session closeout: reconcile the existing plan/prompt/evidence before dispatch and return its challenged next assignment or stop disposition through the actual host's existing contract. Reuse valid review; do not claim delivery from reply text alone.
 
 ## Coordinated Mode-C Lane Contract
 

@@ -52,3 +52,36 @@ Local, hosted, exact merge and default-branch readback receipts will be bound to
 the PR and the existing operator evidence; this file does not preclaim them.
 No universal enforcement, live product correction or independent fresh-chat
 acceptance follows from this amendment.
+
+## Follow-on: substantive-session closeout
+
+The operator authorized integrating current-state closeout with the existing
+prepared-prompt continuation. Canonical Challenge §2.2 owns the procedure; the
+autonomy prompt's existing step25 and convergence prompt reference it. No new
+lifecycle step or consumer field is introduced. Existing recovery and native
+model pilots remain reusable, not repeated by this source-only amendment.
+
+Same-assistant concrete-path review considered: unchanged evidence (reuse);
+material corrected pair (fresh review); a partly saved pair (no dispatch);
+blocked implementation with a valid review assignment (true does not clear
+implementation); terminal business failure (false/null does not mean accepted);
+UNKNOWN delivery (reconcile original, never resend blindly); and an ordinary
+chat reply without callback (no automatic launch claim). These are semantic
+review observations, not an independent behavioral trial or runtime test.
+
+Initial review identified that requiring a new Challenge after every reply
+would duplicate the receiver and encourage review loops. The corrected rule is
+limited to substantive closeout, permits reuse, explicitly challenges a stop
+decision, and preserves one assignment. Fresh review of this corrected source
+and its two references found no further material delta for this bounded scope.
+A separate requested receiving chat will qualify actual delivery and current
+package recovery; it cannot prove universal future compliance. Owner publication
+and hosted gates remain required before source adoption.
+
+Deterministic compatibility qualification used the installed, unchanged
+Controller completion hook and parser with isolated temporary state: exact
+review-assignment preservation, identical redelivery, changed-content rejection,
+stop/null, prose plus a final record, and rejection of extra fields, true/empty,
+false/non-null and trailing prose all passed (9 checks). No Compute worker,
+model, native job, old recovery case or original ledger was invoked. This proves
+format and successor preparation compatibility, not semantic producer compliance.

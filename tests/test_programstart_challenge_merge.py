@@ -488,3 +488,30 @@ def test_api_adapter_reads_actual_named_target_reference(monkeypatch):
     assert actual["pull"]["base"]["sha"] == "d" * 40
     assert check(actual) == check(value)
     assert "repos/" + REPO + "/git/ref/heads/main" in calls
+
+
+def test_controller_557_withdrawal_requires_exact_original_and_new_clear():
+    repository = "GrahamArdent/programstart-autonomous-controller"
+    original = comment(6962940084)
+    original["body"] = json.loads((Path(__file__).parent / "fixtures/controller_557_disposition.json").read_text())["body"]
+    value = snapshot()
+    value["repository"]["full_name"] = repository
+    value["pull"]["base"]["repo"]["full_name"] = repository
+    value["pull"]["number"] = 557
+    value["comments"] = [original]
+
+    def call():
+        return admit(value, repository, 557, HEAD, POLICY)
+
+    with pytest.raises(AdmissionDenied):
+        call()
+    revoke = withdrawal(original, original["id"] + 1, repository=repository, pr=557)
+    value["comments"].append(revoke)
+    with pytest.raises(AdmissionDenied, match="no authenticated exact-head CLEAR"):
+        call()
+    value["comments"].append(comment(original["id"] + 2, dict(record(), repository=repository, pr=557)))
+    assert call()
+    original["body"] += " altered"
+    value["comments"][1] = withdrawal(original, original["id"] + 1, repository=repository, pr=557)
+    with pytest.raises(AdmissionDenied):
+        call()

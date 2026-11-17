@@ -98,7 +98,18 @@ def _clear_withdrawals(comments, owner, repository, pr):
                 record["body_sha256"] == hashlib.sha256(target_body.encode("utf-8")).hexdigest(),
                 "withdrawal body identity mismatch",
             )
-            positive = json.loads(target_body[len(MARKER) :], object_pairs_hook=_unique)
+            payload = target_body[len(MARKER) :]
+            # Owner-reviewed historical positive with a prose appendix. Bind the
+            # entire original before extracting its JSON for withdrawal only.
+            # Admission still parses every unwithdrawn disposition in full.
+            if (repository, pr, target_id, record["body_sha256"]) == (
+                "GrahamArdent/programstart-autonomous-controller",
+                557,
+                6962940084,
+                "a534d2e87e27efc8eca7c5883fd8baf31803cf68c479f148101f16ee0908ac39",  # pragma: allowlist secret
+            ):
+                payload = payload.split("\n", 1)[0]
+            positive = json.loads(payload, object_pairs_hook=_unique)
             _require(isinstance(positive, dict) and set(positive) == FIELDS, "withdrawal target shape is unknown")
             _require(
                 positive["repository"] == repository and type(positive["pr"]) is int and positive["pr"] == pr,

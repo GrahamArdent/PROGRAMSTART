@@ -76,6 +76,13 @@ targets, wrong hashes, forward references, arbitrary malformed bodies, blocked
 records and legacy prose blockers cannot be withdrawn this way. The withdrawal
 itself must remain unedited with nonempty reason and proof references.
 
+Controller #557 comment 6962940084 is an individually reviewed recovery. Its
+whole-body SHA-256 is pinned in the withdrawal reader. The authenticated owner
+may withdraw that exact original, which contains a positive JSON object followed
+by review notes. The original stays on the PR. A fresh exact-head CLEAR is still
+required. Publish review notes separately and run the admission reader on the
+prospective full comment body before posting it.
+
 Withdrawal removes the named positive assertion and its resolutions, so the
 original blockers survive/reappear. It also invalidates earlier same-head CLEARs
 at that point in history: an older positive record cannot silently revive after

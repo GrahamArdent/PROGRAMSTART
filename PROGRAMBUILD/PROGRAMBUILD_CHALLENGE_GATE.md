@@ -137,6 +137,25 @@ This is a current-state closeout, not a full new review for every conversational
 reply. Reuse valid evidence and review; apply §2.2's fresh review only when a
 material delta or another existing trigger requires it.
 
+Take the perspective of the person or process that will use the result. Starting
+from the original request, follow the recommendation or handoff as written and
+ask: “Where would I first have to guess, correct something, or ask again to get
+the requested outcome?” Try one plausible wrong result that still looks
+successful. Using only what the receiver gets, identify how it would tell
+the difference. Where the outcome depends on an original input, a current
+decision, or prior approval, check what independently establishes each at use.
+Naming the expected source or reading its present value cannot establish its
+earlier identity or permission. Resolve material gaps within existing authority and
+walk the corrected path again under §2.2. Record the concrete gap and its
+disposition, or the observation that made the next action usable, in the
+existing closeout evidence. Label a simulated walkthrough as self-review.
+
+For an apparent owner decision, check existing delegation against the exact
+effect, target and conditions under the Planning Operating Model §9.6.
+When covered, use that authority within the current execution scope. Otherwise
+prepare the recommended choice, its limits, the evidence needed and the action
+that would follow approval. Keep that consequence pending with its actual owner.
+
 Before dispatch, reconcile the existing game plan, execution prompt and owner
 evidence for scope, authority, dependency order, verification, continuation and
 terminal conditions. Update only artifacts whose meaning or observed state

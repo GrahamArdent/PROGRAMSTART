@@ -142,7 +142,10 @@ from the original request, follow the recommendation or handoff as written and
 ask: “Where would I first have to guess, correct something, or ask again to get
 the requested outcome?” Try one plausible wrong result that still looks
 successful. Using only what the receiver gets, identify how it would tell
-the difference. Resolve material gaps within existing authority and
+the difference. Where the outcome depends on an original input, a current
+decision, or prior approval, check what independently establishes each at use.
+Naming the expected source or reading its present value cannot establish its
+earlier identity or permission. Resolve material gaps within existing authority and
 walk the corrected path again under §2.2. Record the concrete gap and its
 disposition, or the observation that made the next action usable, in the
 existing closeout evidence. Label a simulated walkthrough as self-review.

@@ -10,6 +10,13 @@ Authority: Canonical for planning-to-execution separation, idea capture/promotio
 
 ---
 
+### Start here for existing work
+
+1. Find the project owner’s current record and terminal objective. Start with the repository’s declared work references or Issues. Use the [Paths owner lookup](https://github.com/GrahamArdent/paths/blob/main/CHATGPT.md#resuming-work-from-a-repository-name) when the entry is stale, ambiguous, or missing.
+2. Check for an original attempt before choosing a new effect. For a pending or unknown result, reconcile with the owner’s native records using the original request ID and canonical input digest. Resume or read back that original. A successor requires a known disposition and applicable authority.
+3. Identify the exact next admitted effect and choose a callable route for it. Use the normal repository route for authorized routine source work. For detached operation, use the admitted backend and its durable checkpoint. Protected work requires current owner admission for the effect, target, and conditions. If any prerequisite is unresolved, record the owner, required proof, and resume point, and continue safe work.
+4. Verify through the consumer that owns acceptance. Use the repository’s normal review and verification for source work. For cross-system work, verify the receiving seam and obtain the applicable owner disposition before claiming closure. Record the result and next action in the existing owner record.
+
 ## 1. Core Principle
 
 PROGRAMBUILD is a reusable methodology. It is not the live execution authority for every project that uses it.

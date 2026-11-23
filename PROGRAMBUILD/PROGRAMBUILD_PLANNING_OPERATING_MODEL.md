@@ -734,6 +734,17 @@ A separate settled example is [TRA PR-0](https://github.com/GrahamArdent/truck-r
 
 ## 12. Re-Entry After A Pause
 
+Start by resolving the original request ID and canonical input digest with the owner’s native result store. Bind the lookup to the original root, Work Packet and attempt. A wrong digest must fail closed. Preserve the original request and evidence.
+
+| Native disposition | Next action |
+|---|---|
+| Pending or in progress | Rejoin the admitted original or wait on the native result. Keep the same attempt and any required custody. |
+| Unknown | Reconcile the exact original with its owner. A route failure or an empty search does not establish absence. Keep the effect held while the outcome is unknown. |
+| Settled | Read back the bound result and apply the existing verification and owner-disposition rules. Preserve receipts and avoid a second dispatch. |
+| Verified absent | Record the native proof of absence. A successor requires separately admissible authority for the exact effect, target and conditions. |
+
+Use [Paths failure diagnosis](https://github.com/GrahamArdent/paths/blob/main/CHATGPT.md) for a route or selector failure. An equivalent admitted route may restore access to the same target and effect. A protected effect remains held until its owner’s prerequisite is satisfied across all routes. Apply the [Work Packet operator gate](PROGRAMBUILD_WORK_PACKET.md#32-operator--manual-gate-handoff-rule) and shared-mutation controls. Record the waiting state, next owner, safe independent work, acceptable return proof and exact resume point. Resume the same objective after validating that proof.
+
 When work resumes after a pause:
 
 - locate the current execution authority

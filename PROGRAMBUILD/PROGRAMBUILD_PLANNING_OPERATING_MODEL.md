@@ -358,6 +358,20 @@ JIT context remains anchored to an authority-derived terminal condition. At a ma
 
 ---
 
+### Receiving-seam example — B and isolated #601
+
+Use the receiving owner’s current contract to load only the fields needed at each handoff. Keep the historical B observation at `verifying`. The [#601 evidence](https://chatgpt.com/library?file_id=libfile_fde3_f-62fa20d3eae481919e806225ec37b8c0_b2a2be3545e48191a4e5216544ded2e4&account_id=personal) records a distinct isolated attempt with stubbed boundaries.
+
+| Producer → consumer | Minimum evidence and receiving decision |
+|---|---|
+| Product authority → Controller | At admission, read current owner scope, approved objective and sealed Work Packet. Bind request ID, canonical input digest and root. Hold on an authority or digest mismatch. The admitted root and attempt identify the next authorized effect. |
+| Controller → Compute | At dispatch, bind the effect and original attempt to the Compute parent and exact input. Compute validates the binding before forwarding. An unknown response requires lookup of that original, with no replacement dispatch. |
+| Compute → Execution Node | Before worker execution, bind the child, worker revision and sealed fixture descriptor. A matching filename with different bytes fails the custody check. Wait for the bound worker result and preserve its evidence or the exact rejection. |
+| Execution Node → Compute → Controller | Bind the original child result to its parent journal and verify the returned digest before recording the result on the original attempt. Pending stays pending. A reconciled worker result can move the run to verifying. In isolated #601, the normal tick recovered the original parent on the same attempt and a repeat tick submitted nothing. |
+| Controller → business verifier → product owner | Grade the intended result against the Work Packet, then return the bound grade and original evidence to the owner for terminal disposition. The isolated 300-cent oracle supports the example’s business check. Owner settlement and cleanup for that attempt remain open. |
+
+See §11 for settlement and release. Retrieve the exact original identities and proof limits from the owner evidence rather than copying them into new work packets.
+
 ## 8. Evidence Reuse And Re-Verification
 
 Verified evidence SHOULD be reused until something material could have invalidated it.
@@ -703,6 +717,20 @@ Typical lifecycle:
 For long-running work, a repository MAY keep a `CURRENT_WORK_PACKET.md` as a derived, replaceable artifact. It is never canonical over the strategic plan, requirements, architecture, or decision log.
 
 ---
+
+### Verify milestones at the accepting boundary
+
+| Milestone | Producer → consumer and acceptance rule |
+|---|---|
+| Admission | The project owner supplies the current scope and Work Packet. Controller admits the exact effect against the owner revision, root and input digest, or waits for the missing scope or evidence. |
+| Effect observed | The execution owner supplies the original result and receipt. Controller reconciles the native request ID, canonical input digest and parent/child evidence before advancing the same attempt. Unknown stays attached to the original. |
+| Independent business verification | The designated verifier grades the bound result against the Work Packet’s criteria and returns the evidence to the acceptance owner. Missing or rejected evidence keeps settlement open. |
+| Terminal owner disposition | The authorized owner records the decision against the exact candidate, receipt and applicable criteria. A run in verifying is still awaiting this decision. |
+| Resource release, where required | The custody owner reconciles the exact claim or fence, resource and execution unit with current state. Confirm normal release and positive proof that the prior execution and any surviving actors cannot mutate the resource. Hold custody while that proof is missing. See [Work Packet custody rules](PROGRAMBUILD_WORK_PACKET.md). |
+
+Within the existing Controller lifecycle, compare the reconciled original receipt with the Work Packet. Sufficient evidence advances to owner closure without a verifier dispatch. In the qualification scenario, a recoverable missing fact permits one narrowly scoped admitted read, deterministic first. Reconcile that read by its own identity if delivery is uncertain. If historical evidence of actual artifact use is irrecoverable, retain the existing root and seek owner disposition. A later read of current bytes cannot establish earlier worker use.
+
+A separate settled example is [TRA PR-0](https://github.com/GrahamArdent/truck-route-authority/issues/1#issuecomment-7000843648). The exact candidate has an owner-delegated ACCEPT and terminal receipt. The [independent Controller coordination snapshot](https://github.com/GrahamArdent/programstart-compute-spine/blob/main/control/controller-results/req-controller-tra353-terminalstate-20261012t162208398z/result.json) observes the same terminal root with no claims or reserved attempts. The owner’s [Controller record](https://github.com/GrahamArdent/programstart-autonomous-controller/issues/353) records the normal fence release and cleanup evidence. Apply these observations only to that case.
 
 ## 12. Re-Entry After A Pause
 

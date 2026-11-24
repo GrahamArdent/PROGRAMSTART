@@ -167,6 +167,8 @@ When new research suggests changes to an existing execution spine:
 
 Not every project begins as a blank-sheet idea. Select the correct entry mode before applying ceremony.
 
+For an existing workflow with changed input, recover its owner, receipt and applicable admission rule. A new input needs its own binding. Changed authority, capability or consequence requires the responsible owner to check the affected admission before dispatch. Carry forward evidence for unchanged propositions.
+
 ### Mode A — Raw Idea
 
 Use when the project is genuinely new and little reliable planning exists.
@@ -377,6 +379,8 @@ See §11 for settlement and release. Retrieve the exact original identities and 
 Verified evidence SHOULD be reused until something material could have invalidated it.
 
 Do not re-check a fact merely because a new work session started.
+
+For a fixed-case regression, approved fresh-input trial or installed qualification, record the entry used, input identity, tested revision or installed cohort, relevant doubles and acceptance owner. Link each claim to the observable result and state what would invalidate reuse.
 
 ### Typical invalidation triggers
 
@@ -734,6 +738,17 @@ A separate settled example is [TRA PR-0](https://github.com/GrahamArdent/truck-r
 
 ## 12. Re-Entry After A Pause
 
+Start by resolving the original request ID and canonical input digest with the owner’s native result store. Bind the lookup to the original root, Work Packet and attempt. A wrong digest must fail closed. Preserve the original request and evidence.
+
+| Native disposition | Next action |
+|---|---|
+| Pending or in progress | Rejoin the admitted original or wait on the native result. Keep the same attempt and any required custody. |
+| Unknown | Reconcile the exact original with its owner. A route failure or an empty search does not establish absence. Keep the effect held while the outcome is unknown. |
+| Settled | Read back the bound result and apply the existing verification and owner-disposition rules. Preserve receipts and avoid a second dispatch. |
+| Verified absent | Record the native proof of absence. A successor requires separately admissible authority for the exact effect, target and conditions. |
+
+Use [Paths failure diagnosis](https://github.com/GrahamArdent/paths/blob/main/CHATGPT.md) for a route or selector failure. An equivalent admitted route may restore access to the same target and effect. A protected effect remains held until its owner’s prerequisite is satisfied across all routes. Apply the [Work Packet operator gate](PROGRAMBUILD_WORK_PACKET.md#32-operator--manual-gate-handoff-rule) and shared-mutation controls. Record the waiting state, next owner, safe independent work, acceptable return proof and exact resume point. Resume the same objective after validating that proof.
+
 When work resumes after a pause:
 
 - locate the current execution authority
@@ -807,6 +822,8 @@ The goal is less planning friction with stronger control, not more documentation
 ---
 
 ## 15. Success Test
+
+For a workflow claimed to support changed inputs, show the independently graded changed result and the rejected unadmitted case. For a detached workflow, identify the component that advanced the original after interruption, its dispatch count and the owner's terminal decision or verified gate and resumption. Identify any remaining installed proof.
 
 This operating model is working when an operator or agent can answer these quickly:
 

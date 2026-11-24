@@ -167,6 +167,8 @@ When new research suggests changes to an existing execution spine:
 
 Not every project begins as a blank-sheet idea. Select the correct entry mode before applying ceremony.
 
+For an existing workflow with changed input, recover its owner, receipt and applicable admission rule. A new input needs its own binding. Changed authority, capability or consequence requires the responsible owner to check the affected admission before dispatch. Carry forward evidence for unchanged propositions.
+
 ### Mode A — Raw Idea
 
 Use when the project is genuinely new and little reliable planning exists.
@@ -377,6 +379,8 @@ See §11 for settlement and release. Retrieve the exact original identities and 
 Verified evidence SHOULD be reused until something material could have invalidated it.
 
 Do not re-check a fact merely because a new work session started.
+
+For a fixed-case regression, approved fresh-input trial or installed qualification, record the entry used, input identity, tested revision or installed cohort, relevant doubles and acceptance owner. Link each claim to the observable result and state what would invalidate reuse.
 
 ### Typical invalidation triggers
 
@@ -818,6 +822,8 @@ The goal is less planning friction with stronger control, not more documentation
 ---
 
 ## 15. Success Test
+
+For a workflow claimed to support changed inputs, show the independently graded changed result and the rejected unadmitted case. For a detached workflow, identify the component that advanced the original after interruption, its dispatch count and the owner's terminal decision or verified gate and resumption. Identify any remaining installed proof.
 
 This operating model is working when an operator or agent can answer these quickly:
 

@@ -298,36 +298,6 @@ VS Code tasks (`Ctrl+Shift+P` → **Tasks: Run Task**) surface the most common c
                      └──────────────┘
 ```
 
-## Why This Approach
-
-### The Problem
-
-Starting a new software product typically involves:
-1. Blank documents filled inconsistently
-2. No enforced completion gates — teams skip feasibility and jump to coding
-3. Architecture decisions made without recorded rationale
-4. Knowledge trapped in chat history or individual memory
-5. No way to query "what did we decide about X?" after planning is done
-6. Large planning documents repeatedly loaded for small implementation tasks
-7. Research and audits accidentally turning into parallel execution plans
-8. Verified facts repeatedly re-checked even when nothing relevant changed
-
-### The Solution
-
-PROGRAMSTART solves this by making the planning process itself a validated, queryable, machine-readable system:
-
-1. **One strategic execution spine** — a project has one authoritative roadmap/execution ledger rather than competing master plans
-2. **Templates with authority rules** — every concern has exactly one canonical owner document
-3. **Stage gates** — you cannot advance to architecture before requirements are signed off
-4. **Bounded work packets** — current execution gets only the authority, evidence, non-goals, acceptance criteria, and verification needed for the slice
-5. **Evidence validity rules** — trusted evidence is reused until an explicit invalidation trigger requires re-verification
-6. **Convergence gates** — narrow execution periodically widens back out to catch cross-slice drift
-7. **Drift detection** — if someone changes a downstream doc without updating its authority source, the system flags it
-8. **Context indexing** — all planning artifacts are indexed into a searchable corpus
-9. **RAG retrieval** — ask natural language questions against your planning context and get source-cited answers
-10. **Pydantic validation** — the context index and LLM responses are schema-validated, not loose JSON
-11. **Knowledge base** — verified technology stacks and integration patterns inform stack selection decisions
-12. **Bootstrapping** — scaffold new projects from a single command instead of copying and forgetting files
 
 ## Workflow Automation
 

@@ -276,28 +276,7 @@ VS Code tasks (`Ctrl+Shift+P` → **Tasks: Run Task**) surface the most common c
 
 ## Data Flow — From Documents to Answers
 
-```
-┌──────────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
-│   Planning   │     │   Context    │     │   Retrieval  │     │     RAG      │
-│   Documents  │────▶│   Builder    │────▶│    Engine    │────▶│  Assistant   │
-│              │     │              │     │              │     │              │
-│ PROGRAMBUILD/│     │ Extracts:    │     │ BM25 index   │     │ LiteLLM      │
-│ USERJOURNEY/ │     │ - documents  │     │ ChromaDB     │     │ + Instructor │
-│ config/KB    │     │ - concerns   │     │ Hybrid RRF   │     │ → Pydantic   │
-│ routes/cmds  │     │ - stacks     │     │              │     │   validated  │
-│              │     │ - patterns   │     │              │     │   response   │
-└──────────────┘     │ - routes     │     └──────────────┘     └──────────────┘
-                     │ - relations  │
-                     └──────────────┘
-                            │
-                            ▼
-                     ┌──────────────┐
-                     │ Pydantic     │
-                     │ ContextIndex │
-                     │ (validated)  │
-                     └──────────────┘
-```
-
+The context builder extracts a validated index from planning documents and the knowledge base. Retrieval uses that index to supply context to the assistant. See the architecture above for the components and [Knowledge Ops](docs/knowledge-ops.md) for research maintenance.
 
 ## Workflow Automation
 

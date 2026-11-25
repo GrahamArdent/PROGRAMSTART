@@ -1,6 +1,6 @@
 # USERJOURNEY
 
-This project-specific example indexes new-user signup, onboarding, and consent design.
+Purpose: This project-specific example indexes new-user signup, onboarding, and consent design.
 Owner: Solo operator
 Last updated: 2026-03-31
 Depends on: Existing auth flow, workspace routing, product goals

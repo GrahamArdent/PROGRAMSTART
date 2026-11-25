@@ -1,6 +1,6 @@
 # USERJOURNEY
 
-Purpose: Canonical index for the new-user journey, signup, onboarding, and consent design.
+This project-specific example indexes new-user signup, onboarding, and consent design.
 Owner: Solo operator
 Last updated: 2026-03-31
 Depends on: Existing auth flow, workspace routing, product goals

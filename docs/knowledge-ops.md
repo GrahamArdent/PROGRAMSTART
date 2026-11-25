@@ -14,6 +14,8 @@ This review records whether new research changes a recommendation. Use the resul
 
 The [root README](../README.md) directs general startup through `AGENTS.md` and routes knowledge-base review and refresh here. This document and `config/knowledge-base.json` remain authoritative for KB maintenance, review cadence, freshness, and recommendation-change rules.
 
+The retrieval layer consumes the maintained knowledge base. Follow the review procedure below when changing research freshness records.
+
 ## Weekly Review Contract
 
 Use `programstart research --track <name>` to generate a dated delta template in `outputs/research/`. That keeps weekly reviews consistent and forces each pass to produce comparable artifacts.

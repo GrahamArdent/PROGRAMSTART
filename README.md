@@ -1,7 +1,7 @@
 # PROGRAMSTART
 
 Purpose: A program that builds other programs — a workflow automation toolkit for structured product planning, execution tracking, and intelligent context retrieval.
-For current startup and repository instructions, begin with [AGENTS.md](AGENTS.md). For planning and review, use the [Planning Operating Model](PROGRAMBUILD/PROGRAMBUILD_PLANNING_OPERATING_MODEL.md) and the [Challenge Gate](PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md).
+For current startup and repository instructions, begin with [AGENTS.md](AGENTS.md). For planning and review, use the [Planning Operating Model](PROGRAMBUILD/PROGRAMBUILD_PLANNING_OPERATING_MODEL.md) and the [Challenge Gate](PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md). For knowledge-base review and refresh, follow [Knowledge Ops](docs/knowledge-ops.md).
 
 ---
 

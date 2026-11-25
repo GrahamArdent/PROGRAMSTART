@@ -12,7 +12,7 @@ Run a weekly KB review on a fixed day and force every review to end with one of 
 
 That constraint keeps research from becoming an ever-growing archive with no decision impact.
 
-The root `README.md` may summarize broader PROGRAMSTART planning, JIT, and execution behavior, but it does not redefine knowledge-base refresh semantics. This document and `config/knowledge-base.json` remain authoritative for KB maintenance, review cadence, freshness, and recommendation-change rules.
+The [root README](../README.md) directs general startup through `AGENTS.md` and routes knowledge-base review and refresh here. This document and `config/knowledge-base.json` remain authoritative for KB maintenance, review cadence, freshness, and recommendation-change rules.
 
 ## Weekly Review Contract
 

@@ -2,9 +2,9 @@
 
 This directory contains Markdown Architectural Decision Records (MADRs) for the PROGRAMSTART system.
 
-MADRs are used for significant decisions that affect core contracts, workflow rules, data policies, or multi-stage behavior. Routine per-project decisions live in `DECISION_LOG.md`.
+MADRs are used for significant decisions that affect core contracts, workflow rules, data policies, or multi-stage behavior. Routine per-project decisions live in [the project decision log](../../PROGRAMBUILD/DECISION_LOG.md).
 
-Legacy pre-register ADRs: `0001`-`0003` predate the current `DECISION_LOG.md` linkage regime. They are historically valid architecture records, are intentionally exempt from the `<!-- DEC-xxx -->` linkage comment requirement, and are classified in `config/process-registry.json` under `adr_policy.legacy_pre_register_adrs`.
+Legacy pre-register ADRs: `0001`-`0003` predate the current [the project decision log](../../PROGRAMBUILD/DECISION_LOG.md) linkage regime. They are historically valid architecture records, are intentionally exempt from the `<!-- DEC-xxx -->` linkage comment requirement, and are classified in `config/process-registry.json` under `adr_policy.legacy_pre_register_adrs`.
 
 ## Index
 

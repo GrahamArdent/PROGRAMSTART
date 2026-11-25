@@ -10,7 +10,7 @@ Run a weekly KB review on a fixed day and force every review to end with one of 
 - recommendation unchanged
 - blocked pending evidence
 
-That constraint keeps research from becoming an ever-growing archive with no decision impact.
+This review records whether new research changes a recommendation. Use the resulting evidence and decision in planning rather than copying the research rationale into the startup guide.
 
 The [root README](../README.md) directs general startup through `AGENTS.md` and routes knowledge-base review and refresh here. This document and `config/knowledge-base.json` remain authoritative for KB maintenance, review cadence, freshness, and recommendation-change rules.
 

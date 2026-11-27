@@ -3,7 +3,7 @@ description: "Challenge a material design, plan, recommendation, or handoff unti
 name: "PROGRAMSTART Convergence Packet"
 argument-hint: "Describe the candidate/result to challenge and any requested response-length or persistence constraint"
 agent: "agent"
-version: "1.4"
+version: "1.5"
 ---
 
 Run a bounded PROGRAMSTART convergence review and produce one reconstructable Markdown result without creating a second authority.
@@ -78,7 +78,7 @@ admission and result-reconciliation contracts; a reducer is not a reviewer.
 ## Current Slice
 
 1. Build the smallest current candidate from owner-native authority and relevant evidence.
-2. Select the applicable Challenge Gate parts using the current stage/risk/change.
+2. Apply the [opening questions](../../PROGRAMBUILD/PROGRAMBUILD_CHALLENGE_GATE.md#opening-questions) to the decision and next authorized action, then select the applicable Challenge Gate parts using the current stage/risk/change.
 3. Run the Challenge against the exact current candidate.
 4. Classify findings:
    - `MATERIAL_CORRECTIVE_DELTA`
@@ -102,7 +102,7 @@ admission and result-reconciliation contracts; a reducer is not a reviewer.
    materially changes either artifact, freshly review the corrected pair
    before clearance. Retain exact identities and honest reviewer provenance;
    a bare CLEAR label does not establish owner acceptance or action-gate enforcement.
-8. Render one Markdown Convergence Packet containing:
+8. When Planning Operating Model §9.9 calls for a packet, render one Markdown Convergence Packet containing:
    - title/date/mode/declared scope;
    - convergence status;
    - authority status + owner references;
@@ -122,7 +122,7 @@ admission and result-reconciliation contracts; a reducer is not a reviewer.
     - PROGRAMSTART methodology -> appropriate PROGRAMSTART non-authoritative evidence/design surface;
     - genuine cross-project/operator reference -> existing external operator workspace/reference surface;
     - owner unclear -> existing owner-search/capture/Authority-Gap path, **not** a catch-all packet archive.
-11. If the host supports a downloadable Markdown artifact, provide it. Otherwise return/write the same Markdown through the host's supported artifact/path mechanism.
+11. For a warranted packet, provide downloadable Markdown when supported or deliver the same Markdown through the host's available artifact mechanism.
 12. If a durable repository copy is written, surface its durable reference. Treat any downloadable copy as a delivery view, not independently maintained truth.
 
 Use authority-status labels such as:

@@ -24,6 +24,16 @@ Eight gate parts exist because they represent eight recurring failure classes. T
 
 No material risk may be omitted merely to save time, but irrelevant sections should not be completed as paperwork.
 
+### Opening questions
+
+Name the decision and the next authorized action. Open the review with three questions:
+
+1. **What wrong result could look successful?** Identify a plausible failure and the observation that would distinguish it from success.
+2. **What have we already proven?** Reuse evidence while its binding holds. Seek the smallest missing observation that could change the decision. Recheck facts that can change before a consequential action.
+3. **What else could this change affect?** When behavior changes, inspect the relevant callers, data or workflows outside the intended path.
+
+Use the answers to select the applicable controls below. Retain the decision, evidence and limits once in the existing owner record. When the next action is supported, continue within current authority. Material corrections still require fresh review under §2.2.
+
 ### Adaptive Router Boundary
 
 `PROGRAMBUILD_PLANNING_OPERATING_MODEL.md` owns adaptive **decision-time** routing: whether a material decision can execute now, needs focused checks, or needs targeted/deep evidence before it should proceed.
